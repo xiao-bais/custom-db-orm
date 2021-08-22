@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="af78b080-0197-4100-b595-be15bf225a22" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/custom/dbconfig/CustomStrategy.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -66,7 +65,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../hougu-erp" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -154,7 +153,7 @@
       <workItem from="1629567633252" duration="4328000" />
       <workItem from="1629572006018" duration="9345000" />
       <workItem from="1629581430959" duration="249000" />
-      <workItem from="1629619087567" duration="4280000" />
+      <workItem from="1629619087567" duration="5936000" />
     </task>
     <task id="LOCAL-00001" summary="第一次提交">
       <created>1629626288523</created>
@@ -170,7 +169,14 @@
       <option name="project" value="LOCAL" />
       <updated>1629626714373</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="添加配置信息">
+      <created>1629627609317</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1629627609317</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -178,7 +184,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="第一次提交" />
-    <option name="LAST_COMMIT_MESSAGE" value="第一次提交" />
+    <MESSAGE value="添加配置信息" />
+    <option name="LAST_COMMIT_MESSAGE" value="添加配置信息" />
   </component>
   <component name="WindowStateProjectService">
     <state x="552" y="178" key="#Notifications" timestamp="1626266826529">
@@ -225,10 +232,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="715" y="222" key="#xdebugger.evaluate/0.0.1920.1040@0.0.1920.1040" timestamp="1629568901466" />
-    <state x="556" y="113" key="CommitChangelistDialog2" timestamp="1629626714007">
+    <state x="556" y="113" key="CommitChangelistDialog2" timestamp="1629627608968">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="556" y="113" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1629626714007" />
+    <state x="556" y="113" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1629627608968" />
     <state width="429" height="466" key="DebuggerActiveHint" timestamp="1629572204348">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -277,10 +284,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="440" y="94" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1629572871048" />
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1629626717339">
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1629627611654">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1629626717339" />
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1629627611654" />
     <state width="968" height="528" key="XDebugger.FullValuePopup" timestamp="1629568900789">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
