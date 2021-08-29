@@ -160,7 +160,7 @@ public class JdbcDao {
      * 创建表
      */
     @SafeVarargs
-    public final <T> void createTables(Class<T>... arr) throws Exception{
+    public final void createTables(Class<?>... arr) throws Exception{
         dbTableUtil.createTables(arr);
     }
 

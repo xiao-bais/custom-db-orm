@@ -5,7 +5,9 @@ import com.custom.annotations.DbKey;
 import com.custom.annotations.DbRelated;
 import com.custom.annotations.DbTable;
 import com.custom.dbconfig.GlobalConst;
+import com.custom.enums.DbMediaType;
 import com.custom.exceptions.DbAnnotationParserException;
+import com.custom.utils.CommUtils;
 import com.custom.utils.JudgeUtilsAx;
 
 import java.lang.reflect.Field;
@@ -91,11 +93,16 @@ public class DbAnnotationsParser {
         for (Field field : fields) {
             if(!field.isAnnotationPresent(DbField.class)) continue;
             elementMap = new HashMap<>();
+
             DbField annotation = field.getAnnotation(DbField.class);
-            elementMap.put("fieldType", annotation.fieldType());//数据库对应字段类型
+            DbMediaType dbFieldType = annotation.fieldType();
+            if(annotation.fieldType() == DbMediaType.DbVarchar) {
+                dbFieldType = CommUtils.getDbFieldType(field.getType());
+            }
+            elementMap.put("fieldType", dbFieldType);//数据库对应字段类型
             elementMap.put("fieldName", field.getName());//java实体类属性
             elementMap.put("dbFieldName", JudgeUtilsAx.isNotEmpty(annotation.value()) ? annotation.value() : field.getName());//数据库对应字段
-            elementMap.put("length", annotation.fieldType().getLength());//数据库对应字段长度
+            elementMap.put("length", dbFieldType.getLength());//数据库对应字段长度
             elementMap.put("desc", annotation.desc());//数据库对应字段说明
             elementMap.put("isNull", annotation.isNull());//是否允许存在空值
             mapList.add(elementMap);

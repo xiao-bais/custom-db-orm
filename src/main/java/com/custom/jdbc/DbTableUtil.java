@@ -60,8 +60,7 @@ public class DbTableUtil {
     /**
      * 创建多个表
      */
-    @SafeVarargs
-    final <T> void createTables(Class<T>... arr) throws Exception{
+    final void createTables(Class<?>... arr) throws Exception{
         for (int i = arr.length - 1; i >= 0; i--) {
             if(existTable(arr[i])) continue;
             String createTableSql = tableSpliceSql.getCreateTableSql(arr[i]);
@@ -74,8 +73,7 @@ public class DbTableUtil {
     /**
      * 删除多个表
      */
-    @SafeVarargs
-    final <T> void dropTables(Class<T>... arr) throws Exception{
+    final void dropTables(Class<?>... arr) throws Exception{
         for (int i = arr.length - 1; i >= 0; i--) {
             if(!existTable(arr[i])) {
                 throw new CustomCheckException(GlobalConst.EX_DROP_TABLE_NOT_FOUND + arr[i].getName());

@@ -2,7 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="af78b080-0197-4100-b595-be15bf225a22" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/custom/test/DoMain.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/custom/test/Score.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/custom/test/Student.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/custom/jdbc/DbAnnotationsParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/custom/jdbc/DbAnnotationsParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/custom/jdbc/DbTableUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/custom/jdbc/DbTableUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/custom/jdbc/JdbcDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/custom/jdbc/JdbcDao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/custom/utils/CommUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/custom/utils/CommUtils.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,6 +57,7 @@
         <option name="downloadAnnotationsAutomatically" value="true" />
         <option name="downloadDocsAutomatically" value="true" />
         <option name="downloadSourcesAutomatically" value="true" />
+        <option name="jdkForImporter" value="1.8" />
         <option name="vmOptionsForImporter" value="-Xmx768m" />
       </MavenImportingSettings>
     </option>
@@ -65,7 +74,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/main/java/com/custom" />
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -86,11 +95,25 @@
       <recent name="com.custom.enums" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\Program Files\Idea-work\custom-jdbc\src\main\resources" />
       <recent name="D:\Program Files\Idea-work\custom-jdbc\src\main\java\com\custom" />
+      <recent name="D:\Program Files\Idea-work\custom-jdbc" />
+      <recent name="D:\Program Files\Idea-work\custom-jdbc\src\main\resources" />
     </key>
   </component>
   <component name="RunManager" selected="Application.DoMain">
+    <configuration name="CommUtils" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.custom.utils.CommUtils" />
+      <module name="custom-jdbc" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.custom.utils.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="DbParserFieldHandler" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.custom.jdbc.DbParserFieldHandler" />
       <module name="custom-jdbc" />
@@ -120,6 +143,7 @@
     <recent_temporary>
       <list>
         <item itemvalue="Application.DoMain" />
+        <item itemvalue="Application.CommUtils" />
         <item itemvalue="Application.DbParserFieldHandler" />
       </list>
     </recent_temporary>
@@ -153,7 +177,10 @@
       <workItem from="1629567633252" duration="4328000" />
       <workItem from="1629572006018" duration="9345000" />
       <workItem from="1629581430959" duration="249000" />
-      <workItem from="1629619087567" duration="5936000" />
+      <workItem from="1629619087567" duration="6084000" />
+      <workItem from="1629907746272" duration="1583000" />
+      <workItem from="1630227877925" duration="7152000" />
+      <workItem from="1630248380332" duration="1217000" />
     </task>
     <task id="LOCAL-00001" summary="第一次提交">
       <created>1629626288523</created>
@@ -176,7 +203,14 @@
       <option name="project" value="LOCAL" />
       <updated>1629627609317</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="添加配置信息">
+      <created>1629629324176</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1629629324176</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -204,10 +238,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="552" y="178" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1629055430012" />
-    <state x="765" y="221" key="#com.intellij.ide.util.MemberChooser" timestamp="1629627567911">
+    <state x="765" y="221" key="#com.intellij.ide.util.MemberChooser" timestamp="1630239911489">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="765" y="221" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1629627567911" />
+    <state x="765" y="221" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1630239911489" />
     <state x="498" y="445" key="#com.intellij.refactoring.move.MoveHandler.SelectRefactoringDialog" timestamp="1629627029184">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -232,14 +266,14 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="715" y="222" key="#xdebugger.evaluate/0.0.1920.1040@0.0.1920.1040" timestamp="1629568901466" />
-    <state x="556" y="113" key="CommitChangelistDialog2" timestamp="1629627608968">
+    <state x="556" y="113" key="CommitChangelistDialog2" timestamp="1629629323847">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="556" y="113" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1629627608968" />
-    <state width="429" height="466" key="DebuggerActiveHint" timestamp="1629572204348">
+    <state x="556" y="113" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1629629323847" />
+    <state width="429" height="466" key="DebuggerActiveHint" timestamp="1630241122852">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="429" height="466" key="DebuggerActiveHint/0.0.1920.1040@0.0.1920.1040" timestamp="1629572204348" />
+    <state width="429" height="466" key="DebuggerActiveHint/0.0.1920.1040@0.0.1920.1040" timestamp="1630241122852" />
     <state x="92" y="92" width="1736" height="856" key="DiffContextDialog" timestamp="1629378361731">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -248,46 +282,46 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1626525730279" />
-    <state width="1877" height="282" key="GridCell.Tab.0.bottom" timestamp="1629581418437">
+    <state width="1877" height="349" key="GridCell.Tab.0.bottom" timestamp="1630249392553">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1629581418437" />
-    <state width="1877" height="282" key="GridCell.Tab.0.center" timestamp="1629581418437">
+    <state width="1877" height="349" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1630249392553" />
+    <state width="1877" height="349" key="GridCell.Tab.0.center" timestamp="1630249392553">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="282" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1629581418437" />
-    <state width="1877" height="282" key="GridCell.Tab.0.left" timestamp="1629581418437">
+    <state width="1877" height="349" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1630249392553" />
+    <state width="1877" height="349" key="GridCell.Tab.0.left" timestamp="1630249392552">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="282" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1629581418437" />
-    <state width="1877" height="282" key="GridCell.Tab.0.right" timestamp="1629581418437">
+    <state width="1877" height="349" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1630249392552" />
+    <state width="1877" height="349" key="GridCell.Tab.0.right" timestamp="1630249392553">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="282" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1629581418437" />
-    <state width="1877" height="349" key="GridCell.Tab.1.bottom" timestamp="1629581418435">
+    <state width="1877" height="349" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1630249392553" />
+    <state width="1877" height="349" key="GridCell.Tab.1.bottom" timestamp="1630249392553">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="349" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1629581418435" />
-    <state width="1877" height="349" key="GridCell.Tab.1.center" timestamp="1629581418435">
+    <state width="1877" height="349" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1630249392553" />
+    <state width="1877" height="349" key="GridCell.Tab.1.center" timestamp="1630249392553">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="349" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1629581418435" />
-    <state width="1877" height="349" key="GridCell.Tab.1.left" timestamp="1629581418435">
+    <state width="1877" height="349" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1630249392553" />
+    <state width="1877" height="349" key="GridCell.Tab.1.left" timestamp="1630249392553">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="349" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1629581418435" />
-    <state width="1877" height="349" key="GridCell.Tab.1.right" timestamp="1629581418435">
+    <state width="1877" height="349" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1630249392553" />
+    <state width="1877" height="349" key="GridCell.Tab.1.right" timestamp="1630249392553">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="349" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1629581418435" />
-    <state x="440" y="94" key="SettingsEditor" timestamp="1629572871048">
+    <state width="1877" height="349" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1630249392553" />
+    <state x="440" y="94" key="SettingsEditor" timestamp="1630248384359">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="440" y="94" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1629572871048" />
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1629627611654">
+    <state x="440" y="94" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1630248384359" />
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1629629326626">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1629627611654" />
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1629629326626" />
     <state width="968" height="528" key="XDebugger.FullValuePopup" timestamp="1629568900789">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -304,10 +338,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="640" y="344" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1629619087315" />
-    <state x="752" y="437" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1629626264552">
+    <state x="752" y="437" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1630230872720">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="752" y="437" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1040@0.0.1920.1040" timestamp="1629626264552" />
+    <state x="752" y="437" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1040@0.0.1920.1040" timestamp="1630230872720" />
     <state x="616" y="240" key="run.anything.popup" timestamp="1625431573778">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -316,5 +350,16 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1629627031893" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/custom/utils/CommUtils.java</url>
+          <line>77</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
