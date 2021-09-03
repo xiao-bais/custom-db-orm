@@ -1,3 +1,4 @@
+
 package com.custom.utils;
 
 import com.alibaba.druid.sql.visitor.functions.Char;
@@ -6,7 +7,6 @@ import com.custom.enums.DbMediaType;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Locale;
@@ -69,6 +69,34 @@ public class CommUtils {
         if(type.equalsIgnoreCase("float")) return 0.0f;
         if(type.equalsIgnoreCase("byte")) return (byte)0;
         return null;
+    }
+
+    /**
+     * 根据java属性类型设置表字段类型
+     */
+    public static DbMediaType getDbFieldType(Class<?> type) {
+        if (type.getName().toLowerCase().contains(("boolean"))) {
+            return DbMediaType.DbTinyint;
+        }
+        if (type.getName().toLowerCase().contains(("double"))) {
+            return DbMediaType.DbDouble;
+        }
+        if (type.getName().toLowerCase().contains(("int"))) {
+            return DbMediaType.DbInt;
+        }
+        if (type.getName().toLowerCase().contains(("long"))) {
+            return DbMediaType.DbBigint;
+        }
+        if (type.getName().toLowerCase().contains(("decimal"))) {
+            return DbMediaType.DbDecimal;
+        }
+        if (type.getName().toLowerCase().contains(("date"))) {
+            return DbMediaType.DbDate;
+        }
+        if (type.getName().toLowerCase().contains(("float"))) {
+            return DbMediaType.DbFloat;
+        }
+        return DbMediaType.DbVarchar;
     }
 
 
