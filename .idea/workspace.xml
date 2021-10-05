@@ -2,15 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="af78b080-0197-4100-b595-be15bf225a22" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/custom/test/DoMain.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/custom/test/Score.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/custom/test/Student.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/custom-jdbc.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/custom/jdbc/DbAnnotationsParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/custom/jdbc/DbAnnotationsParser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/custom/jdbc/DbTableUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/custom/jdbc/DbTableUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/custom/jdbc/JdbcDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/custom/jdbc/JdbcDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/custom/utils/CommUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/custom/utils/CommUtils.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,7 +44,7 @@
     <option name="generalSettings">
       <MavenGeneralSettings>
         <option name="localRepository" value="D:\Program Files\MavenRepository" />
-        <option name="mavenHome" value="$PROJECT_DIR$/../../apache-maven-3.6.1" />
+        <option name="mavenHome" value="D:/apache-maven-3.6.1" />
         <option name="userSettingsFile" value="D:\Program Files\apache-maven-3.6.1\conf\settings.xml" />
       </MavenGeneralSettings>
     </option>
@@ -57,7 +53,6 @@
         <option name="downloadAnnotationsAutomatically" value="true" />
         <option name="downloadDocsAutomatically" value="true" />
         <option name="downloadSourcesAutomatically" value="true" />
-        <option name="jdkForImporter" value="1.8" />
         <option name="vmOptionsForImporter" value="-Xmx768m" />
       </MavenImportingSettings>
     </option>
@@ -72,13 +67,14 @@
   <component name="PropertiesComponent">
     <property name="DatabaseDriversLRU" value="mysql" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/main/java/com/custom" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="reference.settings.project.maven.importing" />
+    <property name="settings.editor.selected.configurable" value="MavenSettings" />
   </component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
@@ -181,6 +177,7 @@
       <workItem from="1629907746272" duration="1583000" />
       <workItem from="1630227877925" duration="7152000" />
       <workItem from="1630248380332" duration="1217000" />
+      <workItem from="1633418763141" duration="366000" />
     </task>
     <task id="LOCAL-00001" summary="第一次提交">
       <created>1629626288523</created>
@@ -278,10 +275,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="92" y="92" width="1736" height="856" key="DiffContextDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1629378361731" />
-    <state x="740" y="275" key="FileChooserDialogImpl" timestamp="1626525730279">
+    <state x="740" y="275" key="FileChooserDialogImpl" timestamp="1633418901966">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1626525730279" />
+    <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1633418901966" />
     <state width="1877" height="349" key="GridCell.Tab.0.bottom" timestamp="1630249392553">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -314,10 +311,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1877" height="349" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1630249392553" />
-    <state x="440" y="94" key="SettingsEditor" timestamp="1630248384359">
+    <state x="440" y="94" key="SettingsEditor" timestamp="1633418982672">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="440" y="94" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1630248384359" />
+    <state x="440" y="94" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1633418982672" />
     <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1629629326626">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -342,6 +339,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="752" y="437" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1040@0.0.1920.1040" timestamp="1630230872720" />
+    <state x="636" y="253" width="647" height="534" key="find.popup" timestamp="1633419071753">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="636" y="253" width="647" height="534" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1633419071753" />
     <state x="616" y="240" key="run.anything.popup" timestamp="1625431573778">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
