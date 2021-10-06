@@ -2,6 +2,7 @@ package com.custom.jdbc;
 
 import com.custom.dbconfig.DbDataSource;
 import com.custom.dbconfig.GlobalConst;
+import com.custom.dbconfig.SymbolConst;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.utils.DbPageRows;
 import com.custom.utils.JudgeUtilsAx;
@@ -152,7 +153,7 @@ public class JdbcTableDao {
      */
     <T> int deleteBatchKeys(Class<T> t, Object[] keys) throws Exception {
         if(keys == null) return 0;
-        StringJoiner delSymbols = new StringJoiner(",", "(", ")");
+        StringJoiner delSymbols = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2, SymbolConst.BRACKETS_LEFT, SymbolConst.BRACKETS_RIGHT);
         int symbol = keys.length;
         do {
             delSymbols.add("?");
@@ -186,7 +187,7 @@ public class JdbcTableDao {
         String[] dbFields = dbParserFieldHandler.getDbFields(t.getClass());
         //java属性值
         List<Object> fieldsVal = dbParserFieldHandler.getFieldsVal(t, dbParserFieldHandler.getFiledNames(t.getClass()));
-        StringJoiner dbFieldStr = new StringJoiner(", ", "(", ")");
+        StringJoiner dbFieldStr = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2, SymbolConst.BRACKETS_LEFT, SymbolConst.BRACKETS_RIGHT);
 
         //如果存在主键
         if(dbParserFieldHandler.isDbKeyTag(t.getClass())){
@@ -200,7 +201,7 @@ public class JdbcTableDao {
         Arrays.stream(dbFields).map(dbField -> String.format("`%s`", dbField)).forEach(dbFieldStr::add);
 
         /* 拼接预编译的? */
-        StringJoiner insertSymbol = new StringJoiner(", ","(",")");
+        StringJoiner insertSymbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2, SymbolConst.BRACKETS_LEFT, SymbolConst.BRACKETS_RIGHT);
         int symbol = fieldsVal.size();
         do {
             insertSymbol.add("?");
@@ -221,7 +222,7 @@ public class JdbcTableDao {
         T t = tList.get(0);
         //数据库字段
         String[] dbFields = dbParserFieldHandler.getDbFields(t.getClass());
-        StringJoiner dbFieldStr = new StringJoiner(", ", "(", ")");
+        StringJoiner dbFieldStr = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2, SymbolConst.BRACKETS_LEFT, SymbolConst.BRACKETS_RIGHT);
 
         //如果存在主键
         boolean existKey = dbParserFieldHandler.isDbKeyTag(t.getClass());
@@ -233,7 +234,7 @@ public class JdbcTableDao {
             }
         }
         Arrays.stream(dbFields).forEach(dbFieldStr::add);
-        StringJoiner inertValStr = new StringJoiner(",");
+        StringJoiner inertValStr = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1);
         List<Object> saveValues = new ArrayList<>();
         //java属性值
         for (T obj : tList) {
@@ -243,7 +244,7 @@ public class JdbcTableDao {
             }
             saveValues.addAll(fieldsVal);
             /* 拼接预编译的? */
-            StringJoiner insertSymbol = new StringJoiner(", ","(",")");
+            StringJoiner insertSymbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2, SymbolConst.BRACKETS_LEFT, SymbolConst.BRACKETS_RIGHT);
             int symbol = fieldsVal.size();
             do {
                 insertSymbol.add("?");
@@ -262,7 +263,7 @@ public class JdbcTableDao {
      */
     <T> int updateByKey(T t, String... updateDbFields) throws Exception {
 
-        StringJoiner editSymbol = new StringJoiner(",");
+        StringJoiner editSymbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1);
         List<String> updateDbColumns = new ArrayList<>();
         List<Object> updateDbValues = new ArrayList<>();
 
@@ -282,8 +283,8 @@ public class JdbcTableDao {
                 updateDbValues.add(dbParserFieldHandler.getFieldValue(t, dbParserFieldHandler.getProFieldName(t.getClass(), column)));
         }
 
-        for (int i = 0; i < updateDbColumns.size(); i++) {
-            editSymbol.add(String.format(" %s = ?", updateDbColumns.get(i)));
+        for (String updateDbColumn : updateDbColumns) {
+            editSymbol.add(String.format(" %s = ?", updateDbColumn));
         }
         String dbTableName = dbParserFieldHandler.getDbTableName(t.getClass());
         String fieldKey = dbParserFieldHandler.getDbFieldKey(t.getClass());
