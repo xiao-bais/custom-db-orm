@@ -4,6 +4,7 @@ import com.custom.annotations.DbField;
 import com.custom.annotations.DbKey;
 import com.custom.annotations.DbRelated;
 import com.custom.dbconfig.GlobalConst;
+import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.KeyStrategy;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.utils.CommUtils;
@@ -73,11 +74,12 @@ public class DbParserFieldHandler {
         String getter;
         try {
             firstLetter = fieldName.substring(0, 1).toUpperCase();
-            getter = "get" + firstLetter + fieldName.substring(1);
+            getter = SymbolConst.GET + firstLetter + fieldName.substring(1);
             Method method = t.getClass().getMethod(getter);
             value = method.invoke(t);
         }catch (NoSuchMethodException e){
-            Method method = t.getClass().getMethod(fieldName);
+            firstLetter = fieldName.substring(0, 1).toUpperCase();
+            Method method = t.getClass().getMethod(SymbolConst.IS + firstLetter + fieldName.substring(1));
             value = method.invoke(t);
         }
         return value;
@@ -148,7 +150,7 @@ public class DbParserFieldHandler {
      * 获取表查询的主表查询字段
      */
     private <T> String getBasicFieldSql(Class<T> t) throws Exception {
-        StringJoiner fieldSql = new StringJoiner(",");
+        StringJoiner fieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1);
         String alias = getDbTableAlias(t);//获取表的别名
 
         if(isDbKeyTag(t)){
@@ -194,7 +196,7 @@ public class DbParserFieldHandler {
             relationTableFields.add(String.format("%s.`%s` `%s`",joinAlias, relationMap.get("dbField"), relationMap.get("fieldName")));
         }
         Map<String, Object> tableMap = DbAnnoParser.getParserByDbTable(t);
-        queryFieldSql.append(String.format("%s %s", getBasicFieldSql(t), ","));
+        queryFieldSql.append(String.format("%s %s", getBasicFieldSql(t), SymbolConst.SEPARATOR_COMMA_1));
         queryFieldSql.append(relationTableFields);
         return String.format("select %s \nfrom %s %s \n%s",
                 queryFieldSql, tableMap.get("tableName"), tableMap.get("alias"), relationSql);
