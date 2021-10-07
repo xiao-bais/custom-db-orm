@@ -182,7 +182,7 @@ public class JdbcTableDao {
     /**
      * 插入一条记录
      */
-    <T> int insert(T t) throws Exception {
+    <T> int insert(T t, boolean isGeneratedKey) throws Exception {
         //数据库字段
         String[] dbFields = dbParserFieldHandler.getDbFields(t.getClass());
         //java属性值
@@ -190,9 +190,10 @@ public class JdbcTableDao {
         StringJoiner dbFieldStr = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2, SymbolConst.BRACKETS_LEFT, SymbolConst.BRACKETS_RIGHT);
 
         //如果存在主键
+        String dbFieldKey = "";
         if(dbParserFieldHandler.isDbKeyTag(t.getClass())){
             //主键字段
-            String dbFieldKey = dbParserFieldHandler.getDbFieldKey(t.getClass());
+            dbFieldKey = dbParserFieldHandler.getDbFieldKey(t.getClass());
             //主键值
             Object fieldKeyVal = dbParserFieldHandler.getFieldValue(t, dbParserFieldHandler.getFieldKey(t.getClass()));
             dbFieldStr.add(String.format("`%s`", dbFieldKey));
@@ -209,13 +210,15 @@ public class JdbcTableDao {
         }while (symbol > 0);
         String insertSql = String.format("insert into `%s` %s values %s",
                 dbParserFieldHandler.getDbTableName(t.getClass()), dbFieldStr, insertSymbol);
-        return jdbcUtils.executeUpdate(insertSql, fieldsVal.toArray());
+        return isGeneratedKey ?
+                jdbcUtils.executeInsert(Collections.singletonList(t), insertSql, dbFieldKey, fieldsVal.toArray()) :
+                jdbcUtils.executeUpdate(insertSql, fieldsVal.toArray());
     }
 
     /**
      * 批量插入记录
      */
-    <T> int insert(List<T> tList) throws Exception {
+    <T> int insert(List<T> tList, boolean isGeneratedKey) throws Exception {
         if(null == tList) {
             throw new RuntimeException(GlobalConst.EX_PARAM_EMPTY);
         }
@@ -226,9 +229,10 @@ public class JdbcTableDao {
 
         //如果存在主键
         boolean existKey = dbParserFieldHandler.isDbKeyTag(t.getClass());
+        String dbFieldKey = "";
         if(existKey){
             //主键字段
-            String dbFieldKey = dbParserFieldHandler.getDbFieldKey(t.getClass());
+            dbFieldKey = dbParserFieldHandler.getDbFieldKey(t.getClass());
             if (!dbFieldStr.toString().contains(dbFieldKey)) {
                 dbFieldStr.add(dbFieldKey);
             }
@@ -250,11 +254,13 @@ public class JdbcTableDao {
                 insertSymbol.add("?");
                 symbol--;
             }while (symbol > 0);
-            inertValStr.add("\n"+insertSymbol.toString());
+            inertValStr.add("\n" + insertSymbol.toString());
         }
         String insertSql = String.format("insert into `%s` %s values %s",
                dbParserFieldHandler.getDbTableName(t.getClass()), dbFieldStr, inertValStr);
-        return jdbcUtils.executeUpdate(insertSql, saveValues.toArray());
+        return isGeneratedKey ?
+                jdbcUtils.executeInsert(tList, insertSql, dbFieldKey, saveValues.toArray()) :
+                jdbcUtils.executeUpdate(insertSql, saveValues.toArray());
     }
 
     /* ----------------------------------------------------------------update---------------------------------------------------------------- */
@@ -297,10 +303,10 @@ public class JdbcTableDao {
     /**
      * 保存（更新或插入）
      */
-    <T> int save(T t) throws Exception {
-        int update = updateByKey(t);
+    <T> long save(T t) throws Exception {
+        long update = updateByKey(t);
         if(update == 0) {
-            update = insert(t);
+            update = insert(t, false);
         }
         return update;
     }

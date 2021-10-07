@@ -66,6 +66,7 @@ public class DbTableUtil {
             String createTableSql = tableSpliceSql.getCreateTableSql(arr[i]);
             logger.info("createTableSql -> " + createTableSql);
             jdbcUtils.executeUpdate(createTableSql);
+            logger.info("createTableSql -> successfully" );
         }
     }
 

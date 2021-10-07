@@ -22,6 +22,8 @@ public class Score {
     @DbField(fieldType = DbMediaType.DbInt)
     private int score;
 
+
+
     public int getId() {
         return id;
     }

@@ -69,7 +69,7 @@ public class DbParserFieldHandler {
      * 获取字段值
      */
     <T> Object getFieldValue(T t,  String fieldName) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-        Object value = null;
+        Object value;
         String firstLetter;
         String getter;
         try {
@@ -78,9 +78,14 @@ public class DbParserFieldHandler {
             Method method = t.getClass().getMethod(getter);
             value = method.invoke(t);
         }catch (NoSuchMethodException e){
-            firstLetter = fieldName.substring(0, 1).toUpperCase();
-            Method method = t.getClass().getMethod(SymbolConst.IS + firstLetter + fieldName.substring(1));
-            value = method.invoke(t);
+            try {
+                firstLetter = fieldName.substring(0, 1).toUpperCase();
+                Method method = t.getClass().getMethod(SymbolConst.IS + firstLetter + fieldName.substring(1));
+                value = method.invoke(t);
+            }catch (NoSuchMethodException v) {
+                Method method = t.getClass().getMethod(fieldName);
+                value = method.invoke(t);
+            }
         }
         return value;
     }
@@ -214,6 +219,13 @@ public class DbParserFieldHandler {
      */
     <T> String getFieldKey(Class<T> t) throws Exception {
         return String.valueOf(DbAnnoParser.getParserByDbKey(t).get("fieldKey"));
+    }
+
+    /**
+     * 获取主键对应的java属性类型
+     */
+    <T> Field getFieldKeyType(Class<T> t) throws Exception {
+        return t.getDeclaredField(String.valueOf(DbAnnoParser.getParserByDbKey(t).get("fieldKey")));
     }
 
     /**

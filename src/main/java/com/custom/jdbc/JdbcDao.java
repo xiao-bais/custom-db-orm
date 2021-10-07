@@ -112,15 +112,29 @@ public class JdbcDao {
     /**
      * 插入一条记录
      */
-    public <T> int insert(T t) throws Exception {
-        return jdbcTableDao.insert(t);
+    public <T> long insert(T t) throws Exception {
+        return jdbcTableDao.insert(t, false);
+    }
+
+    /**
+     * 插入一条记录并返回新的主键（只允许自增主键类型）
+     */
+    public <T> int insertReturnKey(T t) throws Exception {
+        return jdbcTableDao.insert(t, true);
+    }
+
+    /**
+     * 插入多条记录并返回新的主键（只允许自增主键类型）
+     */
+    public <T> int insertReturnKey(List<T> tList) throws Exception {
+        return jdbcTableDao.insert(tList, true);
     }
 
     /**
      * 插入多条记录
      */
     public <T> int insert(List<T> tList) throws Exception {
-        return jdbcTableDao.insert(tList);
+        return jdbcTableDao.insert(tList, false);
     }
 
     /* ----------------------------------------------------------------update---------------------------------------------------------------- */
@@ -144,7 +158,7 @@ public class JdbcDao {
     /**
      * 保存一条记录（添加或修改）
      */
-    public <T> int save(T t) throws Exception {
+    public <T> long save(T t) throws Exception {
         return jdbcTableDao.save(t);
     }
 

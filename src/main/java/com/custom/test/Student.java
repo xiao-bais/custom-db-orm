@@ -24,7 +24,7 @@ public class Student {
     private int age;
 
     @DbField
-    private boolean marry;
+    private boolean isMarry;
 
     @DbField
     private Date birthday;
@@ -62,10 +62,10 @@ public class Student {
     }
 
     public boolean isMarry() {
-        return marry;
+        return isMarry;
     }
 
     public void setMarry(boolean marry) {
-        this.marry = marry;
+        isMarry = marry;
     }
 }

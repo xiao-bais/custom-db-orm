@@ -2,46 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="af78b080-0197-4100-b595-be15bf225a22" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/custom/dbconfig/SymbolConst.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/custom/test/Employee.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/custom/jdbc/DbAnnotationsParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/custom/jdbc/DbAnnotationsParser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/custom/jdbc/DbParserFieldHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/custom/jdbc/DbParserFieldHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/custom/jdbc/DbTableUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/custom/jdbc/DbTableUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/custom/jdbc/JdbcDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/custom/jdbc/JdbcDao.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/custom/jdbc/JdbcTableDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/custom/jdbc/JdbcTableDao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/custom/jdbc/JdbcUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/custom/jdbc/JdbcUtils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/custom/test/DoMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/custom/test/DoMain.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/custom/test/Score.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/custom/test/Score.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/custom/test/Student.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/custom/test/Student.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/custom/annotations/DbField.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/custom/annotations/DbKey.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/custom/annotations/DbRelated.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/custom/annotations/DbTable.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/custom/dbconfig/CustomStrategy.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/custom/dbconfig/DbConnection.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/custom/dbconfig/DbDataSource.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/custom/dbconfig/GlobalConst.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/custom/enums/DbMediaType.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/custom/enums/KeyStrategy.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/custom/exceptions/CustomCheckException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/custom/exceptions/DbAnnotationParserException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/custom/jdbc/DbAnnotationsParser.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/custom/jdbc/DbAnnotationsParser.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/custom/jdbc/DbAnnotationsParser.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/custom/jdbc/DbParserFieldHandler$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/custom/jdbc/DbParserFieldHandler$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/custom/jdbc/DbParserFieldHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/custom/jdbc/DbParserFieldHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/custom/jdbc/DbParserFieldHandler.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/custom/jdbc/DbTableUtil.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/custom/jdbc/DbTableUtil.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/custom/jdbc/DbTableUtil.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/custom/jdbc/JdbcDao.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/custom/jdbc/JdbcDao.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/custom/jdbc/JdbcDao.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/custom/jdbc/JdbcTableDao.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/custom/jdbc/JdbcUtils.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/custom/jdbc/TableSpliceSql.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/custom/utils/BackResult.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/custom/utils/CommUtils.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/custom/utils/CommUtils.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/custom/utils/CommUtils.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/custom/utils/DbPageRows.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/custom/utils/JudgeUtilsAx.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/custom/utils/ResultStatus.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/custom-jdbc-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/custom-jdbc-1.0-SNAPSHOT.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-archiver/pom.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -284,10 +255,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="552" y="178" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1629055430012" />
-    <state x="765" y="221" key="#com.intellij.ide.util.MemberChooser" timestamp="1633512260942">
+    <state x="765" y="221" key="#com.intellij.ide.util.MemberChooser" timestamp="1633540182416">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="765" y="221" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1633512260942" />
+    <state x="765" y="221" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1633540182416" />
     <state x="498" y="445" key="#com.intellij.refactoring.move.MoveHandler.SelectRefactoringDialog" timestamp="1629627029184">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -328,42 +299,46 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1633514113447" />
-    <state width="1877" height="348" key="GridCell.Tab.0.bottom" timestamp="1633512771453">
+    <state width="1877" height="291" key="GridCell.Tab.0.bottom" timestamp="1633541049459">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="348" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1633512771453" />
-    <state width="1877" height="348" key="GridCell.Tab.0.center" timestamp="1633512771452">
+    <state width="1877" height="291" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1633541049459" />
+    <state width="1877" height="291" key="GridCell.Tab.0.center" timestamp="1633541049459">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="348" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1633512771452" />
-    <state width="1877" height="348" key="GridCell.Tab.0.left" timestamp="1633512771452">
+    <state width="1877" height="291" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1633541049459" />
+    <state width="1877" height="291" key="GridCell.Tab.0.left" timestamp="1633541049459">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="348" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1633512771452" />
-    <state width="1877" height="348" key="GridCell.Tab.0.right" timestamp="1633512771453">
+    <state width="1877" height="291" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1633541049459" />
+    <state width="1877" height="291" key="GridCell.Tab.0.right" timestamp="1633541049459">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="348" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1633512771453" />
-    <state width="1877" height="348" key="GridCell.Tab.1.bottom" timestamp="1633512771249">
+    <state width="1877" height="291" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1633541049459" />
+    <state width="1877" height="291" key="GridCell.Tab.1.bottom" timestamp="1633541049396">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="348" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1633512771249" />
-    <state width="1877" height="348" key="GridCell.Tab.1.center" timestamp="1633512771249">
+    <state width="1877" height="291" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1633541049396" />
+    <state width="1877" height="291" key="GridCell.Tab.1.center" timestamp="1633541049396">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="348" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1633512771249" />
-    <state width="1877" height="348" key="GridCell.Tab.1.left" timestamp="1633512771249">
+    <state width="1877" height="291" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1633541049396" />
+    <state width="1877" height="291" key="GridCell.Tab.1.left" timestamp="1633541049396">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="348" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1633512771249" />
-    <state width="1877" height="348" key="GridCell.Tab.1.right" timestamp="1633512771249">
+    <state width="1877" height="291" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1633541049396" />
+    <state width="1877" height="291" key="GridCell.Tab.1.right" timestamp="1633541049396">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="348" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1633512771249" />
+    <state width="1877" height="291" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1633541049396" />
     <state x="440" y="94" key="SettingsEditor" timestamp="1633418982672">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="440" y="94" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1633418982672" />
+    <state x="92" y="92" width="1736" height="856" key="VCS.FileHistoryDialog" timestamp="1633541616392">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="92" y="92" width="1736" height="856" key="VCS.FileHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1633541616392" />
     <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1633419159795">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

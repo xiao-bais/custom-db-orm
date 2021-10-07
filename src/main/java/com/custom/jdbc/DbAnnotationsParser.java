@@ -51,8 +51,11 @@ public class DbAnnotationsParser {
         Map<String, Object> elementMap = new HashMap<>();
         Field fieldKey = getFieldKey(t);
         DbKey annotation = fieldKey.getAnnotation(DbKey.class);
-        if(annotation == null){
+        if(annotation == null) {
             throw new DbAnnotationParserException(GlobalConst.EX_DBKEY_NOTFOUND + t);
+        }
+        if(annotation.dbType() == DbMediaType.DbVarchar) {
+
         }
         elementMap.put("dbKey", JudgeUtilsAx.isNotEmpty(annotation.value()) ? annotation.value() : fieldKey.getName());//主键字段名称
         elementMap.put("length", annotation.dbType().getLength());//主键长度

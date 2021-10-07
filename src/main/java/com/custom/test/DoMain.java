@@ -24,24 +24,17 @@ public class DoMain {
     public static void main(String[] args) throws Exception {
 
         DbDataSource dbDataSource = new DbDataSource();
-        dbDataSource.setUrl("jdbc:mysql://127.0.0.1/hos?characterEncoding=utf-8&allowMultiQueries=true&serverTimezone=GMT%2B8");
+        dbDataSource.setUrl("jdbc:mysql://127.0.0.1/smbms?characterEncoding=utf-8&allowMultiQueries=true&serverTimezone=GMT%2B8");
         dbDataSource.setDriver("com.mysql.cj.jdbc.Driver");
         dbDataSource.setUsername("root");
         dbDataSource.setPassword("123456");
 
         JdbcDao jdbcDao = new JdbcDao(dbDataSource);
 
-        jdbcDao.createTables(Student.class);
+        jdbcDao.createTables(Employee.class);
 
-        Student stu = new Student();
-        stu.setAge(27);
-        stu.setName("李民");
-        stu.setBirthday(new SimpleDateFormat("yyyyMMdd").parse("20020918"));
-        stu.setMarry(false);
-
-        jdbcDao.insert(stu);
-
-
+//        long key = jdbcDao.insertReturnKey(Arrays.asList(stu, stu2));
+//        System.out.println("key = " + key);
 
 
     }

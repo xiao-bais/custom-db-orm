@@ -8,6 +8,7 @@ import com.custom.utils.CommUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -181,18 +182,29 @@ public class JdbcUtils extends DbConnection {
      * 插入
      */
     @SuppressWarnings("Unchecked")
-   <T> int executeUpdate(List<T> obj, String keyField, Class<?> type,  String sql, Object... params) {
-       int res = 0;
+   <T> int executeInsert(List<T> obj, String sql, String keyField, Object... params) {
+        int res = 0;
         try{
             executeAll(true, sql, params);
             res = statement.executeUpdate();
             resultSet = statement.getGeneratedKeys();
             int count = 0;
-            while (resultSet.next()){
+            while (resultSet.next()) {
+                T t = obj.get(count);
+                Field fieldKeyType = parserFieldHandler.getFieldKeyType(t.getClass());
+                Class<?> type = fieldKeyType.getType();
+                PropertyDescriptor pd = new PropertyDescriptor(keyField, t.getClass());
+                Method writeMethod = pd.getWriteMethod();
+                if(type.equals(Long.class) || type.equals(long.class)) {
+                    long key = Long.parseLong(resultSet.getObject( 1).toString());
+                    writeMethod.invoke(t, key);
+                }else if(type.equals(Integer.class) || type.equals(int.class)) {
+                    int key = Integer.parseInt(resultSet.getObject( 1).toString());
+                    writeMethod.invoke(t, key);
+                }
+//                Method method = t.getClass().getMethod(initSetStr(keyField), t.getClass());
+//                method.invoke(obj.get(count), key);
                 count++;
-                Object key =  resultSet.getObject( 1);
-                Method method = obj.get(count).getClass().getMethod(initSetStr(keyField), type);
-                method.invoke(obj.get(count), key);
             }
         }catch (SQLException e){
             logger.error(e.toString(), e);
