@@ -3,7 +3,8 @@ package com.custom.jdbc;
 import com.custom.annotations.DbField;
 import com.custom.annotations.DbKey;
 import com.custom.annotations.DbRelated;
-import com.custom.dbconfig.GlobalConst;
+import com.custom.dbconfig.DbFieldsConst;
+import com.custom.dbconfig.ExceptionConst;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.KeyStrategy;
 import com.custom.exceptions.CustomCheckException;
@@ -15,6 +16,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.*;
+
+import static com.custom.dbconfig.DbFieldsConst.DB_JOIN_TABLE;
 
 /**
  * @Author Xiao-Bai
@@ -35,7 +38,7 @@ public class DbParserFieldHandler {
     <T> String[] getDbFields(Class<T> t){
         List<String> dbFields = new ArrayList<>();
         List<Map<String, Object>> elementList = DbAnnoParser.getParserByDbField(t);
-        elementList.forEach(elementMap -> dbFields.add(String.valueOf(elementMap.get("dbFieldName"))));
+        elementList.forEach(elementMap -> dbFields.add(String.valueOf(elementMap.get(DbFieldsConst.DB_FIELD_NAME))));
         return dbFields.toArray(new String[0]);
     }
 
@@ -94,14 +97,14 @@ public class DbParserFieldHandler {
      * 获取实体类对应的表名
      */
     <T> String getDbTableName(Class<T> t) {
-        return DbAnnoParser.getParserByDbTable(t).get("tableName").toString();
+        return DbAnnoParser.getParserByDbTable(t).get(DbFieldsConst.TABLE_NAME).toString();
     }
 
     /**
      * 获取表别名
      */
     <T> String getDbTableAlias(Class<T> t) {
-        return DbAnnoParser.getParserByDbTable(t).get("alias").toString();
+        return DbAnnoParser.getParserByDbTable(t).get(DbFieldsConst.TABLE_ALIAS).toString();
     }
 
     /**
@@ -132,7 +135,7 @@ public class DbParserFieldHandler {
     boolean isExistRelation(List<Map<String, String>> list, String tableName, String condition) {
         if(list.size() <= 0) return false;
         for (Map<String, String> tableMap : list) {
-            if(tableName.equals(tableMap.get("joinTable")) && condition.equals(tableMap.get("condition"))) return true;
+            if(tableName.equals(tableMap.get(DB_JOIN_TABLE)) && condition.equals(tableMap.get(DbFieldsConst.DB_JOIN_CONDITION))) return true;
         }
         return false;
     }
@@ -155,18 +158,18 @@ public class DbParserFieldHandler {
      * 获取表查询的主表查询字段
      */
     private <T> String getBasicFieldSql(Class<T> t) throws Exception {
-        StringJoiner fieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1);
+        StringJoiner fieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
         String alias = getDbTableAlias(t);//获取表的别名
 
         if(isDbKeyTag(t)){
             Map<String, Object> dbKeyMap = DbAnnoParser.getParserByDbKey(t);
-            String keySql = String.format("%s.`%s` `%s`", alias, dbKeyMap.get("dbKey"), dbKeyMap.get("fieldKey"));
+            String keySql = String.format("%s.`%s` `%s`", alias, dbKeyMap.get(DbFieldsConst.DB_KEY), dbKeyMap.get(DbFieldsConst.KEY_FIELD));
             fieldSql.add(keySql);
         }
 
         List<Map<String, Object>> dbFieldMapList = DbAnnoParser.getParserByDbField(t);
         for (Map<String, Object> dbFieldMap : dbFieldMapList) {
-            String dbFieldSql = String.format("%s.`%s` `%s`", alias, dbFieldMap.get("dbFieldName"), dbFieldMap.get("fieldName"));
+            String dbFieldSql = String.format("%s.`%s` `%s`", alias, dbFieldMap.get(DbFieldsConst.DB_FIELD_NAME), dbFieldMap.get(DbFieldsConst.DB_CLASS_FIELD));
             fieldSql.add(dbFieldSql);
         }
         return fieldSql.toString();
@@ -186,46 +189,46 @@ public class DbParserFieldHandler {
         for (Map<String, String> relationMap : relationMapList) {
             Map<String, String> tableMap = new HashMap<>();
             String joinSql = "";
-            String joinTable = relationMap.get("joinTable");//关联表
-            String condition = relationMap.get("condition");//关联条件
-            String joinAlias = relationMap.get("joinAlias");//关联表别名
-            String joinStyle = relationMap.get("joinStyle");//关联方式
+            String joinTable = relationMap.get(DbFieldsConst.DB_JOIN_TABLE);//关联表
+            String condition = relationMap.get(DbFieldsConst.DB_JOIN_CONDITION);//关联条件
+            String joinAlias = relationMap.get(DbFieldsConst.DB_JOIN_ALIAS);//关联表别名
+            String joinStyle = relationMap.get(DbFieldsConst.DB_JOIN_STYLE);//关联方式
             //如果有存在相同的关联条件,那么就不需要再次拼接关联
             if(!isExistRelation(joinTables, joinTable, condition)) {
-                tableMap.put("joinTable", joinTable);
-                tableMap.put("condition", condition);
+                tableMap.put(DbFieldsConst.DB_JOIN_TABLE, joinTable);
+                tableMap.put(DbFieldsConst.DB_JOIN_CONDITION, condition);
                 joinTables.add(tableMap);
                 joinSql = String.format("\n%s %s %s on %s", joinStyle, joinTable, joinAlias ,condition);
                 relationSql.append(joinSql);
             }
-            relationTableFields.add(String.format("%s.`%s` `%s`",joinAlias, relationMap.get("dbField"), relationMap.get("fieldName")));
+            relationTableFields.add(String.format("%s.`%s` `%s`",joinAlias, relationMap.get(DbFieldsConst.DB_JOIN_MAP_FIELD), relationMap.get(DbFieldsConst.DB_JOIN_MAP_CLASS_FIELD)));
         }
         Map<String, Object> tableMap = DbAnnoParser.getParserByDbTable(t);
-        queryFieldSql.append(String.format("%s %s", getBasicFieldSql(t), SymbolConst.SEPARATOR_COMMA_1));
+        queryFieldSql.append(String.format("%s %s", getBasicFieldSql(t), SymbolConst.SEPARATOR_COMMA_2));
         queryFieldSql.append(relationTableFields);
         return String.format("select %s \nfrom %s %s \n%s",
-                queryFieldSql, tableMap.get("tableName"), tableMap.get("alias"), relationSql);
+                queryFieldSql, tableMap.get(DbFieldsConst.TABLE_NAME), tableMap.get(DbFieldsConst.TABLE_ALIAS), relationSql);
     }
 
     /**
      * 获取数据库主键
      */
     <T> String getDbFieldKey(Class<T> t) throws Exception {
-        return String.valueOf(DbAnnoParser.getParserByDbKey(t).get("dbKey"));
+        return String.valueOf(DbAnnoParser.getParserByDbKey(t).get(DbFieldsConst.DB_KEY));
     }
 
     /**
      * 获取主键对应的java属性字段
      */
     <T> String getFieldKey(Class<T> t) throws Exception {
-        return String.valueOf(DbAnnoParser.getParserByDbKey(t).get("fieldKey"));
+        return String.valueOf(DbAnnoParser.getParserByDbKey(t).get(DbFieldsConst.KEY_FIELD));
     }
 
     /**
      * 获取主键对应的java属性类型
      */
     <T> Field getFieldKeyType(Class<T> t) throws Exception {
-        return t.getDeclaredField(String.valueOf(DbAnnoParser.getParserByDbKey(t).get("fieldKey")));
+        return t.getDeclaredField(String.valueOf(DbAnnoParser.getParserByDbKey(t).get(DbFieldsConst.KEY_FIELD)));
     }
 
     /**
@@ -234,18 +237,18 @@ public class DbParserFieldHandler {
     <T> Object generateKey(T t) throws Exception {
         Object value = null;
         Map<String, Object> parserByDbKey = DbAnnoParser.getParserByDbKey(t.getClass());
-        KeyStrategy keyType = (KeyStrategy) parserByDbKey.get("strategy");
-        String fieldKey = String.valueOf(parserByDbKey.get("fieldKey"));
+        KeyStrategy keyType = (KeyStrategy) parserByDbKey.get(DbFieldsConst.KEY_STRATEGY);
+        String fieldKey = String.valueOf(parserByDbKey.get(DbFieldsConst.KEY_FIELD));
         switch (keyType){
             case INPUT:
                 value = getFieldValue(t, fieldKey);
                 if(JudgeUtilsAx.isEmpty(value)) {
-                    throw new CustomCheckException(GlobalConst.EX_PRIMARY_KEY_VALUE_NOT_EMPTY + t.getClass());
+                    throw new CustomCheckException(ExceptionConst.EX_PRIMARY_KEY_VALUE_NOT_EMPTY + t.getClass());
                 }
                 break;
             case AUTO:
                 if(!isKeyByValid(t.getClass(), fieldKey)) {
-                    throw new CustomCheckException(GlobalConst.EX_PRIMARY_CANNOT_MATCH + t.getClass());
+                    throw new CustomCheckException(ExceptionConst.EX_PRIMARY_CANNOT_MATCH + t.getClass());
                 }
                 value = 0;
                 break;
@@ -253,7 +256,7 @@ public class DbParserFieldHandler {
                 Field field = t.getClass().getDeclaredField(fieldKey);
                 Class<?> type = field.getType();
                 if(type != String.class) {
-                    throw new CustomCheckException(GlobalConst.EX_PRIMARY_CANNOT_MATCH + t.getClass());
+                    throw new CustomCheckException(ExceptionConst.EX_PRIMARY_CANNOT_MATCH + t.getClass());
                 }
                 value = CommUtils.getUUID();
                 break;
@@ -274,7 +277,7 @@ public class DbParserFieldHandler {
      * 获取主键增值类型
      */
     <T> KeyStrategy getDbKeyType(Class<T> t) throws Exception {
-        return (KeyStrategy) DbAnnoParser.getParserByDbKey(t).get("keyType");
+        return (KeyStrategy) DbAnnoParser.getParserByDbKey(t).get(DbFieldsConst.KEY_STRATEGY);
     }
 
     /**
@@ -284,20 +287,20 @@ public class DbParserFieldHandler {
         String fieldStr = null;
         if(isDbKeyTag(t)) {
             Map<String, Object> parserByDbKey = DbAnnoParser.getParserByDbKey(t);
-            if(dbField.equals(parserByDbKey.get("dbKey"))) {
-                fieldStr = String.valueOf(parserByDbKey.get("fieldKey"));
+            if(dbField.equals(parserByDbKey.get(DbFieldsConst.DB_KEY))) {
+                fieldStr = String.valueOf(parserByDbKey.get(DbFieldsConst.KEY_FIELD));
             }
         }
         List<Map<String, Object>> parserByDbField = DbAnnoParser.getParserByDbField(t);
         for (Map<String, Object> objectMap : parserByDbField) {
-            if(dbField.equals(objectMap.get("dbFieldName"))) {
-                fieldStr = String.valueOf(objectMap.get("fieldName"));
+            if(dbField.equals(objectMap.get(DbFieldsConst.DB_FIELD_NAME))) {
+                fieldStr = String.valueOf(objectMap.get(DbFieldsConst.DB_CLASS_FIELD));
             }
         }
         List<Map<String, String>> relationList = DbAnnoParser.getParserByDbRelated(t);
         for (Map<String, String> objectMap : relationList) {
-            if(dbField.equals(objectMap.get("dbField"))) {
-                fieldStr = String.valueOf(objectMap.get("fieldName"));
+            if(dbField.equals(objectMap.get(DbFieldsConst.DB_JOIN_MAP_FIELD))) {
+                fieldStr = String.valueOf(objectMap.get(DbFieldsConst.DB_JOIN_MAP_CLASS_FIELD));
             }
         }
 

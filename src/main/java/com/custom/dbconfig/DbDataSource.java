@@ -32,6 +32,16 @@ public class DbDataSource {
 
     private boolean testOnReturn = false;
 
+    private DbCustomStrategy dbCustomStrategy;
+
+    public DbCustomStrategy getDbCustomStrategy() {
+        return dbCustomStrategy;
+    }
+
+    public void setDbCustomStrategy(DbCustomStrategy dbCustomStrategy) {
+        this.dbCustomStrategy = dbCustomStrategy;
+    }
+
     public int getInitialSize() {
         return initialSize;
     }

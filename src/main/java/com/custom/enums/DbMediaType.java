@@ -22,6 +22,8 @@ public enum DbMediaType {
 
     DbTinyint("tinyint", "1"),
 
+    DbBit("bit", "1"),
+
     DbText("text", "255"),
 
     DbBigint("bigint", "11"),

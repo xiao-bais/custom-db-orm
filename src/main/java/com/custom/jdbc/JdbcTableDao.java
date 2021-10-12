@@ -1,7 +1,7 @@
 package com.custom.jdbc;
 
 import com.custom.dbconfig.DbDataSource;
-import com.custom.dbconfig.GlobalConst;
+import com.custom.dbconfig.ExceptionConst;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.utils.DbPageRows;
@@ -56,9 +56,12 @@ public class JdbcTableDao {
         String selectSql = String.format("%s %s %s", dbParserFieldHandler.getSelectSql(t), JudgeUtilsAx.isNotEmpty(condition) ? condition : "",
                 JudgeUtilsAx.isNotEmpty(orderBy) ? orderBy :  "");
         String countSql = String.format("select count(0) from (%s) xxx ", selectSql);
+
+        long count = jdbcUtils.executeSql(countSql, params);
         selectSql = String.format("%s \nlimit %s, %s", selectSql, (pageIndex - 1) * pageSize, pageSize);
         List<T> dataList = jdbcUtils.query(t, selectSql, params);
-        DbPageRows<T> dbPageRows = new DbPageRows<>(pageIndex, pageSize, jdbcUtils.executeSql(countSql, params));
+
+        DbPageRows<T> dbPageRows = new DbPageRows<>(pageIndex, pageSize, count);
         dbPageRows.setData(dataList);
         dbPageRows.setCondition(condition);
         return dbPageRows;
@@ -80,8 +83,11 @@ public class JdbcTableDao {
         String selectSql = String.format("%s %s %s", dbParserFieldHandler.getSelectSql(t), JudgeUtilsAx.isNotEmpty(condition) ? condition : "",
                 JudgeUtilsAx.isNotEmpty(orderBy) ? orderBy : "");
         String countSql = String.format("select count(0) from (%s) xxx ", selectSql);
+
+        long count = jdbcUtils.executeSql(countSql, params);
         selectSql = String.format("%s \nlimit %s, %s", selectSql, (dbPageRows.getPageIndex() - 1) * dbPageRows.getPageSize(), dbPageRows.getPageSize());
-        dbPageRows.setTotal(jdbcUtils.executeSql(countSql, params));
+
+        dbPageRows.setTotal(count);
         List<T> dataList = jdbcUtils.query(t, selectSql, params);
         dbPageRows.setData(dataList);
         dbPageRows.setCondition(condition);
@@ -114,7 +120,7 @@ public class JdbcTableDao {
      */
     <T> List<T> selectBySql(Class<T> t, String sql, Object... params) throws Exception {
         if(JudgeUtilsAx.isEmpty(sql)) {
-            throw new CustomCheckException(GlobalConst.EX_SQL_NOT_EMPTY);
+            throw new CustomCheckException(ExceptionConst.EX_SQL_NOT_EMPTY);
         }
         return jdbcUtils.query(t, sql, params);
     }
@@ -124,13 +130,13 @@ public class JdbcTableDao {
      */
     <T> T selectOneBySql(Class<T> t, String sql, Object... params) throws Exception {
         if(JudgeUtilsAx.isEmpty(sql)) {
-            throw new CustomCheckException(GlobalConst.EX_SQL_NOT_EMPTY);
+            throw new CustomCheckException(ExceptionConst.EX_SQL_NOT_EMPTY);
         }
         List<T> queryList = jdbcUtils.query(t, sql, params);
         if(queryList.size() == 0){
             return null;
         }else if(queryList.size() > 1){
-            throw new CustomCheckException(String.format(GlobalConst.EX_QUERY_MORE_RESULT, queryList.size()));
+            throw new CustomCheckException(String.format(ExceptionConst.EX_QUERY_MORE_RESULT, queryList.size()));
         }
         return queryList.get(0);
     }
@@ -170,7 +176,7 @@ public class JdbcTableDao {
      */
     <T> int deleteByCondition(Class<T> t, String condition, Object... params) throws Exception {
         if(JudgeUtilsAx.isEmpty(condition)){
-            throw new RuntimeException(GlobalConst.EX_DEL_CONDITION_NOT_EMPTY);
+            throw new RuntimeException(ExceptionConst.EX_DEL_CONDITION_NOT_EMPTY);
         }
         condition = String.format("where 1 = 1 %s", condition);
         String alias = dbParserFieldHandler.getDbTableAlias(t);
@@ -220,7 +226,7 @@ public class JdbcTableDao {
      */
     <T> int insert(List<T> tList, boolean isGeneratedKey) throws Exception {
         if(null == tList) {
-            throw new RuntimeException(GlobalConst.EX_PARAM_EMPTY);
+            throw new RuntimeException(ExceptionConst.EX_PARAM_EMPTY);
         }
         T t = tList.get(0);
         //数据库字段
@@ -304,6 +310,9 @@ public class JdbcTableDao {
      * 保存（更新或插入）
      */
     <T> long save(T t) throws Exception {
+        if(!JudgeUtilsAx.isKeyTag(t.getClass())){
+            throw new CustomCheckException(ExceptionConst.EX_DBKEY_NOTFOUND + t);
+        }
         long update = updateByKey(t);
         if(update == 0) {
             update = insert(t, false);

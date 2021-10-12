@@ -14,6 +14,7 @@ import java.sql.Connection;
 public class DbConnection {
 
     private Connection connection = null;
+    private DbCustomStrategy dbCustomStrategy;
 
     /**
      * 获取连接
@@ -22,7 +23,7 @@ public class DbConnection {
     public DbConnection(DbDataSource dbDataSource) {
         try {
             isExistClass(dbDataSource.getDriver());
-            connection = (Connection) GlobalConst.currMap.get("conn");
+            connection = (Connection) ExceptionConst.currMap.get(DbFieldsConst.CONN);
             if (null == connection) {
                 DruidDataSource druidDataSource = new DruidDataSource();
                 druidDataSource.setDriverClassName(dbDataSource.getDriver());
@@ -38,15 +39,21 @@ public class DbConnection {
                 druidDataSource.setTestWhileIdle(dbDataSource.isTestWhileIdle());
                 druidDataSource.setTestOnBorrow(dbDataSource.isTestOnBorrow());
                 druidDataSource.setTestOnReturn(dbDataSource.isTestOnReturn());
-
                 connection = druidDataSource.getConnection();
             }
             dbDataSource.setDatabase(CommUtils.getDataBase(dbDataSource.getUrl()));
-            if(JudgeUtilsAx.isEmpty(dbDataSource.getDatabase())) {
+            if (JudgeUtilsAx.isEmpty(dbDataSource.getDatabase())) {
                 dbDataSource.setDatabase(CommUtils.getDataBase(dbDataSource.getUrl()));
             }
-            GlobalConst.currMap.put("database", dbDataSource.getDatabase());
-            GlobalConst.currMap.put("conn", connection);
+            ExceptionConst.currMap.put(DbFieldsConst.DATA_BASE, dbDataSource.getDatabase());
+            ExceptionConst.currMap.put(DbFieldsConst.CONN, connection);
+
+            DbCustomStrategy dbCustomStrategy = dbDataSource.getDbCustomStrategy();
+            if(null == dbCustomStrategy) {
+                dbCustomStrategy = new DbCustomStrategy();
+            }
+            this.dbCustomStrategy = dbCustomStrategy;
+            ExceptionConst.currMap.put(DbFieldsConst.CUSTOM_STRATEGY, dbCustomStrategy);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -67,6 +74,11 @@ public class DbConnection {
         return connection;
     }
 
+    public DbCustomStrategy getDbCustomStrategy() {
+        return dbCustomStrategy;
+    }
 
-
+    public void setDbCustomStrategy(DbCustomStrategy dbCustomStrategy) {
+        this.dbCustomStrategy = dbCustomStrategy;
+    }
 }

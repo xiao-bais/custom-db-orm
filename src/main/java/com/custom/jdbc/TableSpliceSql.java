@@ -1,6 +1,6 @@
 package com.custom.jdbc;
 
-import com.custom.dbconfig.GlobalConst;
+import com.custom.dbconfig.ExceptionConst;
 import com.custom.enums.DbMediaType;
 import com.custom.enums.KeyStrategy;
 import com.custom.exceptions.CustomCheckException;
@@ -82,7 +82,7 @@ public class TableSpliceSql {
         String keyStrategy = "";
         if(KeyStrategy.AUTO.equals(keyType)) {
             if(!CommUtils.checkPrimaryKeyIsAutoIncrement(dbType))
-                throw new CustomCheckException(GlobalConst.EX_PRIMARY_CANNOT_MATCH);
+                throw new CustomCheckException(ExceptionConst.EX_PRIMARY_CANNOT_MATCH);
                 keyStrategy = "auto_increment";
         }
         primaryKeySql = String.format("`%s` %s(%s) primary key not null %s comment '%s' \n,",

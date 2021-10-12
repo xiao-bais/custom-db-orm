@@ -22,7 +22,16 @@ public class Score {
     @DbField(fieldType = DbMediaType.DbInt)
     private int score;
 
+    public Score(int id, int stuId, int score) {
+        this.id = id;
+        this.stuId = stuId;
+        this.score = score;
+    }
 
+    public Score(int stuId, int score) {
+        this.stuId = stuId;
+        this.score = score;
+    }
 
     public int getId() {
         return id;

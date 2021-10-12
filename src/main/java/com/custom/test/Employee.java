@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 public class Employee {
 
     @DbKey(strategy = KeyStrategy.UUID)
-    private String key;
+    private int key;
 
     @DbField("emp_name")
     private String empName;
@@ -30,11 +30,11 @@ public class Employee {
     @DbField
     private BigDecimal money;
 
-    public String getKey() {
+    public int getKey() {
         return key;
     }
 
-    public void setKey(String key) {
+    public void setKey(int key) {
         this.key = key;
     }
 
@@ -67,6 +67,16 @@ public class Employee {
     }
 
     public void setMoney(BigDecimal money) {
+        this.money = money;
+    }
+
+    public Employee() {
+    }
+
+    public Employee(String empName, boolean empSex, int empAge, BigDecimal money) {
+        this.empName = empName;
+        this.empSex = empSex;
+        this.empAge = empAge;
         this.money = money;
     }
 }

@@ -8,7 +8,8 @@ package com.custom.jdbc;
  */
 
 import com.custom.dbconfig.DbDataSource;
-import com.custom.dbconfig.GlobalConst;
+import com.custom.dbconfig.DbFieldsConst;
+import com.custom.dbconfig.ExceptionConst;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.utils.JudgeUtilsAx;
 import org.slf4j.Logger;
@@ -35,7 +36,7 @@ public class DbTableUtil {
         jdbcUtils = new JdbcUtils(dbDataSource, dbParserFieldHandler);
         annotationsParser = new DbAnnotationsParser();
         tableSpliceSql = new TableSpliceSql(new DbParserFieldHandler(), annotationsParser);
-        dataBase = String.valueOf(GlobalConst.currMap.get("database"));
+        dataBase = String.valueOf(ExceptionConst.currMap.get(DbFieldsConst.DATA_BASE));
     }
 
     /**
@@ -46,7 +47,7 @@ public class DbTableUtil {
         long count = 0;
         try{
             Map<String, Object> tableMap = annotationsParser.getParserByDbTable(t);
-            String tableName = tableMap.get("tableName").toString();
+            String tableName = tableMap.get(DbFieldsConst.TABLE_NAME).toString();
             String isTable = String.format("SELECT COUNT(1) COUNT FROM " +
                     "`information_schema`.`TABLES` WHERE TABLE_NAME = '%s' AND TABLE_SCHEMA = '%s';", tableName, dataBase);
             count = jdbcUtils.executeSql(isTable);
@@ -64,9 +65,8 @@ public class DbTableUtil {
         for (int i = arr.length - 1; i >= 0; i--) {
             if(existTable(arr[i])) continue;
             String createTableSql = tableSpliceSql.getCreateTableSql(arr[i]);
-            logger.info("createTableSql -> " + createTableSql);
             jdbcUtils.executeUpdate(createTableSql);
-            logger.info("createTableSql -> successfully" );
+            logger.info("createTableSql ->\n " + createTableSql);
         }
     }
 
@@ -77,7 +77,7 @@ public class DbTableUtil {
     final void dropTables(Class<?>... arr) throws Exception{
         for (int i = arr.length - 1; i >= 0; i--) {
             if(!existTable(arr[i])) {
-                throw new CustomCheckException(GlobalConst.EX_DROP_TABLE_NOT_FOUND + arr[i].getName());
+                throw new CustomCheckException(ExceptionConst.EX_DROP_TABLE_NOT_FOUND + arr[i].getName());
             }
             dropTable(arr[i]);
         }
@@ -89,7 +89,7 @@ public class DbTableUtil {
      */
     private  <T> void dropTable(Class<T> t) throws Exception{
         String dropTableSql = String.format("DROP TABLE IF EXISTS %s ",
-                annotationsParser.getFieldKey(t).get("tableName").toString());
+                annotationsParser.getFieldKey(t).get(DbFieldsConst.TABLE_NAME).toString());
         jdbcUtils.executeUpdate(dropTableSql);
     }
 

@@ -2,6 +2,7 @@
 package com.custom.utils;
 
 import com.alibaba.druid.sql.visitor.functions.Char;
+import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.DbMediaType;
 
 import java.beans.BeanInfo;
@@ -25,9 +26,9 @@ public class CommUtils {
         int lastIndex =  url.lastIndexOf("/");
         boolean is = url.indexOf("?") > 0;
         if(is){
-            return url.substring(lastIndex+1,url.indexOf("?"));
+            return url.substring(lastIndex+1, url.indexOf("?"));
         }else{
-            return url.substring(url.lastIndexOf("/")+1);
+            return url.substring(url.lastIndexOf("/") + SymbolConst.DEFAULT_ONE);
         }
     }
 
@@ -76,7 +77,7 @@ public class CommUtils {
      */
     public static DbMediaType getDbFieldType(Class<?> type) {
         if (type.getName().toLowerCase().contains(("boolean"))) {
-            return DbMediaType.DbTinyint;
+            return DbMediaType.DbBit;
         }
         if (type.getName().toLowerCase().contains(("double"))) {
             return DbMediaType.DbDouble;

@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Version 1.0
  * @Description GlobalVarManager
  */
-public class GlobalConst {
+public class ExceptionConst {
 
     /**
      * 全局变量
@@ -41,11 +41,6 @@ public class GlobalConst {
      * 主键值为空
      */
     public final static String EX_PRIMARY_KEY_VALUE_NOT_EMPTY = "Primary key cannot be empty in class ";
-
-    /**
-     * 主键不能为空
-     */
-    public final static String EX_PRIMARY_KEY_NOT_EMPTY  = "Primary key cannot be empty";
 
     /**
      * 主键重复

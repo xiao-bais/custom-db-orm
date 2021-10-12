@@ -1,18 +1,15 @@
 package com.custom.jdbc;
 
 import com.custom.dbconfig.DbConnection;
+import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
-import com.custom.dbconfig.GlobalConst;
-import com.custom.exceptions.CustomCheckException;
 import com.custom.utils.CommUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.math.BigInteger;
 import java.sql.*;
 import java.util.*;
 
@@ -31,15 +28,22 @@ public class JdbcUtils extends DbConnection {
     private PreparedStatement statement = null;
     private ResultSet resultSet = null;
     private DbParserFieldHandler parserFieldHandler;
+    private DbCustomStrategy dbCustomStrategy;
 
     public JdbcUtils(DbDataSource dbDataSource, DbParserFieldHandler parserFieldHandler){
         super(dbDataSource);
         conn = super.getConnection();
+        dbCustomStrategy = super.getDbCustomStrategy();
         this.parserFieldHandler = parserFieldHandler;
     }
 
     private void executeAll(boolean isSave,String sql, Object... params) throws Exception {
         statement = isSave ? conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS) : conn.prepareStatement(sql);
+        if(dbCustomStrategy.isPrintSqlFlag()) {
+            logger.info(
+                    "SQL ==>\n {}\n===================\nparams = {}\n"
+                    , sql, Arrays.toString(params));
+        }
         if(params.length <= 0) return;
         for (int i = 0; i < params.length; i++) {
             statement.setObject((i + 1), params[i]);

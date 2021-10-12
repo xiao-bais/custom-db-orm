@@ -5,7 +5,7 @@ package com.custom.dbconfig;
  * @Date 2021/8/22
  * @Description
  */
-public class CustomStrategy {
+public class DbCustomStrategy {
 
     /**
      * 下划线转驼峰
@@ -17,6 +17,18 @@ public class CustomStrategy {
      */
     private boolean camelToUnderline = false;
 
+    /**
+     * 打印sql
+     */
+    private boolean printSqlFlag = false;
+
+    public boolean isPrintSqlFlag() {
+        return printSqlFlag;
+    }
+
+    public void setPrintSqlFlag(boolean printSqlFlag) {
+        this.printSqlFlag = printSqlFlag;
+    }
 
     public boolean isUnderlineToCamel() {
         return underlineToCamel;

@@ -2,7 +2,7 @@ package com.custom.utils;
 
 import com.custom.annotations.DbKey;
 import com.custom.annotations.DbTable;
-import com.custom.dbconfig.GlobalConst;
+import com.custom.dbconfig.ExceptionConst;
 import com.custom.exceptions.CustomCheckException;
 
 import java.lang.reflect.Field;
@@ -65,7 +65,7 @@ public class JudgeUtilsAx {
      * 该类是否存在DbTable注解
      */
     public static <T> void isTableTag(Class<T> clazz) {
-        if(!clazz.isAnnotationPresent(DbTable.class)) throw new CustomCheckException(GlobalConst.EX_DBTABLE__NOTFOUND + clazz.getName());
+        if(!clazz.isAnnotationPresent(DbTable.class)) throw new CustomCheckException(ExceptionConst.EX_DBTABLE__NOTFOUND + clazz.getName());
     }
 
     /**
@@ -79,7 +79,18 @@ public class JudgeUtilsAx {
                 num++;
             }
         }
-        if(num > 1) throw new CustomCheckException(GlobalConst.EX_PRIMARY_REPEAT + clazz.getName());
+        if(num > 1) throw new CustomCheckException(ExceptionConst.EX_PRIMARY_REPEAT + clazz.getName());
+    }
+
+    /**
+     * 该类是否存在主键
+     */
+    public static <T> boolean isKeyTag(Class<T> clazz){
+        Field[] fields = clazz.getDeclaredFields();
+        for (Field field : fields) {
+            if (field.isAnnotationPresent(DbKey.class)) return true;
+        }
+        return false;
     }
 
 }

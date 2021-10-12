@@ -1,6 +1,8 @@
 package com.custom.jdbc;
 
+import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
+import com.custom.dbconfig.ExceptionConst;
 import com.custom.utils.DbPageRows;
 
 import java.util.List;
@@ -38,14 +40,14 @@ public class JdbcDao {
     /**
      * 根据条件进行分页查询: 例（and a.name = ?）
      */
-    public <T> DbPageRows<T> selectPageRows(Class<T> t, String condition,int pageIndex, int pageSize, Object... params) throws Exception {
+    public <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, int pageIndex, int pageSize, Object... params) throws Exception {
         return jdbcTableDao.selectPageRows(t, condition, null, pageIndex, pageSize, params);
     }
 
     /**
      * 根据条件进行分页查询并排序: 例（and a.name = ? orderBy: id desc）
      */
-    public <T> DbPageRows<T> selectPageRows(Class<T> t, String condition,int pageIndex, int pageSize, String orderBy, Object... params) throws Exception {
+    public <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, int pageIndex, int pageSize, String orderBy, Object... params) throws Exception {
         return jdbcTableDao.selectPageRows(t, condition, orderBy, pageIndex, pageSize, params);
     }
 
@@ -59,7 +61,7 @@ public class JdbcDao {
     /**
      * 根据条件进行分页查询并排序: 例（and a.name = ? orderBy: id desc）
      */
-    public <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, DbPageRows<T> dbPageRows, String orderBy,  Object... params) throws Exception {
+    public <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, DbPageRows<T> dbPageRows, String orderBy, Object... params) throws Exception {
         return jdbcTableDao.selectPageRows(t, condition, dbPageRows, orderBy, params);
     }
 
@@ -119,15 +121,8 @@ public class JdbcDao {
     /**
      * 插入一条记录并返回新的主键（只允许自增主键类型）
      */
-    public <T> int insertReturnKey(T t) throws Exception {
+    public <T> int insertGenerateKey(T t) throws Exception {
         return jdbcTableDao.insert(t, true);
-    }
-
-    /**
-     * 插入多条记录并返回新的主键（只允许自增主键类型）
-     */
-    public <T> int insertReturnKey(List<T> tList) throws Exception {
-        return jdbcTableDao.insert(tList, true);
     }
 
     /**
@@ -135,6 +130,13 @@ public class JdbcDao {
      */
     public <T> int insert(List<T> tList) throws Exception {
         return jdbcTableDao.insert(tList, false);
+    }
+
+    /**
+     * 插入多条记录并返回新的主键（只允许自增主键类型）
+     */
+    public <T> int insertGenerateKey(List<T> tList) throws Exception {
+        return jdbcTableDao.insert(tList, true);
     }
 
     /* ----------------------------------------------------------------update---------------------------------------------------------------- */
@@ -156,7 +158,7 @@ public class JdbcDao {
     /* ----------------------------------------------------------------common---------------------------------------------------------------- */
 
     /**
-     * 保存一条记录（添加或修改）
+     * 保存一条记录（根据主键添加或修改）
      */
     public <T> long save(T t) throws Exception {
         return jdbcTableDao.save(t);
@@ -166,7 +168,7 @@ public class JdbcDao {
      * 删除表
      */
     @SafeVarargs
-    public final <T> void dropTables(Class<T>... arr) throws Exception{
+    public final void dropTables(Class<?>... arr) throws Exception{
         dbTableUtil.dropTables(arr);
     }
 
@@ -182,7 +184,6 @@ public class JdbcDao {
     private JdbcTableDao jdbcTableDao;
     private DbTableUtil dbTableUtil;
 
-
     public JdbcDao setDbDataSource(DbDataSource dbDataSource) {
         return new JdbcDao(dbDataSource);
     }
@@ -191,4 +192,6 @@ public class JdbcDao {
         jdbcTableDao = new JdbcTableDao(dbDataSource);
         dbTableUtil = new DbTableUtil(dbDataSource);
     }
+
+
 }
