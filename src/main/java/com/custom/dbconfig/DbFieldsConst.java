@@ -13,6 +13,10 @@ public class DbFieldsConst {
     public static final String CONN = "conn";
     //自定义策略
     public static final String CUSTOM_STRATEGY = "customStrategy";
+    //自定义mysql驱动类
+    public static final String CUSTOM_DRIVER = "com.mysql.cj.jdbc.Driver";
+
+
 
     //表名称
     public static final  String TABLE_NAME = "tableName";

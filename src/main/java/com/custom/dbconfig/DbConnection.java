@@ -22,7 +22,7 @@ public class DbConnection {
      */
     public DbConnection(DbDataSource dbDataSource) {
         try {
-            isExistClass(dbDataSource.getDriver());
+            isExistClass(JudgeUtilsAx.isEmpty(dbDataSource.getDriver()) ? DbFieldsConst.CUSTOM_DRIVER : dbDataSource.getDriver());
             connection = (Connection) ExceptionConst.currMap.get(DbFieldsConst.CONN);
             if (null == connection) {
                 DruidDataSource druidDataSource = new DruidDataSource();
