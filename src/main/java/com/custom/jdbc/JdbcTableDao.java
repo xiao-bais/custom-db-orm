@@ -4,7 +4,7 @@ import com.custom.dbconfig.DbDataSource;
 import com.custom.dbconfig.ExceptionConst;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.exceptions.CustomCheckException;
-import com.custom.utils.DbPageRows;
+import com.custom.page.DbPageRows;
 import com.custom.utils.JudgeUtilsAx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +38,7 @@ public class JdbcTableDao {
        if (JudgeUtilsAx.isNotEmpty(condition)) {
            condition = String.format("where 1 = 1 %s", condition);
        }
+       JudgeUtilsAx.checkObjNotNull(t);
        String selectSql = String.format("%s %s %s", dbParserFieldHandler.getSelectSql(t), JudgeUtilsAx.isNotEmpty(condition) ? condition : "",
                JudgeUtilsAx.isNotEmpty(orderBy) ? orderBy : "");
        return jdbcUtils.query(t, selectSql, params);
@@ -50,6 +51,7 @@ public class JdbcTableDao {
         if (JudgeUtilsAx.isNotEmpty(condition)) {
             condition = String.format("where 1 = 1 %s", condition);
         }
+        JudgeUtilsAx.checkObjNotNull(t);
         if(JudgeUtilsAx.isNotEmpty(orderBy)){
             orderBy = String.format("\norder by %s", orderBy);
         }
@@ -57,9 +59,12 @@ public class JdbcTableDao {
                 JudgeUtilsAx.isNotEmpty(orderBy) ? orderBy :  "");
         String countSql = String.format("select count(0) from (%s) xxx ", selectSql);
 
+        List<T> dataList = new ArrayList<>();
         long count = jdbcUtils.executeSql(countSql, params);
-        selectSql = String.format("%s \nlimit %s, %s", selectSql, (pageIndex - 1) * pageSize, pageSize);
-        List<T> dataList = jdbcUtils.query(t, selectSql, params);
+        if(count > 0) {
+            selectSql = String.format("%s \nlimit %s, %s", selectSql, (pageIndex - 1) * pageSize, pageSize);
+            dataList = jdbcUtils.query(t, selectSql, params);
+        }
 
         DbPageRows<T> dbPageRows = new DbPageRows<>(pageIndex, pageSize, count);
         dbPageRows.setData(dataList);
@@ -70,28 +75,11 @@ public class JdbcTableDao {
     /**
      * 分页查询2
      */
-   <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, DbPageRows<T> dbPageRows, String orderBy,  Object... params) throws Exception {
-        if (JudgeUtilsAx.isNotEmpty(condition)) {
-            condition = String.format("where 1 = 1 %s", condition);
-        }
-        if(JudgeUtilsAx.isNotEmpty(orderBy)){
-            orderBy = String.format("\norder by %s", orderBy);
-        }
-        if(dbPageRows == null){
-            dbPageRows = new DbPageRows<>();
-        }
-        String selectSql = String.format("%s %s %s", dbParserFieldHandler.getSelectSql(t), JudgeUtilsAx.isNotEmpty(condition) ? condition : "",
-                JudgeUtilsAx.isNotEmpty(orderBy) ? orderBy : "");
-        String countSql = String.format("select count(0) from (%s) xxx ", selectSql);
-
-        long count = jdbcUtils.executeSql(countSql, params);
-        selectSql = String.format("%s \nlimit %s, %s", selectSql, (dbPageRows.getPageIndex() - 1) * dbPageRows.getPageSize(), dbPageRows.getPageSize());
-
-        dbPageRows.setTotal(count);
-        List<T> dataList = jdbcUtils.query(t, selectSql, params);
-        dbPageRows.setData(dataList);
-        dbPageRows.setCondition(condition);
-        return dbPageRows;
+   <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, String orderBy, DbPageRows<T> dbPageRows, Object... params) throws Exception {
+       if(dbPageRows == null) {
+           dbPageRows = new DbPageRows<>();
+       }
+       return selectPageRows(t, condition, orderBy, dbPageRows.getPageIndex(), dbPageRows.getPageSize(), params);
    }
 
     /**
@@ -99,6 +87,7 @@ public class JdbcTableDao {
      */
    <T> T selectOneByKey(Class<T> t, Object key) throws Exception {
         if(key == null) throw new NullPointerException();
+        JudgeUtilsAx.checkObjNotNull(t);
         String alias = dbParserFieldHandler.getDbTableAlias(t);
         String selectSql = String.format("%s \nwhere %s.`%s` = ?", dbParserFieldHandler.getSelectSql(t), alias, dbParserFieldHandler.getDbFieldKey(t));
         return jdbcUtils.executeSql(t, selectSql, key);
@@ -111,6 +100,7 @@ public class JdbcTableDao {
         if (JudgeUtilsAx.isNotEmpty(condition)) {
             condition = String.format("where 1 = 1 %s", condition);
         }
+        JudgeUtilsAx.checkObjNotNull(t);
         String selectSql = String.format("%s \n%s", dbParserFieldHandler.getSelectSql(t), condition);
         return jdbcUtils.executeSql(t, selectSql, params);
     }
@@ -122,6 +112,7 @@ public class JdbcTableDao {
         if(JudgeUtilsAx.isEmpty(sql)) {
             throw new CustomCheckException(ExceptionConst.EX_SQL_NOT_EMPTY);
         }
+        JudgeUtilsAx.checkObjNotNull(t);
         return jdbcUtils.query(t, sql, params);
     }
 
@@ -132,6 +123,7 @@ public class JdbcTableDao {
         if(JudgeUtilsAx.isEmpty(sql)) {
             throw new CustomCheckException(ExceptionConst.EX_SQL_NOT_EMPTY);
         }
+        JudgeUtilsAx.checkObjNotNull(t);
         List<T> queryList = jdbcUtils.query(t, sql, params);
         if(queryList.size() == 0){
             return null;
@@ -148,6 +140,7 @@ public class JdbcTableDao {
      */
     <T> int deleteByKey(Class<T> t, Object key) throws Exception {
         if(key == null) return 0;
+        JudgeUtilsAx.checkObjNotNull(t);
         String alias = dbParserFieldHandler.getDbTableAlias(t);
         String deleteSql = String.format("delete from %s %s where %s.`%s` = ?",
                 dbParserFieldHandler.getDbTableName(t), alias, alias, dbParserFieldHandler.getDbFieldKey(t));
@@ -159,6 +152,7 @@ public class JdbcTableDao {
      */
     <T> int deleteBatchKeys(Class<T> t, Object[] keys) throws Exception {
         if(keys == null) return 0;
+        JudgeUtilsAx.checkObjNotNull(t);
         StringJoiner delSymbols = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2, SymbolConst.BRACKETS_LEFT, SymbolConst.BRACKETS_RIGHT);
         int symbol = keys.length;
         do {
@@ -178,6 +172,7 @@ public class JdbcTableDao {
         if(JudgeUtilsAx.isEmpty(condition)){
             throw new RuntimeException(ExceptionConst.EX_DEL_CONDITION_NOT_EMPTY);
         }
+        JudgeUtilsAx.checkObjNotNull(t);
         condition = String.format("where 1 = 1 %s", condition);
         String alias = dbParserFieldHandler.getDbTableAlias(t);
         String deleteSql = String.format("delete from %s %s %s", dbParserFieldHandler.getDbTableName(t), alias, condition);
@@ -189,6 +184,7 @@ public class JdbcTableDao {
      * 插入一条记录
      */
     <T> int insert(T t, boolean isGeneratedKey) throws Exception {
+        JudgeUtilsAx.checkObjNotNull(t.getClass());
         //数据库字段
         String[] dbFields = dbParserFieldHandler.getDbFields(t.getClass());
         //java属性值
@@ -240,10 +236,10 @@ public class JdbcTableDao {
             //主键字段
             dbFieldKey = dbParserFieldHandler.getDbFieldKey(t.getClass());
             if (!dbFieldStr.toString().contains(dbFieldKey)) {
-                dbFieldStr.add(dbFieldKey);
+                dbFieldStr.add(String.format("`%s`", dbFieldKey));
             }
         }
-        Arrays.stream(dbFields).forEach(dbFieldStr::add);
+        Arrays.stream(dbFields).forEach(x -> dbFieldStr.add(String.format("`%s`", x)));
         StringJoiner inertValStr = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1);
         List<Object> saveValues = new ArrayList<>();
         //java属性值
@@ -274,7 +270,7 @@ public class JdbcTableDao {
      * 根据指定字段修改一条记录
      */
     <T> int updateByKey(T t, String... updateDbFields) throws Exception {
-
+        JudgeUtilsAx.checkObjNotNull(t.getClass());
         StringJoiner editSymbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1);
         List<String> updateDbColumns = new ArrayList<>();
         List<Object> updateDbValues = new ArrayList<>();

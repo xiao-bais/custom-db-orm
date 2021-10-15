@@ -1,9 +1,7 @@
 package com.custom.jdbc;
 
-import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
-import com.custom.dbconfig.ExceptionConst;
-import com.custom.utils.DbPageRows;
+import com.custom.page.DbPageRows;
 
 import java.util.List;
 
@@ -55,14 +53,14 @@ public class JdbcDao {
      * 根据条件进行分页查询: 例（and a.name = ?）
      */
     public <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, DbPageRows<T> dbPageRows, Object... params) throws Exception {
-        return jdbcTableDao.selectPageRows(t, condition, dbPageRows, null, params);
+        return jdbcTableDao.selectPageRows(t, condition, null, dbPageRows, params);
     }
 
     /**
      * 根据条件进行分页查询并排序: 例（and a.name = ? orderBy: id desc）
      */
     public <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, DbPageRows<T> dbPageRows, String orderBy, Object... params) throws Exception {
-        return jdbcTableDao.selectPageRows(t, condition, dbPageRows, orderBy, params);
+        return jdbcTableDao.selectPageRows(t, condition, orderBy, dbPageRows, params);
     }
 
     /**

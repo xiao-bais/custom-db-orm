@@ -61,6 +61,11 @@ public class JudgeUtilsAx {
         return !isEmpty(el);
     }
 
+
+    public static <T> void checkObjNotNull(Class<T> t) throws NullPointerException {
+        if(null == t) throw new NullPointerException();
+    }
+
     /**
      * 该类是否存在DbTable注解
      */

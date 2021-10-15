@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 @DbTable(table = "one_employee")
 public class Employee {
 
-    @DbKey(strategy = KeyStrategy.UUID)
+    @DbKey(strategy = KeyStrategy.AUTO)
     private int key;
 
     @DbField("emp_name")
