@@ -128,6 +128,17 @@
     </build>
 
 
+    <distributionManagement>
+        <repository>
+            <id>rdc-releases</id>
+            <url>https://packages.aliyun.com/maven/repository/2146864-release-hlsJ2r/</url>
+        </repository>
+        <snapshotRepository>
+            <id>rdc-snapshots</id>
+            <url>https://packages.aliyun.com/maven/repository/2146864-snapshot-Uz1sk4/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
+    <!-- mvn clean deploy -DskipTests -->
 
 </project>

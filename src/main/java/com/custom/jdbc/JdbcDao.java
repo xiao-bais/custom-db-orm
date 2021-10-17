@@ -29,7 +29,7 @@ public class JdbcDao {
     }
 
     /**
-     * 根据sql查询多条记录: 例（select * from score ）
+     * 根据sql查询多条记录: 例（select * from table ）
      */
     public <T> List<T> selectListBySql(Class<T> t, String sql, Object... params) throws Exception {
         return jdbcTableDao.selectBySql(t, sql, params);
