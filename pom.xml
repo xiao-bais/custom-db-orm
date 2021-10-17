@@ -7,9 +7,7 @@
     <groupId>com.custom</groupId>
     <artifactId>custom-jdbc</artifactId>
     <version>1.1-SNAPSHOT</version>
-    <modules>
-        <module>custom-redis</module>
-    </modules>
+
     <packaging>pom</packaging>
 
     <properties>

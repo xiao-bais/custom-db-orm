@@ -44,19 +44,17 @@ public class DbAnnotationsParser {
     /**
      * 解析@DbKey注解
      */
-    public <T>  Map<String,Object> getParserByDbKey(Class<T> t) throws Exception {
+    public <T> Map<String,Object> getParserByDbKey(Class<T> t) throws Exception {
         if(t == null) {
             throw new NullPointerException();
         }
         JudgeUtilsAx.isMoreDbKey(t);
         Map<String, Object> elementMap = new HashMap<>();
         Field fieldKey = getFieldKey(t);
+        if(null == fieldKey) return elementMap;
         DbKey annotation = fieldKey.getAnnotation(DbKey.class);
         if(annotation == null) {
             throw new DbAnnotationParserException(ExceptionConst.EX_DBKEY_NOTFOUND + t);
-        }
-        if(annotation.dbType() == DbMediaType.DbVarchar) {
-
         }
         elementMap.put(DbFieldsConst.DB_KEY, JudgeUtilsAx.isNotEmpty(annotation.value()) ? annotation.value() : fieldKey.getName());//主键字段名称
         elementMap.put(DbFieldsConst.KEY_LENGTH, annotation.dbType().getLength());//主键长度

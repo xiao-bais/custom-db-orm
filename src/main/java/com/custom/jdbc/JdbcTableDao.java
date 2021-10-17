@@ -271,6 +271,8 @@ public class JdbcTableDao {
      */
     <T> int updateByKey(T t, String... updateDbFields) throws Exception {
         JudgeUtilsAx.checkObjNotNull(t.getClass());
+        // TODO: 2021/10/17 修改的时候判断主键是否为空
+
         StringJoiner editSymbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1);
         List<String> updateDbColumns = new ArrayList<>();
         List<Object> updateDbValues = new ArrayList<>();
@@ -292,7 +294,7 @@ public class JdbcTableDao {
         }
 
         for (String updateDbColumn : updateDbColumns) {
-            editSymbol.add(String.format(" %s = ?", updateDbColumn));
+            editSymbol.add(String.format(" `%s` = ?", updateDbColumn));
         }
         String dbTableName = dbParserFieldHandler.getDbTableName(t.getClass());
         String fieldKey = dbParserFieldHandler.getDbFieldKey(t.getClass());

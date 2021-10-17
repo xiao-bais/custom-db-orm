@@ -1,5 +1,6 @@
 package com.custom.jdbc;
 
+import com.alibaba.druid.util.JdbcUtils;
 import com.custom.dbconfig.ExceptionConst;
 import com.custom.enums.DbMediaType;
 import com.custom.enums.KeyStrategy;
@@ -30,8 +31,13 @@ public class TableSpliceSql {
     public <T> String getCreateTableSql(Class<T> t) throws Exception {
         List<Map<String, Object>> fieldMapList = annotationsParser.getParserByDbField(t);
         String tableName = annotationsParser.getParserByDbTable(t).get("tableName").toString();
+        String taleByFieldKeySql = this.createTaleByFieldKeySql(t);
+        String tableByFieldSql = this.createTableByFieldSql(fieldMapList);
+        if(JudgeUtilsAx.isEmpty(tableByFieldSql)) {
+            throw new CustomCheckException(ExceptionConst.EX_DBFIELD__NOTFOUND + t);
+        }
         return String.format("create table `%s` (\n%s %s) ",
-                tableName, this.createTaleByFieldKeySql(t), this.createTableByFieldSql(fieldMapList));
+                tableName, taleByFieldKeySql, tableByFieldSql);
     }
 
     /**

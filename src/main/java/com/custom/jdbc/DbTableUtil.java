@@ -89,7 +89,7 @@ public class DbTableUtil {
      */
     private  <T> void dropTable(Class<T> t) throws Exception{
         String dropTableSql = String.format("DROP TABLE IF EXISTS %s ",
-                annotationsParser.getFieldKey(t).get(DbFieldsConst.TABLE_NAME).toString());
+                annotationsParser.getParserByDbTable(t).get(DbFieldsConst.TABLE_NAME).toString());
         jdbcUtils.executeUpdate(dropTableSql);
     }
 
