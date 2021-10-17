@@ -4,8 +4,8 @@ import com.custom.dbconfig.ExceptionConst;
 import com.custom.enums.DbMediaType;
 import com.custom.enums.KeyStrategy;
 import com.custom.exceptions.CustomCheckException;
-import com.custom.utils.CommUtils;
-import com.custom.utils.JudgeUtilsAx;
+import com.custom.comm.CommUtils;
+import com.custom.comm.JudgeUtilsAx;
 
 import java.util.List;
 import java.util.Map;
@@ -18,11 +18,9 @@ import java.util.StringJoiner;
  */
 public class TableSpliceSql {
 
-    private DbParserFieldHandler fieldHandler;
     private DbAnnotationsParser annotationsParser;
 
-    public TableSpliceSql(DbParserFieldHandler fieldHandler, DbAnnotationsParser annotationsParser) {
-        this.fieldHandler = fieldHandler;
+    public TableSpliceSql(DbAnnotationsParser annotationsParser) {
         this.annotationsParser = annotationsParser;
     }
 

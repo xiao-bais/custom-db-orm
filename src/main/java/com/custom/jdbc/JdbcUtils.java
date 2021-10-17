@@ -3,7 +3,7 @@ package com.custom.jdbc;
 import com.custom.dbconfig.DbConnection;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
-import com.custom.utils.CommUtils;
+import com.custom.comm.CommUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

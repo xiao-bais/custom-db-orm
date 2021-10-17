@@ -1,5 +1,5 @@
 
-package com.custom.utils;
+package com.custom.comm;
 
 import com.alibaba.druid.sql.visitor.functions.Char;
 import com.custom.dbconfig.SymbolConst;

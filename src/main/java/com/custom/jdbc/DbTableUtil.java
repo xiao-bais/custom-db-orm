@@ -11,7 +11,7 @@ import com.custom.dbconfig.DbDataSource;
 import com.custom.dbconfig.DbFieldsConst;
 import com.custom.dbconfig.ExceptionConst;
 import com.custom.exceptions.CustomCheckException;
-import com.custom.utils.JudgeUtilsAx;
+import com.custom.comm.JudgeUtilsAx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +35,7 @@ public class DbTableUtil {
         dbParserFieldHandler = new DbParserFieldHandler();
         jdbcUtils = new JdbcUtils(dbDataSource, dbParserFieldHandler);
         annotationsParser = new DbAnnotationsParser();
-        tableSpliceSql = new TableSpliceSql(new DbParserFieldHandler(), annotationsParser);
+        tableSpliceSql = new TableSpliceSql(annotationsParser);
         dataBase = String.valueOf(ExceptionConst.currMap.get(DbFieldsConst.DATA_BASE));
     }
 

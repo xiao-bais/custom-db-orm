@@ -1,4 +1,4 @@
-package com.custom.utils;
+package com.custom.comm;
 
 import com.custom.annotations.DbKey;
 import com.custom.annotations.DbTable;

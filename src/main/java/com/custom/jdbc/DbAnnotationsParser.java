@@ -8,8 +8,8 @@ import com.custom.dbconfig.DbFieldsConst;
 import com.custom.dbconfig.ExceptionConst;
 import com.custom.enums.DbMediaType;
 import com.custom.exceptions.DbAnnotationParserException;
-import com.custom.utils.CommUtils;
-import com.custom.utils.JudgeUtilsAx;
+import com.custom.comm.CommUtils;
+import com.custom.comm.JudgeUtilsAx;
 
 import java.lang.reflect.Field;
 import java.util.*;

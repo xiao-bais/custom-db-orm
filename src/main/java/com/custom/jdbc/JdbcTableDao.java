@@ -5,7 +5,7 @@ import com.custom.dbconfig.ExceptionConst;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.page.DbPageRows;
-import com.custom.utils.JudgeUtilsAx;
+import com.custom.comm.JudgeUtilsAx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

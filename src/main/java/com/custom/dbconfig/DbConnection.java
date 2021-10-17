@@ -1,8 +1,8 @@
 package com.custom.dbconfig;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.custom.utils.CommUtils;
-import com.custom.utils.JudgeUtilsAx;
+import com.custom.comm.CommUtils;
+import com.custom.comm.JudgeUtilsAx;
 
 import java.sql.Connection;
 
