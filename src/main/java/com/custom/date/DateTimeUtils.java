@@ -2,8 +2,10 @@ package com.custom.date;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Author Xiao-Bai
@@ -213,13 +215,52 @@ public class DateTimeUtils {
         return getLastMonthEndTimestamp(month, yyyyMM_);
     }
 
+    /**
+    * 获取一个月的每一天1 (返回时间戳)
+    */
+    public static List<Integer> getTimeStampMonthEveryDayBy(String month, String format) throws ParseException {
+        List<Integer> list = new ArrayList<>();
+
+        int startTime = getMonthStartTimeStamp(month, format);
+        int endTime = getMonthEndTimeStamp(month, format);
+        for (int i = startTime; i <= endTime; i += oneDay_1) {
+            list.add(i);
+        }
+        return list;
+    }
+
+    /**
+     * 获取一个月的每一天2 (返回时间戳)
+     */
+    public static List<Integer> getTimeStampMonthEveryDayBy(String month) throws ParseException {
+        return getTimeStampMonthEveryDayBy(month, yyyyMM_);
+    }
+
+    /**
+     * 获取一个月的每一天1 (返回格式化日期)
+     */
+    public static List<String> getFormatDateMonthEveryDayBy(String month, String format, String returnFormat) throws ParseException {
+        List<String> list = new ArrayList<>();
+
+        int startTime = getMonthStartTimeStamp(month, format);
+        int endTime = getMonthEndTimeStamp(month, format);
+        for (int i = startTime; i <= endTime; i += oneDay_1) {
+            list.add(getFormatByTimeStamp(i, returnFormat));
+        }
+        return list;
+    }
+
+    /**
+     * 获取一个月的每一天2 (返回格式化日期)
+     */
+    public static List<String> getFormatDateMonthEveryDayBy(String month, String returnFormat) throws ParseException {
+        return getFormatDateMonthEveryDayBy(month, yyyyMM_, returnFormat);
+    }
 
 
     public static void main(String[] args) throws ParseException {
-        int startTimestamp = getLastMonthStartTimestamp("2021-07");
-        int endTimestamp = getLastMonthEndTimestamp("2021-07");
-        System.out.println("startTimestamp = " + startTimestamp);
-        System.out.println("endTimestamp = " + endTimestamp);
+        List<String> everyDayBy = getFormatDateMonthEveryDayBy("2021-07", "yyyyMMdd");
+        System.out.println("everyDayBy = " + everyDayBy);
     }
 
 
