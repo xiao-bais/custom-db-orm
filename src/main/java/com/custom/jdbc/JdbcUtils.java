@@ -92,7 +92,7 @@ public class JdbcUtils extends DbConnection {
                         field.set(entity, value);
                     }catch (NoSuchFieldException ignored){
                     }catch (IllegalArgumentException e){
-                        logger.error(e.toString(), e);
+                        throw e;
                     }
                 }
                 list.add(entity);

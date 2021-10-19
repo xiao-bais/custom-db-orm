@@ -2,8 +2,10 @@ package com.custom.test;
 
 import com.custom.annotations.DbField;
 import com.custom.annotations.DbKey;
+import com.custom.annotations.DbRelated;
 import com.custom.annotations.DbTable;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -11,31 +13,44 @@ import java.util.Date;
  * @Date 2021/10/17
  * @Description
  */
-@DbTable
+@DbTable(table = "student1")
 public class Person {
 
     @DbKey
     private int id;
     @DbField
     private String name;
+    @DbField("nick_code")
+    private String nickCode;
     @DbField
-    private int age;
+    private String password;
     @DbField
     private boolean sex;
     @DbField
-    private Date birthday;
+    private BigDecimal money;
     @DbField
-    private String explain;
+    private Date birthday;
+    @DbField("dept_Id")
+    private int classId;
+    @DbRelated(joinTable = "classes", joinAlias = "cls", condition = "cls.cs_id = a.dept_id", field = "cls_name")
+    private String clsName;
 
-    public Person() {
+    @Override
+    public String toString() {
+        return "Person{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", nickCode='" + nickCode + '\'' +
+                ", password='" + password + '\'' +
+                ", sex=" + sex +
+                ", money=" + money +
+                ", birthday=" + birthday +
+                ", classId=" + classId +
+                ", clsName='" + clsName + '\'' +
+                '}';
     }
 
-    public Person(String name, int age, boolean sex, Date birthday, String explain) {
-        this.name = name;
-        this.age = age;
-        this.sex = sex;
-        this.birthday = birthday;
-        this.explain = explain;
+    public Person() {
     }
 
     public int getId() {
@@ -54,12 +69,20 @@ public class Person {
         this.name = name;
     }
 
-    public int getAge() {
-        return age;
+    public String getNickCode() {
+        return nickCode;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public void setNickCode(String nickCode) {
+        this.nickCode = nickCode;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public boolean isSex() {
@@ -70,6 +93,14 @@ public class Person {
         this.sex = sex;
     }
 
+    public BigDecimal getMoney() {
+        return money;
+    }
+
+    public void setMoney(BigDecimal money) {
+        this.money = money;
+    }
+
     public Date getBirthday() {
         return birthday;
     }
@@ -78,23 +109,21 @@ public class Person {
         this.birthday = birthday;
     }
 
-    public String getExplain() {
-        return explain;
+    public int getClassId() {
+        return classId;
     }
 
-    public void setExplain(String explain) {
-        this.explain = explain;
+    public void setClassId(int classId) {
+        this.classId = classId;
     }
 
-    @Override
-    public String toString() {
-        return "Person{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", age=" + age +
-                ", sex=" + sex +
-                ", birthday=" + birthday +
-                ", explain='" + explain + '\'' +
-                '}';
+    public String getClsName() {
+        return clsName;
     }
+
+    public void setClsName(String clsName) {
+        this.clsName = clsName;
+    }
+
+
 }
