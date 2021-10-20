@@ -4,9 +4,9 @@ import java.lang.annotation.*;
 
 /**
  * @Author Xiao-Bai
- * @Date 2021/10/19 14:59
- * @Desc：
- **/
+ * @Date 2021/10/19
+ * @Description
+ */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
@@ -14,7 +14,13 @@ import java.lang.annotation.*;
 public @interface DbJoinTable {
 
     /**
-    * 关联的sql
-    */
+     * 关联条件
+     * example：‘left join employee emp on emp.id = a.emp_id’
+     */
     String value();
+
+
+
+
+
 }

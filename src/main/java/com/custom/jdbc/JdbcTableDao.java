@@ -60,7 +60,7 @@ public class JdbcTableDao {
         String countSql = String.format("select count(0) from (%s) xxx ", selectSql);
 
         List<T> dataList = new ArrayList<>();
-        long count = jdbcUtils.executeSql(countSql, params);
+        long count = jdbcUtils.countSql(countSql, params);
         if(count > 0) {
             selectSql = String.format("%s \nlimit %s, %s", selectSql, (pageIndex - 1) * pageSize, pageSize);
             dataList = jdbcUtils.query(t, selectSql, params);
@@ -90,7 +90,7 @@ public class JdbcTableDao {
         JudgeUtilsAx.checkObjNotNull(t);
         String alias = dbParserFieldHandler.getDbTableAlias(t);
         String selectSql = String.format("%s \nwhere %s.`%s` = ?", dbParserFieldHandler.getSelectSql(t), alias, dbParserFieldHandler.getDbFieldKey(t));
-        return jdbcUtils.executeSql(t, selectSql, key);
+        return jdbcUtils.countSql(t, selectSql, key);
    }
 
     /**
@@ -102,7 +102,7 @@ public class JdbcTableDao {
         }
         JudgeUtilsAx.checkObjNotNull(t);
         String selectSql = String.format("%s \n%s", dbParserFieldHandler.getSelectSql(t), condition);
-        return jdbcUtils.executeSql(t, selectSql, params);
+        return jdbcUtils.countSql(t, selectSql, params);
     }
 
     /**

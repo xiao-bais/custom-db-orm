@@ -2,8 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="af78b080-0197-4100-b595-be15bf225a22" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/custom/annotations/DbJoinTable.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/custom/annotations/DbJoinTables.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/custom/annotations/DbJoinTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/custom/annotations/DbJoinTable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/custom/jdbc/DbTableUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/custom/jdbc/DbTableUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/custom/jdbc/JdbcTableDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/custom/jdbc/JdbcTableDao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/custom/jdbc/JdbcUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/custom/jdbc/JdbcUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/custom/test/DoMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/custom/test/DoMain.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/custom/test/Person.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/custom/test/Person.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,8 +34,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Enum" />
-        <option value="AnnotationType" />
         <option value="Class" />
+        <option value="AnnotationType" />
       </list>
     </option>
   </component>
@@ -342,10 +348,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="498" y="445" key="#com.intellij.refactoring.move.MoveHandler.SelectRefactoringDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1629627029184" />
-    <state x="529" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1634451296566">
+    <state x="529" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1634703886822">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="529" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1634451296566" />
+    <state x="529" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1634703886822" />
     <state x="690" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1629379168326">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

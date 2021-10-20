@@ -50,7 +50,7 @@ public class DbTableUtil {
             String tableName = tableMap.get(DbFieldsConst.TABLE_NAME).toString();
             String isTable = String.format("SELECT COUNT(1) COUNT FROM " +
                     "`information_schema`.`TABLES` WHERE TABLE_NAME = '%s' AND TABLE_SCHEMA = '%s';", tableName, dataBase);
-            count = jdbcUtils.executeSql(isTable);
+            count = jdbcUtils.countSql(isTable);
         }catch (SQLException e){
             logger.error(e.toString(), e);
         }

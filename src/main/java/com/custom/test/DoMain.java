@@ -39,9 +39,9 @@ public class DoMain {
 
 //        Person person = new Person("李海霞", 26, false, DateTimeUtils.getDateByFormatDate("1995-09-26"), "她很可怜");
 //        person.setId(3);
-        List<Person> personList = jdbcDao.selectList(Person.class, "");
-        AutoPageUtil<Person> personDbPageRows = new AutoPageUtil<>(1, 6, personList);
-        System.out.println("person = " + personDbPageRows);
+        List<Person> personList = jdbcDao.selectList(Person.class, "and a.age = ?", 26);
+//        AutoPageUtil<Person> personDbPageRows = new AutoPageUtil<>(1, 6, personList);
+//        System.out.println("person = " + personDbPageRows);
 
 
     }

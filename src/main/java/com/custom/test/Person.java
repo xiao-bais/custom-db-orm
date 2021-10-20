@@ -1,9 +1,6 @@
 package com.custom.test;
 
-import com.custom.annotations.DbField;
-import com.custom.annotations.DbKey;
-import com.custom.annotations.DbRelated;
-import com.custom.annotations.DbTable;
+import com.custom.annotations.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -14,6 +11,10 @@ import java.util.Date;
  * @Description
  */
 @DbTable(table = "student1")
+@DbJoinTables({
+        @DbJoinTable(""),
+        @DbJoinTable("")
+})
 public class Person {
 
     @DbKey

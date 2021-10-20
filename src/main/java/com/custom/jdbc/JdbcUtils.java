@@ -110,7 +110,7 @@ public class JdbcUtils extends DbConnection {
     /**
      * Count(1) SQL
      */
-   long executeSql(String sql, Object... params) throws Exception {
+   long countSql(String sql, Object... params) throws Exception {
         long result = 0;
         try {
             executeAll(false, sql,params);
@@ -130,7 +130,7 @@ public class JdbcUtils extends DbConnection {
     /**
      * 通用查询sql
      */
-   <T> T executeSql(Class<T> t, String sql, Object... params) throws Exception {
+   <T> T countSql(Class<T> t, String sql, Object... params) throws Exception {
         T entity = null;
         try {
             executeAll(false, sql,params);
