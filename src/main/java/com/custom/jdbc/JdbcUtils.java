@@ -59,7 +59,7 @@ public class JdbcUtils extends DbConnection {
         T entity = null;
         map = new HashMap<>();
         try{
-            executeAll(false,sql, params);
+            executeAll(false, sql, params);
             resultSet = statement.executeQuery();
             ResultSetMetaData metaData = resultSet.getMetaData();
             while (resultSet.next()) {

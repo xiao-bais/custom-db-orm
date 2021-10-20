@@ -9,7 +9,7 @@ package com.custom.jdbc;
 
 import com.custom.dbconfig.DbDataSource;
 import com.custom.dbconfig.DbFieldsConst;
-import com.custom.dbconfig.ExceptionConst;
+import com.custom.exceptions.ExceptionConst;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.comm.JudgeUtilsAx;
 import org.slf4j.Logger;

@@ -23,26 +23,21 @@ public class DoMain {
     public static void main(String[] args) throws Exception {
 
         DbDataSource dbDataSource = new DbDataSource();
-        dbDataSource.setUrl("jdbc:mysql://127.0.0.1/hos?characterEncoding=utf-8&allowMultiQueries=true&serverTimezone=GMT%2B8");
+        dbDataSource.setUrl("jdbc:mysql://127.0.0.1/smbms?characterEncoding=utf-8&allowMultiQueries=true&serverTimezone=GMT%2B8");
         dbDataSource.setDriver("com.mysql.cj.jdbc.Driver");
         dbDataSource.setUsername("root");
         dbDataSource.setPassword("123456");
-        DbCustomStrategy dbCustomStrategy = new DbCustomStrategy();
-        dbCustomStrategy.setPrintSqlFlag(true);
-        dbDataSource.setDbCustomStrategy(dbCustomStrategy);
+//        DbCustomStrategy dbCustomStrategy = new DbCustomStrategy();
+////        dbCustomStrategy.setPrintSqlFlag(true);
+////        dbDataSource.setDbCustomStrategy(dbCustomStrategy);
 
         JdbcDao jdbcDao = new JdbcDao(dbDataSource);
 
-//        jdbcDao.createTables(Person.class);
+//        jdbcDao.createTables(Classes.class, Teacher.class );
 
-//        jdbcDao.insert(new Person("李海霞", 25, false, DateTimeUtils.getDateByFormatDate("1995-09-26"), "她很可怜"));
-
-//        Person person = new Person("李海霞", 26, false, DateTimeUtils.getDateByFormatDate("1995-09-26"), "她很可怜");
-//        person.setId(3);
-        List<Person> personList = jdbcDao.selectList(Person.class, "and a.age = ?", 26);
-//        AutoPageUtil<Person> personDbPageRows = new AutoPageUtil<>(1, 6, personList);
-//        System.out.println("person = " + personDbPageRows);
-
-
+        List<Person> personList = jdbcDao.selectList(Person.class, "");
+        for (Person x : personList) {
+            System.out.println("x.toString() = " + x.toString());
+        }
     }
 }

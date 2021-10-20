@@ -1,7 +1,6 @@
 package com.custom.jdbc;
 
-import com.alibaba.druid.util.JdbcUtils;
-import com.custom.dbconfig.ExceptionConst;
+import com.custom.exceptions.ExceptionConst;
 import com.custom.enums.DbMediaType;
 import com.custom.enums.KeyStrategy;
 import com.custom.exceptions.CustomCheckException;

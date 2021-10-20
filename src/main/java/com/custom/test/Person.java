@@ -10,49 +10,31 @@ import java.util.Date;
  * @Date 2021/10/17
  * @Description
  */
-@DbTable(table = "student1")
+@DbTable(table = "person")
 @DbJoinTables({
-        @DbJoinTable(""),
-        @DbJoinTable("")
+        @DbJoinTable("left join classes cls on cls.clsId = a.cls_id"),
+        @DbJoinTable("left join teacher t on t.id = a.teach_id"),
 })
 public class Person {
 
     @DbKey
     private int id;
+    @DbField("name")
+    private String personName;
     @DbField
-    private String name;
-    @DbField("nick_code")
-    private String nickCode;
-    @DbField
-    private String password;
+    private int age;
     @DbField
     private boolean sex;
     @DbField
-    private BigDecimal money;
+    private Date birthDay;
     @DbField
-    private Date birthday;
-    @DbField("dept_Id")
-    private int classId;
-    @DbRelated(joinTable = "classes", joinAlias = "cls", condition = "cls.cs_id = a.dept_id", field = "cls_name")
+    private String explain;
+    @DbMap("cls.clsName")
+//    @DbRelated(joinTable = "classes", joinAlias = "cls", field = "clsName", condition = "cls.clsId = a.cls_id")
     private String clsName;
-
-    @Override
-    public String toString() {
-        return "Person{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", nickCode='" + nickCode + '\'' +
-                ", password='" + password + '\'' +
-                ", sex=" + sex +
-                ", money=" + money +
-                ", birthday=" + birthday +
-                ", classId=" + classId +
-                ", clsName='" + clsName + '\'' +
-                '}';
-    }
-
-    public Person() {
-    }
+    @DbMap("t.name")
+//    @DbRelated(joinTable = "teacher", joinAlias = "t", field = "name", condition = "t.id = a.teach_id")
+    private String teachName;
 
     public int getId() {
         return id;
@@ -62,28 +44,20 @@ public class Person {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getPersonName() {
+        return personName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setPersonName(String personName) {
+        this.personName = personName;
     }
 
-    public String getNickCode() {
-        return nickCode;
+    public int getAge() {
+        return age;
     }
 
-    public void setNickCode(String nickCode) {
-        this.nickCode = nickCode;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public void setAge(int age) {
+        this.age = age;
     }
 
     public boolean isSex() {
@@ -94,28 +68,20 @@ public class Person {
         this.sex = sex;
     }
 
-    public BigDecimal getMoney() {
-        return money;
+    public Date getBirthDay() {
+        return birthDay;
     }
 
-    public void setMoney(BigDecimal money) {
-        this.money = money;
+    public void setBirthDay(Date birthDay) {
+        this.birthDay = birthDay;
     }
 
-    public Date getBirthday() {
-        return birthday;
+    public String getExplain() {
+        return explain;
     }
 
-    public void setBirthday(Date birthday) {
-        this.birthday = birthday;
-    }
-
-    public int getClassId() {
-        return classId;
-    }
-
-    public void setClassId(int classId) {
-        this.classId = classId;
+    public void setExplain(String explain) {
+        this.explain = explain;
     }
 
     public String getClsName() {
@@ -126,5 +92,26 @@ public class Person {
         this.clsName = clsName;
     }
 
+    public String getTeachName() {
+        return teachName;
+    }
 
+    public void setTeachName(String teachName) {
+        this.teachName = teachName;
+    }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "id=" + id +
+                ", personName='" + personName + '\'' +
+                ", age=" + age +
+                ", sex=" + sex +
+                ", birthDay=" + birthDay +
+                ", explain='" + explain + '\'' +
+                ", clsName='" + clsName + '\'' +
+                ", teachName='" + teachName + '\'' +
+                '}';
+    }
 }
+

@@ -100,6 +100,21 @@ public class CommUtils {
         return DbMediaType.DbVarchar;
     }
 
+    /**
+     * example : a.name replace the a.`name`
+     */
+    public static String getJoinFieldStr(String field) {
+        int index = field.indexOf(".");
+        String fieldName = field.substring(index + SymbolConst.DEFAULT_ONE);
+        String alias = field.substring(0, index + SymbolConst.DEFAULT_ONE);
+        return String.format("%s`%s`", alias, fieldName);
+    }
+
+    public static void main(String[] args) {
+        String joinFieldStr = getJoinFieldStr("a.name");
+        System.out.println("joinFieldStr = " + joinFieldStr);
+    }
+
 
     /**
      * map转对象

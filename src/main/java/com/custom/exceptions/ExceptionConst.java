@@ -1,4 +1,4 @@
-package com.custom.dbconfig;
+package com.custom.exceptions;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -92,9 +92,15 @@ public class ExceptionConst {
      */
     public final static String EX_NO_SUCH_FIELD = "The unknown field by: ";
 
-    public final static String EX_NOT_SUPPORT_INSERT_TYPE = "Batch data insertion of self increasing primary key type is not supported at present in class ";
+    /**
+     * 同一个对象中不支持DBRelated与DbJoinTables同时存在
+     */
+    public final static String EX_DBRELATED_DBJOINTABLES_NOT_SUPPORT = "@DbRelated and @DbJoinTables cannot exist in a class at the same time";
 
-
+    /**
+     * 找不到注解DbJoinTables
+     */
+    public final static String EX_DB_JOIN_TABLES_NOTFOUND = " @DbJoinTables was not found in class ";
 
 
 }

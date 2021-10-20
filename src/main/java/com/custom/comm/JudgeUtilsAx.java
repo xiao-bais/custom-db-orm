@@ -2,7 +2,7 @@ package com.custom.comm;
 
 import com.custom.annotations.DbKey;
 import com.custom.annotations.DbTable;
-import com.custom.dbconfig.ExceptionConst;
+import com.custom.exceptions.ExceptionConst;
 import com.custom.exceptions.CustomCheckException;
 
 import java.lang.reflect.Field;

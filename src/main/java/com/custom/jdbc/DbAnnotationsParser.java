@@ -1,11 +1,8 @@
 package com.custom.jdbc;
 
-import com.custom.annotations.DbField;
-import com.custom.annotations.DbKey;
-import com.custom.annotations.DbRelated;
-import com.custom.annotations.DbTable;
+import com.custom.annotations.*;
 import com.custom.dbconfig.DbFieldsConst;
-import com.custom.dbconfig.ExceptionConst;
+import com.custom.exceptions.ExceptionConst;
 import com.custom.enums.DbMediaType;
 import com.custom.exceptions.DbAnnotationParserException;
 import com.custom.comm.CommUtils;
@@ -133,6 +130,9 @@ public class DbAnnotationsParser {
         if(t == null) {
             throw new NullPointerException();
         }
+        if(t.isAnnotationPresent(DbJoinTables.class)) {
+            throw new DbAnnotationParserException(ExceptionConst.EX_DBRELATED_DBJOINTABLES_NOT_SUPPORT);
+        }
         List<Map<String,String>> mapList = new ArrayList<>();
         Map<String,String> relationMap = null;
         Field[] fields = getFields(t);
@@ -151,8 +151,67 @@ public class DbAnnotationsParser {
         }
         return mapList;
     }
-    
 
+    /**
+     * 解析DbJoinTable注解
+     */
+    public <T> List<String> getParserByDbJoinTable(Class<T> t) {
+        if(t == null) {
+            throw new NullPointerException();
+        }
+        if(existDbRelated(t)) {
+            throw new DbAnnotationParserException(ExceptionConst.EX_DBRELATED_DBJOINTABLES_NOT_SUPPORT);
+        }
+        List<String> joinSqls = new ArrayList<>();
+        DbJoinTables joinTables = t.getAnnotation(DbJoinTables.class);
+        if(null != joinTables) {
+            DbJoinTable[] dbConditions = joinTables.value();
+            for (int i = 0; i < dbConditions.length; i++) {
+                DbJoinTable dbCondition = dbConditions[i];
+                joinSqls.add(JudgeUtilsAx.isNotEmpty(dbCondition.value()) ? dbCondition.value() : "");
+            }
+        }
+        return joinSqls;
+    }
 
+    /**
+     * 该类是否存在DBRelated注解
+     */
+    private <T> boolean existDbRelated(Class<T> t) {
+        Field[] declaredFields = t.getDeclaredFields();
+        for (Field field : declaredFields) {
+            if(field.isAnnotationPresent(DbRelated.class)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 解析DbMap
+     */
+    public <T> List<Map<String, String>> getParserDbMap(Class<T> t) {
+        if(t == null) {
+            throw new NullPointerException();
+        }
+        if(!t.isAnnotationPresent(DbJoinTables.class)) {
+            throw new DbAnnotationParserException(ExceptionConst.EX_DB_JOIN_TABLES_NOTFOUND + t);
+        }
+        if(existDbRelated(t)) {
+            throw new DbAnnotationParserException(ExceptionConst.EX_DBRELATED_DBJOINTABLES_NOT_SUPPORT);
+        }
+        List<Map<String,String>> mapList = new ArrayList<>();
+        Map<String,String> map;
+        Field[] declaredFields = t.getDeclaredFields();
+        for (Field field : declaredFields) {
+            if(!field.isAnnotationPresent(DbMap.class)) continue;
+            map = new HashMap<>();
+            DbMap mapAnno = field.getAnnotation(DbMap.class);
+            map.put(DbFieldsConst.DB_MAP, JudgeUtilsAx.isEmpty(mapAnno.value()) ? field.getName() : mapAnno.value());
+            map.put(DbFieldsConst.DB_MAP_FIELD, field.getName());
+            mapList.add(map);
+        }
+        return mapList;
+    }
 
 }

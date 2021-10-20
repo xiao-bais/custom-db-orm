@@ -65,5 +65,9 @@ public class DbFieldsConst {
     //关联查询后映射对应java字段
     public static final  String DB_JOIN_MAP_CLASS_FIELD = "fieldName";
 
+    public static final  String DB_MAP = "dbMap";
+
+    public static final  String DB_MAP_FIELD = "mapField";
+
 
 }
