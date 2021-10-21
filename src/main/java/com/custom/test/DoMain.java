@@ -23,7 +23,7 @@ public class DoMain {
     public static void main(String[] args) throws Exception {
 
         DbDataSource dbDataSource = new DbDataSource();
-        dbDataSource.setUrl("jdbc:mysql://127.0.0.1/smbms?characterEncoding=utf-8&allowMultiQueries=true&serverTimezone=GMT%2B8");
+        dbDataSource.setUrl("jdbc:mysql://127.0.0.1:3306/oneTest?characterEncoding=utf-8&allowMultiQueries=true&serverTimezone=GMT%2B8");
         dbDataSource.setDriver("com.mysql.cj.jdbc.Driver");
         dbDataSource.setUsername("root");
         dbDataSource.setPassword("123456");
@@ -33,11 +33,14 @@ public class DoMain {
 
         JdbcDao jdbcDao = new JdbcDao(dbDataSource);
 
-//        jdbcDao.createTables(Classes.class, Teacher.class );
+        jdbcDao.createTables(Classes.class, Person.class );
 
         List<Person> personList = jdbcDao.selectList(Person.class, "");
         for (Person x : personList) {
             System.out.println("x.toString() = " + x.toString());
         }
+//
+//        Teacher teacher = jdbcDao.selectOneByKey(Teacher.class, 1);
+//        System.out.println("teacher.getName() = " + teacher.getName());
     }
 }

@@ -157,6 +157,73 @@ public class CommUtils {
         return map;
     }
 
+    /**
+     * 是否不为空
+     */
+    public static boolean isNotBlank(final  CharSequence cs) {
+        return !isBlank(cs);
+    }
+
+    /**
+     * 是否为空
+     */
+    public static boolean isBlank(final CharSequence cs) {
+        if (cs == null) {
+            return true;
+        }
+        int l = cs.length();
+        if (l > 0) {
+            for (int i = 0; i < l; i++) {
+                if (!Character.isWhitespace(cs.charAt(i))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 驼峰转下划线
+     */
+    public static String camelToUnderline(String param) {
+        if (isBlank(param)) {
+            return "";
+        }
+        int len = param.length();
+        StringBuilder sb = new StringBuilder(len);
+        for (int i = 0; i < len; i++) {
+            char c = param.charAt(i);
+            if (Character.isUpperCase(c) && i > 0) {
+                sb.append(SymbolConst.UNDERLINE);
+            }
+            sb.append(Character.toLowerCase(c));
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 字符串下划线转驼峰
+     */
+    public static String underlineToCamel(String param) {
+        if (isBlank(param)) {
+            return "";
+        }
+        String temp = param.toLowerCase();
+        int len = temp.length();
+        StringBuilder sb = new StringBuilder(len);
+        for (int i = 0; i < len; i++) {
+            char c = temp.charAt(i);
+            if (c == SymbolConst.UNDERLINE) {
+                if (++i < len) {
+                    sb.append(Character.toUpperCase(temp.charAt(i)));
+                }
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
 
 
 

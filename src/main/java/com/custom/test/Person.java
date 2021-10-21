@@ -10,7 +10,7 @@ import java.util.Date;
  * @Date 2021/10/17
  * @Description
  */
-@DbTable(table = "person")
+@DbTable(table = "student")
 @DbJoinTables({
         @DbJoinTable("left join classes cls on cls.clsId = a.cls_id"),
         @DbJoinTable("left join teacher t on t.id = a.teach_id"),
@@ -19,8 +19,8 @@ public class Person {
 
     @DbKey
     private int id;
-    @DbField("name")
-    private String personName;
+    @DbField
+    private String name;
     @DbField
     private int age;
     @DbField
@@ -29,6 +29,12 @@ public class Person {
     private Date birthDay;
     @DbField
     private String explain;
+    @DbField("cls_id")
+    private int clsId;
+    @DbField("teach_id")
+    private int teachId;
+
+
     @DbMap("cls.clsName")
 //    @DbRelated(joinTable = "classes", joinAlias = "cls", field = "clsName", condition = "cls.clsId = a.cls_id")
     private String clsName;
@@ -44,12 +50,28 @@ public class Person {
         this.id = id;
     }
 
-    public String getPersonName() {
-        return personName;
+    public int getClsId() {
+        return clsId;
     }
 
-    public void setPersonName(String personName) {
-        this.personName = personName;
+    public void setClsId(int clsId) {
+        this.clsId = clsId;
+    }
+
+    public int getTeachId() {
+        return teachId;
+    }
+
+    public void setTeachId(int teachId) {
+        this.teachId = teachId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getAge() {
@@ -104,7 +126,7 @@ public class Person {
     public String toString() {
         return "Person{" +
                 "id=" + id +
-                ", personName='" + personName + '\'' +
+                ", name='" + name + '\'' +
                 ", age=" + age +
                 ", sex=" + sex +
                 ", birthDay=" + birthDay +
