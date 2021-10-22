@@ -1,4 +1,4 @@
-package com.custom.jdbc;
+package com.custom.handler;
 
 import com.custom.annotations.DbField;
 import com.custom.annotations.DbJoinTables;
@@ -28,10 +28,10 @@ import static com.custom.dbconfig.DbFieldsConst.DB_JOIN_TABLE;
  */
 public class DbParserFieldHandler {
 
-    private DbAnnotationsParser dbAnnoParser = null;
+    private DbAnnotationsParserHandler dbAnnoParser = null;
 
     public DbParserFieldHandler(){
-        dbAnnoParser = new DbAnnotationsParser();
+        dbAnnoParser = new DbAnnotationsParserHandler();
     }
 
     /**
@@ -226,7 +226,7 @@ public class DbParserFieldHandler {
         List<String> dbJoinSqls = dbAnnoParser.getParserByDbJoinTable(t);
         List<Map<String, String>> dbMapFields = dbAnnoParser.getParserDbMap(t);
         String joinFieldSql = dbMapFields.stream()
-                .map(mapField -> String.format(",%s %s",
+                .map(mapField -> String.format(",%s `%s`",
                         CommUtils.getJoinFieldStr(String.valueOf(mapField.get(DbFieldsConst.DB_MAP))),
                         mapField.get(DbFieldsConst.DB_MAP_FIELD))
                 ).collect(Collectors.joining());
@@ -321,22 +321,6 @@ public class DbParserFieldHandler {
         for (Map<String, Object> objectMap : parserByDbField) {
             if(dbField.equals(objectMap.get(DbFieldsConst.DB_FIELD_NAME))) {
                 return String.valueOf(objectMap.get(DbFieldsConst.DB_CLASS_FIELD));
-            }
-        }
-        if(isDbRelationTag(t)) {
-            List<Map<String, String>> relationList = dbAnnoParser.getParserByDbRelated(t);
-            for (Map<String, String> objectMap : relationList) {
-                if(dbField.equals(objectMap.get(DbFieldsConst.DB_JOIN_MAP_FIELD))) {
-                    return String.valueOf(objectMap.get(DbFieldsConst.DB_JOIN_MAP_CLASS_FIELD));
-                }
-            }
-        }
-        if(t.isAnnotationPresent(DbJoinTables.class)) {
-            List<Map<String, String>> parserDbMaps = dbAnnoParser.getParserDbMap(t);
-            for (Map<String, String> dbMap : parserDbMaps) {
-                if(dbField.equals(dbMap.get(DbFieldsConst.DB_MAP_FIELD))) {
-                    return String.valueOf(dbMap.get(DbFieldsConst.DB_MAP_FIELD));
-                }
             }
         }
         throw new SQLException(String.format("Unknown column name: '%s'", dbField));

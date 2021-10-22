@@ -22,6 +22,11 @@ public class SymbolConst {
     public final static String IS = "is";//is
 
     public final static char UNDERLINE = '_'; //下划线
+    public final static String EMPTY = "";//空字符串
+
+
+
+
 
 
 

@@ -20,14 +20,14 @@ public class DbCustomStrategy {
     /**
      * 打印sql
      */
-    private boolean printSqlFlag = false;
+    private boolean sqlOutPrinting = false;
 
-    public boolean isPrintSqlFlag() {
-        return printSqlFlag;
+    public boolean isSqlOutPrinting() {
+        return sqlOutPrinting;
     }
 
-    public void setPrintSqlFlag(boolean printSqlFlag) {
-        this.printSqlFlag = printSqlFlag;
+    public void setSqlOutPrinting(boolean sqlOutPrinting) {
+        this.sqlOutPrinting = sqlOutPrinting;
     }
 
     public boolean isUnderlineToCamel() {

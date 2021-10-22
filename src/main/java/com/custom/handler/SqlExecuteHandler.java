@@ -1,9 +1,10 @@
-package com.custom.jdbc;
+package com.custom.handler;
 
 import com.custom.dbconfig.DbConnection;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.comm.CommUtils;
+import com.custom.dbconfig.SymbolConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,20 +18,20 @@ import java.util.*;
  * @Author Xiao-Bai
  * @Date 2021/1/9 0009 3:11
  * @Version 1.0
- * @Description JdbcUtils
+ * @Description SqlExecuteHandler
  */
-public class JdbcUtils extends DbConnection {
+public class SqlExecuteHandler extends DbConnection {
 
-    private Logger logger = LoggerFactory.getLogger(JdbcUtils.class);
+    private Logger logger = LoggerFactory.getLogger(SqlExecuteHandler.class);
 
 
-    private Connection conn = null;
+    private Connection conn;
     private PreparedStatement statement = null;
     private ResultSet resultSet = null;
     private DbParserFieldHandler parserFieldHandler;
     private DbCustomStrategy dbCustomStrategy;
 
-    public JdbcUtils(DbDataSource dbDataSource, DbParserFieldHandler parserFieldHandler){
+    public SqlExecuteHandler(DbDataSource dbDataSource, DbParserFieldHandler parserFieldHandler){
         super(dbDataSource);
         conn = super.getConnection();
         dbCustomStrategy = super.getDbCustomStrategy();
@@ -65,9 +66,9 @@ public class JdbcUtils extends DbConnection {
             while (resultSet.next()) {
                 map.clear();
                 for (int i = 0; i < metaData.getColumnCount(); i++) {
-                    String columnName = metaData.getColumnName(i + 1);
+                    String columnName = metaData.getColumnLabel(i + 1);
                     Object object = resultSet.getObject(i + 1);
-                    map.put(parserFieldHandler.getProFieldName(clazz, columnName), object);
+                    map.put(columnName, object);
                 }
                 if (map.size() <= 0)  continue;
                 try{
@@ -99,10 +100,10 @@ public class JdbcUtils extends DbConnection {
 
             }
         }catch (SQLException e){
-            logger.error(e.toString(), e);
             logger.info(
                     "\nsql error\n===================\nSQL ==>\n {}\n===================\nparams = {}\n"
                     , sql, Arrays.toString(params));
+            throw e;
         }
         return list;
    }
@@ -119,10 +120,10 @@ public class JdbcUtils extends DbConnection {
                 result = (long) resultSet.getObject(1);
             }
         }catch (SQLException e){
-            logger.error(e.toString(), e);
             logger.info(
                     "\nsql error\n===================\nSQL ==>\n {}\n===================\nparams = {}\n"
                     , sql, Arrays.toString(params));
+            throw e;
         }
         return result;
    }
@@ -140,7 +141,7 @@ public class JdbcUtils extends DbConnection {
                 entity = t.newInstance();
                 for (int i = 0; i < metaData.getColumnCount(); i++) {
                     Field field = null;
-                    String columnName = metaData.getColumnName(i + 1);
+                    String columnName = metaData.getColumnLabel(i + 1);
                     Object value = resultSet.getObject(i + 1);
                     field  = t.getDeclaredField(columnName);
                     if(value == null){
@@ -152,12 +153,12 @@ public class JdbcUtils extends DbConnection {
                 }
             }
         }catch (SQLException e){
-            logger.error(e.toString(), e);
             logger.info(
                     "\nsql error\n===================\nSQL ==>\n {}\n===================\nparams = {}\n"
                     , sql, Arrays.toString(params));
+            throw e;
         } catch (IllegalAccessException | InstantiationException | NoSuchFieldException e) {
-            logger.error(e.toString(), e);
+            throw e;
         }
         return entity;
    }
@@ -172,12 +173,12 @@ public class JdbcUtils extends DbConnection {
             executeAll(false, sql, params);
             res = statement.executeUpdate();
         }catch (SQLException e){
-            logger.error(e.toString(), e);
             logger.info(
                     "\nsql error\n===================\nSQL ==>\n {}\n===================\nparams = {}\n"
                     , sql, Arrays.toString(params));
+            throw e;
         } catch (Exception e){
-            logger.error(e.toString(), e);
+            throw e;
         }
         return res;
    }
@@ -186,7 +187,7 @@ public class JdbcUtils extends DbConnection {
      * 插入
      */
     @SuppressWarnings("Unchecked")
-   <T> int executeInsert(List<T> obj, String sql, String keyField, Object... params) {
+   <T> int executeInsert(List<T> obj, String sql, String keyField, Object... params) throws SQLException {
         int res = 0;
         try{
             executeAll(true, sql, params);
@@ -211,20 +212,40 @@ public class JdbcUtils extends DbConnection {
                 count++;
             }
         }catch (SQLException e){
-            logger.error(e.toString(), e);
             logger.info(
                     "\nsql error\n===================\nSQL ==>\n {}\n===================\nparams = {}\n"
                     , sql, Arrays.toString(params));
+            throw e;
         } catch (Exception e){
             logger.error(e.toString(), e);
         }
         return res;
    }
 
-    // 将单词的首字母大写
-    public static String initSetStr(String old){
-        return String.format("set%s", old.substring(0,1).toUpperCase() + old.substring(1));
+    /**
+     * 执行表结构创建或删除
+     */
+    void executeTableSql(String sql) throws SQLException {
+        statement = conn.prepareStatement(sql);
+        statement.execute();
     }
+
+    /**
+     * 查询表是否存在
+     */
+    long executeTableExist(String sql) throws SQLException {
+        long count = 0;
+        statement =  conn.prepareStatement(sql);
+        resultSet = statement.executeQuery();
+        while (resultSet.next()) {
+            count = (long) resultSet.getObject(SymbolConst.DEFAULT_ONE);
+        }
+        return count;
+    }
+
+
+
+
 
 
 

@@ -2,7 +2,6 @@ package com.custom.page;
 
 import com.custom.dbconfig.SymbolConst;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,24 +9,8 @@ import java.util.List;
  * @Date 2021/10/15
  * @Description
  */
-public class AutoPageUtil<T> {
+public class AutoPageHelper<T> extends DbPageRows<T> {
 
-    /**
-     * 当前页
-     */
-    private int pageIndex;
-    /**
-     * 每页显示量
-     */
-    private int pageSize;
-    /**
-     * 总记录数
-     */
-    private long total;
-    /**
-     * 当前页的数据
-     */
-    private List<T> data;
     /**
      * 总页数
      */
@@ -65,21 +48,17 @@ public class AutoPageUtil<T> {
      */
     private boolean hasNextPage;
 
-    public AutoPageUtil() {
-        data = new ArrayList<>();
+    public AutoPageHelper() {
+        super();
     }
 
-    public AutoPageUtil(List<T> dataRows) {
+    public AutoPageHelper(List<T> dataRows) {
        this(1, 10, dataRows);
     }
 
-    public AutoPageUtil(int pageIndex, int pageSize, List<T> dataRows) {
-        this.pageIndex = pageIndex;
-        this.pageSize = pageSize;
+    public AutoPageHelper(int pageIndex, int pageSize, List<T> dataRows) {
+        super(pageIndex, pageSize, dataRows);
         int size = dataRows.size();
-        this.total = size;
-        int subIndex = (pageIndex - SymbolConst.DEFAULT_ONE) * pageSize;
-        this.data = dataRows.subList(Math.min(subIndex, size), (int) Math.min(total, pageIndex * pageSize));
         this.pages = size % pageSize > SymbolConst.DEFAULT_ZERO ? size / pageSize + SymbolConst.DEFAULT_ONE : size / pageSize;
         this.firstPage = SymbolConst.DEFAULT_ONE;
         this.lastPage = this.pages;
@@ -89,45 +68,9 @@ public class AutoPageUtil<T> {
         this.isLastPage = pageIndex == this.pages;
         this.hasPreviousPage = pageIndex - SymbolConst.DEFAULT_ONE > SymbolConst.DEFAULT_ZERO;
         this.hasNextPage = pageIndex + SymbolConst.DEFAULT_ONE < this.pages;
-
     }
 
 
-
-
-
-
-    public int getPageIndex() {
-        return pageIndex;
-    }
-
-    public void setPageIndex(int pageIndex) {
-        this.pageIndex = pageIndex;
-    }
-
-    public int getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
-    }
-
-    public long getTotal() {
-        return total;
-    }
-
-    public void setTotal(long total) {
-        this.total = total;
-    }
-
-    public List<T> getData() {
-        return data;
-    }
-
-    public void setData(List<T> data) {
-        this.data = data;
-    }
 
     public int getPages() {
         return pages;
@@ -204,11 +147,11 @@ public class AutoPageUtil<T> {
     @Override
     public String toString() {
         return "AutoPageUtil{" +
-                "pageIndex=" + pageIndex +
-                ", pageSize=" + pageSize +
-                ", total=" + total +
-                ", data=" + data +
-                ", pages=" + pages +
+                "pages=" + pages +
+                ", total=" + super.getTotal() +
+                ", data=" + super.getData() +
+                ", pageIndex=" + super.getPageIndex() +
+                ", pageSize=" + super.getPageSize() +
                 ", firstPage=" + firstPage +
                 ", lastPage=" + lastPage +
                 ", prePage=" + prePage +

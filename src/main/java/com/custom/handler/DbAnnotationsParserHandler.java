@@ -1,4 +1,4 @@
-package com.custom.jdbc;
+package com.custom.handler;
 
 import com.custom.annotations.*;
 import com.custom.dbconfig.DbFieldsConst;
@@ -16,7 +16,7 @@ import java.util.*;
  * @Date 2021/7/4
  * @Description
  */
-public class DbAnnotationsParser {
+public class DbAnnotationsParserHandler {
 
     /**
      * 获取@DbTable信息

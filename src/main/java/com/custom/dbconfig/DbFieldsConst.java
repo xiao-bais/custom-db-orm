@@ -64,10 +64,16 @@ public class DbFieldsConst {
     public static final  String DB_JOIN_MAP_FIELD = "dbField";
     //关联查询后映射对应java字段
     public static final  String DB_JOIN_MAP_CLASS_FIELD = "fieldName";
-
+    //关联后查询的字段
     public static final  String DB_MAP = "dbMap";
-
+    //关联查询后映射对应java字段
     public static final  String DB_MAP_FIELD = "mapField";
+    //自增
+    public static final  String AUTO_INCREMENT = "auto_increment";
+    //不为空
+    public static final  String NOT_NULL = "not null";
+
+
 
 
 }

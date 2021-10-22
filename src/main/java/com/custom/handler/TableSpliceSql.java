@@ -1,5 +1,7 @@
-package com.custom.jdbc;
+package com.custom.handler;
 
+import com.custom.dbconfig.DbFieldsConst;
+import com.custom.dbconfig.SymbolConst;
 import com.custom.exceptions.ExceptionConst;
 import com.custom.enums.DbMediaType;
 import com.custom.enums.KeyStrategy;
@@ -18,9 +20,9 @@ import java.util.StringJoiner;
  */
 public class TableSpliceSql {
 
-    private DbAnnotationsParser annotationsParser;
+    private DbAnnotationsParserHandler annotationsParser;
 
-    public TableSpliceSql(DbAnnotationsParser annotationsParser) {
+    public TableSpliceSql(DbAnnotationsParserHandler annotationsParser) {
         this.annotationsParser = annotationsParser;
     }
 
@@ -29,7 +31,7 @@ public class TableSpliceSql {
      */
     public <T> String getCreateTableSql(Class<T> t) throws Exception {
         List<Map<String, Object>> fieldMapList = annotationsParser.getParserByDbField(t);
-        String tableName = annotationsParser.getParserByDbTable(t).get("tableName").toString();
+        String tableName = annotationsParser.getParserByDbTable(t).get(DbFieldsConst.TABLE_NAME).toString();
         String taleByFieldKeySql = this.createTaleByFieldKeySql(t);
         String tableByFieldSql = this.createTableByFieldSql(fieldMapList);
         if(JudgeUtilsAx.isEmpty(tableByFieldSql)) {
@@ -45,24 +47,24 @@ public class TableSpliceSql {
     private String createTableByFieldSql(List<Map<String, Object>> mapList) {
         StringJoiner createFieldSql = new StringJoiner(",");
         for (Map<String, Object> map : mapList) {
-            String fieldName = map.get("dbFieldName").toString();
+            String fieldName = String.valueOf(map.get(DbFieldsConst.DB_FIELD_NAME));
             //如果注解上没注明对应的表字段,就以java属性字段来填充
             if(JudgeUtilsAx.isEmpty(fieldName)){
-                fieldName = map.get("fieldName").toString();
+                fieldName = String.valueOf(map.get(DbFieldsConst.DB_CLASS_FIELD));
             }
-            DbMediaType fieldType = (DbMediaType) map.get("fieldType");
+            DbMediaType fieldType = (DbMediaType) map.get(DbFieldsConst.DB_FIELD_TYPE);
 
-            String length = "";
+            String length = SymbolConst.EMPTY;
             if(DbMediaType.DbDate != fieldType && DbMediaType.DbDateTime != fieldType) {
-                length = String.format("(%s)",map.get("length").toString());
+                length = String.format("(%s)", map.get(DbFieldsConst.DB_FIELD_LENGTH));
             }
-            String isNullField = "";
-            boolean isNull = (Boolean) map.get("isNull");
+            String isNullField = SymbolConst.EMPTY;
+            boolean isNull = (Boolean) map.get(DbFieldsConst.DB_IS_NULL);
             if(!isNull) {
-                isNullField ="not null";
+                isNullField = DbFieldsConst.NOT_NULL;
             }
             String createField = String.format("`%s` %s%s %s comment '%s'\n",
-                    fieldName, fieldType.getType(), length, isNullField, map.get("desc"));
+                    fieldName, fieldType.getType(), length, isNullField, map.get(DbFieldsConst.DB_FIELD_DESC));
             createFieldSql.add(createField);
         }
         return createFieldSql.toString();
@@ -72,24 +74,24 @@ public class TableSpliceSql {
      * 获取主键字段的创建语句
      */
     private <T> String createTaleByFieldKeySql(Class<T> t) throws Exception {
-        String primaryKeySql = "";
+        String primaryKeySql = SymbolConst.EMPTY;
         Map<String, Object> map = annotationsParser.getParserByDbKey(t);
         if(map.isEmpty()) return primaryKeySql;
 
-        String dbKey = map.get("dbKey").toString();
+        String dbKey = String.valueOf(map.get(DbFieldsConst.DB_KEY));
         if(JudgeUtilsAx.isEmpty(dbKey)) {
-            dbKey = map.get("fieldKey").toString();
+            dbKey = String.valueOf(map.get(DbFieldsConst.KEY_FIELD));
         }
-        DbMediaType dbType = (DbMediaType) map.get("dbType");//获取主键数据类型
-        KeyStrategy keyType = (KeyStrategy) map.get("strategy");//获取主键增值类型
-        String keyStrategy = "";
+        DbMediaType dbType = (DbMediaType) map.get(DbFieldsConst.KEY_TYPE);//获取主键数据类型
+        KeyStrategy keyType = (KeyStrategy) map.get(DbFieldsConst.KEY_STRATEGY);//获取主键增值类型
+        String keyStrategy = SymbolConst.EMPTY;
         if(KeyStrategy.AUTO.equals(keyType)) {
             if(!CommUtils.checkPrimaryKeyIsAutoIncrement(dbType))
                 throw new CustomCheckException(ExceptionConst.EX_PRIMARY_CANNOT_MATCH);
-                keyStrategy = "auto_increment";
+                keyStrategy = DbFieldsConst.AUTO_INCREMENT;
         }
         primaryKeySql = String.format("`%s` %s(%s) primary key not null %s comment '%s' \n,",
-                dbKey, dbType.getType(), map.get("length"), keyStrategy, map.get("desc"));
+                dbKey, dbType.getType(), map.get(DbFieldsConst.KEY_LENGTH), keyStrategy, map.get(DbFieldsConst.KEY_DESC));
         return primaryKeySql;
     }
 }

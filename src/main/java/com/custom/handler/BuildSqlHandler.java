@@ -1,4 +1,4 @@
-package com.custom.jdbc;
+package com.custom.handler;
 
 import com.custom.dbconfig.DbDataSource;
 import com.custom.exceptions.ExceptionConst;
@@ -17,16 +17,16 @@ import java.util.stream.Collectors;
  * @Date 2021/7/4
  * @Description
  */
-public class JdbcTableDao {
+public class BuildSqlHandler {
 
-    private Logger logger = LoggerFactory.getLogger(JdbcTableDao.class);
+    private Logger logger = LoggerFactory.getLogger(BuildSqlHandler.class);
 
-    private JdbcUtils jdbcUtils;
+    private SqlExecuteHandler sqlExecuteHandler;
     private DbParserFieldHandler dbParserFieldHandler;
 
-    public JdbcTableDao(DbDataSource dbDataSource){
+    public BuildSqlHandler(DbDataSource dbDataSource){
         dbParserFieldHandler = new DbParserFieldHandler();
-        jdbcUtils = new JdbcUtils(dbDataSource, dbParserFieldHandler);
+        sqlExecuteHandler = new SqlExecuteHandler(dbDataSource, dbParserFieldHandler);
     }
 
 
@@ -40,8 +40,8 @@ public class JdbcTableDao {
        }
        JudgeUtilsAx.checkObjNotNull(t);
        String selectSql = String.format("%s %s %s", dbParserFieldHandler.getSelectSql(t), JudgeUtilsAx.isNotEmpty(condition) ? condition : "",
-               JudgeUtilsAx.isNotEmpty(orderBy) ? orderBy : "");
-       return jdbcUtils.query(t, selectSql, params);
+               JudgeUtilsAx.isNotEmpty(orderBy) ? orderBy : SymbolConst.EMPTY);
+       return sqlExecuteHandler.query(t, selectSql, params);
    }
 
    /**
@@ -56,14 +56,14 @@ public class JdbcTableDao {
             orderBy = String.format("\norder by %s", orderBy);
         }
         String selectSql = String.format("%s %s %s", dbParserFieldHandler.getSelectSql(t), JudgeUtilsAx.isNotEmpty(condition) ? condition : "",
-                JudgeUtilsAx.isNotEmpty(orderBy) ? orderBy :  "");
+                JudgeUtilsAx.isNotEmpty(orderBy) ? orderBy :  SymbolConst.EMPTY);
         String countSql = String.format("select count(0) from (%s) xxx ", selectSql);
 
         List<T> dataList = new ArrayList<>();
-        long count = jdbcUtils.executeSql(countSql, params);
+        long count = sqlExecuteHandler.executeSql(countSql, params);
         if(count > 0) {
             selectSql = String.format("%s \nlimit %s, %s", selectSql, (pageIndex - 1) * pageSize, pageSize);
-            dataList = jdbcUtils.query(t, selectSql, params);
+            dataList = sqlExecuteHandler.query(t, selectSql, params);
         }
 
         DbPageRows<T> dbPageRows = new DbPageRows<>(pageIndex, pageSize, count);
@@ -90,7 +90,7 @@ public class JdbcTableDao {
         JudgeUtilsAx.checkObjNotNull(t);
         String alias = dbParserFieldHandler.getDbTableAlias(t);
         String selectSql = String.format("%s \nwhere %s.`%s` = ?", dbParserFieldHandler.getSelectSql(t), alias, dbParserFieldHandler.getDbFieldKey(t));
-        return jdbcUtils.executeSql(t, selectSql, key);
+        return sqlExecuteHandler.executeSql(t, selectSql, key);
    }
 
     /**
@@ -102,7 +102,7 @@ public class JdbcTableDao {
         }
         JudgeUtilsAx.checkObjNotNull(t);
         String selectSql = String.format("%s \n%s", dbParserFieldHandler.getSelectSql(t), condition);
-        return jdbcUtils.executeSql(t, selectSql, params);
+        return sqlExecuteHandler.executeSql(t, selectSql, params);
     }
 
     /**
@@ -113,7 +113,7 @@ public class JdbcTableDao {
             throw new CustomCheckException(ExceptionConst.EX_SQL_NOT_EMPTY);
         }
         JudgeUtilsAx.checkObjNotNull(t);
-        return jdbcUtils.query(t, sql, params);
+        return sqlExecuteHandler.query(t, sql, params);
     }
 
     /**
@@ -124,13 +124,14 @@ public class JdbcTableDao {
             throw new CustomCheckException(ExceptionConst.EX_SQL_NOT_EMPTY);
         }
         JudgeUtilsAx.checkObjNotNull(t);
-        List<T> queryList = jdbcUtils.query(t, sql, params);
+        List<T> queryList = sqlExecuteHandler.query(t, sql, params);
         if(queryList.size() == 0){
             return null;
         }else if(queryList.size() > 1){
             throw new CustomCheckException(String.format(ExceptionConst.EX_QUERY_MORE_RESULT, queryList.size()));
         }
         return queryList.get(0);
+
     }
 
 
@@ -144,7 +145,7 @@ public class JdbcTableDao {
         String alias = dbParserFieldHandler.getDbTableAlias(t);
         String deleteSql = String.format("delete from %s %s where %s.`%s` = ?",
                 dbParserFieldHandler.getDbTableName(t), alias, alias, dbParserFieldHandler.getDbFieldKey(t));
-        return jdbcUtils.executeUpdate(deleteSql, key);
+        return sqlExecuteHandler.executeUpdate(deleteSql, key);
     }
 
     /**
@@ -162,7 +163,7 @@ public class JdbcTableDao {
         String alias = dbParserFieldHandler.getDbTableAlias(t);
         String deleteSql = String.format("delete from %s %s where %s.`%s` in %s",
                 dbParserFieldHandler.getDbTableName(t), alias, alias, dbParserFieldHandler.getDbFieldKey(t), delSymbols);
-        return jdbcUtils.executeUpdate(deleteSql, keys);
+        return sqlExecuteHandler.executeUpdate(deleteSql, keys);
     }
 
     /**
@@ -176,7 +177,7 @@ public class JdbcTableDao {
         condition = String.format("where 1 = 1 %s", condition);
         String alias = dbParserFieldHandler.getDbTableAlias(t);
         String deleteSql = String.format("delete from %s %s %s", dbParserFieldHandler.getDbTableName(t), alias, condition);
-        return jdbcUtils.executeUpdate(deleteSql, params);
+        return sqlExecuteHandler.executeUpdate(deleteSql, params);
     }
 
     /* ----------------------------------------------------------------insert---------------------------------------------------------------- */
@@ -213,8 +214,8 @@ public class JdbcTableDao {
         String insertSql = String.format("insert into `%s` %s values %s",
                 dbParserFieldHandler.getDbTableName(t.getClass()), dbFieldStr, insertSymbol);
         return isGeneratedKey ?
-                jdbcUtils.executeInsert(Collections.singletonList(t), insertSql, dbFieldKey, fieldsVal.toArray()) :
-                jdbcUtils.executeUpdate(insertSql, fieldsVal.toArray());
+                sqlExecuteHandler.executeInsert(Collections.singletonList(t), insertSql, dbFieldKey, fieldsVal.toArray()) :
+                sqlExecuteHandler.executeUpdate(insertSql, fieldsVal.toArray());
     }
 
     /**
@@ -261,8 +262,8 @@ public class JdbcTableDao {
         String insertSql = String.format("insert into `%s` %s values %s",
                dbParserFieldHandler.getDbTableName(t.getClass()), dbFieldStr, inertValStr);
         return isGeneratedKey ?
-                jdbcUtils.executeInsert(tList, insertSql, dbFieldKey, saveValues.toArray()) :
-                jdbcUtils.executeUpdate(insertSql, saveValues.toArray());
+                sqlExecuteHandler.executeInsert(tList, insertSql, dbFieldKey, saveValues.toArray()) :
+                sqlExecuteHandler.executeUpdate(insertSql, saveValues.toArray());
     }
 
     /* ----------------------------------------------------------------update---------------------------------------------------------------- */
@@ -301,7 +302,7 @@ public class JdbcTableDao {
         String fieldKey = dbParserFieldHandler.getDbFieldKey(t.getClass());
         updateDbValues.add(dbParserFieldHandler.getFieldValue(t, dbParserFieldHandler.getProFieldName(t.getClass(), fieldKey)));
         String updateSql = String.format(" update %s set %s where %s = ?", dbTableName, editSymbol, fieldKey);
-        return jdbcUtils.executeUpdate(updateSql, updateDbValues.toArray());
+        return sqlExecuteHandler.executeUpdate(updateSql, updateDbValues.toArray());
     }
 
     /* ----------------------------------------------------------------common---------------------------------------------------------------- */
