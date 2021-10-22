@@ -40,7 +40,7 @@ public class SqlExecuteHandler extends DbConnection {
 
     private void executeAll(boolean isSave,String sql, Object... params) throws Exception {
         statement = isSave ? conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS) : conn.prepareStatement(sql);
-        if(dbCustomStrategy.isPrintSqlFlag()) {
+        if(dbCustomStrategy.isSqlOutPrinting()) {
             logger.info(
                     "SQL ==>\n {}\n===================\nparams = {}\n"
                     , sql, Arrays.toString(params));
