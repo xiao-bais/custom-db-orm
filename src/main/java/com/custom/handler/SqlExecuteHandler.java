@@ -114,11 +114,7 @@ public class SqlExecuteHandler extends DbConnection {
            ResultSetMetaData metaData = resultSet.getMetaData();
            while (resultSet.next()) {
                map = new HashMap<>();
-               for (int i = 0; i < metaData.getColumnCount(); i++) {
-                   String columnName = metaData.getColumnLabel(i + 1);
-                   Object object = resultSet.getObject(i + 1);
-                   map.put(dbCustomStrategy.isUnderlineToCamel() ? CommUtils.underlineToCamel(columnName) : columnName, object);
-               }
+               getResultMap(map, metaData);
                list.add(JSONObject.parseObject(JSONObject.toJSONString(map), clazz));
            }
        }catch (SQLException e){
@@ -130,6 +126,17 @@ public class SqlExecuteHandler extends DbConnection {
        return list;
 
    }
+
+   /**
+    * 获取结果集对象
+    */
+    private void getResultMap(Map<String, Object> map, ResultSetMetaData metaData) throws SQLException {
+        for (int i = 0; i < metaData.getColumnCount(); i++) {
+            String columnName = metaData.getColumnLabel(i + 1);
+            Object object = resultSet.getObject(i + 1);
+            map.put(dbCustomStrategy.isUnderlineToCamel() ? CommUtils.underlineToCamel(columnName) : columnName, object);
+        }
+    }
 
 
     /**
@@ -156,25 +163,13 @@ public class SqlExecuteHandler extends DbConnection {
      * 通用查询sql
      */
    <T> T executeSql(Class<T> t, String sql, Object... params) throws Exception {
-        T entity = null;
+       Map<String, Object> map = new HashMap<>();
         try {
             executeAll(false, sql,params);
             resultSet = statement.executeQuery();
             ResultSetMetaData metaData = resultSet.getMetaData();
             if (resultSet.next()){
-                entity = t.newInstance();
-                for (int i = 0; i < metaData.getColumnCount(); i++) {
-                    Field field;
-                    String columnName = metaData.getColumnLabel(i + 1);
-                    Object value = resultSet.getObject(i + 1);
-                    field  = t.getDeclaredField(dbCustomStrategy.isUnderlineToCamel() ? CommUtils.underlineToCamel(columnName) : columnName);
-                    if(value == null){
-                        value = CommUtils.getDefaultVal(field.getType().getName());
-                    }
-                    //表示这个属性(字段)允许访问(设置值)
-                    field.setAccessible(true);
-                    field.set(entity, value);
-                }
+                getResultMap(map, metaData);
             }
         }catch (SQLException e){
             logger.info(
@@ -182,11 +177,8 @@ public class SqlExecuteHandler extends DbConnection {
                     , sql, Arrays.toString(params));
             throw e;
 
-        }catch(NoSuchFieldException ignored){
-        }catch (IllegalAccessException | InstantiationException e) {
-            throw e;
         }
-        return entity;
+        return JSONObject.parseObject(JSONObject.toJSONString(map), t);
    }
 
 

@@ -113,7 +113,7 @@ public class BuildSqlHandler {
             throw new CustomCheckException(ExceptionConst.EX_SQL_NOT_EMPTY);
         }
         JudgeUtilsAx.checkObjNotNull(t);
-        return sqlExecuteHandler.queryCol(t, sql, params);
+        return sqlExecuteHandler.query(t, sql, params);
     }
 
     /**

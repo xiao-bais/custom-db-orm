@@ -32,10 +32,10 @@ public class DoMain {
         String sql = "select a.`stu_id`, a.`name` `name`, a.`age` `age`, a.`sex` `sex`, a.`birthDay` `birthDay`, a.`explain` `explain`, a.`cls_id` `clsId`, a.`teach_id` `teachId` ,cls.`clsName` `className`,t.`leader_name` `leaderName` \n" +
                 "from student a  \n" +
                 "left join classes cls on cls.clsId = a.cls_id\n" +
-                "left join leader t on t.id = a.teach_id";
+                "left join leader t on t.id = a.teach_id where ";
 
-        List<Person> personList = jdbcDao.selectListBySql(Person.class, sql);
-        System.out.println(1);
+        Person person = jdbcDao.selectOneByCondition(Person.class, "and a.stu_id = 5");
+        System.out.println(person);
 
 
     }

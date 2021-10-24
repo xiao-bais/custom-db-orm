@@ -19,7 +19,7 @@ import java.util.Date;
 @Data
 public class Person {
 
-    @DbKey
+    @DbKey("stu_id")
     private int stuId;
     @DbField
     private String name;
