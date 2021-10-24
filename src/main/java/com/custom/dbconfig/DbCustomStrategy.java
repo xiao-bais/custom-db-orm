@@ -10,7 +10,7 @@ public class DbCustomStrategy {
     /**
      * 下划线转驼峰
      */
-    private boolean underlineToCamel = true;
+    private boolean underlineToCamel = false;
 
     /**
      * 驼峰转下划线

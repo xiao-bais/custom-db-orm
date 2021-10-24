@@ -1,10 +1,14 @@
 package com.custom.handler;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.custom.dbconfig.DbConnection;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.comm.CommUtils;
 import com.custom.dbconfig.SymbolConst;
+import com.custom.test.Person;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,70 +47,90 @@ public class SqlExecuteHandler extends DbConnection {
         if(dbCustomStrategy.isSqlOutPrinting()) {
             logger.info(
                     "SQL ==>\n {}\n===================\nparams = {}\n"
-                    , sql, Arrays.toString(params));
-        }
+                    , sql, Arrays.toString(params)); }
         if(params.length <= 0) return;
         for (int i = 0; i < params.length; i++) {
             statement.setObject((i + 1), params[i]);
         }
     }
 
-    /**
-     * 通用查询
-     */
-   public <T> List<T> query(Class<T> clazz, String sql, Object... params) throws Exception{
-        Map<String,Object> map = null;
-        List<T> list = new ArrayList<>();
-        T entity = null;
-        map = new HashMap<>();
-        try{
-            executeAll(false, sql, params);
-            resultSet = statement.executeQuery();
-            ResultSetMetaData metaData = resultSet.getMetaData();
-            while (resultSet.next()) {
-                map.clear();
-                for (int i = 0; i < metaData.getColumnCount(); i++) {
-                    String columnName = metaData.getColumnLabel(i + 1);
-                    Object object = resultSet.getObject(i + 1);
-                    map.put(columnName, object);
-                }
-                if (map.size() <= 0)  continue;
-                try{
-                    //利用反射去实例化对象
-                    entity = clazz.newInstance();
-                }catch (InstantiationException  e){
-                    logger.error(e.toString(), e);
 
-                }
-                for (Map.Entry<String, Object> entry : map.entrySet()) {
-                    String fieldName = entry.getKey();
-                    Object value = entry.getValue();
+//   <T> List<T> query(Class<T> clazz, String sql, Object... params) throws Exception{
+//        Map<String, Object> map;
+//        List<T> list = new ArrayList<>();
+//        T entity;
+//        map = new HashMap<>();
+//        try{
+//            executeAll(false, sql, params);
+//            resultSet = statement.executeQuery();
+//            ResultSetMetaData metaData = resultSet.getMetaData();
+//            while (resultSet.next()) {
+//                map.clear();
+//                for (int i = 0; i < metaData.getColumnCount(); i++) {
+//                    String columnName = metaData.getColumnLabel(i + 1);
+//                    Object object = resultSet.getObject(i + 1);
+//                    map.put(dbCustomStrategy.isUnderlineToCamel() ? CommUtils.underlineToCamel(columnName) : columnName, object);
+//                }
+//                if (map.size() <= 0)  continue;
+//                //利用反射去实例化对象
+//                entity = clazz.newInstance();
+//                for (Map.Entry<String, Object> entry : map.entrySet()) {
+//                    String fieldName = entry.getKey();
+//                    Object value = entry.getValue();
+//
+//                    Field field;
+//                    try {
+//                        field  = clazz.getDeclaredField(fieldName);
+//                        if(value == null){
+//                            value = CommUtils.getDefaultVal(field.getType().getName());
+//                        }
+//
+//                        //表示这个属性(字段)允许访问(设置值)
+//                        field.setAccessible(true);
+//                        field.set(entity, value);
+//                    }catch (NoSuchFieldException ignored){
+//                    }catch (IllegalArgumentException e){ throw e; }
+//                }
+//                list.add(entity);
+//            }
+//        }catch (SQLException e){
+//            logger.info(
+//                    "\nsql error\n===================\nSQL ==>\n {}\n===================\nparams = {}\n"
+//                    , sql, Arrays.toString(params));
+//            throw e;
+//        }
+//        return list;
+//   }
 
-                    Field field = null;
-                    try {
-                        field  = clazz.getDeclaredField(fieldName);
-                        if(value == null){
-                            value = CommUtils.getDefaultVal(field.getType().getName());
-                        }
-                        //表示这个属性(字段)允许访问(设置值)
-                        field.setAccessible(true);
-                        field.set(entity, value);
-                    }catch (NoSuchFieldException ignored){
-                    }catch (IllegalArgumentException e){
-                        throw e;
-                    }
-                }
-                list.add(entity);
+   /**
+    * 通用查询（Collection）
+    */
+   <T> List<T> query(Class<T> clazz, String sql, Object... params) throws Exception {
+       Map<String, Object> map;
+       List<T> list = new ArrayList<>();
+       try{
+           executeAll(false, sql, params);
+           resultSet = statement.executeQuery();
+           ResultSetMetaData metaData = resultSet.getMetaData();
+           while (resultSet.next()) {
+               map = new HashMap<>();
+               for (int i = 0; i < metaData.getColumnCount(); i++) {
+                   String columnName = metaData.getColumnLabel(i + 1);
+                   Object object = resultSet.getObject(i + 1);
+                   map.put(dbCustomStrategy.isUnderlineToCamel() ? CommUtils.underlineToCamel(columnName) : columnName, object);
+               }
+               list.add(JSONObject.parseObject(JSONObject.toJSONString(map), clazz));
+           }
+       }catch (SQLException e){
+           logger.info(
+                   "\nsql error\n===================\nSQL ==>\n {}\n===================\nparams = {}\n"
+                   , sql, Arrays.toString(params));
+           throw e;
+       }
+       return list;
 
-            }
-        }catch (SQLException e){
-            logger.info(
-                    "\nsql error\n===================\nSQL ==>\n {}\n===================\nparams = {}\n"
-                    , sql, Arrays.toString(params));
-            throw e;
-        }
-        return list;
    }
+
 
     /**
      * Count(1) SQL
@@ -140,10 +164,10 @@ public class SqlExecuteHandler extends DbConnection {
             if (resultSet.next()){
                 entity = t.newInstance();
                 for (int i = 0; i < metaData.getColumnCount(); i++) {
-                    Field field = null;
+                    Field field;
                     String columnName = metaData.getColumnLabel(i + 1);
                     Object value = resultSet.getObject(i + 1);
-                    field  = t.getDeclaredField(columnName);
+                    field  = t.getDeclaredField(dbCustomStrategy.isUnderlineToCamel() ? CommUtils.underlineToCamel(columnName) : columnName);
                     if(value == null){
                         value = CommUtils.getDefaultVal(field.getType().getName());
                     }
@@ -157,7 +181,9 @@ public class SqlExecuteHandler extends DbConnection {
                     "\nsql error\n===================\nSQL ==>\n {}\n===================\nparams = {}\n"
                     , sql, Arrays.toString(params));
             throw e;
-        } catch (IllegalAccessException | InstantiationException | NoSuchFieldException e) {
+
+        }catch(NoSuchFieldException ignored){
+        }catch (IllegalAccessException | InstantiationException e) {
             throw e;
         }
         return entity;
@@ -207,8 +233,6 @@ public class SqlExecuteHandler extends DbConnection {
                     int key = Integer.parseInt(resultSet.getObject( 1).toString());
                     writeMethod.invoke(t, key);
                 }
-//                Method method = t.getClass().getMethod(initSetStr(keyField), t.getClass());
-//                method.invoke(obj.get(count), key);
                 count++;
             }
         }catch (SQLException e){
