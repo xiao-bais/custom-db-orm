@@ -44,16 +44,24 @@ public class SqlExecuteHandler extends DbConnection {
 
     private void executeAll(boolean isSave,String sql, Object... params) throws Exception {
         statement = isSave ? conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS) : conn.prepareStatement(sql);
-        if(dbCustomStrategy.isSqlOutPrinting()) {
-            logger.info(
-                    "SQL ==>\n {}\n===================\nparams = {}\n"
-                    , sql, Arrays.toString(params)); }
-        if(params.length <= 0) return;
-        for (int i = 0; i < params.length; i++) {
-            statement.setObject((i + 1), params[i]);
+        if (dbCustomStrategy.isSqlOutPrinting()) {
+
+            if (params.length <= 0) return;
+            for (int i = 0; i < params.length; i++) {
+                statement.setObject((i + 1), params[i]);
+            }
         }
     }
 
+
+    /**
+     * PRINT-ERROR-SQL
+     */
+    private void sqlPrint(String sql, Object... params) {
+        logger.info(
+                "\nsql error\n===================\nSQL ====>\n {}\n===================\nparams = {}\n"
+                , sql, Arrays.toString(params));
+    }
 
 //   <T> List<T> query(Class<T> clazz, String sql, Object... params) throws Exception{
 //        Map<String, Object> map;
@@ -118,9 +126,7 @@ public class SqlExecuteHandler extends DbConnection {
                list.add(JSONObject.parseObject(JSONObject.toJSONString(map), clazz));
            }
        }catch (SQLException e){
-           logger.info(
-                   "\nsql error\n===================\nSQL ==>\n {}\n===================\nparams = {}\n"
-                   , sql, Arrays.toString(params));
+           sqlPrint(sql, params);
            throw e;
        }
        return list;
@@ -151,9 +157,7 @@ public class SqlExecuteHandler extends DbConnection {
                 result = (long) resultSet.getObject(1);
             }
         }catch (SQLException e){
-            logger.info(
-                    "\nsql error\n===================\nSQL ==>\n {}\n===================\nparams = {}\n"
-                    , sql, Arrays.toString(params));
+            sqlPrint(sql, params);
             throw e;
         }
         return result;
@@ -172,9 +176,7 @@ public class SqlExecuteHandler extends DbConnection {
                 getResultMap(map, metaData);
             }
         }catch (SQLException e){
-            logger.info(
-                    "\nsql error\n===================\nSQL ==>\n {}\n===================\nparams = {}\n"
-                    , sql, Arrays.toString(params));
+            sqlPrint(sql, params);
             throw e;
 
         }
@@ -191,49 +193,41 @@ public class SqlExecuteHandler extends DbConnection {
             executeAll(false, sql, params);
             res = statement.executeUpdate();
         }catch (SQLException e){
-            logger.info(
-                    "\nsql error\n===================\nSQL ==>\n {}\n===================\nparams = {}\n"
-                    , sql, Arrays.toString(params));
-            throw e;
-        } catch (Exception e){
+            sqlPrint(sql, params);
             throw e;
         }
-        return res;
+       return res;
    }
 
     /**
      * 插入
      */
     @SuppressWarnings("Unchecked")
-   <T> int executeInsert(List<T> obj, String sql, String keyField, Object... params) throws SQLException {
+   <T> int executeInsert(List<T> obj, String sql, String keyField, Object... params) throws Exception {
         int res = 0;
         try{
             executeAll(true, sql, params);
             res = statement.executeUpdate();
-            resultSet = statement.getGeneratedKeys();
-            int count = 0;
-            while (resultSet.next()) {
-                T t = obj.get(count);
-                Field fieldKeyType = parserFieldHandler.getFieldKeyType(t.getClass());
-                Class<?> type = fieldKeyType.getType();
-                PropertyDescriptor pd = new PropertyDescriptor(keyField, t.getClass());
-                Method writeMethod = pd.getWriteMethod();
-                if(type.equals(Long.class) || type.equals(long.class)) {
-                    long key = Long.parseLong(resultSet.getObject( 1).toString());
-                    writeMethod.invoke(t, key);
-                }else if(type.equals(Integer.class) || type.equals(int.class)) {
-                    int key = Integer.parseInt(resultSet.getObject( 1).toString());
-                    writeMethod.invoke(t, key);
-                }
-                count++;
-            }
         }catch (SQLException e){
-            logger.info(
-                    "\nsql error\n===================\nSQL ==>\n {}\n===================\nparams = {}\n"
-                    , sql, Arrays.toString(params));
+            sqlPrint(sql, params);
             throw e;
-        } catch (Exception e){
-            logger.error(e.toString(), e);
+        }
+        resultSet = statement.getGeneratedKeys();
+        int count = 0;
+        while (resultSet.next()) {
+            T t = obj.get(count);
+            Field fieldKeyType = parserFieldHandler.getFieldKeyType(t.getClass());
+            Class<?> type = fieldKeyType.getType();
+            PropertyDescriptor pd = new PropertyDescriptor(keyField, t.getClass());
+            Method writeMethod = pd.getWriteMethod();
+            if(type.equals(Long.class) || type.equals(long.class)) {
+                long key = Long.parseLong(resultSet.getObject( 1).toString());
+                writeMethod.invoke(t, key);
+            }else if(type.equals(Integer.class) || type.equals(int.class)) {
+                int key = Integer.parseInt(resultSet.getObject( 1).toString());
+                writeMethod.invoke(t, key);
+            }
+            count++;
         }
         return res;
    }

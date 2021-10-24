@@ -34,7 +34,7 @@ public class DoMain {
                 "left join classes cls on cls.clsId = a.cls_id\n" +
                 "left join leader t on t.id = a.teach_id where ";
 
-        Person person = jdbcDao.selectOneByCondition(Person.class, "and a.stu_id = 5");
+        Person person = jdbcDao.selectOneByCondition(Person.class, "and a.stu_ad = 5");
         System.out.println(person);
 
 

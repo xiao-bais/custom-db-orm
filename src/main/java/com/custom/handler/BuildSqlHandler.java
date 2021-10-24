@@ -101,7 +101,7 @@ public class BuildSqlHandler {
             condition = String.format("where 1 = 1 %s", condition);
         }
         JudgeUtilsAx.checkObjNotNull(t);
-        String selectSql = String.format("%s \n%s", dbParserFieldHandler.getSelectSql(t), condition);
+        String selectSql = String.format("%s %s", dbParserFieldHandler.getSelectSql(t), condition);
         return sqlExecuteHandler.executeSql(t, selectSql, params);
     }
 
