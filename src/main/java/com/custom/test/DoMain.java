@@ -1,9 +1,11 @@
 package com.custom.test;
 
+import com.custom.date.DateTimeUtils;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.handler.JdbcDao;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -29,13 +31,22 @@ public class DoMain {
 
         JdbcDao jdbcDao = new JdbcDao(dbDataSource);
 
-        String sql = "select a.`stu_id`, a.`name` `name`, a.`age` `age`, a.`sex` `sex`, a.`birthDay` `birthDay`, a.`explain` `explain`, a.`cls_id` `clsId`, a.`teach_id` `teachId` ,cls.`clsName` `className`,t.`leader_name` `leaderName` \n" +
-                "from student a  \n" +
-                "left join classes cls on cls.clsId = a.cls_id\n" +
-                "left join leader t on t.id = a.teach_id where ";
+        String sql = "SELECT\n" +
+                "  `stu_id`, `stu_name`, `stu_sex`, `stu_age`, `stu_birth`\n" +
+                "FROM\n" +
+                "  `onetest`.`student` ";
 
-        Person person = jdbcDao.selectOneByCondition(Person.class, "and a.stu_ad = 5");
-        System.out.println(person);
+        int thisTime = DateTimeUtils.getThisTime();
+        List<Person> personList = jdbcDao.selectListByKeys(Person.class, Arrays.asList(41,42,43,44,45,46,47,48,49,50,51,52));
+        int nowTime = DateTimeUtils.getThisTime();
+
+       int sub = nowTime - thisTime;
+
+        System.out.println("sub = " + sub);
+
+        for (Person person : personList) {
+            System.out.println("person = " + person);
+        }
 
 
     }

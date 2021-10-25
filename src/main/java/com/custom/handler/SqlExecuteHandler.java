@@ -60,7 +60,7 @@ public class SqlExecuteHandler extends DbConnection {
     private void sqlPrint(String sql, Object... params) {
         logger.info(
                 "\nsql error\n===================\nSQL ====>\n {}\n===================\nparams = {}\n"
-                , sql, Arrays.toString(params));
+                , sql, JSON.toJSONString(params));
     }
 
 //   <T> List<T> query(Class<T> clazz, String sql, Object... params) throws Exception{

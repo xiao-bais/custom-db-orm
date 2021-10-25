@@ -9,6 +9,7 @@ import com.custom.comm.JudgeUtilsAx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -89,8 +90,24 @@ public class BuildSqlHandler {
         if(key == null) throw new NullPointerException();
         JudgeUtilsAx.checkObjNotNull(t);
         String alias = dbParserFieldHandler.getDbTableAlias(t);
-        String selectSql = String.format("%s \nwhere %s.`%s` = ?", dbParserFieldHandler.getSelectSql(t), alias, dbParserFieldHandler.getDbFieldKey(t));
+        String selectSql = String.format("%s where %s.`%s` = ?", dbParserFieldHandler.getSelectSql(t), alias, dbParserFieldHandler.getDbFieldKey(t));
         return sqlExecuteHandler.executeSql(t, selectSql, key);
+   }
+
+   /**
+   * 根据多个主键获取多条记录
+   */
+
+   <T> List<T> selectBatchByKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception {
+       if(keys == null || keys.size() == 0) throw new NullPointerException();
+       JudgeUtilsAx.checkObjNotNull(t);
+       String alias = dbParserFieldHandler.getDbTableAlias(t);
+       StringJoiner symbolKeys = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+       for (int i = 0; i < keys.size(); i++) {
+           symbolKeys.add("?");
+       }
+       String selectSql = String.format("%s where %s.`%s` in (%s) ", dbParserFieldHandler.getSelectSql(t), alias, dbParserFieldHandler.getDbFieldKey(t), symbolKeys);
+       return sqlExecuteHandler.query(t, selectSql, keys.toArray());
    }
 
     /**
@@ -151,19 +168,17 @@ public class BuildSqlHandler {
     /**
      * 根据主键批量删除
      */
-    <T> int deleteBatchKeys(Class<T> t, Object[] keys) throws Exception {
-        if(keys == null) return 0;
+    <T> int deleteBatchKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception {
+        if(keys == null || keys.size() == 0) return 0;
         JudgeUtilsAx.checkObjNotNull(t);
-        StringJoiner delSymbols = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2, SymbolConst.BRACKETS_LEFT, SymbolConst.BRACKETS_RIGHT);
-        int symbol = keys.length;
-        do {
+        StringJoiner delSymbols = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+        for (int i = 0; i < keys.size(); i++) {
             delSymbols.add("?");
-            symbol--;
-        }while (symbol > 0);
+        }
         String alias = dbParserFieldHandler.getDbTableAlias(t);
-        String deleteSql = String.format("delete from %s %s where %s.`%s` in %s",
+        String deleteSql = String.format("delete from %s %s where %s.`%s` in (%s) ",
                 dbParserFieldHandler.getDbTableName(t), alias, alias, dbParserFieldHandler.getDbFieldKey(t), delSymbols);
-        return sqlExecuteHandler.executeUpdate(deleteSql, keys);
+        return sqlExecuteHandler.executeUpdate(deleteSql, keys.toArray());
     }
 
     /**

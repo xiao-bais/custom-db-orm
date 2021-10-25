@@ -97,6 +97,10 @@ public class DateTimeUtils {
         return getThisDay(yyyyMMdd_);
     }
 
+    public static int getThisTime() {
+        return (int) (new Date().getTime() / 1000L);
+    }
+
     /**
      * 获取今日开始时间戳
      */

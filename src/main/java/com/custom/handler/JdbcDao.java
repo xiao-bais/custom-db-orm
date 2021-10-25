@@ -3,6 +3,8 @@ package com.custom.handler;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.page.DbPageRows;
 
+import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -26,6 +28,13 @@ public class JdbcDao {
      */
     public <T> List<T> selectList(Class<T> t, String condition, String orderBy, Object... params) throws Exception {
         return buildSqlHandler.selectList(t, condition, orderBy, params);
+    }
+
+    /**
+    * 根据多个主键查询多条记录
+    */
+    public <T> List<T> selectListByKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception {
+        return buildSqlHandler.selectBatchByKeys(t, keys);
     }
 
     /**
@@ -96,7 +105,7 @@ public class JdbcDao {
     /**
      * 根据主键删除多条记录
      */
-    public <T> int deleteBatchKeys(Class<T> t, Object[] keys) throws Exception {
+    public <T> int deleteBatchKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception {
         return buildSqlHandler.deleteBatchKeys(t, keys);
     }
 

@@ -12,35 +12,35 @@ import java.util.Date;
  * @Description
  */
 @DbTable(table = "student")
-@DbJoinTables({
-        @DbJoinTable("left join classes cls on cls.clsId = a.cls_id"),
-        @DbJoinTable("left join leader t on t.id = a.teach_id"),
-})
+//@DbJoinTables({
+//        @DbJoinTable("left join classes cls on cls.clsId = a.cls_id"),
+//        @DbJoinTable("left join leader t on t.id = a.teach_id"),
+//})
 @Data
 public class Person {
 
     @DbKey("stu_id")
     private int stuId;
-    @DbField
+    @DbField("stu_name")
     private String name;
-    @DbField
+    @DbField("stu_age")
     private int age;
-    @DbField
+    @DbField("stu_sex")
     private boolean sex;
-    @DbField
+    @DbField("stu_birth")
     private Date birthDay;
-    @DbField
+//    @DbField
     private String explain;
-    @DbField("cls_id")
+//    @DbField("cls_id")
     private int clsId;
-    @DbField("teach_id")
+//    @DbField("teach_id")
     private int teachId;
 
 
-    @DbMap("cls.clsName")
+//    @DbMap("cls.clsName")
 //    @DbRelated(joinTable = "classes", joinAlias = "cls", field = "clsName", condition = "cls.clsId = a.cls_id")
     private String className;
-    @DbMap("t.leader_name")
+//    @DbMap("t.leader_name")
 //    @DbRelated(joinTable = "teacher", joinAlias = "t", field = "name", condition = "t.id = a.teach_id")
     private String leaderName;
 
