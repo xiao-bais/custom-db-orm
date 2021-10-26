@@ -46,11 +46,13 @@ public class SqlExecuteHandler extends DbConnection {
     private void executeAll(boolean isSave,String sql, Object... params) throws Exception {
         statement = isSave ? conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS) : conn.prepareStatement(sql);
         if (dbCustomStrategy.isSqlOutPrinting()) {
-
-            if (params.length <= 0) return;
-            for (int i = 0; i < params.length; i++) {
-                statement.setObject((i + 1), params[i]);
-            }
+            logger.info(
+                    "\nSQL ====>\n {}\n===================\nparams = {}\n"
+                    , sql, JSON.toJSONString(params));
+        }
+        if (params.length <= 0) return;
+        for (int i = 0; i < params.length; i++) {
+            statement.setObject((i + 1), params[i]);
         }
     }
 

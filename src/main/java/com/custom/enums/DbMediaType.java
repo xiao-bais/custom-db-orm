@@ -16,7 +16,7 @@ public enum DbMediaType {
 
     DbTimestamp("timestamp", "11"),
 
-    DbDecimal("decimal", "16,4"),
+    DbDecimal("decimal", "16,2"),
 
     DbDouble("double", "12,2"),
 
