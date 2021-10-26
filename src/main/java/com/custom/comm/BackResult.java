@@ -170,14 +170,14 @@ public class BackResult<T> {
         return new BackResult<>(ResultStatus.server_err.getCode(), msg);
     }
 
-    private interface Back<T>{
-        void exeCall(BackResult<T> backResult);
+    public interface Back<T>{
+        void execCall(BackResult<T> backResult);
     }
 
     public static <T> BackResult<T> exeCall(BackResult.Back<T> back){
         BackResult<T> backResult = new BackResult<>();
         try {
-            back.exeCall(backResult);
+            back.execCall(backResult);
         }catch (Exception e){
             logger.error(e.toString(), e);
             backResult = new BackResult<>(ResultStatus.error.getCode(), e.toString());
