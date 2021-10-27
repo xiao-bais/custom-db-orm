@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="af78b080-0197-4100-b595-be15bf225a22" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/custom/http/HttpRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/custom/enums/DbMediaType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/custom/enums/DbMediaType.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/custom/handler/SqlExecuteHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/custom/handler/SqlExecuteHandler.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,8 +29,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Enum" />
-        <option value="Class" />
         <option value="AnnotationType" />
+        <option value="Class" />
       </list>
     </option>
   </component>
