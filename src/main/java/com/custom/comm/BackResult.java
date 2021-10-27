@@ -171,10 +171,10 @@ public class BackResult<T> {
     }
 
     public interface Back<T>{
-        void execCall(BackResult<T> backResult);
+        void execCall(BackResult<T> backResult) throws Exception;
     }
 
-    public static <T> BackResult<T> exeCall(BackResult.Back<T> back){
+    public static <T> BackResult<T> execCall(BackResult.Back<T> back){
         BackResult<T> backResult = new BackResult<>();
         try {
             back.execCall(backResult);
