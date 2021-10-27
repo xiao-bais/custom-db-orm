@@ -60,9 +60,9 @@ public class SqlExecuteHandler extends DbConnection {
     /**
      * PRINT-ERROR-SQL
      */
-    private void sqlPrint(String sql, Object... params) {
+    private void sqlErrPrint(String sql, Object... params) {
         logger.info(
-                "\nsql error\n===================\nSQL ====>\n {}\n===================\nparams = {}\n"
+                "\nsql error\n===================\nSQL ====>\n {}\n===================\nparams = {}\n==================="
                 , sql, JSON.toJSONString(params));
     }
 
@@ -129,7 +129,7 @@ public class SqlExecuteHandler extends DbConnection {
                list.add(JSONObject.parseObject(JSONObject.toJSONString(map), clazz));
            }
        }catch (SQLException e){
-           sqlPrint(sql, params);
+           sqlErrPrint(sql, params);
            throw e;
        }
        return list;
@@ -160,7 +160,7 @@ public class SqlExecuteHandler extends DbConnection {
                 result = (long) resultSet.getObject(1);
             }
         }catch (SQLException e){
-            sqlPrint(sql, params);
+            sqlErrPrint(sql, params);
             throw e;
         }
         return result;
@@ -179,7 +179,7 @@ public class SqlExecuteHandler extends DbConnection {
                 getResultMap(map, metaData);
             }
         }catch (SQLException e){
-            sqlPrint(sql, params);
+            sqlErrPrint(sql, params);
             throw e;
 
         }
@@ -196,7 +196,7 @@ public class SqlExecuteHandler extends DbConnection {
             executeAll(false, sql, params);
             res = statement.executeUpdate();
         }catch (SQLException e){
-            sqlPrint(sql, params);
+            sqlErrPrint(sql, params);
             throw e;
         }
        return res;
@@ -212,7 +212,7 @@ public class SqlExecuteHandler extends DbConnection {
             executeAll(true, sql, params);
             res = statement.executeUpdate();
         }catch (SQLException e){
-            sqlPrint(sql, params);
+            sqlErrPrint(sql, params);
             throw e;
         }
         resultSet = statement.getGeneratedKeys();

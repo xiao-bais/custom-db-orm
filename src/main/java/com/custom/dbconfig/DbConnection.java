@@ -24,7 +24,7 @@ public class DbConnection {
     public DbConnection(DbDataSource dbDataSource) {
         try {
             isExistClass(JudgeUtilsAx.isEmpty(dbDataSource.getDriver()) ? DbFieldsConst.CUSTOM_DRIVER : dbDataSource.getDriver());
-            connection = (Connection) ExceptionConst.currMap.get(DbFieldsConst.CONN);
+            connection = (Connection) ExceptionConst.currMap.get(getConnKey(dbDataSource));
             if (null == connection) {
                 DruidDataSource druidDataSource = new DruidDataSource();
                 druidDataSource.setDriverClassName(dbDataSource.getDriver());
@@ -47,7 +47,7 @@ public class DbConnection {
                 dbDataSource.setDatabase(CommUtils.getDataBase(dbDataSource.getUrl()));
             }
             ExceptionConst.currMap.put(DbFieldsConst.DATA_BASE, dbDataSource.getDatabase());
-            ExceptionConst.currMap.put(DbFieldsConst.CONN, connection);
+            ExceptionConst.currMap.put(getConnKey(dbDataSource), connection);
 
             DbCustomStrategy dbCustomStrategy = dbDataSource.getDbCustomStrategy();
             if(null == dbCustomStrategy) {
@@ -61,6 +61,9 @@ public class DbConnection {
         }
     }
 
+    private String getConnKey(DbDataSource dbDataSource) {
+        return String.format("%s-%s-%s-%s", dbDataSource.getUrl(), dbDataSource.getUsername(), dbDataSource.getPassword(), dbDataSource.getDatabase());
+    }
 
 
     private void isExistClass(String driverClassName) throws ClassNotFoundException {
@@ -71,6 +74,7 @@ public class DbConnection {
         }
     }
 
+    private static ThreadLocal<Connection> CONN_LOCAL = new ThreadLocal<>();
     protected Connection getConnection() {
         return connection;
     }
