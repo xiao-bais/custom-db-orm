@@ -74,9 +74,15 @@ public class DbConnection {
         }
     }
 
+    //线程隔离
     private static ThreadLocal<Connection> CONN_LOCAL = new ThreadLocal<>();
+
     protected Connection getConnection() {
-        return connection;
+        if(null == CONN_LOCAL.get()) {
+            CONN_LOCAL.set(connection);
+            return connection;
+        }
+        return CONN_LOCAL.get();
     }
 
     public DbCustomStrategy getDbCustomStrategy() {

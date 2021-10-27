@@ -66,53 +66,6 @@ public class SqlExecuteHandler extends DbConnection {
                 , sql, JSON.toJSONString(params));
     }
 
-//   <T> List<T> query(Class<T> clazz, String sql, Object... params) throws Exception{
-//        Map<String, Object> map;
-//        List<T> list = new ArrayList<>();
-//        T entity;
-//        map = new HashMap<>();
-//        try{
-//            executeAll(false, sql, params);
-//            resultSet = statement.executeQuery();
-//            ResultSetMetaData metaData = resultSet.getMetaData();
-//            while (resultSet.next()) {
-//                map.clear();
-//                for (int i = 0; i < metaData.getColumnCount(); i++) {
-//                    String columnName = metaData.getColumnLabel(i + 1);
-//                    Object object = resultSet.getObject(i + 1);
-//                    map.put(dbCustomStrategy.isUnderlineToCamel() ? CommUtils.underlineToCamel(columnName) : columnName, object);
-//                }
-//                if (map.size() <= 0)  continue;
-//                //利用反射去实例化对象
-//                entity = clazz.newInstance();
-//                for (Map.Entry<String, Object> entry : map.entrySet()) {
-//                    String fieldName = entry.getKey();
-//                    Object value = entry.getValue();
-//
-//                    Field field;
-//                    try {
-//                        field  = clazz.getDeclaredField(fieldName);
-//                        if(value == null){
-//                            value = CommUtils.getDefaultVal(field.getType().getName());
-//                        }
-//
-//                        //表示这个属性(字段)允许访问(设置值)
-//                        field.setAccessible(true);
-//                        field.set(entity, value);
-//                    }catch (NoSuchFieldException ignored){
-//                    }catch (IllegalArgumentException e){ throw e; }
-//                }
-//                list.add(entity);
-//            }
-//        }catch (SQLException e){
-//            logger.info(
-//                    "\nsql error\n===================\nSQL ==>\n {}\n===================\nparams = {}\n"
-//                    , sql, Arrays.toString(params));
-//            throw e;
-//        }
-//        return list;
-//   }
-
    /**
     * 通用查询（Collection）
     */
@@ -167,7 +120,7 @@ public class SqlExecuteHandler extends DbConnection {
    }
 
     /**
-     * 通用查询sql
+     * 通用查询单个对象sql
      */
    <T> T executeSql(Class<T> t, String sql, Object... params) throws Exception {
        Map<String, Object> map = new HashMap<>();
