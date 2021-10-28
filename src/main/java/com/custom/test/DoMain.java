@@ -1,7 +1,10 @@
 package com.custom.test;
 
+import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.handler.JdbcDao;
+
+import java.util.List;
 
 /**
  * @Author Xiao-Bai
@@ -17,11 +20,18 @@ public class DoMain {
         dbDataSource.setDriver("com.mysql.cj.jdbc.Driver");
         dbDataSource.setUsername("root");
         dbDataSource.setPassword("123456");
+        DbCustomStrategy dbCustomStrategy = new DbCustomStrategy();
+        //是否打印执行的sql 默认false
+        dbCustomStrategy.setSqlOutPrinting(true);
+        dbDataSource.setDbCustomStrategy(dbCustomStrategy);
 
         JdbcDao jdbcDao = new JdbcDao(dbDataSource);
 
         //创建一个表
         jdbcDao.createTables(Employee.class);
+
+        List<Employee> employeeList1 = jdbcDao.selectList(Employee.class, "and a.id = ?", 5);
+        // List<Employee> employeeList2 = jdbcDao.selectList(Employee.class, "and a.id = 5");
 
     }
 }
