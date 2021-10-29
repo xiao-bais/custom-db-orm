@@ -45,6 +45,18 @@ public class Employee {
 
     }
 
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "id=" + id +
+                ", empName='" + empName + '\'' +
+                ", sex=" + sex +
+                ", age=" + age +
+                ", address=" + address +
+                ", birthday=" + birthday +
+                '}';
+    }
+
     public int getId() {
         return id;
     }
