@@ -24,7 +24,7 @@ public class DbConnection {
      */
     public DbConnection(DbDataSource dbDataSource) {
         try {
-            isExistClass(JudgeUtilsAx.isEmpty(dbDataSource.getDriver()) ? DbFieldsConst.CUSTOM_DRIVER : dbDataSource.getDriver());
+            isExistClass(dbDataSource.getDriver());
             connection = (Connection) ExceptionConst.currMap.get(getConnKey(dbDataSource));
             if (null == connection) {
                 DruidDataSource druidDataSource = new DruidDataSource();
@@ -68,11 +68,10 @@ public class DbConnection {
 
 
     private void isExistClass(String driverClassName) throws ClassNotFoundException {
-        try {
-            Class.forName(driverClassName);
-        }catch (ClassNotFoundException e){
-            throw e;
+        if(JudgeUtilsAx.isEmpty(driverClassName)) {
+            driverClassName = DbFieldsConst.CUSTOM_DRIVER;
         }
+        Class.forName(driverClassName);
     }
 
     //线程隔离
