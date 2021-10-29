@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="af78b080-0197-4100-b595-be15bf225a22" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/custom/dbconfig/ProxyTransBean.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/custom/dbconfig/DbConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/custom/dbconfig/DbConnection.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -215,7 +213,7 @@
       <workItem from="1635086860649" duration="4819000" />
       <workItem from="1635266454860" duration="1200000" />
       <workItem from="1635498162799" duration="903000" />
-      <workItem from="1635500446314" duration="406000" />
+      <workItem from="1635500446314" duration="462000" />
     </task>
     <task id="LOCAL-00001" summary="第一次提交">
       <created>1629626288523</created>
@@ -413,7 +411,14 @@
       <option name="project" value="LOCAL" />
       <updated>1635387924518</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="修改数据库连接方式">
+      <created>1635500863798</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1635500863798</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -469,10 +474,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="773" y="391" key="#xdebugger.evaluate/0.0.1920.1040@0.0.1920.1040" timestamp="1635387507448" />
-    <state x="556" y="113" key="CommitChangelistDialog2" timestamp="1635387923588">
+    <state x="556" y="113" key="CommitChangelistDialog2" timestamp="1635500862916">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="556" y="113" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1635387923587" />
+    <state x="556" y="113" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1635500862916" />
     <state width="429" height="466" key="DebuggerActiveHint" timestamp="1634051442436">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -529,10 +534,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="92" y="92" width="1736" height="856" key="VCS.FileHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1633800668457" />
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1635387927044">
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1635500873607">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1635387927044" />
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1635500873607" />
     <state width="968" height="528" key="XDebugger.FullValuePopup" timestamp="1634743654481">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
