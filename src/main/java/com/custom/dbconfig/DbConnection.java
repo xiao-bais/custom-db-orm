@@ -25,41 +25,44 @@ public class DbConnection {
     public DbConnection(DbDataSource dbDataSource) {
         try {
             isExistClass(dbDataSource.getDriver());
-            connection = (Connection) ExceptionConst.currMap.get(getConnKey(dbDataSource));
-            if (null == connection) {
-                DruidDataSource druidDataSource = new DruidDataSource();
-                druidDataSource.setDriverClassName(dbDataSource.getDriver());
-                druidDataSource.setUrl(dbDataSource.getUrl());
-                druidDataSource.setUsername(dbDataSource.getUsername());
-                druidDataSource.setPassword(dbDataSource.getPassword());
-
-                druidDataSource.setInitialSize(dbDataSource.getInitialSize());
-                druidDataSource.setMinIdle(dbDataSource.getMinIdle());
-                druidDataSource.setMaxWait(dbDataSource.getMaxWait());
-                druidDataSource.setMaxActive(dbDataSource.getMaxActive());
-                druidDataSource.setValidationQuery(dbDataSource.getValidationQuery());
-                druidDataSource.setTestWhileIdle(dbDataSource.isTestWhileIdle());
-                druidDataSource.setTestOnBorrow(dbDataSource.isTestOnBorrow());
-                druidDataSource.setTestOnReturn(dbDataSource.isTestOnReturn());
-                connection = druidDataSource.getConnection();
-            }
-            dbDataSource.setDatabase(CommUtils.getDataBase(dbDataSource.getUrl()));
-            if (JudgeUtilsAx.isEmpty(dbDataSource.getDatabase())) {
-                dbDataSource.setDatabase(CommUtils.getDataBase(dbDataSource.getUrl()));
-            }
-            ExceptionConst.currMap.put(DbFieldsConst.DATA_BASE, dbDataSource.getDatabase());
-            ExceptionConst.currMap.put(getConnKey(dbDataSource), connection);
-
-            DbCustomStrategy dbCustomStrategy = dbDataSource.getDbCustomStrategy();
-            if(null == dbCustomStrategy) {
-                dbCustomStrategy = new DbCustomStrategy();
-            }
-            this.dbCustomStrategy = dbCustomStrategy;
-            ExceptionConst.currMap.put(DbFieldsConst.CUSTOM_STRATEGY, dbCustomStrategy);
-
+            init(dbDataSource);
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    private void init(DbDataSource dbDataSource) throws SQLException {
+        connection = (Connection) ExceptionConst.currMap.get(getConnKey(dbDataSource));
+        if (null == connection) {
+            DruidDataSource druidDataSource = new DruidDataSource();
+            druidDataSource.setDriverClassName(dbDataSource.getDriver());
+            druidDataSource.setUrl(dbDataSource.getUrl());
+            druidDataSource.setUsername(dbDataSource.getUsername());
+            druidDataSource.setPassword(dbDataSource.getPassword());
+
+            druidDataSource.setInitialSize(dbDataSource.getInitialSize());
+            druidDataSource.setMinIdle(dbDataSource.getMinIdle());
+            druidDataSource.setMaxWait(dbDataSource.getMaxWait());
+            druidDataSource.setMaxActive(dbDataSource.getMaxActive());
+            druidDataSource.setValidationQuery(dbDataSource.getValidationQuery());
+            druidDataSource.setTestWhileIdle(dbDataSource.isTestWhileIdle());
+            druidDataSource.setTestOnBorrow(dbDataSource.isTestOnBorrow());
+            druidDataSource.setTestOnReturn(dbDataSource.isTestOnReturn());
+            connection = druidDataSource.getConnection();
+        }
+        dbDataSource.setDatabase(CommUtils.getDataBase(dbDataSource.getUrl()));
+        if (JudgeUtilsAx.isEmpty(dbDataSource.getDatabase())) {
+            dbDataSource.setDatabase(CommUtils.getDataBase(dbDataSource.getUrl()));
+        }
+        ExceptionConst.currMap.put(DbFieldsConst.DATA_BASE, dbDataSource.getDatabase());
+        ExceptionConst.currMap.put(getConnKey(dbDataSource), connection);
+
+        DbCustomStrategy dbCustomStrategy = dbDataSource.getDbCustomStrategy();
+        if(null == dbCustomStrategy) {
+            dbCustomStrategy = new DbCustomStrategy();
+        }
+        this.dbCustomStrategy = dbCustomStrategy;
+        ExceptionConst.currMap.put(DbFieldsConst.CUSTOM_STRATEGY, dbCustomStrategy);
     }
 
     private String getConnKey(DbDataSource dbDataSource) {
