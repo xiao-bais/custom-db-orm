@@ -6,6 +6,7 @@ import com.custom.comm.JudgeUtilsAx;
 import com.custom.exceptions.ExceptionConst;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * @Author Xiao-Bai
@@ -78,9 +79,13 @@ public class DbConnection {
     private static ThreadLocal<Connection> CONN_LOCAL = new ThreadLocal<>();
 
     protected Connection getConnection() {
-        if(null == CONN_LOCAL.get()) {
-            CONN_LOCAL.set(connection);
-            return connection;
+        try {
+            if(null == CONN_LOCAL.get() || connection.isClosed()) {
+                CONN_LOCAL.set(connection);
+                return connection;
+            }
+        }catch (SQLException e) {
+            return null;
         }
         return CONN_LOCAL.get();
     }

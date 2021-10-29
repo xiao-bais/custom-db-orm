@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="af78b080-0197-4100-b595-be15bf225a22" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/custom/dbconfig/ProxyTransBean.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/custom/test/DoMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/custom/test/DoMain.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/custom/dbconfig/DbConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/custom/dbconfig/DbConnection.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,6 +31,7 @@
         <option value="AnnotationType" />
         <option value="Class" />
         <option value="Enum" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -212,6 +214,8 @@
       <workItem from="1635070814177" duration="528000" />
       <workItem from="1635086860649" duration="4819000" />
       <workItem from="1635266454860" duration="1200000" />
+      <workItem from="1635498162799" duration="903000" />
+      <workItem from="1635500446314" duration="406000" />
     </task>
     <task id="LOCAL-00001" summary="第一次提交">
       <created>1629626288523</created>
@@ -402,7 +406,14 @@
       <option name="project" value="LOCAL" />
       <updated>1635384562787</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="修改数据库连接方式">
+      <created>1635387924518</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1635387924518</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -458,10 +469,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="773" y="391" key="#xdebugger.evaluate/0.0.1920.1040@0.0.1920.1040" timestamp="1635387507448" />
-    <state x="556" y="113" key="CommitChangelistDialog2" timestamp="1635384562003">
+    <state x="556" y="113" key="CommitChangelistDialog2" timestamp="1635387923588">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="556" y="113" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1635384562003" />
+    <state x="556" y="113" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1635387923587" />
     <state width="429" height="466" key="DebuggerActiveHint" timestamp="1634051442436">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -474,38 +485,38 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1634901941384" />
-    <state width="1877" height="402" key="GridCell.Tab.0.bottom" timestamp="1635387773251">
+    <state width="1877" height="402" key="GridCell.Tab.0.bottom" timestamp="1635391596641">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="402" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1635387773251" />
-    <state width="1877" height="402" key="GridCell.Tab.0.center" timestamp="1635387773251">
+    <state width="1877" height="402" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1635391596641" />
+    <state width="1877" height="402" key="GridCell.Tab.0.center" timestamp="1635391596641">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="402" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1635387773251" />
-    <state width="1877" height="402" key="GridCell.Tab.0.left" timestamp="1635387773251">
+    <state width="1877" height="402" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1635391596641" />
+    <state width="1877" height="402" key="GridCell.Tab.0.left" timestamp="1635391596641">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="402" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1635387773251" />
-    <state width="1877" height="402" key="GridCell.Tab.0.right" timestamp="1635387773251">
+    <state width="1877" height="402" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1635391596641" />
+    <state width="1877" height="402" key="GridCell.Tab.0.right" timestamp="1635391596641">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="402" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1635387773251" />
-    <state width="1877" height="402" key="GridCell.Tab.1.bottom" timestamp="1635387773092">
+    <state width="1877" height="402" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1635391596641" />
+    <state width="1877" height="402" key="GridCell.Tab.1.bottom" timestamp="1635391596642">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="402" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1635387773092" />
-    <state width="1877" height="402" key="GridCell.Tab.1.center" timestamp="1635387773092">
+    <state width="1877" height="402" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1635391596642" />
+    <state width="1877" height="402" key="GridCell.Tab.1.center" timestamp="1635391596642">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="402" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1635387773092" />
-    <state width="1877" height="402" key="GridCell.Tab.1.left" timestamp="1635387773092">
+    <state width="1877" height="402" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1635391596642" />
+    <state width="1877" height="402" key="GridCell.Tab.1.left" timestamp="1635391596642">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="402" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1635387773092" />
-    <state width="1877" height="402" key="GridCell.Tab.1.right" timestamp="1635387773092">
+    <state width="1877" height="402" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1635391596642" />
+    <state width="1877" height="402" key="GridCell.Tab.1.right" timestamp="1635391596642">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="402" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1635387773092" />
+    <state width="1877" height="402" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1635391596642" />
     <state x="716" y="230" key="RollbackChangesDialog" timestamp="1634818565955">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -518,10 +529,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="92" y="92" width="1736" height="856" key="VCS.FileHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1633800668457" />
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1635384565003">
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1635387927044">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1635384565003" />
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1635387927044" />
     <state width="968" height="528" key="XDebugger.FullValuePopup" timestamp="1634743654481">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -558,16 +569,5 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1635314952784" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/custom/handler/SqlExecuteHandler.java</url>
-          <line>47</line>
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>
