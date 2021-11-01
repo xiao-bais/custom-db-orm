@@ -27,12 +27,9 @@ public class DoMain {
 
         JdbcDao jdbcDao = new JdbcDao(dbDataSource);
 
-        //创建一个表
-        jdbcDao.createTables(Employee.class);
+        long l = jdbcDao.executeSql("update employee set emp_name = '张三' where id = 5");
+        System.out.println("l = " + l);
 
-        Employee employee = jdbcDao.selectOneByCondition(Employee.class, "and a.id = ?", 5);
-        // List<Employee> employeeList2 = jdbcDao.selectList(Employee.class, "and a.id = 5");
-        System.out.println("employee = " + employee.toString());
 
     }
 }

@@ -86,8 +86,8 @@ public class BackResult<T> {
         try {
             back.execCall(backResult);
         }catch (Exception e){
-            logger.error(e.toString(), e);
-            backResult = new BackResult<>(ResultStatus.error.getCode(), e.toString());
+            logger.error(e.getMessage(), e);
+            backResult = new BackResult<>(ResultStatus.error.getCode(), e.getMessage());
         }
         return backResult;
     }
@@ -131,7 +131,7 @@ public class BackResult<T> {
     public static BackResult<List<String>> test(){
         return BackResult.execCall(call -> {
            call.error("错误了");
-
+            throw new NullPointerException("error....");
         });
     }
 

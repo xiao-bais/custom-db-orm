@@ -1,11 +1,11 @@
 package com.custom.handler;
 
+import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.DbDataSource;
-import com.custom.exceptions.ExceptionConst;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.exceptions.CustomCheckException;
+import com.custom.exceptions.ExceptionConst;
 import com.custom.page.DbPageRows;
-import com.custom.comm.JudgeUtilsAx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -333,6 +333,13 @@ public class BuildSqlHandler {
             update = insert(t, false);
         }
         return update;
+    }
+
+    int executeSql(String sql, Object... params) throws Exception {
+        if(JudgeUtilsAx.isEmpty(sql)){
+            throw new NullPointerException();
+        }
+        return sqlExecuteHandler.executeUpdate(sql, params);
     }
 
 

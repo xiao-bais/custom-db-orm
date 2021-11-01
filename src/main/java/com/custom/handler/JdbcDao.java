@@ -172,6 +172,13 @@ public class JdbcDao {
     }
 
     /**
+    * 执行一条sql（增删改）
+    */
+    public <T> long executeSql(String sql, Object... params) throws Exception {
+        return buildSqlHandler.executeSql(sql, params);
+    }
+
+    /**
      * 删除表
      */
     public final void dropTables(Class<?>... arr) throws Exception{
