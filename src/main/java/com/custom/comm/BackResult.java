@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -69,105 +70,11 @@ public class BackResult<T> {
         return this;
     }
 
-
-    public BackResult(Integer status, String msg, T data, Map<String, Object> attr) {
-        this.status = status;
-        this.msg = msg;
-        this.data = data;
-        this.attr = attr;
-    }
     public BackResult() {}
-
-    public BackResult(String msg, T data, Map<String, Object> attr) {
-        this.msg = msg;
-        this.data = data;
-        this.attr = attr;
-    }
 
     public BackResult(Integer status, String msg) {
         this.status = status;
         this.msg = msg;
-    }
-
-    public BackResult(Integer status, String msg, T data) {
-        this.status = status;
-        this.msg = msg;
-        this.data = data;
-    }
-
-    public BackResult(String msg, T data) {
-        this.msg = msg;
-        this.data = data;
-    }
-
-    public BackResult(String msg) {
-        this.msg = msg;
-    }
-
-    public static <T> BackResult<T> bySuccess(T data){
-        logger.info("request-status: ---------" + ResultStatus.success.getDesc());
-        return new BackResult<>(ResultStatus.success.getCode(), ResultStatus.success.getDesc(), data);
-    }
-
-    public static <T> BackResult<T> bySuccess(T data, Map<String, Object> attr){
-        logger.info("request-status: ---------" + ResultStatus.success.getDesc());
-        return new BackResult<>(ResultStatus.success.getCode(), ResultStatus.success.getDesc(), data, attr);
-    }
-
-    public static <T> BackResult<T> bySuccess(String msg, T data){
-        logger.info("request-status: ---------" + ResultStatus.success.getDesc());
-        return new BackResult<>(ResultStatus.success.getCode(), msg, data);
-    }
-
-    public static <T> BackResult<T> bySuccess(String msg){
-        logger.info("request-status: ---------" + ResultStatus.success.getDesc());
-        return new BackResult<>(ResultStatus.success.getCode(), msg);
-    }
-
-
-
-    public static <T> BackResult<T> byError(String msg, T data){
-        logger.info("request-status: ---------" + ResultStatus.error.getDesc());
-        return new BackResult<>(ResultStatus.error.getCode(), msg, data);
-    }
-
-    public static <T> BackResult<T> byError(T data){
-        logger.info("request-status: ---------" + ResultStatus.error.getDesc());
-        return new BackResult<>(ResultStatus.error.getCode(), ResultStatus.error.getDesc(), data);
-    }
-
-    public static <T> BackResult<T> byError(String msg){
-        logger.info("request-status: ---------" + ResultStatus.error.getDesc());
-        return new BackResult<>(ResultStatus.error.getCode(), msg);
-    }
-
-
-
-    public static <T> BackResult<T> byEmpty(String msg, T data){
-        logger.info("request-status: ---------" + ResultStatus.empty.getDesc());
-        return new BackResult<>(ResultStatus.empty.getCode(), msg, data);
-    }
-
-    public static <T> BackResult<T> byEmpty(T data){
-        logger.info("request-status: ---------" + ResultStatus.empty.getDesc());
-        return new BackResult<>(ResultStatus.empty.getCode(), ResultStatus.empty.getDesc(), data);
-    }
-
-    public static <T> BackResult<T> byEmpty(String msg){
-        logger.info("request-status: ---------" + ResultStatus.empty.getDesc());
-        return new BackResult<>(ResultStatus.empty.getCode(), msg);
-    }
-
-
-
-    public static <T> BackResult<T> byServerErr(String msg, T data){
-        logger.info("request-status: ---------" + ResultStatus.server_err.getDesc());
-        return new BackResult<>(ResultStatus.server_err.getCode(), msg, data);
-    }
-
-    public static <T> BackResult<T> byServerErr(String msg){
-        logger.info("request-status: ---------" + ResultStatus.server_err.getDesc());
-        return new BackResult<>(ResultStatus.server_err.getCode(), msg);
     }
 
     public interface Back<T>{
@@ -185,9 +92,48 @@ public class BackResult<T> {
         return backResult;
     }
 
+    public void error(String msg) {
+        this.msg = msg;
+        this.status = ResultStatus.error.getCode();
+    }
+
+    public void empty(String msg) {
+        this.msg = msg;
+        this.status = ResultStatus.empty.getCode();
+    }
+
+    public void success(String msg) {
+        this.msg = msg;
+        this.status = ResultStatus.success.getCode();
+    }
+
+    public void success(T data) {
+        this.msg = ResultStatus.success.getDesc();
+        this.status = ResultStatus.success.getCode();
+        this.data = data;
+    }
+
+    public void success(T data, Map<String, Object> attr) {
+        this.msg = ResultStatus.success.getDesc();
+        this.status = ResultStatus.success.getCode();
+        this.data = data;
+        this.attr = attr;
+    }
 
 
+    public static void main(String[] args) {
 
+        BackResult<List<String>> test = test();
+        System.out.println("test = " + test);
+
+    }
+
+    public static BackResult<List<String>> test(){
+        return BackResult.execCall(call -> {
+           call.error("错误了");
+
+        });
+    }
 
 
 

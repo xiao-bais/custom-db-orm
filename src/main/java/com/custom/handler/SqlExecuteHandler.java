@@ -131,10 +131,10 @@ public class SqlExecuteHandler extends DbConnection {
             if (resultSet.next()){
                 getResultMap(map, metaData);
             }
+            if(map.isEmpty()) return null;
         }catch (SQLException e){
             sqlErrPrint(sql, params);
             throw e;
-
         }
         return JSONObject.parseObject(JSONObject.toJSONString(map), t);
    }
