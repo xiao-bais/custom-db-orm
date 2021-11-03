@@ -7,6 +7,7 @@ package com.custom.handler;
  * @Description DbTableApiUtils
  */
 
+import com.custom.comm.CommUtils;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.dbconfig.DbFieldsConst;
 import com.custom.dbconfig.SymbolConst;
@@ -42,7 +43,7 @@ public class BuildTableHandler {
      * 查看该表是否存在
      */
     private <T> boolean existTable(Class<T> t) {
-        JudgeUtilsAx.isTableTag(t);
+        CommUtils.isTableTag(t);
         long count = 0;
         try{
             Map<String, Object> tableMap = annotationsParser.getParserByDbTable(t);

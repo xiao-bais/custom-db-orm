@@ -66,36 +66,6 @@ public class JudgeUtilsAx {
         if(null == t) throw new NullPointerException();
     }
 
-    /**
-     * 该类是否存在DbTable注解
-     */
-    public static <T> void isTableTag(Class<T> clazz) {
-        if(!clazz.isAnnotationPresent(DbTable.class)) throw new CustomCheckException(ExceptionConst.EX_DBTABLE__NOTFOUND + clazz.getName());
-    }
 
-    /**
-     * 该类是否有多个DbKey注解
-     */
-    public static <T> void isMoreDbKey(Class<T> clazz) {
-        Field[] fields = clazz.getDeclaredFields();
-        int num = 0;
-        for (Field field : fields) {
-            if (field.isAnnotationPresent(DbKey.class)) {
-                num++;
-            }
-        }
-        if(num > 1) throw new CustomCheckException(ExceptionConst.EX_PRIMARY_REPEAT + clazz.getName());
-    }
-
-    /**
-     * 该类是否存在主键
-     */
-    public static <T> boolean isKeyTag(Class<T> clazz){
-        Field[] fields = clazz.getDeclaredFields();
-        for (Field field : fields) {
-            if (field.isAnnotationPresent(DbKey.class)) return true;
-        }
-        return false;
-    }
 
 }

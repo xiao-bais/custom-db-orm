@@ -1,5 +1,6 @@
 package com.custom.handler;
 
+import com.custom.comm.CommUtils;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.dbconfig.SymbolConst;
@@ -325,7 +326,7 @@ public class BuildSqlHandler {
      * 保存（更新或插入）
      */
     <T> long save(T t) throws Exception {
-        if(!JudgeUtilsAx.isKeyTag(t.getClass())){
+        if(!CommUtils.isKeyTag(t.getClass())){
             throw new CustomCheckException(ExceptionConst.EX_DBKEY_NOTFOUND + t);
         }
         long update = updateByKey(t);

@@ -4,8 +4,6 @@ import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.handler.JdbcDao;
 
-import java.util.List;
-
 /**
  * @Author Xiao-Bai
  * @Date 2021/10/28 9:18
@@ -29,6 +27,7 @@ public class DoMain {
 
         long l = jdbcDao.executeSql("update employee set emp_name = '张三' where id = 5");
         System.out.println("l = " + l);
+
 
 
     }

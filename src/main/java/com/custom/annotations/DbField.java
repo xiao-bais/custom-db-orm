@@ -1,5 +1,6 @@
 package com.custom.annotations;
 
+import com.custom.enums.FillStrategy;
 import com.custom.enums.DbMediaType;
 
 import java.lang.annotation.*;

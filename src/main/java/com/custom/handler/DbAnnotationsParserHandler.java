@@ -45,7 +45,7 @@ public class DbAnnotationsParserHandler {
         if(t == null) {
             throw new NullPointerException();
         }
-        JudgeUtilsAx.isMoreDbKey(t);
+        CommUtils.isMoreDbKey(t);
         Map<String, Object> elementMap = new HashMap<>();
         Field fieldKey = getFieldKey(t);
         if(null == fieldKey) return elementMap;

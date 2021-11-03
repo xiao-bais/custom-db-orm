@@ -2,12 +2,17 @@
 package com.custom.comm;
 
 import com.alibaba.druid.sql.visitor.functions.Char;
+import com.custom.annotations.DbKey;
+import com.custom.annotations.DbTable;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.DbMediaType;
+import com.custom.exceptions.CustomCheckException;
+import com.custom.exceptions.ExceptionConst;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Locale;
@@ -106,7 +111,7 @@ public class CommUtils {
     public static String getJoinFieldStr(String field) {
         int index = field.indexOf(".");
         String fieldName = field.substring(index + SymbolConst.DEFAULT_ONE);
-        String alias = field.substring(0, index + SymbolConst.DEFAULT_ONE);
+        String alias = field.substring(SymbolConst.DEFAULT_ZERO, index + SymbolConst.DEFAULT_ONE);
         return String.format("%s`%s`", alias, fieldName);
     }
 
@@ -223,6 +228,37 @@ public class CommUtils {
         return sb.toString();
     }
 
+    /**
+     * 该类是否存在DbTable注解
+     */
+    public static <T> void isTableTag(Class<T> clazz) {
+        if(!clazz.isAnnotationPresent(DbTable.class)) throw new CustomCheckException(ExceptionConst.EX_DBTABLE__NOTFOUND + clazz.getName());
+    }
+
+    /**
+     * 该类是否有多个DbKey注解
+     */
+    public static <T> void isMoreDbKey(Class<T> clazz) {
+        Field[] fields = clazz.getDeclaredFields();
+        int num = 0;
+        for (Field field : fields) {
+            if (field.isAnnotationPresent(DbKey.class)) {
+                num++;
+            }
+        }
+        if(num > 1) throw new CustomCheckException(ExceptionConst.EX_PRIMARY_REPEAT + clazz.getName());
+    }
+
+    /**
+     * 该类是否存在主键
+     */
+    public static <T> boolean isKeyTag(Class<T> clazz){
+        Field[] fields = clazz.getDeclaredFields();
+        for (Field field : fields) {
+            if (field.isAnnotationPresent(DbKey.class)) return true;
+        }
+        return false;
+    }
 
 
 

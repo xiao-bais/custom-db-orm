@@ -1,0 +1,26 @@
+{
+  "properties": [
+    {
+      "name": "custom.db.datasource",
+      "type": "com.custom.dbconfig.DbDataSource",
+      "description": "The Connection database configuration.",
+      "sourceType": "com.custom.dbconfig.DbDataSource"
+    },
+    {
+      "name": "custom.db.strategy",
+      "type": "com.custom.dbconfig.DbCustomStrategy",
+      "description": "The Custom Strategy Rule.",
+      "sourceType": "com.custom.dbconfig.DbCustomStrategy"
+    }
+  ],
+
+  "groups": [
+    {
+      "name": "custom.db.datasource",
+      "sourceMethod": "DbDataSource()",
+      "type": "com.custom.dbconfig.DbDataSource",
+      "sourceType": "com.custom.dbconfig.DbDataSource"
+    }
+  ]
+
+}

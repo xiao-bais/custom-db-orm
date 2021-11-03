@@ -1,16 +1,36 @@
 package com.custom.dbconfig;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+
 /**
  * @Author Xiao-Bai
  * @Date 2021/1/31 22:35
  * @Description 数据库连接配置中心
  */
+@Configuration
+@ConfigurationProperties(prefix = "custom.db.datasource")
 public class DbDataSource {
 
+    /**
+    * 连接驱动
+    */
     private String driver;
+    /**
+    * 连接地址
+    */
     private String url;
+    /**
+    * 连接用户名
+    */
     private String username;
+    /**
+    * 连接用户密码
+    */
     private String password;
+    /**
+    * 指定数据库
+    */
     private String database;
 
     /* 初始化配置 */
