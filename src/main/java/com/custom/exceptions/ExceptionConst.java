@@ -102,6 +102,11 @@ public class ExceptionConst {
      */
     public final static String EX_DB_JOIN_TABLES_NOTFOUND = " @DbJoinTables was not found in class ";
 
+    /**
+    * 未配置逻辑删除字段的对应值
+    */
+    public final static String EX_LOGIC_EMPTY_VALUE = " The corresponding value of the logical deletion field is not configured ";
+
 
 }
 

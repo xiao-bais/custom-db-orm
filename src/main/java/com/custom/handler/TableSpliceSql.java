@@ -6,7 +6,7 @@ import com.custom.exceptions.ExceptionConst;
 import com.custom.enums.DbMediaType;
 import com.custom.enums.KeyStrategy;
 import com.custom.exceptions.CustomCheckException;
-import com.custom.comm.CommUtils;
+import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
 
 import java.util.List;
@@ -86,7 +86,7 @@ public class TableSpliceSql {
         KeyStrategy keyType = (KeyStrategy) map.get(DbFieldsConst.KEY_STRATEGY);//获取主键增值类型
         String keyStrategy = SymbolConst.EMPTY;
         if(KeyStrategy.AUTO.equals(keyType)) {
-            if(!CommUtils.checkPrimaryKeyIsAutoIncrement(dbType))
+            if(!CustomUtil.checkPrimaryKeyIsAutoIncrement(dbType))
                 throw new CustomCheckException(ExceptionConst.EX_PRIMARY_CANNOT_MATCH);
                 keyStrategy = DbFieldsConst.AUTO_INCREMENT;
         }

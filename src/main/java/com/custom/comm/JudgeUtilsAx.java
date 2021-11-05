@@ -2,6 +2,7 @@ package com.custom.comm;
 
 import com.custom.annotations.DbKey;
 import com.custom.annotations.DbTable;
+import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.exceptions.ExceptionConst;
 import com.custom.exceptions.CustomCheckException;
 
@@ -64,6 +65,16 @@ public class JudgeUtilsAx {
 
     public static <T> void checkObjNotNull(Class<T> t) throws NullPointerException {
         if(null == t) throw new NullPointerException();
+    }
+
+    /**
+    * 是否开启了逻辑删除字段
+    */
+    public static boolean isLogicDeleteOpen(DbCustomStrategy dbCustomStrategy) {
+        if(dbCustomStrategy == null) {
+            dbCustomStrategy = new DbCustomStrategy();
+        }
+       return isNotEmpty(dbCustomStrategy.getDbFieldDeleteLogic());
     }
 
 

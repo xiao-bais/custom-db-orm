@@ -13,16 +13,21 @@ public class SymbolConst {
     public final static String SEPARATOR_COMMA_1 = ",";//逗号
     public final static String SEPARATOR_COMMA_2 = ", ";//逗号(加空格)
 
-
     public final static String BRACKETS_LEFT = "(";//左括号
     public final static String BRACKETS_RIGHT = ")";//右括号
 
     public final static String GET = "get";//get
     public final static String SET = "set";//set
     public final static String IS = "is";//is
+    public final static String IN = "in";//is
+
 
     public final static char UNDERLINE = '_'; //下划线
     public final static String EMPTY = "";//空字符串
+    public final static String EQUALS = "=";//等于
+    public final static String QUEST = "?";//占位符
+
+
 
 
 

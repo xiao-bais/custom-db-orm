@@ -81,7 +81,7 @@ public class BackResult<T> {
         void execCall(BackResult<T> backResult) throws Exception;
     }
 
-    public static <T> BackResult<T> execCall(BackResult.Back<T> back){
+    public static <T> BackResult<T> execCall(BackResult.Back<T> back) throws Exception {
         BackResult<T> backResult = new BackResult<>();
         try {
             back.execCall(backResult);
@@ -121,16 +121,17 @@ public class BackResult<T> {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         BackResult<List<String>> test = test();
         System.out.println("test = " + test);
 
     }
 
-    public static BackResult<List<String>> test(){
+    public static BackResult<List<String>> test() throws Exception {
         return BackResult.execCall(call -> {
-           call.error("错误了");
+            int a= 1;
+            System.out.println(a);
             throw new NullPointerException("error....");
         });
     }

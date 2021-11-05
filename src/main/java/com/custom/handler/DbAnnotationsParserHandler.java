@@ -5,7 +5,7 @@ import com.custom.dbconfig.DbFieldsConst;
 import com.custom.exceptions.ExceptionConst;
 import com.custom.enums.DbMediaType;
 import com.custom.exceptions.DbAnnotationParserException;
-import com.custom.comm.CommUtils;
+import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
 
 import java.lang.reflect.Field;
@@ -45,7 +45,7 @@ public class DbAnnotationsParserHandler {
         if(t == null) {
             throw new NullPointerException();
         }
-        CommUtils.isMoreDbKey(t);
+        CustomUtil.isMoreDbKey(t);
         Map<String, Object> elementMap = new HashMap<>();
         Field fieldKey = getFieldKey(t);
         if(null == fieldKey) return elementMap;
@@ -96,7 +96,7 @@ public class DbAnnotationsParserHandler {
             DbField annotation = field.getAnnotation(DbField.class);
             DbMediaType dbFieldType = annotation.fieldType();
             if(annotation.fieldType() == DbMediaType.DbVarchar) {
-                dbFieldType = CommUtils.getDbFieldType(field.getType());
+                dbFieldType = CustomUtil.getDbFieldType(field.getType());
             }
             elementMap.put(DbFieldsConst.DB_FIELD_TYPE, dbFieldType);//数据库对应字段类型
             elementMap.put(DbFieldsConst.DB_CLASS_FIELD, field.getName());//java实体类属性

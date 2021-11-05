@@ -1,7 +1,7 @@
 package com.custom.dbconfig;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.custom.comm.CommUtils;
+import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.exceptions.ExceptionConst;
 
@@ -50,9 +50,9 @@ public class DbConnection {
             druidDataSource.setTestOnReturn(dbDataSource.isTestOnReturn());
             connection = druidDataSource.getConnection();
         }
-        dbDataSource.setDatabase(CommUtils.getDataBase(dbDataSource.getUrl()));
+        dbDataSource.setDatabase(CustomUtil.getDataBase(dbDataSource.getUrl()));
         if (JudgeUtilsAx.isEmpty(dbDataSource.getDatabase())) {
-            dbDataSource.setDatabase(CommUtils.getDataBase(dbDataSource.getUrl()));
+            dbDataSource.setDatabase(CustomUtil.getDataBase(dbDataSource.getUrl()));
         }
         ExceptionConst.currMap.put(DbFieldsConst.DATA_BASE, dbDataSource.getDatabase());
         ExceptionConst.currMap.put(getConnKey(dbDataSource), connection);

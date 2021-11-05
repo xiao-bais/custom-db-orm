@@ -12,6 +12,7 @@ import java.util.List;
  * @Date 2021/7/4
  * @Description jdbc通用操作类
  */
+
 public class JdbcDao {
 
     /* ----------------------------------------------------------------select---------------------------------------------------------------- */
@@ -84,6 +85,13 @@ public class JdbcDao {
      */
     public <T> T selectOneBySql(Class<T> t, String sql, Object... params) throws Exception {
         return buildSqlHandler.selectOneBySql(t, sql, params);
+    }
+
+    /**
+     * 纯sql查询单个值
+     */
+    public Object selectObjBySql(String sql, Object... params) throws Exception {
+        return buildSqlHandler.selectObjBySql(sql, params);
     }
 
     /**

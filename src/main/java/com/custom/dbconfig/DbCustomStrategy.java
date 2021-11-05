@@ -18,10 +18,14 @@ public class DbCustomStrategy {
     private boolean underlineToCamel = false;
 
     /**
-     * 打印sql
+     * 打印sql（默认只开启查询的sql）
      */
     private boolean sqlOutPrinting = false;
 
+    /**
+    * 开启打印增删改的sql
+    */
+    private boolean sqlOutUpdate = false;
 
     /**
     * 逻辑删除字段
@@ -39,9 +43,13 @@ public class DbCustomStrategy {
     private String notDeleteLogicValue = SymbolConst.EMPTY;
 
 
+    public boolean isSqlOutUpdate() {
+        return sqlOutUpdate;
+    }
 
-
-
+    public void setSqlOutUpdate(boolean sqlOutUpdate) {
+        this.sqlOutUpdate = sqlOutUpdate;
+    }
 
     public String getDbFieldDeleteLogic() {
         return dbFieldDeleteLogic;

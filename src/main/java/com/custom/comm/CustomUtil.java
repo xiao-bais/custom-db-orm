@@ -25,7 +25,7 @@ import java.util.UUID;
  * @Version 1.0
  * @Description CommUtils
  */
-public class CommUtils {
+public class CustomUtil {
 
     public static String getDataBase(String url){
         int lastIndex =  url.lastIndexOf("/");

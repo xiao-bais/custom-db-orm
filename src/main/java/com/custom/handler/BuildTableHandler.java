@@ -7,13 +7,12 @@ package com.custom.handler;
  * @Description DbTableApiUtils
  */
 
-import com.custom.comm.CommUtils;
+import com.custom.comm.CustomUtil;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.dbconfig.DbFieldsConst;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.exceptions.ExceptionConst;
 import com.custom.exceptions.CustomCheckException;
-import com.custom.comm.JudgeUtilsAx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +42,7 @@ public class BuildTableHandler {
      * 查看该表是否存在
      */
     private <T> boolean existTable(Class<T> t) {
-        CommUtils.isTableTag(t);
+        CustomUtil.isTableTag(t);
         long count = 0;
         try{
             Map<String, Object> tableMap = annotationsParser.getParserByDbTable(t);

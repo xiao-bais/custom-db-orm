@@ -1,14 +1,13 @@
 package com.custom.handler;
 
-import com.custom.comm.CommUtils;
+import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
+import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
 import com.custom.page.DbPageRows;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.*;
@@ -21,14 +20,29 @@ import java.util.stream.Collectors;
  */
 public class BuildSqlHandler {
 
-    private Logger logger = LoggerFactory.getLogger(BuildSqlHandler.class);
-
     private SqlExecuteHandler sqlExecuteHandler;
     private DbParserFieldHandler dbParserFieldHandler;
+    private String logicDeleteUpdateSql = SymbolConst.EMPTY;
+    private String logicDeleteQuerySql = SymbolConst.EMPTY;
 
     public BuildSqlHandler(DbDataSource dbDataSource){
         dbParserFieldHandler = new DbParserFieldHandler();
         sqlExecuteHandler = new SqlExecuteHandler(dbDataSource, dbParserFieldHandler);
+        DbCustomStrategy dbCustomStrategy = dbDataSource.getDbCustomStrategy();
+        init(dbCustomStrategy);
+    }
+
+
+    /**
+     * 初始化逻辑删除的sql
+     */
+    public void init(DbCustomStrategy dbCustomStrategy) {
+        if(JudgeUtilsAx.isLogicDeleteOpen(dbCustomStrategy)) {
+            if(JudgeUtilsAx.isEmpty(dbCustomStrategy.getNotDeleteLogicValue()) || JudgeUtilsAx.isEmpty(dbCustomStrategy.getDeleteLogicValue()))
+                throw new CustomCheckException(ExceptionConst.EX_LOGIC_EMPTY_VALUE);
+            this.logicDeleteUpdateSql = String.format("`%s` = %s ", dbCustomStrategy.getDbFieldDeleteLogic(), dbCustomStrategy.getDeleteLogicValue());
+            this.logicDeleteQuerySql = String.format("`%s` = %s ", dbCustomStrategy.getDbFieldDeleteLogic(), dbCustomStrategy.getNotDeleteLogicValue());
+        }
     }
 
 
@@ -37,9 +51,8 @@ public class BuildSqlHandler {
      * 查询全部
      */
    <T> List<T> selectList(Class<T> t, String condition, String orderBy, Object... params) throws Exception {
-       if (JudgeUtilsAx.isNotEmpty(condition)) {
-           condition = String.format("where 1 = 1 %s", condition);
-       }
+
+       condition = dbParserFieldHandler.checkConditionAndLogicDeleteSql(t, condition, logicDeleteQuerySql);
        JudgeUtilsAx.checkObjNotNull(t);
        String selectSql = String.format("%s %s %s", dbParserFieldHandler.getSelectSql(t), JudgeUtilsAx.isNotEmpty(condition) ? condition : "",
                JudgeUtilsAx.isNotEmpty(orderBy) ? orderBy : SymbolConst.EMPTY);
@@ -50,9 +63,8 @@ public class BuildSqlHandler {
     * 分页查询1
     */
    <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, String orderBy, int pageIndex, int pageSize, Object... params) throws Exception {
-        if (JudgeUtilsAx.isNotEmpty(condition)) {
-            condition = String.format("where 1 = 1 %s", condition);
-        }
+
+       condition = dbParserFieldHandler.checkConditionAndLogicDeleteSql(t, condition, logicDeleteQuerySql);
         JudgeUtilsAx.checkObjNotNull(t);
         if(JudgeUtilsAx.isNotEmpty(orderBy)){
             orderBy = String.format("\norder by %s", orderBy);
@@ -62,7 +74,7 @@ public class BuildSqlHandler {
         String countSql = String.format("select count(0) from (%s) xxx ", selectSql);
 
         List<T> dataList = new ArrayList<>();
-        long count = sqlExecuteHandler.executeSql(countSql, params);
+        long count = (long) sqlExecuteHandler.selectOneSql(countSql, params);
         if(count > 0) {
             selectSql = String.format("%s \nlimit %s, %s", selectSql, (pageIndex - 1) * pageSize, pageSize);
             dataList = sqlExecuteHandler.query(t, selectSql, params);
@@ -92,7 +104,7 @@ public class BuildSqlHandler {
         JudgeUtilsAx.checkObjNotNull(t);
         String alias = dbParserFieldHandler.getDbTableAlias(t);
         String selectSql = String.format("%s where %s.`%s` = ?", dbParserFieldHandler.getSelectSql(t), alias, dbParserFieldHandler.getDbFieldKey(t));
-        return sqlExecuteHandler.executeSql(t, selectSql, key);
+        return sqlExecuteHandler.selectOneSql(t, selectSql, key);
    }
 
    /**
@@ -105,7 +117,7 @@ public class BuildSqlHandler {
        String alias = dbParserFieldHandler.getDbTableAlias(t);
        StringJoiner symbolKeys = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
        for (int i = 0; i < keys.size(); i++) {
-           symbolKeys.add("?");
+           symbolKeys.add(SymbolConst.QUEST);
        }
        String selectSql = String.format("%s where %s.`%s` in (%s) ", dbParserFieldHandler.getSelectSql(t), alias, dbParserFieldHandler.getDbFieldKey(t), symbolKeys);
        return sqlExecuteHandler.query(t, selectSql, keys.toArray());
@@ -115,12 +127,10 @@ public class BuildSqlHandler {
      * 根据条件获取一条记录
      */
     <T> T selectOneByCondition(Class<T> t, String condition, Object... params) throws Exception {
-        if (JudgeUtilsAx.isNotEmpty(condition)) {
-            condition = String.format("where 1 = 1 %s", condition);
-        }
+        condition = dbParserFieldHandler.checkConditionAndLogicDeleteSql(t, condition, logicDeleteQuerySql);
         JudgeUtilsAx.checkObjNotNull(t);
         String selectSql = String.format("%s %s", dbParserFieldHandler.getSelectSql(t), condition);
-        return sqlExecuteHandler.executeSql(t, selectSql, params);
+        return sqlExecuteHandler.selectOneSql(t, selectSql, params);
     }
 
     /**
@@ -149,7 +159,16 @@ public class BuildSqlHandler {
             throw new CustomCheckException(String.format(ExceptionConst.EX_QUERY_MORE_RESULT, queryList.size()));
         }
         return queryList.get(0);
+    }
 
+    /**
+    * 查询单个值的纯sql
+    */
+    Object selectObjBySql(String sql, Object... params) throws Exception {
+        if(JudgeUtilsAx.isEmpty(sql)) {
+            throw new CustomCheckException(ExceptionConst.EX_SQL_NOT_EMPTY);
+        }
+        return sqlExecuteHandler.selectOneSql(sql, params);
     }
 
 
@@ -160,9 +179,7 @@ public class BuildSqlHandler {
     <T> int deleteByKey(Class<T> t, Object key) throws Exception {
         if(key == null) return 0;
         JudgeUtilsAx.checkObjNotNull(t);
-        String alias = dbParserFieldHandler.getDbTableAlias(t);
-        String deleteSql = String.format("delete from %s %s where %s.`%s` = ?",
-                dbParserFieldHandler.getDbTableName(t), alias, alias, dbParserFieldHandler.getDbFieldKey(t));
+        String deleteSql = dbParserFieldHandler.getDeleteSql(t, logicDeleteUpdateSql, SymbolConst.QUEST, false);
         return sqlExecuteHandler.executeUpdate(deleteSql, key);
     }
 
@@ -174,11 +191,9 @@ public class BuildSqlHandler {
         JudgeUtilsAx.checkObjNotNull(t);
         StringJoiner delSymbols = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
         for (int i = 0; i < keys.size(); i++) {
-            delSymbols.add("?");
+            delSymbols.add(SymbolConst.QUEST);
         }
-        String alias = dbParserFieldHandler.getDbTableAlias(t);
-        String deleteSql = String.format("delete from %s %s where %s.`%s` in (%s) ",
-                dbParserFieldHandler.getDbTableName(t), alias, alias, dbParserFieldHandler.getDbFieldKey(t), delSymbols);
+        String deleteSql = dbParserFieldHandler.getDeleteSql(t, logicDeleteUpdateSql, String.format("(%s)", delSymbols), true);
         return sqlExecuteHandler.executeUpdate(deleteSql, keys.toArray());
     }
 
@@ -209,7 +224,7 @@ public class BuildSqlHandler {
         StringJoiner dbFieldStr = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2, SymbolConst.BRACKETS_LEFT, SymbolConst.BRACKETS_RIGHT);
 
         //如果存在主键
-        String dbFieldKey = "";
+        String dbFieldKey = SymbolConst.EMPTY;
         if(dbParserFieldHandler.isDbKeyTag(t.getClass())){
             //主键字段
             dbFieldKey = dbParserFieldHandler.getDbFieldKey(t.getClass());
@@ -224,7 +239,7 @@ public class BuildSqlHandler {
         StringJoiner insertSymbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2, SymbolConst.BRACKETS_LEFT, SymbolConst.BRACKETS_RIGHT);
         int symbol = fieldsVal.size();
         do {
-            insertSymbol.add("?");
+            insertSymbol.add(SymbolConst.QUEST);
             symbol--;
         }while (symbol > 0);
         String insertSql = String.format("insert into `%s` %s values %s",
@@ -248,7 +263,7 @@ public class BuildSqlHandler {
 
         //如果存在主键
         boolean existKey = dbParserFieldHandler.isDbKeyTag(t.getClass());
-        String dbFieldKey = "";
+        String dbFieldKey = SymbolConst.EMPTY;
         if(existKey){
             //主键字段
             dbFieldKey = dbParserFieldHandler.getDbFieldKey(t.getClass());
@@ -270,7 +285,7 @@ public class BuildSqlHandler {
             StringJoiner insertSymbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2, SymbolConst.BRACKETS_LEFT, SymbolConst.BRACKETS_RIGHT);
             int symbol = fieldsVal.size();
             do {
-                insertSymbol.add("?");
+                insertSymbol.add(SymbolConst.QUEST);
                 symbol--;
             }while (symbol > 0);
             inertValStr.add("\n" + insertSymbol.toString());
@@ -326,7 +341,7 @@ public class BuildSqlHandler {
      * 保存（更新或插入）
      */
     <T> long save(T t) throws Exception {
-        if(!CommUtils.isKeyTag(t.getClass())){
+        if(!CustomUtil.isKeyTag(t.getClass())){
             throw new CustomCheckException(ExceptionConst.EX_DBKEY_NOTFOUND + t);
         }
         long update = updateByKey(t);

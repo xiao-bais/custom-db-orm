@@ -32,6 +32,17 @@ public class Employee {
     @DbField(desc = "生日")
     private Date birthday;
 
+    @DbField
+    private int state;
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
+    }
+
     public Employee(int id, String empName, boolean sex, int age, int address, Date birthday) {
         this.id = id;
         this.empName = empName;

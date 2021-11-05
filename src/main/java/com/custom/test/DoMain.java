@@ -4,6 +4,9 @@ import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.handler.JdbcDao;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @Author Xiao-Bai
  * @Date 2021/10/28 9:18
@@ -21,13 +24,15 @@ public class DoMain {
         DbCustomStrategy dbCustomStrategy = new DbCustomStrategy();
         //是否打印执行的sql 默认false
         dbCustomStrategy.setSqlOutPrinting(true);
+        dbCustomStrategy.setDbFieldDeleteLogic("state");
+        dbCustomStrategy.setDeleteLogicValue("1");
+        dbCustomStrategy.setNotDeleteLogicValue("0");
         dbDataSource.setDbCustomStrategy(dbCustomStrategy);
 
         JdbcDao jdbcDao = new JdbcDao(dbDataSource);
 
-        long l = jdbcDao.executeSql("update employee set emp_name = '张三' where id = 5");
-        System.out.println("l = " + l);
-
+        List<Employee> employeeList = jdbcDao.selectList(Employee.class, "and age > 22");
+//        System.out.println("employee = " + employee);
 
 
     }

@@ -2,7 +2,8 @@ package com.custom.handler;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.custom.comm.CommUtils;
+import com.custom.comm.CustomUtil;
+import com.custom.comm.SqlOutPrintBuilder;
 import com.custom.dbconfig.DbConnection;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
@@ -43,12 +44,27 @@ public class SqlExecuteHandler extends DbConnection {
         this.parserFieldHandler = parserFieldHandler;
     }
 
-    private void executeAll(boolean isSave,String sql, Object... params) throws Exception {
+    /**
+    * 预编译-更新
+    */
+    private void statementUpdate(boolean isSave, String sql, Object... params) throws Exception {
         statement = isSave ? conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS) : conn.prepareStatement(sql);
+        if (dbCustomStrategy.isSqlOutPrinting() && dbCustomStrategy.isSqlOutUpdate()) {
+            new SqlOutPrintBuilder(sql, params).sqlInfoUpdatePrint();
+        }
+        if (params.length <= 0) return;
+        for (int i = 0; i < params.length; i++) {
+            statement.setObject((i + 1), params[i]);
+        }
+    }
+
+    /**
+    * 预编译-查询
+    */
+    private void statementQuery(String sql, Object... params) throws Exception {
+        statement = conn.prepareStatement(sql);
         if (dbCustomStrategy.isSqlOutPrinting()) {
-            logger.info(
-                    "\nSQL ====>\n {}\n===================\nparams = {}\n"
-                    , sql, JSON.toJSONString(params));
+            new SqlOutPrintBuilder(sql, params).sqlInfoQueryPrint();
         }
         if (params.length <= 0) return;
         for (int i = 0; i < params.length; i++) {
@@ -57,15 +73,6 @@ public class SqlExecuteHandler extends DbConnection {
     }
 
 
-    /**
-     * PRINT-ERROR-SQL
-     */
-    private void sqlErrPrint(String sql, Object... params) {
-        logger.info(
-                "\nsql error\n===================\nSQL ====>\n {}\n===================\nparams = {}\n==================="
-                , sql, JSON.toJSONString(params));
-    }
-
    /**
     * 通用查询（Collection）
     */
@@ -73,7 +80,7 @@ public class SqlExecuteHandler extends DbConnection {
        Map<String, Object> map;
        List<T> list = new ArrayList<>();
        try{
-           executeAll(false, sql, params);
+           statementQuery(sql, params);
            resultSet = statement.executeQuery();
            ResultSetMetaData metaData = resultSet.getMetaData();
            while (resultSet.next()) {
@@ -81,8 +88,8 @@ public class SqlExecuteHandler extends DbConnection {
                getResultMap(map, metaData);
                list.add(JSONObject.parseObject(JSONObject.toJSONString(map), clazz));
            }
-       }catch (SQLException e){
-           sqlErrPrint(sql, params);
+       }catch (SQLException e) {
+           new SqlOutPrintBuilder(sql, params).sqlErrPrint();
            throw e;
        }
        return list;
@@ -96,24 +103,24 @@ public class SqlExecuteHandler extends DbConnection {
         for (int i = 0; i < metaData.getColumnCount(); i++) {
             String columnName = metaData.getColumnLabel(i + 1);
             Object object = resultSet.getObject(i + 1);
-            map.put(dbCustomStrategy.isUnderlineToCamel() ? CommUtils.underlineToCamel(columnName) : columnName, object);
+            map.put(dbCustomStrategy.isUnderlineToCamel() ? CustomUtil.underlineToCamel(columnName) : columnName, object);
         }
     }
 
 
     /**
-     * Count(1) SQL
+     * 查询单个值SQL
      */
-   long executeSql(String sql, Object... params) throws Exception {
-        long result = 0;
+   Object selectOneSql(String sql, Object... params) throws Exception {
+        Object result = null;
         try {
-            executeAll(false, sql,params);
+            statementQuery(sql, params);
             resultSet = statement.executeQuery();
             if (resultSet.next()){
-                result = (long) resultSet.getObject(1);
+                result = resultSet.getObject(SymbolConst.DEFAULT_ONE);
             }
         }catch (SQLException e){
-            sqlErrPrint(sql, params);
+            new SqlOutPrintBuilder(sql, params).sqlErrPrint();
             throw e;
         }
         return result;
@@ -122,10 +129,10 @@ public class SqlExecuteHandler extends DbConnection {
     /**
      * 通用查询单个对象sql
      */
-   <T> T executeSql(Class<T> t, String sql, Object... params) throws Exception {
+   <T> T selectOneSql(Class<T> t, String sql, Object... params) throws Exception {
        Map<String, Object> map = new HashMap<>();
         try {
-            executeAll(false, sql,params);
+            statementQuery(sql, params);
             resultSet = statement.executeQuery();
             ResultSetMetaData metaData = resultSet.getMetaData();
             if (resultSet.next()){
@@ -133,7 +140,7 @@ public class SqlExecuteHandler extends DbConnection {
             }
             if(map.isEmpty()) return null;
         }catch (SQLException e){
-            sqlErrPrint(sql, params);
+            new SqlOutPrintBuilder(sql, params).sqlErrPrint();
             throw e;
         }
         return JSONObject.parseObject(JSONObject.toJSONString(map), t);
@@ -146,10 +153,10 @@ public class SqlExecuteHandler extends DbConnection {
    int executeUpdate(String sql, Object... params) throws Exception{
         int res = 0;
         try{
-            executeAll(false, sql, params);
+            statementUpdate(false, sql, params);
             res = statement.executeUpdate();
         }catch (SQLException e){
-            sqlErrPrint(sql, params);
+            new SqlOutPrintBuilder(sql, params).sqlErrPrint();
             throw e;
         }
        return res;
@@ -162,10 +169,10 @@ public class SqlExecuteHandler extends DbConnection {
    <T> int executeInsert(List<T> obj, String sql, String keyField, Object... params) throws Exception {
         int res = 0;
         try{
-            executeAll(true, sql, params);
+            statementUpdate(true, sql, params);
             res = statement.executeUpdate();
         }catch (SQLException e){
-            sqlErrPrint(sql, params);
+            new SqlOutPrintBuilder(sql, params).sqlErrPrint();
             throw e;
         }
         resultSet = statement.getGeneratedKeys();

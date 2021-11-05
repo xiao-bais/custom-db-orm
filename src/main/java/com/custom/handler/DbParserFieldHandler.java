@@ -9,8 +9,9 @@ import com.custom.exceptions.ExceptionConst;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.KeyStrategy;
 import com.custom.exceptions.CustomCheckException;
-import com.custom.comm.CommUtils;
+import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
+import com.custom.handler.logic.InsertLogicDeleteFieldSqlHandler;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -227,7 +228,7 @@ public class DbParserFieldHandler {
         List<Map<String, String>> dbMapFields = dbAnnoParser.getParserDbMap(t);
         String joinFieldSql = dbMapFields.stream()
                 .map(mapField -> String.format(",%s `%s`",
-                        CommUtils.getJoinFieldStr(String.valueOf(mapField.get(DbFieldsConst.DB_MAP))),
+                        CustomUtil.getJoinFieldStr(String.valueOf(mapField.get(DbFieldsConst.DB_MAP))),
                         mapField.get(DbFieldsConst.DB_MAP_FIELD))
                 ).collect(Collectors.joining());
 
@@ -285,7 +286,7 @@ public class DbParserFieldHandler {
                 if(type != String.class) {
                     throw new CustomCheckException(ExceptionConst.EX_PRIMARY_CANNOT_MATCH + t.getClass());
                 }
-                value = CommUtils.getUUID();
+                value = CustomUtil.getUUID();
                 break;
         }
     return value;
@@ -326,5 +327,46 @@ public class DbParserFieldHandler {
         throw new SQLException(String.format("Unknown column name: '%s'", dbField));
     }
 
+    /**
+    * 获取删除的sql
+    */
+    <T> String getDeleteSql(Class<T> t, String logicSql, String key, boolean isMore) throws Exception {
+        Map<String, Object> tableMap = dbAnnoParser.getParserByDbTable(t);
+        Object alias = tableMap.get(DbFieldsConst.TABLE_ALIAS);
+        String dbFieldKey = getDbFieldKey(t);
+        String sql;
+
+        String keySql  = String.format(" %s.`%s` %s %s", tableMap.get(DbFieldsConst.TABLE_ALIAS),
+                dbFieldKey, isMore ? SymbolConst.IN : SymbolConst.EQUALS, key);
+
+        if (JudgeUtilsAx.isNotEmpty(logicSql)) {
+            sql = String.format(" update %s %s set %s.%s where %s ", tableMap.get(DbFieldsConst.TABLE_NAME),
+                    alias, alias, logicSql, keySql);
+        }else {
+            sql = String.format(" delete from %s %s where %s", tableMap.get(DbFieldsConst.TABLE_NAME),
+                    tableMap.get(DbFieldsConst.TABLE_ALIAS), keySql);
+        }
+        return sql;
+
+    }
+
+    /**
+    * 添加逻辑删除的部分sql
+    */
+    <T> String checkConditionAndLogicDeleteSql(Class<T> t, String condition, String logicSql) {
+        final String logicFieldSql = String.format("%s.%s", getDbTableAlias(t), logicSql);
+        InsertLogicDeleteFieldSqlHandler handler = () -> {
+            String sql;
+            if (JudgeUtilsAx.isNotEmpty(condition)) {
+                sql = JudgeUtilsAx.isNotEmpty(logicFieldSql) ?
+                        String.format(" where %s %s ", logicFieldSql, condition) : String.format(" where 1 = 1 %s ", condition);
+            } else {
+                sql = JudgeUtilsAx.isNotEmpty(logicFieldSql) ?
+                        String.format(" where %s ", logicFieldSql) : condition;
+            }
+            return sql;
+        };
+        return handler.handleSql();
+    }
 
 }
