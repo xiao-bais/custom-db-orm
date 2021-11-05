@@ -11,7 +11,7 @@ import com.custom.enums.KeyStrategy;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
-import com.custom.handler.logic.InsertLogicDeleteFieldSqlHandler;
+import com.custom.handler.logic.LogicDeleteFieldSqlHandler;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -355,7 +355,7 @@ public class DbParserFieldHandler {
     */
     <T> String checkConditionAndLogicDeleteSql(Class<T> t, String condition, String logicSql) {
         final String logicFieldSql = String.format("%s.%s", getDbTableAlias(t), logicSql);
-        InsertLogicDeleteFieldSqlHandler handler = () -> {
+        LogicDeleteFieldSqlHandler handler = () -> {
             String sql;
             if (JudgeUtilsAx.isNotEmpty(condition)) {
                 sql = JudgeUtilsAx.isNotEmpty(logicFieldSql) ?
