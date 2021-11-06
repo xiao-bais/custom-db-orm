@@ -29,17 +29,21 @@ public class BuildSqlHandler {
         dbParserFieldHandler = new DbParserFieldHandler();
         sqlExecuteHandler = new SqlExecuteHandler(dbDataSource, dbParserFieldHandler);
         DbCustomStrategy dbCustomStrategy = dbDataSource.getDbCustomStrategy();
-        init(dbCustomStrategy);
+        initLogic(dbCustomStrategy);
     }
 
 
     /**
      * 初始化逻辑删除的sql
      */
-    public void init(DbCustomStrategy dbCustomStrategy) {
+    public void initLogic(DbCustomStrategy dbCustomStrategy) {
+
         if(JudgeUtilsAx.isLogicDeleteOpen(dbCustomStrategy)) {
-            if(JudgeUtilsAx.isEmpty(dbCustomStrategy.getNotDeleteLogicValue()) || JudgeUtilsAx.isEmpty(dbCustomStrategy.getDeleteLogicValue()))
+            if(JudgeUtilsAx.isEmpty(dbCustomStrategy.getNotDeleteLogicValue())
+                    || JudgeUtilsAx.isEmpty(dbCustomStrategy.getDeleteLogicValue())) {
                 throw new CustomCheckException(ExceptionConst.EX_LOGIC_EMPTY_VALUE);
+            }
+
             this.logicDeleteUpdateSql = String.format("`%s` = %s ", dbCustomStrategy.getDbFieldDeleteLogic(), dbCustomStrategy.getDeleteLogicValue());
             this.logicDeleteQuerySql = String.format("`%s` = %s ", dbCustomStrategy.getDbFieldDeleteLogic(), dbCustomStrategy.getNotDeleteLogicValue());
         }
@@ -103,7 +107,7 @@ public class BuildSqlHandler {
         if(key == null) throw new NullPointerException();
         JudgeUtilsAx.checkObjNotNull(t);
         String alias = dbParserFieldHandler.getDbTableAlias(t);
-        String selectSql = String.format("%s where %s.`%s` = ?", dbParserFieldHandler.getSelectSql(t), alias, dbParserFieldHandler.getDbFieldKey(t));
+        String selectSql = String.format("%s \nwhere %s.`%s` = ?", dbParserFieldHandler.getSelectSql(t), alias, dbParserFieldHandler.getDbFieldKey(t));
         return sqlExecuteHandler.selectOneSql(t, selectSql, key);
    }
 
@@ -119,7 +123,7 @@ public class BuildSqlHandler {
        for (int i = 0; i < keys.size(); i++) {
            symbolKeys.add(SymbolConst.QUEST);
        }
-       String selectSql = String.format("%s where %s.`%s` in (%s) ", dbParserFieldHandler.getSelectSql(t), alias, dbParserFieldHandler.getDbFieldKey(t), symbolKeys);
+       String selectSql = String.format("%s \nwhere %s.`%s` in (%s) ", dbParserFieldHandler.getSelectSql(t), alias, dbParserFieldHandler.getDbFieldKey(t), symbolKeys);
        return sqlExecuteHandler.query(t, selectSql, keys.toArray());
    }
 

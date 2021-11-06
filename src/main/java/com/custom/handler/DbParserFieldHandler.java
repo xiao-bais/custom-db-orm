@@ -160,7 +160,7 @@ public class DbParserFieldHandler {
     * 获取表的基础查询sql
     */
     private <T> String getBasicTableSql(Class<T> t) throws Exception {
-        return String.format("select %s from %s %s ", getBasicFieldSql(t), getDbTableName(t), getDbTableAlias(t));
+        return String.format("select %s \nfrom %s %s ", getBasicFieldSql(t), getDbTableName(t), getDbTableAlias(t));
     }
 
     /**
@@ -359,10 +359,10 @@ public class DbParserFieldHandler {
             String sql;
             if (JudgeUtilsAx.isNotEmpty(condition)) {
                 sql = JudgeUtilsAx.isNotEmpty(logicFieldSql) ?
-                        String.format(" where %s %s ", logicFieldSql, condition) : String.format(" where 1 = 1 %s ", condition);
+                        String.format(" \nwhere %s %s ", logicFieldSql, condition) : String.format(" \nwhere 1 = 1 %s ", condition);
             } else {
                 sql = JudgeUtilsAx.isNotEmpty(logicFieldSql) ?
-                        String.format(" where %s ", logicFieldSql) : condition;
+                        String.format(" \nwhere %s ", logicFieldSql) : condition;
             }
             return sql;
         };

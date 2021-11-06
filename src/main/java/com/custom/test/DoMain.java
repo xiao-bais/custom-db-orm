@@ -25,14 +25,15 @@ public class DoMain {
         //是否打印执行的sql 默认false
         dbCustomStrategy.setSqlOutPrinting(true);
         dbCustomStrategy.setDbFieldDeleteLogic("state");
-        dbCustomStrategy.setDeleteLogicValue("1");
-        dbCustomStrategy.setNotDeleteLogicValue("0");
+//        dbCustomStrategy.setDeleteLogicValue("1");
+//        dbCustomStrategy.setNotDeleteLogicValue("0");
         dbDataSource.setDbCustomStrategy(dbCustomStrategy);
 
         JdbcDao jdbcDao = new JdbcDao(dbDataSource);
 
-        List<Employee> employeeList = jdbcDao.selectList(Employee.class, "and age > 22");
+//        List<Employee> employeeList = jdbcDao.selectList(Employee.class, "and age > 22");
 //        System.out.println("employee = " + employee);
+        Employee employee = jdbcDao.selectOneByCondition(Employee.class, "and a.age = 23");
 
 
     }
