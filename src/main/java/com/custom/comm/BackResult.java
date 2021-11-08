@@ -81,7 +81,7 @@ public class BackResult<T> {
         void execCall(BackResult<T> backResult) throws Exception;
     }
 
-    public static <T> BackResult<T> execCall(BackResult.Back<T> back) throws Exception {
+    public static <T> BackResult<T> execCall(BackResult.Back<T> back) {
         BackResult<T> backResult = new BackResult<>();
         try {
             back.execCall(backResult);
