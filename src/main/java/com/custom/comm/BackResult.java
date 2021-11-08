@@ -1,8 +1,10 @@
 package com.custom.comm;
 
+import com.custom.handler.proxy.BackResultHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,6 +86,7 @@ public class BackResult<T> {
     public static <T> BackResult<T> execCall(BackResult.Back<T> back) {
         BackResult<T> backResult = new BackResult<>();
         try {
+            Proxy.newProxyInstance(BackResult.Back.class.getClassLoader(), new Class[]{BackResult.Back.class}, new BackResult.Back<>()())
             back.execCall(backResult);
         }catch (Exception e){
             logger.error(e.getMessage(), e);
