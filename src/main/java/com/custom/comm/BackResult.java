@@ -86,7 +86,7 @@ public class BackResult<T> {
     public static <T> BackResult<T> execCall(BackResult.Back<T> back) {
         BackResult<T> backResult = new BackResult<>();
         try {
-            Proxy.newProxyInstance(BackResult.Back.class.getClassLoader(), new Class[]{BackResult.Back.class}, new BackResult.Back<>()())
+//            Proxy.newProxyInstance(BackResult.Back.class.getClassLoader(), new Class[]{BackResult.Back.class}, new BackResult.Back<>()())
             back.execCall(backResult);
         }catch (Exception e){
             logger.error(e.getMessage(), e);

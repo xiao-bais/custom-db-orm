@@ -356,11 +356,11 @@ public class DbParserFieldHandler {
     <T> String checkConditionAndLogicDeleteSql(Class<T> t, String condition, String logicSql) {
         final String logicFieldSql = String.format("%s.%s", getDbTableAlias(t), logicSql);
         LogicDeleteFieldSqlHandler handler = () -> {
-            String sql;
+            String sql = SymbolConst.EMPTY;
             if (JudgeUtilsAx.isNotEmpty(condition)) {
                 sql = JudgeUtilsAx.isNotEmpty(logicFieldSql) ?
                         String.format(" \nwhere %s %s ", logicFieldSql, condition) : String.format(" \nwhere 1 = 1 %s ", condition);
-            } else {
+            } else if (JudgeUtilsAx.isNotEmpty(logicSql)) {
                 sql = JudgeUtilsAx.isNotEmpty(logicFieldSql) ?
                         String.format(" \nwhere %s ", logicFieldSql) : condition;
             }
