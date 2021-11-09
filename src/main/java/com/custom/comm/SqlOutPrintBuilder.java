@@ -21,7 +21,7 @@ public class SqlOutPrintBuilder implements Serializable {
      */
     public void sqlErrPrint() {
         logger.info(
-                "\nsql error\n===================\nSQL ====>\n {}\n===================\nparams = {}\n==================="
+                "\nsql error\n===================\nSQL ====>\n {}\n===================\nparams = {}\n===================\n"
                 , sql, JSON.toJSONString(params));
     }
 
@@ -29,7 +29,7 @@ public class SqlOutPrintBuilder implements Serializable {
      * PRINT-INFO-QUERY-SQL
      */
     public void sqlInfoQueryPrint() {
-        System.out.printf("QUERY-SQL ====>\n \n%s\n===================\nparams = %s\n==================="
+        System.out.printf("QUERY-SQL ====>\n \n%s\n===================\nparams = %s\n===================\n"
                 , sql, JSON.toJSONString(params));
     }
 
@@ -37,7 +37,7 @@ public class SqlOutPrintBuilder implements Serializable {
      * PRINT-INFO-UPDATE-SQL
      */
     public void sqlInfoUpdatePrint() {
-        System.out.printf("UPDATE-SQL ====>\n %s\n===================\nparams = %s\n==================="
+        System.out.printf("UPDATE-SQL ====>\n %s\n===================\nparams = %s\n===================\n"
                 , sql, JSON.toJSONString(params));
     }
 

@@ -3,6 +3,7 @@ package com.custom.test;
 import com.custom.annotations.DbField;
 import com.custom.annotations.DbKey;
 import com.custom.annotations.DbTable;
+import lombok.Data;
 
 import java.util.Date;
 
@@ -12,6 +13,7 @@ import java.util.Date;
  * @Desc：
  **/
 @DbTable(table = "employee")
+@Data
 public class Employee {
 
     @DbKey
@@ -19,6 +21,9 @@ public class Employee {
 
     @DbField(value = "emp_name", desc = "员工姓名")
     private String empName;
+
+    private String pppName;
+
 
     @DbField(desc = "姓名")
     private boolean sex;

@@ -355,6 +355,9 @@ public class BuildSqlHandler {
         return update;
     }
 
+    /**
+    * 执行一条sql
+    */
     int executeSql(String sql, Object... params) throws Exception {
         if(JudgeUtilsAx.isEmpty(sql)){
             throw new NullPointerException();

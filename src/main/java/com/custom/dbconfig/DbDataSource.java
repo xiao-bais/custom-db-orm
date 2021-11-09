@@ -48,9 +48,9 @@ public class DbDataSource {
 
     private boolean testWhileIdle = true;
 
-    private boolean testOnBorrow = false;
+    private boolean testOnBorrow = true;
 
-    private boolean testOnReturn = false;
+    private boolean testOnReturn = true;
 
     private DbCustomStrategy dbCustomStrategy;
 

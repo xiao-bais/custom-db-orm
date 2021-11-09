@@ -354,15 +354,14 @@ public class DbParserFieldHandler {
     * 添加逻辑删除的部分sql
     */
     <T> String checkConditionAndLogicDeleteSql(Class<T> t, String condition, String logicSql) {
-        final String logicFieldSql = String.format("%s.%s", getDbTableAlias(t), logicSql);
         LogicDeleteFieldSqlHandler handler = () -> {
-            String sql = SymbolConst.EMPTY;
+            String sql;
             if (JudgeUtilsAx.isNotEmpty(condition)) {
-                sql = JudgeUtilsAx.isNotEmpty(logicFieldSql) ?
-                        String.format(" \nwhere %s %s ", logicFieldSql, condition) : String.format(" \nwhere 1 = 1 %s ", condition);
-            } else if (JudgeUtilsAx.isNotEmpty(logicSql)) {
-                sql = JudgeUtilsAx.isNotEmpty(logicFieldSql) ?
-                        String.format(" \nwhere %s ", logicFieldSql) : condition;
+                sql = JudgeUtilsAx.isNotEmpty(logicSql) ?
+                        String.format(" \nwhere %s %s ", logicSql, condition) : String.format(" \nwhere 1 = 1 %s ", condition);
+            } else {
+                sql = JudgeUtilsAx.isNotEmpty(logicSql) ?
+                        String.format(" \nwhere %s.%s ", getDbTableAlias(t), logicSql) : condition;
             }
             return sql;
         };
