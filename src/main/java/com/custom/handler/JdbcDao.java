@@ -134,7 +134,7 @@ public class JdbcDao {
     }
 
     /**
-     * 插入一条记录并返回新的主键（只允许自增主键类型）
+     * 插入一条记录并生成新的主键（只允许自增主键类型）
      */
     public <T> int insertGenerateKey(T t) throws Exception {
         return buildSqlHandler.insert(t, true);
@@ -148,7 +148,7 @@ public class JdbcDao {
     }
 
     /**
-     * 插入多条记录并返回新的主键（只允许自增主键类型）
+     * 插入多条记录并生成新的主键（只允许自增主键类型）
      */
     public <T> int insertGenerateKey(List<T> tList) throws Exception {
         return buildSqlHandler.insert(tList, true);
