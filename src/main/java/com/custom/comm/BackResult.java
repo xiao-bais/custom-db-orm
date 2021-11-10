@@ -26,6 +26,19 @@ public class BackResult<T> {
     //额外数据
     private Map<String, Object> attr = new HashMap<>();
 
+    public BackResult(Integer status, String msg, T data, Map<String, Object> attr) {
+        this.status = status;
+        this.msg = msg;
+        this.data = data;
+        this.attr = attr;
+    }
+
+    public BackResult(Integer code, String msg, T data) {
+        this.status = status;
+        this.msg = msg;
+        this.data = data;
+    }
+
     public Integer getStatus() {
         return status;
     }
@@ -79,6 +92,79 @@ public class BackResult<T> {
         this.msg = msg;
     }
 
+    public BackResult(String msg, T data, Map<String, Object> attr) {
+        this.msg = msg;
+        this.data = data;
+        this.attr = attr;
+    }
+
+
+    public static <T> BackResult<T> bySuccess(T data){
+        logger.info("request-status: ---------" + ResultStatus.success.getDesc());
+        return new BackResult<T>(ResultStatus.success.getCode(), ResultStatus.success.getDesc(), data);
+    }
+
+    public static <T> BackResult<T> bySuccess(T data, Map<String, Object> attr){
+        logger.info("request-status: ---------" + ResultStatus.success.getDesc());
+        return new BackResult<T>(ResultStatus.success.getCode(), ResultStatus.success.getDesc(), data, attr);
+    }
+
+    public static <T> BackResult<T> bySuccess(String msg, T data){
+        logger.info("request-status: ---------" + ResultStatus.success.getDesc());
+        return new BackResult<>(ResultStatus.success.getCode(), msg, data);
+    }
+
+    public static <T> BackResult<T> bySuccess(String msg){
+        logger.info("request-status: ---------" + ResultStatus.success.getDesc());
+        return new BackResult<>(ResultStatus.success.getCode(), msg);
+    }
+
+
+
+    public static <T> BackResult<T> byError(String msg, T data){
+        logger.info("request-status: ---------" + ResultStatus.error.getDesc());
+        return new BackResult<>(ResultStatus.error.getCode(), msg, data);
+    }
+
+    public static <T> BackResult<T> byError(T data){
+        logger.info("request-status: ---------" + ResultStatus.error.getDesc());
+        return new BackResult<>(ResultStatus.error.getCode(), ResultStatus.error.getDesc(), data);
+    }
+
+    public static <T> BackResult<T> byError(String msg){
+        logger.info("request-status: ---------" + ResultStatus.error.getDesc());
+        return new BackResult<>(ResultStatus.error.getCode(), msg);
+    }
+
+
+
+    public static <T> BackResult<T> byEmpty(String msg, T data){
+        logger.info("request-status: ---------" + ResultStatus.empty.getDesc());
+        return new BackResult<>(ResultStatus.empty.getCode(), msg, data);
+    }
+
+    public static <T> BackResult<T> byEmpty(T data){
+        logger.info("request-status: ---------" + ResultStatus.empty.getDesc());
+        return new BackResult<>(ResultStatus.empty.getCode(), ResultStatus.empty.getDesc(), data);
+    }
+
+    public static <T> BackResult<T> byEmpty(String msg){
+        logger.info("request-status: ---------" + ResultStatus.empty.getDesc());
+        return new BackResult<>(ResultStatus.empty.getCode(), msg);
+    }
+
+
+
+    public static <T> BackResult<T> byServerErr(String msg, T data){
+        logger.info("request-status: ---------" + ResultStatus.server_err.getDesc());
+        return new BackResult<>(ResultStatus.server_err.getCode(), msg, data);
+    }
+
+    public static <T> BackResult<T> byServerErr(String msg){
+        logger.info("request-status: ---------" + ResultStatus.server_err.getDesc());
+        return new BackResult<>(ResultStatus.server_err.getCode(), msg);
+    }
+
     public interface Back<T>{
         void execCall(BackResult<T> backResult) throws Exception;
     }
@@ -105,13 +191,14 @@ public class BackResult<T> {
         this.status = ResultStatus.empty.getCode();
     }
 
-    public void success(String msg) {
-        this.msg = msg;
-        this.status = ResultStatus.success.getCode();
-    }
-
     public void success(T data) {
         this.msg = ResultStatus.success.getDesc();
+        this.status = ResultStatus.success.getCode();
+        this.data = data;
+    }
+
+    public void success(T data, String msg) {
+        this.msg = msg;
         this.status = ResultStatus.success.getCode();
         this.data = data;
     }
