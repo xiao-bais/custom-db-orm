@@ -4,6 +4,7 @@ import com.custom.annotations.DbField;
 import com.custom.annotations.DbKey;
 import com.custom.annotations.DbTable;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.Date;
 
@@ -14,6 +15,7 @@ import java.util.Date;
  **/
 @DbTable(table = "employee")
 @Data
+@ToString
 public class Employee {
 
     @DbKey
@@ -40,84 +42,5 @@ public class Employee {
     @DbField
     private int state;
 
-    public int getState() {
-        return state;
-    }
 
-    public void setState(int state) {
-        this.state = state;
-    }
-
-    public Employee(int id, String empName, boolean sex, int age, int address, Date birthday) {
-        this.id = id;
-        this.empName = empName;
-        this.sex = sex;
-        this.age = age;
-        this.address = address;
-        this.birthday = birthday;
-    }
-
-    public Employee() {
-
-    }
-
-    @Override
-    public String toString() {
-        return "Employee{" +
-                "id=" + id +
-                ", empName='" + empName + '\'' +
-                ", sex=" + sex +
-                ", age=" + age +
-                ", address=" + address +
-                ", birthday=" + birthday +
-                '}';
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getEmpName() {
-        return empName;
-    }
-
-    public void setEmpName(String empName) {
-        this.empName = empName;
-    }
-
-    public boolean isSex() {
-        return sex;
-    }
-
-    public void setSex(boolean sex) {
-        this.sex = sex;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public int getAddress() {
-        return address;
-    }
-
-    public void setAddress(int address) {
-        this.address = address;
-    }
-
-    public Date getBirthday() {
-        return birthday;
-    }
-
-    public void setBirthday(Date birthday) {
-        this.birthday = birthday;
-    }
 }

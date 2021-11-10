@@ -86,7 +86,9 @@ public class SqlExecuteHandler extends DbConnection {
            while (resultSet.next()) {
                map = new HashMap<>();
                getResultMap(map, metaData);
-               list.add(JSONObject.parseObject(JSONObject.toJSONString(map), clazz));
+               T t = dbCustomStrategy.isUnderlineToCamel() ?  JSONObject.parseObject(JSONObject.toJSONString(map), clazz)
+                        : CustomUtil.mapToObject(clazz, map);
+               list.add(t);
            }
        }catch (SQLException e) {
            new SqlOutPrintBuilder(sql, params).sqlErrPrint();

@@ -358,7 +358,7 @@ public class DbParserFieldHandler {
             String sql;
             if (JudgeUtilsAx.isNotEmpty(condition)) {
                 sql = JudgeUtilsAx.isNotEmpty(logicSql) ?
-                        String.format(" \nwhere %s %s ", logicSql, condition) : String.format(" \nwhere 1 = 1 %s ", condition);
+                        String.format(" \nwhere %s.%s %s ", getDbTableAlias(t), logicSql, condition) : String.format(" \nwhere 1 = 1 %s ", condition);
             } else {
                 sql = JudgeUtilsAx.isNotEmpty(logicSql) ?
                         String.format(" \nwhere %s.%s ", getDbTableAlias(t), logicSql) : condition;

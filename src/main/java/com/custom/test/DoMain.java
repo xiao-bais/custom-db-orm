@@ -28,15 +28,16 @@ public class DoMain {
         dbCustomStrategy.setDeleteLogicValue("1");
         dbCustomStrategy.setNotDeleteLogicValue("0");
         dbDataSource.setDbCustomStrategy(dbCustomStrategy);
-
+        dbCustomStrategy.setUnderlineToCamel(true);
         JdbcDao jdbcDao = new JdbcDao(dbDataSource);
 
 //        List<Employee> employeeList = jdbcDao.selectList(Employee.class, "and age > 22");
 //        System.out.println("employee = " + employee);
-        String sql = "select a.`id` `id`, a.`emp_name` ppp_name, a.`sex` `sex`, a.`age` `age`, a.`address` `address`, a.`birthday` `birthday`, a.`state` `state` \n" +
+        String sql = "select a.`id` `id`, a.`emp_name` emp_name, a.`sex` `sex`, a.`age` `age`, a.`address` `address`, a.`birthday` `birthday`, a.`state` `state` \n" +
                 "from employee a   \n" +
                 "where `state` = 0  and a.age = 23 ";
-        Employee employee = jdbcDao.selectOneBySql(Employee.class, sql);
+        Employee employee = jdbcDao.selectOneByCondition(Employee.class, "and a.age = 23");
+        System.out.println("employee = " + employee.toString());
 
 
     }
