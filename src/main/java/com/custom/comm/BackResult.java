@@ -101,12 +101,12 @@ public class BackResult<T> {
 
     public static <T> BackResult<T> bySuccess(T data){
         logger.info("request-status: ---------" + ResultStatus.success.getDesc());
-        return new BackResult<T>(ResultStatus.success.getCode(), ResultStatus.success.getDesc(), data);
+        return new BackResult<>(ResultStatus.success.getCode(), ResultStatus.success.getDesc(), data);
     }
 
     public static <T> BackResult<T> bySuccess(T data, Map<String, Object> attr){
         logger.info("request-status: ---------" + ResultStatus.success.getDesc());
-        return new BackResult<T>(ResultStatus.success.getCode(), ResultStatus.success.getDesc(), data, attr);
+        return new BackResult<>(ResultStatus.success.getCode(), ResultStatus.success.getDesc(), data, attr);
     }
 
     public static <T> BackResult<T> bySuccess(String msg, T data){
