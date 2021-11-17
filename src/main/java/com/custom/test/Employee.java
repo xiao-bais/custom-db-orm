@@ -13,7 +13,7 @@ import java.util.Date;
  * @Date 2021/10/28 9:19
  * @Desc：
  **/
-@DbTable(table = "employee")
+//@DbTable(table = "employee")
 @Data
 @ToString
 public class Employee {

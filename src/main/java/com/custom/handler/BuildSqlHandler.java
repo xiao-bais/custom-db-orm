@@ -5,8 +5,10 @@ import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.dbconfig.SymbolConst;
+import com.custom.enums.CheckTarget;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
+import com.custom.handler.proxy.annotations.CheckExecute;
 import com.custom.page.DbPageRows;
 
 import java.io.Serializable;
@@ -32,6 +34,8 @@ public class BuildSqlHandler {
         initLogic(dbCustomStrategy);
     }
 
+    public BuildSqlHandler(){}
+
 
     /**
      * 初始化逻辑删除的sql
@@ -44,8 +48,10 @@ public class BuildSqlHandler {
                 throw new CustomCheckException(ExceptionConst.EX_LOGIC_EMPTY_VALUE);
             }
 
-            this.logicDeleteUpdateSql = String.format("`%s` = %s ", dbCustomStrategy.getDbFieldDeleteLogic(), dbCustomStrategy.getDeleteLogicValue());
-            this.logicDeleteQuerySql = String.format("`%s` = %s ", dbCustomStrategy.getDbFieldDeleteLogic(), dbCustomStrategy.getNotDeleteLogicValue());
+            this.logicDeleteUpdateSql = String.format("`%s` = %s ",
+                    dbCustomStrategy.getDbFieldDeleteLogic(), dbCustomStrategy.getDeleteLogicValue());
+            this.logicDeleteQuerySql = String.format("`%s` = %s ",
+                    dbCustomStrategy.getDbFieldDeleteLogic(), dbCustomStrategy.getNotDeleteLogicValue());
         }
     }
 
@@ -54,10 +60,9 @@ public class BuildSqlHandler {
     /**
      * 查询全部
      */
+    @CheckExecute(target = CheckTarget.SELECT)
    <T> List<T> selectList(Class<T> t, String condition, String orderBy, Object... params) throws Exception {
-
        condition = dbParserFieldHandler.checkConditionAndLogicDeleteSql(t, condition, logicDeleteQuerySql);
-       JudgeUtilsAx.checkObjNotNull(t);
        String selectSql = String.format("%s %s %s", dbParserFieldHandler.getSelectSql(t), JudgeUtilsAx.isNotEmpty(condition) ? condition : "",
                JudgeUtilsAx.isNotEmpty(orderBy) ? orderBy : SymbolConst.EMPTY);
        return sqlExecuteHandler.query(t, selectSql, params);
@@ -66,10 +71,10 @@ public class BuildSqlHandler {
    /**
     * 分页查询1
     */
+   @CheckExecute(target = CheckTarget.SELECT)
    <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, String orderBy, int pageIndex, int pageSize, Object... params) throws Exception {
 
        condition = dbParserFieldHandler.checkConditionAndLogicDeleteSql(t, condition, logicDeleteQuerySql);
-        JudgeUtilsAx.checkObjNotNull(t);
         if(JudgeUtilsAx.isNotEmpty(orderBy)){
             orderBy = String.format("\norder by %s", orderBy);
         }
@@ -93,6 +98,7 @@ public class BuildSqlHandler {
     /**
      * 分页查询2
      */
+    @CheckExecute(target = CheckTarget.SELECT)
    <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, String orderBy, DbPageRows<T> dbPageRows, Object... params) throws Exception {
        if(dbPageRows == null) {
            dbPageRows = new DbPageRows<>();
@@ -103,9 +109,8 @@ public class BuildSqlHandler {
     /**
      * 根据主键获取一条记录
      */
+    @CheckExecute(target = CheckTarget.SELECT)
    <T> T selectOneByKey(Class<T> t, Object key) throws Exception {
-        if(key == null) throw new NullPointerException();
-        JudgeUtilsAx.checkObjNotNull(t);
         String alias = dbParserFieldHandler.getDbTableAlias(t);
         String selectSql = String.format("%s \nwhere %s.`%s` = ?", dbParserFieldHandler.getSelectSql(t), alias, dbParserFieldHandler.getDbFieldKey(t));
         return sqlExecuteHandler.selectOneSql(t, selectSql, key);
@@ -114,10 +119,8 @@ public class BuildSqlHandler {
    /**
    * 根据多个主键获取多条记录
    */
-
+   @CheckExecute(target = CheckTarget.SELECT)
    <T> List<T> selectBatchByKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception {
-       if(keys == null || keys.size() == 0) throw new NullPointerException();
-       JudgeUtilsAx.checkObjNotNull(t);
        String alias = dbParserFieldHandler.getDbTableAlias(t);
        StringJoiner symbolKeys = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
        for (int i = 0; i < keys.size(); i++) {
@@ -130,32 +133,26 @@ public class BuildSqlHandler {
     /**
      * 根据条件获取一条记录
      */
+    @CheckExecute(target = CheckTarget.SELECT)
     <T> T selectOneByCondition(Class<T> t, String condition, Object... params) throws Exception {
         condition = dbParserFieldHandler.checkConditionAndLogicDeleteSql(t, condition, logicDeleteQuerySql);
-        JudgeUtilsAx.checkObjNotNull(t);
         String selectSql = String.format("%s %s", dbParserFieldHandler.getSelectSql(t), condition);
-        return sqlExecuteHandler.selectOneSql(t, selectSql, params);
+        return selectOneBySql(t, selectSql, params);
     }
 
     /**
      * 纯sql查询1
      */
+    @CheckExecute(target = CheckTarget.SELECT)
     <T> List<T> selectBySql(Class<T> t, String sql, Object... params) throws Exception {
-        if(JudgeUtilsAx.isEmpty(sql)) {
-            throw new CustomCheckException(ExceptionConst.EX_SQL_NOT_EMPTY);
-        }
-        JudgeUtilsAx.checkObjNotNull(t);
         return sqlExecuteHandler.query(t, sql, params);
     }
 
     /**
      * 纯sql查询2
      */
+    @CheckExecute(target = CheckTarget.SELECT)
     <T> T selectOneBySql(Class<T> t, String sql, Object... params) throws Exception {
-        if(JudgeUtilsAx.isEmpty(sql)) {
-            throw new CustomCheckException(ExceptionConst.EX_SQL_NOT_EMPTY);
-        }
-        JudgeUtilsAx.checkObjNotNull(t);
         List<T> queryList = sqlExecuteHandler.query(t, sql, params);
         if(queryList.size() == 0){
             return null;
@@ -180,9 +177,8 @@ public class BuildSqlHandler {
     /**
      * 根据主键删除
      */
+    @CheckExecute(target = CheckTarget.DELETE)
     <T> int deleteByKey(Class<T> t, Object key) throws Exception {
-        if(key == null) return 0;
-        JudgeUtilsAx.checkObjNotNull(t);
         String deleteSql = dbParserFieldHandler.getDeleteSql(t, logicDeleteUpdateSql, SymbolConst.QUEST, false);
         return sqlExecuteHandler.executeUpdate(deleteSql, key);
     }
@@ -190,9 +186,8 @@ public class BuildSqlHandler {
     /**
      * 根据主键批量删除
      */
+    @CheckExecute(target = CheckTarget.DELETE)
     <T> int deleteBatchKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception {
-        if(keys == null || keys.size() == 0) return 0;
-        JudgeUtilsAx.checkObjNotNull(t);
         StringJoiner delSymbols = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
         for (int i = 0; i < keys.size(); i++) {
             delSymbols.add(SymbolConst.QUEST);
@@ -204,13 +199,11 @@ public class BuildSqlHandler {
     /**
      * 根据条件删除
      */
+    @CheckExecute(target = CheckTarget.DELETE)
     <T> int deleteByCondition(Class<T> t, String condition, Object... params) throws Exception {
-        if(JudgeUtilsAx.isEmpty(condition)){
-            throw new RuntimeException(ExceptionConst.EX_DEL_CONDITION_NOT_EMPTY);
-        }
-        JudgeUtilsAx.checkObjNotNull(t);
         condition = String.format("where 1 = 1 %s", condition);
         String alias = dbParserFieldHandler.getDbTableAlias(t);
+        //todo... 根据条件删除的时候 是否存在逻辑删除字段而执行不同的sql语句
         String deleteSql = String.format("delete from %s %s %s", dbParserFieldHandler.getDbTableName(t), alias, condition);
         return sqlExecuteHandler.executeUpdate(deleteSql, params);
     }
@@ -219,6 +212,7 @@ public class BuildSqlHandler {
     /**
      * 插入一条记录
      */
+    @CheckExecute(target = CheckTarget.INSERT)
     <T> int insert(T t, boolean isGeneratedKey) throws Exception {
         JudgeUtilsAx.checkObjNotNull(t.getClass());
         //数据库字段
@@ -256,6 +250,7 @@ public class BuildSqlHandler {
     /**
      * 批量插入记录
      */
+    @CheckExecute(target = CheckTarget.INSERT)
     <T> int insert(List<T> tList, boolean isGeneratedKey) throws Exception {
         if(null == tList) {
             throw new RuntimeException(ExceptionConst.EX_PARAM_EMPTY);
@@ -305,11 +300,9 @@ public class BuildSqlHandler {
     /**
      * 根据指定字段修改一条记录
      */
+    @CheckExecute(target = CheckTarget.UPDATE)
     <T> int updateByKey(T t, String... updateDbFields) throws Exception {
         JudgeUtilsAx.checkObjNotNull(t.getClass());
-        if(null == dbParserFieldHandler.getFieldKeyType(t.getClass())) {
-            throw new CustomCheckException(ExceptionConst.EX_DBKEY_NOTFOUND);
-        }
         StringJoiner editSymbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1);
         List<String> updateDbColumns = new ArrayList<>();
         List<Object> updateDbValues = new ArrayList<>();
@@ -344,6 +337,7 @@ public class BuildSqlHandler {
     /**
      * 保存（更新或插入）
      */
+    @CheckExecute(target = CheckTarget.UPDATE)
     <T> long save(T t) throws Exception {
         if(!CustomUtil.isKeyTag(t.getClass())){
             throw new CustomCheckException(ExceptionConst.EX_DBKEY_NOTFOUND + t);
