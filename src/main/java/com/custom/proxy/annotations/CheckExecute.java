@@ -1,4 +1,4 @@
-package com.custom.handler.proxy.annotations;
+package com.custom.proxy.annotations;
 
 import com.custom.enums.CheckTarget;
 
