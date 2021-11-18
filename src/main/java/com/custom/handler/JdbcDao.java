@@ -204,19 +204,9 @@ public class JdbcDao {
     private BuildSqlHandler buildSqlHandler;
     private BuildTableHandler buildTableHandler;
 
-    public JdbcDao setDbDataSource(DbDataSource dbDataSource) {
-        return new JdbcDao(dbDataSource);
-    }
-
     public JdbcDao(DbDataSource dbDataSource){
-        buildSqlHandler = this.initBuildSqlHandler(new BuildSqlHandler(), dbDataSource);
+        buildSqlHandler = new SqlParamsCheckProxy<>(new BuildSqlHandler(), dbDataSource).createProxy();
         buildTableHandler = new BuildTableHandler(dbDataSource);
-
     }
-
-    private BuildSqlHandler initBuildSqlHandler(BuildSqlHandler buildSqlHandler, DbDataSource dbDataSource) {
-        return new SqlParamsCheckProxy<>(buildSqlHandler, dbDataSource).createProxy();
-    }
-
 
 }
