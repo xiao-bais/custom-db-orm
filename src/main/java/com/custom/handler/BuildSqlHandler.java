@@ -8,7 +8,6 @@ import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.CheckTarget;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
-import com.custom.proxy.annotations.CheckExecute;
 import com.custom.page.DbPageRows;
 
 import java.io.Serializable;

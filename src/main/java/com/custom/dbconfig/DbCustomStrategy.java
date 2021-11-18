@@ -33,12 +33,12 @@ public class DbCustomStrategy {
     private String dbFieldDeleteLogic = SymbolConst.EMPTY;
 
     /**
-    * 删除字段值
+    * 默认删除字段值
     */
     private String deleteLogicValue = SymbolConst.EMPTY;
 
     /**
-    * 不删除字段值
+    * 默认未删除字段值
     */
     private String notDeleteLogicValue = SymbolConst.EMPTY;
 

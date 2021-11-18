@@ -1,7 +1,6 @@
 package com.custom.handler;
 
 import com.custom.dbconfig.DbDataSource;
-import com.custom.proxy.SqlParamsCheckProxy;
 import com.custom.page.DbPageRows;
 
 import java.io.Serializable;
@@ -212,6 +211,7 @@ public class JdbcDao {
     public JdbcDao(DbDataSource dbDataSource){
         buildSqlHandler = this.initBuildSqlHandler(new BuildSqlHandler(dbDataSource));
         buildTableHandler = new BuildTableHandler(dbDataSource);
+
     }
 
     private BuildSqlHandler initBuildSqlHandler(BuildSqlHandler buildSqlHandler) {

@@ -1,11 +1,10 @@
-package com.custom.proxy;
+package com.custom.handler;
 
 import com.custom.annotations.DbTable;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.enums.CheckTarget;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
-import com.custom.proxy.annotations.CheckExecute;
 import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;
 import org.springframework.cglib.proxy.MethodProxy;
