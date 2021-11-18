@@ -209,13 +209,13 @@ public class JdbcDao {
     }
 
     public JdbcDao(DbDataSource dbDataSource){
-        buildSqlHandler = this.initBuildSqlHandler(new BuildSqlHandler(dbDataSource));
+        buildSqlHandler = this.initBuildSqlHandler(new BuildSqlHandler(), dbDataSource);
         buildTableHandler = new BuildTableHandler(dbDataSource);
 
     }
 
-    private BuildSqlHandler initBuildSqlHandler(BuildSqlHandler buildSqlHandler) {
-        return (BuildSqlHandler) new SqlParamsCheckProxy(buildSqlHandler).createProxy();
+    private BuildSqlHandler initBuildSqlHandler(BuildSqlHandler buildSqlHandler, DbDataSource dbDataSource) {
+        return new SqlParamsCheckProxy<>(buildSqlHandler, dbDataSource).createProxy();
     }
 
 

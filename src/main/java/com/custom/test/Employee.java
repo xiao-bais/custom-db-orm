@@ -13,7 +13,7 @@ import java.util.Date;
  * @Date 2021/10/28 9:19
  * @Desc：
  **/
-//@DbTable(table = "employee")
+@DbTable(table = "employee")
 @Data
 @ToString
 public class Employee {
@@ -23,9 +23,6 @@ public class Employee {
 
     @DbField(value = "emp_name", desc = "员工姓名")
     private String empName;
-
-    private String pppName;
-
 
     @DbField(desc = "姓名")
     private boolean sex;
@@ -41,6 +38,8 @@ public class Employee {
 
     @DbField
     private int state;
+
+
 
 
 }

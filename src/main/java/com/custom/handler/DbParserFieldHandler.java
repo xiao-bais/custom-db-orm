@@ -350,6 +350,23 @@ public class DbParserFieldHandler {
 
     }
 
+
+    /**
+    * 按条件删除时，匹配是否时逻辑删除
+    */
+    <T> String getDeleteSql(Class<T> t, String logicSql, String condition) throws Exception{
+        Map<String, Object> tableMap = dbAnnoParser.getParserByDbTable(t);
+        Object alias = tableMap.get(DbFieldsConst.TABLE_ALIAS);
+        String dbFieldKey = getDbFieldKey(t);
+        String sql;
+
+        if(JudgeUtilsAx.isNotEmpty(logicSql)) {
+
+        }
+
+        return null;
+    }
+
     /**
     * 添加逻辑删除的部分sql
     */

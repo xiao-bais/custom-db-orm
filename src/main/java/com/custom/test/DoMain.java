@@ -4,10 +4,8 @@ import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.handler.JdbcDao;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @Author Xiao-Bai
@@ -33,7 +31,6 @@ public class DoMain {
         dbDataSource.setDbCustomStrategy(dbCustomStrategy);
         dbCustomStrategy.setUnderlineToCamel(true);
         JdbcDao jdbcDao = new JdbcDao(dbDataSource);
-
         long time2 = new Date().getTime();
         System.out.println("初始化:" + (time2 - time1));
 //        List<Employee> employeeList = jdbcDao.selectList(Employee.class, "and age > 22");
@@ -41,10 +38,15 @@ public class DoMain {
         String sql = "select a.`id` `id`, a.`emp_name` emp_name, a.`sex` `sex`, a.`age` `age`, a.`address` `address`, a.`birthday` `birthday`, a.`state` `state` \n" +
                 "from employee a   \n" +
                 "where `state` = 0  and a.age = 23 ";
-        Employee employee = new Employee();
-       List<Employee> list = new ArrayList<>();
-       list.add(employee);
-       jdbcDao.updateByKey(new Employee());
+//        Employee employee = new Employee();
+//        employee.setEmpName("李四111");
+//        employee.setAddress(123454);
+//        employee.setAge(25);
+//        employee.setBirthday(new Date());
+//        employee.setSex(false);
+//        jdbcDao.insert(Collections.singletonList(employee));
+
+//        Employee employee = jdbcDao.selectOneByKey(Employee.class, "");
         long time3 = new Date().getTime();
         System.out.println("执行完：" + (time3 - time2));
 

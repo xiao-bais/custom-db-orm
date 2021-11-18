@@ -200,9 +200,10 @@ public class BuildSqlHandler {
      */
     @CheckExecute(target = CheckTarget.DELETE)
     <T> int deleteByCondition(Class<T> t, String condition, Object... params) throws Exception {
+        System.out.println("删除寄来了");
         condition = String.format("where 1 = 1 %s", condition);
         String alias = dbParserFieldHandler.getDbTableAlias(t);
-        //todo... 根据条件删除的时候 是否存在逻辑删除字段而执行不同的sql语句
+//        String deleteSql = dbParserFieldHandler.getDeleteSql(t, logicDeleteUpdateSql, condition);
         String deleteSql = String.format("delete from %s %s %s", dbParserFieldHandler.getDbTableName(t), alias, condition);
         return sqlExecuteHandler.executeUpdate(deleteSql, params);
     }
@@ -213,7 +214,6 @@ public class BuildSqlHandler {
      */
     @CheckExecute(target = CheckTarget.INSERT)
     <T> int insert(T t, boolean isGeneratedKey) throws Exception {
-        JudgeUtilsAx.checkObjNotNull(t.getClass());
         //数据库字段
         String[] dbFields = dbParserFieldHandler.getDbFields(t.getClass());
         //java属性值
@@ -251,9 +251,6 @@ public class BuildSqlHandler {
      */
     @CheckExecute(target = CheckTarget.INSERT)
     <T> int insert(List<T> tList, boolean isGeneratedKey) throws Exception {
-        if(null == tList) {
-            throw new RuntimeException(ExceptionConst.EX_PARAM_EMPTY);
-        }
         T t = tList.get(0);
         //数据库字段
         String[] dbFields = dbParserFieldHandler.getDbFields(t.getClass());
@@ -301,7 +298,6 @@ public class BuildSqlHandler {
      */
     @CheckExecute(target = CheckTarget.UPDATE)
     <T> int updateByKey(T t, String... updateDbFields) throws Exception {
-        JudgeUtilsAx.checkObjNotNull(t.getClass());
         StringJoiner editSymbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1);
         List<String> updateDbColumns = new ArrayList<>();
         List<Object> updateDbValues = new ArrayList<>();
