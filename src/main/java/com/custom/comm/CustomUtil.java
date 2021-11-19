@@ -8,16 +8,24 @@ import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.DbMediaType;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @Author Xiao-Bai
@@ -25,6 +33,7 @@ import java.util.UUID;
  * @Version 1.0
  * @Description CommUtils
  */
+@Slf4j
 public class CustomUtil {
 
     public static String getDataBase(String url){
@@ -115,10 +124,7 @@ public class CustomUtil {
         return String.format("%s`%s`", alias, fieldName);
     }
 
-    public static void main(String[] args) {
-        String joinFieldStr = getJoinFieldStr("a.name");
-        System.out.println("joinFieldStr = " + joinFieldStr);
-    }
+
 
 
     /**
@@ -259,6 +265,36 @@ public class CustomUtil {
         }
         return false;
     }
+
+
+    public static String loadFiles(String filePath){
+            String res = "";
+            if(JudgeUtilsAx.isEmpty(filePath)){
+                log.error("找不到文件或不存在该路径");
+                return res;
+            }
+            try {
+                Resource resource = new ClassPathResource(filePath);
+                BufferedReader br = new BufferedReader(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8));
+                StringBuilder sb = new StringBuilder();
+                String str;
+                while((str=br.readLine())!=null) {
+                    sb.append(str);
+                }
+                res = sb.toString();
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                e.printStackTrace();
+            }
+            return res;
+        }
+
+    public static void main(String[] args) {
+        String content = loadFiles("mapper/testSql.sql");
+        System.out.println("content = " + content);
+    }
+
+
 
 
 

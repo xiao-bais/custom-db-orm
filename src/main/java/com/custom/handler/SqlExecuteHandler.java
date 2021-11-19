@@ -28,9 +28,6 @@ import java.util.Map;
  */
 public class SqlExecuteHandler extends DbConnection {
 
-    private Logger logger = LoggerFactory.getLogger(SqlExecuteHandler.class);
-
-
     private Connection conn;
     private PreparedStatement statement = null;
     private ResultSet resultSet = null;
@@ -76,7 +73,7 @@ public class SqlExecuteHandler extends DbConnection {
    /**
     * 通用查询（Collection）
     */
-   <T> List<T> query(Class<T> clazz, String sql, Object... params) throws Exception {
+   protected <T> List<T> query(Class<T> clazz, String sql, Object... params) throws Exception {
        Map<String, Object> map;
        List<T> list = new ArrayList<>();
        try{
@@ -113,7 +110,7 @@ public class SqlExecuteHandler extends DbConnection {
     /**
      * 查询单个值SQL
      */
-   Object selectOneSql(String sql, Object... params) throws Exception {
+   protected Object selectOneSql(String sql, Object... params) throws Exception {
         Object result = null;
         try {
             statementQuery(sql, params);
@@ -131,7 +128,7 @@ public class SqlExecuteHandler extends DbConnection {
     /**
      * 通用查询单个对象sql
      */
-   <T> T selectOneSql(Class<T> t, String sql, Object... params) throws Exception {
+   protected <T> T selectOneSql(Class<T> t, String sql, Object... params) throws Exception {
        Map<String, Object> map = new HashMap<>();
         try {
             statementQuery(sql, params);
@@ -152,7 +149,7 @@ public class SqlExecuteHandler extends DbConnection {
     /**
      * 通用删 /改
      */
-   int executeUpdate(String sql, Object... params) throws Exception{
+   protected int executeUpdate(String sql, Object... params) throws Exception{
         int res = 0;
         try{
             statementUpdate(false, sql, params);
@@ -168,7 +165,7 @@ public class SqlExecuteHandler extends DbConnection {
      * 插入
      */
     @SuppressWarnings("Unchecked")
-   <T> int executeInsert(List<T> obj, String sql, String keyField, Object... params) throws Exception {
+   protected <T> int executeInsert(List<T> obj, String sql, String keyField, Object... params) throws Exception {
         int res = 0;
         try{
             statementUpdate(true, sql, params);
@@ -200,7 +197,7 @@ public class SqlExecuteHandler extends DbConnection {
     /**
      * 执行表结构创建或删除
      */
-    void executeTableSql(String sql) throws SQLException {
+    protected void executeTableSql(String sql) throws SQLException {
         statement = conn.prepareStatement(sql);
         statement.execute();
     }
@@ -208,7 +205,7 @@ public class SqlExecuteHandler extends DbConnection {
     /**
      * 查询表是否存在
      */
-    long executeTableExist(String sql) throws SQLException {
+    protected long executeTableExist(String sql) throws SQLException {
         long count = 0;
         statement =  conn.prepareStatement(sql);
         resultSet = statement.executeQuery();
