@@ -25,9 +25,10 @@ public class DoMain {
         DbCustomStrategy dbCustomStrategy = new DbCustomStrategy();
         //是否打印执行的sql 默认false
         dbCustomStrategy.setSqlOutPrinting(true);
-        dbCustomStrategy.setDbFieldDeleteLogic("state");
-        dbCustomStrategy.setDeleteLogicValue("1");
-        dbCustomStrategy.setNotDeleteLogicValue("0");
+        dbCustomStrategy.setSqlOutUpdate(true);
+//        dbCustomStrategy.setDbFieldDeleteLogic("state");
+//        dbCustomStrategy.setDeleteLogicValue("1");
+//        dbCustomStrategy.setNotDeleteLogicValue("0");
         dbDataSource.setDbCustomStrategy(dbCustomStrategy);
         dbCustomStrategy.setUnderlineToCamel(true);
         JdbcDao jdbcDao = new JdbcDao(dbDataSource);
@@ -46,7 +47,7 @@ public class DoMain {
 //        employee.setSex(false);
 //        jdbcDao.insert(Collections.singletonList(employee));
 
-//        Employee employee = jdbcDao.selectOneByKey(Employee.class, "");
+        jdbcDao.deleteBatchKeys(Employee.class, Arrays.asList(1,5,8,9,10));
         long time3 = new Date().getTime();
         System.out.println("执行完：" + (time3 - time2));
 

@@ -13,6 +13,7 @@ import com.custom.page.DbPageRows;
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * @Author Xiao-Bai
@@ -178,7 +179,7 @@ public class BuildSqlHandler {
      */
     @CheckExecute(target = CheckTarget.DELETE)
     <T> int deleteByKey(Class<T> t, Object key) throws Exception {
-        String deleteSql = dbParserFieldHandler.getDeleteSql(t, logicDeleteUpdateSql, SymbolConst.QUEST, false);
+        String deleteSql = dbParserFieldHandler.getDeleteSql(t, logicDeleteQuerySql, logicDeleteUpdateSql, SymbolConst.QUEST, false);
         return sqlExecuteHandler.executeUpdate(deleteSql, key);
     }
 
@@ -188,10 +189,8 @@ public class BuildSqlHandler {
     @CheckExecute(target = CheckTarget.DELETE)
     <T> int deleteBatchKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception {
         StringJoiner delSymbols = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
-        for (int i = 0; i < keys.size(); i++) {
-            delSymbols.add(SymbolConst.QUEST);
-        }
-        String deleteSql = dbParserFieldHandler.getDeleteSql(t, logicDeleteUpdateSql, String.format("(%s)", delSymbols), true);
+        IntStream.range(0, keys.size()).mapToObj(i -> SymbolConst.QUEST).forEach(delSymbols::add);
+        String deleteSql = dbParserFieldHandler.getDeleteSql(t, logicDeleteQuerySql, logicDeleteUpdateSql, String.format("(%s)", delSymbols), true);
         return sqlExecuteHandler.executeUpdate(deleteSql, keys.toArray());
     }
 
@@ -200,11 +199,7 @@ public class BuildSqlHandler {
      */
     @CheckExecute(target = CheckTarget.DELETE)
     <T> int deleteByCondition(Class<T> t, String condition, Object... params) throws Exception {
-        System.out.println("删除寄来了");
-        condition = String.format("where 1 = 1 %s", condition);
-        String alias = dbParserFieldHandler.getDbTableAlias(t);
-//        String deleteSql = dbParserFieldHandler.getDeleteSql(t, logicDeleteUpdateSql, condition);
-        String deleteSql = String.format("delete from %s %s %s", dbParserFieldHandler.getDbTableName(t), alias, condition);
+        String deleteSql = dbParserFieldHandler.getDeleteSql(t, logicDeleteQuerySql, logicDeleteUpdateSql, condition);
         return sqlExecuteHandler.executeUpdate(deleteSql, params);
     }
 

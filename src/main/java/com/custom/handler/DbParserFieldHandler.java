@@ -330,7 +330,7 @@ public class DbParserFieldHandler {
     /**
     * 获取删除的sql
     */
-    <T> String getDeleteSql(Class<T> t, String logicSql, String key, boolean isMore) throws Exception {
+    <T> String getDeleteSql(Class<T> t, String logicValidSql, String logicInValidSql, String key, boolean isMore) throws Exception {
         Map<String, Object> tableMap = dbAnnoParser.getParserByDbTable(t);
         Object alias = tableMap.get(DbFieldsConst.TABLE_ALIAS);
         String dbFieldKey = getDbFieldKey(t);
@@ -339,9 +339,9 @@ public class DbParserFieldHandler {
         String keySql  = String.format(" %s.`%s` %s %s", tableMap.get(DbFieldsConst.TABLE_ALIAS),
                 dbFieldKey, isMore ? SymbolConst.IN : SymbolConst.EQUALS, key);
 
-        if (JudgeUtilsAx.isNotEmpty(logicSql)) {
-            sql = String.format(" update %s %s set %s.%s where %s ", tableMap.get(DbFieldsConst.TABLE_NAME),
-                    alias, alias, logicSql, keySql);
+        if (JudgeUtilsAx.isNotEmpty(logicInValidSql)) {
+            sql = String.format(" update %s %s set %s.%s where %s.%s and %s ", tableMap.get(DbFieldsConst.TABLE_NAME),
+                    alias, alias, logicInValidSql, alias, logicValidSql, keySql);
         }else {
             sql = String.format(" delete from %s %s where %s", tableMap.get(DbFieldsConst.TABLE_NAME),
                     tableMap.get(DbFieldsConst.TABLE_ALIAS), keySql);
@@ -352,19 +352,20 @@ public class DbParserFieldHandler {
 
 
     /**
-    * 按条件删除时，匹配是否时逻辑删除
+    * 按条件删除时，匹配是否是逻辑删除
     */
-    <T> String getDeleteSql(Class<T> t, String logicSql, String condition) throws Exception{
+    <T> String getDeleteSql(Class<T> t, String logicValidSql, String logicInValidSql, String condition) throws Exception{
         Map<String, Object> tableMap = dbAnnoParser.getParserByDbTable(t);
         Object alias = tableMap.get(DbFieldsConst.TABLE_ALIAS);
-        String dbFieldKey = getDbFieldKey(t);
+        Object table = tableMap.get(DbFieldsConst.TABLE_NAME);
         String sql;
 
-        if(JudgeUtilsAx.isNotEmpty(logicSql)) {
-
+        if(JudgeUtilsAx.isNotEmpty(logicInValidSql)) {
+            sql = String.format(" update %s %s set %s.%s where %s.%s %s", table, alias, alias, logicInValidSql, alias, logicValidSql, condition);
+        }else {
+            sql = String.format(" delete from %s %s where 1 = 1 %s", table, alias, condition);
         }
-
-        return null;
+        return sql;
     }
 
     /**
