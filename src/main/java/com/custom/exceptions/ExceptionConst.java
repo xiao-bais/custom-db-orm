@@ -63,9 +63,19 @@ public class ExceptionConst {
     public final static String EX_DROP_TABLE_NOT_FOUND = "The table name to delete cannot be found or does not exist in the database ";
 
     /**
-     * 只查询一个，但找到2个结果
+     * 只查询一个，但找到多个结果
      */
     public final static String EX_QUERY_MORE_RESULT = "One was queried, but more were found:(%s) ";
+
+    /**
+    * 'Set'不支持返回多列结果
+    */
+    public final static String EX_QUERY_SET_RESULT = "The 'Set<%s>' does not support returning multiple column results";
+
+    /**
+     * 'Array'不支持返回多列结果
+     */
+    public final static String EX_QUERY_ARRAY_RESULT = "The 'Arrays' does not support returning multiple column results";
 
     /**
      * 删除条件不能为空
@@ -120,6 +130,18 @@ public class ExceptionConst {
     /**
     * 基于主键查询时，未指定主键的值
     */
-    public final static String EX_PRIMARY_KEY_NOT_SPECIFIED = "The value of the primary key is not specified when querying based on the primary key";}
+    public final static String EX_PRIMARY_KEY_NOT_SPECIFIED = "The value of the primary key is not specified when querying based on the primary key";
+
+    /**
+    * 建议使用包装类型来接收返回值
+    */
+    public final static String EX_NOT_SUPPORT_USE_BASIC_TYPE = "It is recommended to use the wrapper type to receive the return value of the method ： %s.%s()";
+
+    /**
+    * 该方法上未找到@Query 或 @Update 注解
+    */
+    public final static String EX_NOT_FOUND_ANNO__SQL_READ = "The '@Update' or '@Query' annotation was not found on the method : %s";
 
 
+
+}

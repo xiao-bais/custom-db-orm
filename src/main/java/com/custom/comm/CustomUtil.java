@@ -13,13 +13,16 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Locale;
@@ -59,16 +62,17 @@ public class CustomUtil {
         return false;
     }
 
-    public static boolean judgeDbType(Object el) throws Exception{
-        return !(el instanceof String)
-                && !(el instanceof Integer)
-                && !(el instanceof Long)
-                && !(el instanceof Double)
-                && !(el instanceof Char)
-                && !(el instanceof Short)
-                && !(el instanceof Float)
-                && !(el instanceof Boolean)
-                && !(el instanceof Byte);
+    public static boolean judgeDbType(Object el) {
+        return (el.equals(String.class))
+                || (el.equals(Integer.class))
+                || (el.equals(Long.class))
+                || (el.equals(Double.class) )
+                || (el.equals(Char.class))
+                || (el.equals(Short.class))
+                || (el.equals(Float.class))
+                || (el.equals(Boolean.class))
+                || (el.equals(Byte.class))
+                || (el.equals(BigDecimal.class));
     }
 
     /**
@@ -130,9 +134,10 @@ public class CustomUtil {
     /**
      * map转对象
      */
-    public static <T> T mapToObject(Class<T> t, Map<String, Object> map) throws Exception  {
+    public static <T> T mapToObject(Class<T> t, Map<String, Object> map) throws IllegalAccessException, IntrospectionException, InvocationTargetException, InstantiationException {
         if(map == null) return null;
-        T obj = t.newInstance();
+        T obj = null;
+        obj = t.newInstance();
         BeanInfo beanInfo = Introspector.getBeanInfo(t);
         PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
         for (PropertyDescriptor property : propertyDescriptors) {

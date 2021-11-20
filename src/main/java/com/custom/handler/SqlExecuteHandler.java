@@ -1,6 +1,5 @@
 package com.custom.handler;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.SqlOutPrintBuilder;
@@ -8,17 +7,15 @@ import com.custom.dbconfig.DbConnection;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.dbconfig.SymbolConst;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.custom.exceptions.CustomCheckException;
+import com.custom.exceptions.ExceptionConst;
 
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Author Xiao-Bai
@@ -34,7 +31,7 @@ public class SqlExecuteHandler extends DbConnection {
     private DbParserFieldHandler parserFieldHandler;
     private DbCustomStrategy dbCustomStrategy;
 
-    public SqlExecuteHandler(DbDataSource dbDataSource, DbParserFieldHandler parserFieldHandler){
+    public SqlExecuteHandler(DbDataSource dbDataSource, DbParserFieldHandler parserFieldHandler) {
         super(dbDataSource);
         conn = super.getConnection();
         dbCustomStrategy = super.getDbCustomStrategy();
@@ -42,8 +39,8 @@ public class SqlExecuteHandler extends DbConnection {
     }
 
     /**
-    * 预编译-更新
-    */
+     * 预编译-更新
+     */
     private void statementUpdate(boolean isSave, String sql, Object... params) throws Exception {
         statement = isSave ? conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS) : conn.prepareStatement(sql);
         if (dbCustomStrategy.isSqlOutPrinting() && dbCustomStrategy.isSqlOutUpdate()) {
@@ -56,8 +53,8 @@ public class SqlExecuteHandler extends DbConnection {
     }
 
     /**
-    * 预编译-查询
-    */
+     * 预编译-查询
+     */
     private void statementQuery(String sql, Object... params) throws Exception {
         statement = conn.prepareStatement(sql);
         if (dbCustomStrategy.isSqlOutPrinting()) {
@@ -70,34 +67,90 @@ public class SqlExecuteHandler extends DbConnection {
     }
 
 
-   /**
-    * 通用查询（Collection）
-    */
-   protected <T> List<T> query(Class<T> clazz, String sql, Object... params) throws Exception {
-       Map<String, Object> map;
-       List<T> list = new ArrayList<>();
-       try{
-           statementQuery(sql, params);
-           resultSet = statement.executeQuery();
-           ResultSetMetaData metaData = resultSet.getMetaData();
-           while (resultSet.next()) {
-               map = new HashMap<>();
-               getResultMap(map, metaData);
-               T t = dbCustomStrategy.isUnderlineToCamel() ?  JSONObject.parseObject(JSONObject.toJSONString(map), clazz)
+    /**
+     * 通用查询（Collection）
+     */
+    protected <T> List<T> query(Class<T> clazz, String sql, Object... params) throws Exception {
+        Map<String, Object> map;
+        List<T> list = new ArrayList<>();
+        try {
+            statementQuery(sql, params);
+            resultSet = statement.executeQuery();
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            while (resultSet.next()) {
+                map = new HashMap<>();
+                getResultMap(map, metaData);
+                T t = dbCustomStrategy.isUnderlineToCamel() ? JSONObject.parseObject(JSONObject.toJSONString(map), clazz)
                         : CustomUtil.mapToObject(clazz, map);
-               list.add(t);
-           }
-       }catch (SQLException e) {
-           new SqlOutPrintBuilder(sql, params).sqlErrPrint();
-           throw e;
-       }
-       return list;
+                list.add(t);
+            }
+        } catch (SQLException e) {
+            new SqlOutPrintBuilder(sql, params).sqlErrPrint();
+            throw e;
+        }
+        return list;
 
-   }
+    }
 
-   /**
-    * 获取结果集对象
-    */
+    /**
+     * 查询单个字段的多结果集（Set）
+     */
+    @SuppressWarnings("unchecked")
+    protected <T> Set<T> querySet(Class<T> t, String sql, Object... params) throws Exception {
+        Set<T> resSet = new HashSet<>();
+        try {
+            statementQuery(sql, params);
+            resultSet = statement.executeQuery();
+            if (resultSet.getMetaData().getColumnCount() > 1) {
+                throw new CustomCheckException(String.format(ExceptionConst.EX_QUERY_SET_RESULT, t.getTypeName()));
+            }
+            while (resultSet.next()) {
+                T object = (T) resultSet.getObject(1);
+                resSet.add(object);
+            }
+        } catch (SQLException e) {
+            new SqlOutPrintBuilder(sql, params).sqlErrPrint();
+            throw e;
+        }
+        return resSet;
+    }
+
+    /**
+     * 查询单个字段的多结果集（Set）
+     */
+    @SuppressWarnings("unchecked")
+    protected <T> T[] queryArray(Class<T> t, String sql, Object... params) throws Exception {
+        T[] resEntity;
+        try {
+            Statement statement = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            this.resultSet = statement.executeQuery(sql);
+            resultSet.last();
+            final int rowsCount = resultSet.getRow();
+            resultSet.beforeFirst();
+            int count = this.resultSet.getMetaData().getColumnCount();
+            if (count == 0) {
+                return null;
+            } else if (count > 1) {
+                throw new CustomCheckException(ExceptionConst.EX_QUERY_ARRAY_RESULT);
+            }
+
+            resEntity = (T[]) Array.newInstance(t, rowsCount);
+            int len = 0;
+            while (this.resultSet.next()) {
+                T object = (T) this.resultSet.getObject(1);
+                resEntity[len] = object;
+                len++;
+            }
+        } catch (SQLException e) {
+            new SqlOutPrintBuilder(sql, params).sqlErrPrint();
+            throw e;
+        }
+        return resEntity;
+    }
+
+    /**
+     * 获取结果集对象
+     */
     private void getResultMap(Map<String, Object> map, ResultSetMetaData metaData) throws SQLException {
         for (int i = 0; i < metaData.getColumnCount(); i++) {
             String columnName = metaData.getColumnLabel(i + 1);
@@ -110,67 +163,72 @@ public class SqlExecuteHandler extends DbConnection {
     /**
      * 查询单个值SQL
      */
-   protected Object selectOneSql(String sql, Object... params) throws Exception {
+    protected Object selectOneSql(String sql, Object... params) throws Exception {
         Object result = null;
         try {
             statementQuery(sql, params);
             resultSet = statement.executeQuery();
-            if (resultSet.next()){
+            if (resultSet.next()) {
                 result = resultSet.getObject(SymbolConst.DEFAULT_ONE);
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             new SqlOutPrintBuilder(sql, params).sqlErrPrint();
             throw e;
         }
         return result;
-   }
+    }
 
     /**
      * 通用查询单个对象sql
      */
-   protected <T> T selectOneSql(Class<T> t, String sql, Object... params) throws Exception {
-       Map<String, Object> map = new HashMap<>();
+    @SuppressWarnings("unchecked")
+    protected <T> T selectOneSql(Class<T> t, String sql, Object... params) throws Exception {
+        Map<String, Object> map = new HashMap<>();
         try {
             statementQuery(sql, params);
             resultSet = statement.executeQuery();
             ResultSetMetaData metaData = resultSet.getMetaData();
-            if (resultSet.next()){
+            if (resultSet.next()) {
                 getResultMap(map, metaData);
             }
-            if(map.isEmpty()) return null;
-        }catch (SQLException e){
+            if (map.isEmpty()) return null;
+            if (Map.class.isAssignableFrom(t)) {
+                return (T) map;
+            }
+        } catch (SQLException e) {
             new SqlOutPrintBuilder(sql, params).sqlErrPrint();
             throw e;
         }
-        return JSONObject.parseObject(JSONObject.toJSONString(map), t);
-   }
+        return dbCustomStrategy.isUnderlineToCamel() ? JSONObject.parseObject(JSONObject.toJSONString(map), t)
+                : CustomUtil.mapToObject(t, map);
+    }
 
 
     /**
      * 通用删 /改
      */
-   protected int executeUpdate(String sql, Object... params) throws Exception{
-        int res = 0;
-        try{
+    protected int executeUpdate(String sql, Object... params) throws Exception {
+        int res;
+        try {
             statementUpdate(false, sql, params);
             res = statement.executeUpdate();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             new SqlOutPrintBuilder(sql, params).sqlErrPrint();
             throw e;
         }
-       return res;
-   }
+        return res;
+    }
 
     /**
      * 插入
      */
     @SuppressWarnings("Unchecked")
-   protected <T> int executeInsert(List<T> obj, String sql, String keyField, Object... params) throws Exception {
-        int res = 0;
-        try{
+    protected <T> int executeInsert(List<T> obj, String sql, String keyField, Object... params) throws Exception {
+        int res;
+        try {
             statementUpdate(true, sql, params);
             res = statement.executeUpdate();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             new SqlOutPrintBuilder(sql, params).sqlErrPrint();
             throw e;
         }
@@ -182,17 +240,17 @@ public class SqlExecuteHandler extends DbConnection {
             Class<?> type = fieldKeyType.getType();
             PropertyDescriptor pd = new PropertyDescriptor(keyField, t.getClass());
             Method writeMethod = pd.getWriteMethod();
-            if(type.equals(Long.class) || type.equals(long.class)) {
-                long key = Long.parseLong(resultSet.getObject( 1).toString());
+            if (type.equals(Long.class) || type.equals(long.class)) {
+                long key = Long.parseLong(resultSet.getObject(1).toString());
                 writeMethod.invoke(t, key);
-            }else if(type.equals(Integer.class) || type.equals(int.class)) {
-                int key = Integer.parseInt(resultSet.getObject( 1).toString());
+            } else if (type.equals(Integer.class) || type.equals(int.class)) {
+                int key = Integer.parseInt(resultSet.getObject(1).toString());
                 writeMethod.invoke(t, key);
             }
             count++;
         }
         return res;
-   }
+    }
 
     /**
      * 执行表结构创建或删除
@@ -207,18 +265,13 @@ public class SqlExecuteHandler extends DbConnection {
      */
     protected long executeTableExist(String sql) throws SQLException {
         long count = 0;
-        statement =  conn.prepareStatement(sql);
+        statement = conn.prepareStatement(sql);
         resultSet = statement.executeQuery();
-        while (resultSet.next()) {
+        if (resultSet.next()) {
             count = (long) resultSet.getObject(SymbolConst.DEFAULT_ONE);
         }
         return count;
     }
-
-
-
-
-
 
 
 }

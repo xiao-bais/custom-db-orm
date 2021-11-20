@@ -3,7 +3,9 @@ package com.custom.test;
 import com.custom.annotations.DbField;
 import com.custom.annotations.DbKey;
 import com.custom.annotations.DbTable;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.util.Date;
@@ -15,6 +17,8 @@ import java.util.Date;
  **/
 @DbTable(table = "employee")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @ToString
 public class Employee {
 
