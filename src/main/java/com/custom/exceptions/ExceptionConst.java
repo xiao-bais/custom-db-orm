@@ -142,6 +142,8 @@ public class ExceptionConst {
     */
     public final static String EX_NOT_FOUND_ANNO__SQL_READ = "The '@Update' or '@Query' annotation was not found on the method : %s";
 
-
-
+    /**
+    * 未继承BasicDao
+    */
+    public final static String EX_Not_INHERITED_BASIC_DAO = "Execution error, possibly because the %s does not inherit the BasicDao";
 }

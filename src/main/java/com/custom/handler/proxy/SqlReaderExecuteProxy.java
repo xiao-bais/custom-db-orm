@@ -2,6 +2,7 @@ package com.custom.handler.proxy;
 
 import com.custom.annotations.reader.Query;
 import com.custom.annotations.reader.Update;
+import com.custom.comm.BasicDao;
 import com.custom.comm.CustomUtil;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.exceptions.CustomCheckException;
@@ -12,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @Author Xiao-Bai
@@ -38,6 +38,10 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Exception {
+
+        if(!BasicDao.class.isAssignableFrom(proxy.getClass())) {
+            throw new CustomCheckException(String.format(ExceptionConst.EX_Not_INHERITED_BASIC_DAO, method.getDeclaringClass()));
+        }
 
         try {
             if (method.isAnnotationPresent(Query.class)) {
