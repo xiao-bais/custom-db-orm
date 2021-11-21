@@ -61,7 +61,7 @@ public class CustomUtil {
         return false;
     }
 
-    public static boolean judgeDbType(Object el) {
+    public static boolean isBasicType(Object el) {
         return (el.equals(String.class))
                 || (el.equals(Integer.class) || el.equals(int.class))
                 || (el.equals(Long.class) || el.equals(long.class))

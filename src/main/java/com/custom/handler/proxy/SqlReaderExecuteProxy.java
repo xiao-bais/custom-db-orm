@@ -93,7 +93,7 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
             } else if (type.equals(Set.class)) {
                 return querySet(typeArgument, sql, params);
             }
-        } else if (CustomUtil.judgeDbType(returnType)) {
+        } else if (CustomUtil.isBasicType(returnType)) {
             return selectOneSql(sql, params);
         } else if (((Class<?>) returnType).isArray()) {
             Class<?> type = ((Class<?>) returnType).getComponentType();
@@ -120,7 +120,7 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
                 Class<?> type = parameterTypes[i];
                 Object param = args[i];
 
-                if (CustomUtil.judgeDbType(type)) {
+                if (CustomUtil.isBasicType(type)) {
                     paramRes.add(param);
                 } else if (type.equals(List.class)) {
                     paramRes.addAll((List<Object>) param);
@@ -140,7 +140,7 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
                 String paramName = parameters[i].getName();
                 Object paramVal = args[i];
 
-                if(CustomUtil.judgeDbType(type)) {
+                if(CustomUtil.isBasicType(type)) {
                     paramsMap.put(paramName, paramVal);
                 }else if(type.equals(Map.class)){
                     paramsMap.putAll((Map<?, ?>) paramVal);
