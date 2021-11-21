@@ -62,7 +62,7 @@ public class DbParserFieldHandler {
     /**
      * 获取对象中所有的属性值
      */
-    <T> List<Object> getFieldsVal(T t, String[] fields) throws Exception {
+    public <T> List<Object> getFieldsVal(T t, String[] fields) throws Exception {
         List<Object> dataList = new ArrayList<>();
         for (String field : fields) {
             Object fieldValue = this.getFieldValue(t, field);

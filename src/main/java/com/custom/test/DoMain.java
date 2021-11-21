@@ -38,7 +38,7 @@ public class DoMain {
 
 
         JdbcTest jdbcTest  = SqlReaderExecuteProxy.createProxy(JdbcTest.class, dbDataSource);
-        int[] arrays = jdbcTest.getArrays();
+        Integer[] arrays = jdbcTest.getArrays(25, true);
         System.out.println("arrays = " + Arrays.toString(arrays));
 
 

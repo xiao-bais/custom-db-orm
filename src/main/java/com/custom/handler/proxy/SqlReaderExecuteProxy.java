@@ -4,7 +4,9 @@ import com.custom.annotations.reader.Query;
 import com.custom.annotations.reader.Update;
 import com.custom.comm.BasicDao;
 import com.custom.comm.CustomUtil;
+import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.DbDataSource;
+import com.custom.dbconfig.SymbolConst;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
 import com.custom.handler.DbParserFieldHandler;
@@ -13,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.stream.IntStream;
 
 /**
  * @Author Xiao-Bai
@@ -40,7 +43,7 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
     public Object invoke(Object proxy, Method method, Object[] args) throws Exception {
 
         if(!BasicDao.class.isAssignableFrom(proxy.getClass())) {
-            throw new CustomCheckException(String.format(ExceptionConst.EX_Not_INHERITED_BASIC_DAO, method.getDeclaringClass()));
+            throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_INHERITED_BASIC_DAO, method.getDeclaringClass()));
         }
 
         try {
@@ -50,8 +53,8 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
                 return doUpdateInvoke(method, args);
             }
         } catch (Exception e) {
-            if (e instanceof ClassCastException) {
-                throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_SUPPORT_USE_BASIC_TYPE, method.getDeclaringClass().getName(), method.getName()));
+            if (e instanceof CustomCheckException) {
+                throw e;
             }
             throw e;
         }
@@ -74,7 +77,10 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
         Query query = method.getAnnotation(Query.class);
         String sql = query.isPath() ? CustomUtil.loadFiles(query.value()) : query.value();
         Type returnType = method.getGenericReturnType();
-        Object[] params = this.handleParamsReplaceSql(sql, method, args, query.isOrder()).toArray();
+        List<Object> paramValues = this.handleParamsReplaceSql(sql, method, args, query.isOrder());
+        sql = String.valueOf(paramValues.get(paramValues.size() - 1));
+        paramValues.remove(sql);
+        Object[] params = paramValues.toArray();
 
         if (returnType instanceof ParameterizedType) {
             ParameterizedType pt = (ParameterizedType) returnType;
@@ -91,7 +97,7 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
             return selectOneSql(sql, params);
         } else if (((Class<?>) returnType).isArray()) {
             Class<?> type = ((Class<?>) returnType).getComponentType();
-            return queryArray(type, sql, params);
+            return queryArray(type, sql,method.getDeclaringClass().getName(), method.getName(), params);
         }
         String typeName = returnType.getTypeName();
         Class<?> cls = Class.forName(typeName);
@@ -102,36 +108,66 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
     /**
      * 将参数中的占位符处理成‘?’
      */
-    private List<Object> handleParamsReplaceSql(String sql, Method method, Object[] args, boolean isOrder) {
+    private List<Object> handleParamsReplaceSql(String sql, Method method, Object[] args, boolean isOrder) throws Exception {
 
-        List<Object> params = new ArrayList<>();
+        List<Object> paramRes = new ArrayList<>();
+        String logSql = sql;
 
         Class<?>[] parameterTypes = method.getParameterTypes();
-        for (int i = 0; i < parameterTypes.length; i++) {
-            Class<?> type = parameterTypes[i];
-            Object param = args[i];
+        if(isOrder) {
 
-            //以参数的排列顺序来匹配sql的？位置
-            if (isOrder) {
+            for (int i = 0; i < parameterTypes.length; i++) {
+                Class<?> type = parameterTypes[i];
+                Object param = args[i];
+
                 if (CustomUtil.judgeDbType(type)) {
-                    params.add(param);
+                    paramRes.add(param);
                 } else if (type.equals(List.class)) {
-                    params.addAll((List<Object>) param);
+                    paramRes.addAll((List<Object>) param);
                 } else if (type.equals(Arrays.class)) {
-                    params.addAll(Collections.singletonList(param));
+                    paramRes.addAll(Collections.singletonList(param));
                 }else if(type.equals(Set.class)) {
                     Set<Object> paramsSet = (Set<Object>) param;
-                    params.addAll(paramsSet);
+                    paramRes.addAll(paramsSet);
+                }else throw new IllegalArgumentException(String.format(ExceptionConst.EX_NOT_SUPPORT_MAP_OR_CUSTOM_ENTITY_PARAMS, method.getDeclaringClass().getName(), method.getName()));
+            }
+        }else {
+
+            Map<Object, Object> paramsMap = new HashMap<>();
+            Parameter[] parameters = method.getParameters();
+            for (int i = 0; i < parameterTypes.length; i++) {
+                Class<?> type = parameterTypes[i];
+                String paramName = parameters[i].getName();
+                Object paramVal = args[i];
+
+                if(CustomUtil.judgeDbType(type)) {
+                    paramsMap.put(paramName, paramVal);
+                }else if(type.equals(Map.class)){
+                    paramsMap.putAll((Map<?, ?>) paramVal);
+                }else {
+                    Field[] fields = CustomUtil.getFields(paramVal.getClass());
+                    Object[] fieldNames = Arrays.stream(fields).map(Field::getName).toArray();
+                    List<Object> fieldVales = getParserFieldHandler().getFieldsVal(paramVal.getClass(), (String[]) fieldNames);
+                    IntStream.range(0, fieldNames.length).forEach(x -> paramsMap.put(fieldNames[x], fieldVales.get(x)));
                 }
             }
 
-
+            int index = 0;
+            while (true){
+                int[] ints = CustomUtil.replaceSqlRex(sql, SymbolConst.PREPARE_BEGIN_REX, SymbolConst.PREPARE_END_REX, index);
+                if(ints == null) break;
+                String text = sql.substring(ints[0] + 2, ints[1]);
+                sql = sql.replace(sql.substring(ints[0], ints[1] + 1), SymbolConst.QUEST);
+                index = ints[2];
+                Object sqlParamsVal = paramsMap.get(text);
+                if(JudgeUtilsAx.isEmpty(sqlParamsVal)) throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_PARAMS_VALUE, text, logSql));
+                paramRes.add(sqlParamsVal);
+            }
         }
-
-
-        return params;
-
+        paramRes.add(sql);
+        return paramRes;
     }
+
 
 
 }

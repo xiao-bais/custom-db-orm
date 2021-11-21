@@ -9,6 +9,7 @@ import com.custom.dbconfig.DbDataSource;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
+import org.springframework.util.StringUtils;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Array;
@@ -38,6 +39,10 @@ public class SqlExecuteHandler extends DbConnection {
         this.parserFieldHandler = parserFieldHandler;
     }
 
+    public DbParserFieldHandler getParserFieldHandler() {
+        return parserFieldHandler;
+    }
+
     /**
      * 预编译-更新
      */
@@ -53,7 +58,7 @@ public class SqlExecuteHandler extends DbConnection {
     }
 
     /**
-     * 预编译-查询
+     * 预编译-查询1
      */
     private void statementQuery(String sql, Object... params) throws Exception {
         statement = conn.prepareStatement(sql);
@@ -63,6 +68,17 @@ public class SqlExecuteHandler extends DbConnection {
         if (params.length <= 0) return;
         for (int i = 0; i < params.length; i++) {
             statement.setObject((i + 1), params[i]);
+        }
+    }
+
+    /**
+    * 预编译-查询2（可预先获取结果集行数）
+    */
+    private void statementQuery2(String sql, Object... params) throws Exception {
+        sql = CustomUtil.prepareSql(sql, params);
+        statement = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        if (dbCustomStrategy.isSqlOutPrinting()) {
+            new SqlOutPrintBuilder(sql, params).sqlInfoQueryPrint();
         }
     }
 
@@ -119,11 +135,11 @@ public class SqlExecuteHandler extends DbConnection {
      * 查询单个字段的多结果集（Set）
      */
     @SuppressWarnings("unchecked")
-    protected <T> T[] queryArray(Class<T> t, String sql, Object... params) throws Exception {
+    protected <T> T[] queryArray(Class<T> t, String sql, String className, String methodName, Object... params) throws Exception {
         T[] resEntity;
         try {
-            Statement statement = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            this.resultSet = statement.executeQuery(sql);
+            statementQuery2(sql, params);
+            resultSet = statement.executeQuery();
             resultSet.last();
             final int rowsCount = resultSet.getRow();
             resultSet.beforeFirst();
@@ -143,6 +159,11 @@ public class SqlExecuteHandler extends DbConnection {
             }
         } catch (SQLException e) {
             new SqlOutPrintBuilder(sql, params).sqlErrPrint();
+            throw e;
+        }catch (RuntimeException e) {
+            if(e instanceof ClassCastException && t.isPrimitive()) {
+                throw new CustomCheckException(new CustomCheckException(String.format(ExceptionConst.EX_NOT_SUPPORT_USE_BASIC_TYPE, className, methodName)));
+            }
             throw e;
         }
         return resEntity;

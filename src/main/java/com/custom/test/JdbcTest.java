@@ -1,6 +1,7 @@
 package com.custom.test;
 
 import com.custom.annotations.reader.Query;
+import com.custom.comm.BasicDao;
 
 import java.util.List;
 import java.util.Map;
@@ -11,7 +12,7 @@ import java.util.Set;
  * @Date 2021/11/19 17:27
  * @Desc：
  **/
-public interface JdbcTest {
+public interface JdbcTest extends BasicDao {
 
     @Query(value = "select * from employee", isPath = false)
     List<Employee> getList();
@@ -28,8 +29,8 @@ public interface JdbcTest {
     @Query("select emp_name from employee where age = 25")
     String testHel(String name);
 
-    @Query(value = "select age from employee", isPath = false)
-    int[] getArrays();
+    @Query(value = "select age from employee where age = #{myAge} and sex = #{mySex}", isPath = false, isOrder = false)
+    Integer[] getArrays(int myAge, boolean mySex);
 
 
 

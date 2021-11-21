@@ -7,6 +7,7 @@ import com.custom.annotations.DbTable;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.DbMediaType;
 import com.custom.exceptions.CustomCheckException;
+import com.custom.exceptions.DbAnnotationParserException;
 import com.custom.exceptions.ExceptionConst;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
@@ -24,10 +25,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -64,14 +63,14 @@ public class CustomUtil {
 
     public static boolean judgeDbType(Object el) {
         return (el.equals(String.class))
-                || (el.equals(Integer.class))
-                || (el.equals(Long.class))
-                || (el.equals(Double.class) )
-                || (el.equals(Char.class))
-                || (el.equals(Short.class))
-                || (el.equals(Float.class))
-                || (el.equals(Boolean.class))
-                || (el.equals(Byte.class))
+                || (el.equals(Integer.class) || el.equals(int.class))
+                || (el.equals(Long.class) || el.equals(long.class))
+                || (el.equals(Double.class) || el.equals(double.class))
+                || (el.equals(Char.class) || el.equals(char.class))
+                || (el.equals(Short.class) || el.equals(short.class))
+                || (el.equals(Float.class) || el.equals(float.class))
+                || (el.equals(Boolean.class) || el.equals(boolean.class))
+                || (el.equals(Byte.class) || el.equals(byte.class))
                 || (el.equals(BigDecimal.class));
     }
 
@@ -271,6 +270,75 @@ public class CustomUtil {
         return false;
     }
 
+    /**
+    * 获取一个类的所有属性（包括父类）
+    */
+    public static <T> Field[] getFields(Class<T> t){
+        Class<?> clz = t;
+        List<Field> fieldList = new ArrayList<>();
+        while (clz != null && !clz.getName().toLowerCase().equals("java.lang.object")){
+            fieldList.addAll(Arrays.asList(clz.getDeclaredFields()));
+            clz = clz.getSuperclass();
+        }
+        if(fieldList.size() == 0) throw new DbAnnotationParserException(ExceptionConst.EX_DBFIELD__NOTFOUND + t);
+        return fieldList.toArray(new Field[0]);
+    }
+
+    /**
+    * sql#{name} 替换为 #{name} 返回起始的下标位置
+    */
+    public static int[] replaceSqlRex(String sql, String beginRex, String endRex, int index) {
+
+        int[] indexes = new int[3];
+        int start = sql.indexOf(beginRex, index);
+        int end = sql.indexOf(endRex, index);
+        if(start == -1 || end == -1)
+            return null;
+        else if(start > 0 && end > 0){
+            indexes[0] = start;
+            indexes[1] = end;
+            indexes[2] = end + 1;
+            return indexes;
+        }
+        return null;
+    }
+
+    /**
+    * 查找字符串出现次数
+    */
+    public static int countStr(String str,String rex) {
+        int num = 0;
+        while (str.contains(rex)) {
+            str = str.substring(str.indexOf(rex) + rex.length());
+            num ++;
+        }
+        return num;
+    }
+
+    /**
+    * 手动处理预编译的sql
+    */
+    //todo... 待处理
+    public static String prepareSql(String sql, Object... params) {
+        StringBuilder sqlBuilder = new StringBuilder(sql);
+        if(params.length > 0) {
+            int index = 0;
+            int symbolNums = countStr(sql, SymbolConst.QUEST);
+            for (int i = 0; i < symbolNums; i++) {
+                String rexStr = params[i] instanceof String ? String.format("'%s'", params[0].toString()) : params[0].toString();
+                sqlBuilder.replace(index, index + 1, rexStr);
+            }
+        }
+        return sqlBuilder.toString();
+    }
+
+
+    public static void main(String[] args) {
+        String sql = "select * from employee where age = #{age_ag} and sex = #{sex111} and aa = #{op";
+
+
+
+    }
 
     public static String loadFiles(String filePath){
             String res = "";
@@ -294,10 +362,7 @@ public class CustomUtil {
             return res;
         }
 
-    public static void main(String[] args) {
-        String content = loadFiles("mapper/testSql.sql");
-        System.out.println("content = " + content);
-    }
+
 
 
 

@@ -145,5 +145,49 @@ public class ExceptionConst {
     /**
     * 未继承BasicDao
     */
-    public final static String EX_Not_INHERITED_BASIC_DAO = "Execution error, possibly because the %s does not inherit the BasicDao";
+    public final static String EX_NOT_INHERITED_BASIC_DAO = "Execution error, possibly because the %s does not inherit the BasicDao";
+
+    /**
+    * 在isOrder=true的情况下，不支持使用map或自定义类型进行参数传递
+    */
+    public final static String EX_NOT_SUPPORT_MAP_OR_CUSTOM_ENTITY_PARAMS = "When isOrder = true, it is not recommended to use 'map' or custom types for parameter passing：%s.%s()";
+
+    /**
+    *
+    */
+    public final static String EX_NOT_FOUND_PARAMS_VALUE = "The value corresponding to parameter '%s' in SQL cannot be found, \n Sql Error =====> \n%s \n==========";
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }
