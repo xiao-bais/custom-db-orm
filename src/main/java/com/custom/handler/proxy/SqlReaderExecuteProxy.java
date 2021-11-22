@@ -154,11 +154,11 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
 
             int index = 0;
             while (true){
-                int[] ints = CustomUtil.replaceSqlRex(sql, SymbolConst.PREPARE_BEGIN_REX, SymbolConst.PREPARE_END_REX, index);
-                if(ints == null) break;
-                String text = sql.substring(ints[0] + 2, ints[1]);
-                sql = sql.replace(sql.substring(ints[0], ints[1] + 1), SymbolConst.QUEST);
-                index = ints[2];
+                int[] indexes = CustomUtil.replaceSqlRex(sql, SymbolConst.PREPARE_BEGIN_REX, SymbolConst.PREPARE_END_REX, index);
+                if(indexes == null) break;
+                String text = sql.substring(indexes[0] + 2, indexes[1]);
+                sql = sql.replace(sql.substring(indexes[0], indexes[1] + 1), SymbolConst.QUEST);
+                index = indexes[2];
                 Object sqlParamsVal = paramsMap.get(text);
                 if(JudgeUtilsAx.isEmpty(sqlParamsVal)) throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_PARAMS_VALUE, text, logSql));
                 paramRes.add(sqlParamsVal);
