@@ -42,6 +42,18 @@ public class DbCustomStrategy {
     */
     private String notDeleteLogicValue = SymbolConst.EMPTY;
 
+    /**
+    * 需要扫描的包路径，加入spring容器中
+    */
+    private String[] packageScans;
+
+    public String[] getPackageScans() {
+        return packageScans;
+    }
+
+    public void setPackageScans(String[] packageScans) {
+        this.packageScans = packageScans;
+    }
 
     public boolean isSqlOutUpdate() {
         return sqlOutUpdate;

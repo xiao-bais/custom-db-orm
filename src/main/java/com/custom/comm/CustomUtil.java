@@ -179,6 +179,27 @@ public class CustomUtil {
         return !isBlank(cs);
     }
 
+
+    /**
+    * 类名转首字母小写
+    */
+    public static String toIndexLower(String text) {
+        String res = SymbolConst.EMPTY;
+        if(JudgeUtilsAx.isEmpty(text)) {
+            return res;
+        }
+        String first = text.substring(0, 1).toLowerCase();
+        res = first + text.substring(1);
+        return res;
+    }
+
+    public static void main(String[] args) {
+        String userInfo = toIndexLower("UserInfo");
+        System.out.println("userInfo = " + userInfo);
+
+
+    }
+
     /**
      * 是否为空
      */
@@ -333,13 +354,6 @@ public class CustomUtil {
         return sqlBuilder.toString();
     }
 
-
-    public static void main(String[] args) {
-        String sql = "select * from employee where age = #{age_ag} and sex = #{sex111} and aa = #{op";
-
-
-
-    }
 
     public static String loadFiles(String filePath){
             String res = "";

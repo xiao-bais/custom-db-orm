@@ -29,6 +29,12 @@ public class SymbolConst {
     public final static String PREPARE_BEGIN_REX = "#{";
     public final static String PREPARE_END_REX = "}";
 
+    public final static String FILE = "file";
+    public final static String JAVA = "jar";
+    public final static String CLASS = ".class";
+    public final static String POINT = ".";
+
+
 
 
 

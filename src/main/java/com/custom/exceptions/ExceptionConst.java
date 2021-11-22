@@ -153,11 +153,14 @@ public class ExceptionConst {
     public final static String EX_NOT_SUPPORT_MAP_OR_CUSTOM_ENTITY_PARAMS = "When isOrder = true, it is not recommended to use 'map' or custom types for parameter passing：%s.%s()";
 
     /**
-    *
+    * 找不到sql中的参数对应的名称
     */
-    public final static String EX_NOT_FOUND_PARAMS_VALUE = "The value corresponding to parameter '%s' in SQL cannot be found, \n Sql Error =====> \n%s \n==========";
+    public final static String EX_NOT_FOUND_PARAMS_VALUE = "The value corresponding to parameter '%s' in SQL cannot be found \n Sql Error =====> \n%s \n==========";
     
-    
+    /**
+    * 找不到该路径
+    */
+    public final static String EX_NOT_FOUND_URL = "The package url cannot be found：%s";
     
     
     

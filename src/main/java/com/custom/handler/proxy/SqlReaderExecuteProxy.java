@@ -5,12 +5,15 @@ import com.custom.annotations.reader.Update;
 import com.custom.comm.BasicDao;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
+import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
+import com.custom.dbconfig.RegisterBeanExecutor;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
 import com.custom.handler.DbParserFieldHandler;
 import com.custom.handler.SqlExecuteHandler;
+import com.custom.scanner.MapperBeanScanner;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.*;
@@ -27,16 +30,16 @@ import java.util.stream.IntStream;
 public class SqlReaderExecuteProxy extends SqlExecuteHandler implements InvocationHandler {
 
 
-    public static <T> T createProxy(Class<T> cls, DbDataSource dbDataSource) {
+    public <T> T createProxy(Class<T> cls) {
         ClassLoader classLoader = cls.getClassLoader();
         Class<?>[] interfaces = new Class[]{cls};
-        SqlReaderExecuteProxy readerExecuteProxy = new SqlReaderExecuteProxy(dbDataSource);
-        return (T) Proxy.newProxyInstance(classLoader, interfaces, readerExecuteProxy);
+        return (T) Proxy.newProxyInstance(classLoader, interfaces, this);
     }
 
 
     public SqlReaderExecuteProxy(DbDataSource dbDataSource) {
         super(dbDataSource, new DbParserFieldHandler());
+        this.registerBean();
     }
 
     @Override
@@ -166,6 +169,24 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
         }
         paramRes.add(sql);
         return paramRes;
+    }
+
+
+    private void registerBean() {
+        DbCustomStrategy dbCustomStrategy = this.getDbCustomStrategy();
+        String[] packageScans = dbCustomStrategy.getPackageScans();
+        if(packageScans == null) {
+            log.error("扫描包未设置");
+            throw new NullPointerException();
+        }
+        MapperBeanScanner mapperBeanScanner = new MapperBeanScanner(packageScans);
+        List<Class<? extends String>> beanRegisterList = mapperBeanScanner.getBeanRegisterList();
+        Map<String, Object> beanMap = new HashMap<>();
+        for (Class<? extends String> beanClass : beanRegisterList) {
+            beanMap.put(CustomUtil.toIndexLower(beanClass.getSimpleName()), beanClass);
+        }
+        RegisterBeanExecutor registerBeanExecutor = new RegisterBeanExecutor(beanMap);
+        registerBeanExecutor.register();
     }
 
 
