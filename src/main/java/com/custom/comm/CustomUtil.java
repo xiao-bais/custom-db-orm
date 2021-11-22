@@ -318,15 +318,16 @@ public class CustomUtil {
     /**
     * 手动处理预编译的sql
     */
-    //todo... 待处理
     public static String prepareSql(String sql, Object... params) {
         StringBuilder sqlBuilder = new StringBuilder(sql);
         if(params.length > 0) {
             int index = 0;
             int symbolNums = countStr(sql, SymbolConst.QUEST);
             for (int i = 0; i < symbolNums; i++) {
-                String rexStr = params[i] instanceof String ? String.format("'%s'", params[0].toString()) : params[0].toString();
+                index = sqlBuilder.indexOf(SymbolConst.QUEST, index);
+                String rexStr = params[i] instanceof String ? String.format("'%s'", params[i]) : params[i].toString();
                 sqlBuilder.replace(index, index + 1, rexStr);
+                index += rexStr.length() - 1;
             }
         }
         return sqlBuilder.toString();

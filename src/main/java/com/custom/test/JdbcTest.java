@@ -29,7 +29,7 @@ public interface JdbcTest extends BasicDao {
     @Query("select emp_name from employee where age = 25")
     String testHel(String name);
 
-    @Query(value = "select age from employee where age = #{myAge} and sex = #{mySex}", isPath = false, isOrder = false)
+    @Query(value = "select age from employee where age = #{myAge} and sex = #{mySex} and address = #{aaa}", isPath = false, isOrder = false)
     Integer[] getArrays(int myAge, boolean mySex);
 
 

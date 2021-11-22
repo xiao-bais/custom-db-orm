@@ -77,7 +77,7 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
         Query query = method.getAnnotation(Query.class);
         String sql = query.isPath() ? CustomUtil.loadFiles(query.value()) : query.value();
         Type returnType = method.getGenericReturnType();
-        List<Object> paramValues = this.handleParamsReplaceSql(sql, method, args, query.isOrder());
+        List<Object> paramValues = this.handleParamsPrepareSql(sql, method, args, query.isOrder());
         sql = String.valueOf(paramValues.get(paramValues.size() - 1));
         paramValues.remove(sql);
         Object[] params = paramValues.toArray();
@@ -108,7 +108,7 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
     /**
      * 将参数中的占位符处理成‘?’
      */
-    private List<Object> handleParamsReplaceSql(String sql, Method method, Object[] args, boolean isOrder) throws Exception {
+    private List<Object> handleParamsPrepareSql(String sql, Method method, Object[] args, boolean isOrder) throws Exception {
 
         List<Object> paramRes = new ArrayList<>();
         String logSql = sql;
