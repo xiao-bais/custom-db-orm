@@ -162,7 +162,7 @@ public class SqlExecuteHandler extends DbConnection {
             throw e;
         }catch (RuntimeException e) {
             if(e instanceof ClassCastException && t.isPrimitive()) {
-                throw new CustomCheckException(new CustomCheckException(String.format(ExceptionConst.EX_NOT_SUPPORT_USE_BASIC_TYPE, className, methodName)));
+                throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_SUPPORT_USE_BASIC_TYPE, className, methodName));
             }
             throw e;
         }
