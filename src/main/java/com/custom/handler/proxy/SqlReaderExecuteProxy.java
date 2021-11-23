@@ -15,7 +15,13 @@ import com.custom.handler.DbParserFieldHandler;
 import com.custom.handler.SqlExecuteHandler;
 import com.custom.scanner.MapperBeanScanner;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.IntStream;
@@ -30,6 +36,9 @@ import java.util.stream.IntStream;
 public class SqlReaderExecuteProxy extends SqlExecuteHandler implements InvocationHandler {
 
 
+    @Resource(name = "registerBeanExecutor")
+    private ApplicationContextAware registerBeanExecutor;
+
     public <T> T createProxy(Class<T> cls) {
         ClassLoader classLoader = cls.getClassLoader();
         Class<?>[] interfaces = new Class[]{cls};
@@ -39,10 +48,11 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
 
     public SqlReaderExecuteProxy(DbDataSource dbDataSource) {
         super(dbDataSource, new DbParserFieldHandler());
-        if(getDbCustomStrategy().isMapperScan()) {
+        if(getDbCustomStrategy().isMapperScanEnable()) {
             this.registerBean();
         }
     }
+
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Exception {
@@ -177,20 +187,21 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
     private void registerBean() {
         DbCustomStrategy dbCustomStrategy = this.getDbCustomStrategy();
         String[] packageScans = dbCustomStrategy.getPackageScans();
-        if(packageScans == null) {
-            log.error("扫描包未设置");
+        if(JudgeUtilsAx.isEmpty(packageScans)) {
+            log.error("需要设置扫描包地址");
             throw new NullPointerException();
         }
-        MapperBeanScanner mapperBeanScanner = new MapperBeanScanner(packageScans);
-        List<Class<? extends String>> beanRegisterList = mapperBeanScanner.getBeanRegisterList();
-        Map<String, Object> beanMap = new HashMap<>();
-        for (Class<? extends String> beanClass : beanRegisterList) {
-            beanMap.put(CustomUtil.toIndexLower(beanClass.getSimpleName()), createProxy(beanClass));
-        }
-        RegisterBeanExecutor registerBeanExecutor = new RegisterBeanExecutor(beanMap);
-        registerBeanExecutor.register();
+
+        creab(packageScans);
+
+
+
     }
 
-
+    @Bean
+    public List<Class<? extends String>> creab(String[] packageScans) {
+        MapperBeanScanner mapperBeanScanner = new MapperBeanScanner();
+        return mapperBeanScanner.getBeanRegisterList();
+    }
 
 }

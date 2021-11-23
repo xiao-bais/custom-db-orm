@@ -7,6 +7,9 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
@@ -15,24 +18,11 @@ import java.util.Map;
  * @Date 2021/11/22 11:55
  * @Desc： 手动将对象注入spring
  **/
-public class RegisterBeanExecutor implements ApplicationContextAware {
+public class RegisterBeanExecutor implements ApplicationContextAware{
 
-    private Map<String, Object> beanMap;
-
-    @Autowired
     private ApplicationContext applicationContext;
 
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }
-
-    public RegisterBeanExecutor(Map<String, Object> beanMap) {
-        this.beanMap = beanMap;
-    }
-
-    public void register() {
+    public void register(Map<String, Object> beanMap) {
 
         ConfigurableApplicationContext configurableApplicationContext = (ConfigurableApplicationContext) this.applicationContext;
         DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) configurableApplicationContext.getAutowireCapableBeanFactory();
@@ -45,6 +35,8 @@ public class RegisterBeanExecutor implements ApplicationContextAware {
     }
 
 
-
-
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
 }

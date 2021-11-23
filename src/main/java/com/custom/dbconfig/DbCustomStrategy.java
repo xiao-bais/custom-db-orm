@@ -1,6 +1,8 @@
 package com.custom.dbconfig;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -50,16 +52,15 @@ public class DbCustomStrategy {
     /**
     * 开启扫描包
     */
-    private boolean mapperScan = false;
+    private boolean mapperScanEnable = false;
 
 
-
-    public boolean isMapperScan() {
-        return mapperScan;
+    public boolean isMapperScanEnable() {
+        return mapperScanEnable;
     }
 
-    public void setMapperScan(boolean mapperScan) {
-        this.mapperScan = mapperScan;
+    public void setMapperScanEnable(boolean mapperScanEnable) {
+        this.mapperScanEnable = mapperScanEnable;
     }
 
     public String[] getPackageScans() {
@@ -117,5 +118,6 @@ public class DbCustomStrategy {
     public void setUnderlineToCamel(boolean underlineToCamel) {
         this.underlineToCamel = underlineToCamel;
     }
+
 
 }
