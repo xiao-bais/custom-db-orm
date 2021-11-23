@@ -39,7 +39,9 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
 
     public SqlReaderExecuteProxy(DbDataSource dbDataSource) {
         super(dbDataSource, new DbParserFieldHandler());
-        this.registerBean();
+        if(getDbCustomStrategy().isMapperScan()) {
+            this.registerBean();
+        }
     }
 
     @Override
@@ -183,7 +185,7 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
         List<Class<? extends String>> beanRegisterList = mapperBeanScanner.getBeanRegisterList();
         Map<String, Object> beanMap = new HashMap<>();
         for (Class<? extends String> beanClass : beanRegisterList) {
-            beanMap.put(CustomUtil.toIndexLower(beanClass.getSimpleName()), beanClass);
+            beanMap.put(CustomUtil.toIndexLower(beanClass.getSimpleName()), createProxy(beanClass));
         }
         RegisterBeanExecutor registerBeanExecutor = new RegisterBeanExecutor(beanMap);
         registerBeanExecutor.register();

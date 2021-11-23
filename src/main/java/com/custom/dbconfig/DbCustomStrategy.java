@@ -47,6 +47,21 @@ public class DbCustomStrategy {
     */
     private String[] packageScans;
 
+    /**
+    * 开启扫描包
+    */
+    private boolean mapperScan = false;
+
+
+
+    public boolean isMapperScan() {
+        return mapperScan;
+    }
+
+    public void setMapperScan(boolean mapperScan) {
+        this.mapperScan = mapperScan;
+    }
+
     public String[] getPackageScans() {
         return packageScans;
     }

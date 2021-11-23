@@ -71,7 +71,7 @@ public class MapperBeanScanner {
     */
     private void scannerPackage() {
         try {
-            url = classLoader.getResource(packageScan.replace(SymbolConst.POINT,"/"));
+            url = classLoader.getResource(packageScan.replace(SymbolConst.POINT,SymbolConst.SLASH));
             if(url == null) {
                 throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_URL, packageScan));
             }
@@ -95,7 +95,7 @@ public class MapperBeanScanner {
     private void addLocalClass(final String packageName) throws URISyntaxException {
 
         try {
-            url = classLoader.getResource(packageName.replace(SymbolConst.POINT, "/"));
+            url = classLoader.getResource(packageName.replace(SymbolConst.POINT, SymbolConst.SLASH));
             if(url == null) {
                 throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_URL, packageScan));
             }
@@ -143,7 +143,7 @@ public class MapperBeanScanner {
     @SuppressWarnings("unchecked")
     private void addJarClass(final String packageName) throws IOException {
         if(JudgeUtilsAx.isEmpty(packageName)) return;
-        String pathName = packageName.replace(SymbolConst.POINT, "/");
+        String pathName = packageName.replace(SymbolConst.POINT, SymbolConst.SLASH);
         JarFile jarFile = null;
 
         url = classLoader.getResource(packageName);
@@ -157,9 +157,9 @@ public class MapperBeanScanner {
             JarEntry jarEntry = jarEntryEnumeration.nextElement();
             String jarEntryName = jarEntry.getName();
 
-            if(jarEntryName.contains(pathName) && !jarEntryName.equals(pathName + "/")) {
+            if(jarEntryName.contains(pathName) && !jarEntryName.equals(pathName + SymbolConst.SLASH)) {
                 if(jarEntry.isDirectory()) {
-                    String beanClassName = jarEntry.getName().replace("/", SymbolConst.POINT);
+                    String beanClassName = jarEntry.getName().replace(SymbolConst.SLASH, SymbolConst.POINT);
                     int endIndex = beanClassName.lastIndexOf(SymbolConst.POINT);
                     String prefix = null;
                     if(endIndex > 0) {
@@ -170,7 +170,7 @@ public class MapperBeanScanner {
                         Class<?> beanClass = null;
 
                         try {
-                            beanClass = classLoader.loadClass(jarEntry.getName().replace("/", SymbolConst.POINT).replace(SymbolConst.CLASS, SymbolConst.EMPTY));
+                            beanClass = classLoader.loadClass(jarEntry.getName().replace(SymbolConst.SLASH, SymbolConst.POINT).replace(SymbolConst.CLASS, SymbolConst.EMPTY));
                         }catch (ClassNotFoundException e) {
                             e.printStackTrace();
                         }
