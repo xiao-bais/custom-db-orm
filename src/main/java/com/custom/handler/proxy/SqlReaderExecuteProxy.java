@@ -37,9 +37,6 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
 
     public SqlReaderExecuteProxy(DbDataSource dbDataSource) {
         super(dbDataSource, new DbParserFieldHandler());
-        if(getDbCustomStrategy().isMapperScanEnable()) {
-            this.registerBean();
-        }
     }
 
 
@@ -171,22 +168,5 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
         paramRes.add(sql);
         return paramRes;
     }
-
-
-    private void registerBean() {
-        DbCustomStrategy dbCustomStrategy = this.getDbCustomStrategy();
-        String[] packageScans = dbCustomStrategy.getPackageScans();
-        if(JudgeUtilsAx.isEmpty(packageScans)) {
-            throw new NullPointerException("需要设置扫描包地址");
-        }
-        MapperBeanScanner mapperBeanScanner = new MapperBeanScanner(packageScans);
-        List<Class<? extends String>> beanRegisterList = mapperBeanScanner.getBeanRegisterList();
-        System.out.println("beanRegisterList = " + beanRegisterList);
-//        creab(packageScans);
-
-
-
-    }
-
 
 }

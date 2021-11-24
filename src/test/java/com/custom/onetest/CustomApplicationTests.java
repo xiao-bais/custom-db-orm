@@ -27,15 +27,15 @@ public class CustomApplicationTests {
     @Test
     public void test1(){
 
-        DbDataSource dbDataSource = new DbDataSource();
+//        DbDataSource dbDataSource = new DbDataSource();
 //        dbDataSource.setUrl("jdbc:mysql://127.0.0.1/smbms?characterEncoding=utf-8&allowMultiQueries=true&serverTimezone=GMT%2B8");
 //        dbDataSource.setUrl("jdbc:mysql://127.0.0.1/hos?characterEncoding=utf-8&allowMultiQueries=true&serverTimezone=GMT%2B8");
-        dbDataSource.setDriver("com.mysql.cj.jdbc.Driver");
-        dbDataSource.setUsername("root");
-        dbDataSource.setPassword("123456");
-        DbCustomStrategy dbCustomStrategy = new DbCustomStrategy();
-        dbCustomStrategy.setPackageScans(new String[]{"com.custom.test"});
-        dbCustomStrategy.setMapperScanEnable(true);
+//        dbDataSource.setDriver("com.mysql.cj.jdbc.Driver");
+//        dbDataSource.setUsername("root");
+//        dbDataSource.setPassword("123456");
+//        DbCustomStrategy dbCustomStrategy = new DbCustomStrategy();
+//        dbCustomStrategy.setPackageScans(new String[]{"com.custom.test"});
+//        dbCustomStrategy.setMapperScanEnable(true);
 
 //        //是否打印执行的sql 默认false
 //        dbCustomStrategy.setSqlOutPrinting(true);
@@ -43,12 +43,12 @@ public class CustomApplicationTests {
 //        dbCustomStrategy.setDbFieldDeleteLogic("state");
 //        dbCustomStrategy.setDeleteLogicValue("1");
 //        dbCustomStrategy.setNotDeleteLogicValue("0");
-        dbDataSource.setDbCustomStrategy(dbCustomStrategy);
+//        dbDataSource.setDbCustomStrategy(dbCustomStrategy);
 //        dbCustomStrategy.setUnderlineToCamel(true);
 //        JdbcDao jdbcDao = new JdbcDao(dbDataSource);
 
 
-        JdbcTest jdbcTest  = new SqlReaderExecuteProxy(dbDataSource).createProxy(JdbcTest.class);
+//        JdbcTest jdbcTest  = new SqlReaderExecuteProxy(dbDataSource).createProxy(JdbcTest.class);
 
     }
 

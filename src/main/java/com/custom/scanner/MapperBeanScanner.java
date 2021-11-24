@@ -5,19 +5,17 @@ import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -32,7 +30,7 @@ public class MapperBeanScanner {
     /**
     * 所有需要注册的bean集合
     */
-    private List<Class<? extends String>> beanRegisterList = new ArrayList<>();
+    private Set<Class<?>> beanRegisterSet = new HashSet<>();
 
     /**
     * 类加载器
@@ -49,8 +47,6 @@ public class MapperBeanScanner {
     */
     private URL url;
 
-    public MapperBeanScanner(){}
-
     public MapperBeanScanner(String... packageScans) {
         for (String scan : packageScans) {
             packageScan = scan;
@@ -61,8 +57,8 @@ public class MapperBeanScanner {
         }
     }
 
-    public List<Class<? extends String>> getBeanRegisterList(){
-        return this.beanRegisterList;
+    public Set<Class<?>> getBeanRegisterList(){
+        return this.beanRegisterSet;
     }
 
 
@@ -117,7 +113,7 @@ public class MapperBeanScanner {
                         e.printStackTrace();
                     }
                     if(clazz != null && BasicDao.class.isAssignableFrom(clazz)) {
-                        beanRegisterList.add((Class<? extends String>) clazz);
+                        beanRegisterSet.add(clazz);
                     }
                     return true;
                 }
@@ -128,14 +124,6 @@ public class MapperBeanScanner {
             throw e;
         }
     }
-
-
-    public static void main(String[] args) {
-        MapperBeanScanner mapperBeanScanner = new MapperBeanScanner();
-        mapperBeanScanner.scannerPackage();
-        System.out.println(1);
-    }
-
 
     /**
     * 加载jar包中的类
@@ -175,7 +163,7 @@ public class MapperBeanScanner {
                             e.printStackTrace();
                         }
                         if(beanClass != null && BasicDao.class.isAssignableFrom(beanClass)) {
-                            beanRegisterList.add((Class<? extends String>) beanClass);
+                            beanRegisterSet.add(beanClass);
                         }
                     }
                 }

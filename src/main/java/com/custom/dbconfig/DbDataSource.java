@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import java.beans.ConstructorProperties;
+
 /**
  * @Author Xiao-Bai
  * @Date 2021/1/31 22:35
@@ -141,11 +143,14 @@ public class DbDataSource {
         this.url = url;
         this.username = username;
         this.password = password;
+        System.out.println("数据源构造1。。。。");
     }
 
 
 
-    public DbDataSource() {}
+    public DbDataSource() {
+        System.out.println("数据源构造2。。。。");
+    }
 
     public String getDriver() {
         return driver;

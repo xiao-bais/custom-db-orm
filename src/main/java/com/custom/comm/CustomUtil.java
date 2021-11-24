@@ -53,6 +53,10 @@ public class CustomUtil {
         return String.format("%s-%s-%s-%s", dbDataSource.getUrl(), dbDataSource.getUsername(), dbDataSource.getPassword(), dbDataSource.getDatabase());
     }
 
+    public static boolean isDataSourceEmpty(DbDataSource dbDataSource) {
+        return JudgeUtilsAx.isEmpty(dbDataSource.getUrl()) || JudgeUtilsAx.isEmpty(dbDataSource.getUsername()) || JudgeUtilsAx.isEmpty(dbDataSource.getPassword());
+    }
+
     public static String getUUID(){
         return UUID.randomUUID().toString().replace("-","").toLowerCase(Locale.CHINA);
     }
