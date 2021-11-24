@@ -185,8 +185,7 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
         DbCustomStrategy dbCustomStrategy = this.getDbCustomStrategy();
         String[] packageScans = dbCustomStrategy.getPackageScans();
         if(JudgeUtilsAx.isEmpty(packageScans)) {
-            log.error("需要设置扫描包地址");
-            throw new NullPointerException();
+            throw new NullPointerException("需要设置扫描包地址");
         }
         MapperBeanScanner mapperBeanScanner = new MapperBeanScanner(packageScans);
         List<Class<? extends String>> beanRegisterList = mapperBeanScanner.getBeanRegisterList();

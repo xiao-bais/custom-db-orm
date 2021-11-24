@@ -17,8 +17,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class CustomConfiguration {
 
-    @Autowired
     private DbDataSource dbDataSource;
+
+    public CustomConfiguration(DbDataSource dbDataSource) {
+        this.dbDataSource = dbDataSource;
+    }
 
     @Bean
     @ConditionalOnBean(DbDataSource.class)
