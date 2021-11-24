@@ -4,6 +4,7 @@ package com.custom.comm;
 import com.alibaba.druid.sql.visitor.functions.Char;
 import com.custom.annotations.DbKey;
 import com.custom.annotations.DbTable;
+import com.custom.dbconfig.DbDataSource;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.DbMediaType;
 import com.custom.exceptions.CustomCheckException;
@@ -46,6 +47,10 @@ public class CustomUtil {
         }else{
             return url.substring(url.lastIndexOf("/") + SymbolConst.DEFAULT_ONE);
         }
+    }
+
+    public static String getConnKey(DbDataSource dbDataSource) {
+        return String.format("%s-%s-%s-%s", dbDataSource.getUrl(), dbDataSource.getUsername(), dbDataSource.getPassword(), dbDataSource.getDatabase());
     }
 
     public static String getUUID(){

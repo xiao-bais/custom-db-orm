@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -34,10 +35,6 @@ import java.util.stream.IntStream;
 @SuppressWarnings("unchecked")
 @Slf4j
 public class SqlReaderExecuteProxy extends SqlExecuteHandler implements InvocationHandler {
-
-
-    @Resource(name = "registerBeanExecutor")
-    private ApplicationContextAware registerBeanExecutor;
 
     public <T> T createProxy(Class<T> cls) {
         ClassLoader classLoader = cls.getClassLoader();
@@ -191,17 +188,14 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
             log.error("需要设置扫描包地址");
             throw new NullPointerException();
         }
-
-        creab(packageScans);
+        MapperBeanScanner mapperBeanScanner = new MapperBeanScanner(packageScans);
+        List<Class<? extends String>> beanRegisterList = mapperBeanScanner.getBeanRegisterList();
+        System.out.println("beanRegisterList = " + beanRegisterList);
+//        creab(packageScans);
 
 
 
     }
 
-    @Bean
-    public List<Class<? extends String>> creab(String[] packageScans) {
-        MapperBeanScanner mapperBeanScanner = new MapperBeanScanner();
-        return mapperBeanScanner.getBeanRegisterList();
-    }
 
 }

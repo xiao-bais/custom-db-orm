@@ -32,7 +32,7 @@ public class DbConnection {
     }
 
     private void init(DbDataSource dbDataSource) throws SQLException {
-        connection = (Connection) ExceptionConst.currMap.get(getConnKey(dbDataSource));
+        connection = (Connection) ExceptionConst.currMap.get(CustomUtil.getConnKey(dbDataSource));
         if (null == connection) {
             DruidDataSource druidDataSource = new DruidDataSource();
             druidDataSource.setDriverClassName(dbDataSource.getDriver());
@@ -55,7 +55,7 @@ public class DbConnection {
             dbDataSource.setDatabase(CustomUtil.getDataBase(dbDataSource.getUrl()));
         }
         ExceptionConst.currMap.put(DbFieldsConst.DATA_BASE, dbDataSource.getDatabase());
-        ExceptionConst.currMap.put(getConnKey(dbDataSource), connection);
+        ExceptionConst.currMap.put(CustomUtil.getConnKey(dbDataSource), connection);
 
         DbCustomStrategy dbCustomStrategy = dbDataSource.getDbCustomStrategy();
         if(null == dbCustomStrategy) {
@@ -63,10 +63,6 @@ public class DbConnection {
         }
         this.dbCustomStrategy = dbCustomStrategy;
         ExceptionConst.currMap.put(DbFieldsConst.CUSTOM_STRATEGY, dbCustomStrategy);
-    }
-
-    private String getConnKey(DbDataSource dbDataSource) {
-        return String.format("%s-%s-%s-%s", dbDataSource.getUrl(), dbDataSource.getUsername(), dbDataSource.getPassword(), dbDataSource.getDatabase());
     }
 
 

@@ -1,5 +1,6 @@
 package com.custom.dbconfig;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -58,6 +59,7 @@ public class DbDataSource {
         return dbCustomStrategy;
     }
 
+    @Autowired
     public void setDbCustomStrategy(DbCustomStrategy dbCustomStrategy) {
         this.dbCustomStrategy = dbCustomStrategy;
     }
