@@ -1,15 +1,26 @@
 package com.custom.dbconfig;
 
 import com.custom.comm.CustomUtil;
+import com.custom.comm.JudgeUtilsAx;
 import com.custom.exceptions.ExceptionConst;
 import com.custom.handler.proxy.SqlReaderExecuteProxy;
 //import com.custom.scanner.RegisterBeanExecutor;
+import com.custom.scanner.MapperBeanScanner;
 import com.custom.scanner.RegisterBeanExecutor;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
+import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Set;
 
 /**
  * @Author Xiao-Bai
@@ -21,8 +32,11 @@ public class CustomConfiguration {
 
     private DbDataSource dbDataSource;
 
-    public CustomConfiguration(DbDataSource dbDataSource) {
+    private ApplicationContext applicationContext;
+
+    public CustomConfiguration(DbDataSource dbDataSource, ApplicationContext applicationContext) {
         this.dbDataSource = dbDataSource;
+        this.applicationContext = applicationContext;
         System.out.println("配置类。。。");
     }
 
@@ -34,6 +48,8 @@ public class CustomConfiguration {
         }
         return null;
     }
+
+
 
 //    @Bean
 //    public RegisterBeanExecutor registerBeanExecutor(){

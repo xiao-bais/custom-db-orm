@@ -14,6 +14,7 @@ import com.custom.handler.DbParserFieldHandler;
 import com.custom.handler.SqlExecuteHandler;
 import com.custom.scanner.MapperBeanScanner;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.annotation.Order;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -33,7 +34,6 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
         Class<?>[] interfaces = new Class[]{cls};
         return (T) Proxy.newProxyInstance(classLoader, interfaces, this);
     }
-
 
     public SqlReaderExecuteProxy(DbDataSource dbDataSource) {
         super(dbDataSource, new DbParserFieldHandler());
