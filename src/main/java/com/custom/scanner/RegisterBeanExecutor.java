@@ -20,6 +20,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
@@ -35,14 +36,24 @@ import java.util.Set;
 public class RegisterBeanExecutor implements BeanDefinitionRegistryPostProcessor, ApplicationContextAware{
 
 
-    private DbDataSource dbDataSource;
     private ApplicationContext applicationContext;
 
 
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry beanDefinitionRegistry) throws BeansException {
-        DbCustomStrategy dbCustomStrategy = dbDataSource.getDbCustomStrategy();
-        MapperBeanScanner mapperBeanScanner = new MapperBeanScanner(dbCustomStrategy.getPackageScans());
+
+        Environment environment = applicationContext.getEnvironment();
+        Boolean mapperScanEnable = environment.getProperty("custom.db.strategy.mapper-scan-enable", Boolean.class);
+
+        if(mapperScanEnable == null || !mapperScanEnable) {
+            return;
+        }
+        String[] packageScans = environment.getProperty("custom.db.strategy.package-scans", String[].class);
+        if(packageScans == null || packageScans.length == 0) {
+            return;
+        }
+
+        MapperBeanScanner mapperBeanScanner = new MapperBeanScanner(packageScans);
         Set<Class<?>> beanRegisterList = mapperBeanScanner.getBeanRegisterList();
 
         for (Class<?> beanClass : beanRegisterList) {
@@ -50,7 +61,7 @@ public class RegisterBeanExecutor implements BeanDefinitionRegistryPostProcessor
             GenericBeanDefinition rawBeanDefinition = (GenericBeanDefinition) beanDefinitionBuilder.getRawBeanDefinition();
             rawBeanDefinition.getConstructorArgumentValues().addGenericArgumentValue(beanClass);
 
-            rawBeanDefinition.setBeanClass(RegisterBeanExecutor.class);
+            rawBeanDefinition.setBeanClass(InstanceBeanFactory.class);
             beanDefinitionRegistry.registerBeanDefinition(beanClass.getSimpleName(), rawBeanDefinition);
         }
 
@@ -64,7 +75,6 @@ public class RegisterBeanExecutor implements BeanDefinitionRegistryPostProcessor
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
-        this.dbDataSource = applicationContext.getBean(DbDataSource.class);
     }
 
 

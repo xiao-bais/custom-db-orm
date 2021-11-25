@@ -3,6 +3,7 @@ package com.custom.scanner;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.handler.proxy.SqlReaderExecuteProxy;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author Xiao-Bai
@@ -15,7 +16,7 @@ public class InstanceBeanFactory<T> implements FactoryBean<T> {
 
     private Class<T> interfaceType;
 
-    public InstanceBeanFactory(Class<T> interfaceType, DbDataSource dbDataSource) {
+    public InstanceBeanFactory(DbDataSource dbDataSource, Class<T> interfaceType) {
         this.interfaceType = interfaceType;
         this.dbDataSource = dbDataSource;
     }

@@ -75,8 +75,8 @@ public class SqlExecuteHandler extends DbConnection {
     * 预编译-查询2（可预先获取结果集行数）
     */
     private void statementQuery2(String sql, Object... params) throws Exception {
-        sql = CustomUtil.prepareSql(sql, params);
-        statement = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        String execSql = CustomUtil.prepareSql(sql, params);
+        statement = conn.prepareStatement(execSql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         if (dbCustomStrategy.isSqlOutPrinting()) {
             new SqlOutPrintBuilder(sql, params).sqlInfoQueryPrint();
         }

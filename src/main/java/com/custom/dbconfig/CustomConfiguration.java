@@ -32,12 +32,8 @@ public class CustomConfiguration {
 
     private DbDataSource dbDataSource;
 
-    private ApplicationContext applicationContext;
-
-    public CustomConfiguration(DbDataSource dbDataSource, ApplicationContext applicationContext) {
+    public CustomConfiguration(DbDataSource dbDataSource) {
         this.dbDataSource = dbDataSource;
-        this.applicationContext = applicationContext;
-        System.out.println("配置类。。。");
     }
 
     @Bean
