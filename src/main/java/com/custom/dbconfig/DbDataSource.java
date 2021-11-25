@@ -145,14 +145,11 @@ public class DbDataSource {
         this.url = url;
         this.username = username;
         this.password = password;
-        System.out.println("数据源构造1。。。。");
     }
 
 
 
-    public DbDataSource() {
-        System.out.println("数据源构造2。。。。");
-    }
+    public DbDataSource() {}
 
     public String getDriver() {
         return driver;

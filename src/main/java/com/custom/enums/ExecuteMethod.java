@@ -5,7 +5,7 @@ package com.custom.enums;
  * @Date 2021/11/17 10:20
  * @Desc：定义方法执行的种类：增，删，改，查
  **/
-public enum CheckTarget {
+public enum ExecuteMethod {
 
     /**
     * 插入方法

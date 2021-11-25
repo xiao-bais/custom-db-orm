@@ -1,6 +1,6 @@
 package com.custom.handler;
 
-import com.custom.enums.CheckTarget;
+import com.custom.enums.ExecuteMethod;
 
 import java.lang.annotation.*;
 
@@ -18,5 +18,5 @@ public @interface CheckExecute {
     /**
     * 默认不做处理
     */
-    CheckTarget target() default CheckTarget.NONE;
+    ExecuteMethod target() default ExecuteMethod.NONE;
 }

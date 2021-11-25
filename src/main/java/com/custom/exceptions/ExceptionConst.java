@@ -138,7 +138,7 @@ public class ExceptionConst {
     public final static String EX_NOT_SUPPORT_USE_BASIC_TYPE = "It is recommended to use the wrapper type to receive the return value of the method ： %s.%s()";
 
     /**
-    * 该方法上未找到@Query 或 @Update 注解
+    * 该方法上未找到@Query 或 @Update 或 @SqlPath注解
     */
     public final static String EX_NOT_FOUND_ANNO__SQL_READ = "The '@Update' or '@Query' annotation was not found on the method : %s";
 
@@ -161,6 +161,16 @@ public class ExceptionConst {
     * 找不到该路径
     */
     public final static String EX_NOT_FOUND_URL = "The package url cannot be found：%s";
+
+    /**
+    * 无法解析：#{}与? 不能同时出现在同一条sql上
+    */
+    public final static String EX_UNABLE_TO_RESOLVE_SQL = " The SQL cannot be resolved '%s'";
+
+    public final static String EX_USE_ORDER_TRUE = " 方法注解上建议使用 isOrder = true";
+    public final static String EX_USE_ORDER_FALSE = " 方法注解上建议使用 isOrder = false";
+
+
     
     
     

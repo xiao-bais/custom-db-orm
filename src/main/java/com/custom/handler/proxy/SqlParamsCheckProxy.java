@@ -3,7 +3,7 @@ package com.custom.handler.proxy;
 import com.custom.annotations.DbTable;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.DbDataSource;
-import com.custom.enums.CheckTarget;
+import com.custom.enums.ExecuteMethod;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
 import com.custom.handler.CheckExecute;
@@ -50,7 +50,7 @@ public class SqlParamsCheckProxy<T> implements MethodInterceptor {
         if(annotation == null) {
             return methodProxy.invokeSuper(o, objects);
         }
-        CheckTarget target = annotation.target();
+        ExecuteMethod target = annotation.target();
         switch (target) {
             // 当执行插入方法时进行参数的
             case INSERT:
