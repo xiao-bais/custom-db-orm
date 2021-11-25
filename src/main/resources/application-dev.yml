@@ -3,7 +3,7 @@ server:
 custom:
   db:
     datasource:
-      url: jdbc:mysql://127.0.0.1:3306/hos?characterEncoding=utf-8&allowMultiQueries=true&serverTimezone=GMT%2B8
+      url: jdbc:mysql://127.0.0.1:3306/smbms?characterEncoding=utf-8&allowMultiQueries=true&serverTimezone=GMT%2B8
       driver: com.mysql.cj.jdbc.Driver
       username: root
       password: 123456

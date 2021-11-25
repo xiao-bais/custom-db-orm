@@ -49,7 +49,7 @@ public class RegisterBeanExecutor implements BeanDefinitionRegistryPostProcessor
             return;
         }
         String[] packageScans = environment.getProperty("custom.db.strategy.package-scans", String[].class);
-        if(packageScans == null || packageScans.length == 0) {
+        if(JudgeUtilsAx.isEmpty(packageScans)) {
             return;
         }
 

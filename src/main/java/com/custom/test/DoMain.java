@@ -26,8 +26,8 @@ public class DoMain {
     public static void main(String[] args) throws Exception {
 
         DbDataSource dbDataSource = new DbDataSource();
-//        dbDataSource.setUrl("jdbc:mysql://127.0.0.1/smbms?characterEncoding=utf-8&allowMultiQueries=true&serverTimezone=GMT%2B8");
-        dbDataSource.setUrl("jdbc:mysql://127.0.0.1/hos?characterEncoding=utf-8&allowMultiQueries=true&serverTimezone=GMT%2B8");
+        dbDataSource.setUrl("jdbc:mysql://127.0.0.1/smbms?characterEncoding=utf-8&allowMultiQueries=true&serverTimezone=GMT%2B8");
+//        dbDataSource.setUrl("jdbc:mysql://127.0.0.1/hos?characterEncoding=utf-8&allowMultiQueries=true&serverTimezone=GMT%2B8");
         dbDataSource.setDriver("com.mysql.cj.jdbc.Driver");
         dbDataSource.setUsername("root");
         dbDataSource.setPassword("123456");
@@ -46,8 +46,10 @@ public class DoMain {
 
 
         JdbcTest jdbcTest  = new SqlReaderExecuteProxy(dbDataSource).createProxy(JdbcTest.class);
-        int byId = jdbcTest.updateById("张郃", 5);
-        System.out.println("byId = " + byId);
+        Employee employee = new Employee();
+        employee.setId(5);
+        employee.setEmpName("陈工");
+        List<Employee> employees = jdbcTest.selectListById(Arrays.asList(1, 5));
 
 
     }

@@ -56,10 +56,11 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
         } else if (method.isAnnotationPresent(SqlPath.class)) {
             SqlPath sqlPath = method.getAnnotation(SqlPath.class);
             ExecuteMethod execType = sqlPath.method();
+            String sql = CustomUtil.loadFiles(sqlPath.value());
             if (execType == ExecuteMethod.SELECT) {
-                return doPrepareExecuteQuery(method, args, CustomUtil.loadFiles(sqlPath.value()), sqlPath.isOrder());
+                return doPrepareExecuteQuery(method, args, sql, sqlPath.isOrder());
             } else if (execType == ExecuteMethod.UPDATE || execType == ExecuteMethod.DELETE || execType == ExecuteMethod.INSERT) {
-                return doPrepareExecuteUpdate(method, args, sqlPath.value(), sqlPath.isOrder());
+                return doPrepareExecuteUpdate(method, args, sql, sqlPath.isOrder());
             }
             return null;
         }
@@ -128,11 +129,15 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
             throw new CustomCheckException(String.format(ExceptionConst.EX_UNABLE_TO_RESOLVE_SQL, sql));
         }
 
-        Type[] parameterTypes = method.getGenericParameterTypes();
+        Class<?>[] parameterTypes = method.getParameterTypes();
         if (isOrder) {
 
+            if(sql.contains(SymbolConst.PREPARE_BEGIN_REX) && sql.contains(SymbolConst.PREPARE_END_REX)) {
+
+            }
+
             for (int i = 0; i < parameterTypes.length; i++) {
-                Type type = parameterTypes[i];
+                Class<?> type = parameterTypes[i];
                 Object param = args[i];
 
                 if (CustomUtil.isBasicType(type)) {
@@ -160,10 +165,12 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
                     paramsMap.put(paramName, paramVal);
                 } else if (type.equals(Map.class)) {
                     paramsMap.putAll((Map<?, ?>) paramVal);
+                } else if(type.equals(List.class) || type.equals(Arrays.class) || type.equals(Set.class)){
+                    throw new IllegalArgumentException(String.format(ExceptionConst.EX_NOT_SUPPORT_ARRAY_PARAMS, method.getDeclaringClass().getName(), method.getName()));
                 } else {
                     Field[] fields = CustomUtil.getFields(paramVal.getClass());
                     Object[] fieldNames = Arrays.stream(fields).map(Field::getName).toArray();
-                    List<Object> fieldVales = getParserFieldHandler().getFieldsVal(paramVal.getClass(), Arrays.copyOf(fieldNames, fieldNames.length, String[].class));
+                    List<Object> fieldVales = getParserFieldHandler().getFieldsVal(paramVal, Arrays.copyOf(fieldNames, fieldNames.length, String[].class));
                     IntStream.range(0, fieldNames.length).forEach(x -> paramsMap.put(fieldNames[x], fieldVales.get(x)));
                 }
             }
@@ -183,6 +190,13 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
         }
         paramRes.add(sql);
         return paramRes;
+    }
+
+    //todo... 将规则判断迁移至此
+    private void checkSqlByOrder(String sql, boolean isOrder){
+
+
+
     }
 
 }

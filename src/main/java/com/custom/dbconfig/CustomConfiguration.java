@@ -47,10 +47,4 @@ public class CustomConfiguration {
 
 
 
-//    @Bean
-//    public RegisterBeanExecutor registerBeanExecutor(){
-//        return new RegisterBeanExecutor(dbDataSource);
-//    }
-
-
 }

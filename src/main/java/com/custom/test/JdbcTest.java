@@ -1,8 +1,10 @@
 package com.custom.test;
 
 import com.custom.annotations.loader.Query;
+import com.custom.annotations.loader.SqlPath;
 import com.custom.annotations.loader.Update;
 import com.custom.comm.BasicDao;
+import com.custom.enums.ExecuteMethod;
 
 import java.util.List;
 import java.util.Map;
@@ -33,8 +35,11 @@ public interface JdbcTest extends BasicDao {
     @Query(value = "select age from employee where age = #{myAge} and sex = #{mySex} ")
     Integer[] getArrays(int myAge, boolean mySex);
 
-    @Update(value = "update employee set emp_name = #{name} where id = #{id}")
-    int updateById(String name, int id);
+    @SqlPath(value = "sql/updateEmp.sql", method = ExecuteMethod.UPDATE)
+    int updateById(Employee employee);
+
+    @Query(value = "select * from employee where id in (#{idList})", isOrder = true)
+    List<Employee> selectListById(List<Integer> idList);
 
 
 
