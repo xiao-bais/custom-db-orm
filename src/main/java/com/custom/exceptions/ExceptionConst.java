@@ -160,7 +160,7 @@ public class ExceptionConst {
     /**
     * 找不到sql中的参数对应的名称
     */
-    public final static String EX_NOT_FOUND_PARAMS_VALUE = "unknown column, The value corresponding to parameter '%s' in SQL cannot be found \n Sql Error =====> \n%s \n==========";
+    public final static String EX_NOT_FOUND_PARAMS_VALUE = "unknown column, The value corresponding to parameter '%s' in SQL cannot be found \n Sql Error =====> \n%s \n==========\n";
     
     /**
     * 找不到该路径

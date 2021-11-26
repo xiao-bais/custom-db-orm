@@ -43,6 +43,22 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Exception {
 
+        Object result;
+        try {
+            result = doInvoke(proxy, method, args);
+        }catch (IllegalArgumentException e) {
+            log.error("Illegal parameter");
+            throw e;
+        }
+        catch (CustomCheckException e) {
+            log.info("custom check exception !");
+            throw e;
+        }
+        return result;
+    }
+
+
+    private Object doInvoke(Object proxy, Method method, Object[] args) throws Exception {
         if (!BasicDao.class.isAssignableFrom(proxy.getClass())) {
             throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_INHERITED_BASIC_DAO, method.getDeclaringClass()));
         }

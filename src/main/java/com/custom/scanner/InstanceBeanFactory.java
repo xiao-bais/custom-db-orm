@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * @author Xiao-Bai
  * @date 2021/11/24 21:38
- * @desc:
+ * @desc:用于实例化代理时的工厂对象
  */
 public class InstanceBeanFactory<T> implements FactoryBean<T> {
 
@@ -16,14 +16,17 @@ public class InstanceBeanFactory<T> implements FactoryBean<T> {
 
     private Class<T> interfaceType;
 
-    public InstanceBeanFactory(DbDataSource dbDataSource, Class<T> interfaceType) {
+    private SqlReaderExecuteProxy sqlReaderExecuteProxy;
+
+    public InstanceBeanFactory(DbDataSource dbDataSource, SqlReaderExecuteProxy sqlReaderExecuteProxy, Class<T> interfaceType) {
         this.interfaceType = interfaceType;
+        this.sqlReaderExecuteProxy = sqlReaderExecuteProxy;
         this.dbDataSource = dbDataSource;
     }
 
     @Override
     public T getObject() {
-        return new SqlReaderExecuteProxy(dbDataSource).createProxy(interfaceType);
+        return sqlReaderExecuteProxy.createProxy(interfaceType);
     }
 
     @Override

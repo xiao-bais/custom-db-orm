@@ -149,7 +149,8 @@ public class DbDataSource {
 
 
 
-    public DbDataSource() {}
+    public DbDataSource() {
+    }
 
     public String getDriver() {
         return driver;
