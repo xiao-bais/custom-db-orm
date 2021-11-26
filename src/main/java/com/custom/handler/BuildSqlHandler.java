@@ -26,12 +26,13 @@ public class BuildSqlHandler {
     private DbParserFieldHandler dbParserFieldHandler;
     private String logicDeleteUpdateSql = SymbolConst.EMPTY;
     private String logicDeleteQuerySql = SymbolConst.EMPTY;
+    private DbCustomStrategy dbCustomStrategy;
 
-    public BuildSqlHandler(DbDataSource dbDataSource){
-        dbParserFieldHandler = new DbParserFieldHandler();
-        sqlExecuteHandler = new SqlExecuteHandler(dbDataSource, dbParserFieldHandler);
-        DbCustomStrategy dbCustomStrategy = dbDataSource.getDbCustomStrategy();
-        initLogic(dbCustomStrategy);
+    public BuildSqlHandler(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy){
+        this.dbParserFieldHandler = new DbParserFieldHandler();
+        this.sqlExecuteHandler = new SqlExecuteHandler(dbDataSource, dbCustomStrategy, dbParserFieldHandler);
+        this.dbCustomStrategy = dbCustomStrategy;
+        initLogic();
     }
 
     public BuildSqlHandler(){}
@@ -40,7 +41,7 @@ public class BuildSqlHandler {
     /**
      * 初始化逻辑删除的sql
      */
-    public void initLogic(DbCustomStrategy dbCustomStrategy) {
+    public void initLogic() {
 
         if(JudgeUtilsAx.isLogicDeleteOpen(dbCustomStrategy)) {
             if(JudgeUtilsAx.isEmpty(dbCustomStrategy.getNotDeleteLogicValue())

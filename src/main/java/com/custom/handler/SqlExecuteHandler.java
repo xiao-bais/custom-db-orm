@@ -32,10 +32,10 @@ public class SqlExecuteHandler extends DbConnection {
     private DbParserFieldHandler parserFieldHandler;
     private DbCustomStrategy dbCustomStrategy;
 
-    public SqlExecuteHandler(DbDataSource dbDataSource, DbParserFieldHandler parserFieldHandler) {
+    public SqlExecuteHandler(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy, DbParserFieldHandler parserFieldHandler) {
         super(dbDataSource);
-        conn = super.getConnection();
-        dbCustomStrategy = super.getDbCustomStrategy();
+        this.conn = super.getConnection();
+        this.dbCustomStrategy = dbCustomStrategy;
         this.parserFieldHandler = parserFieldHandler;
     }
 

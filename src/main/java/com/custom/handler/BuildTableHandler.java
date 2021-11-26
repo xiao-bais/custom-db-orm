@@ -8,6 +8,7 @@ package com.custom.handler;
  */
 
 import com.custom.comm.CustomUtil;
+import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.dbconfig.DbFieldsConst;
 import com.custom.dbconfig.SymbolConst;
@@ -31,8 +32,8 @@ public class BuildTableHandler {
     private DbAnnotationsParserHandler annotationsParser;
     private static String dataBase = SymbolConst.EMPTY;
 
-    BuildTableHandler(DbDataSource dbDataSource){
-        sqlExecuteHandler = new SqlExecuteHandler(dbDataSource, new DbParserFieldHandler());
+    BuildTableHandler(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy){
+        sqlExecuteHandler = new SqlExecuteHandler(dbDataSource, dbCustomStrategy, new DbParserFieldHandler());
         annotationsParser = new DbAnnotationsParserHandler();
         tableSpliceSql = new TableSpliceSql(annotationsParser);
         dataBase = String.valueOf(ExceptionConst.currMap.get(DbFieldsConst.DATA_BASE));

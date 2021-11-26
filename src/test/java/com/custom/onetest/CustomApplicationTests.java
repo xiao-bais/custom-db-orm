@@ -1,9 +1,5 @@
 package com.custom.onetest;
 
-import com.custom.dbconfig.DbCustomStrategy;
-import com.custom.dbconfig.DbDataSource;
-import com.custom.handler.proxy.SqlReaderExecuteProxy;
-import com.custom.test.JdbcTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

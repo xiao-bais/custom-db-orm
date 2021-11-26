@@ -2,6 +2,7 @@ package com.custom.handler.proxy;
 
 import com.custom.annotations.DbTable;
 import com.custom.comm.JudgeUtilsAx;
+import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.enums.ExecuteMethod;
 import com.custom.exceptions.CustomCheckException;
@@ -19,15 +20,19 @@ import java.util.List;
  * @Date 2021/11/17 9:55
  * @Desc：在执行之前做一些必要的检查，以减少异常的出现
  **/
+@SuppressWarnings("unchecked")
 public class SqlParamsCheckProxy<T> implements MethodInterceptor {
 
     private T obj;
 
     private DbDataSource dbDataSource;
 
-    public SqlParamsCheckProxy(T obj, DbDataSource dbDataSource) {
+    private DbCustomStrategy dbCustomStrategy;
+
+    public SqlParamsCheckProxy(T obj, DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         this.obj = obj;
         this.dbDataSource = dbDataSource;
+        this.dbCustomStrategy = dbCustomStrategy;
     }
 
     public SqlParamsCheckProxy() {}
@@ -37,22 +42,23 @@ public class SqlParamsCheckProxy<T> implements MethodInterceptor {
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(obj.getClass());
         enhancer.setCallback(this);
-        return (T) enhancer.create(new Class[]{DbDataSource.class}, new Object[]{dbDataSource});
+        return (T) enhancer.create(new Class[]{DbDataSource.class, DbCustomStrategy.class}, new Object[]{dbDataSource, dbCustomStrategy});
     }
 
 
     @Override
     public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
-        if(JudgeUtilsAx.isEmpty(objects[0])) {
-            throw new CustomCheckException(ExceptionConst.EX_JDBC_ENTITY_NOT_SPECIFIED);
-        }
+
         CheckExecute annotation = method.getAnnotation(CheckExecute.class);
         if(annotation == null) {
             return methodProxy.invokeSuper(o, objects);
         }
+        if(JudgeUtilsAx.isEmpty(objects[0])) {
+            throw new CustomCheckException(ExceptionConst.EX_JDBC_ENTITY_NOT_SPECIFIED);
+        }
         ExecuteMethod target = annotation.target();
         switch (target) {
-            // 当执行插入方法时进行参数的
+            // 当执行插入方法时进行参数的预检查
             case INSERT:
                 this.insert(objects);
                 break;

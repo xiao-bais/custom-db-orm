@@ -1,9 +1,7 @@
 package com.custom.scanner;
 
-import com.custom.dbconfig.DbDataSource;
 import com.custom.handler.proxy.SqlReaderExecuteProxy;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author Xiao-Bai
@@ -12,16 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class InstanceBeanFactory<T> implements FactoryBean<T> {
 
-    private DbDataSource dbDataSource;
-
     private Class<T> interfaceType;
 
     private SqlReaderExecuteProxy sqlReaderExecuteProxy;
 
-    public InstanceBeanFactory(DbDataSource dbDataSource, SqlReaderExecuteProxy sqlReaderExecuteProxy, Class<T> interfaceType) {
+    public InstanceBeanFactory(SqlReaderExecuteProxy sqlReaderExecuteProxy, Class<T> interfaceType) {
         this.interfaceType = interfaceType;
         this.sqlReaderExecuteProxy = sqlReaderExecuteProxy;
-        this.dbDataSource = dbDataSource;
     }
 
     @Override

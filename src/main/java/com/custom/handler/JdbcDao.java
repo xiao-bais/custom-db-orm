@@ -1,5 +1,6 @@
 package com.custom.handler;
 
+import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.handler.proxy.SqlParamsCheckProxy;
 import com.custom.page.DbPageRows;
@@ -205,9 +206,9 @@ public class JdbcDao {
     private BuildSqlHandler buildSqlHandler;
     private BuildTableHandler buildTableHandler;
 
-    public JdbcDao(DbDataSource dbDataSource){
-        buildSqlHandler = new SqlParamsCheckProxy<>(new BuildSqlHandler(), dbDataSource).createProxy();
-        buildTableHandler = new BuildTableHandler(dbDataSource);
+    public JdbcDao(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy){
+        buildSqlHandler = new SqlParamsCheckProxy<>(new BuildSqlHandler(), dbDataSource, dbCustomStrategy).createProxy();
+        buildTableHandler = new BuildTableHandler(dbDataSource, dbCustomStrategy);
     }
 
 }

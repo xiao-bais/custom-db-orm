@@ -2,7 +2,6 @@ package com.custom.test;
 
 import com.custom.annotations.loader.Query;
 import com.custom.annotations.loader.SqlPath;
-import com.custom.annotations.loader.Update;
 import com.custom.comm.BasicDao;
 import com.custom.enums.ExecuteMethod;
 

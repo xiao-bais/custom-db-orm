@@ -6,6 +6,7 @@ import com.custom.annotations.loader.Update;
 import com.custom.comm.BasicDao;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
+import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.ExecuteMethod;
@@ -35,8 +36,8 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
         return (T) Proxy.newProxyInstance(classLoader, interfaces, this);
     }
 
-    public SqlReaderExecuteProxy(DbDataSource dbDataSource) {
-        super(dbDataSource, new DbParserFieldHandler());
+    public SqlReaderExecuteProxy(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
+        super(dbDataSource, dbCustomStrategy, new DbParserFieldHandler());
     }
 
 

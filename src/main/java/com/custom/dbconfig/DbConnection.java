@@ -16,7 +16,6 @@ import java.sql.SQLException;
 public class DbConnection {
 
     private Connection connection = null;
-    private DbCustomStrategy dbCustomStrategy;
 
     /**
      * 获取连接
@@ -50,19 +49,12 @@ public class DbConnection {
             druidDataSource.setTestOnReturn(dbDataSource.isTestOnReturn());
             connection = druidDataSource.getConnection();
         }
-        dbDataSource.setDatabase(CustomUtil.getDataBase(dbDataSource.getUrl()));
         if (JudgeUtilsAx.isEmpty(dbDataSource.getDatabase())) {
             dbDataSource.setDatabase(CustomUtil.getDataBase(dbDataSource.getUrl()));
         }
         ExceptionConst.currMap.put(DbFieldsConst.DATA_BASE, dbDataSource.getDatabase());
         ExceptionConst.currMap.put(CustomUtil.getConnKey(dbDataSource), connection);
 
-        DbCustomStrategy dbCustomStrategy = dbDataSource.getDbCustomStrategy();
-        if(null == dbCustomStrategy) {
-            dbCustomStrategy = new DbCustomStrategy();
-        }
-        this.dbCustomStrategy = dbCustomStrategy;
-        ExceptionConst.currMap.put(DbFieldsConst.CUSTOM_STRATEGY, dbCustomStrategy);
     }
 
 
@@ -88,11 +80,4 @@ public class DbConnection {
         return CONN_LOCAL.get();
     }
 
-    public DbCustomStrategy getDbCustomStrategy() {
-        return dbCustomStrategy;
-    }
-
-    public void setDbCustomStrategy(DbCustomStrategy dbCustomStrategy) {
-        this.dbCustomStrategy = dbCustomStrategy;
-    }
 }
