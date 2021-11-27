@@ -1,4 +1,4 @@
-package com.custom.test;
+package com.home.customtest.entity;
 
 import com.custom.annotations.DbField;
 import com.custom.annotations.DbKey;
@@ -6,44 +6,41 @@ import com.custom.annotations.DbTable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import java.util.Date;
 
 /**
  * @Author Xiao-Bai
- * @Date 2021/10/28 9:19
+ * @Date 2021/11/27 15:37
  * @Desc：
  **/
 @DbTable(table = "employee")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class Employee {
+
 
     @DbKey
     private int id;
 
-    @DbField(value = "emp_name", desc = "员工姓名")
+    @DbField("emp_name")
     private String empName;
 
-    @DbField(desc = "姓名")
+    @DbField
     private boolean sex;
 
-    @DbField(desc = "员工年龄")
+    @DbField
     private int age;
 
-    @DbField(desc = "员工地址")
-    private int address;
+    @DbField
+    private String address;
 
-    @DbField(desc = "生日")
+    @DbField
     private Date birthday;
 
     @DbField
     private int state;
-
-
 
 
 }

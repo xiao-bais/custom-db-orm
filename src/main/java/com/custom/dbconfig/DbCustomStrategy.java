@@ -2,13 +2,14 @@ package com.custom.dbconfig;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 /**
  * @Author Xiao-Bai
  * @Date 2021/8/22
  * @Description
  */
-@Configuration
+@Component
 @ConfigurationProperties(prefix = "custom.db.strategy")
 public class DbCustomStrategy {
 

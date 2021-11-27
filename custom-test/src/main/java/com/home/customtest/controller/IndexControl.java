@@ -1,9 +1,8 @@
-package com.custom.controller;
+package com.home.customtest.controller;
 
 import com.custom.comm.BackResult;
-import com.custom.test.Employee;
 import com.custom.handler.JdbcDao;
-import com.custom.test.JdbcTest;
+import com.home.customtest.entity.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,25 +11,23 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * @author Xiao-Bai
- * @date 2021/11/26 22:46
- * @desc:
- */
+ * @Author Xiao-Bai
+ * @Date 2021/11/27 15:32
+ * @Desc：
+ **/
 @RestController
-@RequestMapping("/getMain")
-public class TestController {
+@RequestMapping("/one")
+public class IndexControl {
+
 
     @Autowired
     private JdbcDao jdbcDao;
-    @Autowired
-    private JdbcTest jdbcTest;
 
 
-    @GetMapping("/getIndex")
-    public BackResult<List<Employee>> getTest01() throws Exception {
+    @GetMapping("/getMain")
+    public BackResult<String> getIndex() throws Exception {
         List<Employee> employees = jdbcDao.selectList(Employee.class, null);
-        return BackResult.bySuccess(employees);
+        return BackResult.bySuccess("success01", employees.toString());
     }
-
 
 }
