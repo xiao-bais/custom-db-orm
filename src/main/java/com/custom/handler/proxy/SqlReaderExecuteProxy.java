@@ -33,8 +33,11 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
     public <T> T createProxy(Class<T> cls) {
         ClassLoader classLoader = cls.getClassLoader();
         Class<?>[] interfaces = new Class[]{cls};
+        target = cls.getName();
         return (T) Proxy.newProxyInstance(classLoader, interfaces, this);
     }
+
+    private String target;
 
     public SqlReaderExecuteProxy(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         super(dbDataSource, dbCustomStrategy, new DbParserFieldHandler());
@@ -42,26 +45,28 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
 
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Exception {
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
+        if(method.getName().equals("toString")) {
+            return this + "";
+        }
         Object result;
         try {
             result = doInvoke(proxy, method, args);
         }catch (IllegalArgumentException e) {
-            log.error("Illegal parameter");
+            log.error("illegal parameter");
             throw e;
-        }
-        catch (CustomCheckException e) {
-            log.info("custom check exception !");
-            throw e;
+        }catch (CustomCheckException ex) {
+            log.error("custom check exception");
+            throw ex;
         }
         return result;
     }
 
-
     private Object doInvoke(Object proxy, Method method, Object[] args) throws Exception {
+
         if (!BasicDao.class.isAssignableFrom(proxy.getClass())) {
-            throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_INHERITED_BASIC_DAO, method.getDeclaringClass()));
+            throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_INHERITED_BASIC_DAO, target));
         }
 
         if (method.isAnnotationPresent(Query.class)) {
