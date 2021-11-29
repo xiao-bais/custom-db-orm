@@ -45,7 +45,7 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
 
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public Object invoke(Object proxy, Method method, Object[] args) throws Exception {
 
         if(method.getName().equals("toString")) {
             return this + "";
