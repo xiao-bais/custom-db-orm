@@ -8,7 +8,7 @@ import com.custom.comm.BasicDao;
  * @Date 2021/11/29 12:57
  * @Desc：
  **/
-public interface CustomDao  {
+public interface CustomDao  extends BasicDao{
 
 
     @Query("select emp_name from employee where sex = #{sex} and age = #{age}")

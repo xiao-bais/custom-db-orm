@@ -4,6 +4,8 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.exceptions.ExceptionConst;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -14,6 +16,8 @@ import java.sql.SQLException;
  * @Description 数据库连接配置
  */
 public class DbConnection {
+
+    private static Logger logger = LoggerFactory.getLogger(DbConnection.class);
 
     private Connection connection = null;
 
@@ -48,6 +52,7 @@ public class DbConnection {
             druidDataSource.setTestOnBorrow(dbDataSource.isTestOnBorrow());
             druidDataSource.setTestOnReturn(dbDataSource.isTestOnReturn());
             connection = druidDataSource.getConnection();
+            logger.info("dataSource Connection Successfully !");
         }
         if (JudgeUtilsAx.isEmpty(dbDataSource.getDatabase())) {
             dbDataSource.setDatabase(CustomUtil.getDataBase(dbDataSource.getUrl()));

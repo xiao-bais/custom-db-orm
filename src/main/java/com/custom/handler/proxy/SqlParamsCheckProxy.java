@@ -35,10 +35,8 @@ public class SqlParamsCheckProxy<T> implements MethodInterceptor {
         this.dbCustomStrategy = dbCustomStrategy;
     }
 
-    public SqlParamsCheckProxy() {}
 
-
-    public <T> T createProxy() {
+    public T createProxy() {
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(obj.getClass());
         enhancer.setCallback(this);
@@ -83,7 +81,7 @@ public class SqlParamsCheckProxy<T> implements MethodInterceptor {
     private void insert(Object[] objects) {
         Object insertParam = objects[0];
         if(objects[0] instanceof List) {
-            insertParam = ((List) objects[0]).get(0);
+            insertParam = ((List<Object>) objects[0]).get(0);
         }
         if(!insertParam.getClass().isAnnotationPresent(DbTable.class)) {
             throw new CustomCheckException(ExceptionConst.EX_DBTABLE__NOTFOUND + insertParam.getClass().getName());

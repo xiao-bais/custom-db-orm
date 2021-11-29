@@ -26,6 +26,8 @@ public class DoMain {
 
         CustomDao customDao = new SqlReaderExecuteProxy(dbDataSource, dbCustomStrategy).createProxy(CustomDao.class);
         String s = customDao.selectOneByCond(1, 25);
+        String code = System.getenv("ENV_CODE");
+        System.out.println("code = " + code);
         System.out.println("s = " + s);
 
 
