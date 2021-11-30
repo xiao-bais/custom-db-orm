@@ -321,7 +321,7 @@ public class CustomUtil {
 
         int[] indexes = new int[3];
         int start = sql.indexOf(beginRex, index);
-        int end = sql.indexOf(endRex, index);
+        int end = sql.indexOf(endRex, start);
         if(start == -1 || end == -1)
             return null;
         else if(start > 0 && end > 0){

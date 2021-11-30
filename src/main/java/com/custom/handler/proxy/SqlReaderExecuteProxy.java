@@ -97,7 +97,7 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
 
         String methodName = String.format(" %s.%s() ", method.getDeclaringClass().getName(), method.getName());
 
-        if(sql.contains(SymbolConst.PREPARE_BEGIN_REX) && isOrder) {
+        if(sql.contains(SymbolConst.PREPARE_BEGIN_REX_1) && isOrder) {
             throw new CustomCheckException(methodName + ExceptionConst.EX_USE_ORDER_FALSE);
         }
         if(sql.contains(SymbolConst.QUEST) && !isOrder) {
@@ -146,20 +146,13 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
      */
     private List<Object> handleParamsPrepareSql(String sql, Method method, Object[] args, boolean isOrder) throws Exception {
 
+        checkSqlByOrder(sql, isOrder);
         List<Object> paramRes = new ArrayList<>();
+        Map<String, Object> paramsReplaces = new HashMap<>();
         String logSql = sql;
-
-        if (sql.contains(SymbolConst.QUEST) && sql.contains(SymbolConst.PREPARE_BEGIN_REX)) {
-            log.error("无法解析：'#{ }' 与 '?' 不能作用在同一条sql上");
-            throw new CustomCheckException(String.format(ExceptionConst.EX_UNABLE_TO_RESOLVE_SQL, sql));
-        }
 
         Class<?>[] parameterTypes = method.getParameterTypes();
         if (isOrder) {
-
-            if(sql.contains(SymbolConst.PREPARE_BEGIN_REX) && sql.contains(SymbolConst.PREPARE_END_REX)) {
-
-            }
 
             for (int i = 0; i < parameterTypes.length; i++) {
                 Class<?> type = parameterTypes[i];
@@ -167,6 +160,7 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
 
                 if (CustomUtil.isBasicType(type)) {
                     paramRes.add(param);
+                    paramsReplaces.put(type.getName(), param);
                 } else if (type.equals(List.class)) {
                     paramRes.addAll((List<Object>) param);
                 } else if (type.equals(Arrays.class)) {
@@ -188,38 +182,70 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
 
                 if (CustomUtil.isBasicType(type)) {
                     paramsMap.put(paramName, paramVal);
+                    paramsReplaces.put(paramName, paramVal);
                 } else if (type.equals(Map.class)) {
                     paramsMap.putAll((Map<?, ?>) paramVal);
-                } else if(type.equals(List.class) || type.equals(Arrays.class) || type.equals(Set.class)){
+                    paramsReplaces.putAll((Map<String, ?>) paramVal);
+                } else if(type.equals(List.class) || type.equals(Arrays.class) || type.equals(Set.class)) {
                     throw new IllegalArgumentException(String.format(ExceptionConst.EX_NOT_SUPPORT_ARRAY_PARAMS, method.getDeclaringClass().getName(), method.getName()));
                 } else {
                     Field[] fields = CustomUtil.getFields(paramVal.getClass());
                     Object[] fieldNames = Arrays.stream(fields).map(Field::getName).toArray();
                     List<Object> fieldVales = getParserFieldHandler().getFieldsVal(paramVal, Arrays.copyOf(fieldNames, fieldNames.length, String[].class));
                     IntStream.range(0, fieldNames.length).forEach(x -> paramsMap.put(fieldNames[x], fieldVales.get(x)));
+                    IntStream.range(0, fieldNames.length).forEach(x -> paramsReplaces.put((String) fieldNames[x], fieldVales.get(x)));
                 }
             }
 
+            // 开始执行#{name} 替换为 ？
             int index = 0;
             while (true) {
-                int[] indexes = CustomUtil.replaceSqlRex(sql, SymbolConst.PREPARE_BEGIN_REX, SymbolConst.PREPARE_END_REX, index);
+                int[] indexes = CustomUtil.replaceSqlRex(sql, SymbolConst.PREPARE_BEGIN_REX_1, SymbolConst.PREPARE_END_REX, index);
                 if (indexes == null) break;
                 String text = sql.substring(indexes[0] + 2, indexes[1]);
+                if(JudgeUtilsAx.isBlank(text)) throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_PARAMS_NAME, text, logSql));
                 sql = sql.replace(sql.substring(indexes[0], indexes[1] + 1), SymbolConst.QUEST);
-                index = indexes[2];
+                index = indexes[2] - text.length() - 2;
                 Object sqlParamsVal = paramsMap.get(text);
                 if (JudgeUtilsAx.isEmpty(sqlParamsVal))
                     throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_PARAMS_VALUE, text, logSql));
                 paramRes.add(sqlParamsVal);
             }
         }
+
+        sql = this.replaceSqlSymbol(sql, paramsReplaces);
         paramRes.add(sql);
         return paramRes;
     }
 
+    /**
+    * 将${name} 替换为 `name`的值
+    */
+    private String replaceSqlSymbol(String sql, Map<String, Object> paramsMap) {
+
+        if(!sql.contains(SymbolConst.PREPARE_BEGIN_REX_2)) {
+            return sql;
+        }
+        int index = 0;
+        while (true){
+            int[] indexes = CustomUtil.replaceSqlRex(sql, SymbolConst.PREPARE_BEGIN_REX_2, SymbolConst.PREPARE_END_REX, index);
+            if (indexes == null) break;
+            String text = sql.substring(indexes[0] + 2, indexes[1]);
+            Object param = paramsMap.get(text);
+            if(JudgeUtilsAx.isEmpty(param)) {
+                throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_PARAMS_NAME, text, sql));
+            }
+            sql = sql.replace(sql.substring(indexes[0], indexes[1] + 1), param.toString());
+        }
+        return sql;
+    }
+
     //todo... 将规则判断迁移至此
     private void checkSqlByOrder(String sql, boolean isOrder){
-
+        if (sql.contains(SymbolConst.QUEST) && sql.contains(SymbolConst.PREPARE_BEGIN_REX_1)) {
+            log.error("无法解析：'#{ }' 与 '?' 不能作用在同一条sql上");
+            throw new CustomCheckException(String.format(ExceptionConst.EX_UNABLE_TO_RESOLVE_SQL, sql));
+        }
 
 
     }

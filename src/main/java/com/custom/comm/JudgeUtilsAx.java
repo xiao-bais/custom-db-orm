@@ -58,6 +58,23 @@ public class JudgeUtilsAx {
         return false;
     }
 
+    public static boolean isBlank(final CharSequence cs) {
+        if (cs == null) {
+            return true;
+        }
+        int l = cs.length();
+        if (l > 0) {
+            for (int i = 0; i < l; i++) {
+                if (!Character.isWhitespace(cs.charAt(i))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public static boolean isNotBlank(CharSequence cs){return !isBlank(cs);}
+
     public static boolean isNotEmpty(Object el) {
         return !isEmpty(el);
     }
