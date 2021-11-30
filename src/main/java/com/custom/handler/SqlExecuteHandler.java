@@ -132,7 +132,7 @@ public class SqlExecuteHandler extends DbConnection {
     }
 
     /**
-     * 查询单个字段的多结果集（Set）
+     * 查询单个字段的多结果集（Array）
      */
     @SuppressWarnings("unchecked")
     protected <T> T[] queryArray(Class<T> t, String sql, String className, String methodName, Object... params) throws Exception {

@@ -63,6 +63,9 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
         return result;
     }
 
+    /**
+    * 执行具体代理方法
+    */
     private Object doInvoke(Object proxy, Method method, Object[] args) throws Exception {
 
         if (!BasicDao.class.isAssignableFrom(proxy.getClass())) {
