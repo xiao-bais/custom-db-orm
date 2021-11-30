@@ -3,7 +3,7 @@ package com.home.customtest;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication(scanBasePackages = {"com.custom","com.home"})
+@SpringBootApplication
 public class CustomTestApplication {
 
     public static void main(String[] args) {

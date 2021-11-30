@@ -1,8 +1,7 @@
 package com.home.customtest.entity;
 
-import com.custom.annotations.DbField;
-import com.custom.annotations.DbKey;
-import com.custom.annotations.DbTable;
+import com.custom.annotations.*;
+import com.custom.enums.DbMediaType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +17,14 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@DbJoinTables({
+        @DbJoinTable("left join emp_dept dept on dept.id = a.dept_id"),
+        @DbJoinTable("left join emp_dept dept1 on dept.id = a.dept_id"),
+        @DbJoinTable("left join emp_dept dept2 on dept.id = a.dept_id"),
+        @DbJoinTable("left join emp_dept dept3 on dept.id = a.dept_id"),
+        @DbJoinTable("left join emp_dept dept4 on dept.id = a.dept_id"),
+        @DbJoinTable("left join emp_dept dept5 on dept.id = a.dept_id"),
+})
 public class Employee {
 
 
@@ -41,6 +48,12 @@ public class Employee {
 
     @DbField
     private int state;
+
+    @DbMap("dept.name")
+    private String deptName2;
+
+    @DbRelated(joinTable = "emp_dept", joinAlias = "dept", condition = "dept.id = a.dept_id", field = "dept.name")
+    private String dpetName;
 
 
 }
