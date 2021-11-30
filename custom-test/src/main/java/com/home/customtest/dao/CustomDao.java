@@ -12,6 +12,6 @@ public interface CustomDao  extends BasicDao{
 
 
     @Query("select emp_name from employee where sex = #{sex} and ${name} = #{age}")
-    String selectOneByCond(int sex, String name, int age);
+    String selectOneByCond(int sex,  int age, String name);
 
 }
