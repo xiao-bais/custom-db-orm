@@ -1,4 +1,4 @@
-package com.custom.annotations.loader;
+package com.custom.annotations.mapper;
 
 import com.custom.enums.ExecuteMethod;
 

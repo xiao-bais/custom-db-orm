@@ -145,7 +145,7 @@ public class ExceptionConst {
     /**
     * 未继承BasicDao
     */
-    public final static String EX_NOT_INHERITED_BASIC_DAO = "Execution error, possibly because the %s does not inherit the BasicDao";
+    public final static String EX_NOT_INHERITED_BASIC_DAO = "Execution error, possibly because '%s' does not inherit basicdao or this interface is not annotated with @SqlMapper";
 
     /**
     * 在isOrder=true的情况下，不支持使用map或自定义类型进行参数传递

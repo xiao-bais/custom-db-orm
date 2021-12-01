@@ -1,5 +1,6 @@
 package com.custom.annotations;
 
+import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.DbMediaType;
 
 import java.lang.annotation.*;
@@ -31,7 +32,7 @@ public @interface DbField {
      * 字段说明
      * @return
      */
-    String desc() default "";
+    String desc() default SymbolConst.EMPTY;
 
     /**
      * 是否为空

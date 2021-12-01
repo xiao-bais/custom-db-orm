@@ -1,5 +1,6 @@
 package com.custom.scanner;
 
+import com.custom.annotations.mapper.SqlMapper;
 import com.custom.comm.BasicDao;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.SymbolConst;
@@ -28,23 +29,23 @@ import java.util.jar.JarFile;
 public class MapperBeanScanner {
 
     /**
-    * 所有需要注册的bean集合
-    */
+     * 所有需要注册的bean集合
+     */
     private Set<Class<?>> beanRegisterSet = new HashSet<>();
 
     /**
-    * 类加载器
-    */
+     * 类加载器
+     */
     private ClassLoader classLoader = MapperBeanScanner.class.getClassLoader();
 
     /**
-    * 扫描的包
-    */
+     * 扫描的包
+     */
     private String packageScan = SymbolConst.EMPTY;
 
     /**
-    * 资源路径
-    */
+     * 资源路径
+     */
     private URL url;
 
     public MapperBeanScanner(String... packageScans) {
@@ -57,27 +58,27 @@ public class MapperBeanScanner {
         }
     }
 
-    public Set<Class<?>> getBeanRegisterList(){
+    public Set<Class<?>> getBeanRegisterList() {
         return this.beanRegisterSet;
     }
 
 
     /**
-    * 扫描包
-    */
+     * 扫描包
+     */
     private void scannerPackage() {
         try {
-            url = classLoader.getResource(packageScan.replace(SymbolConst.POINT,SymbolConst.SLASH));
-            if(url == null) {
+            url = classLoader.getResource(packageScan.replace(SymbolConst.POINT, SymbolConst.SLASH));
+            if (url == null) {
                 throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_URL, packageScan));
             }
             String protocol = url.getProtocol();
-            if(SymbolConst.FILE.equals(protocol)) {
+            if (SymbolConst.FILE.equals(protocol)) {
                 addLocalClass(packageScan);
-            }else if(SymbolConst.JAVA.equals(protocol)) {
+            } else if (SymbolConst.JAVA.equals(protocol)) {
                 addJarClass(packageScan);
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
 
@@ -85,36 +86,38 @@ public class MapperBeanScanner {
 
 
     /**
-    * 加载本地类
-    */
+     * 加载本地类
+     */
     @SuppressWarnings("unchecked")
     private void addLocalClass(final String packageName) throws URISyntaxException {
 
         try {
             url = classLoader.getResource(packageName.replace(SymbolConst.POINT, SymbolConst.SLASH));
-            if(url == null) {
+            if (url == null) {
                 throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_URL, packageScan));
             }
             URI uri = url.toURI();
             File classFile = new File(uri);
             classFile.listFiles(pathName -> {
-                if(pathName.isDirectory()) {
+                if (pathName.isDirectory()) {
                     try {
                         addLocalClass(packageName + SymbolConst.POINT + pathName.getName());
                     } catch (URISyntaxException e) {
                         e.printStackTrace();
                     }
                 }
-                if(pathName.getName().endsWith(SymbolConst.CLASS)) {
+                if (pathName.getName().endsWith(SymbolConst.CLASS)) {
                     Class<?> clazz = null;
                     try {
                         clazz = classLoader.loadClass(packageName + SymbolConst.POINT + pathName.getName().replace(SymbolConst.CLASS, SymbolConst.EMPTY));
                     } catch (ClassNotFoundException e) {
                         e.printStackTrace();
                     }
-                    if(clazz != null && BasicDao.class.isAssignableFrom(clazz)) {
-                        beanRegisterSet.add(clazz);
-                    }
+                    if (clazz != null && (
+                            BasicDao.class.isAssignableFrom(clazz)
+                            || clazz.isAnnotationPresent(SqlMapper.class))
+                    ) beanRegisterSet.add(clazz);
+
                     return true;
                 }
                 return false;
@@ -126,16 +129,16 @@ public class MapperBeanScanner {
     }
 
     /**
-    * 加载jar包中的类
-    */
+     * 加载jar包中的类
+     */
     @SuppressWarnings("unchecked")
     private void addJarClass(final String packageName) throws IOException {
-        if(JudgeUtilsAx.isEmpty(packageName)) return;
+        if (JudgeUtilsAx.isEmpty(packageName)) return;
         String pathName = packageName.replace(SymbolConst.POINT, SymbolConst.SLASH);
         JarFile jarFile = null;
 
         url = classLoader.getResource(packageName);
-        if(url == null) {
+        if (url == null) {
             throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_URL, packageScan));
         }
         JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
@@ -145,26 +148,28 @@ public class MapperBeanScanner {
             JarEntry jarEntry = jarEntryEnumeration.nextElement();
             String jarEntryName = jarEntry.getName();
 
-            if(jarEntryName.contains(pathName) && !jarEntryName.equals(pathName + SymbolConst.SLASH)) {
-                if(jarEntry.isDirectory()) {
+            if (jarEntryName.contains(pathName) && !jarEntryName.equals(pathName + SymbolConst.SLASH)) {
+                if (jarEntry.isDirectory()) {
                     String beanClassName = jarEntry.getName().replace(SymbolConst.SLASH, SymbolConst.POINT);
                     int endIndex = beanClassName.lastIndexOf(SymbolConst.POINT);
                     String prefix = null;
-                    if(endIndex > 0) {
+                    if (endIndex > 0) {
                         prefix = beanClassName.substring(0, endIndex);
                     }
                     addJarClass(prefix);
-                    if(jarEntry.getName().endsWith(SymbolConst.CLASS)) {
+                    if (jarEntry.getName().endsWith(SymbolConst.CLASS)) {
                         Class<?> beanClass = null;
 
                         try {
                             beanClass = classLoader.loadClass(jarEntry.getName().replace(SymbolConst.SLASH, SymbolConst.POINT).replace(SymbolConst.CLASS, SymbolConst.EMPTY));
-                        }catch (ClassNotFoundException e) {
+                        } catch (ClassNotFoundException e) {
                             e.printStackTrace();
                         }
-                        if(beanClass != null && BasicDao.class.isAssignableFrom(beanClass)) {
-                            beanRegisterSet.add(beanClass);
-                        }
+                        if (beanClass != null && (
+                                BasicDao.class.isAssignableFrom(beanClass)
+                                        || beanClass.isAnnotationPresent(SqlMapper.class))
+                        ) beanRegisterSet.add(beanClass);
+
                     }
                 }
             }

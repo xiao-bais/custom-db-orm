@@ -1,14 +1,13 @@
 package com.home.customtest.dao;
 
-import com.custom.annotations.loader.Query;
-import com.custom.comm.BasicDao;
+import com.custom.annotations.mapper.Query;
 
 /**
  * @Author Xiao-Bai
  * @Date 2021/11/29 12:57
  * @Desc：
  **/
-public interface CustomDao  extends BasicDao{
+public interface CustomDao {
 
 
     @Query("select emp_name from employee where sex = #{sex} and ${name} = #{age}")

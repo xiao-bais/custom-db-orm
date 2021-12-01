@@ -1,8 +1,8 @@
 package com.custom.handler.proxy;
 
-import com.custom.annotations.loader.Query;
-import com.custom.annotations.loader.SqlPath;
-import com.custom.annotations.loader.Update;
+import com.custom.annotations.mapper.Query;
+import com.custom.annotations.mapper.SqlPath;
+import com.custom.annotations.mapper.Update;
 import com.custom.comm.BasicDao;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
@@ -53,10 +53,10 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
         try {
             result = doInvoke(proxy, method, args);
         }catch (IllegalArgumentException e) {
-            log.error("illegal parameter");
+            log.error("illegal parameter: {}", e.getMessage());
             throw e;
         }catch (CustomCheckException ex) {
-            log.error("custom check exception");
+            log.error("custom check exception: {}", ex.getMessage());
             throw ex;
         }
         return result;
