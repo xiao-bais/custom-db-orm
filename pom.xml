@@ -12,7 +12,7 @@
     </parent>
 
     <groupId>com.custom</groupId>
-    <artifactId>custom-jdbc</artifactId>
+    <artifactId>custom-data</artifactId>
     <version>1.0.2-SNAPSHOT</version>
 
     <packaging>pom</packaging>
