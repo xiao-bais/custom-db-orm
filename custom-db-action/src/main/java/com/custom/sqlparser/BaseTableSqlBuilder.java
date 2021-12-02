@@ -85,7 +85,7 @@ public class BaseTableSqlBuilder<T> {
         Field[] fields = CustomUtil.getFields(cls);
         for (Field field : fields) {
             if(field.isAnnotationPresent(DbKey.class)) {
-                this.dbKeyParserModel = new DbKeyParserModel<>(field);
+                this.dbKeyParserModel = new DbKeyParserModel<>(field, this.table, this.alias);
             }else if(field.isAnnotationPresent(DbField.class)) {
                 this.fieldBaseModels.add(new DbFieldParserModel<>(field));
             }

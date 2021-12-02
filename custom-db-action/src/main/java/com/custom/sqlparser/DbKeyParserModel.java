@@ -1,6 +1,7 @@
 package com.custom.sqlparser;
 
 import com.custom.annotations.DbKey;
+import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.DbMediaType;
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Type;
 
 /**
  * @author Xiao-Bai
@@ -35,6 +37,7 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
     private String desc;
 
     private Object value;
+
 
     public String getDbKey() {
         return dbKey;
@@ -82,14 +85,37 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
         return value;
     }
 
+    /**
+    * 生成主键
+    */
+    public Object generateKey() {
+        Object key = null;
+        switch (strategy) {
+            case AUTO:
+                if(type.equals(Integer.class) || type.equals(int.class)) {
+                    key = 0;
+                }else if(type.equals(Long.class) || type.equals(long.class)) {
+                    key = 0L;
+                }
+                break;
+            case UUID:
+                key = CustomUtil.getUUID();
+                break;
+            case INPUT:
+                key = value;
+                break;
+        }
+        return key;
+    }
+
     @Override
     public String getFieldSql() {
-        return String.format("%s.`%s`", super.getAlias(), this.dbKey);
+        return String.format("%s.`%s`", this.getAlias(), this.dbKey);
     }
 
     @Override
     public String getSelectFieldSql() {
-        return String.format("%s.`%s` `%s`", super.getAlias(), this.dbKey, this.key);
+        return String.format("%s.`%s` `%s`", this.getAlias(), this.dbKey, this.key);
     }
 
     public void setValue(Object value) {
@@ -102,7 +128,7 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
         StringBuilder keyFieldSql = new StringBuilder(String.format("`%s` ", this.dbKey));
         keyFieldSql.append(this.dbMediaType.getType())
                 .append(SymbolConst.BRACKETS_LEFT)
-                .append(this.dbMediaType.getLength())
+                .append(this.length)
                 .append(SymbolConst.BRACKETS_RIGHT).append(" ");
 
         if(this.strategy == KeyStrategy.AUTO)
