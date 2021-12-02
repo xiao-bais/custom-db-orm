@@ -148,8 +148,8 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
         this.strategy = annotation.strategy();
         this.desc = annotation.desc();
         this.length = this.dbMediaType.getLength();
-        super.setTable(table);
-        super.setAlias(alias);
+        this.setTable(table);
+        this.setAlias(alias);
     }
 
     public DbKeyParserModel(T t, Field field, String table, String alias){
@@ -161,8 +161,8 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
         this.strategy = annotation.strategy();
         this.desc = annotation.desc();
         this.length = this.dbMediaType.getLength();
-        super.setTable(table);
-        super.setAlias(alias);
+        this.setTable(table);
+        this.setAlias(alias);
         try {
             this.value = getFieldValue(t, this.key);
         }catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {

@@ -45,7 +45,7 @@ public class DbRelationParserModel<T> extends AbstractTableModel<T> {
     /**
      * 关联的sql分为两部分
      * 一是 @DbJoinTables注解，二是@DbRelated注解
-     * 默认按顺序载入，优先加载DbJoinTables注解
+     * 默认按顺序载入，优先加载DbJoinTables注解(顺带优先@DbMap的查询字段)
      */
     @Override
     public String buildTableSql() {
