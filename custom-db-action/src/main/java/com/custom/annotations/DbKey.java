@@ -40,7 +40,7 @@ public @interface DbKey {
      * 主键说明
      * @return
      */
-    String desc() default "";
+    String desc() default "主键";
 
 
 

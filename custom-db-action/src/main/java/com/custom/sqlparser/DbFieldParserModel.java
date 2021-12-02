@@ -10,53 +10,78 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 /**
  * @author Xiao-Bai
  * @date 2021/12/1 23:39
  * @desc: 对于@DbField注解的解析
  */
-@SuppressWarnings("unchecked")
-public class DbFieldParserModel<T> {
+public class DbFieldParserModel<T> extends AbstractTableModel<T> {
 
     private static Logger logger = LoggerFactory.getLogger(DbFieldParserModel.class);
 
+    /**
+    * java字段名称
+    */
     private String fieldName;
 
+    /**
+    * sql列名
+    */
     private String column;
 
+    /**
+    * sql字段类型
+    */
     private DbMediaType dbMediaType;
 
+    /**
+    * java字段类型
+    */
     private Class<?> type;
 
+    /**
+    * 字段值
+    */
     private Object value;
 
+    /**
+    * sql字段长度
+    */
     private String length;
 
+    /**
+    * sql字段说明
+    */
     private String desc;
 
+    /**
+    * 是否为空
+    */
     private boolean isNull;
 
 
     /**
     * 构建创建表的sql语句
     */
+    @Override
     public String buildTableSql(){
         StringBuilder fieldSql = new StringBuilder(String.format("`%s` ", this.column));
-        if(dbMediaType == DbMediaType.DbDate || dbMediaType == DbMediaType.DbDateTime) {
+        if(dbMediaType == DbMediaType.DbDate || dbMediaType == DbMediaType.DbDateTime)
             fieldSql.append(dbMediaType.getType()).append(" ");
-        }else
-            fieldSql.append(dbMediaType.getType()).append(" ")
+        else
+            fieldSql.append(dbMediaType.getType())
                     .append(SymbolConst.BRACKETS_LEFT)
                     .append(this.length)
                     .append(SymbolConst.BRACKETS_RIGHT).append(" ");
 
-        fieldSql.append(this.isNull ? "NULL" : " NOT NULL").append(" ");
+        fieldSql.append(this.isNull ? "NULL" : "NOT NULL").append(" ");
         fieldSql.append(String.format(" COMMENT '%s'", this.desc));
         return fieldSql.toString();
     }
 
+    public DbFieldParserModel() {
+    }
 
     public DbFieldParserModel(Field field) {
         this.fieldName = field.getName();
@@ -65,7 +90,7 @@ public class DbFieldParserModel<T> {
         this.column = JudgeUtilsAx.isEmpty(annotation.value()) ? this.fieldName : annotation.value();
         this.isNull = annotation.isNull();
         this.desc = annotation.desc();
-        this.dbMediaType = annotation.fieldType();
+        this.dbMediaType = annotation.fieldType() == DbMediaType.DbVarchar ? CustomUtil.getDbFieldType(field.getType()) : annotation.fieldType();
         this.length = this.dbMediaType.getLength();
     }
 
@@ -76,7 +101,7 @@ public class DbFieldParserModel<T> {
         this.column = JudgeUtilsAx.isEmpty(annotation.value()) ? this.fieldName : annotation.value();
         this.isNull = annotation.isNull();
         this.desc = annotation.desc();
-        this.dbMediaType = annotation.fieldType();
+        this.dbMediaType = annotation.fieldType() == DbMediaType.DbVarchar ? CustomUtil.getDbFieldType(field.getType()) : annotation.fieldType();
         this.length = this.dbMediaType.getLength();
         try {
             this.value = getFieldValue(t, this.fieldName);
@@ -112,16 +137,25 @@ public class DbFieldParserModel<T> {
         this.dbMediaType = dbMediaType;
     }
 
+    @Override
     public Object getValue(T x, String fieldName) {
-        if(JudgeUtilsAx.isEmpty(value)) {
-            try {
-                value = getFieldValue(x, fieldName);
-            }catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
-                logger.error(e.getMessage(), e);
-                return null;
-            }
+        try {
+            value = getFieldValue(x, fieldName);
+        }catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
+            logger.error(e.getMessage(), e);
+            return null;
         }
         return value;
+    }
+
+    @Override
+    public String getFieldSql() {
+        return String.format("%s.`%s`", super.getAlias(), this.column);
+    }
+
+    @Override
+    public String getSelectFieldSql() {
+        return String.format("%s.`%s` `%s`", super.getAlias(), this.column, this.fieldName);
     }
 
     public Object getValue() {
@@ -132,31 +166,7 @@ public class DbFieldParserModel<T> {
         this.value = value;
     }
 
-    /**
-    * E: 实例对象
-    * fieldName: 字段名称
-    */
-    Object getFieldValue(T x, String fieldName) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-        Object value;
-        String firstLetter;
-        String getter;
-        try {
-            firstLetter = fieldName.substring(0, 1).toUpperCase();
-            getter = SymbolConst.GET + firstLetter + fieldName.substring(1);
-            Method method = x.getClass().getMethod(getter);
-            value = method.invoke(x);
-        }catch (NoSuchMethodException e){
-            try {
-                firstLetter = fieldName.substring(0, 1).toUpperCase();
-                Method method = x.getClass().getMethod(SymbolConst.IS + firstLetter + fieldName.substring(1));
-                value = method.invoke(x);
-            }catch (NoSuchMethodException v) {
-                Method method = x.getClass().getMethod(fieldName);
-                value = method.invoke(x);
-            }
-        }
-        return value;
-    }
+
 
 
 }

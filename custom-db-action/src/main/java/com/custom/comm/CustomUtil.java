@@ -361,6 +361,9 @@ public class CustomUtil {
     }
 
 
+    /**
+    * 加载指定路径中文件的内容
+    */
     public static String loadFiles(String filePath){
             String res = "";
             if(JudgeUtilsAx.isEmpty(filePath)){
@@ -382,9 +385,6 @@ public class CustomUtil {
             }
             return res;
         }
-
-
-
 
 
 
