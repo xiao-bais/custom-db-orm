@@ -63,7 +63,7 @@ public class TableSqlBuilder<T> {
 
 
     /**
-    * 创建表
+    * 创建表结构
     */
     public String createTableSql() {
         StringBuilder createTableSql = new StringBuilder();
