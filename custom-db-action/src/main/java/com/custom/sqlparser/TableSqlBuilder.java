@@ -13,7 +13,7 @@ import java.util.*;
 /**
  * @Author Xiao-Bai
  * @Date 2021/12/2 14:10
- * @Desc：
+ * @Desc：构建实体表的基础模板，以及提供一系列的sql语句或字段
  **/
 public class TableSqlBuilder<T> {
 
@@ -25,21 +25,39 @@ public class TableSqlBuilder<T> {
 
     private String table;
 
+    private String alias;
+
     private Field[] fields;
 
+    /**
+    * @Desc：对于@DbRelated注解的解析
+    */
     private DbKeyParserModel<T> keyParserModel = null;
 
+    /**
+    * @desc:对于@DbField注解的解析
+    */
     private List<DbFieldParserModel<T>> fieldParserModels = new ArrayList<>();
 
+    /**
+    * @Desc：对于@DbRelated注解的解析
+    */
     private List<DbRelationParserModel<T>> relatedParserModels = new ArrayList<>();
 
+    /**
+    * @Desc:对于@DbJoinTables注解的解析
+    */
     private Map<String, String> joinTableParserModelMap = new HashMap<>();
 
+    /**
+     * @Desc:对于@DbJoinTables注解的解析
+     */
     private List<String> joinTableParserModels = new ArrayList<>();
 
+    /**
+     * @Desc:查询的sql语句
+     */
     private StringBuilder selectSql = new StringBuilder();
-
-    private String alias;
 
     private String className;
 
