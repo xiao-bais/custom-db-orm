@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Type;
 
 /**
  * @author Xiao-Bai
@@ -21,6 +20,8 @@ import java.lang.reflect.Type;
 public class DbKeyParserModel<T> extends AbstractTableModel<T> {
 
     private static Logger logger = LoggerFactory.getLogger(DbKeyParserModel.class);
+
+    private T t;
 
     private String dbKey;
 
@@ -72,6 +73,12 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
     }
 
     public Object getValue() {
+        try {
+            this.value = getFieldValue(t, key);
+        }catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
+            logger.error(e.getMessage(), e);
+            return null;
+        }
         return value;
     }
 
@@ -139,6 +146,15 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
         return keyFieldSql.toString();
     }
 
+    public DbKeyParserModel(){
+    }
+
+
+    public DbKeyParserModel(T t, Field field, String table, String alias){
+        this(field, table, alias);
+        this.t = t;
+    }
+
     public DbKeyParserModel(Field field, String table, String alias){
         this.key = field.getName();
         DbKey annotation = field.getAnnotation(DbKey.class);
@@ -152,21 +168,5 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
         this.setAlias(alias);
     }
 
-    public DbKeyParserModel(T t, Field field, String table, String alias){
-        this.key = field.getName();
-        DbKey annotation = field.getAnnotation(DbKey.class);
-        this.dbKey = JudgeUtilsAx.isEmpty(annotation.value()) ? this.key : annotation.value();
-        this.type = field.getType();
-        this.dbMediaType = annotation.dbType();
-        this.strategy = annotation.strategy();
-        this.desc = annotation.desc();
-        this.length = this.dbMediaType.getLength();
-        this.setTable(table);
-        this.setAlias(alias);
-        try {
-            this.value = getFieldValue(t, this.key);
-        }catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
-            logger.error(e.getMessage(), e);
-        }
-    }
+
 }

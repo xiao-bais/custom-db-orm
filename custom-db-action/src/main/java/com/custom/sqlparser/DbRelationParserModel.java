@@ -3,7 +3,11 @@ package com.custom.sqlparser;
 import com.custom.annotations.*;
 import com.custom.comm.CustomUtil;
 import com.custom.dbconfig.SymbolConst;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.ReflectionUtils;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.*;
 
@@ -42,21 +46,70 @@ public class DbRelationParserModel<T> extends AbstractTableModel<T> {
         this.condition = annotation.condition();
     }
 
-    /**
-     * 关联的sql分为两部分
-     * 一是 @DbJoinTables注解，二是@DbRelated注解
-     * 默认按顺序载入，优先加载DbJoinTables注解(顺带优先@DbMap的查询字段)
-     */
+    public DbRelationParserModel(Class<T> cls) {
+        this.cls = cls;
+        DbTable annotation = cls.getAnnotation(DbTable.class);
+        super.setTable(annotation.table());
+        super.setAlias(annotation.alias());
+    }
+
+
     @Override
     public String buildTableSql() {
+        return null;
+    }
 
+    /**
+     * 生成表查询sql语句
+     */
+    private String getSelectBaseTableSql() {
         StringBuilder selectSql = new StringBuilder();
-        // @Related注解的所有字段解析对象
-        List<DbRelationParserModel<T>> relatedParserModels = new ArrayList<>();
         // @DbKey注解的解析对象
         DbKeyParserModel<T> dbKeyParserModel = null;
         // @DbField注解的所有字段解析对象
         List<DbFieldParserModel<T>> fieldParserModels = new ArrayList<>();
+
+        Field[] fields = CustomUtil.getFields(this.cls);
+        for (Field field : fields) {
+            if (field.isAnnotationPresent(DbKey.class)) {
+                dbKeyParserModel = new DbKeyParserModel<>(field, this.getTable(), this.getAlias());
+
+            } else if (field.isAnnotationPresent(DbField.class)) {
+                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.getTable(), this.getAlias());
+                fieldParserModels.add(fieldParserModel);
+            }
+        }
+
+        StringJoiner baseFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+
+        // 第一步 拼接主键
+        if (dbKeyParserModel != null) {
+            baseFieldSql.add(dbKeyParserModel.getSelectFieldSql());
+        }
+
+        // 第二步 拼接此表的其他字段
+        if (!fieldParserModels.isEmpty()) {
+            fieldParserModels.stream().map(DbFieldParserModel::getSelectFieldSql).forEach(baseFieldSql::add);
+        }
+
+        // 第三步 拼接主表
+        selectSql.append(String.format("select %s\n from `%s` %s\n", baseFieldSql.toString(), this.getTable(), this.getAlias()));
+
+        return selectSql.toString();
+    }
+
+
+    /**
+    * 生成关联sql语句
+    */
+    private String getSelectRelationSql() {
+        StringBuilder selectSql = new StringBuilder();
+        // @DbKey注解的解析对象
+        DbKeyParserModel<T> dbKeyParserModel = null;
+        // @DbField注解的所有字段解析对象
+        List<DbFieldParserModel<T>> fieldParserModels = new ArrayList<>();
+        // @Related注解的所有字段解析对象
+        List<DbRelationParserModel<T>> relatedParserModels = new ArrayList<>();
         // @DbJoinTables注解的所有值
         List<String> joinTableParserModels = new ArrayList<>();
         // @DbMap注解的解析
@@ -72,11 +125,14 @@ public class DbRelationParserModel<T> extends AbstractTableModel<T> {
             if (field.isAnnotationPresent(DbRelated.class)) {
                 DbRelationParserModel<T> relatedParserModel = new DbRelationParserModel<>(this.cls, field, this.getTable(), this.getAlias());
                 relatedParserModels.add(relatedParserModel);
+
             } else if (field.isAnnotationPresent(DbKey.class)) {
                 dbKeyParserModel = new DbKeyParserModel<>(field, this.getTable(), this.getAlias());
+
             } else if (field.isAnnotationPresent(DbField.class)) {
-                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field);
+                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.getTable(), this.getAlias());
                 fieldParserModels.add(fieldParserModel);
+
             } else if (field.isAnnotationPresent(DbMap.class)) {
                 DbMap annotation = field.getAnnotation(DbMap.class);
                 joinTableParserModelMap.put(CustomUtil.getJoinFieldStr(annotation.value().trim()), field.getName());
@@ -106,7 +162,7 @@ public class DbRelationParserModel<T> extends AbstractTableModel<T> {
         }
 
         // 第四步 拼接主表
-        selectSql.append(String.format("select %s\n from `%s` %s \n", baseFieldSql.toString(), this.getTable(), this.getAlias()));
+        selectSql.append(String.format("select %s\n from `%s` %s\n", baseFieldSql.toString(), this.getTable(), this.getAlias()));
 
         // 第五步 拼接以joinTables方式的关联条件
         if (!joinTableParserModels.isEmpty()) {

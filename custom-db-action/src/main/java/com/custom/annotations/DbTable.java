@@ -17,7 +17,7 @@ public @interface DbTable {
      * 表名称
      * @return
      */
-    String table() default "";
+    String table();
 
     /**
      * 指定表的别名

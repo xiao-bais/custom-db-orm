@@ -111,17 +111,6 @@ public class DbParserFieldHandler {
     }
 
     /**
-     * 该类是否有@DbRelation注解
-     */
-    private <T> boolean isDbRelationTag(Class<T> t) {
-        Field[] fields = t.getDeclaredFields();
-        for (Field field : fields) {
-            if(field.isAnnotationPresent(DbRelated.class)) return true;
-        }
-        return false;
-    }
-
-    /**
      * 该类是否有@DbKey注解
      */
     <T> boolean isDbKeyTag(Class<T> t) {
@@ -147,7 +136,7 @@ public class DbParserFieldHandler {
      * 获取查询sql
      */
    <T> String getSelectSql(Class<T> t) throws Exception {
-        if(!isDbRelationTag(t) && !t.isAnnotationPresent(DbJoinTables.class)) {
+        if(!CustomUtil.isDbRelationTag(t) && !t.isAnnotationPresent(DbJoinTables.class)) {
             return getBasicTableSql(t);
         }
         if(t.isAnnotationPresent(DbJoinTables.class)) {

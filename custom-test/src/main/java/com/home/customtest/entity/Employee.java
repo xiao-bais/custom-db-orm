@@ -17,14 +17,9 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@DbJoinTables({
-        @DbJoinTable("left join emp_dept dept on dept.id = a.dept_id"),
-        @DbJoinTable("left join emp_dept dept1 on dept.id = a.dept_id"),
-        @DbJoinTable("left join emp_dept dept2 on dept.id = a.dept_id"),
-        @DbJoinTable("left join emp_dept dept3 on dept.id = a.dept_id"),
-        @DbJoinTable("left join emp_dept dept4 on dept.id = a.dept_id"),
-        @DbJoinTable("left join emp_dept dept5 on dept.id = a.dept_id"),
-})
+//@DbJoinTables({
+//        @DbJoinTable("left join dept dept on dept.id = a.dept_id"),
+//})
 public class Employee {
 
 
@@ -46,14 +41,26 @@ public class Employee {
     @DbField
     private Date birthday;
 
+    @DbField("dept_id")
+    private int deptId;
+
+    @DbField("area_id")
+    private int areaId;
+
     @DbField
     private int state;
 
-    @DbMap("dept.name")
-    private String deptName2;
+//    @DbMap("dept.name")
+//    private String deptName;
 
-    @DbRelated(joinTable = "emp_dept", joinAlias = "dept", condition = "dept.id = a.dept_id", field = "dept.name")
-    private String dpetName;
+    @DbRelated(joinTable = "location", joinAlias = "lo", condition = "lo.id = a.area_id", field = "area")
+    private String area1;
+    @DbRelated(joinTable = "location", joinAlias = "lo2", condition = "lo2.id = lo.parent_id", field = "area")
+    private String area2;
+    @DbRelated(joinTable = "location", joinAlias = "lo3", condition = "lo3.id = lo2.parent_id", field = "area")
+    private String area3;
+
+
 
 
 }

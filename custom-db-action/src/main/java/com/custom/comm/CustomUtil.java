@@ -3,6 +3,7 @@ package com.custom.comm;
 
 import com.alibaba.druid.sql.visitor.functions.Char;
 import com.custom.annotations.DbKey;
+import com.custom.annotations.DbRelated;
 import com.custom.annotations.DbTable;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.dbconfig.SymbolConst;
@@ -67,6 +68,20 @@ public class CustomUtil {
         return false;
     }
 
+    /**
+     * 该类是否有@DbRelation注解
+     */
+    public static <T> boolean isDbRelationTag(Class<T> t) {
+        Field[] fields = t.getDeclaredFields();
+        for (Field field : fields) {
+            if(field.isAnnotationPresent(DbRelated.class)) return true;
+        }
+        return false;
+    }
+
+    /**
+    * 是否是系统自定义的基础类型
+    */
     public static boolean isBasicType(Object el) {
         return (el.equals(String.class))
                 || (el.equals(Integer.class) || el.equals(int.class))

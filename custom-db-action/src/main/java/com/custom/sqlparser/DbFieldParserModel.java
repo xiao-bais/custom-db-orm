@@ -20,6 +20,8 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
 
     private static Logger logger = LoggerFactory.getLogger(DbFieldParserModel.class);
 
+    private T t;
+
     /**
     * java字段名称
     */
@@ -80,18 +82,14 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
         return fieldSql.toString();
     }
 
-    public DbFieldParserModel(Field field) {
-        this.fieldName = field.getName();
-        this.type = field.getType();
-        DbField annotation = field.getAnnotation(DbField.class);
-        this.column = JudgeUtilsAx.isEmpty(annotation.value()) ? this.fieldName : annotation.value();
-        this.isNull = annotation.isNull();
-        this.desc = annotation.desc();
-        this.dbMediaType = annotation.fieldType() == DbMediaType.DbVarchar ? CustomUtil.getDbFieldType(field.getType()) : annotation.fieldType();
-        this.length = this.dbMediaType.getLength();
+    public DbFieldParserModel(){}
+
+    public DbFieldParserModel(T t, Field field, String table, String alias) {
+        this(field, table, alias);
+        this.t = t;
     }
 
-    public DbFieldParserModel(T t, Field field) {
+    public DbFieldParserModel(Field field, String table, String alias) {
         this.fieldName = field.getName();
         this.type = field.getType();
         DbField annotation = field.getAnnotation(DbField.class);
@@ -100,11 +98,8 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
         this.desc = annotation.desc();
         this.dbMediaType = annotation.fieldType() == DbMediaType.DbVarchar ? CustomUtil.getDbFieldType(field.getType()) : annotation.fieldType();
         this.length = this.dbMediaType.getLength();
-        try {
-            this.value = getFieldValue(t, this.fieldName);
-        }catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
-            logger.error(e.getMessage(), e);
-        }
+        super.setTable(table);
+        super.setAlias(alias);
     }
 
     public String getFieldName() {

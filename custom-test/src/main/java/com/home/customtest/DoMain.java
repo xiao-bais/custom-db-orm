@@ -1,6 +1,9 @@
 package com.home.customtest;
 
-import com.custom.sqlparser.BaseTableSqlBuilder;
+import com.custom.dbconfig.DbCustomStrategy;
+import com.custom.dbconfig.DbDataSource;
+import com.custom.handler.JdbcDao;
+import com.custom.sqlparser.TableSqlBuilder;
 import com.home.customtest.entity.Employee;
 
 import java.util.Date;
@@ -16,33 +19,33 @@ public class DoMain {
     public static void main(String[] args) throws Exception {
 
         long start = new Date().getTime();
-        BaseTableSqlBuilder<Employee> baseTableBuilder = new BaseTableSqlBuilder<>(Employee.class);
-        String tableSql = baseTableBuilder.createTableSql();
-        System.out.println("tableSql = " + tableSql);
-        long time1 = new Date().getTime();
-        System.out.println("time1 = " + (time1 - start));
+        DbDataSource dbDataSource = new DbDataSource();
+        dbDataSource.setUrl("jdbc:mysql://127.0.0.1:3306/hos?characterEncoding=utf-8&allowMultiQueries=true&autoreconnect=true&serverTimezone=UTC");
+        dbDataSource.setUsername("root");
+        dbDataSource.setPassword("123456");
 
-//        long start = new Date().getTime();
-//        DbDataSource dbDataSource = new DbDataSource();
-//        dbDataSource.setUrl("jdbc:mysql://127.0.0.1:3306/hos?characterEncoding=utf-8&allowMultiQueries=true&autoreconnect=true&serverTimezone=UTC");
-//        dbDataSource.setUsername("root");
-//        dbDataSource.setPassword("123456");
-//
-//        DbCustomStrategy dbCustomStrategy = new DbCustomStrategy();
+        DbCustomStrategy dbCustomStrategy = new DbCustomStrategy();
 //        dbCustomStrategy.setMapperScanEnable(true);
 //        dbCustomStrategy.setPackageScans(new String[]{"com.custom.customtest.dao"});
-//
-//        JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
-//        jdbcDao.createTables(Employee.class);
-//
-//        CustomDao customDao = new SqlReaderExecuteProxy(dbDataSource, dbCustomStrategy).createProxy(CustomDao.class);
-//        long time = new Date().getTime();
-//        String s = customDao.selectOneByCond(1,25, "age");
-//        long time1 = new Date().getTime();
-//        System.out.println("s = " + s);
-//        System.out.println("time = " + (time1-time));
-//        System.out.println("time2 = " + (time-start));
 
+        JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
+        long time = new Date().getTime();
+        TableSqlBuilder<Employee> tableSqlBuilder = new TableSqlBuilder<>(Employee.class);
+
+        long time1 = new Date().getTime();
+        String selectSql = tableSqlBuilder.getSelectSql();
+        Employee employee = jdbcDao.selectOneBySql(Employee.class, selectSql + " where a.id = 1");
+        long time2 = new Date().getTime();
+
+        Employee employee1 = jdbcDao.selectOneByKey(Employee.class, 1);
+        long time3 = new Date().getTime();
+
+        System.out.println("time = " + (time1-time));
+        System.out.println("time = " + (time2-time1));
+        System.out.println("time = " + (time3-time2));
+
+        System.out.println("employee = " + employee);
+        System.out.println("employee1 = " + employee1);
 
     }
 }
