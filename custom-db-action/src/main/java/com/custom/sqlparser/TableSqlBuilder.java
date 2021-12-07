@@ -3,6 +3,8 @@ package com.custom.sqlparser;
 import com.custom.annotations.*;
 import com.custom.comm.CustomUtil;
 import com.custom.dbconfig.SymbolConst;
+import com.custom.enums.ExecuteMethod;
+import com.custom.handler.CheckExecute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -59,8 +61,6 @@ public class TableSqlBuilder<T> {
      */
     private StringBuilder selectSql = new StringBuilder();
 
-    private String className;
-
 
     /**
     * 获取查询sql
@@ -96,6 +96,10 @@ public class TableSqlBuilder<T> {
 
         createTableSql.append(String.format("create table `%s` (\n%s)", this.table, fieldSql.toString()));
         return createTableSql.toString();
+    }
+
+    public String dropTableSql() {
+        return String.format(" drop table ");
     }
 
     /**
@@ -179,26 +183,31 @@ public class TableSqlBuilder<T> {
     }
 
 
-    public TableSqlBuilder(Class<T> cls, boolean isUpdate) {
+    public TableSqlBuilder(Class<T> cls, ExecuteMethod method) {
         this.cls = cls;
         DbTable annotation = cls.getAnnotation(DbTable.class);
         this.alias = annotation.alias();
         this.table = annotation.table();
-        this.className = cls.getSimpleName();
         this.fields = CustomUtil.getFields(this.cls);
-        if (isUpdate) {
-            buildUpdateModels();
-        } else {
-            buildSelectModels();
+        switch (method) {
+            case NONE:
+
+
         }
     }
 
+    /**
+    * 默认构造方法为查询
+    */
     public TableSqlBuilder(Class<T> cls) {
-        this(cls, false);
+        this(cls, ExecuteMethod.SELECT);
     }
 
     public TableSqlBuilder(T t) {
         this.t = t;
+        DbTable annotation = t.getClass().getAnnotation(DbTable.class);
+        this.alias = annotation.alias();
+        this.table = annotation.table();
     }
 
     /**
@@ -244,5 +253,12 @@ public class TableSqlBuilder<T> {
         }
     }
 
+    public String getTable() {
+        return table;
+    }
+
+    public String getAlias() {
+        return alias;
+    }
 
 }
