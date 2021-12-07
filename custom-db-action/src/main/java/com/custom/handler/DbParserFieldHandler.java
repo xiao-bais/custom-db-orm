@@ -135,7 +135,7 @@ public class DbParserFieldHandler {
     /**
      * 获取查询sql
      */
-   <T> String getSelectSql(Class<T> t) throws Exception {
+   public <T> String getSelectSql(Class<T> t) throws Exception {
         if(!CustomUtil.isDbRelationTag(t) && !t.isAnnotationPresent(DbJoinTables.class)) {
             return getBasicTableSql(t);
         }

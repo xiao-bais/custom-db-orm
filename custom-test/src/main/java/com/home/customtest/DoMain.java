@@ -2,6 +2,7 @@ package com.home.customtest;
 
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
+import com.custom.handler.DbParserFieldHandler;
 import com.custom.handler.JdbcDao;
 import com.custom.sqlparser.TableSqlBuilder;
 import com.home.customtest.entity.Employee;
@@ -29,20 +30,28 @@ public class DoMain {
 //        dbCustomStrategy.setPackageScans(new String[]{"com.custom.customtest.dao"});
 
         JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
-        long time = new Date().getTime();
-        TableSqlBuilder<Employee> tableSqlBuilder = new TableSqlBuilder<>(Employee.class);
+        long time = System.currentTimeMillis();
+        TableSqlBuilder<Employee> tableSqlBuilder = new TableSqlBuilder<>(Employee.class, false);
+        long time1 = System.currentTimeMillis();
 
-        long time1 = new Date().getTime();
-        String selectSql = tableSqlBuilder.getSelectSql();
-        Employee employee = jdbcDao.selectOneBySql(Employee.class, selectSql + " where a.id = 1");
-        long time2 = new Date().getTime();
+        String selectSql = tableSqlBuilder.getSelectSql() + " where a.id = 1";
+        long time2 = System.currentTimeMillis();
 
-        Employee employee1 = jdbcDao.selectOneByKey(Employee.class, 1);
-        long time3 = new Date().getTime();
+        DbParserFieldHandler dbParserFieldHandler = new DbParserFieldHandler();
+        String selectssql = dbParserFieldHandler.getSelectSql(Employee.class) + " where a.id = 3";
+        long time3 = System.currentTimeMillis();
+
+        Employee employee1 = jdbcDao.selectOneBySql(Employee.class, selectssql);
+        long time4 = System.currentTimeMillis();
+
+        Employee employee = jdbcDao.selectOneBySql(Employee.class, selectSql);
+        long time5 = System.currentTimeMillis();
 
         System.out.println("time = " + (time1-time));
         System.out.println("time = " + (time2-time1));
         System.out.println("time = " + (time3-time2));
+        System.out.println("time = " + (time4-time3));
+        System.out.println("time = " + (time5-time4));
 
         System.out.println("employee = " + employee);
         System.out.println("employee1 = " + employee1);

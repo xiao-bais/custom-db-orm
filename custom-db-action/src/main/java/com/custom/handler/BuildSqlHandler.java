@@ -160,7 +160,7 @@ public class BuildSqlHandler {
         }else if(queryList.size() > 1){
             throw new CustomCheckException(String.format(ExceptionConst.EX_QUERY_MORE_RESULT, queryList.size()));
         }
-        return queryList.get(0);
+        return queryList.get(SymbolConst.DEFAULT_ZERO);
     }
 
     /**

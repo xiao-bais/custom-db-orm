@@ -49,8 +49,8 @@ public class DbRelationParserModel<T> extends AbstractTableModel<T> {
     public DbRelationParserModel(Class<T> cls) {
         this.cls = cls;
         DbTable annotation = cls.getAnnotation(DbTable.class);
-        super.setTable(annotation.table());
-        super.setAlias(annotation.alias());
+        this.setTable(annotation.table());
+        this.setAlias(annotation.alias());
     }
 
 
@@ -59,139 +59,6 @@ public class DbRelationParserModel<T> extends AbstractTableModel<T> {
         return null;
     }
 
-    /**
-     * 生成表查询sql语句
-     */
-    private String getSelectBaseTableSql() {
-        StringBuilder selectSql = new StringBuilder();
-        // @DbKey注解的解析对象
-        DbKeyParserModel<T> dbKeyParserModel = null;
-        // @DbField注解的所有字段解析对象
-        List<DbFieldParserModel<T>> fieldParserModels = new ArrayList<>();
-
-        Field[] fields = CustomUtil.getFields(this.cls);
-        for (Field field : fields) {
-            if (field.isAnnotationPresent(DbKey.class)) {
-                dbKeyParserModel = new DbKeyParserModel<>(field, this.getTable(), this.getAlias());
-
-            } else if (field.isAnnotationPresent(DbField.class)) {
-                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.getTable(), this.getAlias());
-                fieldParserModels.add(fieldParserModel);
-            }
-        }
-
-        StringJoiner baseFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
-
-        // 第一步 拼接主键
-        if (dbKeyParserModel != null) {
-            baseFieldSql.add(dbKeyParserModel.getSelectFieldSql());
-        }
-
-        // 第二步 拼接此表的其他字段
-        if (!fieldParserModels.isEmpty()) {
-            fieldParserModels.stream().map(DbFieldParserModel::getSelectFieldSql).forEach(baseFieldSql::add);
-        }
-
-        // 第三步 拼接主表
-        selectSql.append(String.format("select %s\n from `%s` %s\n", baseFieldSql.toString(), this.getTable(), this.getAlias()));
-
-        return selectSql.toString();
-    }
-
-
-    /**
-    * 生成关联sql语句
-    */
-    private String getSelectRelationSql() {
-        StringBuilder selectSql = new StringBuilder();
-        // @DbKey注解的解析对象
-        DbKeyParserModel<T> dbKeyParserModel = null;
-        // @DbField注解的所有字段解析对象
-        List<DbFieldParserModel<T>> fieldParserModels = new ArrayList<>();
-        // @Related注解的所有字段解析对象
-        List<DbRelationParserModel<T>> relatedParserModels = new ArrayList<>();
-        // @DbJoinTables注解的所有值
-        List<String> joinTableParserModels = new ArrayList<>();
-        // @DbMap注解的解析
-        Map<String, String> joinTableParserModelMap = new HashMap<>();
-
-        DbJoinTables joinTables = this.cls.getAnnotation(DbJoinTables.class);
-        if (joinTables != null) {
-            Arrays.stream(joinTables.value()).map(DbJoinTable::value).forEach(joinTableParserModels::add);
-        }
-
-        Field[] fields = CustomUtil.getFields(this.cls);
-        for (Field field : fields) {
-            if (field.isAnnotationPresent(DbRelated.class)) {
-                DbRelationParserModel<T> relatedParserModel = new DbRelationParserModel<>(this.cls, field, this.getTable(), this.getAlias());
-                relatedParserModels.add(relatedParserModel);
-
-            } else if (field.isAnnotationPresent(DbKey.class)) {
-                dbKeyParserModel = new DbKeyParserModel<>(field, this.getTable(), this.getAlias());
-
-            } else if (field.isAnnotationPresent(DbField.class)) {
-                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.getTable(), this.getAlias());
-                fieldParserModels.add(fieldParserModel);
-
-            } else if (field.isAnnotationPresent(DbMap.class)) {
-                DbMap annotation = field.getAnnotation(DbMap.class);
-                joinTableParserModelMap.put(CustomUtil.getJoinFieldStr(annotation.value().trim()), field.getName());
-            }
-        }
-
-        StringJoiner baseFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
-
-        // 第一步 拼接主键
-        if (dbKeyParserModel != null) {
-            baseFieldSql.add(dbKeyParserModel.getSelectFieldSql());
-        }
-
-        // 第二步 拼接此表的其他字段
-        if (!fieldParserModels.isEmpty()) {
-            fieldParserModels.stream().map(DbFieldParserModel::getSelectFieldSql).forEach(baseFieldSql::add);
-        }
-
-        // 第三步 拼接以joinTables的方式关联的查询字段
-        if (!joinTableParserModelMap.isEmpty()) {
-            joinTableParserModelMap.forEach((k, v) -> baseFieldSql.add(String.format("%s `%s`", k, v)));
-        }
-
-        // 第三步 拼接以related方式关联的查询字段
-        if (!relatedParserModels.isEmpty()) {
-            relatedParserModels.stream().map(DbRelationParserModel::getSelectFieldSql).forEach(baseFieldSql::add);
-        }
-
-        // 第四步 拼接主表
-        selectSql.append(String.format("select %s\n from `%s` %s\n", baseFieldSql.toString(), this.getTable(), this.getAlias()));
-
-        // 第五步 拼接以joinTables方式的关联条件
-        if (!joinTableParserModels.isEmpty()) {
-            joinTableParserModels.stream().map(model -> String.format("\n %s", model)).forEach(selectSql::append);
-        }
-
-        // 第六步 拼接以related方式的关联条件
-        if (!relatedParserModels.isEmpty()) {
-            selectSql.append(getRelatedTableSql(relatedParserModels));
-        }
-        return selectSql.toString();
-    }
-
-
-    /**
-     * 拼接related的表关联
-     */
-    private String getRelatedTableSql(List<DbRelationParserModel<T>> relatedParserModels) {
-        StringBuilder joinTableSql = new StringBuilder();
-        List<String> conditions = new ArrayList<>();
-        for (DbRelationParserModel<T> model : relatedParserModels) {
-            String condition = String.format("%s@%s@%s", model.joinTable, model.joinAlias, model.condition);
-            if (!conditions.contains(condition)) {
-                joinTableSql.append("\n").append(String.format("%s `%s` %s on %s", model.getJoinStyle(), model.getJoinTable(), model.getJoinAlias(), model.getCondition()));
-                conditions.add(condition);
-            }
-        }
-        return joinTableSql.toString();
-    }
 
     @Override
     public Object getValue(T x, String fieldName) {
