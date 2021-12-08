@@ -130,7 +130,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     }
 
     @Override
-    public Object getValue(T x, String fieldName) {
+    public Object getValue(T x) {
         try {
             value = getFieldValue(x, fieldName);
         }catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {

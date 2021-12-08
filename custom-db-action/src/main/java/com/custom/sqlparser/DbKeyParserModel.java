@@ -83,11 +83,12 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
     }
 
     @Override
-    public Object getValue(T t, String fieldName) {
+    public Object getValue(T t) {
         try {
-            this.value = getFieldValue(t, fieldName);
+            this.value = getFieldValue(t, key);
         }catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
             logger.error(e.getMessage(), e);
+            return null;
         }
         return value;
     }
@@ -109,7 +110,7 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
                 key = CustomUtil.getUUID();
                 break;
             case INPUT:
-                key = value;
+                key = getValue();
                 break;
         }
         return key;

@@ -25,41 +25,53 @@ public class TableSqlBuilder<T> {
 
     private T t;
 
+    private List<T> list;
+
     private String table;
 
     private String alias;
 
     private Field[] fields;
-
     /**
     * @Desc：对于@DbRelated注解的解析
     */
     private DbKeyParserModel<T> keyParserModel = null;
-
     /**
     * @desc:对于@DbField注解的解析
     */
     private List<DbFieldParserModel<T>> fieldParserModels = new ArrayList<>();
-
     /**
     * @Desc：对于@DbRelated注解的解析
     */
     private List<DbRelationParserModel<T>> relatedParserModels = new ArrayList<>();
-
     /**
     * @Desc:对于@DbJoinTables注解的解析
     */
     private Map<String, String> joinTableParserModelMap = new HashMap<>();
-
     /**
      * @Desc:对于@DbJoinTables注解的解析
      */
     private List<String> joinTableParserModels = new ArrayList<>();
-
     /**
      * @Desc:查询的sql语句
      */
     private StringBuilder selectSql = new StringBuilder();
+    /**
+    * @Desc:插入的sql语句
+    */
+    private StringJoiner insertSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+    /**
+    * @Desc:插入的`?`
+    */
+    private StringJoiner insetSymbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1);
+    /**
+    * @Desc:对象的所有值
+    */
+    private List<Object> objValues = new ArrayList<>();
+
+
+
+
 
 
     /**
@@ -77,6 +89,75 @@ public class TableSqlBuilder<T> {
             return SymbolConst.EMPTY;
         }
         return selectSql.toString();
+    }
+
+    /**
+    * 获取对象所有字段的值(对象集合)
+    */
+    public List<Object> getManyObjValues() {
+        if(objValues.isEmpty()) {
+            for (T t : list) {
+                if (keyParserModel != null) {
+                    if (t == null) throw new NullPointerException();
+                    objValues.add(keyParserModel.getValue(t));
+                }
+                if (!fieldParserModels.isEmpty()) {
+                    fieldParserModels.forEach(x -> objValues.add(x.getValue(t)));
+                }
+            }
+        }
+        return objValues;
+    }
+
+    /**
+     * 获取对象所有字段的值(单个对象)
+     */
+    public List<Object> getOneObjValues() {
+        if(objValues.isEmpty()) {
+            if (keyParserModel != null) {
+                objValues.add(keyParserModel.generateKey());
+            }
+            if (!fieldParserModels.isEmpty()) {
+                fieldParserModels.forEach(x -> objValues.add(x.getValue(t)));
+            }
+        }
+        return objValues;
+    }
+
+    /**
+    * 获取添加sql
+    */
+    public String getInsertSql() {
+        try {
+            if(keyParserModel != null) {
+                insertSql.add(String.format("`%s`",keyParserModel.getDbKey()));
+            }
+            if(!fieldParserModels.isEmpty()) {
+                fieldParserModels.forEach(x -> insertSql.add(String.format("`%s`", x.getColumn())));
+            }
+        }catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return SymbolConst.EMPTY;
+        }
+        return String.format("insert into %s(%s) values %s ", this.table, insertSql.toString(), getInsertSymbol());
+    }
+
+    /**
+     * 获取添加的？
+     */
+    private String getInsertSymbol() {
+        int size = list.size();
+        for (int i = 0; i < size; i++) {
+            StringJoiner brackets = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1, SymbolConst.BRACKETS_LEFT, SymbolConst.BRACKETS_RIGHT);
+            if(keyParserModel != null) {
+                brackets.add(SymbolConst.QUEST);
+            }
+            if(!fieldParserModels.isEmpty()) {
+                fieldParserModels.forEach(x -> brackets.add(SymbolConst.QUEST));
+            }
+            insetSymbol.add(brackets.toString());
+        }
+        return insetSymbol.toString();
     }
 
 
@@ -99,7 +180,7 @@ public class TableSqlBuilder<T> {
     }
 
     public String dropTableSql() {
-        return String.format(" drop table ");
+        return String.format("drop table if exists `%s`", this.table);
     }
 
     /**
@@ -119,7 +200,7 @@ public class TableSqlBuilder<T> {
         }
 
         // 第三步 拼接主表
-        selectSql.append(String.format("select %s\n from `%s` %s\n", baseFieldSql.toString(), this.table, this.alias));
+        selectSql.append(String.format("select %s\n from `%s` %s \n", baseFieldSql.toString(), this.table, this.alias));
     }
 
 
@@ -162,7 +243,7 @@ public class TableSqlBuilder<T> {
 
         // 第六步 拼接以related方式的关联条件
         if (!relatedParserModels.isEmpty()) {
-            selectSql.append(getRelatedTableSql(relatedParserModels));
+            selectSql.append(getRelatedTableSql(relatedParserModels)).append(" \n");
         }
     }
 
@@ -189,10 +270,29 @@ public class TableSqlBuilder<T> {
         this.alias = annotation.alias();
         this.table = annotation.table();
         this.fields = CustomUtil.getFields(this.cls);
+        initTableBuild(method);
+    }
+
+
+    /**
+    * 初始化
+    */
+    void initTableBuild(ExecuteMethod method){
         switch (method) {
             case NONE:
-
-
+                break;
+            case SELECT:
+                buildSelectModels();
+                break;
+            case UPDATE:
+            case INSERT:
+                buildUpdateModels();
+                break;
+            case DELETE:
+                buildDeleteModels();
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + method);
         }
     }
 
@@ -205,9 +305,23 @@ public class TableSqlBuilder<T> {
 
     public TableSqlBuilder(T t) {
         this.t = t;
+        this.list = new ArrayList<>();
+        this.list.add(t);
         DbTable annotation = t.getClass().getAnnotation(DbTable.class);
+        this.fields = CustomUtil.getFields(t.getClass());
         this.alias = annotation.alias();
         this.table = annotation.table();
+        buildUpdateModels();
+    }
+
+    public TableSqlBuilder(List<T> tList) {
+        this.list = tList;
+        this.t = tList.get(0);
+        DbTable annotation = t.getClass().getAnnotation(DbTable.class);
+        this.fields = CustomUtil.getFields(t.getClass());
+        this.alias = annotation.alias();
+        this.table = annotation.table();
+        buildUpdateModels();
     }
 
     /**
@@ -224,7 +338,7 @@ public class TableSqlBuilder<T> {
                 DbRelationParserModel<T> relatedParserModel = new DbRelationParserModel<>(this.cls, field, this.table, this.alias);
                 relatedParserModels.add(relatedParserModel);
 
-            } else if (field.isAnnotationPresent(DbKey.class)) {
+            } else if (field.isAnnotationPresent(DbKey.class) && keyParserModel == null) {
                 keyParserModel = new DbKeyParserModel<>(field, this.table, this.alias);
 
             } else if (field.isAnnotationPresent(DbField.class)) {
@@ -239,11 +353,11 @@ public class TableSqlBuilder<T> {
     }
 
     /**
-    * 构造增删改模板
+    * 构造增改模板
     */
     private void buildUpdateModels() {
         for (Field field : fields) {
-            if (field.isAnnotationPresent(DbKey.class)) {
+            if (field.isAnnotationPresent(DbKey.class) && keyParserModel == null) {
                 keyParserModel = new DbKeyParserModel<>(field, this.table, this.alias);
 
             } else if (field.isAnnotationPresent(DbField.class)) {
@@ -251,6 +365,14 @@ public class TableSqlBuilder<T> {
                 fieldParserModels.add(fieldParserModel);
             }
         }
+    }
+
+    /**
+    * 构造删除模板
+    */
+    private void buildDeleteModels() {
+        Optional<Field> fieldOptional = Arrays.stream(fields).filter(x -> x.isAnnotationPresent(DbKey.class)).findFirst();
+        fieldOptional.ifPresent(field -> keyParserModel = new DbKeyParserModel<>(field, this.table, this.alias));
     }
 
     public String getTable() {

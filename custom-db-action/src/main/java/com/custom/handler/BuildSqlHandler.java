@@ -247,6 +247,7 @@ public class BuildSqlHandler {
      */
     @CheckExecute(target = ExecuteMethod.INSERT)
     <T> int insert(List<T> tList, boolean isGeneratedKey) throws Exception {
+        long time = System.currentTimeMillis();
         T t = tList.get(0);
         //数据库字段
         String[] dbFields = dbParserFieldHandler.getDbFields(t.getClass());
@@ -283,9 +284,12 @@ public class BuildSqlHandler {
         }
         String insertSql = String.format("insert into `%s` %s values %s",
                dbParserFieldHandler.getDbTableName(t.getClass()), dbFieldStr, inertValStr);
-        return isGeneratedKey ?
-                sqlExecuteHandler.executeInsert(tList, insertSql, dbFieldKey, saveValues.toArray()) :
-                sqlExecuteHandler.executeUpdate(insertSql, saveValues.toArray());
+        long time1 = System.currentTimeMillis();
+        System.out.println("time- = " + (time1-time));
+        return 0;
+//        return isGeneratedKey ?
+//                sqlExecuteHandler.executeInsert(tList, insertSql, dbFieldKey, saveValues.toArray()) :
+//                sqlExecuteHandler.executeUpdate(insertSql, saveValues.toArray());
     }
 
     /* ----------------------------------------------------------------update---------------------------------------------------------------- */

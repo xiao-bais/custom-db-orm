@@ -61,7 +61,7 @@ public class DbRelationParserModel<T> extends AbstractTableModel<T> {
 
 
     @Override
-    public Object getValue(T x, String fieldName) {
+    public Object getValue(T x) {
         return null;
     }
 
