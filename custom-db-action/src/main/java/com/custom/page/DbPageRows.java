@@ -40,6 +40,11 @@ public class DbPageRows<T> {
         this.total = total;
     }
 
+    public DbPageRows(int pageIndex, int pageSize) {
+        this.pageIndex = pageIndex;
+        this.pageSize = pageSize;
+    }
+
     public DbPageRows(){
 
     }

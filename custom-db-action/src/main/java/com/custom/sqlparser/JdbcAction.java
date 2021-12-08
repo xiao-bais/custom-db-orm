@@ -9,6 +9,7 @@ import com.custom.dbconfig.SymbolConst;
 import com.custom.page.DbPageRows;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -42,12 +43,32 @@ public class JdbcAction extends AbstractSqlBuilder {
 
     @Override
     public <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, String orderBy, int pageIndex, int pageSize, Object... params) throws Exception {
-        return null;
+        DbPageRows<T> dbPageRows = new DbPageRows<>(pageIndex, pageSize);
+        return selectPageRows(t, condition, orderBy, dbPageRows, params);
     }
 
     @Override
     public <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, String orderBy, DbPageRows<T> dbPageRows, Object... params) throws Exception {
-        return null;
+        if(dbPageRows == null) {
+            dbPageRows = new DbPageRows<>();
+        }
+        TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<>(t);
+        condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), condition, getLogicDeleteQuerySql());
+        if (JudgeUtilsAx.isNotEmpty(orderBy)) {
+            orderBy = String.format("\norder by %s", orderBy);
+        }
+        String selectSql = String.format("%s %s %s", tableSqlBuilder.getSelectSql(), JudgeUtilsAx.isNotEmpty(condition) ? condition : SymbolConst.EMPTY,
+                JudgeUtilsAx.isNotEmpty(orderBy) ? orderBy : SymbolConst.EMPTY);
+
+        List<T> dataList = new ArrayList<>();
+        long count = (long) sqlExecuteAction.selectOneSql(String.format("select count(0) from (%s) xxx ", selectSql), params);
+        if (count > 0) {
+            selectSql = String.format("%s \nlimit %s, %s", selectSql, (dbPageRows.getPageIndex() - 1) * dbPageRows.getPageSize(), dbPageRows.getPageSize());
+            dataList = sqlExecuteAction.query(t, selectSql, params);
+        }
+        dbPageRows.setTotal(count);
+        dbPageRows.setData(dataList);
+        return dbPageRows;
     }
 
     @Override
