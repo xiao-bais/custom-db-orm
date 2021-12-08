@@ -8,6 +8,7 @@ package com.custom.handler;
  */
 
 import com.custom.comm.CustomUtil;
+import com.custom.dbaction.SqlExecuteAction;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.dbconfig.DbFieldsConst;
@@ -27,13 +28,13 @@ public class BuildTableHandler {
 
     private Logger logger = LoggerFactory.getLogger(BuildTableHandler.class);
 
-    private SqlExecuteHandler sqlExecuteHandler;
+    private SqlExecuteAction sqlExecuteAction;
     private TableSpliceSql tableSpliceSql;
     private DbAnnotationsParserHandler annotationsParser;
     private static String dataBase = SymbolConst.EMPTY;
 
     BuildTableHandler(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy){
-        sqlExecuteHandler = new SqlExecuteHandler(dbDataSource, dbCustomStrategy, new DbParserFieldHandler());
+        sqlExecuteAction = new SqlExecuteAction(dbDataSource, dbCustomStrategy);
         annotationsParser = new DbAnnotationsParserHandler();
         tableSpliceSql = new TableSpliceSql(annotationsParser);
         dataBase = String.valueOf(ExceptionConst.currMap.get(DbFieldsConst.DATA_BASE));
@@ -50,7 +51,7 @@ public class BuildTableHandler {
             String tableName = tableMap.get(DbFieldsConst.TABLE_NAME).toString();
             String isTable = String.format("SELECT COUNT(1) COUNT FROM " +
                     "`information_schema`.`TABLES` WHERE TABLE_NAME = '%s' AND TABLE_SCHEMA = '%s';", tableName, dataBase);
-            count = sqlExecuteHandler.executeTableExist(isTable);
+            count = sqlExecuteAction.executeTableExist(isTable);
         }catch (SQLException e){
             logger.error(e.toString(), e);
         }
@@ -65,7 +66,7 @@ public class BuildTableHandler {
         for (int i = arr.length - 1; i >= 0; i--) {
             if(existTable(arr[i])) continue;
             String createTableSql = tableSpliceSql.getCreateTableSql(arr[i]);
-            sqlExecuteHandler.executeTableSql(createTableSql);
+            sqlExecuteAction.executeTableSql(createTableSql);
             logger.info("createTableSql ->\n " + createTableSql);
         }
     }
@@ -90,7 +91,7 @@ public class BuildTableHandler {
     private <T> void dropTable(Class<T> t) throws Exception{
         String table = String.valueOf(annotationsParser.getParserByDbTable(t).get(DbFieldsConst.TABLE_NAME));
         String dropTableSql = String.format("DROP TABLE IF EXISTS %s ", table);
-        sqlExecuteHandler.executeTableSql(dropTableSql);
+        sqlExecuteAction.executeTableSql(dropTableSql);
         logger.warn("drop table '{}' completed\n", table);
     }
 

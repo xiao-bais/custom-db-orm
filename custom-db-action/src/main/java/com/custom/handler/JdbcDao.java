@@ -1,9 +1,11 @@
 package com.custom.handler;
 
+import com.custom.dbaction.AbstractSqlBuilder;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.handler.proxy.SqlParamsCheckProxy;
 import com.custom.page.DbPageRows;
+import com.custom.sqlparser.JdbcAction;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -203,11 +205,12 @@ public class JdbcDao {
     }
 
 
-    private BuildSqlHandler buildSqlHandler;
+    private AbstractSqlBuilder buildSqlHandler;
     private BuildTableHandler buildTableHandler;
 
     public JdbcDao(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy){
-        buildSqlHandler = new SqlParamsCheckProxy<>(new BuildSqlHandler(), dbDataSource, dbCustomStrategy).createProxy();
+//        buildSqlHandler = new SqlParamsCheckProxy<>(new BuildSqlHandler(), dbDataSource, dbCustomStrategy).createProxy();
+        buildSqlHandler = new SqlParamsCheckProxy<>(new JdbcAction(), dbDataSource, dbCustomStrategy).createProxy();
         buildTableHandler = new BuildTableHandler(dbDataSource, dbCustomStrategy);
     }
 

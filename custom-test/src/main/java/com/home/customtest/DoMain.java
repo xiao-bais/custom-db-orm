@@ -2,6 +2,7 @@ package com.home.customtest;
 
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
+import com.custom.enums.ExecuteMethod;
 import com.custom.handler.DbParserFieldHandler;
 import com.custom.handler.JdbcDao;
 import com.custom.sqlparser.TableSqlBuilder;
@@ -30,32 +31,37 @@ public class DoMain {
         DbCustomStrategy dbCustomStrategy = new DbCustomStrategy();
 
         JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
-        jdbcDao.createTables(Employee.class);
 
-        List<Employee> list = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            Employee e = new Employee();
-            e.setEmpName("员工-"+i);
-            e.setSex(i % 2 == 1);
-            e.setAddress("aaaa->" + i);
-            e.setAge(24-i);
-            e.setAreaId(i);
-            e.setDeptId(2);
+        List<Employee> list = jdbcDao.selectList(Employee.class, null);
+        System.out.println("list = " + list);
+
+
+//        jdbcDao.createTables(Employee.class);
+
+//        List<Employee> list = new ArrayList<>();
+//        for (int i = 0; i < 5; i++) {
+//            Employee e = new Employee();
+//            e.setEmpName("员工-"+i);
+//            e.setSex(i % 2 == 1);
+//            e.setAddress("aaaa->" + i);
+//            e.setAge(24-i);
+//            e.setAreaId(i);
+//            e.setDeptId(2);
 //            e.setBirthday(new Date());
-            e.setState(0);
-            list.add(e);
-        }
+//            e.setState(0);
+//            list.add(e);
+//        }
 
-        jdbcDao.insert(list);
+//        jdbcDao.insert(list);
 
-        long time1 = System.currentTimeMillis();
-        TableSqlBuilder<Employee> tableSqlBuilder = new TableSqlBuilder<>(list);
-        long time2 = System.currentTimeMillis();
-        String insertSql = tableSqlBuilder.getInsertSql();
-        long time3 = System.currentTimeMillis();
+//        long time1 = System.currentTimeMillis();
+//        TableSqlBuilder<Employee> tableSqlBuilder = new TableSqlBuilder<>(Employee.class, ExecuteMethod.UPDATE);
+//        long time2 = System.currentTimeMillis();
+//        String insertSql = tableSqlBuilder.getInsertSql();
+//        long time3 = System.currentTimeMillis();
 //        System.out.println("insertSql = " + insertSql);
-        List<Object> objValues = tableSqlBuilder.getManyObjValues();
-        long time4 = System.currentTimeMillis();
+//        List<Object> objValues = tableSqlBuilder.getManyObjValues();
+//        long time4 = System.currentTimeMillis();
 //        System.out.println("objValues = " + objValues);
 
 
@@ -81,9 +87,9 @@ public class DoMain {
 //        long time5 = System.currentTimeMillis();
 //
 //        System.out.println("time = " + (time1-time));
-        System.out.println("time = " + (time2-time1));
-        System.out.println("time = " + (time3-time2));
-        System.out.println("time = " + (time4-time3));
+//        System.out.println("time = " + (time2-time1));
+//        System.out.println("time = " + (time3-time2));
+//        System.out.println("time = " + (time4-time3));
 //        System.out.println("time = " + (time5-time4));
 //
 //        System.out.println("employee = " + employee);

@@ -3,6 +3,7 @@ package com.custom.sqlparser;
 import com.custom.annotations.DbKey;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
+import com.custom.dbaction.AbstractTableModel;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.DbMediaType;
 import com.custom.enums.KeyStrategy;

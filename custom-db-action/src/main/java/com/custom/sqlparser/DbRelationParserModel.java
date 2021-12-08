@@ -1,15 +1,9 @@
 package com.custom.sqlparser;
 
 import com.custom.annotations.*;
-import com.custom.comm.CustomUtil;
-import com.custom.dbconfig.SymbolConst;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.ReflectionUtils;
+import com.custom.dbaction.AbstractTableModel;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.*;
 
 /**
  * @Author Xiao-Bai

@@ -1,6 +1,8 @@
-package com.custom.sqlparser;
+package com.custom.dbaction;
 
+import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.SymbolConst;
+import com.custom.handler.logic.LogicDeleteFieldSqlHandler;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -37,7 +39,7 @@ public abstract class AbstractTableModel<T> {
      * x: 实例对象
      * fieldName: 字段名称
      */
-    Object getFieldValue(T x, String fieldName) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+    protected Object getFieldValue(T x, String fieldName) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
         Object value;
         String firstLetter;
         String getter;

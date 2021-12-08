@@ -1,4 +1,4 @@
-package com.custom.handler;
+package com.custom.dbaction;
 
 import com.alibaba.fastjson.JSONObject;
 import com.custom.comm.CustomUtil;
@@ -9,6 +9,7 @@ import com.custom.dbconfig.DbDataSource;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
+import com.custom.handler.DbParserFieldHandler;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Array;
@@ -23,23 +24,17 @@ import java.util.*;
  * @Version 1.0
  * @Description SqlExecuteHandler
  */
-public class SqlExecuteHandler extends DbConnection {
+public class SqlExecuteAction extends DbConnection {
 
     private Connection conn;
     private PreparedStatement statement = null;
     private ResultSet resultSet = null;
-    private DbParserFieldHandler parserFieldHandler;
     private DbCustomStrategy dbCustomStrategy;
 
-    public SqlExecuteHandler(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy, DbParserFieldHandler parserFieldHandler) {
+    public SqlExecuteAction(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         super(dbDataSource);
         this.conn = super.getConnection();
         this.dbCustomStrategy = dbCustomStrategy;
-        this.parserFieldHandler = parserFieldHandler;
-    }
-
-    public DbParserFieldHandler getParserFieldHandler() {
-        return parserFieldHandler;
     }
 
     /**
@@ -85,7 +80,7 @@ public class SqlExecuteHandler extends DbConnection {
     /**
      * 通用查询（Collection）
      */
-    protected <T> List<T> query(Class<T> clazz, String sql, Object... params) throws Exception {
+    public  <T> List<T> query(Class<T> clazz, String sql, Object... params) throws Exception {
         Map<String, Object> map;
         List<T> list = new ArrayList<>();
         try {
@@ -111,7 +106,7 @@ public class SqlExecuteHandler extends DbConnection {
      * 查询单个字段的多结果集（Set）
      */
     @SuppressWarnings("unchecked")
-    protected <T> Set<T> querySet(Class<T> t, String sql, Object... params) throws Exception {
+    public  <T> Set<T> querySet(Class<T> t, String sql, Object... params) throws Exception {
         Set<T> resSet = new HashSet<>();
         try {
             statementQuery(sql, params);
@@ -134,7 +129,7 @@ public class SqlExecuteHandler extends DbConnection {
      * 查询单个字段的多结果集（Array）
      */
     @SuppressWarnings("unchecked")
-    protected <T> T[] queryArray(Class<T> t, String sql, String className, String methodName, Object... params) throws Exception {
+    public  <T> T[] queryArray(Class<T> t, String sql, String className, String methodName, Object... params) throws Exception {
         T[] resEntity;
         try {
             statementQuery2(sql, params);
@@ -183,7 +178,7 @@ public class SqlExecuteHandler extends DbConnection {
     /**
      * 查询单个值SQL
      */
-    protected Object selectOneSql(String sql, Object... params) throws Exception {
+    public Object selectOneSql(String sql, Object... params) throws Exception {
         Object result = null;
         try {
             statementQuery(sql, params);
@@ -202,7 +197,7 @@ public class SqlExecuteHandler extends DbConnection {
      * 通用查询单个对象sql
      */
     @SuppressWarnings("unchecked")
-    protected <T> T selectOneSql(Class<T> t, String sql, Object... params) throws Exception {
+    public <T> T selectOneSql(Class<T> t, String sql, Object... params) throws Exception {
         Map<String, Object> map = new HashMap<>();
         try {
             statementQuery(sql, params);
@@ -227,7 +222,7 @@ public class SqlExecuteHandler extends DbConnection {
     /**
      * 通用删 /改
      */
-    protected int executeUpdate(String sql, Object... params) throws Exception {
+    public int executeUpdate(String sql, Object... params) throws Exception {
         int res;
         try {
             statementUpdate(false, sql, params);
@@ -243,7 +238,7 @@ public class SqlExecuteHandler extends DbConnection {
      * 插入
      */
     @SuppressWarnings("Unchecked")
-    protected <T> int executeInsert(List<T> obj, String sql, String keyField, Object... params) throws Exception {
+    public <T> int executeInsert(List<T> obj, String sql, String keyField, Class<?> type, Object... params) throws Exception {
         int res;
         try {
             statementUpdate(true, sql, params);
@@ -256,8 +251,6 @@ public class SqlExecuteHandler extends DbConnection {
         int count = 0;
         while (resultSet.next()) {
             T t = obj.get(count);
-            Field fieldKeyType = parserFieldHandler.getFieldKeyType(t.getClass());
-            Class<?> type = fieldKeyType.getType();
             PropertyDescriptor pd = new PropertyDescriptor(keyField, t.getClass());
             Method writeMethod = pd.getWriteMethod();
             if (type.equals(Long.class) || type.equals(long.class)) {
@@ -275,7 +268,7 @@ public class SqlExecuteHandler extends DbConnection {
     /**
      * 执行表结构创建或删除
      */
-    protected void executeTableSql(String sql) throws SQLException {
+    public void executeTableSql(String sql) throws SQLException {
         statement = conn.prepareStatement(sql);
         statement.execute();
     }
@@ -283,7 +276,7 @@ public class SqlExecuteHandler extends DbConnection {
     /**
      * 查询表是否存在
      */
-    protected long executeTableExist(String sql) throws SQLException {
+    public long executeTableExist(String sql) throws SQLException {
         long count = 0;
         statement = conn.prepareStatement(sql);
         resultSet = statement.executeQuery();

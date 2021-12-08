@@ -38,7 +38,7 @@ public class DbParserFieldHandler {
     /**
      * 根据实体类获取对应数据库表中所有字段
      */
-    <T> String[] getDbFields(Class<T> t){
+    public <T> String[] getDbFields(Class<T> t){
         List<String> dbFields = new ArrayList<>();
         List<Map<String, Object>> elementList = dbAnnoParser.getParserByDbField(t);
         elementList.forEach(elementMap -> dbFields.add(String.valueOf(elementMap.get(DbFieldsConst.DB_FIELD_NAME))));
@@ -48,7 +48,7 @@ public class DbParserFieldHandler {
     /**
      * 获取一个类的所有标注@DbField注解的属性名称
      */
-    <T> String[] getFiledNames(Class<T> t) throws Exception {
+    public <T> String[] getFiledNames(Class<T> t) throws Exception {
         Field[] fields = dbAnnoParser.getFields(t);
         List<String> fieldList = new ArrayList<>();
         for (int i = 0; i < fields.length; i++) {
@@ -74,7 +74,7 @@ public class DbParserFieldHandler {
     /**
      * 获取字段值
      */
-    <T> Object getFieldValue(T t,  String fieldName) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+    public <T> Object getFieldValue(T t,  String fieldName) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
         Object value;
         String firstLetter;
         String getter;
@@ -99,21 +99,21 @@ public class DbParserFieldHandler {
     /**
      * 获取实体类对应的表名
      */
-    <T> String getDbTableName(Class<T> t) {
+    public <T> String getDbTableName(Class<T> t) {
         return dbAnnoParser.getParserByDbTable(t).get(DbFieldsConst.TABLE_NAME).toString();
     }
 
     /**
      * 获取表别名
      */
-    <T> String getDbTableAlias(Class<T> t) {
+    public <T> String getDbTableAlias(Class<T> t) {
         return dbAnnoParser.getParserByDbTable(t).get(DbFieldsConst.TABLE_ALIAS).toString();
     }
 
     /**
      * 该类是否有@DbKey注解
      */
-    <T> boolean isDbKeyTag(Class<T> t) {
+    public <T> boolean isDbKeyTag(Class<T> t) {
         Field[] fields = t.getDeclaredFields();
         for (Field field : fields) {
             if(field.isAnnotationPresent(DbKey.class)) return true;
@@ -230,28 +230,28 @@ public class DbParserFieldHandler {
     /**
      * 获取数据库主键
      */
-    <T> String getDbFieldKey(Class<T> t) throws Exception {
+    public <T> String getDbFieldKey(Class<T> t) throws Exception {
         return String.valueOf(dbAnnoParser.getParserByDbKey(t).get(DbFieldsConst.DB_KEY));
     }
 
     /**
      * 获取主键对应的java属性字段
      */
-    <T> String getFieldKey(Class<T> t) throws Exception {
+    public <T> String getFieldKey(Class<T> t) throws Exception {
         return String.valueOf(dbAnnoParser.getParserByDbKey(t).get(DbFieldsConst.KEY_FIELD));
     }
 
     /**
      * 获取主键对应的java属性类型
      */
-    <T> Field getFieldKeyType(Class<T> t) throws Exception {
+    public <T> Field getFieldKeyType(Class<T> t) throws Exception {
         return t.getDeclaredField(String.valueOf(dbAnnoParser.getParserByDbKey(t).get(DbFieldsConst.KEY_FIELD)));
     }
 
     /**
      * 生成主键值
      */
-    <T> Object generateKey(T t) throws Exception {
+    public <T> Object generateKey(T t) throws Exception {
         Object value = null;
         Map<String, Object> parserByDbKey = dbAnnoParser.getParserByDbKey(t.getClass());
         KeyStrategy keyType = (KeyStrategy) parserByDbKey.get(DbFieldsConst.KEY_STRATEGY);
@@ -284,7 +284,7 @@ public class DbParserFieldHandler {
     /**
      * 判断主键是否是有效类型
      */
-    <T> boolean isKeyByValid(Class<T> t, String fieldKey) throws Exception {
+    public <T> boolean isKeyByValid(Class<T> t, String fieldKey) throws Exception {
         Field field = t.getDeclaredField(fieldKey);
         Class<?> type = field.getType();
         return type == int.class || type == Integer.class || type == long.class || type == Long.class;
@@ -293,14 +293,14 @@ public class DbParserFieldHandler {
     /**
      * 获取主键增值类型
      */
-    <T> KeyStrategy getDbKeyType(Class<T> t) throws Exception {
+    public <T> KeyStrategy getDbKeyType(Class<T> t) throws Exception {
         return (KeyStrategy) dbAnnoParser.getParserByDbKey(t).get(DbFieldsConst.KEY_STRATEGY);
     }
 
     /**
      * 通过表字段名称找到属性名称
      */
-    <T> String getProFieldName(Class<T> t, String dbField) throws Exception {
+    public <T> String getProFieldName(Class<T> t, String dbField) throws Exception {
         if(isDbKeyTag(t)) {
             Map<String, Object> parserByDbKey = dbAnnoParser.getParserByDbKey(t);
             if(dbField.equals(parserByDbKey.get(DbFieldsConst.DB_KEY))) {
@@ -319,7 +319,7 @@ public class DbParserFieldHandler {
     /**
     * 获取删除的sql
     */
-    <T> String getDeleteSql(Class<T> t, String logicValidSql, String logicInValidSql, String key, boolean isMore) throws Exception {
+    public <T> String getDeleteSql(Class<T> t, String logicValidSql, String logicInValidSql, String key, boolean isMore) throws Exception {
         Map<String, Object> tableMap = dbAnnoParser.getParserByDbTable(t);
         Object alias = tableMap.get(DbFieldsConst.TABLE_ALIAS);
         String dbFieldKey = getDbFieldKey(t);
@@ -343,7 +343,7 @@ public class DbParserFieldHandler {
     /**
     * 按条件删除时，匹配是否是逻辑删除
     */
-    <T> String getDeleteSql(Class<T> t, String logicValidSql, String logicInValidSql, String condition) throws Exception{
+    public <T> String getDeleteSql(Class<T> t, String logicValidSql, String logicInValidSql, String condition) throws Exception{
         Map<String, Object> tableMap = dbAnnoParser.getParserByDbTable(t);
         Object alias = tableMap.get(DbFieldsConst.TABLE_ALIAS);
         Object table = tableMap.get(DbFieldsConst.TABLE_NAME);
@@ -360,7 +360,7 @@ public class DbParserFieldHandler {
     /**
     * 添加逻辑删除的部分sql
     */
-    <T> String checkConditionAndLogicDeleteSql(Class<T> t, String condition, String logicSql) {
+    public <T> String checkConditionAndLogicDeleteSql(Class<T> t, String condition, String logicSql) {
         LogicDeleteFieldSqlHandler handler = () -> {
             String sql;
             if (JudgeUtilsAx.isNotEmpty(condition)) {

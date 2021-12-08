@@ -71,9 +71,6 @@ public class TableSqlBuilder<T> {
 
 
 
-
-
-
     /**
     * 获取查询sql
     */
@@ -92,7 +89,7 @@ public class TableSqlBuilder<T> {
     }
 
     /**
-    * 获取对象所有字段的值(对象集合)
+    * 获取对象所有字段的值(多个对象)
     */
     public List<Object> getManyObjValues() {
         if(objValues.isEmpty()) {
@@ -164,7 +161,7 @@ public class TableSqlBuilder<T> {
     /**
     * 创建表结构
     */
-    public String createTableSql() {
+    public String geCreateTableSql() {
         StringBuilder createTableSql = new StringBuilder();
         StringJoiner fieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1);
         if(this.keyParserModel != null) {
@@ -179,7 +176,10 @@ public class TableSqlBuilder<T> {
         return createTableSql.toString();
     }
 
-    public String dropTableSql() {
+    /**
+    * 删除表结构
+    */
+    public String getDropTableSql() {
         return String.format("drop table if exists `%s`", this.table);
     }
 

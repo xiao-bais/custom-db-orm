@@ -13,7 +13,7 @@ import com.custom.enums.ExecuteMethod;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
 import com.custom.handler.DbParserFieldHandler;
-import com.custom.handler.SqlExecuteHandler;
+import com.custom.dbaction.SqlExecuteAction;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.*;
@@ -27,7 +27,7 @@ import java.util.stream.IntStream;
  **/
 @SuppressWarnings("unchecked")
 @Slf4j
-public class SqlReaderExecuteProxy extends SqlExecuteHandler implements InvocationHandler {
+public class SqlReaderExecuteProxy extends SqlExecuteAction implements InvocationHandler {
 
     public <T> T createProxy(Class<T> cls) {
         ClassLoader classLoader = cls.getClassLoader();
@@ -37,9 +37,10 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
     }
 
     private String target;
+    private DbParserFieldHandler dbParserFieldHandler = new DbParserFieldHandler();;
 
     public SqlReaderExecuteProxy(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
-        super(dbDataSource, dbCustomStrategy, new DbParserFieldHandler());
+        super(dbDataSource, dbCustomStrategy);
     }
 
 
@@ -190,7 +191,7 @@ public class SqlReaderExecuteProxy extends SqlExecuteHandler implements Invocati
                 } else {
                     Field[] fields = CustomUtil.getFields(paramVal.getClass());
                     Object[] fieldNames = Arrays.stream(fields).map(Field::getName).toArray();
-                    List<Object> fieldVales = getParserFieldHandler().getFieldsVal(paramVal, Arrays.copyOf(fieldNames, fieldNames.length, String[].class));
+                    List<Object> fieldVales = dbParserFieldHandler.getFieldsVal(paramVal, Arrays.copyOf(fieldNames, fieldNames.length, String[].class));
                     IntStream.range(0, fieldNames.length).forEach(x -> paramsMap.put(fieldNames[x], fieldVales.get(x)));
                     IntStream.range(0, fieldNames.length).forEach(x -> paramsReplaces.put((String) fieldNames[x], fieldVales.get(x)));
                 }
