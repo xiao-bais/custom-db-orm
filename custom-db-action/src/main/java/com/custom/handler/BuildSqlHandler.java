@@ -130,41 +130,6 @@ public class BuildSqlHandler extends AbstractSqlBuilder {
         return selectOneBySql(t, selectSql, params);
     }
 
-    /**
-     * 纯sql查询1
-     */
-    @Override
-    @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> List<T> selectBySql(Class<T> t, String sql, Object... params) throws Exception {
-        return sqlExecuteAction.query(t, sql, params);
-    }
-
-    /**
-     * 纯sql查询2
-     */
-    @Override
-    @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> T selectOneBySql(Class<T> t, String sql, Object... params) throws Exception {
-        List<T> queryList = sqlExecuteAction.query(t, sql, params);
-        if (queryList.size() == 0) {
-            return null;
-        } else if (queryList.size() > 1) {
-            throw new CustomCheckException(String.format(ExceptionConst.EX_QUERY_MORE_RESULT, queryList.size()));
-        }
-        return queryList.get(SymbolConst.DEFAULT_ZERO);
-    }
-
-    /**
-     * 查询单个值的纯sql
-     */
-    @Override
-    public Object selectObjBySql(String sql, Object... params) throws Exception {
-        if (JudgeUtilsAx.isEmpty(sql)) {
-            throw new CustomCheckException(ExceptionConst.EX_SQL_NOT_EMPTY);
-        }
-        return sqlExecuteAction.selectOneSql(sql, params);
-    }
-
 
     /* ----------------------------------------------------------------delete---------------------------------------------------------------- */
 
@@ -174,7 +139,8 @@ public class BuildSqlHandler extends AbstractSqlBuilder {
     @Override
     @CheckExecute(target = ExecuteMethod.DELETE)
     public <T> int deleteByKey(Class<T> t, Object key) throws Exception {
-        String deleteSql = dbParserFieldHandler.getDeleteSql(t, getLogicDeleteQuerySql(), getLogicDeleteUpdateSql(), SymbolConst.QUEST, false);
+        String[] deleteFieldArray = dbParserFieldHandler.getTableBaseFieldArray(t);
+        String deleteSql = getLogicDeleteSql(getLogicDeleteQuerySql(), getLogicDeleteUpdateSql(), SymbolConst.QUEST, deleteFieldArray[2], deleteFieldArray[0], deleteFieldArray[1], false);
         return sqlExecuteAction.executeUpdate(deleteSql, key);
     }
 
@@ -186,7 +152,9 @@ public class BuildSqlHandler extends AbstractSqlBuilder {
     public <T> int deleteBatchKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception {
         StringJoiner delSymbols = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
         IntStream.range(0, keys.size()).mapToObj(i -> SymbolConst.QUEST).forEach(delSymbols::add);
-        String deleteSql = dbParserFieldHandler.getDeleteSql(t, getLogicDeleteQuerySql(), getLogicDeleteUpdateSql(), String.format("(%s)", delSymbols), true);
+        String[] deleteFieldArray = dbParserFieldHandler.getTableBaseFieldArray(t);
+        String deleteSql = getLogicDeleteSql(getLogicDeleteQuerySql(), getLogicDeleteUpdateSql(), String.format("(%s)", delSymbols),
+                deleteFieldArray[2], deleteFieldArray[0], deleteFieldArray[1], true);
         return sqlExecuteAction.executeUpdate(deleteSql, keys.toArray());
     }
 
@@ -345,15 +313,19 @@ public class BuildSqlHandler extends AbstractSqlBuilder {
         return update;
     }
 
-    /**
-     * 执行一条sql
-     */
     @Override
-    public int executeSql(String sql, Object... params) throws Exception {
-        if (JudgeUtilsAx.isEmpty(sql)) {
-            throw new NullPointerException();
-        }
-        return sqlExecuteAction.executeUpdate(sql, params);
+    public <T> int rollbackLogicByKey(Class<T> t, Object key) {
+        return 0;
+    }
+
+    @Override
+    public <T> int rollbackLogicByKeys(Class<T> t, Collection<? extends Serializable> keys) {
+        return 0;
+    }
+
+    @Override
+    public <T> int rollbackLogicByCondition(Class<T> t, String condition, Object... params) {
+        return 0;
     }
 
 

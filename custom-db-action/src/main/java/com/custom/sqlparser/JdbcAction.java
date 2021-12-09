@@ -6,12 +6,15 @@ import com.custom.dbaction.SqlExecuteAction;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.dbconfig.SymbolConst;
+import com.custom.enums.ExecuteMethod;
+import com.custom.handler.CheckExecute;
 import com.custom.page.DbPageRows;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.StringJoiner;
 
 /**
  * @Author Xiao-Bai
@@ -20,11 +23,8 @@ import java.util.List;
  **/
 public class JdbcAction extends AbstractSqlBuilder {
 
-    private SqlExecuteAction sqlExecuteAction;
-
     public JdbcAction(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy){
         this.setSqlExecuteAction(new SqlExecuteAction(dbDataSource, dbCustomStrategy));
-        this.sqlExecuteAction = getSqlExecuteAction();
         this.setDbCustomStrategy(dbCustomStrategy);
         initLogic();
     }
@@ -33,21 +33,24 @@ public class JdbcAction extends AbstractSqlBuilder {
 
 
     @Override
+    @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> List<T> selectList(Class<T> t, String condition, String orderBy, Object... params) throws Exception {
         TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<>(t);
         condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), condition, getLogicDeleteQuerySql());
         String selectSql = String.format("%s %s %s", tableSqlBuilder.getSelectSql(), JudgeUtilsAx.isNotEmpty(condition) ? condition : SymbolConst.EMPTY,
                 JudgeUtilsAx.isNotEmpty(orderBy) ? orderBy : SymbolConst.EMPTY);
-        return sqlExecuteAction.query(t, selectSql, params);
+        return selectBySql(t, selectSql, params);
     }
 
     @Override
+    @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, String orderBy, int pageIndex, int pageSize, Object... params) throws Exception {
         DbPageRows<T> dbPageRows = new DbPageRows<>(pageIndex, pageSize);
         return selectPageRows(t, condition, orderBy, dbPageRows, params);
     }
 
     @Override
+    @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, String orderBy, DbPageRows<T> dbPageRows, Object... params) throws Exception {
         if(dbPageRows == null) {
             dbPageRows = new DbPageRows<>();
@@ -61,83 +64,105 @@ public class JdbcAction extends AbstractSqlBuilder {
                 JudgeUtilsAx.isNotEmpty(orderBy) ? orderBy : SymbolConst.EMPTY);
 
         List<T> dataList = new ArrayList<>();
-        long count = (long) sqlExecuteAction.selectOneSql(String.format("select count(0) from (%s) xxx ", selectSql), params);
+        long count = (long) selectObjBySql(String.format("select count(0) from (%s) xxx ", selectSql), params);
         if (count > 0) {
             selectSql = String.format("%s \nlimit %s, %s", selectSql, (dbPageRows.getPageIndex() - 1) * dbPageRows.getPageSize(), dbPageRows.getPageSize());
-            dataList = sqlExecuteAction.query(t, selectSql, params);
+            dataList = selectBySql(t, selectSql, params);
         }
         dbPageRows.setTotal(count);
+        dbPageRows.setCondition(condition);
         dbPageRows.setData(dataList);
         return dbPageRows;
     }
 
     @Override
+    @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> T selectOneByKey(Class<T> t, Object key) throws Exception {
-        return null;
+        TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<>(t);
+        String condition = String.format("and %s = ?", tableSqlBuilder.getKeyParserModel().getFieldSql());
+        condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), condition, getLogicDeleteQuerySql());
+        String selectSql = String.format("%s %s", tableSqlBuilder.getSelectSql(), condition);
+        return selectOneBySql(t, selectSql, key);
     }
 
     @Override
+    @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> List<T> selectBatchByKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception {
-        return null;
+        TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<>(t);
+        StringJoiner symbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1);
+        keys.forEach(x -> symbol.add(SymbolConst.QUEST));
+        String condition = String.format("and %s in (%s)", tableSqlBuilder.getKeyParserModel().getFieldSql(), symbol.toString());
+        condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), condition, getLogicDeleteQuerySql());
+        String selectSql = String.format("%s %s", tableSqlBuilder.getSelectSql(), condition);
+        return selectBySql(t, selectSql, keys.toArray());
     }
 
     @Override
+    @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> T selectOneByCondition(Class<T> t, String condition, Object... params) throws Exception {
-        return null;
+        TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<>(t);
+        condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), condition, getLogicDeleteQuerySql());
+        String selectSql = String.format("%s %s", tableSqlBuilder.getSelectSql(), condition);
+        return selectOneBySql(t, selectSql, params);
     }
 
     @Override
-    public <T> List<T> selectBySql(Class<T> t, String sql, Object... params) throws Exception {
-        return null;
-    }
-
-    @Override
-    public <T> T selectOneBySql(Class<T> t, String sql, Object... params) throws Exception {
-        return null;
-    }
-
-    @Override
-    public Object selectObjBySql(String sql, Object... params) throws Exception {
-        return null;
-    }
-
-    @Override
+    @CheckExecute(target = ExecuteMethod.DELETE)
     public <T> int deleteByKey(Class<T> t, Object key) throws Exception {
+        TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<>(t, ExecuteMethod.DELETE);
+        String condition = String.format("and %s = ?", tableSqlBuilder.getKeyParserModel().getFieldSql());
+
         return 0;
     }
 
     @Override
+    @CheckExecute(target = ExecuteMethod.DELETE)
     public <T> int deleteBatchKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception {
         return 0;
     }
 
     @Override
+    @CheckExecute(target = ExecuteMethod.DELETE)
     public <T> int deleteByCondition(Class<T> t, String condition, Object... params) throws Exception {
         return 0;
     }
 
     @Override
+    @CheckExecute(target = ExecuteMethod.INSERT)
     public <T> int insert(T t, boolean isGeneratedKey) throws Exception {
         return 0;
     }
 
     @Override
+    @CheckExecute(target = ExecuteMethod.INSERT)
     public <T> int insert(List<T> ts, boolean isGeneratedKey) throws Exception {
         return 0;
     }
 
     @Override
+    @CheckExecute(target = ExecuteMethod.UPDATE)
     public <T> int updateByKey(T t, String... updateDbFields) throws Exception {
         return 0;
     }
 
     @Override
+    @CheckExecute(target = ExecuteMethod.UPDATE)
     public <T> long save(T t) throws Exception {
         return 0;
     }
 
     @Override
-    public int executeSql(String sql, Object... params) throws Exception {
+    public <T> int rollbackLogicByKey(Class<T> t, Object key) {
+        return 0;
+    }
+
+    @Override
+    public <T> int rollbackLogicByKeys(Class<T> t, Collection<? extends Serializable> keys) {
+        return 0;
+    }
+
+    @Override
+    public <T> int rollbackLogicByCondition(Class<T> t, String condition, Object... params) {
         return 0;
     }
 }

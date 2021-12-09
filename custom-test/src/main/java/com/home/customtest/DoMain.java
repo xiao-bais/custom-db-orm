@@ -9,6 +9,7 @@ import com.custom.sqlparser.TableSqlBuilder;
 import com.home.customtest.entity.Employee;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -22,18 +23,24 @@ public class DoMain {
 
     public static void main(String[] args) throws Exception {
 
-        long start = new Date().getTime();
         DbDataSource dbDataSource = new DbDataSource();
         dbDataSource.setUrl("jdbc:mysql://127.0.0.1:3306/hos?characterEncoding=utf-8&allowMultiQueries=true&autoreconnect=true&serverTimezone=UTC");
         dbDataSource.setUsername("root");
         dbDataSource.setPassword("123456");
 
         DbCustomStrategy dbCustomStrategy = new DbCustomStrategy();
+        dbCustomStrategy.setSqlOutPrinting(true);
+        dbCustomStrategy.setDbFieldDeleteLogic("state");
+        dbCustomStrategy.setDeleteLogicValue("1");
+        dbCustomStrategy.setNotDeleteLogicValue("0");
 
         JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
 
-        List<Employee> list = jdbcDao.selectList(Employee.class, null);
-        System.out.println("list = " + list);
+        Employee employee = jdbcDao.selectOneByCondition(Employee.class, "and a.age > 22");
+        System.out.println("employee = " + employee);
+
+//        List<Employee> list = jdbcDao.selectListByKeys(Employee.class, Arrays.asList(1,3,5));
+//        System.out.println("employee = " + list);
 
 
 //        jdbcDao.createTables(Employee.class);

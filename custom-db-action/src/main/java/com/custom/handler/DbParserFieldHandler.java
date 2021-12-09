@@ -29,7 +29,7 @@ import static com.custom.dbconfig.DbFieldsConst.DB_JOIN_TABLE;
  */
 public class DbParserFieldHandler {
 
-    private DbAnnotationsParserHandler dbAnnoParser = null;
+    private DbAnnotationsParserHandler dbAnnoParser;
 
     public DbParserFieldHandler(){
         dbAnnoParser = new DbAnnotationsParserHandler();
@@ -108,6 +108,13 @@ public class DbParserFieldHandler {
      */
     public <T> String getDbTableAlias(Class<T> t) {
         return dbAnnoParser.getParserByDbTable(t).get(DbFieldsConst.TABLE_ALIAS).toString();
+    }
+
+    /**
+    * 获取@DbTable解析
+    */
+    public <T> Map<String, Object> getDbTable(Class<T> t) {
+        return dbAnnoParser.getParserByDbTable(t);
     }
 
     /**
@@ -316,29 +323,6 @@ public class DbParserFieldHandler {
         throw new SQLException(String.format("Unknown column name: '%s'", dbField));
     }
 
-    /**
-    * 获取删除的sql
-    */
-    public <T> String getDeleteSql(Class<T> t, String logicValidSql, String logicInValidSql, String key, boolean isMore) throws Exception {
-        Map<String, Object> tableMap = dbAnnoParser.getParserByDbTable(t);
-        Object alias = tableMap.get(DbFieldsConst.TABLE_ALIAS);
-        String dbFieldKey = getDbFieldKey(t);
-        String sql;
-
-        String keySql  = String.format(" %s.`%s` %s %s", tableMap.get(DbFieldsConst.TABLE_ALIAS),
-                dbFieldKey, isMore ? SymbolConst.IN : SymbolConst.EQUALS, key);
-
-        if (JudgeUtilsAx.isNotEmpty(logicInValidSql)) {
-            sql = String.format(" update %s %s set %s.%s where %s.%s and %s ", tableMap.get(DbFieldsConst.TABLE_NAME),
-                    alias, alias, logicInValidSql, alias, logicValidSql, keySql);
-        }else {
-            sql = String.format(" delete from %s %s where %s", tableMap.get(DbFieldsConst.TABLE_NAME),
-                    tableMap.get(DbFieldsConst.TABLE_ALIAS), keySql);
-        }
-        return sql;
-
-    }
-
 
     /**
     * 按条件删除时，匹配是否是逻辑删除
@@ -355,6 +339,17 @@ public class DbParserFieldHandler {
             sql = String.format(" delete from %s %s where 1 = 1 %s", table, alias, condition);
         }
         return sql;
+    }
+
+    /**
+    * 获取表的常用属性
+    */
+    public <T> String[] getTableBaseFieldArray(Class<T> t) {
+        Map<String, Object> tableMap = getDbTable(t);
+        String alias = String.valueOf(tableMap.get(DbFieldsConst.TABLE_ALIAS));
+        String table = String.valueOf(tableMap.get(DbFieldsConst.TABLE_NAME));
+        String dbKey = String.valueOf(tableMap.get(DbFieldsConst.DB_KEY));
+        return new String[]{table, alias, dbKey};
     }
 
     /**

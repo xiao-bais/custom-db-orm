@@ -383,4 +383,7 @@ public class TableSqlBuilder<T> {
         return alias;
     }
 
+    public DbKeyParserModel<T> getKeyParserModel() {
+        return keyParserModel;
+    }
 }

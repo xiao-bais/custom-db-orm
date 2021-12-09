@@ -2,6 +2,7 @@ package com.custom.dbaction;
 
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.DbCustomStrategy;
+import com.custom.dbconfig.DbFieldsConst;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.ExecuteMethod;
 import com.custom.exceptions.CustomCheckException;
@@ -13,6 +14,7 @@ import com.custom.page.DbPageRows;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author Xiao-Bai
@@ -28,9 +30,6 @@ public abstract class AbstractSqlBuilder {
     public abstract <T> T selectOneByKey(Class<T> t, Object key) throws Exception;
     public abstract <T> List<T> selectBatchByKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception;
     public abstract <T> T selectOneByCondition(Class<T> t, String condition, Object... params) throws Exception;
-    public abstract <T> List<T> selectBySql(Class<T> t, String sql, Object... params) throws Exception;
-    public abstract <T> T selectOneBySql(Class<T> t, String sql, Object... params) throws Exception;
-    public abstract Object selectObjBySql(String sql, Object... params) throws Exception;
 
     /*--------------------------------------- delete ---------------------------------------*/
     public abstract <T> int deleteByKey(Class<T> t, Object key) throws Exception;
@@ -46,8 +45,9 @@ public abstract class AbstractSqlBuilder {
 
     /*--------------------------------------- comm ---------------------------------------*/
     public abstract <T> long save(T t) throws Exception;
-    public abstract int executeSql(String sql, Object... params) throws Exception;
-
+    public abstract <T> int rollbackLogicByKey(Class<T> t, Object key);
+    public abstract <T> int rollbackLogicByKeys(Class<T> t, Collection<? extends Serializable> keys);
+    public abstract <T> int rollbackLogicByCondition(Class<T> t, String condition, Object... params);
 
 
 
@@ -75,6 +75,24 @@ public abstract class AbstractSqlBuilder {
     }
 
     /**
+     * 获取删除的sql
+     */
+    public <T> String getLogicDeleteSql(String logicValidSql, String logicInValidSql, String key, String dbKey, String table, String alias, boolean isMore) throws Exception {
+        String sql;
+        String keySql  = String.format(" %s.`%s` %s %s", alias,
+                dbKey, isMore ? SymbolConst.IN : SymbolConst.EQUALS, key);
+
+        if (JudgeUtilsAx.isNotEmpty(logicInValidSql)) {
+            sql = String.format(" update %s %s set %s.%s where %s.%s and %s ", table,
+                    alias, alias, logicInValidSql, alias, logicValidSql, keySql);
+        }else {
+            sql = String.format(" delete from %s %s where %s", table,
+                    alias, keySql);
+        }
+        return sql;
+    }
+
+    /**
      * 添加逻辑删除的部分sql
      */
     public String checkConditionAndLogicDeleteSql(String alias, String condition, String logicSql) {
@@ -82,14 +100,56 @@ public abstract class AbstractSqlBuilder {
             String sql;
             if (JudgeUtilsAx.isNotEmpty(condition)) {
                 sql = JudgeUtilsAx.isNotEmpty(logicSql) ?
-                        String.format(" \nwhere %s.%s %s ", alias, logicSql, condition) : String.format(" \nwhere 1 = 1 %s ", condition);
+                        String.format("where %s.%s %s ", alias, logicSql, condition) : String.format("where 1 = 1 %s ", condition);
             } else {
                 sql = JudgeUtilsAx.isNotEmpty(logicSql) ?
-                        String.format(" \nwhere %s.%s ", alias, logicSql) : condition;
+                        String.format("where %s.%s ", alias, logicSql) : condition;
             }
             return sql;
         };
         return handler.handleSql();
+    }
+
+    /**
+    * 纯sql查询集合
+    */
+    @CheckExecute(target = ExecuteMethod.SELECT)
+    public <T> List<T> selectBySql(Class<T> t, String sql, Object... params) throws Exception {
+        return sqlExecuteAction.query(t, sql, params);
+    }
+
+    /**
+    * 纯sql查询单条记录
+    */
+    @CheckExecute(target = ExecuteMethod.SELECT)
+    public <T> T selectOneBySql(Class<T> t, String sql, Object... params) throws Exception {
+        List<T> queryList = sqlExecuteAction.query(t, sql, params);
+        if (queryList.size() == 0) {
+            return null;
+        } else if (queryList.size() > 1) {
+            throw new CustomCheckException(String.format(ExceptionConst.EX_QUERY_MORE_RESULT, queryList.size()));
+        }
+        return queryList.get(SymbolConst.DEFAULT_ZERO);
+    }
+
+    /**
+    * 纯sql查询当个字段
+    */
+    public Object selectObjBySql(String sql, Object... params) throws Exception {
+        if (JudgeUtilsAx.isEmpty(sql)) {
+            throw new CustomCheckException(ExceptionConst.EX_SQL_NOT_EMPTY);
+        }
+        return sqlExecuteAction.selectOneSql(sql, params);
+    }
+
+    /**
+    * 纯sql增删改
+    */
+    public int executeSql(String sql, Object... params) throws Exception {
+        if (JudgeUtilsAx.isEmpty(sql)) {
+            throw new NullPointerException();
+        }
+        return sqlExecuteAction.executeUpdate(sql, params);
     }
 
 
