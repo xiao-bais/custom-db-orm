@@ -1,4 +1,4 @@
-package com.custom.http;
+package com.custom.comm.http;
 
 import com.alibaba.fastjson.JSON;
 import com.custom.comm.JudgeUtilsAx;

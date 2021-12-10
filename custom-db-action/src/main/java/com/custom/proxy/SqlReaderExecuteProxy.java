@@ -1,4 +1,4 @@
-package com.custom.handler.proxy;
+package com.custom.proxy;
 
 import com.custom.annotations.mapper.Query;
 import com.custom.annotations.mapper.SqlPath;

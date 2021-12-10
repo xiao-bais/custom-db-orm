@@ -1,13 +1,15 @@
-package com.custom.handler.proxy;
+package com.custom.proxy;
 
+import com.custom.annotations.DbKey;
 import com.custom.annotations.DbTable;
+import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.enums.ExecuteMethod;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
-import com.custom.handler.CheckExecute;
+import com.custom.annotations.check.CheckExecute;
 import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;
 import org.springframework.cglib.proxy.MethodProxy;
@@ -83,7 +85,7 @@ public class SqlParamsCheckProxy<T> implements MethodInterceptor {
         if(objects[0] instanceof List) {
             insertParam = ((List<Object>) objects[0]).get(0);
         }
-        if(!insertParam.getClass().isAnnotationPresent(DbTable.class)) {
+        else if(!insertParam.getClass().isAnnotationPresent(DbTable.class)) {
             throw new CustomCheckException(ExceptionConst.EX_DBTABLE__NOTFOUND + insertParam.getClass().getName());
         }
     }
@@ -96,7 +98,7 @@ public class SqlParamsCheckProxy<T> implements MethodInterceptor {
         if(!((Class<?>)objects[0]).isAnnotationPresent(DbTable.class)) {
             throw new CustomCheckException(ExceptionConst.EX_DBTABLE__NOTFOUND + objects[0].getClass().getName());
         }
-        if(JudgeUtilsAx.isEmpty(deleteParam)) {
+        else if(JudgeUtilsAx.isEmpty(deleteParam)) {
             if(deleteParam instanceof String) {
                 throw new CustomCheckException(ExceptionConst.EX_DEL_CONDITION_NOT_EMPTY);
             }
@@ -110,6 +112,9 @@ public class SqlParamsCheckProxy<T> implements MethodInterceptor {
     private void update(Object[] objects) {
         if(!objects[0].getClass().isAnnotationPresent(DbTable.class)) {
             throw new CustomCheckException(ExceptionConst.EX_DBTABLE__NOTFOUND + objects[0].getClass().getName());
+        }
+        else if(!CustomUtil.isKeyTag(objects[0].getClass())) {
+            throw new CustomCheckException(ExceptionConst.EX_DBKEY_NOTFOUND + objects[0].getClass().getName());
         }
     }
 

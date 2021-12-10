@@ -33,8 +33,8 @@ public class BuildTableHandler {
     private DbAnnotationsParserHandler annotationsParser;
     private static String dataBase = SymbolConst.EMPTY;
 
-    BuildTableHandler(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy){
-        sqlExecuteAction = new SqlExecuteAction(dbDataSource, dbCustomStrategy);
+    BuildTableHandler(SqlExecuteAction sqlExecuteAction){
+        this.sqlExecuteAction = sqlExecuteAction;
         annotationsParser = new DbAnnotationsParserHandler();
         tableSpliceSql = new TableSpliceSql(annotationsParser);
         dataBase = String.valueOf(ExceptionConst.currMap.get(DbFieldsConst.DATA_BASE));
@@ -77,9 +77,6 @@ public class BuildTableHandler {
      */
     final void dropTables(Class<?>... arr) throws Exception{
         for (int i = arr.length - 1; i >= 0; i--) {
-            if(!existTable(arr[i])) {
-                throw new CustomCheckException(ExceptionConst.EX_DROP_TABLE_NOT_FOUND + arr[i].getName());
-            }
             dropTable(arr[i]);
         }
     }

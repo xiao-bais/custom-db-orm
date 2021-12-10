@@ -2,7 +2,7 @@ package com.custom.dbconfig;
 
 import com.custom.comm.CustomUtil;
 import com.custom.handler.JdbcDao;
-import com.custom.handler.proxy.SqlReaderExecuteProxy;
+import com.custom.proxy.SqlReaderExecuteProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;

@@ -7,8 +7,10 @@ import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.ExecuteMethod;
-import com.custom.handler.CheckExecute;
-import com.custom.page.DbPageRows;
+import com.custom.annotations.check.CheckExecute;
+import com.custom.comm.page.DbPageRows;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.*;
@@ -20,6 +22,8 @@ import java.util.stream.IntStream;
  * @Desc：方法执行处理入口
  **/
 public class JdbcAction extends AbstractSqlBuilder {
+
+    private static Logger logger = LoggerFactory.getLogger(JdbcAction.class);
 
     public JdbcAction(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy){
         this.setSqlExecuteAction(new SqlExecuteAction(dbDataSource, dbCustomStrategy));
@@ -141,7 +145,7 @@ public class JdbcAction extends AbstractSqlBuilder {
     @Override
     @CheckExecute(target = ExecuteMethod.INSERT)
     public <T> int insert(T t, boolean isGeneratedKey) throws Exception {
-        TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<>(t);
+        TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<>(t, false);
         String insertSql = tableSqlBuilder.getInsertSql();
         DbKeyParserModel<T> keyParserModel = tableSqlBuilder.getKeyParserModel();
         return executeInsert(insertSql, Collections.singletonList(t), isGeneratedKey, keyParserModel.getKey(), keyParserModel.getType(), tableSqlBuilder.getOneObjValues().toArray());
@@ -159,15 +163,67 @@ public class JdbcAction extends AbstractSqlBuilder {
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
     public <T> int updateByKey(T t, String... updateDbFields) throws Exception {
+        TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<>(t, true);
+        DbKeyParserModel<T> keyParserModel = tableSqlBuilder.getKeyParserModel();
+        StringJoiner updateFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+        List<Object> objectValues = new ArrayList<>();
 
-
-        return 0;
+        if(updateDbFields.length > 0) {
+            for (String field : updateDbFields) {
+                Optional<DbFieldParserModel<T>> updateFieldOP = tableSqlBuilder.getFieldParserModels().stream().filter(x -> x.getColumn().equals(field)).findFirst();
+                updateFieldOP.ifPresent(op -> {
+                    updateFieldSql.add(String.format("%s = ?", op.getFieldSql()));
+                    objectValues.add(op.getValue());
+                });
+            }
+        }else {
+            List<DbFieldParserModel<T>> fieldParserModels = tableSqlBuilder.getFieldParserModels();
+            fieldParserModels.forEach(x -> {
+                Object value = x.getValue();
+                if (value != null) {
+                    updateFieldSql.add(String.format("%s = ?", x.getFieldSql()));
+                    objectValues.add(value);
+                }
+            });
+        }
+        String updateSql = String.format("update %s %s set %s where %s", tableSqlBuilder.getTable(),
+                tableSqlBuilder.getAlias(), updateFieldSql.toString(), getLogicUpdateSql(keyParserModel.getFieldSql()));
+        objectValues.add(keyParserModel.getValue(t));
+        return executeSql(updateSql, objectValues.toArray());
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
     public <T> long save(T t) throws Exception {
-        return 0;
+        long update = updateByKey(t);
+        if (update == 0) {
+            update = insert(t, false);
+        }
+        return update;
+    }
+
+    @Override
+    public void createTables(Class<?>... arr) throws Exception {
+        TableSqlBuilder<?> tableSqlBuilder = new TableSqlBuilder<>();
+        for (int i = arr.length - 1; i >= 0; i--) {
+            String exitsTableSql = tableSqlBuilder.getExitsTableSql(arr[i]);
+            long count = (long) selectObjBySql(exitsTableSql);
+            if(count > 0) {
+                String createTableSql = tableSqlBuilder.geCreateTableSql();
+                execTable(createTableSql);
+                logger.info("createTableSql ->\n " + createTableSql);
+            }
+        }
+    }
+
+    @Override
+    public void dropTables(Class<?>... arr) throws Exception {
+        for (int i = arr.length - 1; i >= 0; i--) {
+            TableSqlBuilder<?> tableSqlBuilder = new TableSqlBuilder<>(arr[i], ExecuteMethod.NONE);
+            String dropTableSql = tableSqlBuilder.getDropTableSql();
+            execTable(dropTableSql);
+            logger.warn("drop table '{}' completed\n", tableSqlBuilder.getTable());
+        }
     }
 
     @Override

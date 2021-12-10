@@ -2,19 +2,18 @@ package com.custom.dbaction;
 
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.DbCustomStrategy;
-import com.custom.dbconfig.DbFieldsConst;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.ExecuteMethod;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
-import com.custom.handler.CheckExecute;
-import com.custom.handler.logic.LogicDeleteFieldSqlHandler;
-import com.custom.page.DbPageRows;
+import com.custom.annotations.check.CheckExecute;
+import com.custom.logic.LogicDeleteFieldSqlHandler;
+import com.custom.comm.page.DbPageRows;
 
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Author Xiao-Bai
@@ -45,6 +44,8 @@ public abstract class AbstractSqlBuilder {
 
     /*--------------------------------------- comm ---------------------------------------*/
     public abstract <T> long save(T t) throws Exception;
+    public abstract void createTables(Class<?>... arr) throws Exception;
+    public abstract void dropTables(Class<?>... arr) throws Exception;
     public abstract <T> int rollbackLogicByKey(Class<T> t, Object key);
     public abstract <T> int rollbackLogicByKeys(Class<T> t, Collection<? extends Serializable> keys);
     public abstract <T> int rollbackLogicByCondition(Class<T> t, String condition, Object... params);
@@ -77,7 +78,7 @@ public abstract class AbstractSqlBuilder {
     /**
      * 获取删除的sql
      */
-    public <T> String getLogicDeleteSql(String key, String dbKey, String table, String alias, boolean isMore) {
+    public String getLogicDeleteSql(String key, String dbKey, String table, String alias, boolean isMore) {
         String sql;
         String keySql  = String.format(" %s.`%s` %s %s", alias,
                 dbKey, isMore ? SymbolConst.IN : SymbolConst.EQUALS, key);
@@ -90,6 +91,13 @@ public abstract class AbstractSqlBuilder {
                     alias, keySql);
         }
         return sql;
+    }
+
+    /**
+    * 获取修改的逻辑删除字段sql
+    */
+    public String getLogicUpdateSql(String key) {
+        return JudgeUtilsAx.isNotBlank(logicDeleteQuerySql) ? String.format("%s and %s = ?", logicDeleteQuerySql, key) : String.format("%s = ?", key);
     }
 
     /**
@@ -150,6 +158,13 @@ public abstract class AbstractSqlBuilder {
             throw new NullPointerException();
         }
         return sqlExecuteAction.executeUpdate(sql, params);
+    }
+
+    /**
+    * 创建/删除表
+    */
+    public void execTable(String sql) throws SQLException {
+        sqlExecuteAction.executeTableSql(sql);
     }
 
     /**

@@ -1,6 +1,6 @@
 package com.custom.scanner;
 
-import com.custom.handler.proxy.SqlReaderExecuteProxy;
+import com.custom.proxy.SqlReaderExecuteProxy;
 import org.springframework.beans.factory.FactoryBean;
 
 /**

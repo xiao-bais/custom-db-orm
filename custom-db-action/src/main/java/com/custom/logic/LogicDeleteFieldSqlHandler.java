@@ -1,4 +1,4 @@
-package com.custom.handler.logic;
+package com.custom.logic;
 
 /**
  * @author Xiao-Bai

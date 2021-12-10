@@ -152,6 +152,12 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     }
 
     public Object getValue() {
+        try {
+            value = getFieldValue(t, fieldName);
+        }catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
+            logger.error(e.getMessage(), e);
+            return null;
+        }
         return value;
     }
 

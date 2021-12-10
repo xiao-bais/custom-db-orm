@@ -3,7 +3,6 @@ package com.custom.handler;
 import com.custom.annotations.DbField;
 import com.custom.annotations.DbJoinTables;
 import com.custom.annotations.DbKey;
-import com.custom.annotations.DbRelated;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.DbFieldsConst;
@@ -11,7 +10,7 @@ import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.KeyStrategy;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
-import com.custom.handler.logic.LogicDeleteFieldSqlHandler;
+import com.custom.logic.LogicDeleteFieldSqlHandler;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;

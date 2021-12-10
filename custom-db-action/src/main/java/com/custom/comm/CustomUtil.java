@@ -306,7 +306,7 @@ public class CustomUtil {
      * 该类是否存在主键
      */
     public static <T> boolean isKeyTag(Class<T> clazz){
-        Field[] fields = clazz.getDeclaredFields();
+        Field[] fields = getFields(clazz);
         for (Field field : fields) {
             if (field.isAnnotationPresent(DbKey.class)) return true;
         }

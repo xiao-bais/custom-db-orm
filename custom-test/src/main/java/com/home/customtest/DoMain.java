@@ -5,6 +5,7 @@ import com.custom.dbconfig.DbDataSource;
 import com.custom.enums.ExecuteMethod;
 import com.custom.handler.DbParserFieldHandler;
 import com.custom.handler.JdbcDao;
+import com.custom.sqlparser.CustomDao;
 import com.custom.sqlparser.TableSqlBuilder;
 import com.home.customtest.entity.Employee;
 
@@ -34,25 +35,34 @@ public class DoMain {
         dbCustomStrategy.setDeleteLogicValue("1");
         dbCustomStrategy.setNotDeleteLogicValue("0");
 
-        JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
+//        JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
+        CustomDao customDao = new CustomDao(dbDataSource, dbCustomStrategy);
+
+//        Employee employee = customDao.selectOneByKey(Employee.class, 2);
+//        employee.setAddress("加利福尼亚");
+
+        Employee employee = new Employee();
+        employee.setAddress("混哪呢");
+        employee.setId(2);
+
+        customDao.updateByKey(employee);
 
 
+//        List<Employee> list = new ArrayList<>();
+//        for (int i = 0; i < 5; i++) {
+//            Employee e = new Employee();
+//            e.setEmpName("员-工bb-"+i);
+//            e.setSex(i % 2 == 1);
+//            e.setAddress("bbbb->" + i);
+//            e.setAge(24-i);
+//            e.setAreaId(i);
+//            e.setDeptId(2);
+//            e.setBirthday(new Date());
+//            e.setState(0);
+//            list.add(e);
+//        }
 
-        List<Employee> list = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            Employee e = new Employee();
-            e.setEmpName("员-工bb-"+i);
-            e.setSex(i % 2 == 1);
-            e.setAddress("bbbb->" + i);
-            e.setAge(24-i);
-            e.setAreaId(i);
-            e.setDeptId(2);
-            e.setBirthday(new Date());
-            e.setState(0);
-            list.add(e);
-        }
-
-        jdbcDao.insert(list);
+//        jdbcDao.insert(list);
 
 //        long time1 = System.currentTimeMillis();
 //        TableSqlBuilder<Employee> tableSqlBuilder = new TableSqlBuilder<>(Employee.class, ExecuteMethod.UPDATE);

@@ -1,5 +1,6 @@
 package com.custom.handler;
 
+import com.custom.annotations.check.CheckExecute;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbaction.AbstractSqlBuilder;
@@ -10,7 +11,7 @@ import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.ExecuteMethod;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
-import com.custom.page.DbPageRows;
+import com.custom.comm.page.DbPageRows;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -27,11 +28,13 @@ public class BuildSqlHandler extends AbstractSqlBuilder {
 
     private DbParserFieldHandler dbParserFieldHandler;
     private SqlExecuteAction sqlExecuteAction;
+    private BuildTableHandler buildTableHandler;
 
     public BuildSqlHandler(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         this.dbParserFieldHandler = new DbParserFieldHandler();
         this.setSqlExecuteAction(new SqlExecuteAction(dbDataSource, dbCustomStrategy));
         this.sqlExecuteAction = getSqlExecuteAction();
+        this.buildTableHandler = new BuildTableHandler(getSqlExecuteAction());
         this.setDbCustomStrategy(dbCustomStrategy);
         initLogic();
     }
@@ -312,6 +315,18 @@ public class BuildSqlHandler extends AbstractSqlBuilder {
             update = insert(t, false);
         }
         return update;
+    }
+
+    @Override
+    @CheckExecute(target = ExecuteMethod.NONE)
+    public void createTables(Class<?>... arr) throws Exception {
+        buildTableHandler.createTables(arr);
+    }
+
+    @Override
+    @CheckExecute(target = ExecuteMethod.NONE)
+    public void dropTables(Class<?>... arr) throws Exception {
+        buildTableHandler.dropTables(arr);
     }
 
     @Override

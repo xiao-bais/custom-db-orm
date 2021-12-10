@@ -1,4 +1,4 @@
-package com.custom.page;
+package com.custom.comm.page;
 
 import com.custom.dbconfig.SymbolConst;
 
