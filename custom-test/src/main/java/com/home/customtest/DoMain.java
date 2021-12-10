@@ -36,30 +36,23 @@ public class DoMain {
 
         JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
 
-        Employee employee = jdbcDao.selectOneByCondition(Employee.class, "and a.age > 22");
-        System.out.println("employee = " + employee);
-
-//        List<Employee> list = jdbcDao.selectListByKeys(Employee.class, Arrays.asList(1,3,5));
-//        System.out.println("employee = " + list);
 
 
-//        jdbcDao.createTables(Employee.class);
+        List<Employee> list = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            Employee e = new Employee();
+            e.setEmpName("员-工bb-"+i);
+            e.setSex(i % 2 == 1);
+            e.setAddress("bbbb->" + i);
+            e.setAge(24-i);
+            e.setAreaId(i);
+            e.setDeptId(2);
+            e.setBirthday(new Date());
+            e.setState(0);
+            list.add(e);
+        }
 
-//        List<Employee> list = new ArrayList<>();
-//        for (int i = 0; i < 5; i++) {
-//            Employee e = new Employee();
-//            e.setEmpName("员工-"+i);
-//            e.setSex(i % 2 == 1);
-//            e.setAddress("aaaa->" + i);
-//            e.setAge(24-i);
-//            e.setAreaId(i);
-//            e.setDeptId(2);
-//            e.setBirthday(new Date());
-//            e.setState(0);
-//            list.add(e);
-//        }
-
-//        jdbcDao.insert(list);
+        jdbcDao.insert(list);
 
 //        long time1 = System.currentTimeMillis();
 //        TableSqlBuilder<Employee> tableSqlBuilder = new TableSqlBuilder<>(Employee.class, ExecuteMethod.UPDATE);

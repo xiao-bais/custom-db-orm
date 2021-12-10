@@ -77,16 +77,16 @@ public abstract class AbstractSqlBuilder {
     /**
      * 获取删除的sql
      */
-    public <T> String getLogicDeleteSql(String logicValidSql, String logicInValidSql, String key, String dbKey, String table, String alias, boolean isMore) throws Exception {
+    public <T> String getLogicDeleteSql(String key, String dbKey, String table, String alias, boolean isMore) {
         String sql;
         String keySql  = String.format(" %s.`%s` %s %s", alias,
                 dbKey, isMore ? SymbolConst.IN : SymbolConst.EQUALS, key);
 
-        if (JudgeUtilsAx.isNotEmpty(logicInValidSql)) {
-            sql = String.format(" update %s %s set %s.%s where %s.%s and %s ", table,
-                    alias, alias, logicInValidSql, alias, logicValidSql, keySql);
+        if (JudgeUtilsAx.isNotEmpty(logicDeleteUpdateSql)) {
+            sql = String.format("update %s %s set %s.%s where %s.%s and %s ", table,
+                    alias, alias, logicDeleteUpdateSql, alias, logicDeleteQuerySql, keySql);
         }else {
-            sql = String.format(" delete from %s %s where %s", table,
+            sql = String.format("delete from %s %s where %s", table,
                     alias, keySql);
         }
         return sql;
@@ -150,6 +150,17 @@ public abstract class AbstractSqlBuilder {
             throw new NullPointerException();
         }
         return sqlExecuteAction.executeUpdate(sql, params);
+    }
+
+    /**
+    * 添加
+    */
+    public <T> int executeInsert(String sql, List<T> obj, boolean isGeneratedKey, String key, Class<?> keyType,  Object... params) throws Exception {
+        if (JudgeUtilsAx.isEmpty(sql)) {
+            throw new NullPointerException();
+        }
+        return isGeneratedKey ? sqlExecuteAction.executeUpdate(sql, params) :
+        sqlExecuteAction.executeInsert(obj, sql, key, keyType, params);
     }
 
 

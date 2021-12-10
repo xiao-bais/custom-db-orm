@@ -11,10 +11,8 @@ import com.custom.handler.CheckExecute;
 import com.custom.page.DbPageRows;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.StringJoiner;
+import java.util.*;
+import java.util.stream.IntStream;
 
 /**
  * @Author Xiao-Bai
@@ -110,38 +108,59 @@ public class JdbcAction extends AbstractSqlBuilder {
     @CheckExecute(target = ExecuteMethod.DELETE)
     public <T> int deleteByKey(Class<T> t, Object key) throws Exception {
         TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<>(t, ExecuteMethod.DELETE);
-        String condition = String.format("and %s = ?", tableSqlBuilder.getKeyParserModel().getFieldSql());
-
-        return 0;
+        DbKeyParserModel<T> keyParserModel = tableSqlBuilder.getKeyParserModel();
+        String deleteSql = getLogicDeleteSql(SymbolConst.QUEST, keyParserModel.getDbKey(), tableSqlBuilder.getTable(), tableSqlBuilder.getAlias(), false);
+        return executeSql(deleteSql, key);
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.DELETE)
     public <T> int deleteBatchKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception {
-        return 0;
+        TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<>(t, ExecuteMethod.DELETE);
+        DbKeyParserModel<T> keyParserModel = tableSqlBuilder.getKeyParserModel();
+        StringJoiner delSymbols = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+        IntStream.range(0, keys.size()).mapToObj(i -> SymbolConst.QUEST).forEach(delSymbols::add);
+        String deleteSql = getLogicDeleteSql(String.format("(%s)", delSymbols), keyParserModel.getDbKey(), tableSqlBuilder.getTable(), tableSqlBuilder.getAlias(), true);
+        return executeSql(deleteSql, keys.toArray());
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.DELETE)
     public <T> int deleteByCondition(Class<T> t, String condition, Object... params) throws Exception {
-        return 0;
+        TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<>(t, ExecuteMethod.DELETE);
+        String deleteSql;
+        if(JudgeUtilsAx.isNotEmpty(getLogicDeleteUpdateSql())) {
+            deleteSql = String.format(" update %s %s set %s.%s where %s.%s %s", tableSqlBuilder.getTable(), tableSqlBuilder.getAlias(),
+                    tableSqlBuilder.getAlias(), getLogicDeleteUpdateSql(), tableSqlBuilder.getAlias(), getLogicDeleteQuerySql(), condition);
+        }else {
+            deleteSql = String.format(" delete from %s %s where 1 = 1 %s", tableSqlBuilder.getTable(), tableSqlBuilder.getAlias(), condition);
+        }
+        return executeSql(deleteSql, params);
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.INSERT)
     public <T> int insert(T t, boolean isGeneratedKey) throws Exception {
-        return 0;
+        TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<>(t);
+        String insertSql = tableSqlBuilder.getInsertSql();
+        DbKeyParserModel<T> keyParserModel = tableSqlBuilder.getKeyParserModel();
+        return executeInsert(insertSql, Collections.singletonList(t), isGeneratedKey, keyParserModel.getKey(), keyParserModel.getType(), tableSqlBuilder.getOneObjValues().toArray());
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.INSERT)
     public <T> int insert(List<T> ts, boolean isGeneratedKey) throws Exception {
-        return 0;
+        TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<>(ts);
+        String insertSql = tableSqlBuilder.getInsertSql();
+        DbKeyParserModel<T> keyParserModel = tableSqlBuilder.getKeyParserModel();
+        return executeInsert(insertSql, ts, isGeneratedKey, keyParserModel.getKey(), keyParserModel.getType(), tableSqlBuilder.getManyObjValues().toArray());
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
     public <T> int updateByKey(T t, String... updateDbFields) throws Exception {
+
+
         return 0;
     }
 

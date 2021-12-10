@@ -73,6 +73,10 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
         this.strategy = strategy;
     }
 
+    public Class<?> getType() {
+        return type;
+    }
+
     public Object getValue() {
         try {
             this.value = getFieldValue(t, key);

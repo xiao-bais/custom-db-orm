@@ -344,11 +344,11 @@ public class DbParserFieldHandler {
     /**
     * 获取表的常用属性
     */
-    public <T> String[] getTableBaseFieldArray(Class<T> t) {
+    public <T> String[] getTableBaseFieldArray(Class<T> t) throws Exception {
         Map<String, Object> tableMap = getDbTable(t);
         String alias = String.valueOf(tableMap.get(DbFieldsConst.TABLE_ALIAS));
         String table = String.valueOf(tableMap.get(DbFieldsConst.TABLE_NAME));
-        String dbKey = String.valueOf(tableMap.get(DbFieldsConst.DB_KEY));
+        String dbKey = getDbFieldKey(t);
         return new String[]{table, alias, dbKey};
     }
 
