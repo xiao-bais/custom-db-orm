@@ -3,6 +3,7 @@ package com.custom.dbconfig;
 import com.custom.comm.CustomUtil;
 import com.custom.handler.JdbcDao;
 import com.custom.proxy.SqlReaderExecuteProxy;
+import com.custom.sqlparser.CustomDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -50,6 +51,16 @@ public class CustomConfiguration {
         }
         logger.info("JdbcDao Initialized Successfully !");
         return new JdbcDao(dbDataSource, dbCustomStrategy);
+    }
+
+    @Bean
+    @ConditionalOnBean(DbDataSource.class)
+    public CustomDao customDao(){
+        if(CustomUtil.isDataSourceEmpty(dbDataSource)) {
+            return null;
+        }
+        logger.info("CustomDao Initialized Successfully !");
+        return new CustomDao(dbDataSource, dbCustomStrategy);
     }
 
 
