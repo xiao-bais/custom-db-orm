@@ -13,20 +13,19 @@ public enum DbSymbol {
     GREATER_THAN_EQUALS(">="),
     LESS_THAN("<"),
     LESS_THAN_EQUALS("<="),
-    EXISTS("EXISTS"),
-    NOT_EXISTS("NOT EXISTS"),
-    BETWEEN("BETWEEN %s AND %s"),
-    NOT_BETWEEN("NOT BETWEEN %s AND %s"),
-    AND("AND"),
-    GROUP_BY("GROUP BY"),
-    HAVING("HAVING"),
-    OR("OR"),
-    LIKE("LIKE"),
-    IS_NOT_NULL("IS NOT NULL"),
-    IS_NULL("IS NULL"),
-    NOT_IN("NOT IN"),
-    ORDER_BY("ORDER BY"),
-    IN("IN");
+    EXISTS("exists"),
+    NOT_EXISTS("not exists"),
+    BETWEEN("between ? and ?"),
+    NOT_BETWEEN("not between ? and ?"),
+    AND("and"),
+    OR("or"),
+    LIKE("like"),
+    NOT_LIKE("not like"),
+    IS_NOT_NULL("is not null"),
+    IS_NULL("is null"),
+    NOT_IN("not in"),
+    ORDER_BY("order by"),
+    IN("in");
 
 
 
