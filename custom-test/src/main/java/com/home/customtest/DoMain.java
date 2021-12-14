@@ -2,19 +2,13 @@ package com.home.customtest;
 
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
-import com.custom.enums.DbSymbol;
-import com.custom.enums.ExecuteMethod;
-import com.custom.handler.DbParserFieldHandler;
 import com.custom.handler.JdbcDao;
+import com.custom.proxy.SqlReaderExecuteProxy;
 import com.custom.sqlparser.CustomDao;
-import com.custom.sqlparser.TableSqlBuilder;
-import com.custom.wrapper.ConditionEntity;
+import com.home.customtest.dao.CustomTestDao;
 import com.home.customtest.entity.Employee;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -29,9 +23,12 @@ public class DoMain {
     public static void main(String[] args) throws Exception {
 
 
-            ConditionEntity<Employee> entity = new ConditionEntity<>();
 
-            Type type = ((ParameterizedType) entity.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+
+
+
+
+
 //            int a = 15, b = 27;
 //            ConditionEntity<Employee> conditionEntity = objectConditionEntity
 //                    .where(DbSymbol.GREATER_THAN, true, "addr", "1232", null, null)
@@ -47,86 +44,61 @@ public class DoMain {
 
 
 
-//        DbDataSource dbDataSource = new DbDataSource();
-//        dbDataSource.setUrl("jdbc:mysql://127.0.0.1:3306/hos?characterEncoding=utf-8&allowMultiQueries=true&autoreconnect=true&serverTimezone=UTC");
-//        dbDataSource.setUsername("root");
-//        dbDataSource.setPassword("123456");
-//
-//        DbCustomStrategy dbCustomStrategy = new DbCustomStrategy();
-//        dbCustomStrategy.setSqlOutPrinting(true);
-//        dbCustomStrategy.setDbFieldDeleteLogic("state");
-//        dbCustomStrategy.setDeleteLogicValue("1");
-//        dbCustomStrategy.setNotDeleteLogicValue("0");
+        DbDataSource dbDataSource = new DbDataSource();
+        dbDataSource.setUrl("jdbc:mysql://127.0.0.1:3306/hos?characterEncoding=utf-8&allowMultiQueries=true&autoreconnect=true&serverTimezone=UTC");
+        dbDataSource.setUsername("root");
+        dbDataSource.setPassword("123456");
 
-//        JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
-//        CustomDao customDao = new CustomDao(dbDataSource, dbCustomStrategy);
+        DbCustomStrategy dbCustomStrategy = new DbCustomStrategy();
+        dbCustomStrategy.setSqlOutPrinting(true);
+//        dbCustomStrategy.setUnderlineToCamel(true);
+        dbCustomStrategy.setDbFieldDeleteLogic("state");
+        dbCustomStrategy.setDeleteLogicValue("1");
+        dbCustomStrategy.setNotDeleteLogicValue("0");
 
-//        Employee employee = customDao.selectOneByKey(Employee.class, 2);
-//        employee.setAddress("加利福尼亚");
+        // 以动态代理的方式来执行dao层接口的方法。类似于mybatis
+        CustomTestDao customTestDao = new SqlReaderExecuteProxy(dbDataSource, dbCustomStrategy).createProxy(CustomTestDao.class);
+        String oneByCond = customTestDao.selectOneByCond(1, 21, "age");
+        System.out.println("oneByCond = " + oneByCond);
 
-//        Employee employee = new Employee();
-//        employee.setAddress("混哪呢");
-//        employee.setId(2);
-
-//        customDao.updateByKey(employee);
+        Employee employee = customTestDao.selectByOne(21);
+        System.out.println("employee = " + employee);
 
 
-//        List<Employee> list = new ArrayList<>();
-//        for (int i = 0; i < 5; i++) {
-//            Employee e = new Employee();
-//            e.setEmpName("员-工bb-"+i);
-//            e.setSex(i % 2 == 1);
-//            e.setAddress("bbbb->" + i);
-//            e.setAge(24-i);
-//            e.setAreaId(i);
-//            e.setDeptId(2);
-//            e.setBirthday(new Date());
-//            e.setState(0);
-//            list.add(e);
-//        }
 
-//        jdbcDao.insert(list);
+        // JdbcDao/CustomDao 两个dao的功能几乎一模一样 不同的在于注解的解析方式
+        JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
+        CustomDao customDao = new CustomDao(dbDataSource, dbCustomStrategy);
 
-//        long time1 = System.currentTimeMillis();
-//        TableSqlBuilder<Employee> tableSqlBuilder = new TableSqlBuilder<>(Employee.class, ExecuteMethod.UPDATE);
-//        long time2 = System.currentTimeMillis();
-//        String insertSql = tableSqlBuilder.getInsertSql();
-//        long time3 = System.currentTimeMillis();
-//        System.out.println("insertSql = " + insertSql);
-//        List<Object> objValues = tableSqlBuilder.getManyObjValues();
-//        long time4 = System.currentTimeMillis();
-//        System.out.println("objValues = " + objValues);
+        Employee employee1 = new Employee();
+        employee1.setAddress("混哪呢");
+        employee1.setId(2);
+
+        customDao.updateByKey(employee1);
 
 
-//        dbCustomStrategy.setMapperScanEnable(true);
-//        dbCustomStrategy.setPackageScans(new String[]{"com.custom.customtest.dao"});
+        List<Employee> list = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            Employee e = new Employee();
+            e.setEmpName("员-工bb-"+i);
+            e.setSex(i % 2 == 1);
+            e.setAddress("bbbb->" + i);
+            e.setAge(24-i);
+            e.setAreaId(i);
+            e.setDeptId(2);
+            e.setBirthday(new Date());
+            e.setState(0);
+            list.add(e);
+        }
 
-//        JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
-//        long time = System.currentTimeMillis();
-//        TableSqlBuilder<Employee> tableSqlBuilder = new TableSqlBuilder<>(Employee.class, false);
-//        long time1 = System.currentTimeMillis();
-//
-//        String selectSql = tableSqlBuilder.getSelectSql() + " where a.id = 1";
-//        long time2 = System.currentTimeMillis();
-//
-//        DbParserFieldHandler dbParserFieldHandler = new DbParserFieldHandler();
-//        String selectssql = dbParserFieldHandler.getSelectSql(Employee.class) + " where a.id = 3";
-//        long time3 = System.currentTimeMillis();
-//
-//        Employee employee1 = jdbcDao.selectOneBySql(Employee.class, selectssql);
-//        long time4 = System.currentTimeMillis();
-//
-//        Employee employee = jdbcDao.selectOneBySql(Employee.class, selectSql);
-//        long time5 = System.currentTimeMillis();
-//
-//        System.out.println("time = " + (time1-time));
-//        System.out.println("time = " + (time2-time1));
-//        System.out.println("time = " + (time3-time2));
-//        System.out.println("time = " + (time4-time3));
-//        System.out.println("time = " + (time5-time4));
-//
-//        System.out.println("employee = " + employee);
-//        System.out.println("employee1 = " + employee1);
+        // 插入多条记录
+        jdbcDao.insert(list);
+
+
+        // 一般查询
+        List<Employee> list1 = jdbcDao.selectList(Employee.class, " and a.age > 20");
+        System.out.println("list1 = " + list1);
+
 
     }
 }

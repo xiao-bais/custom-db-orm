@@ -1,6 +1,7 @@
 package com.custom.proxy;
 
 import com.custom.annotations.mapper.Query;
+import com.custom.annotations.mapper.SqlMapper;
 import com.custom.annotations.mapper.SqlPath;
 import com.custom.annotations.mapper.Update;
 import com.custom.comm.BasicDao;
@@ -37,7 +38,7 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
     }
 
     private String target;
-    private DbParserFieldHandler dbParserFieldHandler = new DbParserFieldHandler();;
+    private DbParserFieldHandler dbParserFieldHandler = new DbParserFieldHandler();
 
     public SqlReaderExecuteProxy(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         super(dbDataSource, dbCustomStrategy);
@@ -68,7 +69,7 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
     */
     private Object doInvoke(Object proxy, Method method, Object[] args) throws Exception {
 
-        if (!BasicDao.class.isAssignableFrom(proxy.getClass())) {
+        if (!BasicDao.class.isAssignableFrom(method.getDeclaringClass()) && !method.getDeclaringClass().isAnnotationPresent(SqlMapper.class)) {
             throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_INHERITED_BASIC_DAO, target));
         }
 

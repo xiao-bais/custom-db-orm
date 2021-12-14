@@ -23,9 +23,21 @@ public class ConditionEntity<T> {
 
     private Class<T> cls;
 
-    public ConditionEntity() {
+    public ConditionEntity()  {
 
-//        this.tableSqlBuilder = new TableSqlBuilder<>(cls, ExecuteMethod.NONE);
+
+    }
+
+    public void init(){
+        Type type1 = getClass().getGenericSuperclass();
+        Type type = this.getClass().getGenericSuperclass();
+        if(type instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) type;
+            Type[] typeArguments = parameterizedType.getActualTypeArguments();
+            cls = (Class<T>) typeArguments[0];
+            System.out.println("cls-->" + cls.getName());
+            this.tableSqlBuilder = new TableSqlBuilder<>(cls, ExecuteMethod.NONE);
+        }
     }
 
 
