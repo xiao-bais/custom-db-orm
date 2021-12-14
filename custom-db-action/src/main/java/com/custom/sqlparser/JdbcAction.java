@@ -208,7 +208,7 @@ public class JdbcAction extends AbstractSqlBuilder {
         for (int i = arr.length - 1; i >= 0; i--) {
             String exitsTableSql = tableSqlBuilder.getExitsTableSql(arr[i]);
             long count = (long) selectObjBySql(exitsTableSql);
-            if(count > 0) {
+            if(count == 0) {
                 String createTableSql = tableSqlBuilder.geCreateTableSql();
                 execTable(createTableSql);
                 logger.info("createTableSql ->\n " + createTableSql);

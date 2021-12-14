@@ -76,13 +76,16 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
         if (method.isAnnotationPresent(Query.class)) {
             Query query = method.getAnnotation(Query.class);
             return doPrepareExecuteQuery(method, args, query.value(), query.isOrder());
+
         } else if (method.isAnnotationPresent(Update.class)) {
             Update update = method.getAnnotation(Update.class);
             return doPrepareExecuteUpdate(method, args, update.value(), update.isOrder());
+
         } else if (method.isAnnotationPresent(SqlPath.class)) {
             SqlPath sqlPath = method.getAnnotation(SqlPath.class);
             ExecuteMethod execType = sqlPath.method();
             String sql = CustomUtil.loadFiles(sqlPath.value());
+
             if (execType == ExecuteMethod.SELECT) {
                 return doPrepareExecuteQuery(method, args, sql, sqlPath.isOrder());
             } else if (execType == ExecuteMethod.UPDATE || execType == ExecuteMethod.DELETE || execType == ExecuteMethod.INSERT) {
@@ -125,13 +128,16 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
             Type type = ((ParameterizedType) returnType).getRawType();
             if (type.equals(List.class)) {
                 return query(typeArgument, sql, params);
+
             } else if (type.equals(Map.class)) {
                 return selectOneSql(HashMap.class, sql, params);
+
             } else if (type.equals(Set.class)) {
                 return querySet(typeArgument, sql, params);
             }
         } else if (CustomUtil.isBasicType(returnType)) {
             return selectOneSql(sql, params);
+
         } else if (((Class<?>) returnType).isArray()) {
             Class<?> type = ((Class<?>) returnType).getComponentType();
             return queryArray(type, sql, method.getDeclaringClass().getName(), method.getName(), params);
@@ -203,11 +209,13 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
             while (true) {
                 int[] indexes = CustomUtil.replaceSqlRex(sql, SymbolConst.PREPARE_BEGIN_REX_1, SymbolConst.PREPARE_END_REX, index);
                 if (indexes == null) break;
+
                 String text = sql.substring(indexes[0] + 2, indexes[1]);
                 if(JudgeUtilsAx.isBlank(text)) throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_PARAMS_NAME, text, logSql));
                 sql = sql.replace(sql.substring(indexes[0], indexes[1] + 1), SymbolConst.QUEST);
                 index = indexes[2] - text.length() - 2;
                 Object sqlParamsVal = paramsMap.get(text);
+
                 if (JudgeUtilsAx.isEmpty(sqlParamsVal))
                     throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_PARAMS_VALUE, text, logSql));
                 paramRes.add(sqlParamsVal);
