@@ -4,6 +4,7 @@ import com.custom.annotations.mapper.Query;
 import com.custom.annotations.mapper.SqlMapper;
 import com.custom.annotations.mapper.SqlPath;
 import com.home.customtest.entity.Employee;
+import com.home.customtest.entity.WorkEmp;
 
 import java.util.List;
 
@@ -24,5 +25,8 @@ public interface CustomTestDao {
 
     @Query(value = "select age from employee where age in (#{ages}) and emp_name = #{empName}",isOrder = true)
     List<Integer> getAges(int[] ages, String empName);
+
+    @Query("select * from employee where age in (#{emp.ageList}) and emp_name = #{emp.eName}")
+    List<Employee> getConditr(WorkEmp emp);
 
 }

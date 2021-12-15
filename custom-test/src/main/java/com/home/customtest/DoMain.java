@@ -7,8 +7,10 @@ import com.custom.proxy.SqlReaderExecuteProxy;
 import com.custom.sqlparser.CustomDao;
 import com.home.customtest.dao.CustomTestDao;
 import com.home.customtest.entity.Employee;
+import com.home.customtest.entity.WorkEmp;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -21,10 +23,6 @@ public class DoMain {
 
 
     public static void main(String[] args) throws Exception {
-
-
-
-
 
 
 
@@ -59,9 +57,11 @@ public class DoMain {
         // 以动态代理的方式来执行dao层接口的方法。类似于mybatis
         CustomTestDao customTestDao = new SqlReaderExecuteProxy(dbDataSource, dbCustomStrategy).createProxy(CustomTestDao.class);
 
-        int[] ages = {21,22,23};
-        List<Integer> ages1 = customTestDao.getAges(ages,"");
-        System.out.println("ages1 = " + ages1);
+        WorkEmp workEmp = new WorkEmp();
+        workEmp.setAgeList(Arrays.asList(21,22,23));
+        workEmp.seteName("里斯");
+        List<Employee> conditr = customTestDao.getConditr(workEmp);
+        System.out.println("conditr = " + conditr);
 
 //        String oneByCond = customTestDao.selectOneByCond(1, 21, "age");
 //        System.out.println("oneByCond = " + oneByCond);

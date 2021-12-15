@@ -108,7 +108,7 @@ public class ParameterCustomOrderParserModel {
             for (int j = 0; j < fieldNames.length; j++) {
                 String fieldName = fieldNames[j];
                 Object fieldValue = fieldVales.get(j);
-                JudgeParamsType(fieldValue.getClass(), fieldName, fieldValue);
+                JudgeParamsType(fieldValue.getClass(), String.format("%s.%s", paramName, fieldName), fieldValue);
             }
         }
         prepareSql = prepareSql.replace(signName, SymbolConst.QUEST);
@@ -118,30 +118,54 @@ public class ParameterCustomOrderParserModel {
     /**
     * 自定义sql参数提取（前步骤）
     */
-    private void prepareSqlParamsSymbol() {
-
-        for (int i = 0; i < parameterTypes.length; i++) {
-            String paramName = methodParameters[i].getName();
-            Object paramValue = params[i];
-            paramsMap.put(paramName, paramValue);
-        }
+    private void prepareSqlParamsSymbol() throws Exception {
+        handleParams();
         int index = 0;
         String sql = prepareSql;
         while (true) {
             int[] indexes = CustomUtil.replaceSqlRex(prepareSql, SymbolConst.PREPARE_BEGIN_REX_1, SymbolConst.PREPARE_END_REX, index);
             if (indexes == null) break;
 
-            String text = prepareSql.substring(indexes[0] + 2, indexes[1]);
-            if (JudgeUtilsAx.isBlank(text))
-                throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_PARAMS_NAME, text, sql));
+            String prepareName = prepareSql.substring(indexes[0] + 2, indexes[1]);
+            if (JudgeUtilsAx.isBlank(prepareName))
+                throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_PARAMS_NAME, prepareName, sql));
 
-            if (JudgeUtilsAx.isEmpty(paramsMap.get(text))) {
-                throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_PARAMS_VALUE, text, sql));
+            if(prepareName.indexOf(SymbolConst.POINT) > 0) {
+                prepareName = prepareName.substring(0, prepareName.indexOf(SymbolConst.POINT));
+            }
+            if (JudgeUtilsAx.isEmpty(paramsMap.get(prepareName))) {
+                throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_PARAMS_VALUE, prepareName, sql));
             }
             String param = prepareSql.substring(indexes[0], indexes[1] + 1);
-            String signParam = String.format(sign, text);
+            String signParam = String.format(sign, prepareName);
             prepareSql = prepareSql.replace(param, signParam);
-            index = indexes[2] - text.length() - 2;
+            index = indexes[2] - prepareName.length() - 2;
+        }
+    }
+
+
+    //Class<?> cls, String name, Object value
+    void handleParams() throws Exception {
+        for (int i = 0; i < parameterTypes.length; i++) {
+            String paramName = methodParameters[i].getName();
+            Object paramValue = params[i];
+            paramsMap.put(paramName, paramValue);
+//            if(CustomUtil.isBasicType(paramValue)) {
+//
+//            }else if(paramValue instanceof List) {
+//                paramsMap.put(paramName, paramValue);
+//            }else if(paramValue instanceof Set) {
+//                paramsMap.put(paramName, paramValue);
+//            }else if(paramValue instanceof Map) {
+//                paramsMap.putAll((Map<String,Object>)paramValue);
+//            }else {
+//                Field[] fields = CustomUtil.getFields(paramValue.getClass());
+//                String[] fieldNames = (String[]) Arrays.stream(fields).map(Field::getName).toArray();
+//                List<Object> fieldVales = new DbParserFieldHandler().getFieldsVal(paramValue, Arrays.copyOf(fieldNames, fieldNames.length, String[].class));
+//                for (String fieldName : fieldNames) {
+//                    handleParams()
+//                }
+//            }
         }
     }
 
