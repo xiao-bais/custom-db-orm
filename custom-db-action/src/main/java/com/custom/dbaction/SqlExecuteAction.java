@@ -80,6 +80,7 @@ public class SqlExecuteAction extends DbConnection {
     /**
      * 通用查询（Collection）
      */
+    @SuppressWarnings("unchecked")
     public  <T> List<T> query(Class<T> clazz, String sql, Object... params) throws Exception {
         Map<String, Object> map;
         List<T> list = new ArrayList<>();
@@ -87,11 +88,19 @@ public class SqlExecuteAction extends DbConnection {
             statementQuery(sql, params);
             resultSet = statement.executeQuery();
             ResultSetMetaData metaData = resultSet.getMetaData();
+
             while (resultSet.next()) {
-                map = new HashMap<>();
-                getResultMap(map, metaData);
-                T t = dbCustomStrategy.isUnderlineToCamel() ? JSONObject.parseObject(JSONObject.toJSONString(map), clazz)
-                        : CustomUtil.mapToObject(clazz, map);
+                T t;
+                if(CustomUtil.isBasicType(clazz)) {
+                   t = (T) resultSet.getObject(SymbolConst.DEFAULT_ONE);
+                }else {
+                    map = new HashMap<>();
+                    getResultMap(map, metaData);
+                    if(CustomUtil.isBasicType(clazz)) {}
+                    t = dbCustomStrategy.isUnderlineToCamel() ? JSONObject.parseObject(JSONObject.toJSONString(map), clazz)
+                            : CustomUtil.mapToObject(clazz, map);
+                }
+
                 list.add(t);
             }
         } catch (SQLException e) {

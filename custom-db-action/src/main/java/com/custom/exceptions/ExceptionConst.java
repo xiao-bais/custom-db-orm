@@ -147,15 +147,6 @@ public class ExceptionConst {
     */
     public final static String EX_NOT_INHERITED_BASIC_DAO = "Execution error, possibly because '%s' does not inherit basicdao or this interface is not annotated with @SqlMapper";
 
-    /**
-    * 在isOrder=true的情况下，不支持使用map或自定义类型进行参数传递
-    */
-    public final static String EX_NOT_SUPPORT_MAP_OR_CUSTOM_ENTITY_PARAMS = "When isOrder = true, it is not recommended to use 'map' or custom types for parameter passing：%s.%s()";
-
-    /**
-    * 在isOrder=false的情况下，不支持使用数组（list,array,set）类型进行参数传递
-    */
-    public final static String EX_NOT_SUPPORT_ARRAY_PARAMS = "When isOrder = false, it is not recommended to use (list,array,set) for parameter passing：%s.%s()";
 
     /**
     * 找不到sql中的参数对应的名称

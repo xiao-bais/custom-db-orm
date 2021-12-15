@@ -107,19 +107,105 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
         if(sql.contains(SymbolConst.QUEST) && !isOrder) {
             throw new CustomCheckException(methodName + ExceptionConst.EX_USE_ORDER_TRUE);
         }
-        List<Object> paramValues = this.handleParamsPrepareSql(sql, method, args, isOrder);
-        sql = String.valueOf(paramValues.get(paramValues.size() - 1));
-        paramValues.remove(sql);
-        return executeUpdate(sql, paramValues.toArray());
+        ParameterCustomOrderParserModel parameterCustomOrderParserModel = new ParameterCustomOrderParserModel(sql, method, args);
+        if(isOrder) {
+            parameterCustomOrderParserModel.prepareOrderParams();
+        }else {
+            parameterCustomOrderParserModel.prepareDisorderParams();
+        }
+        List<Object> paramValues = parameterCustomOrderParserModel.getParamResList();
+        return executeUpdate(parameterCustomOrderParserModel.getPrepareSql(), paramValues.toArray());
     }
 
+    /**
+     * 将参数中的占位符处理成‘?’
+     */
+//    private List<Object> handleParamsPrepareSql(String sql, Method method, Object[] args, boolean isOrder) throws Exception {
+//
+//        checkSqlByOrder(sql, isOrder);
+//        List<Object> paramRes = new ArrayList<>();
+//        Map<String, Object> paramsReplaces = new HashMap<>();
+//        String logSql = sql;
+//
+//        Class<?>[] parameterTypes = method.getParameterTypes();
+//        if (isOrder) {
+//
+//            for (int i = 0; i < parameterTypes.length; i++) {
+//                Class<?> type = parameterTypes[i];
+//                Object param = args[i];
+//
+//                if (CustomUtil.isBasicType(type)) {
+//                    paramRes.add(param);
+//                    paramsReplaces.put(type.getName(), param);
+//                } else if (type.equals(List.class)) {
+//                    paramRes.addAll((List<Object>) param);
+//                } else if (type.equals(Arrays.class)) {
+//                    paramRes.addAll(Collections.singletonList(param));
+//                } else if (type.equals(Set.class)) {
+//                    Set<Object> paramsSet = (Set<Object>) param;
+//                    paramRes.addAll(paramsSet);
+//                } else
+//                    throw new IllegalArgumentException(String.format(ExceptionConst.EX_NOT_SUPPORT_MAP_OR_CUSTOM_ENTITY_PARAMS, method.getDeclaringClass().getName(), method.getName()));
+//            }
+//        } else {
+//
+//            Map<Object, Object> paramsMap = new HashMap<>();
+//            Parameter[] parameters = method.getParameters();
+//            for (int i = 0; i < parameterTypes.length; i++) {
+//                Type type = parameterTypes[i];
+//                String paramName = parameters[i].getName();
+//                Object paramVal = args[i];
+//
+//                if (CustomUtil.isBasicType(type)) {
+//                    paramsMap.put(paramName, paramVal);
+//                    paramsReplaces.put(paramName, paramVal);
+//                } else if (type.equals(Map.class)) {
+//                    paramsMap.putAll((Map<?, ?>) paramVal);
+//                    paramsReplaces.putAll((Map<String, ?>) paramVal);
+//                } else if(type.equals(List.class) || type.equals(Arrays.class) || type.equals(Set.class)) {
+//                    throw new IllegalArgumentException(String.format(ExceptionConst.EX_NOT_SUPPORT_ARRAY_PARAMS, method.getDeclaringClass().getName(), method.getName()));
+//                } else {
+//                    Field[] fields = CustomUtil.getFields(paramVal.getClass());
+//                    Object[] fieldNames = Arrays.stream(fields).map(Field::getName).toArray();
+//                    List<Object> fieldVales = dbParserFieldHandler.getFieldsVal(paramVal, Arrays.copyOf(fieldNames, fieldNames.length, String[].class));
+//                    IntStream.range(0, fieldNames.length).forEach(x -> paramsMap.put(fieldNames[x], fieldVales.get(x)));
+//                    IntStream.range(0, fieldNames.length).forEach(x -> paramsReplaces.put((String) fieldNames[x], fieldVales.get(x)));
+//                }
+//            }
+//
+//            // 开始执行#{name} 替换为 ？
+//            int index = 0;
+//            while (true) {
+//                int[] indexes = CustomUtil.replaceSqlRex(sql, SymbolConst.PREPARE_BEGIN_REX_1, SymbolConst.PREPARE_END_REX, index);
+//                if (indexes == null) break;
+//                String text = sql.substring(indexes[0] + 2, indexes[1]);
+//                if(JudgeUtilsAx.isBlank(text)) throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_PARAMS_NAME, text, logSql));
+//                sql = sql.replace(sql.substring(indexes[0], indexes[1] + 1), SymbolConst.QUEST);
+//                index = indexes[2] - text.length() - 2;
+//                Object sqlParamsVal = paramsMap.get(text);
+//                if (JudgeUtilsAx.isEmpty(sqlParamsVal))
+//                    throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_PARAMS_VALUE, text, logSql));
+//                paramRes.add(sqlParamsVal);
+//            }
+//        }
+//
+//        sql = this.replaceSqlSymbol(sql, paramsReplaces);
+//        paramRes.add(sql);
+//        return paramRes;
+//    }
 
     private Object doPrepareExecuteQuery(Method method, Object[] args, String sql, boolean isOrder) throws Exception {
 
         Type returnType = method.getGenericReturnType();
-        List<Object> paramValues = this.handleParamsPrepareSql(sql, method, args, isOrder);
-        sql = String.valueOf(paramValues.get(paramValues.size() - 1));
-        paramValues.remove(sql);
+        ParameterCustomOrderParserModel parameterCustomOrderParserModel = new ParameterCustomOrderParserModel(sql, method, args);
+        if(isOrder) {
+            parameterCustomOrderParserModel.prepareOrderParams();
+        }else {
+            parameterCustomOrderParserModel.prepareDisorderParams();
+        }
+
+        List<Object> paramValues = parameterCustomOrderParserModel.getParamResList();
+        sql = parameterCustomOrderParserModel.getPrepareSql();
         Object[] params = paramValues.toArray();
 
         if (returnType instanceof ParameterizedType) {
@@ -148,106 +234,6 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
     }
 
 
-    /**
-     * 将参数中的占位符处理成‘?’
-     */
-    private List<Object> handleParamsPrepareSql(String sql, Method method, Object[] args, boolean isOrder) throws Exception {
-
-        checkSqlByOrder(sql, isOrder);
-        List<Object> paramRes = new ArrayList<>();
-        Map<String, Object> paramsReplaces = new HashMap<>();
-        String logSql = sql;
-
-        Class<?>[] parameterTypes = method.getParameterTypes();
-        if (isOrder) {
-
-            for (int i = 0; i < parameterTypes.length; i++) {
-                Class<?> type = parameterTypes[i];
-                Object param = args[i];
-
-                if (CustomUtil.isBasicType(type)) {
-                    paramRes.add(param);
-                    paramsReplaces.put(type.getName(), param);
-                } else if (type.equals(List.class)) {
-                    paramRes.addAll((List<Object>) param);
-                } else if (type.equals(Arrays.class)) {
-                    paramRes.addAll(Collections.singletonList(param));
-                } else if (type.equals(Set.class)) {
-                    Set<Object> paramsSet = (Set<Object>) param;
-                    paramRes.addAll(paramsSet);
-                } else
-                    throw new IllegalArgumentException(String.format(ExceptionConst.EX_NOT_SUPPORT_MAP_OR_CUSTOM_ENTITY_PARAMS, method.getDeclaringClass().getName(), method.getName()));
-            }
-        } else {
-
-            Map<Object, Object> paramsMap = new HashMap<>();
-            Parameter[] parameters = method.getParameters();
-            for (int i = 0; i < parameterTypes.length; i++) {
-                Type type = parameterTypes[i];
-                String paramName = parameters[i].getName();
-                Object paramVal = args[i];
-
-                if (CustomUtil.isBasicType(type)) {
-                    paramsMap.put(paramName, paramVal);
-                    paramsReplaces.put(paramName, paramVal);
-                } else if (type.equals(Map.class)) {
-                    paramsMap.putAll((Map<?, ?>) paramVal);
-                    paramsReplaces.putAll((Map<String, ?>) paramVal);
-                } else if(type.equals(List.class) || type.equals(Arrays.class) || type.equals(Set.class)) {
-                    throw new IllegalArgumentException(String.format(ExceptionConst.EX_NOT_SUPPORT_ARRAY_PARAMS, method.getDeclaringClass().getName(), method.getName()));
-                } else {
-                    Field[] fields = CustomUtil.getFields(paramVal.getClass());
-                    Object[] fieldNames = Arrays.stream(fields).map(Field::getName).toArray();
-                    List<Object> fieldVales = dbParserFieldHandler.getFieldsVal(paramVal, Arrays.copyOf(fieldNames, fieldNames.length, String[].class));
-                    IntStream.range(0, fieldNames.length).forEach(x -> paramsMap.put(fieldNames[x], fieldVales.get(x)));
-                    IntStream.range(0, fieldNames.length).forEach(x -> paramsReplaces.put((String) fieldNames[x], fieldVales.get(x)));
-                }
-            }
-
-            // 开始执行#{name} 替换为 ？
-            int index = 0;
-            while (true) {
-                int[] indexes = CustomUtil.replaceSqlRex(sql, SymbolConst.PREPARE_BEGIN_REX_1, SymbolConst.PREPARE_END_REX, index);
-                if (indexes == null) break;
-
-                String text = sql.substring(indexes[0] + 2, indexes[1]);
-                if(JudgeUtilsAx.isBlank(text)) throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_PARAMS_NAME, text, logSql));
-                sql = sql.replace(sql.substring(indexes[0], indexes[1] + 1), SymbolConst.QUEST);
-                index = indexes[2] - text.length() - 2;
-                Object sqlParamsVal = paramsMap.get(text);
-
-                if (JudgeUtilsAx.isEmpty(sqlParamsVal))
-                    throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_PARAMS_VALUE, text, logSql));
-                paramRes.add(sqlParamsVal);
-            }
-        }
-
-        sql = this.replaceSqlSymbol(sql, paramsReplaces);
-        paramRes.add(sql);
-        return paramRes;
-    }
-
-    /**
-    * 将${name} 替换为 `name`的值
-    */
-    private String replaceSqlSymbol(String sql, Map<String, Object> paramsMap) {
-
-        if(!sql.contains(SymbolConst.PREPARE_BEGIN_REX_2)) {
-            return sql;
-        }
-        int index = 0;
-        while (true){
-            int[] indexes = CustomUtil.replaceSqlRex(sql, SymbolConst.PREPARE_BEGIN_REX_2, SymbolConst.PREPARE_END_REX, index);
-            if (indexes == null) break;
-            String text = sql.substring(indexes[0] + 2, indexes[1]);
-            Object param = paramsMap.get(text);
-            if(JudgeUtilsAx.isEmpty(param)) {
-                throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_PARAMS_NAME, text, sql));
-            }
-            sql = sql.replace(sql.substring(indexes[0], indexes[1] + 1), param.toString());
-        }
-        return sql;
-    }
 
     //todo... 将规则判断迁移至此
     private void checkSqlByOrder(String sql, boolean isOrder){

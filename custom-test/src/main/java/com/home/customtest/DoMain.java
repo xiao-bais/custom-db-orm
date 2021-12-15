@@ -58,46 +58,53 @@ public class DoMain {
 
         // 以动态代理的方式来执行dao层接口的方法。类似于mybatis
         CustomTestDao customTestDao = new SqlReaderExecuteProxy(dbDataSource, dbCustomStrategy).createProxy(CustomTestDao.class);
-        String oneByCond = customTestDao.selectOneByCond(1, 21, "age");
-        System.out.println("oneByCond = " + oneByCond);
 
-        Employee employee = customTestDao.selectByOne(21);
-        System.out.println("employee = " + employee);
+        int[] ages = {21,22,23};
+        List<Integer> ages1 = customTestDao.getAges(ages,"");
+        System.out.println("ages1 = " + ages1);
+
+//        String oneByCond = customTestDao.selectOneByCond(1, 21, "age");
+//        System.out.println("oneByCond = " + oneByCond);
+//
+//        Employee employee = customTestDao.selectByOne(21);
+//        System.out.println("employee = " + employee);
+
+
 
 
 
         // JdbcDao/CustomDao 两个dao的功能几乎一模一样 不同的在于注解的解析方式
-        JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
-        CustomDao customDao = new CustomDao(dbDataSource, dbCustomStrategy);
-
-        Employee employee1 = new Employee();
-        employee1.setAddress("混哪呢");
-        employee1.setId(2);
-
-        customDao.updateByKey(employee1);
-
-
-        List<Employee> list = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            Employee e = new Employee();
-            e.setEmpName("员-工bb-"+i);
-            e.setSex(i % 2 == 1);
-            e.setAddress("bbbb->" + i);
-            e.setAge(24-i);
-            e.setAreaId(i);
-            e.setDeptId(2);
-            e.setBirthday(new Date());
-            e.setState(0);
-            list.add(e);
-        }
-
-        // 插入多条记录
-        jdbcDao.insert(list);
-
-
-        // 一般查询
-        List<Employee> list1 = jdbcDao.selectList(Employee.class, " and a.age > 20");
-        System.out.println("list1 = " + list1);
+//        JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
+//        CustomDao customDao = new CustomDao(dbDataSource, dbCustomStrategy);
+//
+//        Employee employee1 = new Employee();
+//        employee1.setAddress("混哪呢");
+//        employee1.setId(2);
+//
+//        customDao.updateByKey(employee1);
+//
+//
+//        List<Employee> list = new ArrayList<>();
+//        for (int i = 0; i < 5; i++) {
+//            Employee e = new Employee();
+//            e.setEmpName("员-工bb-"+i);
+//            e.setSex(i % 2 == 1);
+//            e.setAddress("bbbb->" + i);
+//            e.setAge(24-i);
+//            e.setAreaId(i);
+//            e.setDeptId(2);
+//            e.setBirthday(new Date());
+//            e.setState(0);
+//            list.add(e);
+//        }
+//
+//        // 插入多条记录
+//        jdbcDao.insert(list);
+//
+//
+//        // 一般查询
+//        List<Employee> list1 = jdbcDao.selectList(Employee.class, " and a.age > 20");
+//        System.out.println("list1 = " + list1);
 
 
     }

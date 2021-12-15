@@ -5,6 +5,8 @@ import com.custom.annotations.mapper.SqlMapper;
 import com.custom.annotations.mapper.SqlPath;
 import com.home.customtest.entity.Employee;
 
+import java.util.List;
+
 /**
  * @Author Xiao-Bai
  * @Date 2021/11/29 12:57
@@ -19,5 +21,8 @@ public interface CustomTestDao {
 
     @SqlPath(value = "/sql/selectOne.sql", isOrder = true)
     Employee selectByOne(int age);
+
+    @Query(value = "select age from employee where age in (#{ages}) and emp_name = #{empName}",isOrder = true)
+    List<Integer> getAges(int[] ages, String empName);
 
 }

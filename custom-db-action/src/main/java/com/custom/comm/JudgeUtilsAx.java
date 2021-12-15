@@ -2,6 +2,7 @@ package com.custom.comm;
 
 import com.custom.dbconfig.DbCustomStrategy;
 
+import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Map;
 
@@ -25,25 +26,23 @@ public class JudgeUtilsAx {
         if(el == null) return true;
 
         if(el instanceof String)
-            return isEmpty(el.toString());
+            return isEmpty(el.toString().trim());
 
         if(el instanceof CharSequence)
             return ((CharSequence) el).length() == 0;
 
         if(el instanceof Collection)
-            return ((Collection) el).isEmpty();
+            return ((Collection<?>) el).isEmpty();
 
         if (el instanceof Map)
-            return ((Map) el).isEmpty();
+            return ((Map<?,?>) el).isEmpty();
 
-        if (el instanceof Object[]) {
-            Object[] object = (Object[]) el;
-            if (object.length == 0) {
-                return true;
-            }
+        if (el.getClass().isArray()) {
+            int len = Array.getLength(el);
+            if(len == 0) return true;
             boolean empty = true;
-            for (int i = 0; i < object.length; i++) {
-                if (!isEmpty(object[i])) {
+            for (int i = 0; i < len; i++) {
+                if (!isEmpty(Array.get(el, i))) {
                     empty = false;
                     break;
                 }

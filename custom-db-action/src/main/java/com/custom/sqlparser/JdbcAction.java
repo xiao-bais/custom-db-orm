@@ -134,10 +134,10 @@ public class JdbcAction extends AbstractSqlBuilder {
         TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<>(t, ExecuteMethod.DELETE);
         String deleteSql;
         if(JudgeUtilsAx.isNotEmpty(getLogicDeleteUpdateSql())) {
-            deleteSql = String.format(" update %s %s set %s.%s where %s.%s %s", tableSqlBuilder.getTable(), tableSqlBuilder.getAlias(),
+            deleteSql = String.format("update %s %s set %s.%s where %s.%s %s", tableSqlBuilder.getTable(), tableSqlBuilder.getAlias(),
                     tableSqlBuilder.getAlias(), getLogicDeleteUpdateSql(), tableSqlBuilder.getAlias(), getLogicDeleteQuerySql(), condition);
         }else {
-            deleteSql = String.format(" delete from %s %s where 1 = 1 %s", tableSqlBuilder.getTable(), tableSqlBuilder.getAlias(), condition);
+            deleteSql = String.format("delete from %s %s where 1 = 1 %s", tableSqlBuilder.getTable(), tableSqlBuilder.getAlias(), condition);
         }
         return executeSql(deleteSql, params);
     }
