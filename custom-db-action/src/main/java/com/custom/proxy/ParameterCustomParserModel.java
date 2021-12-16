@@ -5,7 +5,6 @@ import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
-import com.custom.handler.DbAnnotationsParserHandler;
 import com.custom.handler.DbParserFieldHandler;
 import lombok.extern.slf4j.Slf4j;
 
@@ -14,16 +13,18 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * @Author Xiao-Bai
  * @Date 2021/12/15 11:06
- * @Desc：sql参数化解析
+ * @Desc：sql自定义参数化解析
  **/
 @Slf4j
-public class ParameterCustomOrderParserModel {
+@SuppressWarnings("unchecked")
+public class ParameterCustomParserModel {
 
 
     /**
@@ -32,9 +33,9 @@ public class ParameterCustomOrderParserModel {
     public void prepareDisorderParams() throws Exception {
         // 参数化-直接编译 ${name} 替换为name的值
         replaceSqlSymbol();
-        // 参数化-前预编译 #{name} 替换为 @name@
+        // 参数化-前期-预编译 #{name} 替换为 @name@
         prepareSqlParamsSymbol();
-        // 参数化-后预编译 @name@ 替换为?
+        // 参数化-后期-预编译 @name@ 替换为?
         prepareAfterSqlParamsSymbol();
     }
 
@@ -43,14 +44,12 @@ public class ParameterCustomOrderParserModel {
     * order=true的预编译sql
     */
     public void prepareOrderParams() {
-        for (int i = 0; i < parameterTypes.length; i++) {
-            Class<?> type = parameterTypes[i];
-            Object param = params[i];
-
+        for (Object param : params) {
+            Class<?> type = param.getClass();
             if (CustomUtil.isBasicType(type)) {
                 paramResList.add(param);
-            } else throw new IllegalArgumentException(String.format("Illegal parameter method: %s.%s(), only basic type parameters are allowed when order = true", method.getDeclaringClass().getName(), method.getName()));
-
+            } else
+                throw new IllegalArgumentException(String.format("Illegal parameter method: %s.%s(), only basic type parameters are allowed when order = true", method.getDeclaringClass().getName(), method.getName()));
         }
 
     }
@@ -61,57 +60,63 @@ public class ParameterCustomOrderParserModel {
      * 参数预编译化（后步骤）
      */
     private void prepareAfterSqlParamsSymbol() throws Exception {
-        for (int i = 0; i < parameterTypes.length; i++) {
-            Class<?> type = parameterTypes[i];
+        for (int i = 0; i < methodParameters.length; i++) {
             String paramName = methodParameters[i].getName();
             Object paramValue = params[i];
             if(JudgeUtilsAx.isEmpty(paramValue))
-                throw new CustomCheckException("params '" + paramName + "' is Empty");
-            JudgeParamsType(type, paramName, paramValue);
+                throw new CustomCheckException("Parameter '" + paramName + "' cannot be empty");
+            JudgeTypeAndSetterSymbolParams(paramName, paramValue);
         }
     }
 
 
-    @SuppressWarnings("unchecked")
-    private void JudgeParamsType(Class<?> type, String paramName, Object paramValue) throws Exception {
-        String signName = String.format(sign, paramName);
-        if (CustomUtil.isBasicType(type)) {
-            paramResList.add(paramValue);
+    /**
+    *
+    */
+    private void JudgeTypeAndSetterSymbolParams(String paramName, Object paramValue) throws Exception {
 
-        } else if (type.equals(List.class)) {
+        String regex = ".*@*@*";
+        Matcher matcher = Pattern.compile(regex).matcher(prepareSql);
+        if(!matcher.find()) return;
+
+        String signName = String.format(sign, paramName);
+        StringJoiner symbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+        if (CustomUtil.isBasicType(paramValue.getClass())) {
+            paramResList.add(paramValue);
+            symbol.add(SymbolConst.QUEST);
+
+        } else if (paramValue instanceof List) {
             List<Object> paramsForList = (List<Object>) paramValue;
-            paramsForList = paramsForList.stream().filter(CustomUtil::isBasicType).collect(Collectors.toList());
-            StringJoiner symbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+            paramsForList = paramsForList.stream().filter(x -> CustomUtil.isBasicType(x.getClass())).collect(Collectors.toList());
             paramsForList.forEach(x -> symbol.add(SymbolConst.QUEST));
             paramResList.addAll(paramsForList);
 
-        } else if (type.isArray()) {
+        } else if (paramValue.getClass().isArray()) {
             int length = Array.getLength(paramValue);
-            StringJoiner symbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
             for (int j = 0; j < length; j++) {
                 symbol.add(SymbolConst.QUEST);
                 paramResList.add(Array.get(paramValue, j));
             }
 
-        } else if (type.equals(Set.class)) {
+        }
+        else if (paramValue instanceof Set) {
             Set<Object> paramsSet = (Set<Object>) paramValue;
-            paramsSet = paramsSet.stream().filter(CustomUtil::isBasicType).collect(Collectors.toSet());
-            StringJoiner symbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+            paramsSet = paramsSet.stream().filter(x -> CustomUtil.isBasicType(x.getClass())).collect(Collectors.toSet());
             paramsSet.forEach(x -> symbol.add(SymbolConst.QUEST));
             paramResList.addAll(paramsSet);
         }
         // 最终只剩下自定义的实体类
         else {
-            Field[] fields = CustomUtil.getFields(type);
-            String[] fieldNames = (String[]) Arrays.stream(fields).map(Field::getName).toArray();
-            List<Object> fieldVales = new DbParserFieldHandler().getFieldsVal(paramValue, Arrays.copyOf(fieldNames, fieldNames.length, String[].class));
-            for (int j = 0; j < fieldNames.length; j++) {
-                String fieldName = fieldNames[j];
+            Field[] fields = CustomUtil.getFields(paramValue.getClass());
+            List<String> fieldNames = Arrays.stream(fields).map(Field::getName).collect(Collectors.toList());
+            List<Object> fieldVales = new DbParserFieldHandler().getFieldsVal(paramValue, fieldNames.toArray(new String[0]));
+            for (int j = 0; j < fieldNames.size(); j++) {
+                String fieldName = fieldNames.get(j);
                 Object fieldValue = fieldVales.get(j);
-                JudgeParamsType(fieldValue.getClass(), String.format("%s.%s", paramName, fieldName), fieldValue);
+                JudgeTypeAndSetterSymbolParams(String.format("%s.%s", paramName, fieldName), fieldValue);
             }
         }
-        prepareSql = prepareSql.replace(signName, SymbolConst.QUEST);
+        prepareSql = prepareSql.replace(signName, symbol.toString());
     }
 
 
@@ -119,7 +124,11 @@ public class ParameterCustomOrderParserModel {
     * 自定义sql参数提取（前步骤）
     */
     private void prepareSqlParamsSymbol() throws Exception {
-        handleParams();
+        for (int i = 0; i < methodParameters.length; i++) {
+            String paramName = methodParameters[i].getName();
+            Object paramValue = params[i];
+            handleParamMaps(paramName, paramValue);
+        }
         int index = 0;
         String sql = prepareSql;
         while (true) {
@@ -130,10 +139,7 @@ public class ParameterCustomOrderParserModel {
             if (JudgeUtilsAx.isBlank(prepareName))
                 throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_PARAMS_NAME, prepareName, sql));
 
-            if(prepareName.indexOf(SymbolConst.POINT) > 0) {
-                prepareName = prepareName.substring(0, prepareName.indexOf(SymbolConst.POINT));
-            }
-            if (JudgeUtilsAx.isEmpty(paramsMap.get(prepareName))) {
+            if (JudgeUtilsAx.isEmpty(paramsMap.get(String.format(sign, prepareName)))) {
                 throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_PARAMS_VALUE, prepareName, sql));
             }
             String param = prepareSql.substring(indexes[0], indexes[1] + 1);
@@ -144,28 +150,36 @@ public class ParameterCustomOrderParserModel {
     }
 
 
-    //Class<?> cls, String name, Object value
-    void handleParams() throws Exception {
-        for (int i = 0; i < parameterTypes.length; i++) {
-            String paramName = methodParameters[i].getName();
-            Object paramValue = params[i];
-            paramsMap.put(paramName, paramValue);
-//            if(CustomUtil.isBasicType(paramValue)) {
-//
-//            }else if(paramValue instanceof List) {
-//                paramsMap.put(paramName, paramValue);
-//            }else if(paramValue instanceof Set) {
-//                paramsMap.put(paramName, paramValue);
-//            }else if(paramValue instanceof Map) {
-//                paramsMap.putAll((Map<String,Object>)paramValue);
-//            }else {
-//                Field[] fields = CustomUtil.getFields(paramValue.getClass());
-//                String[] fieldNames = (String[]) Arrays.stream(fields).map(Field::getName).toArray();
-//                List<Object> fieldVales = new DbParserFieldHandler().getFieldsVal(paramValue, Arrays.copyOf(fieldNames, fieldNames.length, String[].class));
-//                for (String fieldName : fieldNames) {
-//                    handleParams()
-//                }
-//            }
+
+    /**
+    * 处理参数映射
+    */
+    private void handleParamMaps(String paramName, Object paramValue) throws Exception {
+
+        if(JudgeUtilsAx.isEmpty(paramValue)) throw new CustomCheckException(String.format("Parameter '%s' cannot be empty", paramName));
+        if(CustomUtil.isBasicType(paramValue.getClass())
+            || paramValue instanceof List || paramValue instanceof Set) {
+            paramsMap.put(String.format(sign, paramName), paramValue);
+
+        } else if(paramValue instanceof Map) {
+            Map<String, Object> objectMap = (Map<String, Object>) paramValue;
+            objectMap.forEach((k, v) ->{
+                try {
+                    handleParamMaps(String.format("%s.%s", paramName, k), v);
+                } catch (Exception e) {
+                    log.info(e.getMessage(), e);
+                }
+            });
+
+        }else {
+            Field[] fields = CustomUtil.getFields(paramValue.getClass());
+            List<String> fieldNames = Arrays.stream(fields).map(Field::getName).collect(Collectors.toList());
+            List<Object> fieldVales = new DbParserFieldHandler().getFieldsVal(paramValue, fieldNames.toArray(new String[0]));
+            for (int j = 0; j < fieldNames.size(); j++) {
+                String fieldName = fieldNames.get(j);
+                Object fieldValue = fieldVales.get(j);
+                handleParamMaps(String.format("%s.%s", paramName, fieldName), fieldValue);
+            }
         }
     }
 
@@ -199,19 +213,16 @@ public class ParameterCustomOrderParserModel {
 
     private Map<String, Object> paramsMap;
 
-    private Class<?>[] parameterTypes;
-
     private Parameter[] methodParameters;
 
     private Object[] params;
 
     private final String sign = "@%s@";
 
-    public ParameterCustomOrderParserModel(String prepareSql, Method method, Object[] params){
+    public ParameterCustomParserModel(String prepareSql, Method method, Object[] params){
         this.method = method;
         this.prepareSql = prepareSql;
         this.methodParameters = method.getParameters();
-        this.parameterTypes = method.getParameterTypes();
         this.params = params;
         this.paramResList = new ArrayList<>();
         this.paramsMap = new HashMap<>();

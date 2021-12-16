@@ -12,7 +12,17 @@ public class WorkEmp {
 
     private List<Integer> ageList = new ArrayList<>();
 
-    private String eName;
+    private String empName;
+
+    private int age;
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
 
     public List<Integer> getAgeList() {
         return ageList;
@@ -22,11 +32,11 @@ public class WorkEmp {
         this.ageList = ageList;
     }
 
-    public String geteName() {
-        return eName;
+    public String getEmpName() {
+        return empName;
     }
 
-    public void seteName(String eName) {
-        this.eName = eName;
+    public void setEmpName(String empName) {
+        this.empName = empName;
     }
 }

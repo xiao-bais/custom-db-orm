@@ -26,7 +26,7 @@ public interface CustomTestDao {
     @Query(value = "select age from employee where age in (#{ages}) and emp_name = #{empName}",isOrder = true)
     List<Integer> getAges(int[] ages, String empName);
 
-    @Query("select * from employee where age in (#{emp.ageList}) and emp_name = #{emp.eName}")
+    @Query("select * from employee where age in (#{emp.ageList}) and emp_name = #{emp.empName}")
     List<Employee> getConditr(WorkEmp emp);
 
 }

@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @Author Xiao-Bai
@@ -24,7 +26,10 @@ public class DoMain {
 
     public static void main(String[] args) throws Exception {
 
-
+        String regex = "[@]\\w+[@]";
+        String sql = "aaaa @vvv@ puji";
+        Matcher matcher = Pattern.compile(regex).matcher(sql);
+        System.out.println("matcher.matches() = " + matcher.matches());
 
 
 //            int a = 15, b = 27;
@@ -48,20 +53,25 @@ public class DoMain {
         dbDataSource.setPassword("123456");
 
         DbCustomStrategy dbCustomStrategy = new DbCustomStrategy();
-        dbCustomStrategy.setSqlOutPrinting(true);
+//        dbCustomStrategy.setSqlOutPrinting(true);
 //        dbCustomStrategy.setUnderlineToCamel(true);
         dbCustomStrategy.setDbFieldDeleteLogic("state");
         dbCustomStrategy.setDeleteLogicValue("1");
         dbCustomStrategy.setNotDeleteLogicValue("0");
 
         // 以动态代理的方式来执行dao层接口的方法。类似于mybatis
-        CustomTestDao customTestDao = new SqlReaderExecuteProxy(dbDataSource, dbCustomStrategy).createProxy(CustomTestDao.class);
+//        CustomTestDao customTestDao = new SqlReaderExecuteProxy(dbDataSource, dbCustomStrategy).createProxy(CustomTestDao.class);
+//
+//        WorkEmp workEmp = new WorkEmp();
+//
+//        workEmp.setAgeList(Arrays.asList(21,23,24));
+//        workEmp.setEmpName("员工-3");
+//        workEmp.setAge(55);
+//        for (int i = 0; i < 10; i++) {
+//            List<Employee> conditr = customTestDao.getConditr(workEmp);
+//        }
 
-        WorkEmp workEmp = new WorkEmp();
-        workEmp.setAgeList(Arrays.asList(21,22,23));
-        workEmp.seteName("里斯");
-        List<Employee> conditr = customTestDao.getConditr(workEmp);
-        System.out.println("conditr = " + conditr);
+//        System.out.println("conditr = " + conditr);
 
 //        String oneByCond = customTestDao.selectOneByCond(1, 21, "age");
 //        System.out.println("oneByCond = " + oneByCond);

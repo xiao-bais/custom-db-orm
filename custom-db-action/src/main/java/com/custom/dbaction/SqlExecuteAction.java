@@ -96,11 +96,9 @@ public class SqlExecuteAction extends DbConnection {
                 }else {
                     map = new HashMap<>();
                     getResultMap(map, metaData);
-                    if(CustomUtil.isBasicType(clazz)) {}
                     t = dbCustomStrategy.isUnderlineToCamel() ? JSONObject.parseObject(JSONObject.toJSONString(map), clazz)
                             : CustomUtil.mapToObject(clazz, map);
                 }
-
                 list.add(t);
             }
         } catch (SQLException e) {
