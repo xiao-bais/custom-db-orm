@@ -38,6 +38,6 @@ public interface CustomTestDao {
     Employee getEmpInfoBySet(Set<Integer> opSet);
 
     @Query("select age from employee where age in (#{arr})")
-    int[] getEmpInfoByArray(int[] arr);
+    Integer[] getEmpInfoByArray(int[] arr);
 
 }

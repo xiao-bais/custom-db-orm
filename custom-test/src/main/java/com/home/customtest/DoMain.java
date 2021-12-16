@@ -88,7 +88,7 @@ public class DoMain {
 
 
         int[] arr = {21,22,23};
-        int[] empInfoByArray = customTestDao.getEmpInfoByArray(arr);
+        Integer[] empInfoByArray = customTestDao.getEmpInfoByArray(arr);
         System.out.println("empInfoByArray = " + Arrays.toString(empInfoByArray));
 
 
