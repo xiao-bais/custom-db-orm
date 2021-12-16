@@ -137,7 +137,7 @@ public class SqlExecuteAction extends DbConnection {
      */
     @SuppressWarnings("unchecked")
     public  <T> T[] queryArray(Class<T> t, String sql, String className, String methodName, Object... params) throws Exception {
-        T[] resEntity;
+        Object res;
         try {
             statementQuery2(sql, params);
             resultSet = statement.executeQuery();
@@ -151,13 +151,15 @@ public class SqlExecuteAction extends DbConnection {
                 throw new CustomCheckException(ExceptionConst.EX_QUERY_ARRAY_RESULT);
             }
 
-            resEntity = (T[]) Array.newInstance(t, rowsCount);
+            res = Array.newInstance(t, rowsCount);
             int len = 0;
             while (this.resultSet.next()) {
-                T object = (T) this.resultSet.getObject(1);
-                resEntity[len] = object;
+                T val = (T) this.resultSet.getObject(1);
+                Array.set(res, len, val);
                 len++;
             }
+            //todo... 泛型数组无法实例化后返回 办法1-> 测试 GenericArray工具实例化
+            return (T[])res;
         } catch (SQLException e) {
             new SqlOutPrintBuilder(sql, params).sqlErrPrint();
             throw e;
@@ -167,7 +169,6 @@ public class SqlExecuteAction extends DbConnection {
             }
             throw e;
         }
-        return resEntity;
     }
 
     /**

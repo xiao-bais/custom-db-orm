@@ -9,10 +9,7 @@ import com.home.customtest.dao.CustomTestDao;
 import com.home.customtest.entity.Employee;
 import com.home.customtest.entity.WorkEmp;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,10 +23,10 @@ public class DoMain {
 
     public static void main(String[] args) throws Exception {
 
-        String regex = "[@]\\w+[@]";
-        String sql = "aaaa @vvv@ puji";
-        Matcher matcher = Pattern.compile(regex).matcher(sql);
-        System.out.println("matcher.matches() = " + matcher.matches());
+//        String regex = "[@]\\w[@]";
+//        String sql = "aaaa @vvv@ puji";
+//        Matcher matcher = Pattern.compile(regex).matcher(sql);
+//        System.out.println("matcher.matches() = " + matcher.matches());
 
 
 //            int a = 15, b = 27;
@@ -53,34 +50,46 @@ public class DoMain {
         dbDataSource.setPassword("123456");
 
         DbCustomStrategy dbCustomStrategy = new DbCustomStrategy();
-//        dbCustomStrategy.setSqlOutPrinting(true);
+        dbCustomStrategy.setSqlOutPrinting(true);
 //        dbCustomStrategy.setUnderlineToCamel(true);
         dbCustomStrategy.setDbFieldDeleteLogic("state");
         dbCustomStrategy.setDeleteLogicValue("1");
         dbCustomStrategy.setNotDeleteLogicValue("0");
 
         // 以动态代理的方式来执行dao层接口的方法。类似于mybatis
-//        CustomTestDao customTestDao = new SqlReaderExecuteProxy(dbDataSource, dbCustomStrategy).createProxy(CustomTestDao.class);
-//
-//        WorkEmp workEmp = new WorkEmp();
-//
-//        workEmp.setAgeList(Arrays.asList(21,23,24));
-//        workEmp.setEmpName("员工-3");
-//        workEmp.setAge(55);
-//        for (int i = 0; i < 10; i++) {
-//            List<Employee> conditr = customTestDao.getConditr(workEmp);
-//        }
+        CustomTestDao customTestDao = new SqlReaderExecuteProxy(dbDataSource, dbCustomStrategy).createProxy(CustomTestDao.class);
 
+        WorkEmp workEmp = new WorkEmp();
+
+//        workEmp.setAgeList(Arrays.asList(21,22,24));
+//        workEmp.setEmpName("里斯");
+//        workEmp.setAge(55);
+//        List<Employee> conditr = customTestDao.getConditr(workEmp);
 //        System.out.println("conditr = " + conditr);
 
 //        String oneByCond = customTestDao.selectOneByCond(1, 21, "age");
 //        System.out.println("oneByCond = " + oneByCond);
-//
+////
 //        Employee employee = customTestDao.selectByOne(21);
 //        System.out.println("employee = " + employee);
 
+//        Map<String, String> map = new HashMap<>();
+//        map.put("age", "23");
+//        map.put("name", "湖南");
+//        Employee empInfoByMap = customTestDao.getEmpInfoByMap(map);
+//        System.out.println("empInfoByMap = " + empInfoByMap);
+
+//        Set<Integer> empSets = new HashSet<>();
+//        empSets.add(21);
+//        empSets.add(25);
+//        empSets.add(22);
+//        Employee empInfoBySet = customTestDao.getEmpInfoBySet(empSets);
+//        System.out.println("empInfoBySet = " + empInfoBySet);
 
 
+        int[] arr = {21,22,23};
+        int[] empInfoByArray = customTestDao.getEmpInfoByArray(arr);
+        System.out.println("empInfoByArray = " + Arrays.toString(empInfoByArray));
 
 
         // JdbcDao/CustomDao 两个dao的功能几乎一模一样 不同的在于注解的解析方式

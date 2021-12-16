@@ -31,10 +31,11 @@ public class ParameterCustomParserModel {
     * order=false的预编译sql
     */
     public void prepareDisorderParams() throws Exception {
-        // 参数化-直接编译 ${name} 替换为name的值
-        replaceSqlSymbol();
+
         // 参数化-前期-预编译 #{name} 替换为 @name@
         prepareSqlParamsSymbol();
+        // 参数化-直接编译 ${name} 替换为name的值
+        replaceSqlSymbol();
         // 参数化-后期-预编译 @name@ 替换为?
         prepareAfterSqlParamsSymbol();
     }
@@ -75,9 +76,10 @@ public class ParameterCustomParserModel {
     */
     private void JudgeTypeAndSetterSymbolParams(String paramName, Object paramValue) throws Exception {
 
-        String regex = ".*@*@*";
-        Matcher matcher = Pattern.compile(regex).matcher(prepareSql);
-        if(!matcher.find()) return;
+        if(!prepareSql.contains("{@")) return;
+//        String regex = ".*@*@*";
+//        Matcher matcher = Pattern.compile(regex).matcher(prepareSql);
+//        if(!matcher.find()) return;
 
         String signName = String.format(sign, paramName);
         StringJoiner symbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
@@ -91,7 +93,17 @@ public class ParameterCustomParserModel {
             paramsForList.forEach(x -> symbol.add(SymbolConst.QUEST));
             paramResList.addAll(paramsForList);
 
-        } else if (paramValue.getClass().isArray()) {
+        } else if (paramValue instanceof Map) {
+            Map<?,?> paramsForMap = (Map<?,?>) paramValue;
+            paramsForMap.forEach((k, v) -> {
+                try {
+                    JudgeTypeAndSetterSymbolParams(String.format("%s.%s", paramName, k), v);
+                } catch (Exception e) {
+                    log.error(e.getMessage(), e);
+                }
+            });
+
+        }else if (paramValue.getClass().isArray()) {
             int length = Array.getLength(paramValue);
             for (int j = 0; j < length; j++) {
                 symbol.add(SymbolConst.QUEST);
@@ -100,10 +112,10 @@ public class ParameterCustomParserModel {
 
         }
         else if (paramValue instanceof Set) {
-            Set<Object> paramsSet = (Set<Object>) paramValue;
-            paramsSet = paramsSet.stream().filter(x -> CustomUtil.isBasicType(x.getClass())).collect(Collectors.toSet());
-            paramsSet.forEach(x -> symbol.add(SymbolConst.QUEST));
-            paramResList.addAll(paramsSet);
+            Set<Object> paramsForSet = (Set<Object>) paramValue;
+            paramsForSet = paramsForSet.stream().filter(x -> CustomUtil.isBasicType(x.getClass())).collect(Collectors.toSet());
+            paramsForSet.forEach(x -> symbol.add(SymbolConst.QUEST));
+            paramResList.addAll(paramsForSet);
         }
         // 最终只剩下自定义的实体类
         else {
@@ -130,7 +142,6 @@ public class ParameterCustomParserModel {
             handleParamMaps(paramName, paramValue);
         }
         int index = 0;
-        String sql = prepareSql;
         while (true) {
             int[] indexes = CustomUtil.replaceSqlRex(prepareSql, SymbolConst.PREPARE_BEGIN_REX_1, SymbolConst.PREPARE_END_REX, index);
             if (indexes == null) break;
@@ -158,7 +169,7 @@ public class ParameterCustomParserModel {
 
         if(JudgeUtilsAx.isEmpty(paramValue)) throw new CustomCheckException(String.format("Parameter '%s' cannot be empty", paramName));
         if(CustomUtil.isBasicType(paramValue.getClass())
-            || paramValue instanceof List || paramValue instanceof Set) {
+            || paramValue instanceof List || paramValue instanceof Set || paramValue.getClass().isArray()) {
             paramsMap.put(String.format(sign, paramName), paramValue);
 
         } else if(paramValue instanceof Map) {
@@ -195,12 +206,12 @@ public class ParameterCustomParserModel {
         while (true){
             int[] indexes = CustomUtil.replaceSqlRex(prepareSql, SymbolConst.PREPARE_BEGIN_REX_2, SymbolConst.PREPARE_END_REX, index);
             if (indexes == null) break;
-            String text = prepareSql.substring(indexes[0] + 2, indexes[1]);
-            Object param = paramsMap.get(text);
-            if(JudgeUtilsAx.isEmpty(param)) {
-                throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_PARAMS_NAME, text, prepareSql));
+            String name = prepareSql.substring(indexes[0] + 2, indexes[1]);
+            Object paramName = paramsMap.get(String.format(sign, name));
+            if(JudgeUtilsAx.isEmpty(paramName)) {
+                throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_PARAMS_NAME, name, sql));
             }
-            prepareSql = prepareSql.replace(prepareSql.substring(indexes[0], indexes[1] + 1), param.toString());
+            prepareSql = prepareSql.replace(prepareSql.substring(indexes[0], indexes[1] + 1), paramName.toString());
         }
     }
 
@@ -208,6 +219,8 @@ public class ParameterCustomParserModel {
     private Method method;
 
     private String prepareSql;
+
+    private String sql;
 
     private List<Object> paramResList;
 
@@ -217,11 +230,12 @@ public class ParameterCustomParserModel {
 
     private Object[] params;
 
-    private final String sign = "@%s@";
+    private final String sign = "{@%s@}";
 
     public ParameterCustomParserModel(String prepareSql, Method method, Object[] params){
         this.method = method;
         this.prepareSql = prepareSql;
+        this.sql = prepareSql;
         this.methodParameters = method.getParameters();
         this.params = params;
         this.paramResList = new ArrayList<>();

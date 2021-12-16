@@ -7,6 +7,8 @@ import com.home.customtest.entity.Employee;
 import com.home.customtest.entity.WorkEmp;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @Author Xiao-Bai
@@ -26,7 +28,16 @@ public interface CustomTestDao {
     @Query(value = "select age from employee where age in (#{ages}) and emp_name = #{empName}",isOrder = true)
     List<Integer> getAges(int[] ages, String empName);
 
-    @Query("select * from employee where age in (#{emp.ageList}) and emp_name = #{emp.empName}")
+    @Query("select emp_name empName from employee where age in (#{emp.ageList}) and emp_name = #{emp.empName}")
     List<Employee> getConditr(WorkEmp emp);
+
+    @Query("select * from employee where 1=1 and address like concat('%', #{searchMap.name}, '%')")
+    Employee getEmpInfoByMap(Map<String, String> searchMap);
+
+    @Query("select * from employee where age in (#{opSet})")
+    Employee getEmpInfoBySet(Set<Integer> opSet);
+
+    @Query("select age from employee where age in (#{arr})")
+    int[] getEmpInfoByArray(int[] arr);
 
 }

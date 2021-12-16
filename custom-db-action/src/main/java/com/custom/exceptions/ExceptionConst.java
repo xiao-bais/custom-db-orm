@@ -140,12 +140,12 @@ public class ExceptionConst {
     /**
     * 该方法上未找到@Query 或 @Update 或 @SqlPath注解
     */
-    public final static String EX_NOT_FOUND_ANNO__SQL_READ = "The '@Update' or '@Query' annotation was not found on the method : %s";
+    public final static String EX_NOT_FOUND_ANNO__SQL_READ = "The '@Update' or '@Query' annotation was not found on the method : %s.%s()";
 
     /**
     * 未继承BasicDao
     */
-    public final static String EX_NOT_INHERITED_BASIC_DAO = "Execution error, possibly because '%s' does not inherit basicdao or this interface is not annotated with @SqlMapper";
+    public final static String EX_NOT_INHERITED_BASIC_DAO = "Execution error, possibly because '%s' does not inherit com.custom.comm.BasicDao or this interface is not annotated with @SqlMapper";
 
 
     /**

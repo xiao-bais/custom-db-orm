@@ -89,7 +89,7 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
             }
             return null;
         }
-        throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_ANNO__SQL_READ, method.getName()));
+        throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_ANNO__SQL_READ, target, method.getName()));
     }
 
 
@@ -121,6 +121,7 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
     * 执行查询代理
     */
     private Object doPrepareExecuteQuery(Method method, Object[] args, String sql, boolean isOrder) throws Exception {
+        checkIllegalParam(isOrder, sql);
         Type returnType = method.getGenericReturnType();
         ParameterCustomParserModel parameterCustomParserModel = new ParameterCustomParserModel(sql, method, args);
         if(isOrder) {
@@ -152,10 +153,41 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
         } else if (((Class<?>) returnType).isArray()) {
             Class<?> type = ((Class<?>) returnType).getComponentType();
             return queryArray(type, sql, method.getDeclaringClass().getName(), method.getName(), params);
+        }else {
+            String typeName = returnType.getTypeName();
+            Class<?> cls = Class.forName(typeName);
+            List<?> resultList = query(cls, sql, params);
+            if(resultList.isEmpty()) {
+                return null;
+            }else if(resultList.size() > SymbolConst.DEFAULT_ONE) {
+                throw new CustomCheckException(String.format(ExceptionConst.EX_QUERY_MORE_RESULT, resultList.size()));
+            }else {
+                return resultList.get(SymbolConst.DEFAULT_ZERO);
+            }
         }
-        String typeName = returnType.getTypeName();
-        Class<?> cls = Class.forName(typeName);
-        return selectOneSql(cls, sql, params);
+        return null;
     }
+
+    /**
+     * 检验参数合法性
+     */
+    private void checkIllegalParam(boolean isOrder, String sql) {
+
+
+        if(sql.contains(SymbolConst.PREPARE_BEGIN_REX_1) && sql.contains(SymbolConst.QUEST)) {
+            log.error("if isOrder=true，only allow used \"?\"  when isOrder=false only allow used \"#{}\" set parameter");
+            throw new CustomCheckException(String.format(ExceptionConst.EX_UNABLE_TO_RESOLVE_SQL, sql));
+        }
+        if(isOrder) {
+            if(sql.contains(SymbolConst.PREPARE_BEGIN_REX_1)) {
+                throw new CustomCheckException(ExceptionConst.EX_USE_ORDER_FALSE);
+            }
+        }else {
+            if(sql.contains(SymbolConst.QUEST)) {
+                throw new CustomCheckException(ExceptionConst.EX_USE_ORDER_TRUE);
+            }
+        }
+    }
+
 
 }
