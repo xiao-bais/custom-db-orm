@@ -85,7 +85,7 @@ public class SqlParamsCheckProxy<T> implements MethodInterceptor {
         if(objects[0] instanceof List) {
             insertParam = ((List<Object>) objects[0]).get(0);
         }
-        else if(!insertParam.getClass().isAnnotationPresent(DbTable.class)) {
+        if(!insertParam.getClass().isAnnotationPresent(DbTable.class)) {
             throw new CustomCheckException(ExceptionConst.EX_DBTABLE__NOTFOUND + insertParam.getClass().getName());
         }
     }
