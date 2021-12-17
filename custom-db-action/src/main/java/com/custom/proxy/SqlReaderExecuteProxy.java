@@ -97,8 +97,8 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
     * 执行更新代理
     */
     private Object doPrepareExecuteUpdate(Method method, Object[] args, String sql, boolean isOrder) throws Exception {
-
         String methodName = String.format(" %s.%s() ", method.getDeclaringClass().getName(), method.getName());
+        checkIllegalParam(methodName, isOrder, sql);
 
         if(sql.contains(SymbolConst.PREPARE_BEGIN_REX_1) && isOrder) {
             throw new CustomCheckException(methodName + ExceptionConst.EX_USE_ORDER_FALSE);
@@ -122,7 +122,8 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
     * 执行查询代理
     */
     private Object doPrepareExecuteQuery(Method method, Object[] args, String sql, boolean isOrder) throws Exception {
-        checkIllegalParam(isOrder, sql);
+        String methodName = String.format(" %s.%s() ", method.getDeclaringClass().getName(), method.getName());
+        checkIllegalParam(methodName, isOrder, sql);
         Type returnType = method.getGenericReturnType();
         // 自定义-参数预编译
         ParameterCustomParserModel parameterCustomParserModel = new ParameterCustomParserModel(sql, method, args);
@@ -174,19 +175,21 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
     /**
      * 检验参数合法性
      */
-    private void checkIllegalParam(boolean isOrder, String sql) {
-
+    private void checkIllegalParam(String methodName, boolean isOrder, String sql) {
 
         if(sql.contains(SymbolConst.PREPARE_BEGIN_REX_1) && sql.contains(SymbolConst.QUEST)) {
             log.error("if isOrder=true，only allow used \"?\"  when isOrder=false only allow used \"#{}\" set parameter");
+            log.error("Error Method ==> {}", methodName);
             throw new CustomCheckException(String.format(ExceptionConst.EX_UNABLE_TO_RESOLVE_SQL, sql));
         }
         if(isOrder) {
             if(sql.contains(SymbolConst.PREPARE_BEGIN_REX_1)) {
+                log.error("Error Method ==> {}", methodName);
                 throw new CustomCheckException(ExceptionConst.EX_USE_ORDER_FALSE);
             }
         }else {
             if(sql.contains(SymbolConst.QUEST)) {
+                log.error("Error Method ==> {}", methodName);
                 throw new CustomCheckException(ExceptionConst.EX_USE_ORDER_TRUE);
             }
         }

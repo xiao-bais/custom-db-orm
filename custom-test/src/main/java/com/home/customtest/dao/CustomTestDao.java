@@ -47,4 +47,10 @@ public interface CustomTestDao {
     @Update("update employee set age = #{age}, address = #{address}, dept_id = #{dept} where emp_name = #{name}")
     int updateEmp(int age, String name, String address, int dept);
 
+    @Update(value = "insert into employee(emp_name,address,age) values(?,?,?)", isOrder = true)
+    int saveEmp(String name, String addr, int age);
+
+    @Update(value = "insert into employee(emp_name,address,age) values(#{name}, #{address}, #{age})", isOrder = true)
+    int saveEmp2(String name, String addr, int age);
+
 }

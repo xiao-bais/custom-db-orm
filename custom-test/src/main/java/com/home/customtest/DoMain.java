@@ -94,7 +94,9 @@ public class DoMain {
 //        Map<String, Object> empInfoByMap = customTestDao.getEmpInfoByMap(21, "湖南长沙");
 //        System.out.println("empInfoByMap = " + empInfoByMap.toString());
 
-        int i = customTestDao.updateEmp(25, "张三", "湖南邵阳", 3);
+//        int i = customTestDao.updateEmp(25, "张三", "湖南邵阳", 3);
+
+        int i = customTestDao.saveEmp2("王海", "吉林长春", 22);
 
 
         // JdbcDao/CustomDao 两个dao的功能几乎一模一样 不同的在于注解的解析方式
