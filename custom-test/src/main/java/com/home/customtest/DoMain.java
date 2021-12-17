@@ -59,8 +59,7 @@ public class DoMain {
         // 以动态代理的方式来执行dao层接口的方法。类似于mybatis
         CustomTestDao customTestDao = new SqlReaderExecuteProxy(dbDataSource, dbCustomStrategy).createProxy(CustomTestDao.class);
 
-        WorkEmp workEmp = new WorkEmp();
-
+//        WorkEmp workEmp = new WorkEmp();
 //        workEmp.setAgeList(Arrays.asList(21,22,24));
 //        workEmp.setEmpName("里斯");
 //        workEmp.setAge(55);
