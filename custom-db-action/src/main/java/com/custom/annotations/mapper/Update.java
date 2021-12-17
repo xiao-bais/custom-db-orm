@@ -14,7 +14,9 @@ import java.lang.annotation.*;
 public @interface Update {
 
     /**
-     * 示例sql：update set name = #{name} where id = #{id}
+     * 示例sql1：update employee set name = #{name} where id = #{id}
+     * 示例sql2：delete from employee where name = #{name}
+     * 示例sql3：insert into employee(name, address) values(#{name},  #{address})
      */
     String value();
 

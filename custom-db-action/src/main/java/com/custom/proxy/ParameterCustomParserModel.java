@@ -61,14 +61,16 @@ public class ParameterCustomParserModel {
     /**
      * 参数预编译化（后步骤）
      */
-    private void prepareAfterSqlParamsSymbol() throws Exception {
-        for (int i = 0; i < methodParameters.length; i++) {
-            String paramName = methodParameters[i].getName();
-            Object paramValue = params[i];
-            if(JudgeUtilsAx.isEmpty(paramValue))
-                throw new CustomCheckException("Parameter '" + paramName + "' cannot be empty");
-            JudgeTypeAndSetterSymbolParams(paramName, paramValue);
-        }
+    private void prepareAfterSqlParamsSymbol() {
+        basicParamsMap.forEach((String k, Object v) ->{
+            if(JudgeUtilsAx.isEmpty(v))
+                throw new CustomCheckException("Parameter '" + k + "' cannot be empty");
+            try {
+                JudgeTypeAndSetterSymbolParams(k, v);
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+            }
+        });
     }
 
 
@@ -156,6 +158,11 @@ public class ParameterCustomParserModel {
             if (JudgeUtilsAx.isEmpty(paramsMap.get(String.format(sign, prepareName)))) {
                 throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_PARAMS_VALUE, prepareName, sql));
             }
+
+            if(basicParamsMap.get(prepareName) == null) {
+                basicParamsMap.put(prepareName, paramsMap.get(String.format(sign, prepareName)));
+            }
+
             String param = prepareSql.substring(indexes[0], indexes[1] + 1);
             String signParam = String.format(sign, prepareName);
             prepareSql = prepareSql.replace(param, signParam);
@@ -230,6 +237,8 @@ public class ParameterCustomParserModel {
 
     private Map<String, Object> paramsMap;
 
+    private Map<String, Object> basicParamsMap;
+
     private Parameter[] methodParameters;
 
     private Object[] params;
@@ -244,6 +253,7 @@ public class ParameterCustomParserModel {
         this.params = params;
         this.paramResList = new ArrayList<>();
         this.paramsMap = new HashMap<>();
+        this.basicParamsMap = new LinkedHashMap<>();
     }
 
     public String getPrepareSql() {

@@ -45,7 +45,7 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
     public Object invoke(Object proxy, Method method, Object[] args) throws Exception {
 
         if(method.getName().equals("toString")) {
-            return this + "";
+            return this.toString();
         }
         Object result;
         try {

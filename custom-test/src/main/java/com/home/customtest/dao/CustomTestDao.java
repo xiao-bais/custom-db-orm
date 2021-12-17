@@ -3,6 +3,7 @@ package com.home.customtest.dao;
 import com.custom.annotations.mapper.Query;
 import com.custom.annotations.mapper.SqlMapper;
 import com.custom.annotations.mapper.SqlPath;
+import com.custom.annotations.mapper.Update;
 import com.home.customtest.entity.Employee;
 import com.home.customtest.entity.WorkEmp;
 
@@ -42,5 +43,8 @@ public interface CustomTestDao {
 
     @Query(value = "select * from employee where age = ? and address = ?",isOrder = true)
     Map<String, Object> getEmpInfoByMap(int age, String addr);
+
+    @Update("update employee set age = #{age}, address = #{address}, dept_id = #{dept} where emp_name = #{name}")
+    int updateEmp(int age, String name, String address, int dept);
 
 }
