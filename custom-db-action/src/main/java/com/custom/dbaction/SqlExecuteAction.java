@@ -137,7 +137,6 @@ public class SqlExecuteAction extends DbConnection {
      */
     @SuppressWarnings("unchecked")
     public  <T> T[] queryArray(Class<T> t, String sql, String className, String methodName, Object... params) throws Exception {
-        Object res;
         try {
             statementQuery2(sql, params);
             resultSet = statement.executeQuery();
@@ -151,7 +150,7 @@ public class SqlExecuteAction extends DbConnection {
                 throw new CustomCheckException(ExceptionConst.EX_QUERY_ARRAY_RESULT);
             }
 
-            res = Array.newInstance(t, rowsCount);
+            Object res = Array.newInstance(t, rowsCount);
             int len = 0;
             while (this.resultSet.next()) {
                 T val = (T) this.resultSet.getObject(1);
