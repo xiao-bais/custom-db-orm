@@ -32,17 +32,18 @@ public class ParameterCustomParserModel {
     */
     public void prepareDisorderParams() throws Exception {
 
-        // 参数化-前期-预编译 #{name} 替换为 @name@
+        // 参数化-前期-预编译 #{name} 替换为 {@name@}
         prepareSqlParamsSymbol();
-        // 参数化-直接编译 ${name} 替换为name的值
+        // 参数化-直接替换 ${name} 替换为name的值
         replaceSqlSymbol();
-        // 参数化-后期-预编译 @name@ 替换为?
+        // 参数化-后期-预编译 {@name@} 替换为?
         prepareAfterSqlParamsSymbol();
     }
 
 
     /**
     * order=true的预编译sql
+     * 只允许基本类型的参数值
     */
     public void prepareOrderParams() {
         for (Object param : params) {
@@ -72,8 +73,9 @@ public class ParameterCustomParserModel {
 
 
     /**
-    *
+    * 判断参数类型，并开始将参数的位置以'?'代替
     */
+    // todo... 待优化 将{@name@} 的格式，以正则表达式去判断，现在这种方式比较死板
     private void JudgeTypeAndSetterSymbolParams(String paramName, Object paramValue) throws Exception {
 
         if(!prepareSql.contains("{@")) return;
@@ -142,6 +144,7 @@ public class ParameterCustomParserModel {
             handleParamMaps(paramName, paramValue);
         }
         int index = 0;
+        // todo... 待优化 以正则表达式的格式来匹配参数的位置，以便替换
         while (true) {
             int[] indexes = CustomUtil.replaceSqlRex(prepareSql, SymbolConst.PREPARE_BEGIN_REX_1, SymbolConst.PREPARE_END_REX, index);
             if (indexes == null) break;
@@ -178,7 +181,7 @@ public class ParameterCustomParserModel {
                 try {
                     handleParamMaps(String.format("%s.%s", paramName, k), v);
                 } catch (Exception e) {
-                    log.info(e.getMessage(), e);
+                    log.error(e.getMessage(), e);
                 }
             });
 
@@ -202,6 +205,7 @@ public class ParameterCustomParserModel {
         if(!prepareSql.contains(SymbolConst.PREPARE_BEGIN_REX_2)) {
             return;
         }
+        // todo... 待优化 以正则表达式的格式来匹配参数的位置，以便替换
         int index = 0;
         while (true){
             int[] indexes = CustomUtil.replaceSqlRex(prepareSql, SymbolConst.PREPARE_BEGIN_REX_2, SymbolConst.PREPARE_END_REX, index);

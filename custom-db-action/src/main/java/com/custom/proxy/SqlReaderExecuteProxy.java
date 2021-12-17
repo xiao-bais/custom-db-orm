@@ -106,6 +106,7 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
         if(sql.contains(SymbolConst.QUEST) && !isOrder) {
             throw new CustomCheckException(methodName + ExceptionConst.EX_USE_ORDER_TRUE);
         }
+        // 自定义-参数预编译
         ParameterCustomParserModel parameterCustomParserModel = new ParameterCustomParserModel(sql, method, args);
         if(isOrder) {
             parameterCustomParserModel.prepareOrderParams();
@@ -123,6 +124,7 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
     private Object doPrepareExecuteQuery(Method method, Object[] args, String sql, boolean isOrder) throws Exception {
         checkIllegalParam(isOrder, sql);
         Type returnType = method.getGenericReturnType();
+        // 自定义-参数预编译
         ParameterCustomParserModel parameterCustomParserModel = new ParameterCustomParserModel(sql, method, args);
         if(isOrder) {
             parameterCustomParserModel.prepareOrderParams();
@@ -134,6 +136,7 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
         sql = parameterCustomParserModel.getPrepareSql();
         Object[] params = paramValues.toArray();
 
+        // 判断查询后的返回类型
         if (returnType instanceof ParameterizedType) {
             ParameterizedType pt = (ParameterizedType) returnType;
             Class<?> typeArgument = (Class<?>) pt.getActualTypeArguments()[0];
@@ -142,7 +145,7 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
                 return query(typeArgument, sql, params);
 
             } else if (type.equals(Map.class)) {
-                return selectOneSql(HashMap.class, sql, params);
+                return selectOneSql(Map.class, sql, params);
 
             } else if (type.equals(Set.class)) {
                 return querySet(typeArgument, sql, params);

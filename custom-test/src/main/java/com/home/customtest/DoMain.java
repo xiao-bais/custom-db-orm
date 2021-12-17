@@ -86,9 +86,13 @@ public class DoMain {
 //        System.out.println("empInfoBySet = " + empInfoBySet);
 
 
-        int[] arr = {21,22,23};
-        Integer[] empInfoByArray = customTestDao.getEmpInfoByArray(arr);
-        System.out.println("empInfoByArray = " + Arrays.toString(empInfoByArray));
+//        int[] arr = {21,22,23};
+//        Integer[] empInfoByArray = customTestDao.getEmpInfoByArray(arr);
+//        System.out.println("empInfoByArray = " + Arrays.toString(empInfoByArray));
+
+
+        Map<String, Object> empInfoByMap = customTestDao.getEmpInfoByMap(21, "湖南长沙");
+        System.out.println("empInfoByMap = " + empInfoByMap.toString());
 
 
         // JdbcDao/CustomDao 两个dao的功能几乎一模一样 不同的在于注解的解析方式

@@ -40,4 +40,7 @@ public interface CustomTestDao {
     @Query("select age from employee where age in (#{arr})")
     Integer[] getEmpInfoByArray(int[] arr);
 
+    @Query(value = "select * from employee where age = ? and address = ?",isOrder = true)
+    Map<String, Object> getEmpInfoByMap(int age, String addr);
+
 }
