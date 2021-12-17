@@ -14,7 +14,8 @@ import java.lang.annotation.*;
 public @interface DbMap {
 
     /**
-     * 映射的字段 例如：a.name
+     * 关联表映射的字段 例如：example：‘left join employee emp on emp.id = a.emp_id’
+     * value=emp.name
      */
     String value();
 }

@@ -7,7 +7,7 @@ import java.lang.annotation.*;
 /**
  * @Author Xiao-Bai
  * @Date 2021/11/25 15:33
- * @Desc：
+ * @Desc：适用于dao层动态代理方法上使用
  **/
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
