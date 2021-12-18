@@ -8,6 +8,7 @@ import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.ParameterizedType;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -16,15 +17,19 @@ import java.util.stream.Stream;
  * @Date 2021/12/13 9:23
  * @Desc：条件构造器抽象接口
  **/
-public abstract class AbstractWrapper {
+public abstract class AbstractWrapper<T, Children> {
 
 
-    public abstract void adapter(DbSymbol dbSymbol, String column, Object val);
-    public abstract void adapter(DbSymbol dbSymbol, boolean condition, String column, Object val);
-    public abstract void adapter(DbSymbol dbSymbol, boolean condition, String column, Object val1, Object val2);
-    public abstract void adapter(DbSymbol dbSymbol, boolean condition, String column, Object val, String express);
+    public abstract Children adapter(DbSymbol dbSymbol, String column, Object val);
+    public abstract Children adapter(DbSymbol dbSymbol, boolean condition, String column, Object val);
+    public abstract Children adapter(DbSymbol dbSymbol, boolean condition, String column, Object val1, Object val2);
+    public abstract Children adapter(DbSymbol dbSymbol, boolean condition, String column, Object val, String express);
 
 
+    @SuppressWarnings("unchecked")
+    public Class<T> getTClass(){
+        return (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+    }
 
     /**
     * 适配各种sql条件的拼接

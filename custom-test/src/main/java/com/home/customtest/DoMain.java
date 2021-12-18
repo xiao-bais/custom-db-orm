@@ -1,12 +1,16 @@
 package com.home.customtest;
 
+import com.custom.comm.page.DbPageRows;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
+import com.custom.enums.DbSymbol;
 import com.custom.handler.JdbcDao;
 import com.custom.proxy.SqlReaderExecuteProxy;
 import com.custom.sqlparser.CustomDao;
+import com.custom.wrapper.ConditionEntity;
 import com.home.customtest.dao.CustomTestDao;
 import com.home.customtest.entity.Employee;
+import com.home.customtest.entity.EmployeeTemp;
 import com.home.customtest.entity.WorkEmp;
 
 import java.util.*;
@@ -30,16 +34,16 @@ public class DoMain {
 
 
 //            int a = 15, b = 27;
-//            ConditionEntity<Employee> conditionEntity = objectConditionEntity
+//            ConditionEntity<Employee> conditionEntity = new ConditionEntity<Employee>(){};
 //                    .where(DbSymbol.GREATER_THAN, true, "addr", "1232", null, null)
 //                    .where(DbSymbol.BETWEEN, true, "age", a, b, null)
 //                    .where(DbSymbol.LESS_THAN, true, "age", 30, null, null)
 //                    .where(DbSymbol.EQUALS, true, "address", "张接不到", null, null)
 //                    .where(DbSymbol.LIKE, true, "name", "k", null, "'%?%'")
 //                    .where(DbSymbol.ORDER_BY, true, null, "id desc, name asc", null, null);
-//
-//            String and = objectConditionEntity.and(conditionEntity.toString());
-//            System.out.println("and = " + and);
+
+//            String and = conditionEntity.and(conditionEntity.toString());
+//            System.out.println("conditionEntity = " + conditionEntity);
 
 
 
@@ -57,7 +61,7 @@ public class DoMain {
         dbCustomStrategy.setNotDeleteLogicValue("0");
 
         // 以动态代理的方式来执行dao层接口的方法。类似于mybatis
-        CustomTestDao customTestDao = new SqlReaderExecuteProxy(dbDataSource, dbCustomStrategy).createProxy(CustomTestDao.class);
+//        CustomTestDao customTestDao = new SqlReaderExecuteProxy(dbDataSource, dbCustomStrategy).createProxy(CustomTestDao.class);
 
 //        WorkEmp workEmp = new WorkEmp();
 //        workEmp.setAgeList(Arrays.asList(21,22,24));
@@ -96,12 +100,17 @@ public class DoMain {
 
 //        int i = customTestDao.updateEmp(25, "张三", "湖南邵阳", 3);
 
-        int i = customTestDao.saveEmp2("王海", "吉林长春", 22);
+//        int i = customTestDao.saveEmp2("王海", "吉林长春", 22);
 
 
         // JdbcDao/CustomDao 两个dao的功能几乎一模一样 不同的在于注解的解析方式
 //        JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
 //        CustomDao customDao = new CustomDao(dbDataSource, dbCustomStrategy);
+        JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
+
+
+
+        jdbcDao.createTables(EmployeeTemp.class);
 //
 //        Employee employee1 = new Employee();
 //        employee1.setAddress("混哪呢");
@@ -125,13 +134,24 @@ public class DoMain {
 //        }
 //
 //        // 插入多条记录
-//        jdbcDao.insert(list);
+//        customDao.insert(list);
 //
 //
 //        // 一般查询
-//        List<Employee> list1 = jdbcDao.selectList(Employee.class, " and a.age > 20");
+//        List<Employee> list1 = customDao.selectList(Employee.class, " and a.age > ?", 20);
 //        System.out.println("list1 = " + list1);
-
+//
+//        DbPageRows<Employee> dbPageRows = customDao.selectPageRows(Employee.class, " and a.name = ?", new DbPageRows<Employee>().setPageIndex(1).setPageSize(10), "张三");
+//        System.out.println("dbPageRows = " + dbPageRows);
+//
+//
+//        List<Employee> employeeList = customDao.selectListByKeys(Employee.class, Arrays.asList(21, 23));
+//
+//        Employee employee = new Employee();
+//        employee.setEmpName("张三");
+//        employee.setAddress("西雅图");
+//        employee.setAge(28);
+//        customDao.insert(employee);
 
     }
 }
