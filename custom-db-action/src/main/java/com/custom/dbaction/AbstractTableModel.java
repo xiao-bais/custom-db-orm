@@ -37,6 +37,7 @@ public abstract class AbstractTableModel<T> {
      * fieldName: 字段名称
      */
     protected Object getFieldValue(T x, String fieldName) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+        if(x == null) throw  new NullPointerException();
         Object value;
         String firstLetter;
         String getter;

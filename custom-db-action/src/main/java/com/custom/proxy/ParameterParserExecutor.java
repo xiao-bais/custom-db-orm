@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  **/
 @Slf4j
 @SuppressWarnings("unchecked")
-public class ParameterCustomParserModel {
+public class ParameterParserExecutor {
 
 
     /**
@@ -245,7 +245,7 @@ public class ParameterCustomParserModel {
 
     private final String sign = "{@%s@}";
 
-    public ParameterCustomParserModel(String prepareSql, Method method, Object[] params){
+    public ParameterParserExecutor(String prepareSql, Method method, Object[] params){
         this.method = method;
         this.prepareSql = prepareSql;
         this.sql = prepareSql;

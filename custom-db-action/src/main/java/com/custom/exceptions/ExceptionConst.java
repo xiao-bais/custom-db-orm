@@ -123,11 +123,6 @@ public class ExceptionConst {
     public final static String EX_LOGIC_EMPTY_VALUE = " The corresponding value of the logical deletion field is not configured ";
 
     /**
-    * 未指定执行jdbc实体类
-    */
-    public final static String EX_JDBC_ENTITY_NOT_SPECIFIED = " The entity class to execute JDBC is not specified";
-
-    /**
     * 基于主键查询时，未指定主键的值
     */
     public final static String EX_PRIMARY_KEY_NOT_SPECIFIED = "The value of the primary key is not specified when querying based on the primary key";

@@ -61,7 +61,7 @@ public class DoMain {
         dbCustomStrategy.setNotDeleteLogicValue("0");
 
         // 以动态代理的方式来执行dao层接口的方法。类似于mybatis
-//        CustomTestDao customTestDao = new SqlReaderExecuteProxy(dbDataSource, dbCustomStrategy).createProxy(CustomTestDao.class);
+        CustomTestDao customTestDao = new SqlReaderExecuteProxy(dbDataSource, dbCustomStrategy).createProxy(CustomTestDao.class);
 
 //        WorkEmp workEmp = new WorkEmp();
 //        workEmp.setAgeList(Arrays.asList(21,22,24));
@@ -105,12 +105,12 @@ public class DoMain {
 
         // JdbcDao/CustomDao 两个dao的功能几乎一模一样 不同的在于注解的解析方式
 //        JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
-//        CustomDao customDao = new CustomDao(dbDataSource, dbCustomStrategy);
-        JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
+        CustomDao customDao = new CustomDao(dbDataSource, dbCustomStrategy);
+//        JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
 
 
 
-        jdbcDao.createTables(EmployeeTemp.class);
+//        jdbcDao.createTables(EmployeeTemp.class);
 //
 //        Employee employee1 = new Employee();
 //        employee1.setAddress("混哪呢");
@@ -147,11 +147,8 @@ public class DoMain {
 //
 //        List<Employee> employeeList = customDao.selectListByKeys(Employee.class, Arrays.asList(21, 23));
 //
-//        Employee employee = new Employee();
-//        employee.setEmpName("张三");
-//        employee.setAddress("西雅图");
-//        employee.setAge(28);
-//        customDao.insert(employee);
+        List<EmployeeTemp> employeeTemps = customDao.selectList(EmployeeTemp.class, null);
+        System.out.println("employeeTemps = " + employeeTemps);
 
     }
 }

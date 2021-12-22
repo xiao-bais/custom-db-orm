@@ -7,6 +7,7 @@ import com.custom.dbaction.AbstractTableModel;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.DbMediaType;
 import com.custom.enums.KeyStrategy;
+import com.custom.exceptions.CustomCheckException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,10 +79,13 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
     }
 
     public Object getValue() {
+        if(t == null) throw new NullPointerException();
         try {
             this.value = getFieldValue(t, key);
         }catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
             logger.error(e.getMessage(), e);
+            return null;
+        }catch (NullPointerException npe) {
             return null;
         }
         return value;
@@ -116,6 +120,9 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
                 break;
             case INPUT:
                 key = getValue();
+                if(key == null) {
+                    throw new CustomCheckException("The value of the primary key is empty");
+                }
                 break;
         }
         return key;

@@ -107,14 +107,14 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
             throw new CustomCheckException(methodName + ExceptionConst.EX_USE_ORDER_TRUE);
         }
         // 自定义-参数预编译
-        ParameterCustomParserModel parameterCustomParserModel = new ParameterCustomParserModel(sql, method, args);
+        ParameterParserExecutor parameterParserExecutor = new ParameterParserExecutor(sql, method, args);
         if(isOrder) {
-            parameterCustomParserModel.prepareOrderParams();
+            parameterParserExecutor.prepareOrderParams();
         }else {
-            parameterCustomParserModel.prepareDisorderParams();
+            parameterParserExecutor.prepareDisorderParams();
         }
-        List<Object> paramValues = parameterCustomParserModel.getParamResList();
-        return executeUpdate(parameterCustomParserModel.getPrepareSql(), paramValues.toArray());
+        List<Object> paramValues = parameterParserExecutor.getParamResList();
+        return executeUpdate(parameterParserExecutor.getPrepareSql(), paramValues.toArray());
     }
 
 
@@ -126,15 +126,15 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
         checkIllegalParam(methodName, isOrder, sql);
         Type returnType = method.getGenericReturnType();
         // 自定义-参数预编译
-        ParameterCustomParserModel parameterCustomParserModel = new ParameterCustomParserModel(sql, method, args);
+        ParameterParserExecutor parameterParserExecutor = new ParameterParserExecutor(sql, method, args);
         if(isOrder) {
-            parameterCustomParserModel.prepareOrderParams();
+            parameterParserExecutor.prepareOrderParams();
         }else {
-            parameterCustomParserModel.prepareDisorderParams();
+            parameterParserExecutor.prepareDisorderParams();
         }
 
-        List<Object> paramValues = parameterCustomParserModel.getParamResList();
-        sql = parameterCustomParserModel.getPrepareSql();
+        List<Object> paramValues = parameterParserExecutor.getParamResList();
+        sql = parameterParserExecutor.getPrepareSql();
         Object[] params = paramValues.toArray();
 
         // 判断查询后的返回类型

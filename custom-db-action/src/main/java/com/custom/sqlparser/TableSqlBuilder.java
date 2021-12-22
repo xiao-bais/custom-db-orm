@@ -275,18 +275,6 @@ public class TableSqlBuilder<T> {
     }
 
 
-    public TableSqlBuilder(Class<T> cls, ExecuteMethod method) {
-        this.cls = cls;
-        DbTable annotation = cls.getAnnotation(DbTable.class);
-        this.alias = annotation.alias();
-        this.table = annotation.table();
-        if(method != ExecuteMethod.NONE) {
-            this.fields = CustomUtil.getFields(this.cls);
-        }
-        initTableBuild(method);
-    }
-
-
     /**
      * 初始化
      */
@@ -319,6 +307,17 @@ public class TableSqlBuilder<T> {
 
     public TableSqlBuilder() {}
 
+    public TableSqlBuilder(Class<T> cls, ExecuteMethod method) {
+        this.cls = cls;
+        DbTable annotation = cls.getAnnotation(DbTable.class);
+        this.alias = annotation.alias();
+        this.table = annotation.table();
+        if(method != ExecuteMethod.NONE) {
+            this.fields = CustomUtil.getFields(this.cls);
+        }
+        initTableBuild(method);
+    }
+
     public TableSqlBuilder(T t, boolean isBuildUpdateModels) {
         this.t = t;
         this.list = new ArrayList<>();
@@ -348,7 +347,7 @@ public class TableSqlBuilder<T> {
         if (joinTables != null) {
             Arrays.stream(joinTables.value()).map(DbJoinTable::value).forEach(joinTableParserModels::add);
         }
-        Field[] fields = CustomUtil.getFields(this.cls);
+        Field[] fields = this.fields == null ? CustomUtil.getFields(this.cls) : this.fields;
         for (Field field : fields) {
             if (field.isAnnotationPresent(DbRelated.class)) {
                 DbRelationParserModel<T> relatedParserModel = new DbRelationParserModel<>(this.cls, field, this.table, this.alias);
@@ -374,7 +373,7 @@ public class TableSqlBuilder<T> {
     private void buildUpdateModels(boolean isBuildUpdateModels) {
         for (Field field : fields) {
             if (field.isAnnotationPresent(DbKey.class) && keyParserModel == null) {
-                keyParserModel = new DbKeyParserModel<>(field, this.table, this.alias);
+                keyParserModel = new DbKeyParserModel<>(t, field, this.table, this.alias);
 
             } else if (field.isAnnotationPresent(DbField.class) && isBuildUpdateModels) {
                 DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(t, field, this.table, this.alias);

@@ -53,12 +53,11 @@ public class SqlParamsCheckProxy<T> implements MethodInterceptor {
         if(annotation == null) {
             return methodProxy.invokeSuper(o, objects);
         }
-        if(JudgeUtilsAx.isEmpty(objects[0])) {
-            throw new CustomCheckException(ExceptionConst.EX_JDBC_ENTITY_NOT_SPECIFIED);
-        }
+        if(JudgeUtilsAx.isEmpty(objects[0])) throw new NullPointerException();
+
         ExecuteMethod target = annotation.target();
         switch (target) {
-            // 当执行插入方法时进行参数的预检查
+            // 对当前执行方法进行参数的预检查
             case INSERT:
                 this.insert(objects);
                 break;

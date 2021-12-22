@@ -3,6 +3,7 @@ package com.home.customtest.entity;
 import com.custom.annotations.DbField;
 import com.custom.annotations.DbKey;
 import com.custom.annotations.DbTable;
+import com.custom.enums.KeyStrategy;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,8 +22,8 @@ import java.util.Date;
 public class EmployeeTemp {
 
 
-    @DbKey
-    private int id;
+    @DbKey(strategy = KeyStrategy.INPUT)
+    private String id;
 
     @DbField("emp_name")
     private String empName;
