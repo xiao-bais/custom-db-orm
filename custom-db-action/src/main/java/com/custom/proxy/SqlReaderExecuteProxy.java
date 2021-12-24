@@ -65,7 +65,8 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
     */
     private Object doInvoke(Object proxy, Method method, Object[] args) throws Exception {
 
-        if (!BasicDao.class.isAssignableFrom(method.getDeclaringClass()) && !method.getDeclaringClass().isAnnotationPresent(SqlMapper.class)) {
+        Class<?> execClass = method.getDeclaringClass();
+        if (!BasicDao.class.isAssignableFrom(execClass) && !execClass.isAnnotationPresent(SqlMapper.class)) {
             throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_INHERITED_BASIC_DAO, target));
         }
 
