@@ -245,7 +245,7 @@ public class TableSqlBuilder<T> {
         }
 
         // 第四步 拼接主表
-        selectSql.append(String.format("select %s\n from `%s` %s\n", baseFieldSql.toString(), this.table, this.alias));
+        selectSql.append(String.format("select %s\n from `%s` %s", baseFieldSql.toString(), this.table, this.alias));
 
         // 第五步 拼接以joinTables方式的关联条件
         if (!joinTableParserModels.isEmpty()) {

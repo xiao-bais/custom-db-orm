@@ -147,7 +147,7 @@ public class DoMain {
 //
 //        List<Employee> employeeList = customDao.selectListByKeys(Employee.class, Arrays.asList(21, 23));
 //
-        List<EmployeeTemp> employeeTemps = customDao.selectList(EmployeeTemp.class, null);
+        List<Employee> employeeTemps = customDao.selectList(Employee.class, null);
         System.out.println("employeeTemps = " + employeeTemps);
 
     }
