@@ -149,13 +149,13 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
         keyFieldSql.append(this.dbMediaType.getType())
                 .append(SymbolConst.BRACKETS_LEFT)
                 .append(this.length)
-                .append(SymbolConst.BRACKETS_RIGHT).append(" ");
+                .append(SymbolConst.BRACKETS_RIGHT).append(" PRIMARY KEY ");
 
         if(this.strategy == KeyStrategy.AUTO)
-            keyFieldSql.append("AUTO_INCREMENT ");
+            keyFieldSql.append(" AUTO_INCREMENT ");
 
-        keyFieldSql.append("NOT NULL").append(" ")
-                .append(String.format("COMMENT '%s'", this.desc));
+        keyFieldSql.append(" NOT NULL ")
+                .append(String.format(" COMMENT '%s'", this.desc));
         return keyFieldSql.toString();
     }
 

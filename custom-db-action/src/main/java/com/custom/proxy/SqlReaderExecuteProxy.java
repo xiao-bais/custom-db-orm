@@ -83,6 +83,7 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
             ExecuteMethod execType = sqlPath.method();
             String sql = CustomUtil.loadFiles(sqlPath.value());
 
+
             if (execType == ExecuteMethod.SELECT) {
                 return doPrepareExecuteQuery(method, args, sql, sqlPath.isOrder());
             } else if (execType == ExecuteMethod.UPDATE || execType == ExecuteMethod.DELETE || execType == ExecuteMethod.INSERT) {

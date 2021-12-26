@@ -110,7 +110,7 @@ public class DoMain {
 
 
 
-//        jdbcDao.createTables(EmployeeTemp.class);
+        customDao.createTables(EmployeeTemp.class);
 //
 //        Employee employee1 = new Employee();
 //        employee1.setAddress("混哪呢");
@@ -147,8 +147,8 @@ public class DoMain {
 //
 //        List<Employee> employeeList = customDao.selectListByKeys(Employee.class, Arrays.asList(21, 23));
 //
-        List<Employee> employeeTemps = customDao.selectList(Employee.class, null);
-        System.out.println("employeeTemps = " + employeeTemps);
+//        List<Employee> employeeTemps = customDao.selectList(Employee.class, null);
+//        System.out.println("employeeTemps = " + employeeTemps);
 
     }
 }

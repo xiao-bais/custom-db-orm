@@ -204,8 +204,9 @@ public class JdbcAction extends AbstractSqlBuilder {
 
     @Override
     public void createTables(Class<?>... arr) throws Exception {
-        TableSqlBuilder<?> tableSqlBuilder = new TableSqlBuilder<>();
+        TableSqlBuilder<?> tableSqlBuilder;
         for (int i = arr.length - 1; i >= 0; i--) {
+            tableSqlBuilder = new TableSqlBuilder<>(arr[i]);
             String exitsTableSql = tableSqlBuilder.getExitsTableSql(arr[i]);
             long count = (long) selectObjBySql(exitsTableSql);
             if(count == 0) {

@@ -307,7 +307,7 @@ public class BuildSqlHandler extends AbstractSqlBuilder {
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
     public <T> long save(T t) throws Exception {
-        if (!CustomUtil.isKeyTag(t.getClass())) {
+        if (CustomUtil.isKeyTag(t.getClass())) {
             throw new CustomCheckException(ExceptionConst.EX_DBKEY_NOTFOUND + t);
         }
         long update = updateByKey(t);

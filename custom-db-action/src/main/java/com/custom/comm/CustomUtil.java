@@ -381,26 +381,27 @@ public class CustomUtil {
     * 加载指定路径中文件的内容
     */
     public static String loadFiles(String filePath){
-            String res = "";
-            if(JudgeUtilsAx.isEmpty(filePath)){
-                log.error("找不到文件或不存在该路径");
-                return res;
-            }
-            try {
-                Resource resource = new ClassPathResource(filePath);
-                BufferedReader br = new BufferedReader(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8));
-                StringBuilder sb = new StringBuilder();
-                String str;
-                while((str=br.readLine())!=null) {
-                    sb.append(str);
-                }
-                res = sb.toString();
-            } catch (Exception e) {
-                log.error(e.getMessage(), e);
-                e.printStackTrace();
-            }
+        String res = "";
+        if(JudgeUtilsAx.isEmpty(filePath)){
+            log.error("找不到文件或不存在该路径");
             return res;
         }
+        try {
+            Resource resource = new ClassPathResource(filePath);
+            BufferedReader br = new BufferedReader(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8));
+            StringBuilder sb = new StringBuilder();
+            String str;
+            while((str=br.readLine())!=null) {
+
+                sb.append(str);
+            }
+            res = sb.toString();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            e.printStackTrace();
+        }
+        return res;
+    }
 
 
 

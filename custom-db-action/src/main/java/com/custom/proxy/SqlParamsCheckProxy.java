@@ -1,6 +1,5 @@
 package com.custom.proxy;
 
-import com.custom.annotations.DbKey;
 import com.custom.annotations.DbTable;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
@@ -112,7 +111,7 @@ public class SqlParamsCheckProxy<T> implements MethodInterceptor {
         if(!objects[0].getClass().isAnnotationPresent(DbTable.class)) {
             throw new CustomCheckException(ExceptionConst.EX_DBTABLE__NOTFOUND + objects[0].getClass().getName());
         }
-        else if(!CustomUtil.isKeyTag(objects[0].getClass())) {
+        else if(CustomUtil.isKeyTag(objects[0].getClass())) {
             throw new CustomCheckException(ExceptionConst.EX_DBKEY_NOTFOUND + objects[0].getClass().getName());
         }
     }
