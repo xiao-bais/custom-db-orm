@@ -81,6 +81,7 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
         } else if (method.isAnnotationPresent(SqlPath.class)) {
             SqlPath sqlPath = method.getAnnotation(SqlPath.class);
             ExecuteMethod execType = sqlPath.method();
+            // todo... 在读取内容时 需要去除掉必要的注释
             String sql = CustomUtil.loadFiles(sqlPath.value());
 
 
