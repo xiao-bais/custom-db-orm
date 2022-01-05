@@ -181,7 +181,7 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
     private void checkIllegalParam(String methodName, boolean isOrder, String sql) {
 
         if(sql.contains(SymbolConst.PREPARE_BEGIN_REX_1) && sql.contains(SymbolConst.QUEST)) {
-            log.error("if isOrder=true，only allow used \"?\"  when isOrder=false only allow used \"#{}\" set parameter");
+            log.error("if isOrder=true，only allow used \"?\"  when isOrder=false only allow used \"#{ }\" set parameter");
             log.error("Error Method ==> {}", methodName);
             throw new CustomCheckException(String.format(ExceptionConst.EX_UNABLE_TO_RESOLVE_SQL, sql));
         }
