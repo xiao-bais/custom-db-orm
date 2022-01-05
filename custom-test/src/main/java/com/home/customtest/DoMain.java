@@ -5,6 +5,7 @@ import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.enums.DbSymbol;
 import com.custom.handler.JdbcDao;
+import com.custom.proxy.ClearNotesOnSqlHandler;
 import com.custom.proxy.SqlReaderExecuteProxy;
 import com.custom.sqlparser.CustomDao;
 import com.custom.wrapper.ConditionEntity;
@@ -48,20 +49,20 @@ public class DoMain {
 
 
 
-        DbDataSource dbDataSource = new DbDataSource();
-        dbDataSource.setUrl("jdbc:mysql://127.0.0.1:3306/hos?characterEncoding=utf-8&allowMultiQueries=true&autoreconnect=true&serverTimezone=UTC");
-        dbDataSource.setUsername("root");
-        dbDataSource.setPassword("123456");
-
-        DbCustomStrategy dbCustomStrategy = new DbCustomStrategy();
-        dbCustomStrategy.setSqlOutPrinting(true);
+//        DbDataSource dbDataSource = new DbDataSource();
+//        dbDataSource.setUrl("jdbc:mysql://127.0.0.1:3306/hos?characterEncoding=utf-8&allowMultiQueries=true&autoreconnect=true&serverTimezone=UTC");
+//        dbDataSource.setUsername("root");
+//        dbDataSource.setPassword("123456");
+//
+//        DbCustomStrategy dbCustomStrategy = new DbCustomStrategy();
+//        dbCustomStrategy.setSqlOutPrinting(true);
 //        dbCustomStrategy.setUnderlineToCamel(true);
-        dbCustomStrategy.setDbFieldDeleteLogic("state");
-        dbCustomStrategy.setDeleteLogicValue("1");
-        dbCustomStrategy.setNotDeleteLogicValue("0");
+//        dbCustomStrategy.setDbFieldDeleteLogic("state");
+//        dbCustomStrategy.setDeleteLogicValue("1");
+//        dbCustomStrategy.setNotDeleteLogicValue("0");
 
         // 以动态代理的方式来执行dao层接口的方法。类似于mybatis
-        CustomTestDao customTestDao = new SqlReaderExecuteProxy(dbDataSource, dbCustomStrategy).createProxy(CustomTestDao.class);
+//        CustomTestDao customTestDao = new SqlReaderExecuteProxy(dbDataSource, dbCustomStrategy).createProxy(CustomTestDao.class);
 
 //        WorkEmp workEmp = new WorkEmp();
 //        workEmp.setAgeList(Arrays.asList(21,22,24));
@@ -105,12 +106,12 @@ public class DoMain {
 
         // JdbcDao/CustomDao 两个dao的功能几乎一模一样 不同的在于注解的解析方式
 //        JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
-        CustomDao customDao = new CustomDao(dbDataSource, dbCustomStrategy);
+//        CustomDao customDao = new CustomDao(dbDataSource, dbCustomStrategy);
 //        JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
 
 
 
-        customDao.createTables(EmployeeTemp.class);
+//        customDao.createTables(EmployeeTemp.class);
 //
 //        Employee employee1 = new Employee();
 //        employee1.setAddress("混哪呢");
@@ -149,6 +150,11 @@ public class DoMain {
 //
 //        List<Employee> employeeTemps = customDao.selectList(Employee.class, null);
 //        System.out.println("employeeTemps = " + employeeTemps);
+
+
+        String loadSql = new ClearNotesOnSqlHandler("/sql/selectOne.sql").loadSql();
+        System.out.println("loadSql = " + loadSql);
+
 
     }
 }
