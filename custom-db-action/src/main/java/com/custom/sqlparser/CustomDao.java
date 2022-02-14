@@ -33,6 +33,13 @@ public class CustomDao {
         return jdbcAction.selectList(t, condition, orderBy, params);
     }
 
+    /***
+    * 根据实体直接匹配条件，（a.name = 'ZhangSan'）
+    */
+    public <T> List<T> selectList(Class<T> t, T searchEntity) throws Exception{
+        return jdbcAction.selectList(t, searchEntity);
+    }
+
     /**
      * 根据多个主键查询多条记录
      */

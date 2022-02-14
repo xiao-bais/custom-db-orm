@@ -1,14 +1,17 @@
 package com.custom.sqlparser;
 
+import com.alibaba.fastjson.JSONObject;
 import com.custom.annotations.*;
 import com.custom.comm.CustomUtil;
 import com.custom.dbconfig.DbFieldsConst;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.ExecuteMethod;
+import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 
 import java.lang.reflect.Field;
 import java.sql.SQLException;
@@ -70,6 +73,36 @@ public class TableSqlBuilder<T> {
      * @Desc:对象的所有值
      */
     private List<Object> objValues = new ArrayList<>();
+
+
+    /**
+    * 实体的条件构造
+    */
+    public String buildEntityConditions(T entity, String logicField) {
+        if(cls != entity.getClass()) {
+            throw new CustomCheckException(String.format("t: %s, searchEntity : %s, 't' not equals 'entity' !!", t, entity.getClass()));
+        }
+        StringBuilder condition = new StringBuilder();
+        if(this.keyParserModel != null ) {
+            Object keyValue = keyParserModel.getValue(entity);
+            if(keyValue != null && !keyValue.getClass().isPrimitive()) {
+                if(CustomUtil.isKeyAllowType(keyValue.getClass(), keyValue)) {
+                    condition.append(String.format(" and %s.`%s` = ?", this.alias, keyParserModel.getDbKey()));
+                    objValues.add(keyValue);
+                }
+            }
+        }
+        for (DbFieldParserModel<T> fieldParserModel : this.fieldParserModels) {
+            Object fieldValue = fieldParserModel.getValue(entity);
+            if(fieldValue != null && !fieldValue.getClass().isPrimitive()) {
+                if(CustomUtil.isBlank(logicField) || fieldParserModel.getFieldName().equals(logicField)) continue;
+                condition.append(String.format(" and %s.`%s` = ?", this.alias, fieldParserModel.getColumn()));
+                objValues.add(fieldValue);
+            }
+        }
+
+        return condition.toString();
+    }
 
 
     /**
@@ -408,5 +441,9 @@ public class TableSqlBuilder<T> {
 
     public List<DbFieldParserModel<T>> getFieldParserModels() {
         return fieldParserModels;
+    }
+
+    public List<Object> getObjValues() {
+        return objValues;
     }
 }

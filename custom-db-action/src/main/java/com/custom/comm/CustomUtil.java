@@ -97,6 +97,23 @@ public class CustomUtil {
     }
 
     /**
+    * 是否是主键的允许类型
+    */
+    public static boolean isKeyAllowType(Class<?> type, Object val) {
+        if(type == String.class) {
+            return true;
+        }
+        if(type == Long.class) {
+            return (long) val > 0;
+        }
+        if(type == Integer.class) {
+            return (int) val > 0;
+        }
+        return false;
+    }
+
+
+    /**
      * 获取默认值
      */
     public static Object getDefaultVal(String type){

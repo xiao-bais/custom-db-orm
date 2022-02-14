@@ -49,17 +49,17 @@ public class DoMain {
 
 
 
-//        DbDataSource dbDataSource = new DbDataSource();
-//        dbDataSource.setUrl("jdbc:mysql://127.0.0.1:3306/hos?characterEncoding=utf-8&allowMultiQueries=true&autoreconnect=true&serverTimezone=UTC");
-//        dbDataSource.setUsername("root");
-//        dbDataSource.setPassword("123456");
-//
-//        DbCustomStrategy dbCustomStrategy = new DbCustomStrategy();
-//        dbCustomStrategy.setSqlOutPrinting(true);
-//        dbCustomStrategy.setUnderlineToCamel(true);
-//        dbCustomStrategy.setDbFieldDeleteLogic("state");
-//        dbCustomStrategy.setDeleteLogicValue("1");
-//        dbCustomStrategy.setNotDeleteLogicValue("0");
+        DbDataSource dbDataSource = new DbDataSource();
+        dbDataSource.setUrl("jdbc:mysql://127.0.0.1:3306/hos?characterEncoding=utf-8&allowMultiQueries=true&autoreconnect=true&serverTimezone=UTC");
+        dbDataSource.setUsername("root");
+        dbDataSource.setPassword("123456");
+
+        DbCustomStrategy dbCustomStrategy = new DbCustomStrategy();
+        dbCustomStrategy.setSqlOutPrinting(true);
+        dbCustomStrategy.setUnderlineToCamel(true);
+        dbCustomStrategy.setDbFieldDeleteLogic("state");
+        dbCustomStrategy.setDeleteLogicValue("1");
+        dbCustomStrategy.setNotDeleteLogicValue("0");
 
         // 以动态代理的方式来执行dao层接口的方法。类似于mybatis
 //        CustomTestDao customTestDao = new SqlReaderExecuteProxy(dbDataSource, dbCustomStrategy).createProxy(CustomTestDao.class);
@@ -106,9 +106,14 @@ public class DoMain {
 
         // JdbcDao/CustomDao 两个dao的功能几乎一模一样 不同的在于注解的解析方式
 //        JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
-//        CustomDao customDao = new CustomDao(dbDataSource, dbCustomStrategy);
+        CustomDao customDao = new CustomDao(dbDataSource, dbCustomStrategy);
 //        JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
 
+        Employee employee = new Employee();
+        employee.setAge(25);
+        employee.setId(88);
+        List<Employee> list = customDao.selectList(Employee.class, employee);
+        System.out.println("list = " + list);
 
 
 //        customDao.createTables(EmployeeTemp.class);
@@ -152,8 +157,8 @@ public class DoMain {
 //        System.out.println("employeeTemps = " + employeeTemps);
 
 
-        String loadSql = new ClearNotesOnSqlHandler("/sql/selectOne.sql").loadSql();
-        System.out.println("loadSql = " + loadSql);
+//        String loadSql = new ClearNotesOnSqlHandler("/sql/selectOne.sql").loadSql();
+//        System.out.println("loadSql = " + loadSql);
 
 
     }

@@ -29,6 +29,7 @@ public abstract class AbstractSqlBuilder {
     public abstract <T> T selectOneByKey(Class<T> t, Object key) throws Exception;
     public abstract <T> List<T> selectBatchByKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception;
     public abstract <T> T selectOneByCondition(Class<T> t, String condition, Object... params) throws Exception;
+    public abstract <T> List<T> selectList(Class<T> t, T searchEntity) throws Exception;
 
     /*--------------------------------------- delete ---------------------------------------*/
     public abstract <T> int deleteByKey(Class<T> t, Object key) throws Exception;

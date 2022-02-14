@@ -134,6 +134,11 @@ public class BuildSqlHandler extends AbstractSqlBuilder {
         return selectOneBySql(t, selectSql, params);
     }
 
+    @Override
+    public <T> List<T> selectList(Class<T> t, T searchEntity) throws Exception {
+        return null;
+    }
+
 
     /* ----------------------------------------------------------------delete---------------------------------------------------------------- */
 

@@ -24,7 +24,7 @@ public class Employee {
 
 
     @DbKey
-    private int id;
+    private Integer id;
 
     @DbField("emp_name")
     private String empName;
@@ -33,7 +33,7 @@ public class Employee {
     private boolean sex;
 
     @DbField
-    private int age;
+    private Integer age;
 
     @DbField
     private String address;

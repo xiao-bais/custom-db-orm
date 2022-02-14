@@ -1,5 +1,6 @@
 package com.custom.sqlparser;
 
+import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbaction.AbstractSqlBuilder;
 import com.custom.dbaction.SqlExecuteAction;
@@ -9,6 +10,7 @@ import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.ExecuteMethod;
 import com.custom.annotations.check.CheckExecute;
 import com.custom.comm.page.DbPageRows;
+import com.custom.exceptions.CustomCheckException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,6 +108,15 @@ public class JdbcAction extends AbstractSqlBuilder {
         condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), condition, getLogicDeleteQuerySql());
         String selectSql = String.format("%s %s", tableSqlBuilder.getSelectSql(), condition);
         return selectOneBySql(t, selectSql, params);
+    }
+
+    @Override
+    public <T> List<T> selectList(Class<T> t, T searchEntity) throws Exception {
+        TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<T>(t);
+        String selectSql = tableSqlBuilder.getSelectSql();
+        String conditions = tableSqlBuilder.buildEntityConditions(searchEntity, super.getDbCustomStrategy().getDbFieldDeleteLogic());
+        conditions = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), conditions, getLogicDeleteQuerySql());
+        return selectBySql(t, selectSql + conditions, tableSqlBuilder.getObjValues().toArray());
     }
 
     @Override
