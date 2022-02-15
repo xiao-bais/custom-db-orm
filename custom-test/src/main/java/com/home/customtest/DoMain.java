@@ -47,8 +47,6 @@ public class DoMain {
 //            System.out.println("conditionEntity = " + conditionEntity);
 
 
-
-
         DbDataSource dbDataSource = new DbDataSource();
         dbDataSource.setUrl("jdbc:mysql://127.0.0.1:3306/hos?characterEncoding=utf-8&allowMultiQueries=true&autoreconnect=true&serverTimezone=UTC");
         dbDataSource.setUsername("root");
@@ -110,8 +108,8 @@ public class DoMain {
 //        JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
 
         Employee employee = new Employee();
-        employee.setAge(25);
-        employee.setId(88);
+        employee.setAge(23);
+//        employee.setId(88);
         List<Employee> list = customDao.selectList(Employee.class, employee);
         System.out.println("list = " + list);
 

@@ -139,6 +139,11 @@ public class BuildSqlHandler extends AbstractSqlBuilder {
         return null;
     }
 
+    @Override
+    public <T> DbPageRows<T> selectPageRows(Class<T> t, String orderBy, DbPageRows<T> dbPageRows, T searchEntity) throws Exception {
+        return null;
+    }
+
 
     /* ----------------------------------------------------------------delete---------------------------------------------------------------- */
 

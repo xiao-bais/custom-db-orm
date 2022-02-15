@@ -95,12 +95,11 @@ public class TableSqlBuilder<T> {
         for (DbFieldParserModel<T> fieldParserModel : this.fieldParserModels) {
             Object fieldValue = fieldParserModel.getValue(entity);
             if(fieldValue != null && !fieldValue.getClass().isPrimitive()) {
-                if(CustomUtil.isBlank(logicField) || fieldParserModel.getFieldName().equals(logicField)) continue;
+                if(CustomUtil.isNotBlank(logicField) && fieldParserModel.getFieldName().equals(logicField)) continue;
                 condition.append(String.format(" and %s.`%s` = ?", this.alias, fieldParserModel.getColumn()));
                 objValues.add(fieldValue);
             }
         }
-
         return condition.toString();
     }
 

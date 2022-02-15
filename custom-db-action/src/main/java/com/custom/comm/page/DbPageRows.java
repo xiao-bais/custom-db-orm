@@ -15,11 +15,11 @@ public class DbPageRows<T> {
     /**
      * 当前页
      */
-    private int pageIndex;
+    private int pageIndex = 1;
     /**
      * 每页显示量
      */
-    private int pageSize;
+    private int pageSize = 10;
     /**
      * 总记录数
      */

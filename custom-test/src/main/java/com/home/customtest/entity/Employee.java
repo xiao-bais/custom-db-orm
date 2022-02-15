@@ -30,7 +30,7 @@ public class Employee {
     private String empName;
 
     @DbField
-    private boolean sex;
+    private Boolean sex;
 
     @DbField
     private Integer age;
@@ -42,10 +42,10 @@ public class Employee {
     private Date birthday;
 
     @DbField("dept_id")
-    private int deptId;
+    private Integer deptId;
 
     @DbField("area_id")
-    private int areaId;
+    private Integer areaId;
 
     @DbField
     private int state;
