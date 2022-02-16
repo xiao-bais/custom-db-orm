@@ -34,10 +34,17 @@ public class CustomDao {
     }
 
     /***
-    * 根据实体直接匹配条件，（a.name = 'ZhangSan'）
+    * 根据实体直接匹配条件，例（a.name = 'ZhangSan'）
     */
     public <T> List<T> selectList(Class<T> t, T searchEntity) throws Exception{
-        return jdbcAction.selectList(t, searchEntity);
+        return jdbcAction.selectList(t, searchEntity, null);
+    }
+
+    /***
+     * 根据实体直接匹配条件，并排序，例（a.name = 'ZhangSan'）
+     */
+    public <T> List<T> selectList(Class<T> t, T searchEntity, String orderBy) throws Exception {
+        return jdbcAction.selectList(t, searchEntity, orderBy);
     }
 
     /**
@@ -115,6 +122,13 @@ public class CustomDao {
      */
     public <T> T selectOneByKey(Class<T> t, Object key) throws Exception {
         return jdbcAction.selectOneByKey(t, key);
+    }
+
+    /**
+    * 根据实体构造查询一条记录
+    */
+    public <T> T selectOneByEntity(Class<T> t, T searchEntity) throws Exception {
+        return jdbcAction.selectOneByEntity(t, searchEntity);
     }
 
     /**

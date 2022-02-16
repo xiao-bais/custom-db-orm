@@ -122,12 +122,15 @@ public class JdbcAction extends AbstractSqlBuilder {
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> List<T> selectList(Class<T> t, T searchEntity) throws Exception {
+    public <T> List<T> selectList(Class<T> t, T searchEntity, String orderBy) throws Exception {
         TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<T>(t);
         String selectSql = tableSqlBuilder.getSelectSql();
         String conditions = tableSqlBuilder.buildEntityConditions(searchEntity, super.getDbCustomStrategy().getDbFieldDeleteLogic());
-        conditions = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), conditions, getLogicDeleteQuerySql());
-        return selectBySql(t, selectSql + conditions, tableSqlBuilder.getObjValues().toArray());
+        selectSql += checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), conditions, getLogicDeleteQuerySql());
+        if(CustomUtil.isNotBlank(orderBy)) {
+            selectSql += String.format(" order by %s", orderBy);
+        }
+        return selectBySql(t, selectSql, tableSqlBuilder.getObjValues().toArray());
     }
 
     @Override

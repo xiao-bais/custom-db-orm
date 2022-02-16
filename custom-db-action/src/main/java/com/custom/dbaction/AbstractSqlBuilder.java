@@ -30,7 +30,7 @@ public abstract class AbstractSqlBuilder {
     public abstract <T> List<T> selectBatchByKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception;
     public abstract <T> T selectOneByCondition(Class<T> t, String condition, Object... params) throws Exception;
     public abstract <T> T selectOneByEntity(Class<T> t, T searchEntity) throws Exception;
-    public abstract <T> List<T> selectList(Class<T> t, T searchEntity) throws Exception;
+    public abstract <T> List<T> selectList(Class<T> t, T searchEntity, String orderBy) throws Exception;
     public abstract <T> DbPageRows<T> selectPageRows(Class<T> t, String orderBy, DbPageRows<T> dbPageRows, T searchEntity) throws Exception;
 
     /*--------------------------------------- delete ---------------------------------------*/
