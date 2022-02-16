@@ -1,6 +1,7 @@
 package com.custom.wrapper;
 
 import com.custom.enums.DbSymbol;
+import com.custom.enums.ExecuteMethod;
 import com.custom.sqlparser.TableSqlBuilder;
 
 /**
@@ -15,28 +16,15 @@ public class ConditionEntity<T> extends AbstractWrapper<T, ConditionEntity<T>>{
 
     private Class<T> cls;
 
-    public ConditionEntity()  {
-        init();
-    }
-
-
-
-
-    public void init(){
-        cls = getTClass();
-//        Type type = this.getClass().getGenericSuperclass();
-//        if(type instanceof ParameterizedType) {
-//            ParameterizedType parameterizedType = (ParameterizedType) type;
-//            Type[] typeArguments = parameterizedType.getActualTypeArguments();
-//            cls = (Class<T>) typeArguments[0];
-//            this.tableSqlBuilder = new TableSqlBuilder<>(cls, ExecuteMethod.NONE);
-//        }
+    public ConditionEntity(Class<T> entityClass) {
+        this.cls = entityClass;
+        this.tableSqlBuilder = new TableSqlBuilder<>(cls, ExecuteMethod.NONE);
     }
 
 
 
     public ConditionEntity<T> where(DbSymbol dbSymbol, boolean condition, String column, Object val1, Object val2, String express) {
-//        adapterCondition(dbSymbol, condition, column, val1, val2, express);
+        adapterCondition(dbSymbol, condition, column, val1, val2, express);
         return this;
     }
 
@@ -66,9 +54,5 @@ public class ConditionEntity<T> extends AbstractWrapper<T, ConditionEntity<T>>{
         return this;
     }
 
-    @Override
-    public ConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, String column, Object val, String express) {
-        adapterCondition(dbSymbol, condition, column, val, null, express);
-        return this;
-    }
+
 }

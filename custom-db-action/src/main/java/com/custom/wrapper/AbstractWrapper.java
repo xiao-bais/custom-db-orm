@@ -4,13 +4,10 @@ import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.DbSymbol;
-import com.custom.exceptions.CustomCheckException;
-import com.custom.exceptions.ExceptionConst;
+import com.custom.enums.SqlLike;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.ParameterizedType;
 import java.util.*;
-import java.util.stream.Stream;
 
 /**
  * @Author Xiao-Bai
@@ -23,21 +20,14 @@ public abstract class AbstractWrapper<T, Children> {
     public abstract Children adapter(DbSymbol dbSymbol, String column, Object val);
     public abstract Children adapter(DbSymbol dbSymbol, boolean condition, String column, Object val);
     public abstract Children adapter(DbSymbol dbSymbol, boolean condition, String column, Object val1, Object val2);
-    public abstract Children adapter(DbSymbol dbSymbol, boolean condition, String column, Object val, String express);
-
-
-    @SuppressWarnings("unchecked")
-    public Class<T> getTClass(){
-        return (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-    }
 
     /**
     * 适配各种sql条件的拼接
     */
-    public StringBuilder adapterCondition(DbSymbol dbSymbol, boolean condition, String column, Object val1, Object val2, String express) {
+    public void adapterCondition(DbSymbol dbSymbol, boolean condition, String column, Object val1, Object val2, String express) {
 
         if(!condition) {
-            return null;
+            return;
         }
 
         switch (dbSymbol) {
@@ -77,7 +67,7 @@ public abstract class AbstractWrapper<T, Children> {
                 break;
             case EXISTS:
             case NOT_EXISTS:
-                conditional.append(String.format(" and %s %s", dbSymbol.getSymbol(), val1));
+                conditional.append(String.format(" and %s (%s)", dbSymbol.getSymbol(), express));
                 break;
             case BETWEEN:
             case NOT_BETWEEN:
@@ -98,9 +88,6 @@ public abstract class AbstractWrapper<T, Children> {
             case ORDER_BY:
                 conditional.append(String.format("\n%s %s", dbSymbol.getSymbol(), val1));
         }
-
-
-        return conditional;
     }
 
 
@@ -126,5 +113,18 @@ public abstract class AbstractWrapper<T, Children> {
             condition = condition.replaceFirst(DbSymbol.AND.getSymbol(), SymbolConst.EMPTY);
         }
         return String.format(" and (%s)", condition);
+    }
+
+    public String sqlConcat(SqlLike sqlLike, Object val) {
+        String sql = SymbolConst.EMPTY;
+        switch (sqlLike) {
+            case LEFT:
+                sql = SymbolConst.PERCENT + val;
+            case RIGHT:
+                sql = val + SymbolConst.PERCENT;
+            case LIKE:
+                sql = SymbolConst.PERCENT + val + SymbolConst.PERCENT;
+        }
+        return sql;
     }
 }

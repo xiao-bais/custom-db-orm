@@ -26,6 +26,7 @@ public class SymbolConst {
     public final static String EMPTY = "";//空字符串
     public final static String EQUALS = "=";//等于
     public final static String QUEST = "?";//占位符
+    public final static String PERCENT = "%";//百分号
     public final static String PREPARE_BEGIN_REX_1 = "#{";
     public final static String PREPARE_BEGIN_REX_2 = "${";
     public final static String PREPARE_END_REX = "}";

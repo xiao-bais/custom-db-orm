@@ -109,9 +109,9 @@ public class DoMain {
 
         Employee employee = new Employee();
         employee.setAge(23);
-//        employee.setId(88);
-        List<Employee> list = customDao.selectList(Employee.class, employee);
-        System.out.println("list = " + list);
+        employee.setId(8);
+        Employee oneByEntity = customDao.selectOneByEntity(Employee.class, employee);
+        System.out.println("list = " + oneByEntity);
 
 
 //        customDao.createTables(EmployeeTemp.class);

@@ -79,9 +79,8 @@ public class TableSqlBuilder<T> {
     * 实体的条件构造
     */
     public String buildEntityConditions(T entity, String logicField) {
-        if(cls != entity.getClass()) {
-            throw new CustomCheckException(String.format("t: %s, searchEntity : %s, 't' not equals 'entity' !!", t, entity.getClass()));
-        }
+        if(entity == null) throw new NullPointerException();
+        if(cls != entity.getClass()) throw new CustomCheckException(String.format("t: %s, searchEntity : %s, 't' not equals 'entity' !!", t, entity.getClass()));
         StringBuilder condition = new StringBuilder();
         if(this.keyParserModel != null ) {
             Object keyValue = keyParserModel.getValue(entity);
