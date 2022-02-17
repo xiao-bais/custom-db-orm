@@ -26,9 +26,9 @@ public class IndexControl {
 
 
     @GetMapping("/getMain")
-    public BackResult<String> getIndex() throws Exception {
+    public BackResult<List<Employee>> getIndex() throws Exception {
         List<Employee> employees = jdbcDao.selectList(Employee.class, null);
-        return BackResult.bySuccess("success01", employees.toString());
+        return BackResult.bySuccess("success01", employees);
     }
 
 }

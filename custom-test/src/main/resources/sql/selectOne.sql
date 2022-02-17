@@ -2,7 +2,7 @@
 -- 这是一段sql1
 -- 这是一段sql2
 
-select * from employee a where a.age = ?
+select * from employee a where 1=1
 
 
 /* 这是一段吗打开 */
@@ -25,6 +25,6 @@ select * from employee a where a.age = ?
 这是第四段注释
 */
 
-and a.name = ?
+and a.age = #{age}
 
 -- a.name 是人员名称

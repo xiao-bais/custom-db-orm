@@ -23,7 +23,7 @@ public interface CustomTestDao {
     @Query("select emp_name from employee where sex = #{sex} and ${name} = #{age}")
     String selectOneByCond(int sex,  int age, String name);
 
-    @SqlPath(value = "/sql/selectOne.sql", isOrder = true)
+    @SqlPath(value = "/sql/selectOne.sql")
     Employee selectByOne(int age);
 
     @Query(value = "select age from employee where age in (#{ages}) and emp_name = #{empName}",isOrder = true)
