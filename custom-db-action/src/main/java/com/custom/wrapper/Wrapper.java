@@ -10,6 +10,7 @@ import java.util.Collection;
  **/
 public interface Wrapper<T, Result>  {
 
+
     Result eq(boolean condition, T column, Object val);
     default Result eq(T column, Object val) {
         return eq(true, column, val);
@@ -27,7 +28,7 @@ public interface Wrapper<T, Result>  {
 
     Result lt(boolean condition, T column, Object val);
     default Result lt(T column, Object val) {
-        return le(true, column, val);
+        return lt(true, column, val);
     }
 
     Result gt(boolean condition, T column, Object val);
@@ -95,13 +96,15 @@ public interface Wrapper<T, Result>  {
         return isNotNull(true, column);
     }
 
-    Result or();
     Result or(boolean condition, Result conditionEntity);
-    Result or(Result conditionEntity);
+    default Result or(Result conditionEntity) {
+        return or(true, conditionEntity);
+    }
 
 
-    Result and();
     Result and(boolean condition, Result conditionEntity);
-    Result and(Result conditionEntity);
+    default Result and(Result conditionEntity) {
+        return and(true, conditionEntity);
+    }
 
 }

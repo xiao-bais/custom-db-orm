@@ -20,6 +20,7 @@ public class SymbolConst {
     public final static String SET = "set";//set
     public final static String IS = "is";//is
     public final static String IN = "in";//is
+    public final static String AND = "and";//and
 
 
     public final static char UNDERLINE = '_'; //下划线

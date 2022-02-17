@@ -5,6 +5,7 @@ import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.DbSymbol;
 import com.custom.enums.SqlLike;
+import com.custom.sqlparser.TableSqlBuilder;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -14,22 +15,29 @@ import java.util.*;
  * @Date 2021/12/13 9:23
  * @Desc：条件构造器抽象接口
  **/
-public abstract class AbstractWrapper<T, Children> {
+public abstract class AbstractWrapper<Children> {
 
 
-    public abstract Children adapter(DbSymbol dbSymbol, String column, Object val);
+    public abstract Children adapter(DbSymbol dbSymbol, boolean condition, String column);
     public abstract Children adapter(DbSymbol dbSymbol, boolean condition, String column, Object val);
     public abstract Children adapter(DbSymbol dbSymbol, boolean condition, String column, Object val1, Object val2);
+    public abstract Children adapter(DbSymbol dbSymbol, boolean condition, String column, String express);
+    public abstract Children select(String... columns);
+
+
+
+
 
     /**
     * 适配各种sql条件的拼接
     */
-    public void adapterCondition(DbSymbol dbSymbol, boolean condition, String column, Object val1, Object val2, String express) {
+    public void appendCondition(DbSymbol dbSymbol, boolean condition, String column, Object val1, Object val2, String express) {
 
         if(!condition) {
             return;
         }
 
+        String and = SymbolConst.AND;
         switch (dbSymbol) {
             case EQUALS:
             case NOT_EQUALS:
@@ -37,12 +45,12 @@ public abstract class AbstractWrapper<T, Children> {
             case GREATER_THAN:
             case LESS_THAN_EQUALS:
             case GREATER_THAN_EQUALS:
-                conditional.append(String.format(" and %s %s ?", column, dbSymbol.getSymbol()));
+                lastCondition = String.format(" %s %s %s ?", and, column, dbSymbol.getSymbol());
                 paramValues.add(val1);
                 break;
             case LIKE:
             case NOT_LIKE:
-                conditional.append(String.format(" and %s %s %s", column, dbSymbol.getSymbol(), express));
+                lastCondition = String.format(" %s %s %s %s", and, column, dbSymbol.getSymbol(), express);
                 paramValues.add(val1);
                 break;
             case IN:
@@ -63,11 +71,11 @@ public abstract class AbstractWrapper<T, Children> {
                     paramValues.addAll(objects);
                     objects.forEach(x -> symbol.add(SymbolConst.QUEST));
                 }
-                conditional.append(String.format(" and %s %s (%s)", column, dbSymbol.getSymbol(), symbol));
+                lastCondition = String.format(" %s %s %s (%s)", and, column, dbSymbol.getSymbol(), symbol);
                 break;
             case EXISTS:
             case NOT_EXISTS:
-                conditional.append(String.format(" and %s (%s)", dbSymbol.getSymbol(), express));
+                lastCondition = String.format(" %s %s (%s)", and, dbSymbol.getSymbol(), express);
                 break;
             case BETWEEN:
             case NOT_BETWEEN:
@@ -77,42 +85,92 @@ public abstract class AbstractWrapper<T, Children> {
                 if(JudgeUtilsAx.isEmpty(val1) || JudgeUtilsAx.isEmpty(val2)) {
                     throw new NullPointerException("At least one null value exists between val1 and val2");
                 }
-                conditional.append(String.format(" and %s " + dbSymbol.getSymbol(), column, val1, val2));
+                lastCondition = String.format(" %s %s %s", and, dbSymbol.getSymbol(), column);
                 paramValues.add(val1);
                 paramValues.add(val2);
                 break;
             case IS_NULL:
             case IS_NOT_NULL:
-                conditional.append(String.format(" and %s %s", column, dbSymbol.getSymbol()));
+                lastCondition = String.format(" %s %s %s", and, column, dbSymbol.getSymbol());
                 break;
             case ORDER_BY:
-                conditional.append(String.format("\n%s %s", dbSymbol.getSymbol(), val1));
+                lastCondition = String.format("\n%s %s", dbSymbol.getSymbol(), val1);
+                break;
         }
+        finalConditional.append(lastCondition);
     }
 
 
-    private StringBuilder conditional = new StringBuilder();
+    /**
+     * 最终的sql条件语句
+     */
+    private StringBuilder finalConditional = new StringBuilder();
 
+    /**
+     * 上一次的拼接条件
+     */
+    private String lastCondition = SymbolConst.EMPTY;
+
+    /**
+     * sql中的所有参数值
+     */
     private List<Object> paramValues = new ArrayList<>();
+
+    /**
+     * 执行的sql
+     */
+    private String selectSql = SymbolConst.EMPTY;
+
+    /**
+     * 查询的列名
+     */
+    private String selectColumns = SymbolConst.EMPTY;
 
     public List<Object> getParamValues() {
         return paramValues;
     }
 
-    public void setParamValues(List<Object> paramValues) {
-        this.paramValues = paramValues;
+    public String getFinalConditional() {
+        return finalConditional.toString();
     }
 
-
-    public StringBuilder getConditional() {
-        return conditional;
+    public void setFinalConditional(String finalConditional) {
+        this.finalConditional = new StringBuilder(finalConditional);
     }
 
-    public String and(String condition) {
+    public String getLastCondition() {
+        return lastCondition;
+    }
+
+    public void setLastCondition(String lastCondition) {
+        this.lastCondition = lastCondition;
+    }
+
+    public String getSelectSql() {
+        return selectSql;
+    }
+
+    public void setSelectSql(String selectSql) {
+        this.selectSql = selectSql;
+    }
+
+    public String getSelectColumns() {
+        return selectColumns;
+    }
+
+    public void setSelectColumns(String selectColumns) {
+        this.selectColumns = selectColumns;
+    }
+
+    /**
+     * 拼接下一段大条件
+     */
+    public void append(boolean isAppend, DbSymbol dbSymbol, String condition) {
+        if(!isAppend) return;
         if(condition.trim().startsWith(DbSymbol.AND.getSymbol())) {
             condition = condition.replaceFirst(DbSymbol.AND.getSymbol(), SymbolConst.EMPTY);
         }
-        return String.format(" and (%s)", condition);
+         this.finalConditional = new StringBuilder(String.format(" %s (%s)", dbSymbol.getSymbol(), condition));
     }
 
     public String sqlConcat(SqlLike sqlLike, Object val) {
@@ -120,10 +178,13 @@ public abstract class AbstractWrapper<T, Children> {
         switch (sqlLike) {
             case LEFT:
                 sql = SymbolConst.PERCENT + val;
+                break;
             case RIGHT:
                 sql = val + SymbolConst.PERCENT;
+                break;
             case LIKE:
                 sql = SymbolConst.PERCENT + val + SymbolConst.PERCENT;
+                break;
         }
         return sql;
     }
