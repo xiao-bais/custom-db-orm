@@ -15,6 +15,8 @@ public class DoMain {
 
         ConditionEntity<Employee> conditionEntity = new ConditionEntity<>(Employee.class);
         conditionEntity.select("name", "age", "birth");
+        String selectSql = conditionEntity.getSelectSql();
+        System.out.println("selectSql = " + selectSql);
 
     }
 }
