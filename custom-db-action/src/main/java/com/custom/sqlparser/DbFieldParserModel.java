@@ -143,12 +143,12 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
 
     @Override
     public String getFieldSql() {
-        return String.format("%s.`%s`", this.getAlias(), this.column);
+        return String.format("%s.%s", this.getAlias(), this.column);
     }
 
     @Override
     public String getSelectFieldSql() {
-        return String.format("%s.`%s` `%s`", this.getAlias(), this.column, this.fieldName);
+        return String.format("%s.%s %s", this.getAlias(), this.column, this.fieldName);
     }
 
     public Object getValue() {

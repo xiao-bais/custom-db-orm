@@ -5,12 +5,12 @@ import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.DbSymbol;
 import com.custom.enums.ExecuteMethod;
 import com.custom.enums.SqlLike;
+import com.custom.sqlparser.DbFieldParserModel;
+import com.custom.sqlparser.DbKeyParserModel;
 import com.custom.sqlparser.TableSqlBuilder;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -18,7 +18,7 @@ import java.util.stream.Stream;
  * @Date 2022/2/16 14:11
  * @Desc：
  **/
-public class ConditionEntity<T> extends AbstractWrapper<ConditionEntity<T>> implements Wrapper<String, ConditionEntity<T>> {
+public class ConditionEntity<T> extends AbstractWrapper<T, ConditionEntity<T>> implements Wrapper<String, ConditionEntity<T>> {
 
 
     @Override
@@ -120,13 +120,11 @@ public class ConditionEntity<T> extends AbstractWrapper<ConditionEntity<T>> impl
         return this;
     }
 
-    private TableSqlBuilder<T> tableSqlBuilder;
 
-    private Class<T> cls;
 
     public ConditionEntity(Class<T> entityClass) {
-        this.cls = entityClass;
-        this.tableSqlBuilder = new TableSqlBuilder<>(cls, ExecuteMethod.NONE);
+        setCls(entityClass);
+        setTableSqlBuilder(new TableSqlBuilder<>(entityClass, ExecuteMethod.NONE));
     }
 
     @Override
@@ -153,24 +151,27 @@ public class ConditionEntity<T> extends AbstractWrapper<ConditionEntity<T>> impl
         return this;
     }
 
-    @Override
-    public String getSelectSql() {
-        if(CustomUtil.isNotBlank(super.getSelectColumns())) {
-            return String.format("select %s from %s %s %s", getSelectColumns(), tableSqlBuilder.getTable(), tableSqlBuilder.getAlias(), getFinalConditional());
-        }
-        return tableSqlBuilder.getSelectSql() + getFinalConditional();
-    }
-
-    @Override
-    public void setSelectSql(String selectSql) {
-        super.setSelectSql(selectSql);
-    }
-
-    @Override
-    public ConditionEntity<T> select(String... columns) {
-        StringJoiner columnStr = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
-        Stream.of(columns).forEach(x -> columnStr.add(String.format("%s.%s", tableSqlBuilder.getAlias(), x)));
-        super.setSelectColumns(columnStr.toString());
-        return this;
-    }
+//    @Override
+//    public ConditionEntity<T> select(String... columns) {
+//        StringJoiner columnStr = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+//        Stream.of(columns).forEach(x ->{
+//            DbKeyParserModel<T> keyParserModel = tableSqlBuilder.getKeyParserModel();
+//            List<DbFieldParserModel<T>> fieldParserModels = tableSqlBuilder.getFieldParserModels();
+//            if(keyParserModel != null && x.equals(keyParserModel.getDbKey())) {
+//                columnStr.add(String.format("%s.%s %s", keyParserModel.getAlias(), keyParserModel.getDbKey(), keyParserModel.getKey()));
+//            }else if(!fieldParserModels.isEmpty()) {
+//                Optional<DbFieldParserModel<T>> firstDbFieldParserModel = fieldParserModels.stream().filter(field -> field.getColumn().equals(x)).findFirst();
+//                if (firstDbFieldParserModel.isPresent()) {
+//                    DbFieldParserModel<T> fieldParserModel = firstDbFieldParserModel.get();
+//                    columnStr.add(String.format("%s.%s %s", fieldParserModel.getAlias(), fieldParserModel.getColumn(), fieldParserModel.getFieldName()));
+//                }else {
+//                    columnStr.add(String.format("%s.%s", tableSqlBuilder.getAlias(), x));
+//                }
+//            }else {
+//                columnStr.add(String.format("%s.%s", tableSqlBuilder.getAlias(), x));
+//            }
+//        });
+//        super.setSelectColumns(columnStr.toString());
+//        return this;
+//    }
 }

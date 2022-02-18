@@ -80,13 +80,12 @@ public class TableSqlBuilder<T> {
     */
     public String buildEntityConditions(T entity, String logicField) {
         if(entity == null) throw new NullPointerException();
-        if(cls != entity.getClass()) throw new CustomCheckException(String.format("t: %s, searchEntity : %s, 't' not equals 'entity' !!", t, entity.getClass()));
         StringBuilder condition = new StringBuilder();
         if(this.keyParserModel != null ) {
             Object keyValue = keyParserModel.getValue(entity);
             if(keyValue != null && !keyValue.getClass().isPrimitive()) {
                 if(CustomUtil.isKeyAllowType(keyValue.getClass(), keyValue)) {
-                    condition.append(String.format(" and %s.`%s` = ?", this.alias, keyParserModel.getDbKey()));
+                    condition.append(String.format(" and %s.%s = ?", this.alias, keyParserModel.getDbKey()));
                     objValues.add(keyValue);
                 }
             }
@@ -95,7 +94,7 @@ public class TableSqlBuilder<T> {
             Object fieldValue = fieldParserModel.getValue(entity);
             if(fieldValue != null && !fieldValue.getClass().isPrimitive()) {
                 if(CustomUtil.isNotBlank(logicField) && fieldParserModel.getFieldName().equals(logicField)) continue;
-                condition.append(String.format(" and %s.`%s` = ?", this.alias, fieldParserModel.getColumn()));
+                condition.append(String.format(" and %s.%s = ?", this.alias, fieldParserModel.getColumn()));
                 objValues.add(fieldValue);
             }
         }
@@ -159,10 +158,10 @@ public class TableSqlBuilder<T> {
     public String getInsertSql() {
         try {
             if (keyParserModel != null) {
-                insertSql.add(String.format("`%s`", keyParserModel.getDbKey()));
+                insertSql.add(keyParserModel.getDbKey());
             }
             if (!fieldParserModels.isEmpty()) {
-                fieldParserModels.forEach(x -> insertSql.add(String.format("`%s`", x.getColumn())));
+                fieldParserModels.forEach(x -> insertSql.add(x.getColumn()));
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -242,7 +241,7 @@ public class TableSqlBuilder<T> {
         }
 
         // 第三步 拼接主表
-        selectSql.append(String.format("select %s\n from `%s` %s \n", baseFieldSql.toString(), this.table, this.alias));
+        selectSql.append(String.format("select %s\n from %s %s \n", baseFieldSql.toString(), this.table, this.alias));
     }
 
 
@@ -276,7 +275,7 @@ public class TableSqlBuilder<T> {
         }
 
         // 第四步 拼接主表
-        selectSql.append(String.format("select %s\n from `%s` %s", baseFieldSql.toString(), this.table, this.alias));
+        selectSql.append(String.format("select %s\n from %s %s", baseFieldSql.toString(), this.table, this.alias));
 
         // 第五步 拼接以joinTables方式的关联条件
         if (!joinTableParserModels.isEmpty()) {
@@ -298,7 +297,7 @@ public class TableSqlBuilder<T> {
         for (DbRelationParserModel<T> model : relatedParserModels) {
             String condition = String.format("%s@%s@%s", model.getJoinTable(), model.getJoinAlias(), model.getCondition());
             if (!conditions.contains(condition)) {
-                joinTableSql.append("\n").append(String.format("%s `%s` %s on %s", model.getJoinStyle(), model.getJoinTable(), model.getJoinAlias(), model.getCondition()));
+                joinTableSql.append("\n").append(String.format("%s %s %s on %s", model.getJoinStyle(), model.getJoinTable(), model.getJoinAlias(), model.getCondition()));
                 conditions.add(condition);
             }
         }

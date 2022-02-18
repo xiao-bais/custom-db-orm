@@ -61,12 +61,12 @@ public class DbRelationParserModel<T> extends AbstractTableModel<T> {
 
     @Override
     public String getFieldSql() {
-        return String.format("%s.`%s`", this.joinAlias, this.column);
+        return String.format("%s.%s", this.joinAlias, this.column);
     }
 
     @Override
     public String getSelectFieldSql() {
-        return String.format("%s.`%s` `%s`", this.joinAlias, this.column, this.fieldName);
+        return String.format("%s.%s %s", this.joinAlias, this.column, this.fieldName);
     }
 
 

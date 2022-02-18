@@ -7,6 +7,7 @@ import java.util.Collection;
  * @Author Xiao-Bai
  * @Date 2022/2/16 14:01
  * @Desc：顶级条件构造器
+ * column: 表字段
  **/
 public interface Wrapper<T, Result>  {
 

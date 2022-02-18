@@ -113,7 +113,7 @@ public class JdbcAction extends AbstractSqlBuilder {
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> T selectOneByEntity(Class<T> t, T searchEntity) throws Exception {
-        TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<T>(t);
+        TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<>(t);
         String selectSql = tableSqlBuilder.getSelectSql();
         String conditions = tableSqlBuilder.buildEntityConditions(searchEntity, super.getDbCustomStrategy().getDbFieldDeleteLogic());
         conditions = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), conditions, getLogicDeleteQuerySql());
@@ -123,7 +123,7 @@ public class JdbcAction extends AbstractSqlBuilder {
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> List<T> selectList(Class<T> t, T searchEntity, String orderBy) throws Exception {
-        TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<T>(t);
+        TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<>(t);
         String selectSql = tableSqlBuilder.getSelectSql();
         String conditions = tableSqlBuilder.buildEntityConditions(searchEntity, super.getDbCustomStrategy().getDbFieldDeleteLogic());
         selectSql += checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), conditions, getLogicDeleteQuerySql());

@@ -71,9 +71,9 @@ public abstract class AbstractSqlBuilder {
                 throw new CustomCheckException(ExceptionConst.EX_LOGIC_EMPTY_VALUE);
             }
 
-            this.logicDeleteUpdateSql = String.format("`%s` = %s ",
+            this.logicDeleteUpdateSql = String.format("%s = %s ",
                     dbCustomStrategy.getDbFieldDeleteLogic(), dbCustomStrategy.getDeleteLogicValue());
-            this.logicDeleteQuerySql = String.format("`%s` = %s ",
+            this.logicDeleteQuerySql = String.format("%s = %s ",
                     dbCustomStrategy.getDbFieldDeleteLogic(), dbCustomStrategy.getNotDeleteLogicValue());
         }
     }
@@ -83,7 +83,7 @@ public abstract class AbstractSqlBuilder {
      */
     public String getLogicDeleteSql(String key, String dbKey, String table, String alias, boolean isMore) {
         String sql;
-        String keySql  = String.format(" %s.`%s` %s %s", alias,
+        String keySql  = String.format(" %s.%s %s %s", alias,
                 dbKey, isMore ? SymbolConst.IN : SymbolConst.EQUALS, key);
 
         if (JudgeUtilsAx.isNotEmpty(logicDeleteUpdateSql)) {
@@ -106,12 +106,20 @@ public abstract class AbstractSqlBuilder {
     /**
      * 添加逻辑删除的部分sql
      */
-    public String checkConditionAndLogicDeleteSql(String alias, String condition, String logicSql) {
+    public String checkConditionAndLogicDeleteSql(String alias, final String condition, String logicSql) {
         LogicDeleteFieldSqlHandler handler = () -> {
             String sql;
             if (JudgeUtilsAx.isNotEmpty(condition)) {
-                sql = JudgeUtilsAx.isNotEmpty(logicSql) ?
-                        String.format("where %s.%s %s ", alias, logicSql, condition) : String.format("where 1 = 1 %s ", condition);
+                if (JudgeUtilsAx.isNotEmpty(logicSql)) {
+                    sql = String.format("where %s.%s %s ", alias, logicSql, condition);
+                }else {
+                    String finalCondition = condition;
+                    if(condition.trim().startsWith(SymbolConst.AND)) {
+                        finalCondition = condition.replaceFirst(SymbolConst.AND, SymbolConst.EMPTY);
+                    }
+                    sql = String.format("where %s ", finalCondition);
+                }
+
             } else {
                 sql = JudgeUtilsAx.isNotEmpty(logicSql) ?
                         String.format("where %s.%s ", alias, logicSql) : condition;
