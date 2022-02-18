@@ -5,6 +5,7 @@ import com.custom.dbaction.AbstractSqlBuilder;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.proxy.SqlParamsCheckProxy;
+import com.custom.wrapper.ConditionEntity;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -90,28 +91,28 @@ public class CustomDao {
     }
 
     /**
-    * 根据实体构造条件查询分页
+    * 根据实体构造等值条件查询分页
     */
     public <T> DbPageRows<T> selectPageRows(Class<T> t, T searchEntity, DbPageRows<T> dbPageRows) throws Exception {
         return jdbcAction.selectPageRows(t, null, dbPageRows, searchEntity);
     }
 
     /**
-    * 根据实体构造条件查询分页，并排序
+    * 根据实体构造等值条件查询分页，并排序
     */
     public <T> DbPageRows<T> selectPageRows(Class<T> t, T searchEntity, DbPageRows<T> dbPageRows, String orderBy) throws Exception {
         return jdbcAction.selectPageRows(t, orderBy, dbPageRows, searchEntity);
     }
 
     /**
-     * 根据实体构造条件查询分页
+     * 根据实体构造等值条件查询分页
      */
     public <T> DbPageRows<T> selectPageRows(Class<T> t, T searchEntity, int pageIndex, int pageSize) throws Exception {
         return jdbcAction.selectPageRows(t, null, new DbPageRows<T>().setPageIndex(pageIndex).setPageSize(pageSize), searchEntity);
     }
 
     /**
-     * 根据实体构造条件查询分页，并排序
+     * 根据实体构造等值条件查询分页，并排序
      */
     public <T> DbPageRows<T> selectPageRows(Class<T> t, String orderBy, T searchEntity, int pageIndex, int pageSize) throws Exception {
         return jdbcAction.selectPageRows(t, orderBy, new DbPageRows<T>().setPageIndex(pageIndex).setPageSize(pageSize), searchEntity);
@@ -150,6 +151,27 @@ public class CustomDao {
      */
     public <T> T selectOneByCondition(Class<T> t, String condition, Object... params) throws Exception {
         return jdbcAction.selectOneByCondition(t, condition, params);
+    }
+
+    /**
+     * 条件构造器查询
+     */
+    public <T> DbPageRows<T> selectPageRows(Class<T> t, DbPageRows<T> dbPageRows, ConditionEntity<T> conditionEntity) throws Exception {
+        return jdbcAction.selectPageRows(t, dbPageRows, conditionEntity);
+    }
+
+    /**
+     * 条件构造器查询
+     */
+    public <T> List<T> selectList(Class<T> t, ConditionEntity<T> conditionEntity) throws Exception {
+        return jdbcAction.selectList(t, conditionEntity);
+    }
+
+    /**
+     * 条件构造器查询
+     */
+    public <T> T selectOneByCondition(ConditionEntity<T> conditionEntity) throws Exception {
+        return jdbcAction.selectOneByCondition(conditionEntity);
     }
 
     /* ----------------------------------------------------------------delete---------------------------------------------------------------- */

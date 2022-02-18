@@ -11,6 +11,7 @@ import com.custom.enums.ExecuteMethod;
 import com.custom.annotations.check.CheckExecute;
 import com.custom.comm.page.DbPageRows;
 import com.custom.exceptions.CustomCheckException;
+import com.custom.wrapper.ConditionEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -157,6 +158,24 @@ public class JdbcAction extends AbstractSqlBuilder {
         dbPageRows.setTotal(count);
         dbPageRows.setData(dataList);
         return dbPageRows;
+    }
+
+    @Override
+    public <T> DbPageRows<T> selectPageRows(Class<T> t, DbPageRows<T> dbPageRows, ConditionEntity<T> conditionEntity) throws Exception {
+        return selectPageRows(t, conditionEntity.getFinalConditional(), null, dbPageRows, conditionEntity.getParamValues().toArray());
+    }
+
+    @Override
+    public <T> List<T> selectList(Class<T> t, ConditionEntity<T> conditionEntity) throws Exception {
+        return selectList(t, conditionEntity.getFinalConditional(), null, conditionEntity.getParamValues().toArray());
+    }
+
+    @Override
+    public <T> T selectOneByCondition(ConditionEntity<T> conditionEntity) throws Exception {
+        if(conditionEntity == null) {
+            throw new CustomCheckException("condition cannot be empty");
+        }
+        return selectOneByCondition(conditionEntity.getCls(), conditionEntity.getFinalConditional(), conditionEntity.getParamValues().toArray());
     }
 
     @Override

@@ -9,6 +9,7 @@ import com.custom.exceptions.ExceptionConst;
 import com.custom.annotations.check.CheckExecute;
 import com.custom.logic.LogicDeleteFieldSqlHandler;
 import com.custom.comm.page.DbPageRows;
+import com.custom.wrapper.ConditionEntity;
 
 import java.io.Serializable;
 import java.sql.SQLException;
@@ -32,6 +33,10 @@ public abstract class AbstractSqlBuilder {
     public abstract <T> T selectOneByEntity(Class<T> t, T searchEntity) throws Exception;
     public abstract <T> List<T> selectList(Class<T> t, T searchEntity, String orderBy) throws Exception;
     public abstract <T> DbPageRows<T> selectPageRows(Class<T> t, String orderBy, DbPageRows<T> dbPageRows, T searchEntity) throws Exception;
+    public abstract <T> DbPageRows<T> selectPageRows(Class<T> t, DbPageRows<T> dbPageRows, ConditionEntity<T> conditionEntity) throws Exception;
+    public abstract <T> List<T> selectList(Class<T> t, ConditionEntity<T> conditionEntity) throws Exception;
+    public abstract <T> T selectOneByCondition(ConditionEntity<T> conditionEntity) throws Exception;
+
 
     /*--------------------------------------- delete ---------------------------------------*/
     public abstract <T> int deleteByKey(Class<T> t, Object key) throws Exception;

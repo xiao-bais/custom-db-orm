@@ -110,6 +110,7 @@ public class ConditionEntity<T> extends AbstractWrapper<T, ConditionEntity<T>> i
     public ConditionEntity<T> or(boolean condition, ConditionEntity<T> conditionEntity) {
         super.setLastCondition(SymbolConst.EMPTY);
         super.append(condition, DbSymbol.OR, conditionEntity.getFinalConditional());
+        super.getParamValues().addAll(conditionEntity.getParamValues());
         return this;
     }
 
@@ -117,6 +118,7 @@ public class ConditionEntity<T> extends AbstractWrapper<T, ConditionEntity<T>> i
     public ConditionEntity<T> and(boolean condition, ConditionEntity<T> conditionEntity) {
         super.setLastCondition(SymbolConst.EMPTY);
         super.append(condition, DbSymbol.AND, conditionEntity.getFinalConditional());
+        super.getParamValues().addAll(conditionEntity.getParamValues());
         return this;
     }
 

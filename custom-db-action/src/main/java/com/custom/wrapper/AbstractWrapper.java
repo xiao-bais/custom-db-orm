@@ -100,7 +100,7 @@ public abstract class AbstractWrapper<T, Children> {
                 lastCondition = String.format(" %s %s %s", and, column, dbSymbol.getSymbol());
                 break;
             case ORDER_BY:
-                lastCondition = String.format("\n%s %s", dbSymbol.getSymbol(), val1);
+                orderBy = String.format("\n%s %s", dbSymbol.getSymbol(), val1);
                 break;
         }
         finalConditional.append(lastCondition);
@@ -121,6 +121,11 @@ public abstract class AbstractWrapper<T, Children> {
      * sql中的所有参数值
      */
     private List<Object> paramValues = new ArrayList<>();
+
+    /**
+    * 排序字段
+    */
+    private String orderBy = SymbolConst.EMPTY;
 
     /**
      * 查询的列名

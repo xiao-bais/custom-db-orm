@@ -33,11 +33,12 @@ public class DoMain {
         CustomDao customDao = new CustomDao(dbDataSource, dbCustomStrategy);
 
         ConditionEntity<Employee> conditionEntity = new ConditionEntity<>(Employee.class);
-        conditionEntity.like("emp_name", "工").gt("sex", false).and(new ConditionEntity<>(Employee.class).between("age", 20, 25));
+        conditionEntity.like("emp_name", "工").gt("sex", false).or(new ConditionEntity<>(Employee.class).between("age", 20, 25));
         String selectSql = conditionEntity.getFinalConditional();
         System.out.println("selectSql = " + selectSql);
 
-//        List<Employee> list = customDao.selectList(Employee.class, selectSql, conditionEntity.getParamValues().toArray());
+        Employee employee = customDao.selectOneByCondition(conditionEntity);
+        System.out.println("employee = " + employee);
 //        System.out.println("list = " + list);
 
     }
