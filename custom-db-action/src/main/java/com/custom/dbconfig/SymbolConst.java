@@ -3,7 +3,7 @@ package com.custom.dbconfig;
 /**
  * @Author Xiao-Bai
  * @Date 2021/10/6 17:37
- * @Desc：
+ * @Desc：简短符号常量类
  **/
 public class SymbolConst {
 
@@ -21,6 +21,9 @@ public class SymbolConst {
     public final static String IS = "is";//is
     public final static String IN = "in";//is
     public final static String AND = "and";//and
+    public final static String ASC = "asc";//asc
+    public final static String DESC = "desc";//desc
+
 
 
     public final static char UNDERLINE = '_'; //下划线

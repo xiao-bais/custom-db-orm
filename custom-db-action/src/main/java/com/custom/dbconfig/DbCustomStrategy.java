@@ -48,7 +48,7 @@ public class DbCustomStrategy {
     private String[] packageScans;
 
     /**
-    * 开启扫描包
+    * 开启扫描包（mapperScanEnable = true后，才会开始扫描 `packageScans` 中指定的路径）
     */
     private boolean mapperScanEnable = false;
 

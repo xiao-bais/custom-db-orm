@@ -100,7 +100,11 @@ public abstract class AbstractWrapper<T, Children> {
                 lastCondition = String.format(" %s %s %s", and, column, dbSymbol.getSymbol());
                 break;
             case ORDER_BY:
-                orderBy = String.format("\n%s %s", dbSymbol.getSymbol(), val1);
+                if(CustomUtil.isBlank(orderBy.toString())) {
+                    orderBy.add(String.format("%s %s", dbSymbol.getSymbol(), column));
+                }else {
+                    orderBy.add(column);
+                }
                 break;
         }
         finalConditional.append(lastCondition);
@@ -125,7 +129,7 @@ public abstract class AbstractWrapper<T, Children> {
     /**
     * 排序字段
     */
-    private String orderBy = SymbolConst.EMPTY;
+    private StringJoiner orderBy = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
 
     /**
      * 查询的列名
@@ -202,5 +206,12 @@ public abstract class AbstractWrapper<T, Children> {
                 break;
         }
         return sql;
+    }
+
+    /**
+    * 排序字段整合
+    */
+    public String orderByField(String column, boolean isAsc) {
+        return String.format("%s %s", column, (isAsc ? SymbolConst.ASC :SymbolConst.DESC));
     }
 }
