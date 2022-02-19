@@ -25,7 +25,7 @@ public class DoMain {
         dbDataSource.setUsername("root");
         dbDataSource.setPassword("123456");
 
-        // 数据库策略配置
+        // 增删改查映射策略配置
         DbCustomStrategy dbCustomStrategy = new DbCustomStrategy();
         dbCustomStrategy.setSqlOutPrinting(true);
         dbCustomStrategy.setUnderlineToCamel(true);
