@@ -23,7 +23,7 @@ public abstract class AbstractWrapper<T, Children> {
     public abstract Children adapter(DbSymbol dbSymbol, boolean condition, String column, Object val);
     public abstract Children adapter(DbSymbol dbSymbol, boolean condition, String column, Object val1, Object val2);
     public abstract Children adapter(DbSymbol dbSymbol, boolean condition, String column, String express);
-//    public abstract Children select(String... columns);
+    public abstract Children select(String... columns);
 
     private TableSqlBuilder<T> tableSqlBuilder;
 
@@ -39,7 +39,7 @@ public abstract class AbstractWrapper<T, Children> {
         }
 
         if(CustomUtil.isBlank(column)) {
-            throw new CustomCheckException("column is not null");
+            throw new CustomCheckException("column cannot be empty");
         }
         column = String.format("%s.%s", tableSqlBuilder.getAlias(), column);
 
@@ -100,11 +100,7 @@ public abstract class AbstractWrapper<T, Children> {
                 lastCondition = String.format(" %s %s %s", and, column, dbSymbol.getSymbol());
                 break;
             case ORDER_BY:
-                if(CustomUtil.isBlank(orderBy.toString())) {
-                    orderBy.add(String.format("%s %s", dbSymbol.getSymbol(), column));
-                }else {
-                    orderBy.add(column);
-                }
+                orderBy.add(column);
                 break;
         }
         finalConditional.append(lastCondition);
@@ -134,7 +130,7 @@ public abstract class AbstractWrapper<T, Children> {
     /**
      * 查询的列名
      */
-    private String selectColumns = SymbolConst.EMPTY;
+    private String[] selectColumns;
 
     public List<Object> getParamValues() {
         return paramValues;
@@ -157,11 +153,11 @@ public abstract class AbstractWrapper<T, Children> {
     }
 
 
-    public String getSelectColumns() {
+    public String[] getSelectColumns() {
         return selectColumns;
     }
 
-    public void setSelectColumns(String selectColumns) {
+    public void setSelectColumns(String[] selectColumns) {
         this.selectColumns = selectColumns;
     }
 
@@ -179,6 +175,10 @@ public abstract class AbstractWrapper<T, Children> {
 
     public void setCls(Class<T> cls) {
         this.cls = cls;
+    }
+
+    public StringJoiner getOrderBy() {
+        return orderBy;
     }
 
     /**

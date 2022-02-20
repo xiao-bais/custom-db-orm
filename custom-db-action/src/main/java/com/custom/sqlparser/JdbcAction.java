@@ -162,12 +162,12 @@ public class JdbcAction extends AbstractSqlBuilder {
 
     @Override
     public <T> DbPageRows<T> selectPageRows(Class<T> t, DbPageRows<T> dbPageRows, ConditionEntity<T> conditionEntity) throws Exception {
-        return selectPageRows(t, conditionEntity.getFinalConditional(), null, dbPageRows, conditionEntity.getParamValues().toArray());
+        return selectPageRows(t, conditionEntity.getFinalConditional(), conditionEntity.getOrderBy().toString(), dbPageRows, conditionEntity.getParamValues().toArray());
     }
 
     @Override
     public <T> List<T> selectList(Class<T> t, ConditionEntity<T> conditionEntity) throws Exception {
-        return selectList(t, conditionEntity.getFinalConditional(), null, conditionEntity.getParamValues().toArray());
+        return selectList(t, conditionEntity.getFinalConditional(), conditionEntity.getOrderBy().toString(), conditionEntity.getParamValues().toArray());
     }
 
     @Override

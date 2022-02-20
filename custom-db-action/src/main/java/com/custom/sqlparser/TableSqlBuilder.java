@@ -16,6 +16,7 @@ import org.springframework.util.ObjectUtils;
 import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * @Author Xiao-Bai
@@ -117,6 +118,29 @@ public class TableSqlBuilder<T> {
             return SymbolConst.EMPTY;
         }
         return selectSql.toString();
+    }
+
+    /**
+    * 自定义查询表列名
+    */
+    public String selectColumns(String[] columns) {
+        StringJoiner columnStr = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+        Stream.of(columns).forEach(x ->{
+            if(keyParserModel != null && x.equals(keyParserModel.getDbKey())) {
+                columnStr.add(keyParserModel.getSelectFieldSql());
+            }else if(!fieldParserModels.isEmpty()) {
+                Optional<DbFieldParserModel<T>> firstDbFieldParserModel = fieldParserModels.stream().filter(field -> field.getColumn().equals(x)).findFirst();
+                if (firstDbFieldParserModel.isPresent()) {
+                    DbFieldParserModel<T> fieldParserModel = firstDbFieldParserModel.get();
+                    columnStr.add(fieldParserModel.getSelectFieldSql());
+                }else {
+                    columnStr.add(String.format("%s.%s", this.getAlias(), x));
+                }
+            }else {
+                columnStr.add(String.format("%s.%s", this.getAlias(), x));
+            }
+        });
+        return columnStr.toString();
     }
 
     /**

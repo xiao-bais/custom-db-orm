@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 /**
  * @Author Xiao-Bai
  * @Date 2022/2/16 14:11
- * @Desc：
+ * @Desc：条件构造实例对象
  **/
 public class ConditionEntity<T> extends AbstractWrapper<T, ConditionEntity<T>> implements Wrapper<String, ConditionEntity<T>> {
 
@@ -180,27 +180,10 @@ public class ConditionEntity<T> extends AbstractWrapper<T, ConditionEntity<T>> i
         return this;
     }
 
-//    @Override
-//    public ConditionEntity<T> select(String... columns) {
-//        StringJoiner columnStr = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
-//        Stream.of(columns).forEach(x ->{
-//            DbKeyParserModel<T> keyParserModel = tableSqlBuilder.getKeyParserModel();
-//            List<DbFieldParserModel<T>> fieldParserModels = tableSqlBuilder.getFieldParserModels();
-//            if(keyParserModel != null && x.equals(keyParserModel.getDbKey())) {
-//                columnStr.add(String.format("%s.%s %s", keyParserModel.getAlias(), keyParserModel.getDbKey(), keyParserModel.getKey()));
-//            }else if(!fieldParserModels.isEmpty()) {
-//                Optional<DbFieldParserModel<T>> firstDbFieldParserModel = fieldParserModels.stream().filter(field -> field.getColumn().equals(x)).findFirst();
-//                if (firstDbFieldParserModel.isPresent()) {
-//                    DbFieldParserModel<T> fieldParserModel = firstDbFieldParserModel.get();
-//                    columnStr.add(String.format("%s.%s %s", fieldParserModel.getAlias(), fieldParserModel.getColumn(), fieldParserModel.getFieldName()));
-//                }else {
-//                    columnStr.add(String.format("%s.%s", tableSqlBuilder.getAlias(), x));
-//                }
-//            }else {
-//                columnStr.add(String.format("%s.%s", tableSqlBuilder.getAlias(), x));
-//            }
-//        });
-//        super.setSelectColumns(columnStr.toString());
-//        return this;
-//    }
+    @Override
+    public ConditionEntity<T> select(String... columns) {
+        setSelectColumns(columns);
+        return this;
+    }
+
 }
