@@ -136,21 +136,6 @@ public class BuildSqlHandler extends AbstractSqlBuilder {
     }
 
     @Override
-    public <T> T selectOneByEntity(Class<T> t, T searchEntity) throws Exception {
-        return null;
-    }
-
-    @Override
-    public <T> List<T> selectList(Class<T> t, T searchEntity, String orderBy) throws Exception {
-        return null;
-    }
-
-    @Override
-    public <T> DbPageRows<T> selectPageRows(Class<T> t, String orderBy, DbPageRows<T> dbPageRows, T searchEntity) throws Exception {
-        return null;
-    }
-
-    @Override
     public <T> DbPageRows<T> selectPageRows(Class<T> t, DbPageRows<T> dbPageRows, ConditionEntity<T> conditionEntity) throws Exception {
         return null;
     }

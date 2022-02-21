@@ -34,20 +34,6 @@ public class CustomDao {
         return jdbcAction.selectList(t, condition, orderBy, params);
     }
 
-    /***
-    * 根据实体直接匹配条件，例（a.name = 'ZhangSan'）
-    */
-    public <T> List<T> selectList(Class<T> t, T searchEntity) throws Exception{
-        return jdbcAction.selectList(t, searchEntity, null);
-    }
-
-    /***
-     * 根据实体直接匹配条件，并排序，例（a.name = 'ZhangSan'）
-     */
-    public <T> List<T> selectList(Class<T> t, T searchEntity, String orderBy) throws Exception {
-        return jdbcAction.selectList(t, searchEntity, orderBy);
-    }
-
     /**
      * 根据多个主键查询多条记录
      */
@@ -91,45 +77,10 @@ public class CustomDao {
     }
 
     /**
-    * 根据实体构造等值条件查询分页
-    */
-    public <T> DbPageRows<T> selectPageRows(Class<T> t, T searchEntity, DbPageRows<T> dbPageRows) throws Exception {
-        return jdbcAction.selectPageRows(t, null, dbPageRows, searchEntity);
-    }
-
-    /**
-    * 根据实体构造等值条件查询分页，并排序
-    */
-    public <T> DbPageRows<T> selectPageRows(Class<T> t, T searchEntity, DbPageRows<T> dbPageRows, String orderBy) throws Exception {
-        return jdbcAction.selectPageRows(t, orderBy, dbPageRows, searchEntity);
-    }
-
-    /**
-     * 根据实体构造等值条件查询分页
-     */
-    public <T> DbPageRows<T> selectPageRows(Class<T> t, T searchEntity, int pageIndex, int pageSize) throws Exception {
-        return jdbcAction.selectPageRows(t, null, new DbPageRows<T>().setPageIndex(pageIndex).setPageSize(pageSize), searchEntity);
-    }
-
-    /**
-     * 根据实体构造等值条件查询分页，并排序
-     */
-    public <T> DbPageRows<T> selectPageRows(Class<T> t, String orderBy, T searchEntity, int pageIndex, int pageSize) throws Exception {
-        return jdbcAction.selectPageRows(t, orderBy, new DbPageRows<T>().setPageIndex(pageIndex).setPageSize(pageSize), searchEntity);
-    }
-
-    /**
      * 根据主键查询一条记录
      */
     public <T> T selectOneByKey(Class<T> t, Object key) throws Exception {
         return jdbcAction.selectOneByKey(t, key);
-    }
-
-    /**
-    * 根据实体构造查询一条记录
-    */
-    public <T> T selectOneByEntity(Class<T> t, T searchEntity) throws Exception {
-        return jdbcAction.selectOneByEntity(t, searchEntity);
     }
 
     /**

@@ -24,6 +24,7 @@ public abstract class AbstractWrapper<T, Children> {
     public abstract Children adapter(DbSymbol dbSymbol, boolean condition, String column, Object val1, Object val2);
     public abstract Children adapter(DbSymbol dbSymbol, boolean condition, String column, String express);
     public abstract Children select(String... columns);
+    public abstract Children enabledRelatedCondition(Boolean enabledRelatedCondition);
 
     private TableSqlBuilder<T> tableSqlBuilder;
 
@@ -37,11 +38,12 @@ public abstract class AbstractWrapper<T, Children> {
         if(!condition) {
             return;
         }
-
         if(CustomUtil.isBlank(column)) {
             throw new CustomCheckException("column cannot be empty");
         }
-        column = String.format("%s.%s", tableSqlBuilder.getAlias(), column);
+        if(!column.contains(SymbolConst.POINT)) {
+            column = String.format("%s.%s", tableSqlBuilder.getAlias(), column);
+        }
 
         String and = SymbolConst.AND;
         switch (dbSymbol) {
@@ -124,6 +126,7 @@ public abstract class AbstractWrapper<T, Children> {
 
     /**
     * 排序字段
+     * 在条件拼接完成后，进行排序，例如：age asc, score desc
     */
     private StringJoiner orderBy = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
 
@@ -132,16 +135,21 @@ public abstract class AbstractWrapper<T, Children> {
      */
     private String[] selectColumns;
 
+    /**
+     * 在条件构造中是否开启表连接（若不开启，则使用条件构造对象时，只会以单表的格式去执行查询）
+     * 默认为true，以此承接@DbRelated、DbJoinTables(DbJoinTable)注解的使用
+     * 当条件为true后，条件构造器上的column参数便可填入该实体里面所关联的其他表字段
+     * 除主表外，关联表在使用条件构造对象时必须带上别名：例如：tp.name
+    */
+    private Boolean enabledRelatedCondition = true;
+
+
     public List<Object> getParamValues() {
         return paramValues;
     }
 
     public String getFinalConditional() {
         return finalConditional.toString();
-    }
-
-    public void setFinalConditional(String finalConditional) {
-        this.finalConditional = new StringBuilder(finalConditional);
     }
 
     public String getLastCondition() {
@@ -179,6 +187,14 @@ public abstract class AbstractWrapper<T, Children> {
 
     public StringJoiner getOrderBy() {
         return orderBy;
+    }
+
+    public Boolean getEnabledRelatedCondition() {
+        return enabledRelatedCondition;
+    }
+
+    public void setEnabledRelatedCondition(Boolean enabledRelatedCondition) {
+        this.enabledRelatedCondition = enabledRelatedCondition;
     }
 
     /**

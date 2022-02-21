@@ -1,9 +1,11 @@
 package com.home.customtest;
 
+import com.custom.comm.page.DbPageRows;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.sqlparser.CustomDao;
 import com.custom.wrapper.ConditionEntity;
+import com.home.customtest.entity.Dept;
 import com.home.customtest.entity.Employee;
 
 import java.util.Arrays;
@@ -33,16 +35,29 @@ public class DoMain {
 //        dbCustomStrategy.setDeleteLogicValue("1");
 //        dbCustomStrategy.setNotDeleteLogicValue("0");
 
+        long time = System.currentTimeMillis();
         CustomDao customDao = new CustomDao(dbDataSource, dbCustomStrategy);
-
         ConditionEntity<Employee> conditionEntity = new ConditionEntity<>(Employee.class);
-        conditionEntity.like("emp_name", "工").eq("sex", false).in("age", Arrays.asList(20,25,26));
-        String selectSql = conditionEntity.getFinalConditional();
-        System.out.println("selectSql = " + selectSql);
+        conditionEntity.like("emp_name", "工")
+                .eq("sex", false)
+                .in("age", Arrays.asList(20,25,26))
+//                .or(new ConditionEntity<>(Employee.class).like("dept.name", "财务"))
+                .setEnabledRelatedCondition(true);
+        long time1 = System.currentTimeMillis();
+        System.out.println("time = " + (time1-time));
 
-        List<Employee> employees = customDao.selectList(Employee.class, conditionEntity);
-        System.out.println("employees = " + employees);
-//        System.out.println("list = " + list);
+        DbPageRows<Employee> employeeDbPageRows1 = customDao.selectPageRows(Employee.class, null, conditionEntity);
+        long time2 = System.currentTimeMillis();
+        DbPageRows<Employee> employeeDbPageRows2 = customDao.selectPageRows(Employee.class, null, conditionEntity);
+        long time3 = System.currentTimeMillis();
+        DbPageRows<Employee> employeeDbPageRows3 = customDao.selectPageRows(Employee.class, null, conditionEntity);
+        long time4 = System.currentTimeMillis();
+        DbPageRows<Employee> employeeDbPageRows4 = customDao.selectPageRows(Employee.class, null, conditionEntity);
+        long time5 = System.currentTimeMillis();
+        System.out.println("time1 = " + (time2-time1));
+        System.out.println("time2 = " + (time3-time1));
+        System.out.println("time3 = " + (time4-time1));
+        System.out.println("time4 = " + (time5-time1));
 
     }
 }

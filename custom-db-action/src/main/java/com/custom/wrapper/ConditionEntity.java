@@ -186,4 +186,10 @@ public class ConditionEntity<T> extends AbstractWrapper<T, ConditionEntity<T>> i
         return this;
     }
 
+    @Override
+    public ConditionEntity<T> enabledRelatedCondition(Boolean enabledRelatedCondition) {
+        setEnabledRelatedCondition(enabledRelatedCondition);
+        return this;
+    }
+
 }

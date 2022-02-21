@@ -7,6 +7,7 @@ import com.custom.dbaction.SqlExecuteAction;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.dbconfig.SymbolConst;
+import com.custom.enums.DbSymbol;
 import com.custom.enums.ExecuteMethod;
 import com.custom.annotations.check.CheckExecute;
 import com.custom.comm.page.DbPageRows;
@@ -42,7 +43,7 @@ public class JdbcAction extends AbstractSqlBuilder {
     public <T> List<T> selectList(Class<T> t, String condition, String orderBy, Object... params) throws Exception {
         TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<>(t);
         condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), condition, getLogicDeleteQuerySql());
-        String selectSql = String.format("%s %s %s", tableSqlBuilder.getSelectSql(), JudgeUtilsAx.isNotEmpty(condition) ? condition : SymbolConst.EMPTY,
+        String selectSql = String.format("%s \n%s \n%s", tableSqlBuilder.getSelectSql(), JudgeUtilsAx.isNotEmpty(condition) ? condition : SymbolConst.EMPTY,
                 JudgeUtilsAx.isNotEmpty(orderBy) ? orderBy : SymbolConst.EMPTY);
         return selectBySql(t, selectSql, params);
     }
@@ -63,7 +64,7 @@ public class JdbcAction extends AbstractSqlBuilder {
         TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<>(t);
         condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), condition, getLogicDeleteQuerySql());
         if (JudgeUtilsAx.isNotEmpty(orderBy)) {
-            orderBy = String.format("\norder by %s", orderBy);
+            orderBy = String.format("\n%s %s", DbSymbol.ORDER_BY.getSymbol(), orderBy);
         }
         String selectSql = String.format("%s %s %s", tableSqlBuilder.getSelectSql(), JudgeUtilsAx.isNotEmpty(condition) ? condition : SymbolConst.EMPTY,
                 JudgeUtilsAx.isNotEmpty(orderBy) ? orderBy : SymbolConst.EMPTY);
@@ -112,61 +113,48 @@ public class JdbcAction extends AbstractSqlBuilder {
     }
 
     @Override
-    @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> T selectOneByEntity(Class<T> t, T searchEntity) throws Exception {
-        TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<>(t);
-        String selectSql = tableSqlBuilder.getSelectSql();
-        String conditions = tableSqlBuilder.buildEntityConditions(searchEntity, super.getDbCustomStrategy().getDbFieldDeleteLogic());
-        conditions = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), conditions, getLogicDeleteQuerySql());
-        return selectOneBySql(t, selectSql + conditions, tableSqlBuilder.getObjValues().toArray());
-    }
-
-    @Override
-    @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> List<T> selectList(Class<T> t, T searchEntity, String orderBy) throws Exception {
-        TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<>(t);
-        String selectSql = tableSqlBuilder.getSelectSql();
-        String conditions = tableSqlBuilder.buildEntityConditions(searchEntity, super.getDbCustomStrategy().getDbFieldDeleteLogic());
-        selectSql += checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), conditions, getLogicDeleteQuerySql());
-        if(CustomUtil.isNotBlank(orderBy)) {
-            selectSql += String.format(" order by %s", orderBy);
-        }
-        return selectBySql(t, selectSql, tableSqlBuilder.getObjValues().toArray());
-    }
-
-    @Override
-    @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> DbPageRows<T> selectPageRows(Class<T> t, String orderBy, DbPageRows<T> dbPageRows, T searchEntity) throws Exception {
-        if(dbPageRows == null) {
-            dbPageRows = new DbPageRows<>();
-        }
-
-        TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<>(t);
-        String selectSql = tableSqlBuilder.getSelectSql();
-        String conditions = tableSqlBuilder.buildEntityConditions(searchEntity, super.getDbCustomStrategy().getDbFieldDeleteLogic());
-        selectSql += checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), conditions, getLogicDeleteQuerySql());
-        if(CustomUtil.isNotBlank(orderBy)) {
-            selectSql = selectSql + " " + orderBy;
-        }
-        List<T> dataList = new ArrayList<>();
-        long count = (long) selectObjBySql(String.format("select count(0) from (%s) xxx ", selectSql), tableSqlBuilder.getObjValues().toArray());
-        if (count > 0) {
-            selectSql = String.format("%s \nlimit %s, %s", selectSql, (dbPageRows.getPageIndex() - 1) * dbPageRows.getPageSize(), dbPageRows.getPageSize());
-            dataList = selectBySql(t, selectSql, tableSqlBuilder.getObjValues().toArray());
-        }
-        dbPageRows.setCondition(conditions);
-        dbPageRows.setTotal(count);
-        dbPageRows.setData(dataList);
-        return dbPageRows;
-    }
-
-    @Override
     public <T> DbPageRows<T> selectPageRows(Class<T> t, DbPageRows<T> dbPageRows, ConditionEntity<T> conditionEntity) throws Exception {
+        if(conditionEntity == null) {
+            return selectPageRows(t, null,null, dbPageRows);
+        }else if(conditionEntity.getEnabledRelatedCondition() != null) {
+            if(dbPageRows == null) {
+                dbPageRows = new DbPageRows<>();
+            }
+            TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<>(t);
+            String selectSql = tableSqlBuilder.getSelectSql(conditionEntity.getEnabledRelatedCondition());
+            String condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), conditionEntity.getFinalConditional(), getLogicDeleteQuerySql());
+            if(CustomUtil.isNotBlank(conditionEntity.getOrderBy().toString())) {
+                condition += String.format("%s \n%s %s", selectSql, DbSymbol.ORDER_BY, conditionEntity.getOrderBy().toString());
+            }
+            selectSql += "\n" + condition;
+            List<T> dataList = new ArrayList<>();
+            Object[] params = conditionEntity.getParamValues().toArray();
+            long count = (long) selectObjBySql(String.format("select count(0) from (%s) xxx ", selectSql), params);
+            if (count > 0) {
+                selectSql = String.format("%s \nlimit %s, %s", selectSql, (dbPageRows.getPageIndex() - 1) * dbPageRows.getPageSize(), dbPageRows.getPageSize());
+                dataList = selectBySql(t, selectSql, params);
+            }
+            dbPageRows.setTotal(count);
+            dbPageRows.setCondition(condition);
+            dbPageRows.setData(dataList);
+            return dbPageRows;
+        }
         return selectPageRows(t, conditionEntity.getFinalConditional(), conditionEntity.getOrderBy().toString(), dbPageRows, conditionEntity.getParamValues().toArray());
     }
 
     @Override
     public <T> List<T> selectList(Class<T> t, ConditionEntity<T> conditionEntity) throws Exception {
+        if(conditionEntity == null) {
+            return selectBySql(t, new TableSqlBuilder<>(t).getSelectSql());
+        }else if(conditionEntity.getEnabledRelatedCondition() != null) {
+            TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<>(t);
+            String selectSql = tableSqlBuilder.getSelectSql(conditionEntity.getEnabledRelatedCondition());
+            selectSql += checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), conditionEntity.getFinalConditional(), getLogicDeleteQuerySql());
+            if(CustomUtil.isNotBlank(conditionEntity.getOrderBy().toString())) {
+                selectSql = String.format("%s \n%s %s", selectSql, DbSymbol.ORDER_BY, conditionEntity.getOrderBy().toString());
+            }
+            return selectBySql(t, selectSql, conditionEntity.getParamValues().toArray());
+        }
         return selectList(t, conditionEntity.getFinalConditional(), conditionEntity.getOrderBy().toString(), conditionEntity.getParamValues().toArray());
     }
 

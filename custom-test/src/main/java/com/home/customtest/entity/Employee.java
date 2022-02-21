@@ -17,9 +17,9 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-//@DbJoinTables({
-//        @DbJoinTable("left join dept dept on dept.id = a.dept_id"),
-//})
+@DbJoinTables({
+        @DbJoinTable("left join dept dept on dept.id = a.dept_id"),
+})
 public class Employee {
 
 
@@ -50,8 +50,8 @@ public class Employee {
     @DbField
     private int state;
 
-//    @DbMap("dept.name")
-//    private String deptName;
+    @DbMap("dept.name")
+    private String deptName;
 
 //    @DbRelated(joinTable = "location", joinAlias = "lo", condition = "lo.id = a.area_id", field = "area")
 //    private String area1;

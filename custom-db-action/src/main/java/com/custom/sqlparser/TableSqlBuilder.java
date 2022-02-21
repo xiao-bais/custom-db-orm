@@ -76,41 +76,34 @@ public class TableSqlBuilder<T> {
     private List<Object> objValues = new ArrayList<>();
 
 
-    /**
-    * 实体的条件构造
-    */
-    public String buildEntityConditions(T entity, String logicField) {
-        if(entity == null) throw new NullPointerException();
-        StringBuilder condition = new StringBuilder();
-        if(this.keyParserModel != null ) {
-            Object keyValue = keyParserModel.getValue(entity);
-            if(keyValue != null && !keyValue.getClass().isPrimitive()) {
-                if(CustomUtil.isKeyAllowType(keyValue.getClass(), keyValue)) {
-                    condition.append(String.format(" and %s.%s = ?", this.alias, keyParserModel.getDbKey()));
-                    objValues.add(keyValue);
-                }
-            }
-        }
-        for (DbFieldParserModel<T> fieldParserModel : this.fieldParserModels) {
-            Object fieldValue = fieldParserModel.getValue(entity);
-            if(fieldValue != null && !fieldValue.getClass().isPrimitive()) {
-                if(CustomUtil.isNotBlank(logicField) && fieldParserModel.getFieldName().equals(logicField)) continue;
-                condition.append(String.format(" and %s.%s = ?", this.alias, fieldParserModel.getColumn()));
-                objValues.add(fieldValue);
-            }
-        }
-        return condition.toString();
-    }
-
 
     /**
-     * 获取查询sql
+     * 获取查询sql（代码自行判定是否需要拼接表连接的sql）
      */
     public String getSelectSql() {
         try {
             if (CustomUtil.isDbRelationTag(this.cls) || this.cls.isAnnotationPresent(DbJoinTables.class)) {
                 getSelectRelationSql();
             } else {
+                getSelectBaseTableSql();
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return SymbolConst.EMPTY;
+        }
+        return selectSql.toString();
+    }
+
+    /**
+     * 获取查询sql（主动指定是否需要拼接表连接的sql）
+     */
+    public String getSelectSql(boolean isRelated) {
+        try {
+            if(isRelated) {
+                if (CustomUtil.isDbRelationTag(this.cls) || this.cls.isAnnotationPresent(DbJoinTables.class)) {
+                    getSelectRelationSql();
+                }
+            }else {
                 getSelectBaseTableSql();
             }
         } catch (Exception e) {
@@ -290,7 +283,7 @@ public class TableSqlBuilder<T> {
 
         // 第三步 拼接以joinTables的方式关联的查询字段
         if (!joinTableParserModelMap.isEmpty()) {
-            joinTableParserModelMap.forEach((k, v) -> baseFieldSql.add(String.format("%s `%s`", k, v)));
+            joinTableParserModelMap.forEach((k, v) -> baseFieldSql.add(String.format("%s %s", k, v)));
         }
 
         // 第三步 拼接以related方式关联的查询字段
@@ -416,7 +409,7 @@ public class TableSqlBuilder<T> {
 
             } else if (field.isAnnotationPresent(DbMap.class)) {
                 DbMap dbMap = field.getAnnotation(DbMap.class);
-                joinTableParserModelMap.put(CustomUtil.getJoinFieldStr(dbMap.value().trim()), field.getName());
+                joinTableParserModelMap.put(dbMap.value(), field.getName());
             }
         }
     }
