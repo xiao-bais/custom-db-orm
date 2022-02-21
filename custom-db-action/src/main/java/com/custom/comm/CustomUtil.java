@@ -61,12 +61,9 @@ public class CustomUtil {
     }
 
     public static boolean checkPrimaryKeyIsAutoIncrement(DbMediaType dbType){
-        if("int".equals(dbType.getType())
-            || "float".equals(dbType.getType())
-            || "bigint".equals(dbType.getType())){
-            return true;
-        }
-        return false;
+        return "int".equals(dbType.getType())
+                || "float".equals(dbType.getType())
+                || "bigint".equals(dbType.getType());
     }
 
     /**
