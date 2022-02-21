@@ -138,6 +138,11 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
         return String.format("%s.%s %s", this.getAlias(), this.dbKey, this.key);
     }
 
+    @Override
+    public String getSelectFieldSql(String column) {
+        return String.format("%s %s", column, this.key);
+    }
+
     public void setValue(Object value) {
         this.value = value;
     }

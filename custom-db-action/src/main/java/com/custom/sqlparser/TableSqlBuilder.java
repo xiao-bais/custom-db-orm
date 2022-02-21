@@ -116,24 +116,57 @@ public class TableSqlBuilder<T> {
     /**
     * 自定义查询表列名
     */
-    public String selectColumns(String[] columns) {
+    public String selectColumns(String[] columns, boolean isRelated) {
         StringJoiner columnStr = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
-        Stream.of(columns).forEach(x ->{
-            if(keyParserModel != null && x.equals(keyParserModel.getDbKey())) {
-                columnStr.add(keyParserModel.getSelectFieldSql());
-            }else if(!fieldParserModels.isEmpty()) {
-                Optional<DbFieldParserModel<T>> firstDbFieldParserModel = fieldParserModels.stream().filter(field -> field.getColumn().equals(x)).findFirst();
+        for (String x : columns) {
+            boolean isPoint = x.contains(SymbolConst.POINT);
+            boolean isMatch = false;
+            if (keyParserModel != null && (x.equals(keyParserModel.getDbKey()) || x.equals(keyParserModel.getFieldSql()))) {
+                columnStr.add(isPoint ? keyParserModel.getSelectFieldSql(x) : keyParserModel.getSelectFieldSql());
+                isMatch = true;
+            }
+            if (!fieldParserModels.isEmpty() && !isMatch) {
+                Optional<DbFieldParserModel<T>> firstDbFieldParserModel = fieldParserModels.stream().filter(field -> field.getColumn().equals(x) || field.getFieldSql().equals(x)).findFirst();
                 if (firstDbFieldParserModel.isPresent()) {
                     DbFieldParserModel<T> fieldParserModel = firstDbFieldParserModel.get();
-                    columnStr.add(fieldParserModel.getSelectFieldSql());
-                }else {
-                    columnStr.add(String.format("%s.%s", this.getAlias(), x));
+                    columnStr.add(isPoint ? fieldParserModel.getSelectFieldSql(x) : fieldParserModel.getSelectFieldSql());
+                    isMatch = true;
                 }
-            }else {
-                columnStr.add(String.format("%s.%s", this.getAlias(), x));
             }
-        });
-        return columnStr.toString();
+            if (!relatedParserModels.isEmpty() && isRelated && !isMatch) {
+                Optional<DbRelationParserModel<T>> firstDbFieldParserModel = relatedParserModels.stream().filter(field -> field.getFieldSql().equals(x)).findFirst();
+                if (firstDbFieldParserModel.isPresent()) {
+                    DbRelationParserModel<T> relationParserModel = firstDbFieldParserModel.get();
+                    columnStr.add(relationParserModel.getSelectFieldSql(x));
+                    isMatch = true;
+                }
+            }
+            if (!joinTableParserModelMap.isEmpty() && isRelated && !isMatch) {
+                Optional<String> firstJoinModel = joinTableParserModelMap.keySet().stream().filter(field -> field.equals(x)).findFirst();
+                if(firstJoinModel.isPresent()) {
+                    String joinModel = firstJoinModel.get();
+                    columnStr.add(String.format("%s %s", joinModel, joinTableParserModelMap.get(joinModel)));
+                    isMatch = true;
+                }
+            }
+            if (!isMatch){
+                columnStr.add(x);
+            }
+        }
+        String selectSql = getSelectSql(isRelated);
+        selectSql = String.format("select %s %s", columnStr.toString(), selectSql.substring(selectSql.indexOf("from")));
+        return selectSql;
+    }
+
+    /**
+     * 自定义查询表列名
+     */
+    public String selectColumns2(String columns, boolean isRelated) {
+
+
+
+
+        return null;
     }
 
     /**

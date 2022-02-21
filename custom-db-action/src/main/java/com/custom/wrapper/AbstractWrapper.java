@@ -132,6 +132,8 @@ public abstract class AbstractWrapper<T, Children> {
 
     /**
      * 查询的列名
+     * 若是查询单表（查询的实体中(包括父类)没有@DbRelated,@DbJoinTables之类的关联注解）则column为表字段，例如 name, age
+     * 若是查询关联表字段，则需附带关联表别名，例如：tp.name, tp.age
      */
     private String[] selectColumns;
 

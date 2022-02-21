@@ -100,7 +100,7 @@ public class CustomDao {
     /**
      * 根据条件查询一条记录
      */
-    public <T> T selectOneByCondition(Class<T> t, String condition, Object... params) throws Exception {
+    public <T> T selectOne(Class<T> t, String condition, Object... params) throws Exception {
         return jdbcAction.selectOneByCondition(t, condition, params);
     }
 
@@ -121,7 +121,7 @@ public class CustomDao {
     /**
      * 条件构造器查询
      */
-    public <T> T selectOneByCondition(ConditionEntity<T> conditionEntity) throws Exception {
+    public <T> T selectOne(ConditionEntity<T> conditionEntity) throws Exception {
         return jdbcAction.selectOneByCondition(conditionEntity);
     }
 

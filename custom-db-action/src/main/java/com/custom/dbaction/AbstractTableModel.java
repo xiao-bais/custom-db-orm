@@ -63,5 +63,6 @@ public abstract class AbstractTableModel<T> {
     public abstract Object getValue(T x);
     public abstract String getFieldSql();
     public abstract String getSelectFieldSql();
+    public abstract String getSelectFieldSql(String column);
 
 }

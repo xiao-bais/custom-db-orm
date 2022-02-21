@@ -134,7 +134,6 @@ public abstract class AbstractSqlBuilder {
     /**
     * 纯sql查询集合
     */
-    @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> List<T> selectBySql(Class<T> t, String sql, Object... params) throws Exception {
         return sqlExecuteAction.query(t, sql, params);
     }
@@ -142,13 +141,13 @@ public abstract class AbstractSqlBuilder {
     /**
     * 纯sql查询单条记录
     */
-    @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> T selectOneBySql(Class<T> t, String sql, Object... params) throws Exception {
         List<T> queryList = sqlExecuteAction.query(t, sql, params);
-        if (queryList.size() == 0) {
+        int size = queryList.size();
+        if (size == 0) {
             return null;
-        } else if (queryList.size() > 1) {
-            throw new CustomCheckException(String.format(ExceptionConst.EX_QUERY_MORE_RESULT, queryList.size()));
+        } else if (size > 1) {
+            throw new CustomCheckException(String.format(ExceptionConst.EX_QUERY_MORE_RESULT, size));
         }
         return queryList.get(SymbolConst.DEFAULT_ZERO);
     }

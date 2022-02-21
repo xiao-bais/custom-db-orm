@@ -20,7 +20,7 @@ public class SqlOutPrintBuilder implements Serializable {
      * PRINT-ERROR-SQL
      */
     public void sqlErrPrint() {
-        logger.info(
+        logger.error(
                 "\nsql error\n===================\nSQL ====>\n {}\n===================\nparams = {}\n===================\n"
                 , sql, JSON.toJSONString(params));
     }

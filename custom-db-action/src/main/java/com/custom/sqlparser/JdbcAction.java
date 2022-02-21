@@ -108,11 +108,12 @@ public class JdbcAction extends AbstractSqlBuilder {
     public <T> T selectOneByCondition(Class<T> t, String condition, Object... params) throws Exception {
         TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<>(t);
         condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), condition, getLogicDeleteQuerySql());
-        String selectSql = String.format("%s %s", tableSqlBuilder.getSelectSql(), condition);
+        String selectSql = String.format("%s \n%s", tableSqlBuilder.getSelectSql(), condition);
         return selectOneBySql(t, selectSql, params);
     }
 
     @Override
+    @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> DbPageRows<T> selectPageRows(Class<T> t, DbPageRows<T> dbPageRows, ConditionEntity<T> conditionEntity) throws Exception {
         if(conditionEntity == null) {
             return selectPageRows(t, null,null, dbPageRows);
@@ -143,13 +144,19 @@ public class JdbcAction extends AbstractSqlBuilder {
     }
 
     @Override
+    @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> List<T> selectList(Class<T> t, ConditionEntity<T> conditionEntity) throws Exception {
         if(conditionEntity == null) {
             return selectBySql(t, new TableSqlBuilder<>(t).getSelectSql());
         }else if(conditionEntity.getEnabledRelatedCondition() != null) {
             TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<>(t);
-            String selectSql = tableSqlBuilder.getSelectSql(conditionEntity.getEnabledRelatedCondition());
-            selectSql += checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), conditionEntity.getFinalConditional(), getLogicDeleteQuerySql());
+            String selectSql;
+            if(conditionEntity.getSelectColumns() != null) {
+                selectSql = tableSqlBuilder.selectColumns(conditionEntity.getSelectColumns(), conditionEntity.getEnabledRelatedCondition());
+            }else {
+                selectSql = tableSqlBuilder.getSelectSql(conditionEntity.getEnabledRelatedCondition());
+            }
+            selectSql += "\n" + checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), conditionEntity.getFinalConditional(), getLogicDeleteQuerySql());
             if(CustomUtil.isNotBlank(conditionEntity.getOrderBy().toString())) {
                 selectSql = String.format("%s \n%s %s", selectSql, DbSymbol.ORDER_BY, conditionEntity.getOrderBy().toString());
             }

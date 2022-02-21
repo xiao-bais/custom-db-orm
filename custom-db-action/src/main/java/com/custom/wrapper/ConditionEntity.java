@@ -156,6 +156,8 @@ public class ConditionEntity<T> extends AbstractWrapper<T, ConditionEntity<T>> i
         setTableSqlBuilder(new TableSqlBuilder<>(entityClass, ExecuteMethod.NONE));
     }
 
+    public ConditionEntity() {}
+
     @Override
     public ConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, String column) {
         appendCondition(dbSymbol, condition, column, null, null, null);
@@ -180,6 +182,10 @@ public class ConditionEntity<T> extends AbstractWrapper<T, ConditionEntity<T>> i
         return this;
     }
 
+    /**
+     * 若是查询单表（查询的实体中(包括父类)没有@DbRelated,@DbJoinTables之类的关联注解），则column为表字段，例如：name,age
+     * 若是查询关联表字段，则需附带关联表别名，例如：tp.name,tp.age
+     */
     @Override
     public ConditionEntity<T> select(String... columns) {
         setSelectColumns(columns);
