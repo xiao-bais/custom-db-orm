@@ -42,7 +42,7 @@ public class JdbcAction extends AbstractSqlBuilder {
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> List<T> selectList(Class<T> t, String condition, String orderBy, Object... params) throws Exception {
         TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<>(t);
-        condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), condition, getLogicDeleteQuerySql());
+        condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
         String selectSql = String.format("%s \n%s \n%s", tableSqlBuilder.getSelectSql(), JudgeUtilsAx.isNotEmpty(condition) ? condition : SymbolConst.EMPTY,
                 JudgeUtilsAx.isNotEmpty(orderBy) ? orderBy : SymbolConst.EMPTY);
         return selectBySql(t, selectSql, params);
@@ -62,7 +62,7 @@ public class JdbcAction extends AbstractSqlBuilder {
             dbPageRows = new DbPageRows<>();
         }
         TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<>(t);
-        condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), condition, getLogicDeleteQuerySql());
+        condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
         if (JudgeUtilsAx.isNotEmpty(orderBy)) {
             orderBy = String.format("\n%s %s", DbSymbol.ORDER_BY.getSymbol(), orderBy);
         }
@@ -86,7 +86,7 @@ public class JdbcAction extends AbstractSqlBuilder {
     public <T> T selectOneByKey(Class<T> t, Object key) throws Exception {
         TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<>(t);
         String condition = String.format("and %s = ?", tableSqlBuilder.getKeyParserModel().getFieldSql());
-        condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), condition, getLogicDeleteQuerySql());
+        condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
         String selectSql = String.format("%s %s", tableSqlBuilder.getSelectSql(), condition);
         return selectOneBySql(t, selectSql, key);
     }
@@ -98,7 +98,7 @@ public class JdbcAction extends AbstractSqlBuilder {
         StringJoiner symbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1);
         keys.forEach(x -> symbol.add(SymbolConst.QUEST));
         String condition = String.format("and %s in (%s)", tableSqlBuilder.getKeyParserModel().getFieldSql(), symbol.toString());
-        condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), condition, getLogicDeleteQuerySql());
+        condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
         String selectSql = String.format("%s %s", tableSqlBuilder.getSelectSql(), condition);
         return selectBySql(t, selectSql, keys.toArray());
     }
@@ -107,7 +107,7 @@ public class JdbcAction extends AbstractSqlBuilder {
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> T selectOneByCondition(Class<T> t, String condition, Object... params) throws Exception {
         TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<>(t);
-        condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), condition, getLogicDeleteQuerySql());
+        condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
         String selectSql = String.format("%s \n%s", tableSqlBuilder.getSelectSql(), condition);
         return selectOneBySql(t, selectSql, params);
     }
@@ -123,7 +123,8 @@ public class JdbcAction extends AbstractSqlBuilder {
             }
             TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<>(t);
             String selectSql = tableSqlBuilder.getSelectSql(conditionEntity.getEnabledRelatedCondition());
-            String condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), conditionEntity.getFinalConditional(), getLogicDeleteQuerySql());
+            String condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), conditionEntity.getFinalConditional(),
+                    getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
             if(CustomUtil.isNotBlank(conditionEntity.getOrderBy().toString())) {
                 condition += String.format("%s \n%s %s", selectSql, DbSymbol.ORDER_BY, conditionEntity.getOrderBy().toString());
             }
@@ -156,7 +157,7 @@ public class JdbcAction extends AbstractSqlBuilder {
             }else {
                 selectSql = tableSqlBuilder.getSelectSql(conditionEntity.getEnabledRelatedCondition());
             }
-            selectSql += "\n" + checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), conditionEntity.getFinalConditional(), getLogicDeleteQuerySql());
+            selectSql += "\n" + checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), conditionEntity.getFinalConditional(), getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
             if(CustomUtil.isNotBlank(conditionEntity.getOrderBy().toString())) {
                 selectSql = String.format("%s \n%s %s", selectSql, DbSymbol.ORDER_BY, conditionEntity.getOrderBy().toString());
             }
@@ -290,20 +291,5 @@ public class JdbcAction extends AbstractSqlBuilder {
             execTable(dropTableSql);
             logger.warn("drop table '{}' completed\n", tableSqlBuilder.getTable());
         }
-    }
-
-    @Override
-    public <T> int rollbackLogicByKey(Class<T> t, Object key) {
-        return 0;
-    }
-
-    @Override
-    public <T> int rollbackLogicByKeys(Class<T> t, Collection<? extends Serializable> keys) {
-        return 0;
-    }
-
-    @Override
-    public <T> int rollbackLogicByCondition(Class<T> t, String condition, Object... params) {
-        return 0;
     }
 }

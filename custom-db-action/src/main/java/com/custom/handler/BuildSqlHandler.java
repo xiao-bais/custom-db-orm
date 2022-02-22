@@ -345,20 +345,5 @@ public class BuildSqlHandler extends AbstractSqlBuilder {
         buildTableHandler.dropTables(arr);
     }
 
-    @Override
-    public <T> int rollbackLogicByKey(Class<T> t, Object key) {
-        return 0;
-    }
-
-    @Override
-    public <T> int rollbackLogicByKeys(Class<T> t, Collection<? extends Serializable> keys) {
-        return 0;
-    }
-
-    @Override
-    public <T> int rollbackLogicByCondition(Class<T> t, String condition, Object... params) {
-        return 0;
-    }
-
 
 }

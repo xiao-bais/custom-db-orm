@@ -9,11 +9,8 @@ package com.custom.handler;
 
 import com.custom.comm.CustomUtil;
 import com.custom.dbaction.SqlExecuteAction;
-import com.custom.dbconfig.DbCustomStrategy;
-import com.custom.dbconfig.DbDataSource;
 import com.custom.dbconfig.DbFieldsConst;
 import com.custom.dbconfig.SymbolConst;
-import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +48,7 @@ public class BuildTableHandler {
             String tableName = tableMap.get(DbFieldsConst.TABLE_NAME).toString();
             String isTable = String.format("SELECT COUNT(1) COUNT FROM " +
                     "`information_schema`.`TABLES` WHERE TABLE_NAME = '%s' AND TABLE_SCHEMA = '%s';", tableName, dataBase);
-            count = sqlExecuteAction.executeTableExist(isTable);
+            count = sqlExecuteAction.executeExist(isTable);
         }catch (SQLException e){
             logger.error(e.toString(), e);
         }

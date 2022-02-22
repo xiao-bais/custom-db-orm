@@ -281,9 +281,9 @@ public class SqlExecuteAction extends DbConnection {
     }
 
     /**
-     * 查询表是否存在
+     * 查询表是否存在,字段是否存在
      */
-    public long executeTableExist(String sql) throws SQLException {
+    public long executeExist(String sql) throws SQLException {
         long count = 0;
         statement = conn.prepareStatement(sql);
         resultSet = statement.executeQuery();
