@@ -23,7 +23,8 @@ public class SymbolConst {
     public final static String AND = "and";//and
     public final static String ASC = "asc";//asc
     public final static String DESC = "desc";//desc
-    public final static String WHERE = " WHERE ";//where
+    public final static String UPDATE = "update ";//update
+    public final static String WHERE = " where ";//where
 
 
 
