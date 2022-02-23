@@ -122,5 +122,11 @@ public class DbCustomStrategy {
         this.underlineToCamel = underlineToCamel;
     }
 
+    public String[] getEntityScans() {
+        return entityScans;
+    }
 
+    public void setEntityScans(String[] entityScans) {
+        this.entityScans = entityScans;
+    }
 }
