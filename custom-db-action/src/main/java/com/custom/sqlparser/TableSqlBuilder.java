@@ -371,7 +371,7 @@ public class TableSqlBuilder<T> {
             });
         }
         updateSql.append("update ").append(table).append(" ").append(alias)
-                .append(" set ").append(updateFieldSql).append(" where ")
+                .append(SymbolConst.SET).append(updateFieldSql).append(SymbolConst.WHERE)
                 .append(getLogicUpdateSql(keyParserModel.getFieldSql(), logicDeleteQuerySql));
         objValues.add(keyParserModel.getValue(t));
     }
@@ -396,7 +396,7 @@ public class TableSqlBuilder<T> {
             }
         }
         updateSql.append("update ").append(table).append(" ").append(alias)
-                .append(" set ").append(updateFieldSql).append(" ").append(condition);
+                .append(SymbolConst.SET).append(updateFieldSql).append(" ").append(condition);
         objValues.addAll(conditionVals);
     }
 
