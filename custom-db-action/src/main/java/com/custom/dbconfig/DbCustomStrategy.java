@@ -43,14 +43,19 @@ public class DbCustomStrategy {
     private String notDeleteLogicValue = SymbolConst.EMPTY;
 
     /**
-    * 需要扫描的包路径，加入spring容器中
+    * 需要扫描的dao层包路径，加入spring容器中
     */
     private String[] packageScans;
 
     /**
-    * 开启扫描包（mapperScanEnable = true后，才会开始扫描 `packageScans` 中指定的路径）
+    * 开启dao层的扫描包（mapperScanEnable = true后，才会开始扫描 `packageScans` 中指定的路径）
     */
     private boolean mapperScanEnable = false;
+
+    /**
+     * 需要扫描的实体类扫描路径，在spring容器启动后，加入缓存中
+     */
+    private String[] entityScans;
 
 
     public boolean isMapperScanEnable() {

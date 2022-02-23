@@ -48,16 +48,14 @@ public class DoMain {
 
         CustomDao customDao = new CustomDao(dbDataSource, dbCustomStrategy);
         ConditionEntity<Employee> conditionEntity = new ConditionEntity<>(Employee.class);
-//        conditionEntity.like("emp_name", "工")
-//                .select("emp_name", "age", "name", "dept.name")
-//                .eq("sex", true)
-//                .in("age", Stream.of(20,24,26).collect(Collectors.toList()))
-//                .and(new ConditionEntity<>(Employee.class).like("dept.name", "财务"));
+        conditionEntity.like("emp_name", "工")
+                .select("emp_name", "age", "name", "dept.name")
+                .eq("sex", true)
+                .in("age", Stream.of(20,24,26).collect(Collectors.toList()))
+                .and(new ConditionEntity<>(Employee.class).like("dept.name", "财务"));
 
-        Employee employee = new Employee();
-        employee.setEmpName("张三");
-        employee.setAge(26);
-        int id = customDao.
+
+        List<Employee> employees = customDao.selectList(Employee.class, conditionEntity);
 //        int i = customDao.deleteByKey(Dept.class, 13);
 
 
