@@ -1,5 +1,6 @@
 package com.custom.dbaction;
 
+import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.SymbolConst;
@@ -41,6 +42,7 @@ public abstract class AbstractSqlBuilder {
     public abstract <T> int deleteByKey(Class<T> t, Object key) throws Exception;
     public abstract <T> int deleteBatchKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception;
     public abstract <T> int deleteByCondition(Class<T> t, String condition, Object... params) throws Exception;
+    public abstract <T> int deleteByCondition(Class<T> t, ConditionEntity<T> conditionEntity) throws Exception;
 
     /*--------------------------------------- insert ---------------------------------------*/
     public abstract <T> int insert(T t, boolean isGeneratedKey) throws Exception;
@@ -48,6 +50,7 @@ public abstract class AbstractSqlBuilder {
 
     /*--------------------------------------- update ---------------------------------------*/
     public abstract <T> int updateByKey(T t, String... updateDbFields) throws Exception;
+    public abstract <T> int updateByCondition(T t, ConditionEntity<T> conditionEntity) throws Exception;
 
     /*--------------------------------------- comm ---------------------------------------*/
     public abstract <T> long save(T t) throws Exception;
@@ -72,47 +75,41 @@ public abstract class AbstractSqlBuilder {
                 throw new CustomCheckException(ExceptionConst.EX_LOGIC_EMPTY_VALUE);
             }
             this.logicField = dbCustomStrategy.getDbFieldDeleteLogic();
-            this.logicDeleteUpdateSql = String.format("%s = %s ",
+            this.logicDeleteUpdateSql = String.format("%s = %s",
                     logicField, dbCustomStrategy.getDeleteLogicValue());
-            this.logicDeleteQuerySql = String.format("%s = %s ",
+            this.logicDeleteQuerySql = String.format("%s = %s",
                     logicField, dbCustomStrategy.getNotDeleteLogicValue());
         }
     }
 
     /**
-     * 获取删除的sql
+     * 获取根据主键删除的sql
      */
-    public String getLogicDeleteSql(String key, String dbKey, String table, String alias, boolean isMore) throws SQLException {
-        String sql = SymbolConst.EMPTY;
-        String keySql  = String.format(" %s.%s %s %s", alias,
+    public String getLogicDeleteKeySql(String key, String dbKey, String table, String alias, boolean isMore) throws Exception {
+        String sql;
+        String keySql  = String.format("%s.%s %s %s", alias,
                 dbKey, isMore ? SymbolConst.IN : SymbolConst.EQUALS, key);
 
         if (JudgeUtilsAx.isNotEmpty(logicDeleteUpdateSql)) {
             String logicDeleteQuerySql = String.format("%s.%s", alias, this.logicDeleteQuerySql);
             String logicDeleteUpdateSql = String.format("%s.%s", alias, this.logicDeleteUpdateSql);
             if(checkLogicFieldIsExist(table)) {
-                sql = String.format("update %s %s set %s.%s where %s.%s and %s ", table,
-                        alias, alias, logicDeleteUpdateSql, alias, logicDeleteQuerySql, keySql);
+                sql = String.format("update %s %s set %s where %s and %s", table,
+                        alias, logicDeleteUpdateSql, logicDeleteQuerySql, keySql);
+            }else {
+                sql = String.format("delete from %s %s where %s", table, alias, keySql);
             }
-
         }else {
             sql = String.format("delete from %s %s where %s", table, alias, keySql);
         }
         return sql;
     }
 
-    /**
-    * 获取修改的逻辑删除字段sql
-    */
-    public String getLogicUpdateSql(String key) {
-        return JudgeUtilsAx.isNotBlank(logicDeleteQuerySql) ? String.format("%s and %s = ?", logicDeleteQuerySql, key) : String.format("%s = ?", key);
-    }
-
 
     /**
      * 由于部分表可能没有逻辑删除字段，所以在每一次执行时，都需检查该表有没有逻辑删除的字段，以保证sql正常执行
      */
-    public boolean checkLogicFieldIsExist(String tableName) throws SQLException {
+    public boolean checkLogicFieldIsExist(String tableName) throws Exception {
         if (tableLogicCache.get(tableName) != null) {
              return tableLogicCache.get(tableName);
         }
@@ -128,26 +125,22 @@ public abstract class AbstractSqlBuilder {
     /**
      * 添加逻辑删除的部分sql
      */
-    public String checkConditionAndLogicDeleteSql(String alias, final String condition, String logicSql, String tableName) throws SQLException {
+    public String checkConditionAndLogicDeleteSql(String alias, final String condition, String logicSql, String tableName) throws Exception {
         if(!checkLogicFieldIsExist(tableName)) {
-            return SymbolConst.EMPTY;
+            logicSql = SymbolConst.EMPTY;
         }
+        final String finalLogicSql = logicSql;
         LogicDeleteFieldSqlHandler handler = () -> {
             String sql;
             if (JudgeUtilsAx.isNotEmpty(condition)) {
-                if (JudgeUtilsAx.isNotEmpty(logicSql)) {
-                    sql = String.format("where %s.%s %s ", alias, logicSql, condition.trim());
+                if (JudgeUtilsAx.isNotEmpty(finalLogicSql)) {
+                    sql = String.format("where %s.%s %s ", alias, finalLogicSql, condition.trim());
                 }else {
-                    String finalCondition = condition;
-                    if(condition.trim().startsWith(SymbolConst.AND)) {
-                        finalCondition = condition.replaceFirst(SymbolConst.AND, SymbolConst.EMPTY);
-                    }
-                    sql = String.format("where %s ", finalCondition.trim());
+                    sql = String.format("where %s ", CustomUtil.trimSqlCondition(condition));
                 }
-
             } else {
-                if (JudgeUtilsAx.isNotEmpty(logicSql)) {
-                    sql = String.format("where %s.%s ", alias, logicSql);
+                if (JudgeUtilsAx.isNotEmpty(finalLogicSql)) {
+                    sql = String.format("where %s.%s ", alias, finalLogicSql);
                 }else {
                     sql = condition.trim();
                 }
@@ -203,6 +196,13 @@ public abstract class AbstractSqlBuilder {
     */
     public void execTable(String sql) throws SQLException {
         sqlExecuteAction.executeTableSql(sql);
+    }
+
+    /**
+     * 查询该表是否存在
+     */
+    public boolean existTable(String sql) throws Exception {
+        return sqlExecuteAction.executeExist(sql) == 0L;
     }
 
     /**

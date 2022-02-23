@@ -406,7 +406,6 @@ public class CustomUtil {
             StringBuilder sb = new StringBuilder();
             String str;
             while((str=br.readLine())!=null) {
-
                 sb.append(str);
             }
             res = sb.toString();
@@ -415,6 +414,17 @@ public class CustomUtil {
             e.printStackTrace();
         }
         return res;
+    }
+
+    /**
+     * 消除sql条件中的第一个and
+     */
+    public static String trimSqlCondition(String condition) {
+        String finalCondition = condition;
+        if(condition.trim().startsWith(SymbolConst.AND)) {
+            finalCondition = condition.replaceFirst(SymbolConst.AND, SymbolConst.EMPTY);
+        }
+        return finalCondition.trim();
     }
 
 

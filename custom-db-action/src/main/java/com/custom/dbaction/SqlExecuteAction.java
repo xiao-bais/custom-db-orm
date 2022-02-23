@@ -54,9 +54,9 @@ public class SqlExecuteAction extends DbConnection {
     /**
      * 预编译-查询1
      */
-    private void statementQuery(String sql, Object... params) throws Exception {
+    private void statementQuery(String sql, boolean outFlag, Object... params) throws Exception {
         statement = conn.prepareStatement(sql);
-        if (dbCustomStrategy.isSqlOutPrinting()) {
+        if (dbCustomStrategy.isSqlOutPrinting() && outFlag) {
             new SqlOutPrintBuilder(sql, params).sqlInfoQueryPrint();
         }
         if (params.length <= 0) return;
@@ -81,11 +81,11 @@ public class SqlExecuteAction extends DbConnection {
      * 通用查询（Collection）
      */
     @SuppressWarnings("unchecked")
-    public  <T> List<T> query(Class<T> clazz, String sql, Object... params) throws Exception {
+    public <T> List<T> query(Class<T> clazz, String sql, Object... params) throws Exception {
         Map<String, Object> map;
         List<T> list = new ArrayList<>();
         try {
-            statementQuery(sql, params);
+            statementQuery(sql, true, params);
             resultSet = statement.executeQuery();
             ResultSetMetaData metaData = resultSet.getMetaData();
 
@@ -113,10 +113,10 @@ public class SqlExecuteAction extends DbConnection {
      * 查询单个字段的多结果集（Set）
      */
     @SuppressWarnings("unchecked")
-    public  <T> Set<T> querySet(Class<T> t, String sql, Object... params) throws Exception {
+    public <T> Set<T> querySet(Class<T> t, String sql, Object... params) throws Exception {
         Set<T> resSet = new HashSet<>();
         try {
-            statementQuery(sql, params);
+            statementQuery(sql, true, params);
             resultSet = statement.executeQuery();
             if (resultSet.getMetaData().getColumnCount() > 1) {
                 throw new CustomCheckException(String.format(ExceptionConst.EX_QUERY_SET_RESULT, t.getTypeName()));
@@ -188,7 +188,7 @@ public class SqlExecuteAction extends DbConnection {
     public Object selectOneSql(String sql, Object... params) throws Exception {
         Object result = null;
         try {
-            statementQuery(sql, params);
+            statementQuery(sql, true, params);
             resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 result = resultSet.getObject(SymbolConst.DEFAULT_ONE);
@@ -207,7 +207,7 @@ public class SqlExecuteAction extends DbConnection {
     public <T> T selectOneSql(Class<T> t, String sql, Object... params) throws Exception {
         Map<String, Object> map = new HashMap<>();
         try {
-            statementQuery(sql, params);
+            statementQuery(sql, true, params);
             resultSet = statement.executeQuery();
             ResultSetMetaData metaData = resultSet.getMetaData();
             if (resultSet.next()) {
@@ -283,9 +283,9 @@ public class SqlExecuteAction extends DbConnection {
     /**
      * 查询表是否存在,字段是否存在
      */
-    public long executeExist(String sql) throws SQLException {
+    public long executeExist(String sql) throws Exception {
         long count = 0;
-        statement = conn.prepareStatement(sql);
+        statementQuery(sql, false);
         resultSet = statement.executeQuery();
         if (resultSet.next()) {
             count = (long) resultSet.getObject(SymbolConst.DEFAULT_ONE);

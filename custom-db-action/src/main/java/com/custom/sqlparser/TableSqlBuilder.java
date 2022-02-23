@@ -3,6 +3,7 @@ package com.custom.sqlparser;
 import com.alibaba.fastjson.JSONObject;
 import com.custom.annotations.*;
 import com.custom.comm.CustomUtil;
+import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.DbFieldsConst;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.ExecuteMethod;
@@ -74,6 +75,10 @@ public class TableSqlBuilder<T> {
      * @Desc:对象的所有值
      */
     private List<Object> objValues = new ArrayList<>();
+    /**
+     * @desc:修改的sql语句
+     */
+    private StringBuilder updateSql = new StringBuilder();
 
 
 
@@ -156,17 +161,6 @@ public class TableSqlBuilder<T> {
         String selectSql = getSelectSql(isRelated);
         selectSql = String.format("select %s %s", columnStr.toString(), selectSql.substring(selectSql.indexOf("from")));
         return selectSql;
-    }
-
-    /**
-     * 自定义查询表列名
-     */
-    public String selectColumns2(String columns, boolean isRelated) {
-
-
-
-
-        return null;
     }
 
     /**
@@ -354,6 +348,58 @@ public class TableSqlBuilder<T> {
         return joinTableSql.toString();
     }
 
+    /**
+     * 构建修改的sql语句
+     */
+    public void buildUpdateSql(String[] updateDbFields, String logicDeleteQuerySql) {
+        StringJoiner updateFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+        if(updateDbFields.length > 0) {
+            for (String field : updateDbFields) {
+                Optional<DbFieldParserModel<T>> updateFieldOP = fieldParserModels.stream().filter(x -> x.getColumn().equals(field)).findFirst();
+                updateFieldOP.ifPresent(op -> {
+                    updateFieldSql.add(String.format("%s = ?", op.getFieldSql()));
+                    objValues.add(op.getValue());
+                });
+            }
+        }else {
+            fieldParserModels.forEach(x -> {
+                Object value = x.getValue();
+                if (value != null) {
+                    updateFieldSql.add(String.format("%s = ?", x.getFieldSql()));
+                    objValues.add(value);
+                }
+            });
+        }
+        updateSql.append("update ").append(table).append(" ").append(alias)
+                .append(" set ").append(updateFieldSql).append(" where ")
+                .append(getLogicUpdateSql(keyParserModel.getFieldSql(), logicDeleteQuerySql));
+        objValues.add(keyParserModel.getValue(t));
+    }
+
+    /**
+     * 获取修改的逻辑删除字段sql
+     */
+    public String getLogicUpdateSql(String key, String logicDeleteQuerySql) {
+        return JudgeUtilsAx.isNotBlank(logicDeleteQuerySql) ? String.format("%s and %s = ?", logicDeleteQuerySql, key) : String.format("%s = ?", key);
+    }
+
+    /**
+     * 构建修改的sql字段语句
+     */
+    public void buildUpdateField(String condition, List<Object> conditionVals) {
+        StringJoiner updateFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+        for (DbFieldParserModel<T> fieldParserModel : fieldParserModels) {
+            Object value = fieldParserModel.getValue();
+            if(value != null) {
+                updateFieldSql.add(fieldParserModel.getFieldSql() + " = ?");
+                objValues.add(value);
+            }
+        }
+        updateSql.append("update ").append(table).append(" ").append(alias)
+                .append(" set ").append(updateFieldSql).append(" ").append(condition);
+        objValues.addAll(conditionVals);
+    }
+
 
     /**
      * 初始化
@@ -384,8 +430,6 @@ public class TableSqlBuilder<T> {
     public TableSqlBuilder(Class<T> cls) {
         this(cls, ExecuteMethod.SELECT);
     }
-
-    public TableSqlBuilder() {}
 
     public TableSqlBuilder(Class<T> cls, ExecuteMethod method) {
         this.cls = cls;
@@ -492,5 +536,9 @@ public class TableSqlBuilder<T> {
 
     public List<Object> getObjValues() {
         return objValues;
+    }
+
+    public StringBuilder getUpdateSql() {
+        return updateSql;
     }
 }

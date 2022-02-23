@@ -204,12 +204,12 @@ public abstract class AbstractWrapper<T, Children> {
      */
     public void append(boolean isAppend, DbSymbol dbSymbol, String condition) {
         if(!isAppend) return;
-        if(condition.trim().startsWith(DbSymbol.AND.getSymbol())) {
-            condition = condition.replaceFirst(DbSymbol.AND.getSymbol(), SymbolConst.EMPTY);
-        }
-         this.finalConditional = new StringBuilder(this.finalConditional + String.format(" %s (%s)", dbSymbol.getSymbol(), condition.trim()));
+        this.finalConditional = new StringBuilder(this.finalConditional + String.format(" %s (%s)", dbSymbol.getSymbol(), CustomUtil.trimSqlCondition(condition)));
     }
 
+    /**
+     * sql模糊查询条件拼接
+     */
     public String sqlConcat(SqlLike sqlLike, Object val) {
         String sql = SymbolConst.EMPTY;
         switch (sqlLike) {

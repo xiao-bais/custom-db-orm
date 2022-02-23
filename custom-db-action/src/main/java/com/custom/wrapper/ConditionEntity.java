@@ -156,8 +156,6 @@ public class ConditionEntity<T> extends AbstractWrapper<T, ConditionEntity<T>> i
         setTableSqlBuilder(new TableSqlBuilder<>(entityClass, ExecuteMethod.NONE));
     }
 
-    public ConditionEntity() {}
-
     @Override
     public ConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, String column) {
         appendCondition(dbSymbol, condition, column, null, null, null);

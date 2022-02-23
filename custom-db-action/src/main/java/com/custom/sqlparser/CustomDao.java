@@ -148,6 +148,13 @@ public class CustomDao {
         return jdbcAction.deleteByCondition(t, condition, params);
     }
 
+    /**
+     * 根据条件删除记录
+     */
+    public <T> int deleteByCondition(Class<T> t, ConditionEntity<T> conditionEntity) throws Exception {
+        return jdbcAction.deleteByCondition(t, conditionEntity);
+    }
+
     /* ----------------------------------------------------------------insert---------------------------------------------------------------- */
 
     /**
@@ -192,6 +199,13 @@ public class CustomDao {
      */
     public <T> int updateByKey(T t) throws Exception {
         return jdbcAction.updateByKey(t);
+    }
+
+    /**
+     * 根据条件修改一条记录
+     */
+    public <T> int updateByCondition(T t, ConditionEntity<T> conditionEntity) throws Exception {
+        return jdbcAction.updateByCondition(t, conditionEntity);
     }
 
     /* ----------------------------------------------------------------common---------------------------------------------------------------- */

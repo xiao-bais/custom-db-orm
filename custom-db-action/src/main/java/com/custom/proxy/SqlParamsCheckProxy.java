@@ -9,6 +9,7 @@ import com.custom.enums.ExecuteMethod;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
 import com.custom.annotations.check.CheckExecute;
+import com.custom.wrapper.ConditionEntity;
 import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;
 import org.springframework.cglib.proxy.MethodProxy;
@@ -64,7 +65,7 @@ public class SqlParamsCheckProxy<T> implements MethodInterceptor {
                 this.delete(objects);
                 break;
             case UPDATE:
-                this.update(objects);
+                this.update(objects, method);
                 break;
             case SELECT:
                 this.select(objects, method);
@@ -96,23 +97,30 @@ public class SqlParamsCheckProxy<T> implements MethodInterceptor {
         if(!((Class<?>)objects[0]).isAnnotationPresent(DbTable.class)) {
             throw new CustomCheckException(ExceptionConst.EX_DBTABLE__NOTFOUND + objects[0].getClass().getName());
         }
-        else if(JudgeUtilsAx.isEmpty(deleteParam)) {
-            if(deleteParam instanceof String) {
-                throw new CustomCheckException(ExceptionConst.EX_DEL_CONDITION_NOT_EMPTY);
-            }
-            throw new CustomCheckException(ExceptionConst.EX_DEL_PRIMARY_KEY_NOT_EMPTY);
+        if(JudgeUtilsAx.isEmpty(deleteParam)) {
+            throw new CustomCheckException("delete condition cannot be empty");
         }
     }
 
     /**
     * 修改的时候做参数的预检查
     */
-    private void update(Object[] objects) {
+    private void update(Object[] objects, Method method) {
         if(!objects[0].getClass().isAnnotationPresent(DbTable.class)) {
             throw new CustomCheckException(ExceptionConst.EX_DBTABLE__NOTFOUND + objects[0].getClass().getName());
-        }
-        else if(CustomUtil.isKeyTag(objects[0].getClass())) {
+        } else if(CustomUtil.isKeyTag(objects[0].getClass()) && method.getName().equals("updateByKey")) {
             throw new CustomCheckException(ExceptionConst.EX_DBKEY_NOTFOUND + objects[0].getClass().getName());
+        }else if(method.getName().equals("updateByCondition")) {
+            if(JudgeUtilsAx.isEmpty(objects[0])) {
+                throw new CustomCheckException("update entity cannot be null");
+            }else if(JudgeUtilsAx.isEmpty(objects[1])) {
+                throw new CustomCheckException("update condition cannot be empty");
+            }else if (JudgeUtilsAx.isNotEmpty(objects[1])){
+                ConditionEntity<Object> conditionEntity = (ConditionEntity<Object>) objects[1];
+                if(JudgeUtilsAx.isEmpty(conditionEntity.getFinalConditional())) {
+                    throw new CustomCheckException("update condition cannot be empty");
+                }
+            }
         }
     }
 
@@ -125,11 +133,17 @@ public class SqlParamsCheckProxy<T> implements MethodInterceptor {
         }
         String methodName = method.getName();
         if(JudgeUtilsAx.isEmpty(objects[1])) {
-            if((methodName.equals("selectOneByKey") || methodName.equals("selectBatchByKeys"))) {
-                throw new CustomCheckException(ExceptionConst.EX_PRIMARY_KEY_NOT_SPECIFIED);
+            switch (methodName) {
+                case "selectOneByKey":
+                case "selectBatchByKeys":
+                    throw new CustomCheckException(ExceptionConst.EX_PRIMARY_KEY_NOT_SPECIFIED);
 
-            }else if(methodName.equals("selectOneBySql") || methodName.equals("selectBySql")) {
-                throw new CustomCheckException(ExceptionConst.EX_SQL_NOT_EMPTY);
+                case "selectOneBySql":
+                case "selectBySql":
+                    throw new CustomCheckException(ExceptionConst.EX_SQL_NOT_EMPTY);
+
+                case "selectOneByCondition":
+                    throw new CustomCheckException("condition cannot be empty");
             }
         }
     }

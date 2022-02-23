@@ -40,7 +40,7 @@ public class BuildTableHandler {
     /**
      * 查看该表是否存在
      */
-    private <T> boolean existTable(Class<T> t) {
+    private <T> boolean existTable(Class<T> t) throws Exception {
         CustomUtil.isTableTag(t);
         long count = 0;
         try{

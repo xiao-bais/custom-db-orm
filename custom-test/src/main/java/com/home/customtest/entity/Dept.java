@@ -11,7 +11,7 @@ import lombok.Data;
  * @desc:
  */
 @Data
-@DbTable(table = "dept")
+@DbTable(table = "dept1")
 public class Dept {
 
     @DbKey
@@ -19,8 +19,5 @@ public class Dept {
 
     @DbField
     private String name;
-
-    @DbField
-    private int state;
 
 }

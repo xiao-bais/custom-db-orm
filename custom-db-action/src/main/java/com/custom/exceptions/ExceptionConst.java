@@ -80,7 +80,7 @@ public class ExceptionConst {
     /**
      * 删除条件不能为空
      */
-    public final static String EX_DEL_CONDITION_NOT_EMPTY = "Delete condition cannot be empty";
+    public final static String EX_DEL_CONDITION_NOT_EMPTY = "";
 
     /**
     * 删除的主键不能为空

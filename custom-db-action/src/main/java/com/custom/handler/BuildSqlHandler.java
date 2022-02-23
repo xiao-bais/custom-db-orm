@@ -160,7 +160,7 @@ public class BuildSqlHandler extends AbstractSqlBuilder {
     @CheckExecute(target = ExecuteMethod.DELETE)
     public <T> int deleteByKey(Class<T> t, Object key) throws Exception {
         String[] deleteFieldArray = dbParserFieldHandler.getTableBaseFieldArray(t);
-        String deleteSql = getLogicDeleteSql(SymbolConst.QUEST, deleteFieldArray[2], deleteFieldArray[0], deleteFieldArray[1], false);
+        String deleteSql = getLogicDeleteKeySql(SymbolConst.QUEST, deleteFieldArray[2], deleteFieldArray[0], deleteFieldArray[1], false);
         return sqlExecuteAction.executeUpdate(deleteSql, key);
     }
 
@@ -173,7 +173,7 @@ public class BuildSqlHandler extends AbstractSqlBuilder {
         StringJoiner delSymbols = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
         IntStream.range(0, keys.size()).mapToObj(i -> SymbolConst.QUEST).forEach(delSymbols::add);
         String[] deleteFieldArray = dbParserFieldHandler.getTableBaseFieldArray(t);
-        String deleteSql = getLogicDeleteSql(String.format("(%s)", delSymbols),
+        String deleteSql = getLogicDeleteKeySql(String.format("(%s)", delSymbols),
                 deleteFieldArray[2], deleteFieldArray[0], deleteFieldArray[1], true);
         return sqlExecuteAction.executeUpdate(deleteSql, keys.toArray());
     }
@@ -186,6 +186,11 @@ public class BuildSqlHandler extends AbstractSqlBuilder {
     public <T> int deleteByCondition(Class<T> t, String condition, Object... params) throws Exception {
         String deleteSql = dbParserFieldHandler.getDeleteSql(t, getLogicDeleteQuerySql(), getLogicDeleteUpdateSql(), condition);
         return sqlExecuteAction.executeUpdate(deleteSql, params);
+    }
+
+    @Override
+    public <T> int deleteByCondition(Class<T> t, ConditionEntity<T> conditionEntity) throws Exception {
+        return 0;
     }
 
     /* ----------------------------------------------------------------insert---------------------------------------------------------------- */
@@ -313,6 +318,11 @@ public class BuildSqlHandler extends AbstractSqlBuilder {
         updateDbValues.add(dbParserFieldHandler.getFieldValue(t, dbParserFieldHandler.getProFieldName(t.getClass(), fieldKey)));
         String updateSql = String.format(" update %s set %s where %s = ?", dbTableName, editSymbol, fieldKey);
         return sqlExecuteAction.executeUpdate(updateSql, updateDbValues.toArray());
+    }
+
+    @Override
+    public <T> int updateByCondition(T t, ConditionEntity<T> conditionEntity) throws Exception {
+        return 0;
     }
 
     /* ----------------------------------------------------------------common---------------------------------------------------------------- */
