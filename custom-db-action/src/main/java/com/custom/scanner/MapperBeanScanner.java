@@ -1,5 +1,6 @@
 package com.custom.scanner;
 
+import com.custom.annotations.DbTable;
 import com.custom.annotations.mapper.SqlMapper;
 import com.custom.comm.BasicDao;
 import com.custom.comm.JudgeUtilsAx;
@@ -115,7 +116,8 @@ public class MapperBeanScanner {
                     }
                     if (clazz != null && (
                             BasicDao.class.isAssignableFrom(clazz)
-                            || clazz.isAnnotationPresent(SqlMapper.class))
+                            || clazz.isAnnotationPresent(SqlMapper.class)
+                            || clazz.isAnnotationPresent(DbTable.class))
                     ) beanRegisterSet.add(clazz);
 
                     return true;
@@ -167,7 +169,8 @@ public class MapperBeanScanner {
                         }
                         if (beanClass != null && (
                                 BasicDao.class.isAssignableFrom(beanClass)
-                                        || beanClass.isAnnotationPresent(SqlMapper.class))
+                                        || beanClass.isAnnotationPresent(SqlMapper.class)
+                                        || beanClass.isAnnotationPresent(DbTable.class))
                         ) beanRegisterSet.add(beanClass);
 
                     }

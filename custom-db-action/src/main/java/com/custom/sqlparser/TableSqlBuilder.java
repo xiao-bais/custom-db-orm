@@ -438,8 +438,19 @@ public class TableSqlBuilder<T> {
         this.table = annotation.table();
         if(method != ExecuteMethod.NONE) {
             this.fields = CustomUtil.getFields(this.cls);
+            initTableBuild(method);
         }
-        initTableBuild(method);
+    }
+
+    public TableSqlBuilder(Class<T> cls, ExecuteMethod method, Field[] fields) {
+        this.cls = cls;
+        DbTable annotation = cls.getAnnotation(DbTable.class);
+        this.alias = annotation.alias();
+        this.table = annotation.table();
+        if(method != ExecuteMethod.NONE && fields != null) {
+            this.fields = fields;
+            initTableBuild(method);
+        }
     }
 
     public TableSqlBuilder(T t, boolean isBuildUpdateModels) {
@@ -448,6 +459,17 @@ public class TableSqlBuilder<T> {
         this.list.add(t);
         DbTable annotation = t.getClass().getAnnotation(DbTable.class);
         this.fields = CustomUtil.getFields(t.getClass());
+        this.alias = annotation.alias();
+        this.table = annotation.table();
+        buildUpdateModels(isBuildUpdateModels);
+    }
+
+    public TableSqlBuilder(T t, boolean isBuildUpdateModels, Field[] fields) {
+        this.t = t;
+        this.list = new ArrayList<>();
+        this.list.add(t);
+        DbTable annotation = t.getClass().getAnnotation(DbTable.class);
+        this.fields = fields;
         this.alias = annotation.alias();
         this.table = annotation.table();
         buildUpdateModels(isBuildUpdateModels);
@@ -532,6 +554,10 @@ public class TableSqlBuilder<T> {
 
     public List<DbFieldParserModel<T>> getFieldParserModels() {
         return fieldParserModels;
+    }
+
+    public List<DbRelationParserModel<T>> getRelatedParserModels() {
+        return relatedParserModels;
     }
 
     public List<Object> getObjValues() {
