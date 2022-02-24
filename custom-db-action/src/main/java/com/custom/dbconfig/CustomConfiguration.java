@@ -17,7 +17,6 @@ import org.springframework.context.annotation.Configuration;
  * @Date 2021/11/23 17:47
  * @Desc：
  **/
-
 @Configuration
 @ComponentScan("com.custom")
 public class CustomConfiguration {

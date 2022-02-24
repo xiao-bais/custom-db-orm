@@ -2,6 +2,7 @@ package com.custom.scanner;
 
 import com.custom.proxy.SqlReaderExecuteProxy;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.context.annotation.Lazy;
 
 /**
  * @author Xiao-Bai
@@ -14,6 +15,7 @@ public class InstanceBeanFactory<T> implements FactoryBean<T> {
 
     private SqlReaderExecuteProxy sqlReaderExecuteProxy;
 
+    @Lazy
     public InstanceBeanFactory(SqlReaderExecuteProxy sqlReaderExecuteProxy, Class<T> interfaceType) {
         this.interfaceType = interfaceType;
         this.sqlReaderExecuteProxy = sqlReaderExecuteProxy;

@@ -6,6 +6,8 @@ import com.custom.scanner.MapperBeanScanner;
 import com.custom.sqlparser.TableParserModelCache;
 import com.custom.sqlparser.TableSqlBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -17,22 +19,27 @@ import java.util.Set;
 /**
  * @Author Xiao-Bai
  * @Date 2022/2/24 12:09
- * @Desc：在springboot程序启动后执行一些缓存操作
+ * @Desc：在springboot程序启动后执行一些本地数据缓存操作
  **/
 @Component
 @Order(7)
-public class CustomApplicationRunner implements CommandLineRunner {
+public class CustomApplicationRunner implements ApplicationRunner {
 
-    @Autowired
     private DbCustomStrategy dbCustomStrategy;
 
+    public CustomApplicationRunner(DbCustomStrategy dbCustomStrategy){
+        this.dbCustomStrategy = dbCustomStrategy;
+    }
+
     @Override
-    public void run(String... args) throws Exception {
+    public void run(ApplicationArguments args) {
         String[] entityScans = dbCustomStrategy.getEntityScans();
         if(entityScans == null) return;
+
         MapperBeanScanner mapperBeanScanner = new MapperBeanScanner(entityScans);
         Set<Class<?>> beanRegisterList = mapperBeanScanner.getBeanRegisterList();
         TableParserModelCache tableParserModelCache = new TableParserModelCache(beanRegisterList.size());
+
         for (Class<?> aClass : beanRegisterList) {
             Field[] fields = CustomUtil.getFields(aClass);
             TableSqlBuilder<?> tableSqlBuilder1 = new TableSqlBuilder<>(aClass, ExecuteMethod.NONE);
