@@ -25,7 +25,7 @@ import java.util.Set;
 @Order(7)
 public class CustomApplicationRunner implements ApplicationRunner {
 
-    private DbCustomStrategy dbCustomStrategy;
+    private final DbCustomStrategy dbCustomStrategy;
 
     public CustomApplicationRunner(DbCustomStrategy dbCustomStrategy){
         this.dbCustomStrategy = dbCustomStrategy;
