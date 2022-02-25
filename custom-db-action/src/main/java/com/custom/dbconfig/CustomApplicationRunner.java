@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @Author Xiao-Bai
@@ -37,36 +38,29 @@ public class CustomApplicationRunner implements ApplicationRunner {
         if(entityScans == null) return;
 
         MapperBeanScanner mapperBeanScanner = new MapperBeanScanner(entityScans);
-        Set<Class<?>> beanRegisterList = mapperBeanScanner.getBeanRegisterList();
-        TableParserModelCache tableParserModelCache = new TableParserModelCache(beanRegisterList.size());
+        Set<Class<?>> entityClassSets = mapperBeanScanner.getBeanRegisterList();
+        TableParserModelCache tableParserModelCache = new TableParserModelCache(entityClassSets.size());
 
-        for (Class<?> aClass : beanRegisterList) {
+        for (Class<?> aClass : entityClassSets) {
             Field[] fields = CustomUtil.getFields(aClass);
-            TableSqlBuilder<?> tableSqlBuilder1 = new TableSqlBuilder<>(aClass, ExecuteMethod.NONE);
-            tableParserModelCache.setTableModel(aClass.getSimpleName(), tableSqlBuilder1)
-                    .setKeyModel(aClass.getSimpleName(), tableSqlBuilder1.getKeyParserModel())
-                    .setFieldModel(aClass.getSimpleName(), tableSqlBuilder1.getFieldParserModels())
-                    .setRelatedModel(aClass.getSimpleName(), tableSqlBuilder1.getRelatedParserModels());
 
-            TableSqlBuilder<?> tableSqlBuilder2 = new TableSqlBuilder<>(aClass, ExecuteMethod.DELETE, fields);
-            tableParserModelCache.setTableModel(aClass.getSimpleName(), tableSqlBuilder2)
-                    .setKeyModel(aClass.getSimpleName(), tableSqlBuilder2.getKeyParserModel())
-                    .setFieldModel(aClass.getSimpleName(), tableSqlBuilder2.getFieldParserModels())
-                    .setRelatedModel(aClass.getSimpleName(), tableSqlBuilder2.getRelatedParserModels());
-
-            TableSqlBuilder<?> tableSqlBuilder3 = new TableSqlBuilder<>(aClass, ExecuteMethod.UPDATE, fields);
-            tableParserModelCache.setTableModel(aClass.getSimpleName(), tableSqlBuilder3)
-                    .setKeyModel(aClass.getSimpleName(), tableSqlBuilder3.getKeyParserModel())
-                    .setFieldModel(aClass.getSimpleName(), tableSqlBuilder3.getFieldParserModels())
-                    .setRelatedModel(aClass.getSimpleName(), tableSqlBuilder3.getRelatedParserModels());
-
-            TableSqlBuilder<?> tableSqlBuilder4 = new TableSqlBuilder<>(aClass);
-
-            tableParserModelCache.setTableModel(aClass.getSimpleName(), tableSqlBuilder4)
-                    .setKeyModel(aClass.getSimpleName(), tableSqlBuilder4.getKeyParserModel())
-                    .setFieldModel(aClass.getSimpleName(), tableSqlBuilder4.getFieldParserModels())
-                    .setRelatedModel(aClass.getSimpleName(), tableSqlBuilder4.getRelatedParserModels());
+            for (ExecuteMethod value : ExecuteMethod.values()) {
+                setCache(tableParserModelCache, fields, aClass, value);
+            }
         }
+
+    }
+
+    /**
+     * 设置缓存
+     */
+    private void setCache(TableParserModelCache tableParserModelCache, Field[] fields, Class<?> aClass, ExecuteMethod method) {
+
+        TableSqlBuilder<?> tableSqlBuilder = new TableSqlBuilder<>(aClass, method, fields);
+        tableParserModelCache.setTableModel(aClass.getSimpleName(), tableSqlBuilder)
+                .setKeyModel(aClass.getSimpleName(), tableSqlBuilder.getKeyParserModel())
+                .setFieldModel(aClass.getSimpleName(), tableSqlBuilder.getFieldParserModels())
+                .setRelatedModel(aClass.getSimpleName(), tableSqlBuilder.getRelatedParserModels());
 
     }
 }

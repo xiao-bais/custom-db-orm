@@ -32,9 +32,13 @@ public class TableParserModelCache {
     private Map<String, Object> executeFieldModel;
 
     /**
-     * 执行方法解析模板缓存-关联缓存
+     * 执行方法解析模板缓存-关联缓存(related)
      */
     private Map<String, Object> executeRelatedModel;
+
+    /**
+     * 执行犯法接续模板缓存-关联缓存（joinTables）
+     */
 
 
     public TableParserModelCache(int size) {
