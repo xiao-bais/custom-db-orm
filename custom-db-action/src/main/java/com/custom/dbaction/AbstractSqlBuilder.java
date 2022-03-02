@@ -16,9 +16,7 @@ import com.custom.wrapper.ConditionEntity;
 
 import java.io.Serializable;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -63,6 +61,7 @@ public abstract class AbstractSqlBuilder {
     private SqlExecuteAction sqlExecuteAction;
     private DbCustomStrategy dbCustomStrategy;
     private TableParserModelCache tableParserModelCache;
+    private boolean enabledTableModel = false;
     private String logicField = SymbolConst.EMPTY;
     private String logicDeleteUpdateSql = SymbolConst.EMPTY;
     private String logicDeleteQuerySql = SymbolConst.EMPTY;
@@ -215,23 +214,49 @@ public abstract class AbstractSqlBuilder {
         if (JudgeUtilsAx.isEmpty(sql)) {
             throw new NullPointerException();
         }
-        return isGeneratedKey ? sqlExecuteAction.executeUpdate(sql, params) :
-        sqlExecuteAction.executeInsert(obj, sql, key, keyType, params);
+        return isGeneratedKey ? sqlExecuteAction.executeInsert(obj, sql, key, keyType, params) : sqlExecuteAction.executeUpdate(sql, params);
     }
 
 
     /**
-     * 从缓存中获取实体解析模板
+     * 从缓存中获取实体解析模板，若缓存中没有，就重新构造模板
      */
     protected <T> TableSqlBuilder<T> getEntityModelCache(Class<T> t, ExecuteMethod method) {
-        return tableParserModelCache.getTableModel(t.getSimpleName());
+        return isEnabledTableModel() ? tableParserModelCache.getTableModel(t.getName()) : new TableSqlBuilder<>(t, method);
     }
 
-    protected <T> TableSqlBuilder<T> getEntityModelCache(T t) {
-        TableSqlBuilder<T> tableModel = tableParserModelCache.getTableModel(t.getClass().getSimpleName());
-        tableModel.getKeyParserModel().setEntity(t);
-        tableModel.getFieldParserModels().forEach(x -> x.setEntity(t));
+    protected <T> TableSqlBuilder<T> getEntityModelCache(Class<T> t) {
+        return getEntityModelCache(t, ExecuteMethod.SELECT);
+    }
 
+    protected <T> TableSqlBuilder<T> getInsertEntityModelCache(T t) {
+        TableSqlBuilder<T> tableModel;
+        if(!isEnabledTableModel()) {
+            return new TableSqlBuilder<>(t, false);
+        }else {
+            tableModel = tableParserModelCache.getTableModel(t.getClass().getName());
+            if(tableModel == null) {
+                return new TableSqlBuilder<>(t, false);
+            }
+        }
+        tableModel.setEntity(t);
+        tableModel.setList(Collections.singletonList(t));
+        return tableModel;
+    }
+
+    protected <T> TableSqlBuilder<T> getInsertEntityModelCache(List<T> tList) {
+        T t = tList.get(0);
+        TableSqlBuilder<T> tableModel;
+        if(!isEnabledTableModel()) {
+            return new TableSqlBuilder<>(tList);
+        }else {
+            tableModel = tableParserModelCache.getTableModel(t.getClass().getName());
+            if(tableModel == null) {
+                return new TableSqlBuilder<>(tList);
+            }
+        }
+        tableModel.setEntity(t);
+        tableModel.setList(tList);
         return tableModel;
     }
 
@@ -275,5 +300,13 @@ public abstract class AbstractSqlBuilder {
 
     public void setTableParserModelCache(TableParserModelCache tableParserModelCache) {
         this.tableParserModelCache = tableParserModelCache;
+    }
+
+    public boolean isEnabledTableModel() {
+        return enabledTableModel;
+    }
+
+    public void setEnabledTableModel(boolean enabledTableModel) {
+        this.enabledTableModel = enabledTableModel;
     }
 }

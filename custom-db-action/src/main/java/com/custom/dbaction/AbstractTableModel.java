@@ -33,6 +33,7 @@ public abstract class AbstractTableModel<T> {
     }
 
     /**
+     * 获取实体中指定字段的值
      * x: 实例对象
      * fieldName: 字段名称
      */

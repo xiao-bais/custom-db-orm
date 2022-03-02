@@ -34,7 +34,7 @@ public class CustomEntityCacheBuilder {
         TableParserModelCache tableParserModelCache = new TableParserModelCache(entityClassSets.size());
 
         // 设置表的实体缓存
-        entityClassSets.forEach(cls -> tableParserModelCache.setTableModel(cls.getSimpleName(), new TableSqlBuilder<>(cls)));
+        entityClassSets.forEach(cls -> tableParserModelCache.setTableModel(cls.getName(), new TableSqlBuilder<>(cls)));
         dbCustomStrategy.setTableParserModelCache(tableParserModelCache);
         logger.info("Entity parse model Initialized Completed ... ...");
 

@@ -158,30 +158,16 @@ public class CustomDao {
     /* ----------------------------------------------------------------insert---------------------------------------------------------------- */
 
     /**
-     * 插入一条记录
+     * 插入一条记录(默认在实体中set新的主键)
      */
     public <T> long insert(T t) throws Exception {
-        return jdbcAction.insert(t, false);
-    }
-
-    /**
-     * 插入一条记录并生成新的主键（只允许自增主键类型）
-     */
-    public <T> int insertGenerateKey(T t) throws Exception {
         return jdbcAction.insert(t, true);
     }
 
     /**
-     * 插入多条记录
+     * 插入多条记录(默认在实体中set新的主键)
      */
     public <T> int insert(List<T> tList) throws Exception {
-        return jdbcAction.insert(tList, false);
-    }
-
-    /**
-     * 插入多条记录并生成新的主键（只允许自增主键类型）
-     */
-    public <T> int insertGenerateKey(List<T> tList) throws Exception {
         return jdbcAction.insert(tList, true);
     }
 
