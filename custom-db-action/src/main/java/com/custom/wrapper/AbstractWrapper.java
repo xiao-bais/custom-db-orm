@@ -122,13 +122,13 @@ public abstract class AbstractWrapper<T, Children> {
     /**
      * sql中的所有参数值
      */
-    private List<Object> paramValues = new ArrayList<>();
+    private final List<Object> paramValues = new ArrayList<>();
 
     /**
     * 排序字段
      * 在条件拼接完成后，进行排序，例如：age asc, score desc
     */
-    private StringJoiner orderBy = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+    private final StringJoiner orderBy = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
 
     /**
      * 查询的列名

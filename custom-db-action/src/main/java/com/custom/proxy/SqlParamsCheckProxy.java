@@ -25,11 +25,11 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 public class SqlParamsCheckProxy<T> implements MethodInterceptor {
 
-    private T obj;
+    private final T obj;
 
-    private DbDataSource dbDataSource;
+    private final DbDataSource dbDataSource;
 
-    private DbCustomStrategy dbCustomStrategy;
+    private final DbCustomStrategy dbCustomStrategy;
 
     public SqlParamsCheckProxy(T obj, DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         this.obj = obj;

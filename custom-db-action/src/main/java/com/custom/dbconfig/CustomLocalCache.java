@@ -12,11 +12,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class CustomLocalCache extends LinkedHashMap<String, Object> {
 
     // 读写锁
-    private ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
-    private Lock readLock = readWriteLock.readLock();
-    private Lock writeLock = readWriteLock.writeLock();
-
-    private Class<?> cls;
+    private final ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+    private final Lock readLock = readWriteLock.readLock();
+    private final Lock writeLock = readWriteLock.writeLock();
 
 
     @Override
@@ -41,10 +39,6 @@ public class CustomLocalCache extends LinkedHashMap<String, Object> {
 
     public CustomLocalCache(int size) {
         super(size + 1, 1.0F, true);
-    }
-
-    public void setEntityClass(Class<?> entityClass) {
-        this.cls = entityClass;
     }
 
 

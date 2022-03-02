@@ -10,6 +10,7 @@ import com.custom.exceptions.ExceptionConst;
 import com.custom.annotations.check.CheckExecute;
 import com.custom.logic.LogicDeleteFieldSqlHandler;
 import com.custom.comm.page.DbPageRows;
+import com.custom.sqlparser.TableParserModelCache;
 import com.custom.wrapper.ConditionEntity;
 
 import java.io.Serializable;
@@ -60,6 +61,7 @@ public abstract class AbstractSqlBuilder {
 
     private SqlExecuteAction sqlExecuteAction;
     private DbCustomStrategy dbCustomStrategy;
+    private TableParserModelCache tableParserModelCache;
     private String logicField = SymbolConst.EMPTY;
     private String logicDeleteUpdateSql = SymbolConst.EMPTY;
     private String logicDeleteQuerySql = SymbolConst.EMPTY;
@@ -247,5 +249,13 @@ public abstract class AbstractSqlBuilder {
 
     public String getLogicField() {
         return logicField;
+    }
+
+    public TableParserModelCache getTableParserModelCache() {
+        return tableParserModelCache;
+    }
+
+    public void setTableParserModelCache(TableParserModelCache tableParserModelCache) {
+        this.tableParserModelCache = tableParserModelCache;
     }
 }

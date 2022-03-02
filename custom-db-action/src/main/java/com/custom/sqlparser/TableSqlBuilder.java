@@ -476,6 +476,7 @@ public class TableSqlBuilder<T> {
     }
 
     public TableSqlBuilder(List<T> tList) {
+        if(tList == null) throw new NullPointerException();
         this.list = tList;
         this.t = tList.get(0);
         DbTable annotation = t.getClass().getAnnotation(DbTable.class);

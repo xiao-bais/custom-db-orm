@@ -27,12 +27,17 @@ import java.util.stream.IntStream;
  **/
 public class JdbcAction extends AbstractSqlBuilder {
 
-    private static Logger logger = LoggerFactory.getLogger(JdbcAction.class);
+    private static final Logger logger = LoggerFactory.getLogger(JdbcAction.class);
 
     public JdbcAction(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy){
         this.setSqlExecuteAction(new SqlExecuteAction(dbDataSource, dbCustomStrategy));
         this.setDbCustomStrategy(dbCustomStrategy);
         initLogic();
+    }
+
+    public JdbcAction(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy, TableParserModelCache tableParserModelCache) {
+        this(dbDataSource, dbCustomStrategy);
+        this.setTableParserModelCache(tableParserModelCache);
     }
 
     public JdbcAction(){}

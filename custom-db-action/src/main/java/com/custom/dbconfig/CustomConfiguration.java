@@ -4,12 +4,14 @@ import com.custom.comm.CustomUtil;
 import com.custom.handler.JdbcDao;
 import com.custom.proxy.SqlReaderExecuteProxy;
 import com.custom.sqlparser.CustomDao;
+import com.custom.sqlparser.TableParserModelCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 
 
 /**
@@ -18,18 +20,20 @@ import org.springframework.context.annotation.Configuration;
  * @Desc：
  **/
 @Configuration
+@Order(8)
 @ComponentScan("com.custom")
 public class CustomConfiguration {
 
-    private static Logger logger = LoggerFactory.getLogger(CustomConfiguration.class);
+    private static final Logger logger = LoggerFactory.getLogger(CustomConfiguration.class);
 
-    private DbDataSource dbDataSource;
+    private final DbDataSource dbDataSource;
 
-    private DbCustomStrategy dbCustomStrategy;
+    private final DbCustomStrategy dbCustomStrategy;
 
     public CustomConfiguration(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         this.dbDataSource = dbDataSource;
         this.dbCustomStrategy = dbCustomStrategy;
+
     }
 
     @Bean
