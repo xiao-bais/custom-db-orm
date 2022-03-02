@@ -27,7 +27,7 @@ import java.util.jar.JarFile;
  * @Desc：jdbc映射层的接口扫描
  **/
 @Slf4j
-public class MapperBeanScanner {
+public class CustomBeanScanner {
 
     /**
      * 所有需要注册的bean集合
@@ -37,7 +37,7 @@ public class MapperBeanScanner {
     /**
      * 类加载器
      */
-    private ClassLoader classLoader = MapperBeanScanner.class.getClassLoader();
+    private ClassLoader classLoader = CustomBeanScanner.class.getClassLoader();
 
     /**
      * 扫描的包
@@ -49,7 +49,7 @@ public class MapperBeanScanner {
      */
     private URL url;
 
-    public MapperBeanScanner(String... packageScans) {
+    public CustomBeanScanner(String... packageScans) {
         for (String scan : packageScans) {
             packageScan = scan;
             if (JudgeUtilsAx.isEmpty(packageScan)) {

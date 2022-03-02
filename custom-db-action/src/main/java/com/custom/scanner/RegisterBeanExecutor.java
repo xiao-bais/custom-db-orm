@@ -43,8 +43,8 @@ public class RegisterBeanExecutor implements BeanDefinitionRegistryPostProcessor
             return;
         }
 
-        MapperBeanScanner mapperBeanScanner = new MapperBeanScanner(packageScans);
-        Set<Class<?>> beanRegisterList = mapperBeanScanner.getBeanRegisterList();
+        CustomBeanScanner customBeanScanner = new CustomBeanScanner(packageScans);
+        Set<Class<?>> beanRegisterList = customBeanScanner.getBeanRegisterList();
 
         for (Class<?> beanClass : beanRegisterList) {
             BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(beanClass);

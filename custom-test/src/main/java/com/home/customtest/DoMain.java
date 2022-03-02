@@ -1,24 +1,13 @@
 package com.home.customtest;
 
-import com.custom.comm.CustomUtil;
-import com.custom.comm.page.DbPageRows;
+import com.custom.sqlparser.CustomEntityCacheBuilder;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
-import com.custom.enums.ExecuteMethod;
-import com.custom.scanner.MapperBeanScanner;
 import com.custom.sqlparser.CustomDao;
-import com.custom.sqlparser.DbFieldParserModel;
-import com.custom.sqlparser.TableParserModelCache;
-import com.custom.sqlparser.TableSqlBuilder;
 import com.custom.wrapper.ConditionEntity;
-import com.home.customtest.entity.Dept;
 import com.home.customtest.entity.Employee;
 
-import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -46,21 +35,23 @@ public class DoMain {
         dbCustomStrategy.setDbFieldDeleteLogic("state");
         dbCustomStrategy.setDeleteLogicValue("1");
         dbCustomStrategy.setNotDeleteLogicValue("0");
-        dbCustomStrategy.setEntityScans(new String[]{"com.home.customtest.entity"});
 
-
+        CustomEntityCacheBuilder builder = new CustomEntityCacheBuilder(dbCustomStrategy);
+        builder.buildEntity();
         CustomDao customDao = new CustomDao(dbDataSource, dbCustomStrategy);
         ConditionEntity<Employee> conditionEntity = new ConditionEntity<>(Employee.class);
-        conditionEntity.like("emp_name1", "工")
+        conditionEntity.like("emp_name", "工")
                 .select("emp_name", "age", "name", "dept.name")
                 .eq("sex", true)
-                .in("age", Stream.of(20,24,26).collect(Collectors.toList()))
+                .in("age", Stream.of(20, 24, 26).collect(Collectors.toList()))
                 .and(new ConditionEntity<>(Employee.class).like("dept.name", "财务"));
 
-        List<Employee> employees = customDao.selectList(Employee.class, conditionEntity);
 
+        List<Employee> employees = customDao.selectList(Employee.class, conditionEntity);
         System.out.println("employees = " + employees);
 
 
     }
+
+
 }

@@ -23,7 +23,7 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
 
     private static Logger logger = LoggerFactory.getLogger(DbKeyParserModel.class);
 
-    private T t;
+    private T entity;
 
     private String dbKey;
 
@@ -58,6 +58,14 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
         this.key = key;
     }
 
+    public T getEntity() {
+        return entity;
+    }
+
+    public void setEntity(T entity) {
+        this.entity = entity;
+    }
+
     public DbMediaType getDbMediaType() {
         return dbMediaType;
     }
@@ -79,9 +87,9 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
     }
 
     public Object getValue() {
-        if(t == null) throw new NullPointerException();
+        if(entity == null) throw new NullPointerException();
         try {
-            this.value = getFieldValue(t, key);
+            this.value = getFieldValue(entity, key);
         }catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
             logger.error(e.getMessage(), e);
             return null;
@@ -170,7 +178,7 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
 
     public DbKeyParserModel(T t, Field field, String table, String alias){
         this(field, table, alias);
-        this.t = t;
+        this.entity = t;
     }
 
     public DbKeyParserModel(Field field, String table, String alias){

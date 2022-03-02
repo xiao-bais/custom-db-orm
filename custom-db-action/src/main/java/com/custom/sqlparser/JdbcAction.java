@@ -32,12 +32,8 @@ public class JdbcAction extends AbstractSqlBuilder {
     public JdbcAction(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy){
         this.setSqlExecuteAction(new SqlExecuteAction(dbDataSource, dbCustomStrategy));
         this.setDbCustomStrategy(dbCustomStrategy);
+        this.setTableParserModelCache(dbCustomStrategy.getTableParserModelCache());
         initLogic();
-    }
-
-    public JdbcAction(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy, TableParserModelCache tableParserModelCache) {
-        this(dbDataSource, dbCustomStrategy);
-        this.setTableParserModelCache(tableParserModelCache);
     }
 
     public JdbcAction(){}

@@ -21,7 +21,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
 
     private static Logger logger = LoggerFactory.getLogger(DbFieldParserModel.class);
 
-    private T t;
+    private T entity;
 
     /**
     * java字段名称
@@ -87,7 +87,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
 
     public DbFieldParserModel(T t, Field field, String table, String alias) {
         this(field, table, alias);
-        this.t = t;
+        this.entity = t;
     }
 
     public DbFieldParserModel(Field field, String table, String alias) {
@@ -130,6 +130,14 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
         this.dbMediaType = dbMediaType;
     }
 
+    public T getEntity() {
+        return entity;
+    }
+
+    public void setEntity(T entity) {
+        this.entity = entity;
+    }
+
     @Override
     public Object getValue(T x) {
         try {
@@ -158,7 +166,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
 
     public Object getValue() {
         try {
-            value = getFieldValue(t, fieldName);
+            value = getFieldValue(entity, fieldName);
         }catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
             logger.error(e.getMessage(), e);
             return null;

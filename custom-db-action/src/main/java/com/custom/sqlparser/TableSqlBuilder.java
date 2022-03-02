@@ -1,23 +1,17 @@
 package com.custom.sqlparser;
 
-import com.alibaba.fastjson.JSONObject;
 import com.custom.annotations.*;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.DbFieldsConst;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.ExecuteMethod;
-import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
-import org.springframework.util.ObjectUtils;
 
 import java.lang.reflect.Field;
-import java.sql.SQLException;
 import java.util.*;
-import java.util.stream.Stream;
 
 /**
  * @Author Xiao-Bai
@@ -30,7 +24,7 @@ public class TableSqlBuilder<T> {
 
     private Class<T> cls;
 
-    private T t;
+    private T entity;
 
     private List<T> list;
 
@@ -190,7 +184,7 @@ public class TableSqlBuilder<T> {
                 objValues.add(keyParserModel.generateKey());
             }
             if (!fieldParserModels.isEmpty()) {
-                fieldParserModels.forEach(x -> objValues.add(x.getValue(t)));
+                fieldParserModels.forEach(x -> objValues.add(x.getValue(entity)));
             }
         }
         return objValues;
@@ -373,7 +367,7 @@ public class TableSqlBuilder<T> {
         updateSql.append(SymbolConst.UPDATE).append(table).append(" ").append(alias)
                 .append(SymbolConst.SET).append(updateFieldSql).append(SymbolConst.WHERE)
                 .append(getLogicUpdateSql(keyParserModel.getFieldSql(), logicDeleteQuerySql));
-        objValues.add(keyParserModel.getValue(t));
+        objValues.add(keyParserModel.getValue(entity));
     }
 
     /**
@@ -454,22 +448,11 @@ public class TableSqlBuilder<T> {
     }
 
     public TableSqlBuilder(T t, boolean isBuildUpdateModels) {
-        this.t = t;
+        this.entity = t;
         this.list = new ArrayList<>();
         this.list.add(t);
         DbTable annotation = t.getClass().getAnnotation(DbTable.class);
         this.fields = CustomUtil.getFields(t.getClass());
-        this.alias = annotation.alias();
-        this.table = annotation.table();
-        buildUpdateModels(isBuildUpdateModels);
-    }
-
-    public TableSqlBuilder(T t, boolean isBuildUpdateModels, Field[] fields) {
-        this.t = t;
-        this.list = new ArrayList<>();
-        this.list.add(t);
-        DbTable annotation = t.getClass().getAnnotation(DbTable.class);
-        this.fields = fields;
         this.alias = annotation.alias();
         this.table = annotation.table();
         buildUpdateModels(isBuildUpdateModels);
@@ -478,9 +461,9 @@ public class TableSqlBuilder<T> {
     public TableSqlBuilder(List<T> tList) {
         if(tList == null) throw new NullPointerException();
         this.list = tList;
-        this.t = tList.get(0);
-        DbTable annotation = t.getClass().getAnnotation(DbTable.class);
-        this.fields = CustomUtil.getFields(t.getClass());
+        this.entity = tList.get(0);
+        DbTable annotation = entity.getClass().getAnnotation(DbTable.class);
+        this.fields = CustomUtil.getFields(entity.getClass());
         this.alias = annotation.alias();
         this.table = annotation.table();
         buildUpdateModels(false);
@@ -520,10 +503,10 @@ public class TableSqlBuilder<T> {
     private void buildUpdateModels(boolean isBuildUpdateModels) {
         for (Field field : fields) {
             if (field.isAnnotationPresent(DbKey.class) && keyParserModel == null) {
-                keyParserModel = new DbKeyParserModel<>(t, field, this.table, this.alias);
+                keyParserModel = new DbKeyParserModel<>(entity, field, this.table, this.alias);
 
             } else if (field.isAnnotationPresent(DbField.class) && isBuildUpdateModels) {
-                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(t, field, this.table, this.alias);
+                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(entity, field, this.table, this.alias);
                 fieldParserModels.add(fieldParserModel);
 
             }else if (field.isAnnotationPresent(DbField.class)) {
@@ -567,5 +550,73 @@ public class TableSqlBuilder<T> {
 
     public StringBuilder getUpdateSql() {
         return updateSql;
+    }
+
+    public Map<String, String> getJoinTableParserModelMap() {
+        return joinTableParserModelMap;
+    }
+
+    public List<String> getJoinTableParserModels() {
+        return joinTableParserModels;
+    }
+
+    public Class<T> getCls() {
+        return cls;
+    }
+
+    public T getEntity() {
+        return entity;
+    }
+
+    public List<T> getList() {
+        return list;
+    }
+
+    public Field[] getFields() {
+        return fields;
+    }
+
+    public void setCls(Class<T> cls) {
+        this.cls = cls;
+    }
+
+    public void setEntity(T entity) {
+        this.entity = entity;
+    }
+
+    public void setList(List<T> list) {
+        this.list = list;
+    }
+
+    public void setTable(String table) {
+        this.table = table;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
+
+    public void setFields(Field[] fields) {
+        this.fields = fields;
+    }
+
+    public void setKeyParserModel(DbKeyParserModel<T> keyParserModel) {
+        this.keyParserModel = keyParserModel;
+    }
+
+    public void setFieldParserModels(List<DbFieldParserModel<T>> fieldParserModels) {
+        this.fieldParserModels = fieldParserModels;
+    }
+
+    public void setRelatedParserModels(List<DbRelationParserModel<T>> relatedParserModels) {
+        this.relatedParserModels = relatedParserModels;
+    }
+
+    public void setJoinTableParserModelMap(Map<String, String> joinTableParserModelMap) {
+        this.joinTableParserModelMap = joinTableParserModelMap;
+    }
+
+    public void setJoinTableParserModels(List<String> joinTableParserModels) {
+        this.joinTableParserModels = joinTableParserModels;
     }
 }

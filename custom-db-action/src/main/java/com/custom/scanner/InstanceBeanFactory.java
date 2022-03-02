@@ -11,9 +11,9 @@ import org.springframework.context.annotation.Lazy;
  */
 public class InstanceBeanFactory<T> implements FactoryBean<T> {
 
-    private Class<T> interfaceType;
+    private final Class<T> interfaceType;
 
-    private SqlReaderExecuteProxy sqlReaderExecuteProxy;
+    private final SqlReaderExecuteProxy sqlReaderExecuteProxy;
 
     @Lazy
     public InstanceBeanFactory(SqlReaderExecuteProxy sqlReaderExecuteProxy, Class<T> interfaceType) {

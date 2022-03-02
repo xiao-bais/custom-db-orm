@@ -1,5 +1,6 @@
 package com.custom.dbconfig;
 
+import com.custom.sqlparser.TableParserModelCache;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -56,6 +57,11 @@ public class DbCustomStrategy {
      * 需要扫描的实体类扫描路径，在spring容器启动后，加入缓存中
      */
     private String[] entityScans;
+
+    /**
+     * 实体模板缓存
+     */
+    private TableParserModelCache tableParserModelCache;
 
 
     public boolean isMapperScanEnable() {
@@ -128,5 +134,13 @@ public class DbCustomStrategy {
 
     public void setEntityScans(String[] entityScans) {
         this.entityScans = entityScans;
+    }
+
+    public TableParserModelCache getTableParserModelCache() {
+        return tableParserModelCache;
+    }
+
+    public void setTableParserModelCache(TableParserModelCache tableParserModelCache) {
+        this.tableParserModelCache = tableParserModelCache;
     }
 }

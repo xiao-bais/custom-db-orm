@@ -11,6 +11,7 @@ import com.custom.annotations.check.CheckExecute;
 import com.custom.logic.LogicDeleteFieldSqlHandler;
 import com.custom.comm.page.DbPageRows;
 import com.custom.sqlparser.TableParserModelCache;
+import com.custom.sqlparser.TableSqlBuilder;
 import com.custom.wrapper.ConditionEntity;
 
 import java.io.Serializable;
@@ -65,7 +66,7 @@ public abstract class AbstractSqlBuilder {
     private String logicField = SymbolConst.EMPTY;
     private String logicDeleteUpdateSql = SymbolConst.EMPTY;
     private String logicDeleteQuerySql = SymbolConst.EMPTY;
-    private Map<String, Boolean> tableLogicCache = new ConcurrentHashMap<>();
+    private final Map<String, Boolean> tableLogicCache = new ConcurrentHashMap<>();
 
     /**
      * 初始化逻辑删除的sql
@@ -217,6 +218,23 @@ public abstract class AbstractSqlBuilder {
         return isGeneratedKey ? sqlExecuteAction.executeUpdate(sql, params) :
         sqlExecuteAction.executeInsert(obj, sql, key, keyType, params);
     }
+
+
+    /**
+     * 从缓存中获取实体解析模板
+     */
+    protected <T> TableSqlBuilder<T> getEntityModelCache(Class<T> t, ExecuteMethod method) {
+        return tableParserModelCache.getTableModel(t.getSimpleName());
+    }
+
+    protected <T> TableSqlBuilder<T> getEntityModelCache(T t) {
+        TableSqlBuilder<T> tableModel = tableParserModelCache.getTableModel(t.getClass().getSimpleName());
+        tableModel.getKeyParserModel().setEntity(t);
+        tableModel.getFieldParserModels().forEach(x -> x.setEntity(t));
+
+        return tableModel;
+    }
+
 
 
     public SqlExecuteAction getSqlExecuteAction() {

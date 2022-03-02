@@ -29,6 +29,7 @@ public class SymbolConst {
 
 
     public final static char UNDERLINE = '_'; //下划线
+    public final static char CENTERLINE = '-'; //中划线
     public final static String EMPTY = "";//空字符串
     public final static String EQUALS = "=";//等于
     public final static String QUEST = "?";//占位符

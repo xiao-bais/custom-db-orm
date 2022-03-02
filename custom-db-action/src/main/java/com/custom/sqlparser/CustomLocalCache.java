@@ -1,4 +1,4 @@
-package com.custom.dbconfig;
+package com.custom.sqlparser;
 
 import java.util.LinkedHashMap;
 import java.util.concurrent.locks.Lock;
