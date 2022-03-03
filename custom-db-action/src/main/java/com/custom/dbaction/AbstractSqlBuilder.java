@@ -229,14 +229,14 @@ public abstract class AbstractSqlBuilder {
         return getEntityModelCache(t, ExecuteMethod.SELECT);
     }
 
-    protected <T> TableSqlBuilder<T> getInsertEntityModelCache(T t) {
+    protected <T> TableSqlBuilder<T> getUpdateEntityModelCache(T t, boolean isBuildUpdateModels) {
         TableSqlBuilder<T> tableModel;
         if(!isEnabledTableModel()) {
-            return new TableSqlBuilder<>(t, false);
+            return new TableSqlBuilder<>(t, isBuildUpdateModels);
         }else {
             tableModel = tableParserModelCache.getTableModel(t.getClass().getName());
             if(tableModel == null) {
-                return new TableSqlBuilder<>(t, false);
+                return new TableSqlBuilder<>(t, isBuildUpdateModels);
             }
         }
         tableModel.setEntity(t);

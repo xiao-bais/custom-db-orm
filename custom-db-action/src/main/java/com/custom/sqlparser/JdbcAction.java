@@ -70,7 +70,11 @@ public class JdbcAction extends AbstractSqlBuilder {
         }
         String selectSql = String.format("%s %s %s", tableSqlBuilder.getSelectSql(), JudgeUtilsAx.isNotEmpty(condition) ? condition : SymbolConst.EMPTY,
                 JudgeUtilsAx.isNotEmpty(orderBy) ? orderBy : SymbolConst.EMPTY);
+        buildPageResult(t, selectSql, condition, dbPageRows, params);
+        return dbPageRows;
+    }
 
+    private <T> void buildPageResult(Class<T> t, String selectSql, String condition, DbPageRows<T> dbPageRows, Object... params) throws Exception {
         List<T> dataList = new ArrayList<>();
         long count = (long) selectObjBySql(String.format("select count(0) from (%s) xxx ", selectSql), params);
         if (count > 0) {
@@ -80,7 +84,6 @@ public class JdbcAction extends AbstractSqlBuilder {
         dbPageRows.setTotal(count);
         dbPageRows.setCondition(condition);
         dbPageRows.setData(dataList);
-        return dbPageRows;
     }
 
     @Override
@@ -131,16 +134,8 @@ public class JdbcAction extends AbstractSqlBuilder {
                 condition += String.format("%s \n%s %s", selectSql, DbSymbol.ORDER_BY, conditionEntity.getOrderBy().toString());
             }
             selectSql += "\n" + condition;
-            List<T> dataList = new ArrayList<>();
             Object[] params = conditionEntity.getParamValues().toArray();
-            long count = (long) selectObjBySql(String.format("select count(0) from (%s) xxx ", selectSql), params);
-            if (count > 0) {
-                selectSql = String.format("%s \nlimit %s, %s", selectSql, (dbPageRows.getPageIndex() - 1) * dbPageRows.getPageSize(), dbPageRows.getPageSize());
-                dataList = selectBySql(t, selectSql, params);
-            }
-            dbPageRows.setTotal(count);
-            dbPageRows.setCondition(condition);
-            dbPageRows.setData(dataList);
+            buildPageResult(t, selectSql, condition, dbPageRows, params);
             return dbPageRows;
         }
         return selectPageRows(t, conditionEntity.getFinalConditional(), conditionEntity.getOrderBy().toString(), dbPageRows, conditionEntity.getParamValues().toArray());
@@ -225,7 +220,7 @@ public class JdbcAction extends AbstractSqlBuilder {
     @Override
     @CheckExecute(target = ExecuteMethod.INSERT)
     public <T> int insert(T t, boolean isGeneratedKey) throws Exception {
-        TableSqlBuilder<T> tableSqlBuilder = getInsertEntityModelCache(t);
+        TableSqlBuilder<T> tableSqlBuilder = getUpdateEntityModelCache(t, false);
         String insertSql = tableSqlBuilder.getInsertSql();
         DbKeyParserModel<T> keyParserModel = tableSqlBuilder.getKeyParserModel();
         return executeInsert(insertSql, Collections.singletonList(t), isGeneratedKey, keyParserModel.getKey(), keyParserModel.getType(), tableSqlBuilder.getOneObjValues().toArray());
@@ -243,7 +238,7 @@ public class JdbcAction extends AbstractSqlBuilder {
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
     public <T> int updateByKey(T t, String... updateDbFields) throws Exception {
-        TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<>(t, true);
+        TableSqlBuilder<T> tableSqlBuilder = getUpdateEntityModelCache(t, true);
         tableSqlBuilder.buildUpdateSql(updateDbFields, getLogicDeleteQuerySql());
         return executeSql(tableSqlBuilder.getUpdateSql().toString(), tableSqlBuilder.getObjValues().toArray());
     }
@@ -251,7 +246,7 @@ public class JdbcAction extends AbstractSqlBuilder {
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
     public <T> int updateByCondition(T t, ConditionEntity<T> conditionEntity) throws Exception {
-        TableSqlBuilder<T> tableSqlBuilder = new TableSqlBuilder<T>(t, true);
+        TableSqlBuilder<T> tableSqlBuilder = getUpdateEntityModelCache(t, true);
         String condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), conditionEntity.getFinalConditional(), getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
         tableSqlBuilder.buildUpdateField(condition, conditionEntity.getParamValues());
         return executeSql(tableSqlBuilder.getUpdateSql().toString(), tableSqlBuilder.getObjValues().toArray());
@@ -271,7 +266,7 @@ public class JdbcAction extends AbstractSqlBuilder {
     public void createTables(Class<?>... arr) throws Exception {
         TableSqlBuilder<?> tableSqlBuilder;
         for (int i = arr.length - 1; i >= 0; i--) {
-            tableSqlBuilder = new TableSqlBuilder<>(arr[i]);
+            tableSqlBuilder = getEntityModelCache(arr[i]);
             String exitsTableSql = tableSqlBuilder.getExitsTableSql(arr[i]);
             if(existTable(exitsTableSql)) {
                 String createTableSql = tableSqlBuilder.geCreateTableSql();
@@ -284,7 +279,7 @@ public class JdbcAction extends AbstractSqlBuilder {
     @Override
     public void dropTables(Class<?>... arr) throws Exception {
         for (int i = arr.length - 1; i >= 0; i--) {
-            TableSqlBuilder<?> tableSqlBuilder = new TableSqlBuilder<>(arr[i], ExecuteMethod.NONE);
+            TableSqlBuilder<?> tableSqlBuilder = getEntityModelCache(arr[i], ExecuteMethod.NONE);
             String dropTableSql = tableSqlBuilder.getDropTableSql();
             execTable(dropTableSql);
             logger.warn("drop table '{}' completed\n", tableSqlBuilder.getTable());

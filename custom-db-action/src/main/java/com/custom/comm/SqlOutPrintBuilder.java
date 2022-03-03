@@ -1,10 +1,15 @@
 package com.custom.comm;
 
 import com.alibaba.fastjson.JSON;
+import com.custom.dbconfig.SymbolConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
+import java.util.StringJoiner;
 
 /**
  * @author Xiao-Bai
@@ -13,7 +18,7 @@ import java.io.Serializable;
  */
 public class SqlOutPrintBuilder implements Serializable {
 
-    private Logger logger = LoggerFactory.getLogger(SqlOutPrintBuilder.class);
+    private final Logger logger = LoggerFactory.getLogger(SqlOutPrintBuilder.class);
 
 
     /**
@@ -22,7 +27,7 @@ public class SqlOutPrintBuilder implements Serializable {
     public void sqlErrPrint() {
         logger.error(
                 "\nsql error\n===================\nSQL ====>\n {}\n===================\nparams = {}\n===================\n"
-                , sql, JSON.toJSONString(params));
+                , sql, getFormatterParams());
     }
 
     /**
@@ -30,7 +35,7 @@ public class SqlOutPrintBuilder implements Serializable {
      */
     public void sqlInfoQueryPrint() {
         System.out.printf("QUERY-SQL ====>\n \n%s\n===================\nparams = %s\n===================\n"
-                , sql, JSON.toJSONString(params));
+                , sql, getFormatterParams());
     }
 
     /**
@@ -38,16 +43,31 @@ public class SqlOutPrintBuilder implements Serializable {
      */
     public void sqlInfoUpdatePrint() {
         System.out.printf("UPDATE-SQL ====>\n %s\n===================\nparams = %s\n===================\n"
-                , sql, JSON.toJSONString(params));
+                , sql, getFormatterParams());
     }
 
 
-    private String sql;
+    private final String sql;
 
-    private Object[] params;
+    private final Object[] params;
 
     public SqlOutPrintBuilder(String sql, Object[] params) {
         this.sql = sql;
         this.params = params;
+    }
+
+    /**
+     * 格式化参数打印
+     */
+    private String getFormatterParams() {
+        StringJoiner sqlParams = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+        for (Object param : params) {
+            if(param == null) {
+                sqlParams.add("null");
+            }else {
+                sqlParams.add(param + SymbolConst.BRACKETS_LEFT + param.getClass().getSimpleName() + SymbolConst.BRACKETS_RIGHT);
+            }
+        }
+        return sqlParams.toString();
     }
 }
