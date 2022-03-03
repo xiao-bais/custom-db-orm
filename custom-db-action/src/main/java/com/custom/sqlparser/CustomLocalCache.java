@@ -41,5 +41,9 @@ public class CustomLocalCache extends LinkedHashMap<String, Object> {
         super(size + 1, 1.0F, true);
     }
 
+    public CustomLocalCache() {
+        super(10, 1.0F, true);
+    }
+
 
 }

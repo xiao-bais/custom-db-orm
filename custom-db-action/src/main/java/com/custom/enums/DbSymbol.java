@@ -25,11 +25,13 @@ public enum DbSymbol {
     IS_NULL("is null"),
     NOT_IN("not in"),
     ORDER_BY("order by"),
-    IN("in");
+    IN("in"),
+    GROUP_BY("group by"),
+    HAVING("having");
 
 
 
-    private String symbol;
+    private final String symbol;
 
     DbSymbol(String symbol) {
         this.symbol = symbol;

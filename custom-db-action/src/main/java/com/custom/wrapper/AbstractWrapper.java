@@ -19,10 +19,10 @@ import java.util.*;
 public abstract class AbstractWrapper<T, Children> {
 
 
-    public abstract Children adapter(DbSymbol dbSymbol, boolean condition, String column);
-    public abstract Children adapter(DbSymbol dbSymbol, boolean condition, String column, Object val);
-    public abstract Children adapter(DbSymbol dbSymbol, boolean condition, String column, Object val1, Object val2);
-    public abstract Children adapter(DbSymbol dbSymbol, boolean condition, String column, String express);
+    protected abstract Children adapter(DbSymbol dbSymbol, boolean condition, String column);
+    protected abstract Children adapter(DbSymbol dbSymbol, boolean condition, String column, Object val);
+    protected abstract Children adapter(DbSymbol dbSymbol, boolean condition, String column, Object val1, Object val2);
+    protected abstract Children adapter(DbSymbol dbSymbol, boolean condition, String column, String express);
     public abstract Children select(String... columns);
     public abstract Children enabledRelatedCondition(Boolean enabledRelatedCondition);
 

@@ -24,7 +24,7 @@ import java.util.jar.JarFile;
 /**
  * @Author Xiao-Bai
  * @Date 2021/11/22 14:16
- * @Desc：jdbc映射层的接口扫描
+ * @Desc：将指定路径下的类扫描出来
  **/
 @Slf4j
 public class CustomBeanScanner {

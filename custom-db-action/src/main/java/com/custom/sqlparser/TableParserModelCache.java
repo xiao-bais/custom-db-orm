@@ -25,9 +25,17 @@ public class TableParserModelCache {
         initialize(size);
     }
 
+    public TableParserModelCache() {
+        initialize();
+    }
+
     private void initialize(int size) {
         logger.info("Entity parse model Initialized Started ... ...");
         this.tableModel = new CustomLocalCache(size);
+    }
+
+    private void initialize() {
+        this.tableModel = new CustomLocalCache();
     }
 
     public void setTableModel(String key, Object val) {

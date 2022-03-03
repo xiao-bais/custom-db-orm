@@ -150,6 +150,11 @@ public class ConditionEntity<T> extends AbstractWrapper<T, ConditionEntity<T>> i
         return adapter(DbSymbol.ORDER_BY, condition, orderBy.toString());
     }
 
+    @Override
+    public ConditionEntity<T> groupBy(boolean condition, String... column) {
+        return null;
+    }
+
 
     public ConditionEntity(Class<T> entityClass) {
         setCls(entityClass);

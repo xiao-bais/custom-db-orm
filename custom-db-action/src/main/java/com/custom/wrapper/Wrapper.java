@@ -11,7 +11,6 @@ import java.util.Collection;
  **/
 public interface Wrapper<T, Result>  {
 
-
     Result eq(boolean condition, T column, Object val);
     default Result eq(T column, Object val) {
         return eq(true, column, val);
@@ -125,6 +124,11 @@ public interface Wrapper<T, Result>  {
     Result orderByDesc(boolean condition, T... columns);
     default Result orderByDesc(T... columns) {
         return orderByDesc(true, columns);
+    }
+
+    Result groupBy(boolean condition, T... column);
+    default Result groupBy(T... column) {
+        return groupBy(true, column);
     }
 
 }

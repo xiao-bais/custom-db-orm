@@ -30,7 +30,7 @@ public class Employee {
     private String empName;
 
     @DbField
-    private Boolean sex;
+    private boolean sex;
 
     @DbField
     private Integer age;
