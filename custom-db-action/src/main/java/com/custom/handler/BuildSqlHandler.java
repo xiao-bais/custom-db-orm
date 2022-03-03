@@ -12,6 +12,7 @@ import com.custom.enums.ExecuteMethod;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
 import com.custom.comm.page.DbPageRows;
+import com.custom.wrapper.AbstractWrapper;
 import com.custom.wrapper.ConditionEntity;
 
 import java.io.Serializable;
@@ -141,7 +142,7 @@ public class BuildSqlHandler extends AbstractSqlBuilder {
     }
 
     @Override
-    public <T> List<T> selectList(Class<T> t, ConditionEntity<T> conditionEntity) throws Exception {
+    public <T> List<T> selectList(Class<T> t, AbstractWrapper<T, ?> conditionEntity) throws Exception {
         return null;
     }
 

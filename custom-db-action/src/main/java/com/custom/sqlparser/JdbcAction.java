@@ -12,6 +12,7 @@ import com.custom.enums.ExecuteMethod;
 import com.custom.annotations.check.CheckExecute;
 import com.custom.comm.page.DbPageRows;
 import com.custom.exceptions.CustomCheckException;
+import com.custom.wrapper.AbstractWrapper;
 import com.custom.wrapper.ConditionEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -143,7 +144,7 @@ public class JdbcAction extends AbstractSqlBuilder {
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> List<T> selectList(Class<T> t, ConditionEntity<T> conditionEntity) throws Exception {
+    public <T> List<T> selectList(Class<T> t, AbstractWrapper<T, ?> conditionEntity) throws Exception {
         if(conditionEntity == null) {
             return selectBySql(t, getEntityModelCache(t).getSelectSql());
         }else if(conditionEntity.getEnabledRelatedCondition() != null) {

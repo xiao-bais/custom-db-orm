@@ -6,6 +6,7 @@ import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.proxy.SqlParamsCheckProxy;
 import com.custom.wrapper.ConditionEntity;
+import com.custom.wrapper.LambdaConditionEntity;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -123,6 +124,27 @@ public class CustomDao {
      */
     public <T> T selectOne(ConditionEntity<T> conditionEntity) throws Exception {
         return jdbcAction.selectOneByCondition(conditionEntity);
+    }
+
+    /**
+     * 条件构造器查询
+     */
+    public <T> DbPageRows<T> selectLambdaPageRows(Class<T> t, DbPageRows<T> dbPageRows, LambdaConditionEntity<T> lambdaConditionEntity) throws Exception {
+        return null;
+    }
+
+    /**
+     * 条件构造器查询
+     */
+    public <T> List<T> selectLambdaList(Class<T> t, LambdaConditionEntity<T> lambdaConditionEntity) throws Exception {
+        return null;
+    }
+
+    /**
+     * 条件构造器查询
+     */
+    public <T> T selectLambdaOne(LambdaConditionEntity<T> lambdaConditionEntity) throws Exception {
+        return null;
     }
 
     /* ----------------------------------------------------------------delete---------------------------------------------------------------- */
