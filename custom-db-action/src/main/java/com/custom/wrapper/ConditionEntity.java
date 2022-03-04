@@ -150,11 +150,6 @@ public class ConditionEntity<T> extends AbstractWrapper<T, ConditionEntity<T>> i
         return adapter(DbSymbol.ORDER_BY, condition, orderBy.toString());
     }
 
-    @Override
-    public ConditionEntity<T> groupBy(boolean condition, String... column) {
-        return null;
-    }
-
 
     public ConditionEntity(Class<T> entityClass) {
         setCls(entityClass);
@@ -162,25 +157,25 @@ public class ConditionEntity<T> extends AbstractWrapper<T, ConditionEntity<T>> i
     }
 
     @Override
-    public ConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, String column) {
+    protected ConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, String column) {
         appendCondition(dbSymbol, condition, column, null, null, null);
         return this;
     }
 
     @Override
-    public ConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, String column, Object val) {
+    protected ConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, String column, Object val) {
         appendCondition(dbSymbol, condition, column, val, null, null);
         return this;
     }
 
     @Override
-    public ConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, String column, Object val1, Object val2) {
+    protected ConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, String column, Object val1, Object val2) {
         appendCondition(dbSymbol, condition, column, val1, val2, null);
         return this;
     }
 
     @Override
-    public ConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, String column, String express) {
+    protected ConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, String column, String express) {
         appendCondition(dbSymbol, condition, column, null, null, express);
         return this;
     }
@@ -200,5 +195,10 @@ public class ConditionEntity<T> extends AbstractWrapper<T, ConditionEntity<T>> i
         setEnabledRelatedCondition(enabledRelatedCondition);
         return this;
     }
+
+
+
+
+
 
 }

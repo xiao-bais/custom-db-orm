@@ -125,10 +125,4 @@ public interface Wrapper<T, Result>  {
     default Result orderByDesc(T... columns) {
         return orderByDesc(true, columns);
     }
-
-    Result groupBy(boolean condition, T... column);
-    default Result groupBy(T... column) {
-        return groupBy(true, column);
-    }
-
 }

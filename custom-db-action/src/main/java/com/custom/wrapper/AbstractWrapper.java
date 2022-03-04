@@ -9,6 +9,7 @@ import com.custom.exceptions.CustomCheckException;
 import com.custom.sqlparser.TableSqlBuilder;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.util.*;
 
 /**
@@ -33,7 +34,7 @@ public abstract class AbstractWrapper<T, Children> {
     /**
     * 适配各种sql条件的拼接
     */
-    public void appendCondition(DbSymbol dbSymbol, boolean condition, String column, Object val1, Object val2, String express) {
+    protected void appendCondition(DbSymbol dbSymbol, boolean condition, String column, Object val1, Object val2, String express) {
 
         if(!condition) {
             return;
@@ -125,12 +126,6 @@ public abstract class AbstractWrapper<T, Children> {
     private final List<Object> paramValues = new ArrayList<>();
 
     /**
-    * 排序字段
-     * 在条件拼接完成后，进行排序，例如：age asc, score desc
-    */
-    private final StringJoiner orderBy = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
-
-    /**
      * 查询的列名
      * 若是查询单表（查询的实体中(包括父类)没有@DbRelated,@DbJoinTables之类的关联注解）则column为表字段，例如 name, age
      * 若是查询关联表字段，则需附带关联表别名，例如：tp.name, tp.age
@@ -144,6 +139,12 @@ public abstract class AbstractWrapper<T, Children> {
      * 除主表外，关联表在使用条件构造对象时必须带上别名：例如：tp.name
     */
     private Boolean enabledRelatedCondition = true;
+
+    /**
+     * 排序字段
+     * 在条件拼接完成后，进行排序，例如：age asc, score desc
+     */
+    private final StringJoiner orderBy = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
 
 
     public List<Object> getParamValues() {
@@ -162,15 +163,6 @@ public abstract class AbstractWrapper<T, Children> {
         this.lastCondition = lastCondition;
     }
 
-
-    public String[] getSelectColumns() {
-        return selectColumns;
-    }
-
-    public void setSelectColumns(String[] selectColumns) {
-        this.selectColumns = selectColumns;
-    }
-
     public TableSqlBuilder<T> getTableSqlBuilder() {
         return tableSqlBuilder;
     }
@@ -187,8 +179,12 @@ public abstract class AbstractWrapper<T, Children> {
         this.cls = cls;
     }
 
-    public StringJoiner getOrderBy() {
-        return orderBy;
+    public String[] getSelectColumns() {
+        return selectColumns;
+    }
+
+    public void setSelectColumns(String[] selectColumns) {
+        this.selectColumns = selectColumns;
     }
 
     public Boolean getEnabledRelatedCondition() {
@@ -199,6 +195,9 @@ public abstract class AbstractWrapper<T, Children> {
         this.enabledRelatedCondition = enabledRelatedCondition;
     }
 
+    public StringJoiner getOrderBy() {
+        return orderBy;
+    }
     /**
      * 拼接下一段大条件
      */
@@ -231,5 +230,77 @@ public abstract class AbstractWrapper<T, Children> {
     */
     public String orderByField(String column, boolean isAsc) {
         return String.format("%s %s", column, (isAsc ? SymbolConst.ASC :SymbolConst.DESC));
+    }
+
+    /**
+     * 条件对象
+     */
+    static class Condition {
+
+        final boolean cond;
+        /**
+         * 条件字段属性
+         */
+        final Field field;
+        /**
+         * 条件
+         */
+        final DbSymbol dbSymbol;
+
+        /**
+         * 参数值1
+         */
+        Object val1;
+
+        /**
+         * 参数值2
+         */
+        Object val2;
+
+        /**
+         * 表达式
+         */
+        String express;
+
+        Condition(boolean cond, Field field, DbSymbol dbSymbol, Object val1, Object val2) {
+            this.cond = cond;
+            this.field = field;
+            this.dbSymbol = dbSymbol;
+            this.val1 = val1;
+            this.val2 = val2;
+        }
+
+        Condition(boolean cond, Field field, DbSymbol dbSymbol, String express) {
+            this.cond = cond;
+            this.field = field;
+            this.dbSymbol = dbSymbol;
+            this.express = express;
+        }
+
+        Condition(boolean cond, Field field, DbSymbol dbSymbol) {
+            this.cond = cond;
+            this.field = field;
+            this.dbSymbol = dbSymbol;
+        }
+
+        public Field getField() {
+            return field;
+        }
+
+        public DbSymbol getDbSymbol() {
+            return dbSymbol;
+        }
+
+        public Object getVal1() {
+            return val1;
+        }
+
+        public Object getVal2() {
+            return val2;
+        }
+
+        public String getExpress() {
+            return express;
+        }
     }
 }

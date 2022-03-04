@@ -142,7 +142,7 @@ public class BuildSqlHandler extends AbstractSqlBuilder {
     }
 
     @Override
-    public <T> List<T> selectList(Class<T> t, AbstractWrapper<T, ?> conditionEntity) throws Exception {
+    public <T> List<T> selectList(Class<T> t, ConditionEntity<T> conditionEntity) throws Exception {
         return null;
     }
 

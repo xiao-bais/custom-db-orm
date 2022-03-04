@@ -144,7 +144,7 @@ public class JdbcAction extends AbstractSqlBuilder {
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> List<T> selectList(Class<T> t, AbstractWrapper<T, ?> conditionEntity) throws Exception {
+    public <T> List<T> selectList(Class<T> t, ConditionEntity<T> conditionEntity) throws Exception {
         if(conditionEntity == null) {
             return selectBySql(t, getEntityModelCache(t).getSelectSql());
         }else if(conditionEntity.getEnabledRelatedCondition() != null) {

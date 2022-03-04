@@ -35,7 +35,7 @@ public abstract class AbstractSqlBuilder {
     public abstract <T> List<T> selectBatchByKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception;
     public abstract <T> T selectOneByCondition(Class<T> t, String condition, Object... params) throws Exception;
     public abstract <T> DbPageRows<T> selectPageRows(Class<T> t, DbPageRows<T> dbPageRows, ConditionEntity<T> conditionEntity) throws Exception;
-    public abstract <T> List<T> selectList(Class<T> t, AbstractWrapper<T, ?> conditionEntity) throws Exception;
+    public abstract <T> List<T> selectList(Class<T> t, ConditionEntity<T> conditionEntity) throws Exception;
     public abstract <T> T selectOneByCondition(ConditionEntity<T> conditionEntity) throws Exception;
 
 
