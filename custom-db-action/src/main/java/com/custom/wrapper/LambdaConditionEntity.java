@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  * @Date 2022/3/3 17:17
  * @Desc：lambda表达式的条件构造对象
  **/
-public class LambdaConditionEntity<T> extends AbstractWrapper<T, SFunction<T, ?>, LambdaConditionEntity<T>, Map<SFunction<T, ?>, SqlOrderBy>, String>
+public class LambdaConditionEntity<T> extends AbstractWrapper<T, SFunction<T, ?>, LambdaConditionEntity<T>, Map<SFunction<T, ?>, SqlOrderBy>, Field>
         implements Wrapper<SFunction<T, ?>, LambdaConditionEntity<T>> {
 
 
