@@ -2,6 +2,7 @@ package com.custom.wrapper;
 
 import com.custom.enums.DbSymbol;
 import com.custom.enums.ExecuteMethod;
+import com.custom.enums.SqlLike;
 import com.custom.sqlparser.TableParserModelCache;
 import com.custom.sqlparser.TableSqlBuilder;
 
@@ -61,37 +62,37 @@ public class LambdaConditionEntity<T> extends AbstractWrapper<T, LambdaCondition
 
     @Override
     public LambdaConditionEntity<T> ge(boolean condition, SFunction<T, ?> column, Object val) {
-        commonlyCondition.add(new Condition(condition, fieldToColumn(column), DbSymbol.EQUALS, val, null));
+        commonlyCondition.add(new Condition(condition, fieldToColumn(column), DbSymbol.GREATER_THAN_EQUALS, val, null));
         return this;
     }
 
     @Override
     public LambdaConditionEntity<T> le(boolean condition, SFunction<T, ?> column, Object val) {
-        commonlyCondition.add(new Condition(condition, fieldToColumn(column), DbSymbol.EQUALS, val, null));
+        commonlyCondition.add(new Condition(condition, fieldToColumn(column), DbSymbol.LESS_THAN_EQUALS, val, null));
         return this;
     }
 
     @Override
     public LambdaConditionEntity<T> lt(boolean condition, SFunction<T, ?> column, Object val) {
-        commonlyCondition.add(new Condition(condition, fieldToColumn(column), DbSymbol.EQUALS, val, null));
+        commonlyCondition.add(new Condition(condition, fieldToColumn(column), DbSymbol.LESS_THAN, val, null));
         return this;
     }
 
     @Override
     public LambdaConditionEntity<T> gt(boolean condition, SFunction<T, ?> column, Object val) {
-        commonlyCondition.add(new Condition(condition, fieldToColumn(column), DbSymbol.EQUALS, val, null));
+        commonlyCondition.add(new Condition(condition, fieldToColumn(column), DbSymbol.GREATER_THAN, val, null));
         return this;
     }
 
     @Override
     public LambdaConditionEntity<T> in(boolean condition, SFunction<T, ?> column, Collection<? extends Serializable> val) {
-        commonlyCondition.add(new Condition(condition, fieldToColumn(column), DbSymbol.EQUALS, val, null));
+        commonlyCondition.add(new Condition(condition, fieldToColumn(column), DbSymbol.IN, val, null));
         return this;
     }
 
     @Override
     public LambdaConditionEntity<T> notIn(boolean condition, SFunction<T, ?> column, Collection<? extends Serializable> val) {
-        commonlyCondition.add(new Condition(condition, fieldToColumn(column), DbSymbol.EQUALS, val, null));
+        commonlyCondition.add(new Condition(condition, fieldToColumn(column), DbSymbol.NOT_IN, val, null));
         return this;
     }
 
@@ -103,79 +104,88 @@ public class LambdaConditionEntity<T> extends AbstractWrapper<T, LambdaCondition
 
     @Override
     public LambdaConditionEntity<T> notExists(boolean condition, String notExistsSql) {
+        commonlyCondition.add(new Condition(condition, null, DbSymbol.EQUALS, notExistsSql));
         return this;
     }
 
     @Override
     public LambdaConditionEntity<T> like(boolean condition, SFunction<T, ?> column, Object val) {
+        commonlyCondition.add(new Condition(condition, fieldToColumn(column), DbSymbol.LIKE, sqlConcat(SqlLike.LIKE, val)));
         return this;
     }
 
     @Override
     public LambdaConditionEntity<T> notLike(boolean condition, SFunction<T, ?> column, Object val) {
+        commonlyCondition.add(new Condition(condition, fieldToColumn(column), DbSymbol.NOT_LIKE, sqlConcat(SqlLike.LIKE, val)));
         return this;
     }
 
     @Override
     public LambdaConditionEntity<T> likeLeft(boolean condition, SFunction<T, ?> column, Object val) {
+        commonlyCondition.add(new Condition(condition, fieldToColumn(column), DbSymbol.LIKE, sqlConcat(SqlLike.LEFT, val)));
         return this;
     }
 
     @Override
     public LambdaConditionEntity<T> likeRight(boolean condition, SFunction<T, ?> column, Object val) {
+        commonlyCondition.add(new Condition(condition, fieldToColumn(column), DbSymbol.LIKE, sqlConcat(SqlLike.RIGHT, val)));
         return this;
     }
 
     @Override
     public LambdaConditionEntity<T> between(boolean condition, SFunction<T, ?> column, Object val1, Object val2) {
+        commonlyCondition.add(new Condition(condition, fieldToColumn(column), DbSymbol.BETWEEN, val1, val2));
         return this;
     }
 
     @Override
     public LambdaConditionEntity<T> notBetween(boolean condition, SFunction<T, ?> column, Object val1, Object val2) {
+        commonlyCondition.add(new Condition(condition, fieldToColumn(column), DbSymbol.NOT_BETWEEN, val1, val2));
         return this;
     }
 
     @Override
     public LambdaConditionEntity<T> isNull(boolean condition, SFunction<T, ?> column) {
+        commonlyCondition.add(new Condition(condition, fieldToColumn(column), DbSymbol.IS_NULL));
         return this;
     }
 
     @Override
     public LambdaConditionEntity<T> isNotNull(boolean condition, SFunction<T, ?> column) {
-        return null;
+        commonlyCondition.add(new Condition(condition, fieldToColumn(column), DbSymbol.IS_NOT_NULL));
+        return this;
     }
 
     @Override
     public LambdaConditionEntity<T> or(boolean condition, LambdaConditionEntity<T> conditionEntity) {
-        return null;
+        return this;
     }
 
     @Override
     public LambdaConditionEntity<T> and(boolean condition, LambdaConditionEntity<T> conditionEntity) {
-        return null;
+        return this;
     }
 
     @Override
     public LambdaConditionEntity<T> orderByAsc(boolean condition, SFunction<T, ?> column) {
-        return null;
+        return this;
     }
 
     @SafeVarargs
     @Override
     public final LambdaConditionEntity<T> orderByAsc(boolean condition, SFunction<T, ?>... columns) {
-        return null;
+        return this;
     }
 
     @Override
     public LambdaConditionEntity<T> orderByDesc(boolean condition, SFunction<T, ?> column) {
-        return null;
+        return this;
     }
 
     @SafeVarargs
     @Override
     public final LambdaConditionEntity<T> orderByDesc(boolean condition, SFunction<T, ?>... columns) {
-        return null;
+        return this;
     }
 
 
