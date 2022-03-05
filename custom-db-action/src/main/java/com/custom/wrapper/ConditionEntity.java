@@ -5,6 +5,7 @@ import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.DbSymbol;
 import com.custom.enums.ExecuteMethod;
 import com.custom.enums.SqlLike;
+import com.custom.enums.SqlOrderBy;
 import com.custom.sqlparser.DbFieldParserModel;
 import com.custom.sqlparser.DbKeyParserModel;
 import com.custom.sqlparser.TableSqlBuilder;
@@ -18,7 +19,8 @@ import java.util.stream.Stream;
  * @Date 2022/2/16 14:11
  * @Desc：条件构造实例对象
  **/
-public class ConditionEntity<T> extends AbstractWrapper<T, ConditionEntity<T>> implements Wrapper<String, ConditionEntity<T>> {
+public class ConditionEntity<T> extends AbstractWrapper<T, String, ConditionEntity<T>, StringJoiner, String>
+        implements Wrapper<String, ConditionEntity<T>> {
 
 
     @Override
@@ -124,28 +126,28 @@ public class ConditionEntity<T> extends AbstractWrapper<T, ConditionEntity<T>> i
 
     @Override
     public ConditionEntity<T> orderByAsc(boolean condition, String column) {
-        return adapter(DbSymbol.ORDER_BY, condition, orderByField(column, true));
+        return adapter(DbSymbol.ORDER_BY, condition, orderByField(column, SqlOrderBy.ASC));
     }
 
     @Override
     public ConditionEntity<T> orderByAsc(boolean condition, String... columns) {
         StringBuilder orderBy = new StringBuilder(SymbolConst.EMPTY);
         for (String column : columns) {
-            orderBy.append(orderByField(column, true));
+            orderBy.append(orderByField(column, SqlOrderBy.ASC));
         }
         return adapter(DbSymbol.ORDER_BY, condition, orderBy.toString());
     }
 
     @Override
     public ConditionEntity<T> orderByDesc(boolean condition, String column) {
-        return adapter(DbSymbol.ORDER_BY, condition, orderByField(column, false));
+        return adapter(DbSymbol.ORDER_BY, condition, orderByField(column, SqlOrderBy.DESC));
     }
 
     @Override
     public ConditionEntity<T> orderByDesc(boolean condition, String... columns) {
         StringBuilder orderBy = new StringBuilder(SymbolConst.EMPTY);
         for (String column : columns) {
-            orderBy.append(orderByField(column, false));
+            orderBy.append(orderByField(column, SqlOrderBy.DESC));
         }
         return adapter(DbSymbol.ORDER_BY, condition, orderBy.toString());
     }
