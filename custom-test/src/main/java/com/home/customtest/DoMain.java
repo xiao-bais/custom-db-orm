@@ -51,8 +51,9 @@ public class DoMain {
 
 
 
-//        LambdaConditionEntity<Employee> condition = new LambdaConditionEntity<>(Employee.class);
-//        condition.eq(Employee::getEmpName, "张三").le(Employee::getAge, 22);
+        LambdaConditionEntity<Employee> condition = new LambdaConditionEntity<>(Employee.class);
+        condition.eq(Employee::getEmpName, "张三").le(Employee::getAge, 22);
+        condition.enabledRelatedCondition(false).like(Employee::getEmpName, "张三");
 //
 //
 //        ConditionEntity<Employee> conditionEntity = new ConditionEntity<>(Employee.class);

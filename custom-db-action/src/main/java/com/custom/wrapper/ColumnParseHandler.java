@@ -33,7 +33,7 @@ public class ColumnParseHandler<T> {
      * 从Function中获取实现的字段
      */
     @SafeVarargs
-    public final List<Field> parseColumns(SFunction<T, ?>... fun) {
+    public final Field[] parseColumns(SFunction<T, ?>... fun) {
         List<Field> fieldList = new ArrayList<>(fun.length);
         for (SFunction<T, ?> function : fun) {
             SerializedLambda serializedLambda = getSerializedLambda(function);
@@ -46,7 +46,7 @@ public class ColumnParseHandler<T> {
                 fieldList.add(firstField.get());
             }else throw new CustomCheckException(String.format("Unknown method: '%s', not found in class'%s', or please create getter or setter method with boxing type", implMethodName, cls.getName()));
         }
-        return fieldList;
+        return fieldList.toArray(new Field[0]);
     }
 
 

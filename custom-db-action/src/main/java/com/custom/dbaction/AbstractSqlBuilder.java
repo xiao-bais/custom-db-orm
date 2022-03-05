@@ -7,12 +7,10 @@ import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.ExecuteMethod;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
-import com.custom.annotations.check.CheckExecute;
 import com.custom.logic.LogicDeleteFieldSqlHandler;
 import com.custom.comm.page.DbPageRows;
 import com.custom.sqlparser.TableParserModelCache;
 import com.custom.sqlparser.TableSqlBuilder;
-import com.custom.wrapper.AbstractWrapper;
 import com.custom.wrapper.ConditionEntity;
 
 import java.io.Serializable;
@@ -150,7 +148,7 @@ public abstract class AbstractSqlBuilder {
             }
             return sql;
         };
-        return handler.handleSql();
+        return handler.handleLogic();
     }
 
     /**

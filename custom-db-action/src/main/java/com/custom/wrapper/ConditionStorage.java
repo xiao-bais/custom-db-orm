@@ -15,9 +15,11 @@ import java.util.*;
 public class ConditionStorage<T, OrderBy, Select> {
 
     /**
-     * 查询字段
+     * 查询的列名
+     * 若是查询单表（查询的实体中(包括父类)没有@DbRelated,@DbJoinTables之类的关联注解）则column为表字段，例如 name, age
+     * 若是查询关联表字段，则需附带关联表别名，例如：tp.name, tp.age
      */
-    private List<Select> queryColumns = new ArrayList<>();
+    private Select[] selectColumns;
 
     /**
      * 排序条件存储
@@ -35,20 +37,11 @@ public class ConditionStorage<T, OrderBy, Select> {
     private Class<T> cls;
 
 
-
-    public List<Select> getQueryColumns() {
-        return queryColumns;
-    }
-
-    public void setQueryColumns(List<Select> queryColumns) {
-        this.queryColumns = queryColumns;
-    }
-
     public OrderBy getOrderByColumns() {
         return orderByColumns;
     }
 
-    public void setOrderByColumns(OrderBy orderByColumns) {
+    protected void setOrderByColumns(OrderBy orderByColumns) {
         this.orderByColumns = orderByColumns;
     }
 
@@ -56,7 +49,7 @@ public class ConditionStorage<T, OrderBy, Select> {
         return tableSqlBuilder;
     }
 
-    public void setTableSqlBuilder(TableSqlBuilder<T> tableSqlBuilder) {
+    protected void setTableSqlBuilder(TableSqlBuilder<T> tableSqlBuilder) {
         this.tableSqlBuilder = tableSqlBuilder;
     }
 
@@ -64,7 +57,7 @@ public class ConditionStorage<T, OrderBy, Select> {
         return cls;
     }
 
-    public void setCls(Class<T> cls) {
+    protected void setCls(Class<T> cls) {
         this.cls = cls;
     }
 
@@ -82,13 +75,6 @@ public class ConditionStorage<T, OrderBy, Select> {
      * sql中的所有参数值
      */
     private final List<Object> paramValues = new ArrayList<>();
-
-    /**
-     * 查询的列名
-     * 若是查询单表（查询的实体中(包括父类)没有@DbRelated,@DbJoinTables之类的关联注解）则column为表字段，例如 name, age
-     * 若是查询关联表字段，则需附带关联表别名，例如：tp.name, tp.age
-     */
-    private String[] selectColumns;
 
     /**
      * 在条件构造中是否开启表连接（若不开启，则使用条件构造对象时，只会以单表的格式去执行查询）
@@ -126,15 +112,15 @@ public class ConditionStorage<T, OrderBy, Select> {
         return lastCondition;
     }
 
-    public void setLastCondition(String lastCondition) {
+    protected void setLastCondition(String lastCondition) {
         this.lastCondition = lastCondition;
     }
 
-    public String[] getSelectColumns() {
+    public Select[] getSelectColumns() {
         return selectColumns;
     }
 
-    public void setSelectColumns(String[] selectColumns) {
+    protected void setSelectColumns(Select[] selectColumns) {
         this.selectColumns = selectColumns;
     }
 
@@ -142,7 +128,7 @@ public class ConditionStorage<T, OrderBy, Select> {
         return enabledRelatedCondition;
     }
 
-    public void setEnabledRelatedCondition(Boolean enabledRelatedCondition) {
+    protected void setEnabledRelatedCondition(Boolean enabledRelatedCondition) {
         this.enabledRelatedCondition = enabledRelatedCondition;
     }
 
@@ -150,7 +136,7 @@ public class ConditionStorage<T, OrderBy, Select> {
         return orderBy;
     }
 
-    public void setFinalConditional(StringBuilder finalConditional) {
+    protected void setFinalConditional(StringBuilder finalConditional) {
         this.finalConditional = finalConditional;
     }
 }

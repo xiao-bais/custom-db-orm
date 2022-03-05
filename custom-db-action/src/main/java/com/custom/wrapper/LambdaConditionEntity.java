@@ -60,7 +60,7 @@ public class LambdaConditionEntity<T> extends AbstractWrapper<T, SFunction<T, ?>
     @SafeVarargs
     @Override
     public final LambdaConditionEntity<T> select(SFunction<T, ?>... columns) {
-        queryColumns.addAll(fieldToColumn(columns));
+        setSelectColumns(fieldToColumn(columns));
         return this;
     }
 
@@ -210,20 +210,6 @@ public class LambdaConditionEntity<T> extends AbstractWrapper<T, SFunction<T, ?>
      * 函数式接口序列化解析对象
      */
     private final ColumnParseHandler<T> columnParseHandler;
-    /**
-     * 一般条件
-     */
-    private final List<Condition> commonlyCondition = new ArrayList<>();
-
-    /**
-     * 查询字段
-     */
-    private final List<Field> queryColumns = new ArrayList<>();
-
-    /**
-     * orderBy
-     */
-    private final List<Condition> orderBy = new ArrayList<>();
 
 
     public LambdaConditionEntity(Class<T> entityClass) {
@@ -234,15 +220,15 @@ public class LambdaConditionEntity<T> extends AbstractWrapper<T, SFunction<T, ?>
 
 
     private Field fieldToColumn(SFunction<T, ?> func) {
-        List<Field> fieldList = columnParseHandler.parseColumns(func);
-        if(!fieldList.isEmpty()) {
-            return fieldList.get(0);
+        Field[] fields = columnParseHandler.parseColumns(func);
+        if(fields.length > 0) {
+            return fields[0];
         }
         return null;
     }
 
     @SafeVarargs
-    private final List<Field> fieldToColumn(SFunction<T, ?>... func) {
+    private final Field[] fieldToColumn(SFunction<T, ?>... func) {
         return columnParseHandler.parseColumns(func);
     }
 

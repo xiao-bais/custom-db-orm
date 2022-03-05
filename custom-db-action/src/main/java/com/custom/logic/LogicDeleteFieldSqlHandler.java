@@ -7,5 +7,5 @@ package com.custom.logic;
  */
 public interface LogicDeleteFieldSqlHandler {
 
-    String handleSql();
+    String handleLogic();
 }

@@ -366,7 +366,7 @@ public class DbParserFieldHandler {
             }
             return sql;
         };
-        return handler.handleSql();
+        return handler.handleLogic();
     }
 
 }
