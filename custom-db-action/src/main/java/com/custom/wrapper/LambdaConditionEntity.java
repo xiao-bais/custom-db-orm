@@ -26,7 +26,7 @@ public class LambdaConditionEntity<T> extends AbstractWrapper<T, SFunction<T, ?>
      */
     @Override
     protected LambdaConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, SFunction<T, ?> column) {
-        appendCondition(new Condition(condition, fieldToColumn(column), dbSymbol));
+        storeCondition(new Condition(condition, fieldToColumn(column), dbSymbol));
         return this;
     }
 
@@ -35,25 +35,34 @@ public class LambdaConditionEntity<T> extends AbstractWrapper<T, SFunction<T, ?>
      */
     @Override
     protected LambdaConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, String sqlCondition) {
-        appendCondition(new Condition(condition, null, sqlCondition, dbSymbol));
+        storeCondition(new Condition(condition, null, sqlCondition, dbSymbol));
         return this;
     }
 
+    /**
+     * 适用（eq, ge, gt, le, lt, in, not in）
+     */
     @Override
     protected LambdaConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, SFunction<T, ?> column, Object val) {
-        appendCondition(new Condition(condition, fieldToColumn(column), dbSymbol, val, null));
+        storeCondition(new Condition(condition, fieldToColumn(column), dbSymbol, val, null));
         return this;
     }
 
+    /**
+     * 适用（between，not between）
+     */
     @Override
     protected LambdaConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, SFunction<T, ?> column, Object val1, Object val2) {
-        appendCondition(new Condition(condition, fieldToColumn(column), dbSymbol, val1, val2));
+        storeCondition(new Condition(condition, fieldToColumn(column), dbSymbol, val1, val2));
         return this;
     }
 
+    /**
+     * 适用（like, not like）
+     */
     @Override
     protected LambdaConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, SFunction<T, ?> column, String express) {
-        appendCondition(new Condition(condition, fieldToColumn(column), express, dbSymbol));
+        storeCondition(new Condition(condition, fieldToColumn(column), express, dbSymbol));
         return this;
     }
 
@@ -174,6 +183,32 @@ public class LambdaConditionEntity<T> extends AbstractWrapper<T, SFunction<T, ?>
 
     @Override
     public LambdaConditionEntity<T> or(boolean condition, LambdaConditionEntity<T> conditionEntity) {
+        if(conditionEntity != null) {
+            if(conditionEntity.getOrderByColumns() != null) {
+                if(getOrderByColumns() != null) {
+                    getOrderByColumns().putAll(conditionEntity.getOrderByColumns());
+                }else {
+                    setOrderByColumns(conditionEntity.getOrderByColumns());
+                }
+            }
+            if(!conditionEntity.getCommonlyCondition().isEmpty()) {
+                getCommonlyCondition().addAll(conditionEntity.getCommonlyCondition());
+            }
+            if(conditionEntity.getSelectColumns() != null) {
+                int thisLen = getSelectColumns().length;
+                int addLen = conditionEntity.getSelectColumns().length;
+                Field[] newFields  = new Field[thisLen + addLen];
+                for (int i = 0; i < newFields.length; i++) {
+                    if(i <= thisLen - 1) {
+                        newFields[i] = getSelectColumns()[i];
+                    }else {
+                        newFields[i] = conditionEntity.getSelectColumns()[i];
+                    }
+                }
+                setSelectColumns(newFields);
+            }
+
+        }
         return this;
     }
 
@@ -182,26 +217,23 @@ public class LambdaConditionEntity<T> extends AbstractWrapper<T, SFunction<T, ?>
         return this;
     }
 
-    @Override
-    public LambdaConditionEntity<T> orderByAsc(boolean condition, SFunction<T, ?> column) {
-        adapter(DbSymbol.ORDER_BY, condition, column);
-        return this;
-    }
-
     @SafeVarargs
     @Override
     public final LambdaConditionEntity<T> orderByAsc(boolean condition, SFunction<T, ?>... columns) {
-        return this;
-    }
-
-    @Override
-    public LambdaConditionEntity<T> orderByDesc(boolean condition, SFunction<T, ?> column) {
+        if(getOrderByColumns() == null) {
+            setOrderByColumns(new HashMap<>());
+        }
+        Arrays.stream(columns).forEach(column -> getOrderByColumns().put(column, SqlOrderBy.ASC));
         return this;
     }
 
     @SafeVarargs
     @Override
     public final LambdaConditionEntity<T> orderByDesc(boolean condition, SFunction<T, ?>... columns) {
+        if(getOrderByColumns() == null) {
+            setOrderByColumns(new HashMap<>());
+        }
+        Arrays.stream(columns).forEach(column -> getOrderByColumns().put(column, SqlOrderBy.DESC));
         return this;
     }
 

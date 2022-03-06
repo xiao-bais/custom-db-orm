@@ -125,22 +125,12 @@ public class ConditionEntity<T> extends AbstractWrapper<T, String, ConditionEnti
     }
 
     @Override
-    public ConditionEntity<T> orderByAsc(boolean condition, String column) {
-        return adapter(DbSymbol.ORDER_BY, condition, orderByField(column, SqlOrderBy.ASC));
-    }
-
-    @Override
     public ConditionEntity<T> orderByAsc(boolean condition, String... columns) {
         StringBuilder orderBy = new StringBuilder(SymbolConst.EMPTY);
         for (String column : columns) {
             orderBy.append(orderByField(column, SqlOrderBy.ASC));
         }
         return adapter(DbSymbol.ORDER_BY, condition, orderBy.toString());
-    }
-
-    @Override
-    public ConditionEntity<T> orderByDesc(boolean condition, String column) {
-        return adapter(DbSymbol.ORDER_BY, condition, orderByField(column, SqlOrderBy.DESC));
     }
 
     @Override

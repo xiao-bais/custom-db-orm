@@ -22,7 +22,8 @@ public class ConditionStorage<T, OrderBy, Select> {
     private Select[] selectColumns;
 
     /**
-     * 排序条件存储
+     * 排序字段
+     * 在条件拼接完成后，进行排序，例如：age asc, score desc
      */
     private OrderBy orderByColumns;
 
@@ -35,6 +36,32 @@ public class ConditionStorage<T, OrderBy, Select> {
      * 实体Class对象
      */
     private Class<T> cls;
+
+    /**
+     * 最终的sql条件语句
+     */
+    private StringBuilder finalConditional = new StringBuilder();
+
+    /**
+     * 上一次的拼接条件
+     */
+    private String lastCondition = SymbolConst.EMPTY;
+
+    /**
+     * sql中的所有参数值
+     */
+    private final List<Object> paramValues = new ArrayList<>();
+
+    /**
+     * 在条件构造中是否开启表连接（若不开启，则使用条件构造对象时，只会以单表的格式去执行查询）
+     * 默认为true，以此承接@DbRelated、DbJoinTables(DbJoinTable)注解的使用
+     * 当条件为true后，条件构造器上的column参数便可填入该实体里面所关联的其他表字段
+     * 除主表外，关联表在使用条件构造对象时必须带上别名：例如：tp.name
+     */
+    private Boolean enabledRelatedCondition = true;
+
+
+    private final StringJoiner orderBy = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
 
 
     public OrderBy getOrderByColumns() {
@@ -60,41 +87,6 @@ public class ConditionStorage<T, OrderBy, Select> {
     protected void setCls(Class<T> cls) {
         this.cls = cls;
     }
-
-    /**
-     * 最终的sql条件语句
-     */
-    private StringBuilder finalConditional = new StringBuilder();
-
-    /**
-     * 上一次的拼接条件
-     */
-    private String lastCondition = SymbolConst.EMPTY;
-
-    /**
-     * sql中的所有参数值
-     */
-    private final List<Object> paramValues = new ArrayList<>();
-
-    /**
-     * 在条件构造中是否开启表连接（若不开启，则使用条件构造对象时，只会以单表的格式去执行查询）
-     * 默认为true，以此承接@DbRelated、DbJoinTables(DbJoinTable)注解的使用
-     * 当条件为true后，条件构造器上的column参数便可填入该实体里面所关联的其他表字段
-     * 除主表外，关联表在使用条件构造对象时必须带上别名：例如：tp.name
-     */
-    private Boolean enabledRelatedCondition = true;
-
-    /**
-     * 排序字段
-     * 在条件拼接完成后，进行排序，例如：age asc, score desc
-     */
-    private final StringJoiner orderBy = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
-
-    /**
-     * lambda表达式的排序条件
-     */
-    private final Map<SFunction<T, ?>, SqlOrderBy> lambdaOrderBy = new HashMap<>();
-
 
     public List<Object> getParamValues() {
         return paramValues;

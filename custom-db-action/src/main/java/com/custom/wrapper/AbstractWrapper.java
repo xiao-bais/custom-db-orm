@@ -110,9 +110,14 @@ public abstract class AbstractWrapper<T, R, Children, OrderBy, Select> extends C
         getFinalCondition().append(getLastCondition());
     }
 
-    protected void appendCondition(Condition condition) {
-
+    /**
+     * 条件暂存(where后面的条件)
+     */
+    protected void storeCondition(Condition condition) {
+        commonlyCondition.add(condition);
     }
+
+
 
     /**
      * 拼接下一段大条件
@@ -146,6 +151,12 @@ public abstract class AbstractWrapper<T, R, Children, OrderBy, Select> extends C
     */
     public String orderByField(String column, SqlOrderBy orderBy) {
         return String.format("%s %s", column, (orderBy == SqlOrderBy.ASC ? SqlOrderBy.ASC.getName() : SqlOrderBy.DESC.getName()));
+    }
+
+    private final List<Condition> commonlyCondition = new ArrayList<>();
+
+    public List<Condition> getCommonlyCondition() {
+        return commonlyCondition;
     }
 
     /**

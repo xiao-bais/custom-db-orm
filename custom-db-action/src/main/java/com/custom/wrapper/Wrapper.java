@@ -106,19 +106,9 @@ public interface Wrapper<T, Result>  {
         return and(true, conditionEntity);
     }
 
-    Result orderByAsc(boolean condition, T column);
-    default Result orderByAsc(T column) {
-        return orderByAsc(true, column);
-    }
-
     Result orderByAsc(boolean condition, T... columns);
     default Result orderByAsc(T... columns) {
         return orderByAsc(true, columns);
-    }
-
-    Result orderByDesc(boolean condition, T column);
-    default Result orderByDesc(T column) {
-        return orderByDesc(true, column);
     }
 
     Result orderByDesc(boolean condition, T... columns);
