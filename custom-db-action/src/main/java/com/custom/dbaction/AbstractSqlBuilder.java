@@ -12,6 +12,7 @@ import com.custom.comm.page.DbPageRows;
 import com.custom.sqlparser.TableParserModelCache;
 import com.custom.sqlparser.TableSqlBuilder;
 import com.custom.wrapper.ConditionEntity;
+import com.custom.wrapper.LambdaConditionEntity;
 
 import java.io.Serializable;
 import java.sql.SQLException;
@@ -35,6 +36,9 @@ public abstract class AbstractSqlBuilder {
     public abstract <T> DbPageRows<T> selectPageRows(Class<T> t, DbPageRows<T> dbPageRows, ConditionEntity<T> conditionEntity) throws Exception;
     public abstract <T> List<T> selectList(Class<T> t, ConditionEntity<T> conditionEntity) throws Exception;
     public abstract <T> T selectOneByCondition(ConditionEntity<T> conditionEntity) throws Exception;
+    public abstract <T> DbPageRows<T> selectPageRows(Class<T> t, DbPageRows<T> dbPageRows, LambdaConditionEntity<T> conditionEntity) throws Exception;
+    public abstract <T> List<T> selectList(Class<T> t, LambdaConditionEntity<T> conditionEntity) throws Exception;
+    public abstract <T> T selectOneByCondition(LambdaConditionEntity<T> conditionEntity) throws Exception;
 
 
     /*--------------------------------------- delete ---------------------------------------*/

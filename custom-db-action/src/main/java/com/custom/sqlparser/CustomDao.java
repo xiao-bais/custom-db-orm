@@ -130,21 +130,21 @@ public class CustomDao {
      * 条件构造器查询
      */
     public <T> DbPageRows<T> selectLambdaPageRows(Class<T> t, DbPageRows<T> dbPageRows, LambdaConditionEntity<T> lambdaConditionEntity) throws Exception {
-        return null;
+        return jdbcAction.selectPageRows(t, dbPageRows, lambdaConditionEntity);
     }
 
     /**
      * 条件构造器查询
      */
     public <T> List<T> selectLambdaList(Class<T> t, LambdaConditionEntity<T> lambdaConditionEntity) throws Exception {
-        return null;
+        return jdbcAction.selectList(t, lambdaConditionEntity);
     }
 
     /**
      * 条件构造器查询
      */
     public <T> T selectLambdaOne(LambdaConditionEntity<T> lambdaConditionEntity) throws Exception {
-        return null;
+        return jdbcAction.selectOneByCondition(lambdaConditionEntity);
     }
 
     /* ----------------------------------------------------------------delete---------------------------------------------------------------- */

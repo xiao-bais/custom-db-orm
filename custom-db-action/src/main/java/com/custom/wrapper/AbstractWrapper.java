@@ -23,11 +23,25 @@ import java.util.*;
  **/
 public abstract class AbstractWrapper<T, R, Children, OrderBy, Select> extends ConditionStorage<T, OrderBy, Select> {
 
-
+    /**
+     * 适用（orderBy, is null, is not null,）
+     */
     protected abstract Children adapter(DbSymbol dbSymbol, boolean condition, R column);
+    /**
+     * 适用（like，exists, not exists）
+     */
     protected abstract Children adapter(DbSymbol dbSymbol, boolean condition, String sqlCondition);
+    /**
+     * 适用（eq, ge, gt, le, lt, in, not in）
+     */
     protected abstract Children adapter(DbSymbol dbSymbol, boolean condition, R column, Object val);
+    /**
+     * 适用（between，not between）
+     */
     protected abstract Children adapter(DbSymbol dbSymbol, boolean condition, R column, Object val1, Object val2);
+    /**
+     * 适用（like, not like）
+     */
     protected abstract Children adapter(DbSymbol dbSymbol, boolean condition, R column, String express);
     public abstract Children select(R... columns);
     public abstract Children enabledRelatedCondition(Boolean enabledRelatedCondition);

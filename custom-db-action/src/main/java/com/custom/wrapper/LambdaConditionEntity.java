@@ -4,13 +4,11 @@ import com.custom.enums.DbSymbol;
 import com.custom.enums.ExecuteMethod;
 import com.custom.enums.SqlLike;
 import com.custom.enums.SqlOrderBy;
-import com.custom.sqlparser.TableParserModelCache;
 import com.custom.sqlparser.TableSqlBuilder;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @Author Xiao-Bai
@@ -21,45 +19,35 @@ public class LambdaConditionEntity<T> extends AbstractWrapper<T, SFunction<T, ?>
         implements Wrapper<SFunction<T, ?>, LambdaConditionEntity<T>> {
 
 
-    /**
-     * 适用（orderBy, is null, is not null,）
-     */
+
     @Override
     protected LambdaConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, SFunction<T, ?> column) {
         storeCondition(new Condition(condition, fieldToColumn(column), dbSymbol));
         return this;
     }
 
-    /**
-     * 适用（like，exists, not exists）
-     */
+
     @Override
     protected LambdaConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, String sqlCondition) {
         storeCondition(new Condition(condition, null, sqlCondition, dbSymbol));
         return this;
     }
 
-    /**
-     * 适用（eq, ge, gt, le, lt, in, not in）
-     */
+
     @Override
     protected LambdaConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, SFunction<T, ?> column, Object val) {
         storeCondition(new Condition(condition, fieldToColumn(column), dbSymbol, val, null));
         return this;
     }
 
-    /**
-     * 适用（between，not between）
-     */
+
     @Override
     protected LambdaConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, SFunction<T, ?> column, Object val1, Object val2) {
         storeCondition(new Condition(condition, fieldToColumn(column), dbSymbol, val1, val2));
         return this;
     }
 
-    /**
-     * 适用（like, not like）
-     */
+
     @Override
     protected LambdaConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, SFunction<T, ?> column, String express) {
         storeCondition(new Condition(condition, fieldToColumn(column), express, dbSymbol));
@@ -183,7 +171,25 @@ public class LambdaConditionEntity<T> extends AbstractWrapper<T, SFunction<T, ?>
 
     @Override
     public LambdaConditionEntity<T> or(boolean condition, LambdaConditionEntity<T> conditionEntity) {
+        if(condition) {
+            addNewConditionEntity(false, conditionEntity);
+        }
+        return this;
+    }
+
+
+
+    @Override
+    public LambdaConditionEntity<T> and(boolean condition, LambdaConditionEntity<T> conditionEntity) {
+        if(condition) {
+            addNewConditionEntity(true, conditionEntity);
+        }
+        return this;
+    }
+
+    private void addNewConditionEntity(boolean isAnd, LambdaConditionEntity<T> conditionEntity) {
         if(conditionEntity != null) {
+            conditionEntity.setAndConditionFlag(isAnd);
             if(conditionEntity.getOrderByColumns() != null) {
                 if(getOrderByColumns() != null) {
                     getOrderByColumns().putAll(conditionEntity.getOrderByColumns());
@@ -207,14 +213,8 @@ public class LambdaConditionEntity<T> extends AbstractWrapper<T, SFunction<T, ?>
                 }
                 setSelectColumns(newFields);
             }
-
+            lambdaConditionEntityList.add(conditionEntity);
         }
-        return this;
-    }
-
-    @Override
-    public LambdaConditionEntity<T> and(boolean condition, LambdaConditionEntity<T> conditionEntity) {
-        return this;
     }
 
     @SafeVarargs
@@ -246,15 +246,15 @@ public class LambdaConditionEntity<T> extends AbstractWrapper<T, SFunction<T, ?>
     /**
      * 条件是否是添加（继续添加一个构造器（or / and））
      */
-    private boolean andConditionFlag;
+    private Boolean andConditionFlag;
 
     private final List<LambdaConditionEntity<T>> lambdaConditionEntityList;
 
-    public boolean isAndConditionFlag() {
+    public Boolean getAndConditionFlag() {
         return andConditionFlag;
     }
 
-    public void setAndConditionFlag(boolean andConditionFlag) {
+    public void setAndConditionFlag(Boolean andConditionFlag) {
         this.andConditionFlag = andConditionFlag;
     }
 
