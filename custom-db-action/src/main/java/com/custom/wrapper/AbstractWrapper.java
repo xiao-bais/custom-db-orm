@@ -159,6 +159,7 @@ public abstract class AbstractWrapper<T, R, Children, OrderBy, Select> extends C
         return commonlyCondition;
     }
 
+
     /**
      * 条件对象
      */

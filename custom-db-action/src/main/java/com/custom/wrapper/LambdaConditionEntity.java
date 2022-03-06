@@ -243,11 +243,26 @@ public class LambdaConditionEntity<T> extends AbstractWrapper<T, SFunction<T, ?>
      */
     private final ColumnParseHandler<T> columnParseHandler;
 
+    /**
+     * 条件是否是添加（继续添加一个构造器（or / and））
+     */
+    private boolean andConditionFlag;
+
+    private final List<LambdaConditionEntity<T>> lambdaConditionEntityList;
+
+    public boolean isAndConditionFlag() {
+        return andConditionFlag;
+    }
+
+    public void setAndConditionFlag(boolean andConditionFlag) {
+        this.andConditionFlag = andConditionFlag;
+    }
 
     public LambdaConditionEntity(Class<T> entityClass) {
         setCls(entityClass);
         setTableSqlBuilder(new TableSqlBuilder<>(entityClass, ExecuteMethod.NONE));
         columnParseHandler = new ColumnParseHandler<>(entityClass);
+        lambdaConditionEntityList = new ArrayList<>();
     }
 
 
