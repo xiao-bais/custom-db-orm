@@ -5,13 +5,18 @@ import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.DbFieldsConst;
 import com.custom.dbconfig.SymbolConst;
+import com.custom.enums.DbSymbol;
 import com.custom.enums.ExecuteMethod;
+import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
+import com.custom.wrapper.AbstractWrapper;
+import com.custom.wrapper.LambdaConditionEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @Author Xiao-Bai
@@ -341,6 +346,73 @@ public class TableSqlBuilder<T> {
         }
         return joinTableSql.toString();
     }
+
+
+
+    /**
+     * 获取lambda表达式的条件构造sql
+     */
+    public void getLambdaCondition(LambdaConditionEntity<T> conditionEntity) {
+        parseLambdaCondition(conditionEntity);
+        parseLambdaOrderBy(conditionEntity);
+        conditionEntity.setSelectColumns(Arrays.stream(conditionEntity.getSelects()).map(Field::getName).toArray(String[]::new));
+    }
+
+    /**
+     * 解析条件
+     */
+    private void parseLambdaCondition(LambdaConditionEntity<T> conditionEntity) {
+        for (AbstractWrapper.Condition condition : conditionEntity.getCommonlyCondition()) {
+            String fieldName = condition.getField().getName();
+            String column = SymbolConst.EMPTY;
+            boolean isMatch = false;
+            if(keyParserModel != null && fieldName.equals(keyParserModel.getKey())) {
+                column = keyParserModel.getDbKey();
+                isMatch = true;
+            }
+            if(!fieldParserModels.isEmpty() && !isMatch) {
+                Optional<DbFieldParserModel<T>> firstDbFieldParserModel = fieldParserModels.stream().filter(x -> x.getFieldName().equals(fieldName)).findFirst();
+                if(firstDbFieldParserModel.isPresent()) {
+                    column = firstDbFieldParserModel.get().getColumn();
+                    isMatch = true;
+                }
+            }
+            if(!relatedParserModels.isEmpty() && !isMatch && conditionEntity.getEnabledRelatedCondition()) {
+                Optional<DbRelationParserModel<T>> firstDbRelationParserModel = relatedParserModels.stream().filter(x -> x.getFieldName().equals(fieldName)).findFirst();
+                if(firstDbRelationParserModel.isPresent()) {
+                    column = firstDbRelationParserModel.get().getFieldSql();
+                    isMatch = true;
+                }
+            }
+            if(!joinTableParserModelMap.isEmpty() && conditionEntity.getEnabledRelatedCondition()) {
+                final String[] joinFieldName = new String[1];
+                joinTableParserModelMap.forEach((k, v) -> {
+                    if(v.equals(fieldName)) {
+                        joinFieldName[0] = k;
+                    }
+                });
+                if(JudgeUtilsAx.isNotEmpty(joinFieldName[0])) {
+                    column = joinFieldName[0];
+                    isMatch = true;
+                }
+            }
+            if(!isMatch) {
+                throw new CustomCheckException(fieldName + "：无法匹配现有字段");
+            }
+            conditionEntity.appendCondition(condition.getDbSymbol(), true, column, condition.getVal1(), condition.getVal2(), condition.getExpress());
+        }
+    }
+
+    /**
+     * 解析orderBy
+     */
+    private void parseLambdaOrderBy(LambdaConditionEntity<T> conditionEntity) {
+
+    }
+
+
+
+
 
     /**
      * 构建修改的sql语句

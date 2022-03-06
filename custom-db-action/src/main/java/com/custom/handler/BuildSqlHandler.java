@@ -14,6 +14,7 @@ import com.custom.exceptions.ExceptionConst;
 import com.custom.comm.page.DbPageRows;
 import com.custom.wrapper.AbstractWrapper;
 import com.custom.wrapper.ConditionEntity;
+import com.custom.wrapper.LambdaConditionEntity;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -148,6 +149,21 @@ public class BuildSqlHandler extends AbstractSqlBuilder {
 
     @Override
     public <T> T selectOneByCondition(ConditionEntity<T> conditionEntity) throws Exception {
+        return null;
+    }
+
+    @Override
+    public <T> DbPageRows<T> selectPageRows(Class<T> t, DbPageRows<T> dbPageRows, LambdaConditionEntity<T> conditionEntity) throws Exception {
+        return null;
+    }
+
+    @Override
+    public <T> List<T> selectList(Class<T> t, LambdaConditionEntity<T> conditionEntity) throws Exception {
+        return null;
+    }
+
+    @Override
+    public <T> T selectOneByCondition(LambdaConditionEntity<T> conditionEntity) throws Exception {
         return null;
     }
 

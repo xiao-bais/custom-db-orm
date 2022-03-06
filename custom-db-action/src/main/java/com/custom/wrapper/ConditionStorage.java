@@ -1,10 +1,9 @@
 package com.custom.wrapper;
 
 import com.custom.dbconfig.SymbolConst;
-import com.custom.enums.DbSymbol;
-import com.custom.enums.SqlOrderBy;
 import com.custom.sqlparser.TableSqlBuilder;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 /**
@@ -12,14 +11,16 @@ import java.util.*;
  * @date 2022/3/5 23:07
  * @desc:查询条件储存
  */
-public class ConditionStorage<T, OrderBy, Select> {
+public class ConditionStorage<T, OrderBy> {
 
     /**
      * 查询的列名
      * 若是查询单表（查询的实体中(包括父类)没有@DbRelated,@DbJoinTables之类的关联注解）则column为表字段，例如 name, age
      * 若是查询关联表字段，则需附带关联表别名，例如：tp.name, tp.age
      */
-    private Select[] selectColumns;
+    private Field[] selects;
+
+    private String[] selectColumns;
 
     /**
      * 排序字段
@@ -108,11 +109,19 @@ public class ConditionStorage<T, OrderBy, Select> {
         this.lastCondition = lastCondition;
     }
 
-    public Select[] getSelectColumns() {
+    public Field[] getSelects() {
+        return selects;
+    }
+
+    public void setSelects(Field[] selects) {
+        this.selects = selects;
+    }
+
+    public String[] getSelectColumns() {
         return selectColumns;
     }
 
-    protected void setSelectColumns(Select[] selectColumns) {
+    public void setSelectColumns(String[] selectColumns) {
         this.selectColumns = selectColumns;
     }
 

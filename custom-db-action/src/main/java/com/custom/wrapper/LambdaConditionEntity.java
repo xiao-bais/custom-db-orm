@@ -57,7 +57,7 @@ public class LambdaConditionEntity<T> extends AbstractWrapper<T, SFunction<T, ?>
     @SafeVarargs
     @Override
     public final LambdaConditionEntity<T> select(SFunction<T, ?>... columns) {
-        setSelectColumns(fieldToColumn(columns));
+        setSelects(fieldToColumn(columns));
         return this;
     }
 
@@ -200,18 +200,18 @@ public class LambdaConditionEntity<T> extends AbstractWrapper<T, SFunction<T, ?>
             if(!conditionEntity.getCommonlyCondition().isEmpty()) {
                 getCommonlyCondition().addAll(conditionEntity.getCommonlyCondition());
             }
-            if(conditionEntity.getSelectColumns() != null) {
-                int thisLen = getSelectColumns().length;
-                int addLen = conditionEntity.getSelectColumns().length;
+            if(conditionEntity.getSelects() != null) {
+                int thisLen = getSelects().length;
+                int addLen = conditionEntity.getSelects().length;
                 Field[] newFields  = new Field[thisLen + addLen];
                 for (int i = 0; i < newFields.length; i++) {
                     if(i <= thisLen - 1) {
-                        newFields[i] = getSelectColumns()[i];
+                        newFields[i] = getSelects()[i];
                     }else {
-                        newFields[i] = conditionEntity.getSelectColumns()[i];
+                        newFields[i] = conditionEntity.getSelects()[i];
                     }
                 }
-                setSelectColumns(newFields);
+                setSelects(newFields);
             }
             lambdaConditionEntityList.add(conditionEntity);
         }
@@ -256,6 +256,10 @@ public class LambdaConditionEntity<T> extends AbstractWrapper<T, SFunction<T, ?>
 
     public void setAndConditionFlag(Boolean andConditionFlag) {
         this.andConditionFlag = andConditionFlag;
+    }
+
+    public List<LambdaConditionEntity<T>> getLambdaConditionEntityList() {
+        return lambdaConditionEntityList;
     }
 
     public LambdaConditionEntity(Class<T> entityClass) {

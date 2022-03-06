@@ -49,7 +49,7 @@ public abstract class AbstractWrapper<T, R, Children, OrderBy, Select> extends C
     /**
     * 适配各种sql条件的拼接
     */
-    protected void appendCondition(DbSymbol dbSymbol, boolean condition, String column, Object val1, Object val2, String express) {
+    public void appendCondition(DbSymbol dbSymbol, boolean condition, String column, Object val1, Object val2, String express) {
 
         if(!condition) {
             return;
@@ -128,7 +128,9 @@ public abstract class AbstractWrapper<T, R, Children, OrderBy, Select> extends C
      * 条件暂存(where后面的条件)
      */
     protected void storeCondition(Condition condition) {
-        commonlyCondition.add(condition);
+        if(condition.cond) {
+            commonlyCondition.add(condition);
+        }
     }
 
 
@@ -177,7 +179,7 @@ public abstract class AbstractWrapper<T, R, Children, OrderBy, Select> extends C
     /**
      * 条件对象
      */
-    static class Condition {
+    public static class Condition {
 
         final boolean cond;
         /**

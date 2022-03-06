@@ -14,6 +14,7 @@ import com.custom.comm.page.DbPageRows;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.wrapper.AbstractWrapper;
 import com.custom.wrapper.ConditionEntity;
+import com.custom.wrapper.LambdaConditionEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -170,6 +171,21 @@ public class JdbcAction extends AbstractSqlBuilder {
             throw new CustomCheckException("condition cannot be empty");
         }
         return selectOneByCondition(conditionEntity.getCls(), conditionEntity.getFinalConditional(), conditionEntity.getParamValues().toArray());
+    }
+
+    @Override
+    public <T> DbPageRows<T> selectPageRows(Class<T> t, DbPageRows<T> dbPageRows, LambdaConditionEntity<T> conditionEntity) throws Exception {
+        return null;
+    }
+
+    @Override
+    public <T> List<T> selectList(Class<T> t, LambdaConditionEntity<T> conditionEntity) throws Exception {
+        return null;
+    }
+
+    @Override
+    public <T> T selectOneByCondition(LambdaConditionEntity<T> conditionEntity) throws Exception {
+        return null;
     }
 
     @Override
