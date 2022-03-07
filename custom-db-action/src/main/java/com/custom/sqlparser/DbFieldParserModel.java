@@ -44,6 +44,11 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     private Class<?> type;
 
     /**
+     * 字段属性
+     */
+    private Field field;
+
+    /**
     * 字段值
     */
     private Object value;
@@ -94,6 +99,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
         this.fieldName = field.getName();
         this.type = field.getType();
         DbField annotation = field.getAnnotation(DbField.class);
+        this.field = field;
         this.column = JudgeUtilsAx.isEmpty(annotation.value()) ? this.fieldName : annotation.value();
         this.isNull = annotation.isNull();
         this.desc = annotation.desc();
@@ -178,6 +184,9 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
         this.value = value;
     }
 
+    public Field getField() {
+        return field;
+    }
 
 
 

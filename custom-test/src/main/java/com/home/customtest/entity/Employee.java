@@ -1,7 +1,6 @@
 package com.home.customtest.entity;
 
 import com.custom.annotations.*;
-import com.custom.enums.DbMediaType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -50,7 +49,7 @@ public class Employee {
     @DbField
     private int state;
 
-    @DbMap("dept.name")
+    @DbMapper("dept.name")
     private String deptName;
 
 //    @DbRelated(joinTable = "location", joinAlias = "lo", condition = "lo.id = a.area_id", field = "area")

@@ -53,14 +53,6 @@ public class ConditionStorage<T, OrderBy> {
      */
     private final List<Object> paramValues = new ArrayList<>();
 
-    /**
-     * 在条件构造中是否开启表连接（若不开启，则使用条件构造对象时，只会以单表的格式去执行查询）
-     * 默认为true，以此承接@DbRelated、DbJoinTables(DbJoinTable)注解的使用
-     * 当条件为true后，条件构造器上的column参数便可填入该实体里面所关联的其他表字段
-     * 除主表外，关联表在使用条件构造对象时必须带上别名：例如：tp.name
-     */
-    private Boolean enabledRelatedCondition = true;
-
 
     private final StringJoiner orderBy = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
 
@@ -123,14 +115,6 @@ public class ConditionStorage<T, OrderBy> {
 
     public void setSelectColumns(String[] selectColumns) {
         this.selectColumns = selectColumns;
-    }
-
-    public Boolean getEnabledRelatedCondition() {
-        return enabledRelatedCondition;
-    }
-
-    protected void setEnabledRelatedCondition(Boolean enabledRelatedCondition) {
-        this.enabledRelatedCondition = enabledRelatedCondition;
     }
 
     public StringJoiner getOrderBy() {

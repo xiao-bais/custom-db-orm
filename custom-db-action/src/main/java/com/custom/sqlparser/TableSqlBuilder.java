@@ -5,7 +5,6 @@ import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.DbFieldsConst;
 import com.custom.dbconfig.SymbolConst;
-import com.custom.enums.DbSymbol;
 import com.custom.enums.ExecuteMethod;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
@@ -16,7 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @Author Xiao-Bai
@@ -53,7 +51,7 @@ public class TableSqlBuilder<T> {
     /**
      * @Desc:对于@DbJoinTables注解的解析
      */
-    private Map<String, String> joinTableParserModelMap = new HashMap<>();
+    private List<DbJoinTableParserModel<T>> joinDbMappers = new ArrayList<>();
     /**
      * @Desc:对于@DbJoinTables注解的解析
      */
@@ -120,7 +118,7 @@ public class TableSqlBuilder<T> {
     /**
     * 自定义查询表列名
     */
-    public String selectColumns(String[] columns, boolean isRelated) {
+    public String selectColumns(String[] columns) {
         StringJoiner columnStr = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
         for (String x : columns) {
             boolean isPoint = x.contains(SymbolConst.POINT);
@@ -137,7 +135,7 @@ public class TableSqlBuilder<T> {
                     isMatch = true;
                 }
             }
-            if (!relatedParserModels.isEmpty() && isRelated && !isMatch) {
+            if (!relatedParserModels.isEmpty()  && !isMatch) {
                 Optional<DbRelationParserModel<T>> firstDbFieldParserModel = relatedParserModels.stream().filter(field -> field.getFieldSql().equals(x)).findFirst();
                 if (firstDbFieldParserModel.isPresent()) {
                     DbRelationParserModel<T> relationParserModel = firstDbFieldParserModel.get();
@@ -145,11 +143,11 @@ public class TableSqlBuilder<T> {
                     isMatch = true;
                 }
             }
-            if (!joinTableParserModelMap.isEmpty() && isRelated && !isMatch) {
-                Optional<String> firstJoinModel = joinTableParserModelMap.keySet().stream().filter(field -> field.equals(x)).findFirst();
-                if(firstJoinModel.isPresent()) {
-                    String joinModel = firstJoinModel.get();
-                    columnStr.add(String.format("%s %s", joinModel, joinTableParserModelMap.get(joinModel)));
+            if (!joinDbMappers.isEmpty() && !isMatch) {
+                Optional<DbJoinTableParserModel<T>> firstDbJoinTableParserModel = joinDbMappers.stream().filter(field -> field.getJoinName().equals(x)).findFirst();
+                if(firstDbJoinTableParserModel.isPresent()) {
+                    DbJoinTableParserModel<T> model = firstDbJoinTableParserModel.get();
+                    columnStr.add(model.getSelectFieldSql());
                     isMatch = true;
                 }
             }
@@ -157,8 +155,8 @@ public class TableSqlBuilder<T> {
                 columnStr.add(x);
             }
         }
-        String selectSql = getSelectSql(isRelated);
-        selectSql = String.format("select %s %s", columnStr.toString(), selectSql.substring(selectSql.indexOf("from")));
+        String selectSql = getSelectSql();
+        selectSql = String.format("select %s %s", columnStr, selectSql.substring(selectSql.indexOf("from")));
         return selectSql;
     }
 
@@ -308,8 +306,8 @@ public class TableSqlBuilder<T> {
         }
 
         // 第三步 拼接以joinTables的方式关联的查询字段
-        if (!joinTableParserModelMap.isEmpty()) {
-            joinTableParserModelMap.forEach((k, v) -> baseFieldSql.add(String.format("%s %s", k, v)));
+        if (!joinDbMappers.isEmpty()) {
+            joinDbMappers.forEach(x -> baseFieldSql.add(String.format("%s %s", x.getJoinName(), x.getJoinName())));
         }
 
         // 第三步 拼接以related方式关联的查询字段
@@ -352,10 +350,11 @@ public class TableSqlBuilder<T> {
     /**
      * 获取lambda表达式的条件构造sql
      */
-    public void getLambdaCondition(LambdaConditionEntity<T> conditionEntity) {
+    public void handleLambdaCondition(LambdaConditionEntity<T> conditionEntity) {
+        // 解析条件
         parseLambdaCondition(conditionEntity);
+        // 解析排序
         parseLambdaOrderBy(conditionEntity);
-        conditionEntity.setSelectColumns(Arrays.stream(conditionEntity.getSelects()).map(Field::getName).toArray(String[]::new));
     }
 
     /**
@@ -363,41 +362,36 @@ public class TableSqlBuilder<T> {
      */
     private void parseLambdaCondition(LambdaConditionEntity<T> conditionEntity) {
         for (AbstractWrapper.Condition condition : conditionEntity.getCommonlyCondition()) {
-            String fieldName = condition.getField().getName();
             String column = SymbolConst.EMPTY;
             boolean isMatch = false;
-            if(keyParserModel != null && fieldName.equals(keyParserModel.getKey())) {
+            Field conditionField = condition.getField();
+            if(keyParserModel != null && keyParserModel.getField().equals(conditionField)) {
                 column = keyParserModel.getDbKey();
                 isMatch = true;
             }
             if(!fieldParserModels.isEmpty() && !isMatch) {
-                Optional<DbFieldParserModel<T>> firstDbFieldParserModel = fieldParserModels.stream().filter(x -> x.getFieldName().equals(fieldName)).findFirst();
+                Optional<DbFieldParserModel<T>> firstDbFieldParserModel = fieldParserModels.stream().filter(x -> x.getField().equals(conditionField)).findFirst();
                 if(firstDbFieldParserModel.isPresent()) {
                     column = firstDbFieldParserModel.get().getColumn();
                     isMatch = true;
                 }
             }
-            if(!relatedParserModels.isEmpty() && !isMatch && conditionEntity.getEnabledRelatedCondition()) {
-                Optional<DbRelationParserModel<T>> firstDbRelationParserModel = relatedParserModels.stream().filter(x -> x.getFieldName().equals(fieldName)).findFirst();
+            if(!relatedParserModels.isEmpty() && !isMatch) {
+                Optional<DbRelationParserModel<T>> firstDbRelationParserModel = relatedParserModels.stream().filter(x -> x.getField().equals(conditionField)).findFirst();
                 if(firstDbRelationParserModel.isPresent()) {
                     column = firstDbRelationParserModel.get().getFieldSql();
                     isMatch = true;
                 }
             }
-            if(!joinTableParserModelMap.isEmpty() && conditionEntity.getEnabledRelatedCondition()) {
-                final String[] joinFieldName = new String[1];
-                joinTableParserModelMap.forEach((k, v) -> {
-                    if(v.equals(fieldName)) {
-                        joinFieldName[0] = k;
-                    }
-                });
-                if(JudgeUtilsAx.isNotEmpty(joinFieldName[0])) {
-                    column = joinFieldName[0];
+            if(!joinDbMappers.isEmpty() && !isMatch) {
+                Optional<DbJoinTableParserModel<T>> firstDbJoinTableParserModel = joinDbMappers.stream().filter(x -> x.getField().equals(condition.getField())).findFirst();
+                if(firstDbJoinTableParserModel.isPresent()) {
+                    column = firstDbJoinTableParserModel.get().getJoinName();
                     isMatch = true;
                 }
             }
             if(!isMatch) {
-                throw new CustomCheckException(fieldName + "：无法匹配现有字段");
+                throw new CustomCheckException(condition.getField().getName() + "：无法匹配实体中现有属性字段");
             }
             conditionEntity.appendCondition(condition.getDbSymbol(), true, column, condition.getVal1(), condition.getVal2(), condition.getExpress());
         }
@@ -408,6 +402,47 @@ public class TableSqlBuilder<T> {
      */
     private void parseLambdaOrderBy(LambdaConditionEntity<T> conditionEntity) {
 
+    }
+
+    /**
+     *
+     */
+    public String parseLambdaSelect(Field[] selectFields) {
+        StringJoiner columnStr = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+        for (Field selectField : selectFields) {
+            boolean isMatch = false;
+            if(keyParserModel != null && keyParserModel.getField().equals(selectField)) {
+                columnStr.add(keyParserModel.getSelectFieldSql());
+                isMatch = true;
+            }
+            if(!fieldParserModels.isEmpty() && !isMatch) {
+                Optional<DbFieldParserModel<T>> firstDbFieldParserModel = fieldParserModels.stream().filter(x -> x.getField().equals(selectField)).findFirst();
+                if(firstDbFieldParserModel.isPresent()) {
+                    columnStr.add(firstDbFieldParserModel.get().getSelectFieldSql());
+                    isMatch = true;
+                }
+            }
+            if(!relatedParserModels.isEmpty() && !isMatch) {
+                Optional<DbRelationParserModel<T>> firstDbRelationParserModel = relatedParserModels.stream().filter(x -> x.getField().equals(selectField)).findFirst();
+                if(firstDbRelationParserModel.isPresent()) {
+                    columnStr.add(firstDbRelationParserModel.get().getSelectFieldSql());
+                    isMatch = true;
+                }
+            }
+            if(!joinDbMappers.isEmpty() && !isMatch) {
+                Optional<DbJoinTableParserModel<T>> firstDbJoinTableParserModel = joinDbMappers.stream().filter(x -> x.getField().equals(selectField)).findFirst();
+                if(firstDbJoinTableParserModel.isPresent()) {
+                    columnStr.add(firstDbJoinTableParserModel.get().getSelectFieldSql());
+                    isMatch = true;
+                }
+            }
+            if(!isMatch) {
+                throw new CustomCheckException(selectField.toString() + "未找到 @Db*注解");
+            }
+        }
+        String selectSql = getSelectSql();
+        selectSql = String.format("select %s %s", columnStr, selectSql.substring(selectSql.indexOf("from")));
+        return selectSql;
     }
 
 
@@ -562,9 +597,9 @@ public class TableSqlBuilder<T> {
                 DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias);
                 fieldParserModels.add(fieldParserModel);
 
-            } else if (field.isAnnotationPresent(DbMap.class)) {
-                DbMap dbMap = field.getAnnotation(DbMap.class);
-                joinTableParserModelMap.put(dbMap.value(), field.getName());
+            } else if (field.isAnnotationPresent(DbMapper.class)) {
+                DbJoinTableParserModel<T> joinTableParserModel = new DbJoinTableParserModel<>(field);
+                joinDbMappers.add(joinTableParserModel);
             }
         }
     }
@@ -624,10 +659,6 @@ public class TableSqlBuilder<T> {
         return updateSql;
     }
 
-    public Map<String, String> getJoinTableParserModelMap() {
-        return joinTableParserModelMap;
-    }
-
     public List<String> getJoinTableParserModels() {
         return joinTableParserModels;
     }
@@ -682,10 +713,6 @@ public class TableSqlBuilder<T> {
 
     public void setRelatedParserModels(List<DbRelationParserModel<T>> relatedParserModels) {
         this.relatedParserModels = relatedParserModels;
-    }
-
-    public void setJoinTableParserModelMap(Map<String, String> joinTableParserModelMap) {
-        this.joinTableParserModelMap = joinTableParserModelMap;
     }
 
     public void setJoinTableParserModels(List<String> joinTableParserModels) {

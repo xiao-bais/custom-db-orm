@@ -124,23 +124,22 @@ public class JdbcAction extends AbstractSqlBuilder {
     public <T> DbPageRows<T> selectPageRows(Class<T> t, DbPageRows<T> dbPageRows, ConditionEntity<T> conditionEntity) throws Exception {
         if(conditionEntity == null) {
             return selectPageRows(t, null,null, dbPageRows);
-        }else if(conditionEntity.getEnabledRelatedCondition() != null) {
-            if(dbPageRows == null) {
-                dbPageRows = new DbPageRows<>();
-            }
-            TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t);
-            String selectSql = tableSqlBuilder.getSelectSql(conditionEntity.getEnabledRelatedCondition());
-            String condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), conditionEntity.getFinalConditional(),
-                    getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
-            if(CustomUtil.isNotBlank(conditionEntity.getOrderBy().toString())) {
-                condition += String.format("%s \n%s %s", selectSql, DbSymbol.ORDER_BY, conditionEntity.getOrderBy().toString());
-            }
-            selectSql += "\n" + condition;
-            Object[] params = conditionEntity.getParamValues().toArray();
-            buildPageResult(t, selectSql, condition, dbPageRows, params);
-            return dbPageRows;
         }
-        return selectPageRows(t, conditionEntity.getFinalConditional(), conditionEntity.getOrderBy().toString(), dbPageRows, conditionEntity.getParamValues().toArray());
+        if(dbPageRows == null) {
+            dbPageRows = new DbPageRows<>();
+        }
+        TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t);
+        String selectSql = tableSqlBuilder.getSelectSql();
+        String condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), conditionEntity.getFinalConditional(),
+                getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
+        if(CustomUtil.isNotBlank(conditionEntity.getOrderBy().toString())) {
+            condition += String.format("%s \n%s %s", selectSql, DbSymbol.ORDER_BY, conditionEntity.getOrderBy().toString());
+        }
+        selectSql += "\n" + condition;
+        Object[] params = conditionEntity.getParamValues().toArray();
+        buildPageResult(t, selectSql, condition, dbPageRows, params);
+        return dbPageRows;
+
     }
 
     @Override
@@ -148,21 +147,19 @@ public class JdbcAction extends AbstractSqlBuilder {
     public <T> List<T> selectList(Class<T> t, ConditionEntity<T> conditionEntity) throws Exception {
         if(conditionEntity == null) {
             return selectBySql(t, getEntityModelCache(t).getSelectSql());
-        }else if(conditionEntity.getEnabledRelatedCondition() != null) {
-            TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t);
-            String selectSql;
-            if(conditionEntity.getSelectColumns() != null) {
-                selectSql = tableSqlBuilder.selectColumns(conditionEntity.getSelectColumns(), conditionEntity.getEnabledRelatedCondition());
-            }else {
-                selectSql = tableSqlBuilder.getSelectSql(conditionEntity.getEnabledRelatedCondition());
-            }
-            selectSql += "\n" + checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), conditionEntity.getFinalConditional(), getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
-            if(CustomUtil.isNotBlank(conditionEntity.getOrderBy().toString())) {
-                selectSql = String.format("%s \n%s %s", selectSql, DbSymbol.ORDER_BY, conditionEntity.getOrderBy().toString());
-            }
-            return selectBySql(t, selectSql, conditionEntity.getParamValues().toArray());
         }
-        return selectList(t, conditionEntity.getFinalConditional(), conditionEntity.getOrderBy().toString(), conditionEntity.getParamValues().toArray());
+        TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t);
+        String selectSql;
+        if(conditionEntity.getSelectColumns() != null) {
+            selectSql = tableSqlBuilder.selectColumns(conditionEntity.getSelectColumns());
+        }else {
+            selectSql = tableSqlBuilder.getSelectSql();
+        }
+        selectSql += "\n" + checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), conditionEntity.getFinalConditional(), getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
+        if(CustomUtil.isNotBlank(conditionEntity.getOrderBy().toString())) {
+            selectSql = String.format("%s \n%s %s", selectSql, DbSymbol.ORDER_BY, conditionEntity.getOrderBy().toString());
+        }
+        return selectBySql(t, selectSql, conditionEntity.getParamValues().toArray());
     }
 
     @Override
@@ -180,7 +177,22 @@ public class JdbcAction extends AbstractSqlBuilder {
 
     @Override
     public <T> List<T> selectList(Class<T> t, LambdaConditionEntity<T> conditionEntity) throws Exception {
-        return null;
+        TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t);
+        if(conditionEntity == null) {
+            return selectBySql(t, tableSqlBuilder.getSelectSql());
+        }
+        tableSqlBuilder.handleLambdaCondition(conditionEntity);
+        String selectSql;
+        if(conditionEntity.getSelects() != null) {
+            selectSql = tableSqlBuilder.parseLambdaSelect(conditionEntity.getSelects());
+        }else {
+            selectSql = tableSqlBuilder.getSelectSql();
+        }
+        selectSql += "\n" + checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), conditionEntity.getFinalConditional(), getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
+        if(CustomUtil.isNotBlank(conditionEntity.getOrderBy().toString())) {
+            selectSql = String.format("%s \n%s %s", selectSql, DbSymbol.ORDER_BY, conditionEntity.getOrderBy().toString());
+        }
+        return selectBySql(t, selectSql, conditionEntity.getParamValues().toArray());
     }
 
     @Override

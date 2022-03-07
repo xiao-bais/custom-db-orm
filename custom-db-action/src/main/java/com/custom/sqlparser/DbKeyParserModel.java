@@ -29,6 +29,8 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
 
     private String key;
 
+    private Field field;
+
     private DbMediaType dbMediaType;
 
     private KeyStrategy strategy;
@@ -84,6 +86,10 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
 
     public Class<?> getType() {
         return type;
+    }
+
+    public Field getField() {
+        return field;
     }
 
     public Object getValue() {
@@ -172,8 +178,7 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
         return keyFieldSql.toString();
     }
 
-    public DbKeyParserModel(){
-    }
+    public DbKeyParserModel(){}
 
 
     public DbKeyParserModel(T t, Field field, String table, String alias){
@@ -185,6 +190,7 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
         this.key = field.getName();
         DbKey annotation = field.getAnnotation(DbKey.class);
         this.dbKey = JudgeUtilsAx.isEmpty(annotation.value()) ? this.key : annotation.value();
+        this.field = field;
         this.type = field.getType();
         this.dbMediaType = annotation.dbType();
         this.strategy = annotation.strategy();

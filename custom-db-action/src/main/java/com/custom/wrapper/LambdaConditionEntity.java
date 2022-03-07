@@ -15,7 +15,7 @@ import java.util.*;
  * @Date 2022/3/3 17:17
  * @Desc：lambda表达式的条件构造对象
  **/
-public class LambdaConditionEntity<T> extends AbstractWrapper<T, SFunction<T, ?>, LambdaConditionEntity<T>, Map<SFunction<T, ?>, SqlOrderBy>, Field>
+public class LambdaConditionEntity<T> extends AbstractWrapper<T, SFunction<T, ?>, LambdaConditionEntity<T>, Map<SFunction<T, ?>, SqlOrderBy>>
         implements Wrapper<SFunction<T, ?>, LambdaConditionEntity<T>> {
 
 
@@ -58,12 +58,6 @@ public class LambdaConditionEntity<T> extends AbstractWrapper<T, SFunction<T, ?>
     @Override
     public final LambdaConditionEntity<T> select(SFunction<T, ?>... columns) {
         setSelects(fieldToColumn(columns));
-        return this;
-    }
-
-    @Override
-    public LambdaConditionEntity<T> enabledRelatedCondition(Boolean enabledRelatedCondition) {
-        setEnabledRelatedCondition(enabledRelatedCondition);
         return this;
     }
 

@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-public @interface DbMap {
+public @interface DbMapper {
 
     /**
      * 关联表映射的字段 例如：example：‘left join employee emp on emp.id = a.emp_id’

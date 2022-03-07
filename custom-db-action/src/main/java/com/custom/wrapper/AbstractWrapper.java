@@ -21,7 +21,7 @@ import java.util.*;
  * R：字段类型（字段类型为String是为字符串、lambda时为SFunction函数接口）
  * Children：为继承该抽象类的子类类型
  **/
-public abstract class AbstractWrapper<T, R, Children, OrderBy, Select> extends ConditionStorage<T, OrderBy, Select> {
+public abstract class AbstractWrapper<T, R, Children, OrderBy> extends ConditionStorage<T, OrderBy> {
 
     /**
      * 适用（orderBy, is null, is not null,）
@@ -44,7 +44,6 @@ public abstract class AbstractWrapper<T, R, Children, OrderBy, Select> extends C
      */
     protected abstract Children adapter(DbSymbol dbSymbol, boolean condition, R column, String express);
     public abstract Children select(R... columns);
-    public abstract Children enabledRelatedCondition(Boolean enabledRelatedCondition);
 
     /**
     * 适配各种sql条件的拼接

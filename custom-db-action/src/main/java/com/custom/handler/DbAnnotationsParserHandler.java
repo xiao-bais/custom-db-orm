@@ -204,9 +204,9 @@ public class DbAnnotationsParserHandler {
         Map<String,String> map;
         Field[] declaredFields = t.getDeclaredFields();
         for (Field field : declaredFields) {
-            if(!field.isAnnotationPresent(DbMap.class)) continue;
+            if(!field.isAnnotationPresent(DbMapper.class)) continue;
             map = new HashMap<>();
-            DbMap mapAnno = field.getAnnotation(DbMap.class);
+            DbMapper mapAnno = field.getAnnotation(DbMapper.class);
             map.put(DbFieldsConst.DB_MAP, JudgeUtilsAx.isEmpty(mapAnno.value()) ? field.getName() : mapAnno.value());
             map.put(DbFieldsConst.DB_MAP_FIELD, field.getName());
             mapList.add(map);

@@ -19,7 +19,7 @@ import java.util.stream.Stream;
  * @Date 2022/2/16 14:11
  * @Desc：条件构造实例对象
  **/
-public class ConditionEntity<T> extends AbstractWrapper<T, String, ConditionEntity<T>, StringJoiner, String>
+public class ConditionEntity<T> extends AbstractWrapper<T, String, ConditionEntity<T>, StringJoiner>
         implements Wrapper<String, ConditionEntity<T>> {
 
 
@@ -179,12 +179,6 @@ public class ConditionEntity<T> extends AbstractWrapper<T, String, ConditionEnti
     @Override
     public ConditionEntity<T> select(String... columns) {
         setSelectColumns(columns);
-        return this;
-    }
-
-    @Override
-    public ConditionEntity<T> enabledRelatedCondition(Boolean enabledRelatedCondition) {
-        setEnabledRelatedCondition(enabledRelatedCondition);
         return this;
     }
 

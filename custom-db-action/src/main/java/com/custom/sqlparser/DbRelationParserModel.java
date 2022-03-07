@@ -18,6 +18,8 @@ public class DbRelationParserModel<T> extends AbstractTableModel<T> {
 
     private String joinAlias;
 
+    private Field field;
+
     private String condition;
 
     private String joinStyle;
@@ -34,6 +36,7 @@ public class DbRelationParserModel<T> extends AbstractTableModel<T> {
         DbRelated annotation = field.getAnnotation(DbRelated.class);
         this.joinTable = annotation.joinTable();
         this.column = annotation.field();
+        this.field = field;
         this.fieldName = field.getName();
         this.joinAlias = annotation.joinAlias();
         this.joinStyle = annotation.joinStyle();
@@ -121,5 +124,9 @@ public class DbRelationParserModel<T> extends AbstractTableModel<T> {
 
     public void setColumn(String column) {
         this.column = column;
+    }
+
+    public Field getField() {
+        return field;
     }
 }

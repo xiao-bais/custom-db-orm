@@ -50,16 +50,11 @@ public class DoMain {
 //        employee.setEmpName("张三");
 
 
-
         LambdaConditionEntity<Employee> condition = new LambdaConditionEntity<>(Employee.class);
-        condition.eq(Employee::getEmpName, "张三").le(Employee::getAge, 22);
-        condition.enabledRelatedCondition(false).like(Employee::getEmpName, "张三");
-//
-//
-//        ConditionEntity<Employee> conditionEntity = new ConditionEntity<>(Employee.class);
-//        conditionEntity.eq("emp_name", "张三").le("age", 22);
+        condition.eq(Employee::getEmpName, "张三").ge(Employee::getAge, 22)
+                .select(Employee::getEmpName, Employee::getAge, Employee::getAddress, Employee::getDeptName);
 
-        List<Employee> employees = customDao.selectList(Employee.class, "and a.emp_name", "张三");
+        List<Employee> employees = customDao.selectLambdaList(Employee.class, condition);
         System.out.println("employees = " + employees);
 
 
