@@ -165,8 +165,8 @@ public class LambdaConditionEntity<T> extends AbstractWrapper<T, SFunction<T, ?>
 
     @Override
     public LambdaConditionEntity<T> or(boolean condition, LambdaConditionEntity<T> conditionEntity) {
-        if(condition) {
-            addNewConditionEntity(false, conditionEntity);
+        if(condition && conditionEntity != null) {
+            handleNewSelectAndOrderBy(false, conditionEntity);
         }
         return this;
     }
@@ -175,40 +175,35 @@ public class LambdaConditionEntity<T> extends AbstractWrapper<T, SFunction<T, ?>
 
     @Override
     public LambdaConditionEntity<T> and(boolean condition, LambdaConditionEntity<T> conditionEntity) {
-        if(condition) {
-            addNewConditionEntity(true, conditionEntity);
+        if(condition && conditionEntity != null) {
+            handleNewSelectAndOrderBy(true, conditionEntity);
         }
         return this;
     }
 
-    private void addNewConditionEntity(boolean isAnd, LambdaConditionEntity<T> conditionEntity) {
-        if(conditionEntity != null) {
-            conditionEntity.setAndConditionFlag(isAnd);
-            if(conditionEntity.getOrderByColumns() != null) {
-                if(getOrderByColumns() != null) {
-                    getOrderByColumns().putAll(conditionEntity.getOrderByColumns());
-                }else {
-                    setOrderByColumns(conditionEntity.getOrderByColumns());
-                }
+    private void handleNewSelectAndOrderBy(boolean isAnd, LambdaConditionEntity<T> conditionEntity) {
+        conditionEntity.setAndConditionFlag(isAnd);
+        if(conditionEntity.getOrderByColumns() != null) {
+            if(getOrderByColumns() != null) {
+                getOrderByColumns().putAll(conditionEntity.getOrderByColumns());
+            }else {
+                setOrderByColumns(conditionEntity.getOrderByColumns());
             }
-            if(!conditionEntity.getCommonlyCondition().isEmpty()) {
-                getCommonlyCondition().addAll(conditionEntity.getCommonlyCondition());
-            }
-            if(conditionEntity.getSelects() != null) {
-                int thisLen = getSelects().length;
-                int addLen = conditionEntity.getSelects().length;
-                Field[] newFields  = new Field[thisLen + addLen];
-                for (int i = 0; i < newFields.length; i++) {
-                    if(i <= thisLen - 1) {
-                        newFields[i] = getSelects()[i];
-                    }else {
-                        newFields[i] = conditionEntity.getSelects()[i];
-                    }
-                }
-                setSelects(newFields);
-            }
-            lambdaConditionEntityList.add(conditionEntity);
         }
+        if(conditionEntity.getSelects() != null) {
+            int thisLen = getSelects().length;
+            int addLen = conditionEntity.getSelects().length;
+            Field[] newFields  = new Field[thisLen + addLen];
+            for (int i = 0; i < newFields.length; i++) {
+                if(i <= thisLen - 1) {
+                    newFields[i] = getSelects()[i];
+                }else {
+                    newFields[i] = conditionEntity.getSelects()[i];
+                }
+            }
+            setSelects(newFields);
+        }
+        this.lambdaConditionEntityList.add(conditionEntity);
     }
 
     @SafeVarargs
@@ -248,7 +243,7 @@ public class LambdaConditionEntity<T> extends AbstractWrapper<T, SFunction<T, ?>
         return andConditionFlag;
     }
 
-    public void setAndConditionFlag(Boolean andConditionFlag) {
+    protected void setAndConditionFlag(Boolean andConditionFlag) {
         this.andConditionFlag = andConditionFlag;
     }
 

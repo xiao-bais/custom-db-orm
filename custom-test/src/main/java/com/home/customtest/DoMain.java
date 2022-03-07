@@ -54,6 +54,7 @@ public class DoMain {
         condition.eq(Employee::getEmpName, "张三").ge(Employee::getAge, 22)
                 .select(Employee::getEmpName, Employee::getAge, Employee::getAddress, Employee::getDeptName);
 
+
         List<Employee> employees = customDao.selectLambdaList(Employee.class, condition);
         System.out.println("employees = " + employees);
 
