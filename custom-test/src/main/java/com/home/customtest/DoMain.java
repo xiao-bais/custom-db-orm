@@ -50,6 +50,12 @@ public class DoMain {
 //        employee.setEmpName("张三");
 
 
+
+
+
+
+
+
         LambdaConditionEntity<Employee> condition = new LambdaConditionEntity<>(Employee.class);
         condition.eq(Employee::getEmpName, "张三").ge(Employee::getAge, 22)
                 .select(Employee::getEmpName, Employee::getAge, Employee::getAddress, Employee::getDeptName);

@@ -210,7 +210,7 @@ public class LambdaConditionEntity<T> extends AbstractWrapper<T, SFunction<T, ?>
     @Override
     public final LambdaConditionEntity<T> orderByAsc(boolean condition, SFunction<T, ?>... columns) {
         if(getOrderByColumns() == null) {
-            setOrderByColumns(new HashMap<>());
+            setOrderByColumns(new LinkedHashMap<>());
         }
         Arrays.stream(columns).forEach(column -> getOrderByColumns().put(column, SqlOrderBy.ASC));
         return this;
@@ -220,7 +220,7 @@ public class LambdaConditionEntity<T> extends AbstractWrapper<T, SFunction<T, ?>
     @Override
     public final LambdaConditionEntity<T> orderByDesc(boolean condition, SFunction<T, ?>... columns) {
         if(getOrderByColumns() == null) {
-            setOrderByColumns(new HashMap<>());
+            setOrderByColumns(new LinkedHashMap<>());
         }
         Arrays.stream(columns).forEach(column -> getOrderByColumns().put(column, SqlOrderBy.DESC));
         return this;
@@ -272,4 +272,7 @@ public class LambdaConditionEntity<T> extends AbstractWrapper<T, SFunction<T, ?>
         return columnParseHandler.parseColumns(func);
     }
 
+    public ColumnParseHandler<T> getColumnParseHandler() {
+        return columnParseHandler;
+    }
 }

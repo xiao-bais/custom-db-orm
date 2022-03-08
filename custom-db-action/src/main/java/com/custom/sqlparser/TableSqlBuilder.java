@@ -6,10 +6,13 @@ import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.DbFieldsConst;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.ExecuteMethod;
+import com.custom.enums.SqlOrderBy;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
 import com.custom.wrapper.AbstractWrapper;
+import com.custom.wrapper.ColumnParseHandler;
 import com.custom.wrapper.LambdaConditionEntity;
+import com.custom.wrapper.SFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -354,7 +357,9 @@ public class TableSqlBuilder<T> {
         // 解析条件
         parseLambdaCondition(conditionEntity);
         // 解析排序
-        parseLambdaOrderBy(conditionEntity);
+        if(conditionEntity.getOrderByColumns() != null) {
+            parseLambdaOrderBy(conditionEntity);
+        }
     }
 
     /**
@@ -401,7 +406,15 @@ public class TableSqlBuilder<T> {
      * 解析orderBy
      */
     private void parseLambdaOrderBy(LambdaConditionEntity<T> conditionEntity) {
-
+        ColumnParseHandler<T> columnParseHandler = conditionEntity.getColumnParseHandler();
+        Map<SFunction<T, ?>, SqlOrderBy> orderByColumns = conditionEntity.getOrderByColumns();
+        for (SFunction<T, ?> function : orderByColumns.keySet()) {
+            Field orderByField = columnParseHandler.getField(function);
+            SqlOrderBy sqlOrderBy = orderByColumns.get(function);
+            if(sqlOrderBy != null) {
+                conditionEntity.getOrderBy().add(conditionEntity.orderByField(orderByField.getName(), sqlOrderBy));
+            }
+        }
     }
 
     /**

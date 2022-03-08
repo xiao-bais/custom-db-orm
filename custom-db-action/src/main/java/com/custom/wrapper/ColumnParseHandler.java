@@ -36,17 +36,22 @@ public class ColumnParseHandler<T> {
     public final Field[] parseColumns(SFunction<T, ?>... fun) {
         List<Field> fieldList = new ArrayList<>(fun.length);
         for (SFunction<T, ?> function : fun) {
-            SerializedLambda serializedLambda = getSerializedLambda(function);
-            String implMethodName = serializedLambda.getImplMethodName();
-            String fieldName = implMethodName.substring(SymbolConst.GET.length());
-            fieldName = fieldName.replaceFirst(String.valueOf(fieldName.charAt(0)), String.valueOf(fieldName.charAt(0)).toLowerCase());
-            String finalFieldName = fieldName;
-            Optional<Field> firstField = Arrays.stream(fields).filter(x -> x.getName().equals(finalFieldName)).findFirst();
-            if (firstField.isPresent()) {
-                fieldList.add(firstField.get());
-            }else throw new CustomCheckException(String.format("Unknown method: '%s', not found in class'%s', or please create getter or setter method with boxing type", implMethodName, cls.getName()));
+            fieldList.add(getField(function));
         }
         return fieldList.toArray(new Field[0]);
+    }
+
+    public Field getField(SFunction<T, ?> fun) {
+        SerializedLambda serializedLambda = getSerializedLambda(fun);
+        String implMethodName = serializedLambda.getImplMethodName();
+        String fieldName = implMethodName.substring(SymbolConst.GET.length());
+        fieldName = fieldName.replaceFirst(String.valueOf(fieldName.charAt(0)), String.valueOf(fieldName.charAt(0)).toLowerCase());
+        String finalFieldName = fieldName;
+        Optional<Field> firstField = Arrays.stream(fields).filter(x -> x.getName().equals(finalFieldName)).findFirst();
+        if (firstField.isPresent()) {
+            return firstField.get();
+        }
+        throw new CustomCheckException(String.format("Unknown method: '%s', not found in class'%s', or please create getter or setter method with boxing type", implMethodName, cls.getName()));
     }
 
 
