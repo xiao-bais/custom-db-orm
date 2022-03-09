@@ -1,9 +1,6 @@
 package com.custom.sqlparser;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.*;
+import java.util.Map;
 
 /**
  * @Author Xiao-Bai
@@ -13,36 +10,21 @@ import java.util.*;
 @SuppressWarnings("unchecked")
 public class TableParserModelCache {
 
-    private static final Logger logger = LoggerFactory.getLogger(TableParserModelCache.class);
-
     /**
      * 实体解析模板缓存
      */
-    private Map<String, Object> tableModel;
+    private final static Map<String, Object> tableModel = new CustomLocalCache();
 
 
-    public TableParserModelCache(int size) {
-        initialize(size);
+    public static void setTableModel(String key, Object val) {
+       tableModel.put(key, val);
     }
 
-    public TableParserModelCache() {
-        initialize();
-    }
-
-    private void initialize(int size) {
-        logger.info("Entity parse model Initialized Started ... ...");
-        this.tableModel = new CustomLocalCache(size);
-    }
-
-    private void initialize() {
-        this.tableModel = new CustomLocalCache();
-    }
-
-    public void setTableModel(String key, Object val) {
-        this.tableModel.put(key, val);
-    }
-
-    public <T> TableSqlBuilder<T> getTableModel(String key) {
-        return (TableSqlBuilder<T>) tableModel.get(key);
+    public static <T> TableSqlBuilder<T> getTableModel(Class<T> cls) {
+        TableSqlBuilder<T> tableSqlBuilder = (TableSqlBuilder<T>) tableModel.get(cls.getName());
+        if(tableSqlBuilder == null) {
+            tableSqlBuilder = new TableSqlBuilder<>(cls);
+        }
+        return tableSqlBuilder;
     }
 }

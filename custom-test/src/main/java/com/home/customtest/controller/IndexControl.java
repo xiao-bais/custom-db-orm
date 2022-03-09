@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -40,7 +38,7 @@ public class IndexControl {
                 .eq("sex", true)
                 .in("age", Stream.of(20,23,26).collect(Collectors.toList()))
                 .and(new ConditionEntity<>(Employee.class).like("dept.name", "财务"));
-        Employee employee = customDao.selectLambdaOne(new LambdaConditionEntity<>(Employee.class).like(Employee::getEmpName, "沾上干"));
+        Employee employee = customDao.selectOne(new LambdaConditionEntity<>(Employee.class).like(Employee::getEmpName, "沾上干"));
         return BackResult.bySuccess("success01", employee);
     }
 

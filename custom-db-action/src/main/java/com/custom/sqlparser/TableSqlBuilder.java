@@ -9,7 +9,7 @@ import com.custom.enums.ExecuteMethod;
 import com.custom.enums.SqlOrderBy;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
-import com.custom.wrapper.AbstractWrapper;
+import com.custom.wrapper.ConditionAdapterHandler;
 import com.custom.wrapper.ColumnParseHandler;
 import com.custom.wrapper.LambdaConditionEntity;
 import com.custom.wrapper.SFunction;
@@ -24,7 +24,7 @@ import java.util.*;
  * @Date 2021/12/2 14:10
  * @Desc：构建实体表的基础模板，以及提供一系列的sql语句或字段
  **/
-public class TableSqlBuilder<T> {
+public class TableSqlBuilder<T> implements Cloneable{
 
     private static Logger logger = LoggerFactory.getLogger(TableSqlBuilder.class);
 
@@ -348,120 +348,6 @@ public class TableSqlBuilder<T> {
         return joinTableSql.toString();
     }
 
-
-
-    /**
-     * 获取lambda表达式的条件构造sql
-     */
-    public void handleLambdaCondition(LambdaConditionEntity<T> conditionEntity) {
-        // 解析条件
-        parseLambdaCondition(conditionEntity);
-        // 解析排序
-        if(conditionEntity.getOrderByColumns() != null) {
-            parseLambdaOrderBy(conditionEntity);
-        }
-    }
-
-    /**
-     * 解析条件
-     */
-    private void parseLambdaCondition(LambdaConditionEntity<T> conditionEntity) {
-        for (AbstractWrapper.Condition condition : conditionEntity.getCommonlyCondition()) {
-            String column = SymbolConst.EMPTY;
-            boolean isMatch = false;
-            Field conditionField = condition.getField();
-            if(keyParserModel != null && keyParserModel.getField().equals(conditionField)) {
-                column = keyParserModel.getDbKey();
-                isMatch = true;
-            }
-            if(!fieldParserModels.isEmpty() && !isMatch) {
-                Optional<DbFieldParserModel<T>> firstDbFieldParserModel = fieldParserModels.stream().filter(x -> x.getField().equals(conditionField)).findFirst();
-                if(firstDbFieldParserModel.isPresent()) {
-                    column = firstDbFieldParserModel.get().getColumn();
-                    isMatch = true;
-                }
-            }
-            if(!relatedParserModels.isEmpty() && !isMatch) {
-                Optional<DbRelationParserModel<T>> firstDbRelationParserModel = relatedParserModels.stream().filter(x -> x.getField().equals(conditionField)).findFirst();
-                if(firstDbRelationParserModel.isPresent()) {
-                    column = firstDbRelationParserModel.get().getFieldSql();
-                    isMatch = true;
-                }
-            }
-            if(!joinDbMappers.isEmpty() && !isMatch) {
-                Optional<DbJoinTableParserModel<T>> firstDbJoinTableParserModel = joinDbMappers.stream().filter(x -> x.getField().equals(condition.getField())).findFirst();
-                if(firstDbJoinTableParserModel.isPresent()) {
-                    column = firstDbJoinTableParserModel.get().getJoinName();
-                    isMatch = true;
-                }
-            }
-            if(!isMatch) {
-                throw new CustomCheckException(condition.getField().getName() + "：无法匹配实体中现有属性字段");
-            }
-            conditionEntity.appendCondition(condition.getDbSymbol(), true, column, condition.getVal1(), condition.getVal2(), condition.getExpress());
-        }
-    }
-
-    /**
-     * 解析orderBy
-     */
-    private void parseLambdaOrderBy(LambdaConditionEntity<T> conditionEntity) {
-        ColumnParseHandler<T> columnParseHandler = conditionEntity.getColumnParseHandler();
-        Map<SFunction<T, ?>, SqlOrderBy> orderByColumns = conditionEntity.getOrderByColumns();
-        for (SFunction<T, ?> function : orderByColumns.keySet()) {
-            Field orderByField = columnParseHandler.getField(function);
-            SqlOrderBy sqlOrderBy = orderByColumns.get(function);
-            if(sqlOrderBy != null) {
-                conditionEntity.getOrderBy().add(conditionEntity.orderByField(orderByField.getName(), sqlOrderBy));
-            }
-        }
-    }
-
-    /**
-     *
-     */
-    public String parseLambdaSelect(Field[] selectFields) {
-        StringJoiner columnStr = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
-        for (Field selectField : selectFields) {
-            boolean isMatch = false;
-            if(keyParserModel != null && keyParserModel.getField().equals(selectField)) {
-                columnStr.add(keyParserModel.getSelectFieldSql());
-                isMatch = true;
-            }
-            if(!fieldParserModels.isEmpty() && !isMatch) {
-                Optional<DbFieldParserModel<T>> firstDbFieldParserModel = fieldParserModels.stream().filter(x -> x.getField().equals(selectField)).findFirst();
-                if(firstDbFieldParserModel.isPresent()) {
-                    columnStr.add(firstDbFieldParserModel.get().getSelectFieldSql());
-                    isMatch = true;
-                }
-            }
-            if(!relatedParserModels.isEmpty() && !isMatch) {
-                Optional<DbRelationParserModel<T>> firstDbRelationParserModel = relatedParserModels.stream().filter(x -> x.getField().equals(selectField)).findFirst();
-                if(firstDbRelationParserModel.isPresent()) {
-                    columnStr.add(firstDbRelationParserModel.get().getSelectFieldSql());
-                    isMatch = true;
-                }
-            }
-            if(!joinDbMappers.isEmpty() && !isMatch) {
-                Optional<DbJoinTableParserModel<T>> firstDbJoinTableParserModel = joinDbMappers.stream().filter(x -> x.getField().equals(selectField)).findFirst();
-                if(firstDbJoinTableParserModel.isPresent()) {
-                    columnStr.add(firstDbJoinTableParserModel.get().getSelectFieldSql());
-                    isMatch = true;
-                }
-            }
-            if(!isMatch) {
-                throw new CustomCheckException(selectField.toString() + "未找到 @Db*注解");
-            }
-        }
-        String selectSql = getSelectSql();
-        selectSql = String.format("select %s %s", columnStr, selectSql.substring(selectSql.indexOf("from")));
-        return selectSql;
-    }
-
-
-
-
-
     /**
      * 构建修改的sql语句
      */
@@ -538,6 +424,7 @@ public class TableSqlBuilder<T> {
         }
     }
 
+    public TableSqlBuilder(){}
     /**
      * 默认构造方法为查询
      */
@@ -731,4 +618,36 @@ public class TableSqlBuilder<T> {
     public void setJoinTableParserModels(List<String> joinTableParserModels) {
         this.joinTableParserModels = joinTableParserModels;
     }
+
+    protected void setJoinDbMappers(List<DbJoinTableParserModel<T>> joinDbMappers) {
+        this.joinDbMappers = joinDbMappers;
+    }
+
+    public List<DbJoinTableParserModel<T>> getJoinDbMappers() {
+        return joinDbMappers;
+    }
+
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public TableSqlBuilder<T> clone() {
+        TableSqlBuilder<T> builder = null;
+        try {
+            builder = (TableSqlBuilder<T>) super.clone();
+            builder.setAlias(this.alias);
+            builder.setTable(this.table);
+            builder.setCls(this.cls);
+            builder.setEntity(this.entity);
+            builder.setKeyParserModel(this.keyParserModel);
+            builder.setFieldParserModels(this.fieldParserModels);
+            builder.setRelatedParserModels(this.relatedParserModels);
+            builder.setJoinTableParserModels(this.joinTableParserModels);
+            builder.setJoinDbMappers(this.joinDbMappers);
+        } catch (CloneNotSupportedException e) {
+            logger.error(e.toString(), e);
+        }
+        return builder;
+    }
+
+
 }

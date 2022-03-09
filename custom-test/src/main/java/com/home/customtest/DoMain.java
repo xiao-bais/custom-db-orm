@@ -1,23 +1,13 @@
 package com.home.customtest;
 
-import com.custom.sqlparser.CustomEntityCacheBuilder;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.sqlparser.CustomDao;
-import com.custom.wrapper.ColumnParseHandler;
-import com.custom.wrapper.ConditionEntity;
+import com.custom.wrapper.ConditionWrapper;
 import com.custom.wrapper.LambdaConditionEntity;
-import com.custom.wrapper.Wrapper;
 import com.home.customtest.entity.Employee;
-import com.home.customtest.fun.MyFun;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @Author Xiao-Bai
@@ -50,18 +40,12 @@ public class DoMain {
 //        employee.setEmpName("张三");
 
 
+        LambdaConditionEntity<Employee> conditionEntity = new LambdaConditionEntity<>(Employee.class).eq(Employee::getEmpName, "张三").ge(Employee::getAge, 22)
+                .select(Employee::getEmpName, Employee::getAge, Employee::getAddress, Employee::getDeptName)
+                .orderByAsc(Employee::getAge, Employee::getDeptId);
 
 
-
-
-
-
-        LambdaConditionEntity<Employee> condition = new LambdaConditionEntity<>(Employee.class);
-        condition.eq(Employee::getEmpName, "张三").ge(Employee::getAge, 22)
-                .select(Employee::getEmpName, Employee::getAge, Employee::getAddress, Employee::getDeptName);
-
-
-        List<Employee> employees = customDao.selectLambdaList(Employee.class, condition);
+        List<Employee> employees = customDao.selectList(Employee.class, conditionEntity);
         System.out.println("employees = " + employees);
 
 

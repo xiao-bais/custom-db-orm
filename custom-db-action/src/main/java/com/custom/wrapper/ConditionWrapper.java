@@ -1,8 +1,10 @@
 package com.custom.wrapper;
 
 import com.custom.dbconfig.SymbolConst;
+import com.custom.sqlparser.TableParserModelCache;
 import com.custom.sqlparser.TableSqlBuilder;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.*;
 
@@ -11,7 +13,8 @@ import java.util.*;
  * @date 2022/3/5 23:07
  * @desc:查询条件储存
  */
-public class ConditionStorage<T, OrderBy> {
+public abstract class ConditionWrapper<T> implements Serializable {
+
 
     /**
      * 查询的列名
@@ -23,12 +26,6 @@ public class ConditionStorage<T, OrderBy> {
     private String[] selectColumns;
 
     /**
-     * 排序字段
-     * 在条件拼接完成后，进行排序，例如：age asc, score desc
-     */
-    private OrderBy orderByColumns;
-
-    /**
      * 实体解析模板
      */
     private TableSqlBuilder<T> tableSqlBuilder;
@@ -37,6 +34,7 @@ public class ConditionStorage<T, OrderBy> {
      * 实体Class对象
      */
     private Class<T> cls;
+
 
     /**
      * 最终的sql条件语句
@@ -56,14 +54,6 @@ public class ConditionStorage<T, OrderBy> {
 
     private final StringJoiner orderBy = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
 
-
-    public OrderBy getOrderByColumns() {
-        return orderByColumns;
-    }
-
-    protected void setOrderByColumns(OrderBy orderByColumns) {
-        this.orderByColumns = orderByColumns;
-    }
 
     public TableSqlBuilder<T> getTableSqlBuilder() {
         return tableSqlBuilder;
@@ -124,4 +114,11 @@ public class ConditionStorage<T, OrderBy> {
     protected void setFinalConditional(StringBuilder finalConditional) {
         this.finalConditional = finalConditional;
     }
+
+    protected TableSqlBuilder<T> getTableParserModelCache(Class<T> key) {
+        return TableParserModelCache.getTableModel(key);
+    }
+
+
+    public abstract T getEntity();
 }

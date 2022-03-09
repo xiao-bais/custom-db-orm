@@ -11,8 +11,8 @@ import com.custom.logic.LogicDeleteFieldSqlHandler;
 import com.custom.comm.page.DbPageRows;
 import com.custom.sqlparser.TableParserModelCache;
 import com.custom.sqlparser.TableSqlBuilder;
+import com.custom.wrapper.ConditionWrapper;
 import com.custom.wrapper.ConditionEntity;
-import com.custom.wrapper.LambdaConditionEntity;
 
 import java.io.Serializable;
 import java.sql.SQLException;
@@ -33,12 +33,9 @@ public abstract class AbstractSqlBuilder {
     public abstract <T> T selectOneByKey(Class<T> t, Object key) throws Exception;
     public abstract <T> List<T> selectBatchByKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception;
     public abstract <T> T selectOneByCondition(Class<T> t, String condition, Object... params) throws Exception;
-    public abstract <T> DbPageRows<T> selectPageRows(Class<T> t, DbPageRows<T> dbPageRows, ConditionEntity<T> conditionEntity) throws Exception;
-    public abstract <T> List<T> selectList(Class<T> t, ConditionEntity<T> conditionEntity) throws Exception;
-    public abstract <T> T selectOneByCondition(ConditionEntity<T> conditionEntity) throws Exception;
-    public abstract <T> DbPageRows<T> selectPageRows(Class<T> t, DbPageRows<T> dbPageRows, LambdaConditionEntity<T> conditionEntity) throws Exception;
-    public abstract <T> List<T> selectList(Class<T> t, LambdaConditionEntity<T> conditionEntity) throws Exception;
-    public abstract <T> T selectOneByCondition(LambdaConditionEntity<T> conditionEntity) throws Exception;
+    public abstract <T> DbPageRows<T> selectPageRows(Class<T> t, DbPageRows<T> dbPageRows, ConditionWrapper<T> wrapper) throws Exception;
+    public abstract <T> List<T> selectList(Class<T> t, ConditionWrapper<T> wrapper) throws Exception;
+    public abstract <T> T selectOneByCondition(ConditionWrapper<T> wrapper) throws Exception;
 
 
     /*--------------------------------------- delete ---------------------------------------*/
@@ -63,8 +60,6 @@ public abstract class AbstractSqlBuilder {
 
     private SqlExecuteAction sqlExecuteAction;
     private DbCustomStrategy dbCustomStrategy;
-    private TableParserModelCache tableParserModelCache;
-    private boolean enabledTableModel = false;
     private String logicField = SymbolConst.EMPTY;
     private String logicDeleteUpdateSql = SymbolConst.EMPTY;
     private String logicDeleteQuerySql = SymbolConst.EMPTY;
@@ -224,41 +219,23 @@ public abstract class AbstractSqlBuilder {
     /**
      * 从缓存中获取实体解析模板，若缓存中没有，就重新构造模板
      */
-    protected <T> TableSqlBuilder<T> getEntityModelCache(Class<T> t, ExecuteMethod method) {
-        return isEnabledTableModel() ? tableParserModelCache.getTableModel(t.getName()) : new TableSqlBuilder<>(t, method);
-    }
-
     protected <T> TableSqlBuilder<T> getEntityModelCache(Class<T> t) {
-        return getEntityModelCache(t, ExecuteMethod.SELECT);
+        return TableParserModelCache.getTableModel(t);
     }
 
-    protected <T> TableSqlBuilder<T> getUpdateEntityModelCache(T t, boolean isBuildUpdateModels) {
-        TableSqlBuilder<T> tableModel;
-        if(!isEnabledTableModel()) {
-            return new TableSqlBuilder<>(t, isBuildUpdateModels);
-        }else {
-            tableModel = tableParserModelCache.getTableModel(t.getClass().getName());
-            if(tableModel == null) {
-                return new TableSqlBuilder<>(t, isBuildUpdateModels);
-            }
-        }
+    @SuppressWarnings("unchecked")
+    protected <T> TableSqlBuilder<T> getUpdateEntityModelCache(T t) {
+        TableSqlBuilder<T> tableModelCache = (TableSqlBuilder<T>) TableParserModelCache.getTableModel(t.getClass());
+        TableSqlBuilder<T> tableModel = tableModelCache.clone();
         tableModel.setEntity(t);
-        tableModel.setList(Collections.singletonList(t));
         return tableModel;
     }
 
-    protected <T> TableSqlBuilder<T> getInsertEntityModelCache(List<T> tList) {
-        T t = tList.get(0);
-        TableSqlBuilder<T> tableModel;
-        if(!isEnabledTableModel()) {
-            return new TableSqlBuilder<>(tList);
-        }else {
-            tableModel = tableParserModelCache.getTableModel(t.getClass().getName());
-            if(tableModel == null) {
-                return new TableSqlBuilder<>(tList);
-            }
-        }
-        tableModel.setEntity(t);
+    @SuppressWarnings("unchecked")
+    protected <T> TableSqlBuilder<T> getUpdateEntityModelCache(List<T> tList) {
+        TableSqlBuilder<T> tableModelCache = (TableSqlBuilder<T>) TableParserModelCache.getTableModel(tList.get(0).getClass());
+        TableSqlBuilder<T> tableModel = tableModelCache.clone();
+        tableModel.setEntity(tList.get(0));
         tableModel.setList(tList);
         return tableModel;
     }
@@ -295,21 +272,5 @@ public abstract class AbstractSqlBuilder {
 
     public String getLogicField() {
         return logicField;
-    }
-
-    public TableParserModelCache getTableParserModelCache() {
-        return tableParserModelCache;
-    }
-
-    public void setTableParserModelCache(TableParserModelCache tableParserModelCache) {
-        this.tableParserModelCache = tableParserModelCache;
-    }
-
-    public boolean isEnabledTableModel() {
-        return enabledTableModel;
-    }
-
-    public void setEnabledTableModel(boolean enabledTableModel) {
-        this.enabledTableModel = enabledTableModel;
     }
 }

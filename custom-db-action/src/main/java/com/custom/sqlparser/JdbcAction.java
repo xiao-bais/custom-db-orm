@@ -12,9 +12,8 @@ import com.custom.enums.ExecuteMethod;
 import com.custom.annotations.check.CheckExecute;
 import com.custom.comm.page.DbPageRows;
 import com.custom.exceptions.CustomCheckException;
-import com.custom.wrapper.AbstractWrapper;
+import com.custom.wrapper.ConditionWrapper;
 import com.custom.wrapper.ConditionEntity;
-import com.custom.wrapper.LambdaConditionEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,8 +33,6 @@ public class JdbcAction extends AbstractSqlBuilder {
     public JdbcAction(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy){
         this.setSqlExecuteAction(new SqlExecuteAction(dbDataSource, dbCustomStrategy));
         this.setDbCustomStrategy(dbCustomStrategy);
-        this.setTableParserModelCache(dbCustomStrategy.getTableParserModelCache());
-        this.setEnabledTableModel(dbCustomStrategy.getTableParserModelCache() != null);
         initLogic();
     }
 
@@ -121,8 +118,8 @@ public class JdbcAction extends AbstractSqlBuilder {
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> DbPageRows<T> selectPageRows(Class<T> t, DbPageRows<T> dbPageRows, ConditionEntity<T> conditionEntity) throws Exception {
-        if(conditionEntity == null) {
+    public <T> DbPageRows<T> selectPageRows(Class<T> t, DbPageRows<T> dbPageRows, ConditionWrapper<T> wrapper) throws Exception {
+        if(wrapper == null) {
             return selectPageRows(t, null,null, dbPageRows);
         }
         if(dbPageRows == null) {
@@ -130,13 +127,13 @@ public class JdbcAction extends AbstractSqlBuilder {
         }
         TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t);
         String selectSql = tableSqlBuilder.getSelectSql();
-        String condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), conditionEntity.getFinalConditional(),
+        String condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), wrapper.getFinalConditional(),
                 getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
-        if(CustomUtil.isNotBlank(conditionEntity.getOrderBy().toString())) {
-            condition += String.format("%s \n%s %s", selectSql, DbSymbol.ORDER_BY, conditionEntity.getOrderBy().toString());
+        if(CustomUtil.isNotBlank(wrapper.getOrderBy().toString())) {
+            condition += String.format("%s \n%s %s", selectSql, DbSymbol.ORDER_BY, wrapper.getOrderBy().toString());
         }
         selectSql += "\n" + condition;
-        Object[] params = conditionEntity.getParamValues().toArray();
+        Object[] params = wrapper.getParamValues().toArray();
         buildPageResult(t, selectSql, condition, dbPageRows, params);
         return dbPageRows;
 
@@ -144,68 +141,36 @@ public class JdbcAction extends AbstractSqlBuilder {
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> List<T> selectList(Class<T> t, ConditionEntity<T> conditionEntity) throws Exception {
-        if(conditionEntity == null) {
+    public <T> List<T> selectList(Class<T> t, ConditionWrapper<T> wrapper) throws Exception {
+        if(wrapper == null) {
             return selectBySql(t, getEntityModelCache(t).getSelectSql());
         }
         TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t);
         String selectSql;
-        if(conditionEntity.getSelectColumns() != null) {
-            selectSql = tableSqlBuilder.selectColumns(conditionEntity.getSelectColumns());
+        if(wrapper.getSelectColumns() != null) {
+            selectSql = tableSqlBuilder.selectColumns(wrapper.getSelectColumns());
         }else {
             selectSql = tableSqlBuilder.getSelectSql();
         }
-        selectSql += "\n" + checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), conditionEntity.getFinalConditional(), getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
-        if(CustomUtil.isNotBlank(conditionEntity.getOrderBy().toString())) {
-            selectSql = String.format("%s \n%s %s", selectSql, DbSymbol.ORDER_BY, conditionEntity.getOrderBy().toString());
+        selectSql += "\n" + checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), wrapper.getFinalConditional(), getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
+        if(CustomUtil.isNotBlank(wrapper.getOrderBy().toString())) {
+            selectSql = String.format("%s \n%s %s", selectSql, DbSymbol.ORDER_BY, wrapper.getOrderBy().toString());
         }
-        return selectBySql(t, selectSql, conditionEntity.getParamValues().toArray());
+        return selectBySql(t, selectSql, wrapper.getParamValues().toArray());
     }
 
     @Override
-    public <T> T selectOneByCondition(ConditionEntity<T> conditionEntity) throws Exception {
-        if(conditionEntity == null) {
+    public <T> T selectOneByCondition(ConditionWrapper<T> wrapper) throws Exception {
+        if(wrapper == null) {
             throw new CustomCheckException("condition cannot be empty");
         }
-        return selectOneByCondition(conditionEntity.getCls(), conditionEntity.getFinalConditional(), conditionEntity.getParamValues().toArray());
-    }
-
-    @Override
-    public <T> DbPageRows<T> selectPageRows(Class<T> t, DbPageRows<T> dbPageRows, LambdaConditionEntity<T> conditionEntity) throws Exception {
-        return null;
-    }
-
-    @Override
-    public <T> List<T> selectList(Class<T> t, LambdaConditionEntity<T> conditionEntity) throws Exception {
-        TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t);
-        if(conditionEntity == null) {
-            return selectBySql(t, tableSqlBuilder.getSelectSql());
-        }
-        tableSqlBuilder.handleLambdaCondition(conditionEntity);
-        String selectSql;
-        if(conditionEntity.getSelects() != null) {
-            selectSql = tableSqlBuilder.parseLambdaSelect(conditionEntity.getSelects());
-        }else {
-            selectSql = tableSqlBuilder.getSelectSql();
-        }
-        selectSql += "\n" + checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), conditionEntity.getFinalConditional(), getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
-        if(CustomUtil.isNotBlank(conditionEntity.getOrderBy().toString())) {
-            selectSql = String.format("%s \n%s %s", selectSql, DbSymbol.ORDER_BY, conditionEntity.getOrderBy().toString());
-        }
-        return selectBySql(t, selectSql, conditionEntity.getParamValues().toArray());
-    }
-
-    @Override
-    public <T> T selectOneByCondition(LambdaConditionEntity<T> conditionEntity) throws Exception {
-
-
-        return null;
+        return selectOneByCondition(wrapper.getCls(), wrapper.getFinalConditional(), wrapper.getParamValues().toArray());
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.DELETE)
     public <T> int deleteByKey(Class<T> t, Object key) throws Exception {
-        TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t, ExecuteMethod.DELETE);
+        TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t);
         DbKeyParserModel<T> keyParserModel = tableSqlBuilder.getKeyParserModel();
         String deleteSql = getLogicDeleteKeySql(SymbolConst.QUEST, keyParserModel.getDbKey(), tableSqlBuilder.getTable(), tableSqlBuilder.getAlias(), false);
         if(!CustomUtil.isKeyAllowType(keyParserModel.getType(), key)) {
@@ -217,7 +182,7 @@ public class JdbcAction extends AbstractSqlBuilder {
     @Override
     @CheckExecute(target = ExecuteMethod.DELETE)
     public <T> int deleteBatchKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception {
-        TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t, ExecuteMethod.DELETE);
+        TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t);
         DbKeyParserModel<T> keyParserModel = tableSqlBuilder.getKeyParserModel();
         StringJoiner delSymbols = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
         IntStream.range(0, keys.size()).mapToObj(i -> SymbolConst.QUEST).forEach(delSymbols::add);
@@ -228,7 +193,7 @@ public class JdbcAction extends AbstractSqlBuilder {
     @Override
     @CheckExecute(target = ExecuteMethod.DELETE)
     public <T> int deleteByCondition(Class<T> t, String condition, Object... params) throws Exception {
-        TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t, ExecuteMethod.DELETE);
+        TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t);
         String deleteSql;
         if(JudgeUtilsAx.isNotEmpty(getLogicDeleteUpdateSql()) && checkLogicFieldIsExist(tableSqlBuilder.getTable())) {
             deleteSql = String.format("update %s %s set %s.%s where %s.%s %s", tableSqlBuilder.getTable(), tableSqlBuilder.getAlias(),
@@ -251,7 +216,7 @@ public class JdbcAction extends AbstractSqlBuilder {
     @Override
     @CheckExecute(target = ExecuteMethod.INSERT)
     public <T> int insert(T t, boolean isGeneratedKey) throws Exception {
-        TableSqlBuilder<T> tableSqlBuilder = getUpdateEntityModelCache(t, false);
+        TableSqlBuilder<T> tableSqlBuilder = getUpdateEntityModelCache(t);
         String insertSql = tableSqlBuilder.getInsertSql();
         DbKeyParserModel<T> keyParserModel = tableSqlBuilder.getKeyParserModel();
         return executeInsert(insertSql, Collections.singletonList(t), isGeneratedKey, keyParserModel.getKey(), keyParserModel.getType(), tableSqlBuilder.getOneObjValues().toArray());
@@ -260,7 +225,7 @@ public class JdbcAction extends AbstractSqlBuilder {
     @Override
     @CheckExecute(target = ExecuteMethod.INSERT)
     public <T> int insert(List<T> ts, boolean isGeneratedKey) throws Exception {
-        TableSqlBuilder<T> tableSqlBuilder = getInsertEntityModelCache(ts);
+        TableSqlBuilder<T> tableSqlBuilder = getUpdateEntityModelCache(ts);
         String insertSql = tableSqlBuilder.getInsertSql();
         DbKeyParserModel<T> keyParserModel = tableSqlBuilder.getKeyParserModel();
         return executeInsert(insertSql, ts, isGeneratedKey, keyParserModel.getKey(), keyParserModel.getType(), tableSqlBuilder.getManyObjValues().toArray());
@@ -269,7 +234,7 @@ public class JdbcAction extends AbstractSqlBuilder {
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
     public <T> int updateByKey(T t, String... updateDbFields) throws Exception {
-        TableSqlBuilder<T> tableSqlBuilder = getUpdateEntityModelCache(t, true);
+        TableSqlBuilder<T> tableSqlBuilder = getUpdateEntityModelCache(t);
         tableSqlBuilder.buildUpdateSql(updateDbFields, getLogicDeleteQuerySql());
         return executeSql(tableSqlBuilder.getUpdateSql().toString(), tableSqlBuilder.getObjValues().toArray());
     }
@@ -277,7 +242,7 @@ public class JdbcAction extends AbstractSqlBuilder {
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
     public <T> int updateByCondition(T t, ConditionEntity<T> conditionEntity) throws Exception {
-        TableSqlBuilder<T> tableSqlBuilder = getUpdateEntityModelCache(t, true);
+        TableSqlBuilder<T> tableSqlBuilder = getUpdateEntityModelCache(t);
         String condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), conditionEntity.getFinalConditional(), getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
         tableSqlBuilder.buildUpdateField(condition, conditionEntity.getParamValues());
         return executeSql(tableSqlBuilder.getUpdateSql().toString(), tableSqlBuilder.getObjValues().toArray());
@@ -310,7 +275,7 @@ public class JdbcAction extends AbstractSqlBuilder {
     @Override
     public void dropTables(Class<?>... arr) throws Exception {
         for (int i = arr.length - 1; i >= 0; i--) {
-            TableSqlBuilder<?> tableSqlBuilder = getEntityModelCache(arr[i], ExecuteMethod.NONE);
+            TableSqlBuilder<?> tableSqlBuilder = getEntityModelCache(arr[i]);
             String dropTableSql = tableSqlBuilder.getDropTableSql();
             execTable(dropTableSql);
             logger.warn("drop table '{}' completed\n", tableSqlBuilder.getTable());

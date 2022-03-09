@@ -1,25 +1,21 @@
 package com.custom.wrapper;
 
-import com.custom.comm.CustomUtil;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.DbSymbol;
 import com.custom.enums.ExecuteMethod;
 import com.custom.enums.SqlLike;
 import com.custom.enums.SqlOrderBy;
-import com.custom.sqlparser.DbFieldParserModel;
-import com.custom.sqlparser.DbKeyParserModel;
 import com.custom.sqlparser.TableSqlBuilder;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.stream.Stream;
 
 /**
  * @Author Xiao-Bai
  * @Date 2022/2/16 14:11
  * @Desc：条件构造实例对象
  **/
-public class ConditionEntity<T> extends AbstractWrapper<T, String, ConditionEntity<T>, StringJoiner>
+public class ConditionEntity<T> extends ConditionAdapterHandler<T, String, ConditionEntity<T>, StringJoiner>
         implements Wrapper<String, ConditionEntity<T>> {
 
 
@@ -110,17 +106,21 @@ public class ConditionEntity<T> extends AbstractWrapper<T, String, ConditionEnti
 
     @Override
     public ConditionEntity<T> or(boolean condition, ConditionEntity<T> conditionEntity) {
-        super.setLastCondition(SymbolConst.EMPTY);
-        super.append(condition, DbSymbol.OR, conditionEntity.getFinalConditional());
-        super.getParamValues().addAll(conditionEntity.getParamValues());
+        if(condition) {
+            super.setLastCondition(SymbolConst.EMPTY);
+            super.append(DbSymbol.OR, conditionEntity.getFinalConditional());
+            super.getParamValues().addAll(conditionEntity.getParamValues());
+        }
         return this;
     }
 
     @Override
     public ConditionEntity<T> and(boolean condition, ConditionEntity<T> conditionEntity) {
-        super.setLastCondition(SymbolConst.EMPTY);
-        super.append(condition, DbSymbol.AND, conditionEntity.getFinalConditional());
-        super.getParamValues().addAll(conditionEntity.getParamValues());
+        if(condition) {
+            super.setLastCondition(SymbolConst.EMPTY);
+            super.append(DbSymbol.AND, conditionEntity.getFinalConditional());
+            super.getParamValues().addAll(conditionEntity.getParamValues());
+        }
         return this;
     }
 
@@ -183,8 +183,8 @@ public class ConditionEntity<T> extends AbstractWrapper<T, String, ConditionEnti
     }
 
 
-
-
-
-
+    @Override
+    public T getEntity() {
+        return null;
+    }
 }

@@ -4,7 +4,6 @@ import com.custom.comm.CustomUtil;
 import com.custom.handler.JdbcDao;
 import com.custom.proxy.SqlReaderExecuteProxy;
 import com.custom.sqlparser.CustomDao;
-import com.custom.sqlparser.CustomEntityCacheBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -61,8 +60,6 @@ public class CustomConfiguration {
         if(CustomUtil.isDataSourceEmpty(dbDataSource)) {
             return null;
         }
-        CustomEntityCacheBuilder customBuildEntityParseModel = new CustomEntityCacheBuilder(dbCustomStrategy);
-        customBuildEntityParseModel.buildEntity();
         logger.info("CustomDao Initialized Successfully !");
         return new CustomDao(dbDataSource, dbCustomStrategy);
     }

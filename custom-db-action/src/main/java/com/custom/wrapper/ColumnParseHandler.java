@@ -1,8 +1,10 @@
 package com.custom.wrapper;
 
+import com.custom.annotations.DbKey;
 import com.custom.comm.CustomUtil;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.exceptions.CustomCheckException;
+import com.custom.sqlparser.*;
 
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Field;
@@ -24,13 +26,69 @@ public class ColumnParseHandler<T> {
 
     private final Field[] fields;
 
+    public ColumnParseHandler(Class<T> cls, Field[] fields) {
+        this.cls = cls;
+        this.fields = fields;
+    }
+
     public ColumnParseHandler(Class<T> cls) {
         this.cls = cls;
         this.fields = CustomUtil.getFields(cls);
     }
 
     /**
-     * 从Function中获取实现的字段
+     * 获取表字段column
+     */
+    public String getColumn(SFunction<T,?> fun) {
+        Field field = getField(fun);
+        TableSqlBuilder<T> tableModel = TableParserModelCache.getTableModel(cls);
+        return parseField(field, tableModel);
+    }
+
+    @SafeVarargs
+    public final String[] getColumn(SFunction<T, ?>... fun) {
+        Field[] targetFields = parseColumns(fun);
+        TableSqlBuilder<T> tableModel = TableParserModelCache.getTableModel(cls);
+        String[] selectColumns = new String[targetFields.length];
+        for (int i = 0; i < targetFields.length; i++) {
+            selectColumns[i] = parseField(targetFields[i], tableModel);
+        }
+        return selectColumns;
+    }
+
+
+    private String parseField(Field targetField, TableSqlBuilder<T> tableModel) {
+
+        // 主键解析模板
+        DbKeyParserModel<T> keyParserModel = tableModel.getKeyParserModel();
+        if (keyParserModel != null && keyParserModel.getField().equals(targetField)) {
+            return keyParserModel.getFieldSql();
+        }
+        // 除主键外的表字段解析模板
+        List<DbFieldParserModel<T>> fieldParserModels = tableModel.getFieldParserModels();
+        Optional<DbFieldParserModel<T>> firstDbFieldParserModel = fieldParserModels.stream().filter(x -> x.getField().equals(targetField)).findFirst();
+        if(firstDbFieldParserModel.isPresent()) {
+            return firstDbFieldParserModel.get().getFieldSql();
+        }
+
+        // 关联表方式1的解析模板
+        List<DbRelationParserModel<T>> relatedParserModels = tableModel.getRelatedParserModels();
+        Optional<DbRelationParserModel<T>> firstDbRelationParserModel = relatedParserModels.stream().filter(x -> x.getField().equals(targetField)).findFirst();
+        if(firstDbRelationParserModel.isPresent()) {
+            return firstDbRelationParserModel.get().getFieldSql();
+        }
+
+        // 关联表方式2的解析模板
+        List<DbJoinTableParserModel<T>> joinDbMappers = tableModel.getJoinDbMappers();
+        Optional<DbJoinTableParserModel<T>> firstDbJoinTableParserModel = joinDbMappers.stream().filter(x -> x.getField().equals(targetField)).findFirst();
+        if(firstDbJoinTableParserModel.isPresent()) {
+            return firstDbJoinTableParserModel.get().getFieldSql();
+        }
+        throw new CustomCheckException(targetField + " 未找到 @Db*注解");
+    }
+
+    /**
+     * 从Function中获取实体的属性字段
      */
     @SafeVarargs
     public final Field[] parseColumns(SFunction<T, ?>... fun) {

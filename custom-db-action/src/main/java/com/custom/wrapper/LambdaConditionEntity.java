@@ -1,13 +1,11 @@
 package com.custom.wrapper;
 
 import com.custom.enums.DbSymbol;
-import com.custom.enums.ExecuteMethod;
 import com.custom.enums.SqlLike;
 import com.custom.enums.SqlOrderBy;
 import com.custom.sqlparser.TableSqlBuilder;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.*;
 
 /**
@@ -15,49 +13,48 @@ import java.util.*;
  * @Date 2022/3/3 17:17
  * @Desc：lambda表达式的条件构造对象
  **/
-public class LambdaConditionEntity<T> extends AbstractWrapper<T, SFunction<T, ?>, LambdaConditionEntity<T>, Map<SFunction<T, ?>, SqlOrderBy>>
+public class LambdaConditionEntity<T> extends ConditionAdapterHandler<T, SFunction<T, ?>, LambdaConditionEntity<T>, Map<SFunction<T, ?>, SqlOrderBy>>
         implements Wrapper<SFunction<T, ?>, LambdaConditionEntity<T>> {
-
 
 
     @Override
     protected LambdaConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, SFunction<T, ?> column) {
-        storeCondition(new Condition(condition, fieldToColumn(column), dbSymbol));
+        appendCondition(dbSymbol, condition, parseColumn(column), null, null, null);
         return this;
     }
 
 
     @Override
-    protected LambdaConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, String sqlCondition) {
-        storeCondition(new Condition(condition, null, sqlCondition, dbSymbol));
+    protected LambdaConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, String columnSql) {
+        appendCondition(dbSymbol, condition, columnSql, null, null, null);
         return this;
     }
 
 
     @Override
     protected LambdaConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, SFunction<T, ?> column, Object val) {
-        storeCondition(new Condition(condition, fieldToColumn(column), dbSymbol, val, null));
+        appendCondition(dbSymbol, condition, parseColumn(column), val, null, null);
         return this;
     }
 
 
     @Override
     protected LambdaConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, SFunction<T, ?> column, Object val1, Object val2) {
-        storeCondition(new Condition(condition, fieldToColumn(column), dbSymbol, val1, val2));
+        appendCondition(dbSymbol, condition, parseColumn(column), val1, val2, null);
         return this;
     }
 
 
     @Override
     protected LambdaConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, SFunction<T, ?> column, String express) {
-        storeCondition(new Condition(condition, fieldToColumn(column), express, dbSymbol));
+        appendCondition(dbSymbol, condition, parseColumn(column), null, null, express);
         return this;
     }
 
     @SafeVarargs
     @Override
     public final LambdaConditionEntity<T> select(SFunction<T, ?>... columns) {
-        setSelects(fieldToColumn(columns));
+        setSelectColumns(parseColumn(columns));
         return this;
     }
 
@@ -166,7 +163,7 @@ public class LambdaConditionEntity<T> extends AbstractWrapper<T, SFunction<T, ?>
     @Override
     public LambdaConditionEntity<T> or(boolean condition, LambdaConditionEntity<T> conditionEntity) {
         if(condition && conditionEntity != null) {
-            handleNewSelectAndOrderBy(false, conditionEntity);
+            handleNewCondition(false, conditionEntity);
         }
         return this;
     }
@@ -176,53 +173,25 @@ public class LambdaConditionEntity<T> extends AbstractWrapper<T, SFunction<T, ?>
     @Override
     public LambdaConditionEntity<T> and(boolean condition, LambdaConditionEntity<T> conditionEntity) {
         if(condition && conditionEntity != null) {
-            handleNewSelectAndOrderBy(true, conditionEntity);
+            handleNewCondition(true, conditionEntity);
         }
         return this;
-    }
-
-    private void handleNewSelectAndOrderBy(boolean isAnd, LambdaConditionEntity<T> conditionEntity) {
-        conditionEntity.setAndConditionFlag(isAnd);
-        if(conditionEntity.getOrderByColumns() != null) {
-            if(getOrderByColumns() != null) {
-                getOrderByColumns().putAll(conditionEntity.getOrderByColumns());
-            }else {
-                setOrderByColumns(conditionEntity.getOrderByColumns());
-            }
-        }
-        if(conditionEntity.getSelects() != null) {
-            int thisLen = getSelects().length;
-            int addLen = conditionEntity.getSelects().length;
-            Field[] newFields  = new Field[thisLen + addLen];
-            for (int i = 0; i < newFields.length; i++) {
-                if(i <= thisLen - 1) {
-                    newFields[i] = getSelects()[i];
-                }else {
-                    newFields[i] = conditionEntity.getSelects()[i];
-                }
-            }
-            setSelects(newFields);
-        }
-        this.lambdaConditionEntityList.add(conditionEntity);
     }
 
     @SafeVarargs
     @Override
     public final LambdaConditionEntity<T> orderByAsc(boolean condition, SFunction<T, ?>... columns) {
-        if(getOrderByColumns() == null) {
-            setOrderByColumns(new LinkedHashMap<>());
+        for (String column : parseColumn(columns)) {
+            String orderByField = orderByField(column, SqlOrderBy.ASC);
+            adapter(DbSymbol.ORDER_BY, condition, orderByField);
         }
-        Arrays.stream(columns).forEach(column -> getOrderByColumns().put(column, SqlOrderBy.ASC));
         return this;
     }
 
     @SafeVarargs
     @Override
     public final LambdaConditionEntity<T> orderByDesc(boolean condition, SFunction<T, ?>... columns) {
-        if(getOrderByColumns() == null) {
-            setOrderByColumns(new LinkedHashMap<>());
-        }
-        Arrays.stream(columns).forEach(column -> getOrderByColumns().put(column, SqlOrderBy.DESC));
+
         return this;
     }
 
@@ -232,47 +201,32 @@ public class LambdaConditionEntity<T> extends AbstractWrapper<T, SFunction<T, ?>
      */
     private final ColumnParseHandler<T> columnParseHandler;
 
-    /**
-     * 条件是否是添加（继续添加一个构造器（or / and））
-     */
-    private Boolean andConditionFlag;
-
-    private final List<LambdaConditionEntity<T>> lambdaConditionEntityList;
-
-    public Boolean getAndConditionFlag() {
-        return andConditionFlag;
-    }
-
-    protected void setAndConditionFlag(Boolean andConditionFlag) {
-        this.andConditionFlag = andConditionFlag;
-    }
-
-    public List<LambdaConditionEntity<T>> getLambdaConditionEntityList() {
-        return lambdaConditionEntityList;
-    }
-
     public LambdaConditionEntity(Class<T> entityClass) {
         setCls(entityClass);
-        setTableSqlBuilder(new TableSqlBuilder<>(entityClass, ExecuteMethod.NONE));
-        columnParseHandler = new ColumnParseHandler<>(entityClass);
-        lambdaConditionEntityList = new ArrayList<>();
+        TableSqlBuilder<T> tableSqlBuilder = getTableParserModelCache(entityClass);
+        setTableSqlBuilder(tableSqlBuilder);
+        columnParseHandler = new ColumnParseHandler<>(entityClass, tableSqlBuilder.getFields());
     }
 
 
-    private Field fieldToColumn(SFunction<T, ?> func) {
-        Field[] fields = columnParseHandler.parseColumns(func);
-        if(fields.length > 0) {
-            return fields[0];
-        }
-        return null;
+    /**
+     * 解析函数后，得到java属性字段对应的表字段名称
+     */
+    private String parseColumn(SFunction<T, ?> func) {
+        return columnParseHandler.getColumn(func);
     }
 
+    /**
+     * 解析函数后，得到java属性字段对应的表字段名称
+     */
     @SafeVarargs
-    private final Field[] fieldToColumn(SFunction<T, ?>... func) {
-        return columnParseHandler.parseColumns(func);
+    private final String[] parseColumn(SFunction<T, ?>... func) {
+        return columnParseHandler.getColumn(func);
     }
 
-    public ColumnParseHandler<T> getColumnParseHandler() {
-        return columnParseHandler;
+
+    @Override
+    public T getEntity() {
+        return null;
     }
 }
