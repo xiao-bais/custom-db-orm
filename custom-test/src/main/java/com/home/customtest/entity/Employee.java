@@ -52,13 +52,6 @@ public class Employee {
     @DbMapper("dept.name")
     private String deptName;
 
-//    @DbRelated(joinTable = "location", joinAlias = "lo", condition = "lo.id = a.area_id", field = "area")
-//    private String area1;
-//    @DbRelated(joinTable = "location", joinAlias = "lo2", condition = "lo2.id = lo.parent_id", field = "area")
-//    private String area2;
-//    @DbRelated(joinTable = "location", joinAlias = "lo3", condition = "lo3.id = lo2.parent_id", field = "area")
-//    private String area3;
-
 
 
 

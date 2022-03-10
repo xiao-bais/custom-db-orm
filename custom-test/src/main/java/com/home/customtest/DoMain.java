@@ -6,6 +6,7 @@ import com.custom.sqlparser.CustomDao;
 import com.custom.wrapper.ConditionWrapper;
 import com.custom.wrapper.LambdaConditionEntity;
 import com.home.customtest.entity.Employee;
+import com.home.customtest.entity.Location;
 
 import java.util.List;
 
@@ -39,14 +40,16 @@ public class DoMain {
 //        Employee employee = new Employee();
 //        employee.setEmpName("张三");
 
-
-        LambdaConditionEntity<Employee> conditionEntity = new LambdaConditionEntity<>(Employee.class).eq(Employee::getEmpName, "张三").ge(Employee::getAge, 22)
-                .select(Employee::getEmpName, Employee::getAge, Employee::getAddress, Employee::getDeptName)
-                .orderByAsc(Employee::getAge, Employee::getDeptId);
+        customDao.createTables(Location.class);
 
 
-        List<Employee> employees = customDao.selectList(Employee.class, conditionEntity);
-        System.out.println("employees = " + employees);
+//        LambdaConditionEntity<Employee> conditionEntity = new LambdaConditionEntity<>(Employee.class).eq(Employee::getEmpName, "张三").ge(Employee::getAge, 22)
+//                .select(Employee::getEmpName, Employee::getAge, Employee::getAddress, Employee::getDeptName)
+//                .orderByAsc(Employee::getAge, Employee::getDeptId);
+
+
+//        List<Employee> employees = customDao.selectList(Employee.class, conditionEntity);
+//        System.out.println("employees = " + employees);
 
 
     }

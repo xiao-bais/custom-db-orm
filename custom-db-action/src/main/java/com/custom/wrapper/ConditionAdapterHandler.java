@@ -20,6 +20,7 @@ import java.util.*;
  * R：字段类型（字段类型为String是为字符串、lambda时为SFunction函数接口）
  * Children：为继承该抽象类的子类类型
  **/
+@SuppressWarnings("all")
 public abstract class ConditionAdapterHandler<T, R, Children, OrderBy> extends ConditionWrapper<T> {
 
     /**
@@ -42,6 +43,7 @@ public abstract class ConditionAdapterHandler<T, R, Children, OrderBy> extends C
      * 适用（like, not like）
      */
     protected abstract Children adapter(DbSymbol dbSymbol, boolean condition, R column, String express);
+
     public abstract Children select(R... columns);
 
     /**
@@ -119,7 +121,11 @@ public abstract class ConditionAdapterHandler<T, R, Children, OrderBy> extends C
                 getOrderBy().add(column);
                 break;
         }
-        getFinalCondition().append(getLastCondition());
+        if(CustomUtil.isNotBlank(getLastCondition())) {
+            getFinalCondition().append(getLastCondition());
+            setLastCondition(SymbolConst.EMPTY);
+        }
+
     }
 
     /**

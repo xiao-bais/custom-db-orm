@@ -130,7 +130,7 @@ public class JdbcAction extends AbstractSqlBuilder {
         String condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), wrapper.getFinalConditional(),
                 getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
         if(CustomUtil.isNotBlank(wrapper.getOrderBy().toString())) {
-            condition += String.format("%s \n%s %s", selectSql, DbSymbol.ORDER_BY, wrapper.getOrderBy().toString());
+            condition += String.format("%s \n%s %s", selectSql, DbSymbol.ORDER_BY.getSymbol(), wrapper.getOrderBy().toString());
         }
         selectSql += "\n" + condition;
         Object[] params = wrapper.getParamValues().toArray();
@@ -154,7 +154,7 @@ public class JdbcAction extends AbstractSqlBuilder {
         }
         selectSql += "\n" + checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), wrapper.getFinalConditional(), getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
         if(CustomUtil.isNotBlank(wrapper.getOrderBy().toString())) {
-            selectSql = String.format("%s \n%s %s", selectSql, DbSymbol.ORDER_BY, wrapper.getOrderBy().toString());
+            selectSql = String.format("%s \n%s %s", selectSql, DbSymbol.ORDER_BY.getSymbol(), wrapper.getOrderBy().toString());
         }
         return selectBySql(t, selectSql, wrapper.getParamValues().toArray());
     }

@@ -159,7 +159,7 @@ public class TableSqlBuilder<T> implements Cloneable{
             }
         }
         String selectSql = getSelectSql();
-        selectSql = String.format("select %s %s", columnStr, selectSql.substring(selectSql.indexOf("from")));
+        selectSql = String.format("select %s\n %s", columnStr, selectSql.substring(selectSql.indexOf("from")));
         return selectSql;
     }
 
@@ -247,7 +247,7 @@ public class TableSqlBuilder<T> implements Cloneable{
             fieldParserModels.stream().map(dbFieldParserModel -> dbFieldParserModel.buildTableSql() + "\n").forEach(fieldSql::add);
         }
 
-        createTableSql.append(String.format("create table `%s` (\n%s)", this.table, fieldSql.toString()));
+        createTableSql.append(String.format("create table `%s` (\n%s)", this.table, fieldSql));
         return createTableSql.toString();
     }
 
@@ -310,7 +310,7 @@ public class TableSqlBuilder<T> implements Cloneable{
 
         // 第三步 拼接以joinTables的方式关联的查询字段
         if (!joinDbMappers.isEmpty()) {
-            joinDbMappers.forEach(x -> baseFieldSql.add(String.format("%s %s", x.getJoinName(), x.getJoinName())));
+            joinDbMappers.forEach(x -> baseFieldSql.add(x.getSelectFieldSql()));
         }
 
         // 第三步 拼接以related方式关联的查询字段
@@ -319,7 +319,7 @@ public class TableSqlBuilder<T> implements Cloneable{
         }
 
         // 第四步 拼接主表
-        selectSql.append(String.format("select %s\n from %s %s", baseFieldSql.toString(), this.table, this.alias));
+        selectSql.append(String.format("select %s\n from %s %s", baseFieldSql, this.table, this.alias));
 
         // 第五步 拼接以joinTables方式的关联条件
         if (!joinTableParserModels.isEmpty()) {
