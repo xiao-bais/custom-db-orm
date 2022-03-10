@@ -41,6 +41,8 @@ public class TableSqlBuilder<T> implements Cloneable{
     private String desc;
 
     private Field[] fields;
+
+    private boolean underlineToCamel;
     /**
      * @Desc：对于@DbRelated注解的解析
      */
@@ -435,16 +437,17 @@ public class TableSqlBuilder<T> implements Cloneable{
     /**
      * 默认构造方法为查询
      */
-    public TableSqlBuilder(Class<T> cls) {
-        this(cls, ExecuteMethod.SELECT);
+    public TableSqlBuilder(Class<T> cls, boolean underlineToCamel) {
+        this(cls, ExecuteMethod.SELECT, underlineToCamel);
     }
 
-    public TableSqlBuilder(Class<T> cls, ExecuteMethod method) {
+    public TableSqlBuilder(Class<T> cls, ExecuteMethod method, boolean underlineToCamel) {
         this.cls = cls;
         DbTable annotation = cls.getAnnotation(DbTable.class);
         this.alias = annotation.alias();
         this.table = annotation.table();
         this.desc = annotation.desc();
+        this.underlineToCamel = underlineToCamel;
         if(method != ExecuteMethod.NONE) {
             this.fields = CustomUtil.getFields(this.cls);
             initTableBuild(method);
@@ -498,17 +501,17 @@ public class TableSqlBuilder<T> implements Cloneable{
         Field[] fields = this.fields == null ? CustomUtil.getFields(this.cls) : this.fields;
         for (Field field : fields) {
             if (field.isAnnotationPresent(DbKey.class) && keyParserModel == null) {
-                keyParserModel = new DbKeyParserModel<>(field, this.table, this.alias);
+                keyParserModel = new DbKeyParserModel<>(field, this.table, this.alias, this.underlineToCamel);
 
             } else if (field.isAnnotationPresent(DbField.class)) {
-                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias);
+                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias, this.underlineToCamel);
                 fieldParserModels.add(fieldParserModel);
 
             } else if (field.isAnnotationPresent(DbMapper.class)) {
-                DbJoinTableParserModel<T> joinTableParserModel = new DbJoinTableParserModel<>(field);
+                DbJoinTableParserModel<T> joinTableParserModel = new DbJoinTableParserModel<>(field, this.underlineToCamel);
                 joinDbMappers.add(joinTableParserModel);
             }else if (field.isAnnotationPresent(DbRelated.class)) {
-                DbRelationParserModel<T> relatedParserModel = new DbRelationParserModel<>(this.cls, field, this.table, this.alias);
+                DbRelationParserModel<T> relatedParserModel = new DbRelationParserModel<>(this.cls, field, this.table, this.alias, this.underlineToCamel);
                 relatedParserModels.add(relatedParserModel);
 
             }
@@ -521,14 +524,14 @@ public class TableSqlBuilder<T> implements Cloneable{
     private void buildUpdateModels(boolean isBuildUpdateModels) {
         for (Field field : fields) {
             if (field.isAnnotationPresent(DbKey.class) && keyParserModel == null) {
-                keyParserModel = new DbKeyParserModel<>(entity, field, this.table, this.alias);
+                keyParserModel = new DbKeyParserModel<>(entity, field, this.table, this.alias, this.underlineToCamel);
 
             } else if (field.isAnnotationPresent(DbField.class) && isBuildUpdateModels) {
-                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(entity, field, this.table, this.alias);
+                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(entity, field, this.table, this.alias, this.underlineToCamel);
                 fieldParserModels.add(fieldParserModel);
 
             }else if (field.isAnnotationPresent(DbField.class)) {
-                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias);
+                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias, this.underlineToCamel);
                 fieldParserModels.add(fieldParserModel);
             }
         }
@@ -539,7 +542,7 @@ public class TableSqlBuilder<T> implements Cloneable{
      */
     private void buildDeleteModels() {
         Optional<Field> fieldOptional = Arrays.stream(fields).filter(x -> x.isAnnotationPresent(DbKey.class)).findFirst();
-        fieldOptional.ifPresent(field -> keyParserModel = new DbKeyParserModel<>(field, this.table, this.alias));
+        fieldOptional.ifPresent(field -> keyParserModel = new DbKeyParserModel<>(field, this.table, this.alias, this.underlineToCamel));
     }
 
     public String getTable() {
@@ -638,6 +641,9 @@ public class TableSqlBuilder<T> implements Cloneable{
         return joinDbMappers;
     }
 
+    public void setUnderlineToCamel(boolean underlineToCamel) {
+        this.underlineToCamel = underlineToCamel;
+    }
 
     @Override
     @SuppressWarnings("unchecked")
@@ -659,6 +665,7 @@ public class TableSqlBuilder<T> implements Cloneable{
         }
         return builder;
     }
+
 
 
 }

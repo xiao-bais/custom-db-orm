@@ -16,15 +16,13 @@ public class TableInfoCache {
      * value-实体解析模板（TableSqlBuilder）
      */
     private final static Map<String, Object> tableModel = new CustomLocalCache();
-
-    public static void setTableModel(String key, Object val) {
-       tableModel.put(key, val);
-    }
+    public static Boolean underlineToCamel = false;
 
     public static <T> TableSqlBuilder<T> getTableModel(Class<T> cls) {
         TableSqlBuilder<T> tableSqlBuilder = (TableSqlBuilder<T>) tableModel.get(cls.getName());
         if(tableSqlBuilder == null) {
-            tableSqlBuilder = new TableSqlBuilder<>(cls);
+            tableSqlBuilder = new TableSqlBuilder<>(cls, underlineToCamel);
+            tableModel.put(cls.getName(), tableSqlBuilder);
         }
         return tableSqlBuilder;
     }

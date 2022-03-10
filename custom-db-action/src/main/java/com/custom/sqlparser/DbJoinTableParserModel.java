@@ -18,11 +18,14 @@ public class DbJoinTableParserModel<T> extends AbstractTableModel<T> {
 
     private String fieldName;
 
-    public DbJoinTableParserModel(Field field) {
+    private boolean underlineToCamel;
+
+    public DbJoinTableParserModel(Field field, boolean underlineToCamel) {
         DbMapper dbMap = field.getAnnotation(DbMapper.class);
         this.joinName = dbMap.value();
         this.fieldName = field.getName();
         this.field = field;
+        this.underlineToCamel = underlineToCamel;
     }
 
     public Field getField() {

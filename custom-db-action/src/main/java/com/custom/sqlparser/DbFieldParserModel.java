@@ -68,6 +68,11 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     */
     private boolean isNull;
 
+    /**
+     * 下划线转驼峰
+     */
+    private boolean underlineToCamel;
+
 
     /**
     * 构建创建表的sql语句
@@ -90,21 +95,26 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
 
     public DbFieldParserModel(){}
 
-    public DbFieldParserModel(T t, Field field, String table, String alias) {
-        this(field, table, alias);
+    public DbFieldParserModel(T t, Field field, String table, String alias, boolean underlineToCamel) {
+        this(field, table, alias, underlineToCamel);
         this.entity = t;
     }
 
-    public DbFieldParserModel(Field field, String table, String alias) {
+    public DbFieldParserModel(Field field, String table, String alias, boolean underlineToCamel) {
         this.fieldName = field.getName();
         this.type = field.getType();
         DbField annotation = field.getAnnotation(DbField.class);
         this.field = field;
-        this.column = JudgeUtilsAx.isEmpty(annotation.value()) ? this.fieldName : annotation.value();
+        if (JudgeUtilsAx.isEmpty(annotation.value())) {
+            this.column = underlineToCamel ? CustomUtil.camelToUnderline(this.fieldName) : this.fieldName;
+        }else {
+            this.column = annotation.value();
+        }
         this.isNull = annotation.isNull();
         this.desc = annotation.desc();
         this.dbMediaType = annotation.dataType() == DbMediaType.DbVarchar ? CustomUtil.getDbFieldType(field.getType()) : annotation.dataType();
         this.length = this.dbMediaType.getLength();
+        this.underlineToCamel = underlineToCamel;
         super.setTable(table);
         super.setAlias(alias);
     }

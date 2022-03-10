@@ -280,4 +280,6 @@ public abstract class AbstractSqlBuilder {
     public String getLogicField() {
         return logicField;
     }
+
+
 }

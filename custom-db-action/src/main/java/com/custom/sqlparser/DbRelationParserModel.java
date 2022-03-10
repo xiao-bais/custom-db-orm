@@ -1,6 +1,8 @@
 package com.custom.sqlparser;
 
 import com.custom.annotations.*;
+import com.custom.comm.CustomUtil;
+import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbaction.AbstractTableModel;
 
 import java.lang.reflect.Field;
@@ -18,6 +20,8 @@ public class DbRelationParserModel<T> extends AbstractTableModel<T> {
 
     private String joinAlias;
 
+    private boolean underlineToCamel;
+
     private Field field;
 
     private String condition;
@@ -29,15 +33,20 @@ public class DbRelationParserModel<T> extends AbstractTableModel<T> {
     private String column;
 
 
-    public DbRelationParserModel(Class<T> cls, Field field, String table, String alias) {
+    public DbRelationParserModel(Class<T> cls, Field field, String table, String alias, boolean underlineToCamel) {
         this.cls = cls;
         this.setTable(table);
         this.setAlias(alias);
         DbRelated annotation = field.getAnnotation(DbRelated.class);
         this.joinTable = annotation.joinTable();
-        this.column = annotation.field();
-        this.field = field;
         this.fieldName = field.getName();
+        if (JudgeUtilsAx.isEmpty(annotation.field())) {
+            this.column = underlineToCamel ? CustomUtil.camelToUnderline(this.fieldName) : this.fieldName;
+        }else {
+            this.column = annotation.field();
+        }
+        this.underlineToCamel = underlineToCamel;
+        this.field = field;
         this.joinAlias = annotation.joinAlias();
         this.joinStyle = annotation.joinStyle();
         this.condition = annotation.condition();

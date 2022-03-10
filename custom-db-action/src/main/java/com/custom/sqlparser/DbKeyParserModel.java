@@ -31,6 +31,8 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
 
     private Field field;
 
+    private boolean underlineToCamel;
+
     private DbMediaType dbMediaType;
 
     private KeyStrategy strategy;
@@ -180,17 +182,22 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
     public DbKeyParserModel(){}
 
 
-    public DbKeyParserModel(T t, Field field, String table, String alias){
-        this(field, table, alias);
+    public DbKeyParserModel(T t, Field field, String table, String alias, boolean underlineToCamel){
+        this(field, table, alias, underlineToCamel);
         this.entity = t;
     }
 
-    public DbKeyParserModel(Field field, String table, String alias){
+    public DbKeyParserModel(Field field, String table, String alias, boolean underlineToCamel){
         this.key = field.getName();
         DbKey annotation = field.getAnnotation(DbKey.class);
-        this.dbKey = JudgeUtilsAx.isEmpty(annotation.value()) ? this.key : annotation.value();
+        if (JudgeUtilsAx.isEmpty(annotation.value())) {
+            this.dbKey = underlineToCamel ? CustomUtil.camelToUnderline(this.key) : this.key;
+        }else {
+            this.dbKey = annotation.value();
+        }
         this.field = field;
         this.type = field.getType();
+        this.underlineToCamel = underlineToCamel;
         this.dbMediaType = annotation.dbType();
         this.strategy = annotation.strategy();
         this.desc = annotation.desc();

@@ -5,6 +5,7 @@ import com.custom.enums.DbSymbol;
 import com.custom.enums.ExecuteMethod;
 import com.custom.enums.SqlLike;
 import com.custom.enums.SqlOrderBy;
+import com.custom.sqlparser.TableInfoCache;
 import com.custom.sqlparser.TableSqlBuilder;
 
 import java.io.Serializable;
@@ -145,7 +146,7 @@ public class ConditionEntity<T> extends ConditionAdapterHandler<T, String, Condi
 
     public ConditionEntity(Class<T> entityClass) {
         setCls(entityClass);
-        setTableSqlBuilder(new TableSqlBuilder<>(entityClass, ExecuteMethod.NONE));
+        setTableSqlBuilder(new TableSqlBuilder<>(entityClass, ExecuteMethod.NONE, TableInfoCache.underlineToCamel));
     }
 
     @Override

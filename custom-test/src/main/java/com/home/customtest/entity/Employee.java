@@ -49,7 +49,7 @@ public class Employee {
     @DbField
     private int state;
 
-    @DbMapper("dept.name")
+    @DbMapper(value = "dept.name")
     private String deptName;
 
 

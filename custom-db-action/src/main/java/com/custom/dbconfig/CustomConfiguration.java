@@ -4,6 +4,7 @@ import com.custom.comm.CustomUtil;
 import com.custom.handler.JdbcDao;
 import com.custom.proxy.SqlReaderExecuteProxy;
 import com.custom.sqlparser.CustomDao;
+import com.custom.sqlparser.TableInfoCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -50,6 +51,7 @@ public class CustomConfiguration {
         if(CustomUtil.isDataSourceEmpty(dbDataSource)) {
             return null;
         }
+        TableInfoCache.underlineToCamel = dbCustomStrategy.isUnderlineToCamel();
         logger.info("JdbcDao Initialized Successfully !");
         return new JdbcDao(dbDataSource, dbCustomStrategy);
     }

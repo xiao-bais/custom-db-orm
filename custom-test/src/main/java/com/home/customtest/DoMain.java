@@ -3,6 +3,7 @@ package com.home.customtest;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.sqlparser.CustomDao;
+import com.custom.sqlparser.TableInfoCache;
 import com.custom.wrapper.ConditionEntity;
 import com.custom.wrapper.ConditionWrapper;
 import com.custom.wrapper.LambdaConditionEntity;
@@ -39,15 +40,16 @@ public class DoMain {
         dbCustomStrategy.setDbFieldDeleteLogic("state");
         dbCustomStrategy.setDeleteLogicValue("1");
         dbCustomStrategy.setNotDeleteLogicValue("0");
-//
+
         CustomDao customDao = new CustomDao(dbDataSource, dbCustomStrategy);
 
-        List<Location> locations = customDao.selectList(Location.class, new ConditionEntity<>(Location.class).like("name", "区"));
+//        List<Location> locations = customDao.selectList(Location.class, new ConditionEntity<>(Location.class).like("name", "区"));
 
-//        List<Student> students = customDao.selectList(Student.class, new LambdaConditionEntity<>(Student.class)
-//                .between(Student::getAge, 20, 24).likeLeft(Student::getProvince, "西")
-//        );
-//        System.out.println("students = " + students);
+        TableInfoCache.underlineToCamel = true;
+        List<Student> students = customDao.selectList(Student.class, new LambdaConditionEntity<>(Student.class)
+                .between(Student::getAge, 20, 24).likeLeft(Student::getProvince, "西")
+        );
+        System.out.println("students = " + students);
 
 
     }
