@@ -144,7 +144,7 @@ public class DbAnnotationsParserHandler {
             relationMap.put(DbFieldsConst.DB_JOIN_TABLE, annotation.joinTable());//关联表
             relationMap.put(DbFieldsConst.DB_JOIN_ALIAS, annotation.joinAlias());//关联表别名
             relationMap.put(DbFieldsConst.DB_JOIN_CONDITION, annotation.condition());//关联条件
-            relationMap.put(DbFieldsConst.DB_JOIN_STYLE, annotation.joinStyle());//关联方式
+            relationMap.put(DbFieldsConst.DB_JOIN_STYLE, annotation.joinStyle().getStyle());//关联方式
             relationMap.put(DbFieldsConst.DB_JOIN_MAP_FIELD, mapField);//表字段映射名称
             relationMap.put(DbFieldsConst.DB_JOIN_MAP_CLASS_FIELD, field.getName());//实体类属性名称
             mapList.add(relationMap);

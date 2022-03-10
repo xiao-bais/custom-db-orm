@@ -350,7 +350,7 @@ public class TableSqlBuilder<T> implements Cloneable{
         for (DbRelationParserModel<T> model : relatedParserModels) {
             String condition = String.format("%s@%s@%s", model.getJoinTable(), model.getJoinAlias(), model.getCondition());
             if (!conditions.contains(condition)) {
-                joinTableSql.append("\n").append(String.format("%s %s %s on %s", model.getJoinStyle(), model.getJoinTable(), model.getJoinAlias(), model.getCondition()));
+                joinTableSql.append("\n").append(String.format("%s %s %s on %s", model.getJoinStyle().getStyle(), model.getJoinTable(), model.getJoinAlias(), model.getCondition()));
                 conditions.add(condition);
             }
         }

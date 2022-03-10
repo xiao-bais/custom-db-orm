@@ -4,6 +4,7 @@ import com.custom.annotations.*;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbaction.AbstractTableModel;
+import com.custom.enums.DbJoinStyle;
 
 import java.lang.reflect.Field;
 
@@ -26,7 +27,7 @@ public class DbRelationParserModel<T> extends AbstractTableModel<T> {
 
     private String condition;
 
-    private String joinStyle;
+    private DbJoinStyle joinStyle;
 
     private String fieldName;
 
@@ -111,12 +112,8 @@ public class DbRelationParserModel<T> extends AbstractTableModel<T> {
         this.condition = condition;
     }
 
-    public String getJoinStyle() {
+    public DbJoinStyle getJoinStyle() {
         return joinStyle;
-    }
-
-    public void setJoinStyle(String joinStyle) {
-        this.joinStyle = joinStyle;
     }
 
     public String getFieldName() {

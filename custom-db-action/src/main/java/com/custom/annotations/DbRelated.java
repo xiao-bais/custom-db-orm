@@ -1,5 +1,7 @@
 package com.custom.annotations;
 
+import com.custom.enums.DbJoinStyle;
+
 import java.lang.annotation.*;
 
 /**
@@ -36,7 +38,7 @@ public @interface DbRelated {
      * 关联方式
      * @return
      */
-    String joinStyle() default "left join";
+    DbJoinStyle joinStyle() default DbJoinStyle.LEFT;
 
     /**
      * 注入的字段
