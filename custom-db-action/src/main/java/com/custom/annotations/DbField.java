@@ -23,10 +23,10 @@ public @interface DbField {
     String value() default "";
 
     /**
-     * 字段类型
+     * 数据类型
      * @return
      */
-    DbMediaType fieldType() default DbMediaType.DbVarchar;
+    DbMediaType dataType() default DbMediaType.DbVarchar;
 
     /**
      * 字段说明

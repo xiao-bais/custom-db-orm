@@ -6,13 +6,13 @@ import com.custom.annotations.DbTable;
 import lombok.Data;
 
 /**
- * @author Xiao-Bai
- * @date 2021/12/3 20:12
- * @desc:
- */
+ * @Author Xiao-Bai
+ * @Date 2022/3/10 9:56
+ * @Desc：
+ **/
 @Data
-@DbTable(table = "location")
-public class Location {
+@DbTable(table = "street")
+public class Street {
 
     @DbKey
     private Integer id;
@@ -20,7 +20,6 @@ public class Location {
     @DbField
     private String name;
 
-    @DbField("city_id")
-    private Integer cityId;
-
+    @DbField("area_id")
+    private Integer areaId;
 }

@@ -9,6 +9,7 @@ import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
 import com.custom.logic.LogicDeleteFieldSqlHandler;
 import com.custom.comm.page.DbPageRows;
+import com.custom.sqlparser.DbFieldParserModel;
 import com.custom.sqlparser.TableParserModelCache;
 import com.custom.sqlparser.TableSqlBuilder;
 import com.custom.wrapper.ConditionWrapper;
@@ -228,6 +229,7 @@ public abstract class AbstractSqlBuilder {
         TableSqlBuilder<T> tableModelCache = (TableSqlBuilder<T>) TableParserModelCache.getTableModel(t.getClass());
         TableSqlBuilder<T> tableModel = tableModelCache.clone();
         tableModel.setEntity(t);
+        injectEntity(tableModel, t);
         return tableModel;
     }
 
@@ -238,6 +240,13 @@ public abstract class AbstractSqlBuilder {
         tableModel.setEntity(tList.get(0));
         tableModel.setList(tList);
         return tableModel;
+    }
+
+    private <T> void injectEntity(TableSqlBuilder<T> tableSqlBuilder, T entity) {
+        if (tableSqlBuilder.getKeyParserModel() != null) {
+            tableSqlBuilder.getKeyParserModel().setEntity(entity);
+        }
+        tableSqlBuilder.getFieldParserModels().forEach(fieldParserModel -> fieldParserModel.setEntity(entity));
     }
 
 

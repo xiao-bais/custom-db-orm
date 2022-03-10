@@ -108,14 +108,18 @@ public class SqlParamsCheckProxy<T> implements MethodInterceptor {
     private void update(Object[] objects, Method method) {
         if(!objects[0].getClass().isAnnotationPresent(DbTable.class)) {
             throw new CustomCheckException(ExceptionConst.EX_DBTABLE__NOTFOUND + objects[0].getClass().getName());
-        } else if(CustomUtil.isKeyTag(objects[0].getClass()) && method.getName().equals("updateByKey")) {
+        }
+        if(!CustomUtil.isKeyTag(objects[0].getClass()) && method.getName().equals("updateByKey")) {
             throw new CustomCheckException(ExceptionConst.EX_DBKEY_NOTFOUND + objects[0].getClass().getName());
-        }else if(method.getName().equals("updateByCondition")) {
+        }
+        if(method.getName().equals("updateByCondition")) {
             if(JudgeUtilsAx.isEmpty(objects[0])) {
                 throw new CustomCheckException("update entity cannot be null");
-            }else if(JudgeUtilsAx.isEmpty(objects[1])) {
+            }
+            if(JudgeUtilsAx.isEmpty(objects[1])) {
                 throw new CustomCheckException("update condition cannot be empty");
-            }else if (JudgeUtilsAx.isNotEmpty(objects[1])){
+            }
+            if (JudgeUtilsAx.isNotEmpty(objects[1])){
                 ConditionEntity<Object> conditionEntity = (ConditionEntity<Object>) objects[1];
                 if(JudgeUtilsAx.isEmpty(conditionEntity.getFinalConditional())) {
                     throw new CustomCheckException("update condition cannot be empty");

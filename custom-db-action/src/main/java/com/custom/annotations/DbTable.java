@@ -1,5 +1,7 @@
 package com.custom.annotations;
 
+import com.custom.dbconfig.SymbolConst;
+
 import java.lang.annotation.*;
 
 /**
@@ -24,6 +26,12 @@ public @interface DbTable {
      * @return
      */
     String alias() default "a";
+
+    /**
+     * 指定表的说明
+     * @return
+     */
+    String desc() default SymbolConst.EMPTY;
 
 
 }

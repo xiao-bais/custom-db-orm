@@ -94,8 +94,8 @@ public class DbAnnotationsParserHandler {
             elementMap = new HashMap<>();
 
             DbField annotation = field.getAnnotation(DbField.class);
-            DbMediaType dbFieldType = annotation.fieldType();
-            if(annotation.fieldType() == DbMediaType.DbVarchar) {
+            DbMediaType dbFieldType = annotation.dataType();
+            if(annotation.dataType() == DbMediaType.DbVarchar) {
                 dbFieldType = CustomUtil.getDbFieldType(field.getType());
             }
             elementMap.put(DbFieldsConst.DB_FIELD_TYPE, dbFieldType);//数据库对应字段类型

@@ -5,10 +5,14 @@ import com.custom.dbconfig.DbDataSource;
 import com.custom.sqlparser.CustomDao;
 import com.custom.wrapper.ConditionWrapper;
 import com.custom.wrapper.LambdaConditionEntity;
+import com.home.customtest.entity.City;
 import com.home.customtest.entity.Employee;
 import com.home.customtest.entity.Location;
+import com.home.customtest.entity.Student;
 
 import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 /**
  * @Author Xiao-Bai
@@ -37,19 +41,11 @@ public class DoMain {
 //
         CustomDao customDao = new CustomDao(dbDataSource, dbCustomStrategy);
 
-//        Employee employee = new Employee();
-//        employee.setEmpName("张三");
-
-        customDao.createTables(Location.class);
+        List<Student> students = customDao.selectList(Student.class, null);
 
 
-//        LambdaConditionEntity<Employee> conditionEntity = new LambdaConditionEntity<>(Employee.class).eq(Employee::getEmpName, "张三").ge(Employee::getAge, 22)
-//                .select(Employee::getEmpName, Employee::getAge, Employee::getAddress, Employee::getDeptName)
-//                .orderByAsc(Employee::getAge, Employee::getDeptId);
 
-
-//        List<Employee> employees = customDao.selectList(Employee.class, conditionEntity);
-//        System.out.println("employees = " + employees);
+        }
 
 
     }

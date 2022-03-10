@@ -103,7 +103,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
         this.column = JudgeUtilsAx.isEmpty(annotation.value()) ? this.fieldName : annotation.value();
         this.isNull = annotation.isNull();
         this.desc = annotation.desc();
-        this.dbMediaType = annotation.fieldType() == DbMediaType.DbVarchar ? CustomUtil.getDbFieldType(field.getType()) : annotation.fieldType();
+        this.dbMediaType = annotation.dataType() == DbMediaType.DbVarchar ? CustomUtil.getDbFieldType(field.getType()) : annotation.dataType();
         this.length = this.dbMediaType.getLength();
         super.setTable(table);
         super.setAlias(alias);

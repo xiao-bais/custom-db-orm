@@ -225,7 +225,7 @@ public class CustomDao {
         jdbcAction.createTables(arr);
     }
 
-    private final AbstractSqlBuilder jdbcAction;
+    private final  AbstractSqlBuilder jdbcAction;
 
     public CustomDao(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         jdbcAction = new SqlParamsCheckProxy<>(new JdbcAction(), dbDataSource, dbCustomStrategy).createProxy();
