@@ -38,6 +38,8 @@ public class TableSqlBuilder<T> implements Cloneable{
 
     private String alias;
 
+    private String desc;
+
     private Field[] fields;
     /**
      * @Desc：对于@DbRelated注解的解析
@@ -248,6 +250,10 @@ public class TableSqlBuilder<T> implements Cloneable{
         }
 
         createTableSql.append(String.format("create table `%s` (\n%s)", this.table, fieldSql));
+
+        if(JudgeUtilsAx.isNotEmpty(this.desc)) {
+            createTableSql.append(String.format(" COMMENT = '%s'", this.desc));
+        }
         return createTableSql.toString();
     }
 
@@ -328,8 +334,9 @@ public class TableSqlBuilder<T> implements Cloneable{
 
         // 第六步 拼接以related方式的关联条件
         if (!relatedParserModels.isEmpty()) {
-            selectSql.append(getRelatedTableSql(relatedParserModels)).append(" \n");
+            selectSql.append(getRelatedTableSql(relatedParserModels));
         }
+        selectSql.append("\n");
     }
 
     /**
@@ -437,6 +444,7 @@ public class TableSqlBuilder<T> implements Cloneable{
         DbTable annotation = cls.getAnnotation(DbTable.class);
         this.alias = annotation.alias();
         this.table = annotation.table();
+        this.desc = annotation.desc();
         if(method != ExecuteMethod.NONE) {
             this.fields = CustomUtil.getFields(this.cls);
             initTableBuild(method);
@@ -448,6 +456,7 @@ public class TableSqlBuilder<T> implements Cloneable{
         DbTable annotation = cls.getAnnotation(DbTable.class);
         this.alias = annotation.alias();
         this.table = annotation.table();
+        this.desc = annotation.desc();
         if(method != ExecuteMethod.NONE && fields != null) {
             this.fields = fields;
             initTableBuild(method);
@@ -462,6 +471,7 @@ public class TableSqlBuilder<T> implements Cloneable{
         this.fields = CustomUtil.getFields(t.getClass());
         this.alias = annotation.alias();
         this.table = annotation.table();
+        this.desc = annotation.desc();
         buildUpdateModels(isBuildUpdateModels);
     }
 
@@ -473,6 +483,7 @@ public class TableSqlBuilder<T> implements Cloneable{
         this.fields = CustomUtil.getFields(entity.getClass());
         this.alias = annotation.alias();
         this.table = annotation.table();
+        this.desc = annotation.desc();
         buildUpdateModels(false);
     }
 

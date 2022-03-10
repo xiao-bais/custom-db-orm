@@ -1,8 +1,6 @@
 package com.home.customtest.entity;
 
-import com.custom.annotations.DbField;
-import com.custom.annotations.DbKey;
-import com.custom.annotations.DbTable;
+import com.custom.annotations.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -15,6 +13,11 @@ import java.util.Date;
  **/
 @Data
 @DbTable(table = "student")
+@DbJoinTables({
+        @DbJoinTable("left join province pro on pro.id = a.pro_id"),
+        @DbJoinTable("left join city cy on cy.id = a.city_id"),
+        @DbJoinTable("left join location lo on lo.id = a.area_id")
+})
 public class Student {
 
     @DbKey
@@ -58,5 +61,14 @@ public class Student {
 
     @DbField("area_id")
     private Integer areaId;
+
+    @DbMapper("pro.name")
+    private String province;
+
+    @DbMapper("cy.name")
+    private String city;
+
+    @DbMapper("lo.name")
+    private String area;
 
 }

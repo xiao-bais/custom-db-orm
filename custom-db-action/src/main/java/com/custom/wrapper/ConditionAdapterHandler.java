@@ -149,7 +149,7 @@ public abstract class ConditionAdapterHandler<T, R, Children, OrderBy> extends C
     /**
      * sql模糊查询条件拼接
      */
-    public String sqlConcat(SqlLike sqlLike, Object val) {
+    protected String sqlConcat(SqlLike sqlLike, Object val) {
         String sql = SymbolConst.EMPTY;
         switch (sqlLike) {
             case LEFT:

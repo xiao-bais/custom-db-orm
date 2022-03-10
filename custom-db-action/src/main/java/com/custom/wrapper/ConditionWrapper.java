@@ -1,7 +1,7 @@
 package com.custom.wrapper;
 
 import com.custom.dbconfig.SymbolConst;
-import com.custom.sqlparser.TableParserModelCache;
+import com.custom.sqlparser.TableInfoCache;
 import com.custom.sqlparser.TableSqlBuilder;
 
 import java.io.Serializable;
@@ -116,7 +116,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
     }
 
     protected TableSqlBuilder<T> getTableParserModelCache(Class<T> key) {
-        return TableParserModelCache.getTableModel(key);
+        return TableInfoCache.getTableModel(key);
     }
 
 

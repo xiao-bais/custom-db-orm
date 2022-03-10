@@ -1,6 +1,6 @@
 package com.custom.dbconfig;
 
-import com.custom.sqlparser.TableParserModelCache;
+import com.custom.sqlparser.TableInfoCache;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -61,7 +61,7 @@ public class DbCustomStrategy {
     /**
      * 实体模板缓存
      */
-    private TableParserModelCache tableParserModelCache;
+    private TableInfoCache tableParserModelCache;
 
 
     public boolean isMapperScanEnable() {
@@ -136,11 +136,11 @@ public class DbCustomStrategy {
         this.entityScans = entityScans;
     }
 
-    public TableParserModelCache getTableParserModelCache() {
+    public TableInfoCache getTableParserModelCache() {
         return tableParserModelCache;
     }
 
-    public void setTableParserModelCache(TableParserModelCache tableParserModelCache) {
+    public void setTableParserModelCache(TableInfoCache tableParserModelCache) {
         this.tableParserModelCache = tableParserModelCache;
     }
 }

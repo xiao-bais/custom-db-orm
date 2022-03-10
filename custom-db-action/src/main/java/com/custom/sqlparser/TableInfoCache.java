@@ -8,13 +8,14 @@ import java.util.Map;
  * @Desc：实体解析模板缓存
  **/
 @SuppressWarnings("unchecked")
-public class TableParserModelCache {
+public class TableInfoCache {
 
     /**
      * 实体解析模板缓存
+     * key-实体全路径名称
+     * value-实体解析模板（TableSqlBuilder）
      */
     private final static Map<String, Object> tableModel = new CustomLocalCache();
-
 
     public static void setTableModel(String key, Object val) {
        tableModel.put(key, val);
@@ -27,4 +28,21 @@ public class TableParserModelCache {
         }
         return tableSqlBuilder;
     }
+
+
+    /**
+     * 表的逻辑删除字段缓存
+     * key-实体全路径名称
+     * value-true or false
+     */
+    private final static Map<String, Object> tableLogic = new CustomLocalCache();
+
+    public static void setTableLogic(String key, Object val) {
+        tableLogic.put(key, key);
+    }
+
+    public static Boolean isExistsLogic(String key) {
+        return (Boolean) tableLogic.get(key);
+    }
+
 }

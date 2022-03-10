@@ -4,13 +4,11 @@ import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.SymbolConst;
-import com.custom.enums.ExecuteMethod;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
 import com.custom.logic.LogicDeleteFieldSqlHandler;
 import com.custom.comm.page.DbPageRows;
-import com.custom.sqlparser.DbFieldParserModel;
-import com.custom.sqlparser.TableParserModelCache;
+import com.custom.sqlparser.TableInfoCache;
 import com.custom.sqlparser.TableSqlBuilder;
 import com.custom.wrapper.ConditionWrapper;
 import com.custom.wrapper.ConditionEntity;
@@ -64,7 +62,6 @@ public abstract class AbstractSqlBuilder {
     private String logicField = SymbolConst.EMPTY;
     private String logicDeleteUpdateSql = SymbolConst.EMPTY;
     private String logicDeleteQuerySql = SymbolConst.EMPTY;
-    private final Map<String, Boolean> tableLogicCache = new ConcurrentHashMap<>();
 
     /**
      * 初始化逻辑删除的sql
@@ -111,15 +108,16 @@ public abstract class AbstractSqlBuilder {
      * 由于部分表可能没有逻辑删除字段，所以在每一次执行时，都需检查该表有没有逻辑删除的字段，以保证sql正常执行
      */
     public boolean checkLogicFieldIsExist(String tableName) throws Exception {
-        if (tableLogicCache.get(tableName) != null) {
-             return tableLogicCache.get(tableName);
+        Boolean existsLogic = TableInfoCache.isExistsLogic(tableName);
+        if (existsLogic != null) {
+             return existsLogic;
         }
         String existSql = String.format("select count(*) count from information_schema.columns where table_name = '%s' and column_name = '%s'", tableName, logicField);
         long count = sqlExecuteAction.executeExist(existSql);
         if (count > 0) {
-            tableLogicCache.put(tableName, true);
+            TableInfoCache.setTableLogic(tableName, true);
         }else {
-            tableLogicCache.put(tableName, false);
+            TableInfoCache.setTableLogic(tableName, false);
         }
         return count > 0;
     }
@@ -221,12 +219,12 @@ public abstract class AbstractSqlBuilder {
      * 从缓存中获取实体解析模板，若缓存中没有，就重新构造模板
      */
     protected <T> TableSqlBuilder<T> getEntityModelCache(Class<T> t) {
-        return TableParserModelCache.getTableModel(t);
+        return TableInfoCache.getTableModel(t);
     }
 
     @SuppressWarnings("unchecked")
     protected <T> TableSqlBuilder<T> getUpdateEntityModelCache(T t) {
-        TableSqlBuilder<T> tableModelCache = (TableSqlBuilder<T>) TableParserModelCache.getTableModel(t.getClass());
+        TableSqlBuilder<T> tableModelCache = (TableSqlBuilder<T>) TableInfoCache.getTableModel(t.getClass());
         TableSqlBuilder<T> tableModel = tableModelCache.clone();
         tableModel.setEntity(t);
         injectEntity(tableModel, t);
@@ -235,7 +233,7 @@ public abstract class AbstractSqlBuilder {
 
     @SuppressWarnings("unchecked")
     protected <T> TableSqlBuilder<T> getUpdateEntityModelCache(List<T> tList) {
-        TableSqlBuilder<T> tableModelCache = (TableSqlBuilder<T>) TableParserModelCache.getTableModel(tList.get(0).getClass());
+        TableSqlBuilder<T> tableModelCache = (TableSqlBuilder<T>) TableInfoCache.getTableModel(tList.get(0).getClass());
         TableSqlBuilder<T> tableModel = tableModelCache.clone();
         tableModel.setEntity(tList.get(0));
         tableModel.setList(tList);
@@ -273,10 +271,6 @@ public abstract class AbstractSqlBuilder {
 
     public String getLogicDeleteQuerySql() {
         return logicDeleteQuerySql;
-    }
-
-    public Map<String, Boolean> getTableLogicCache() {
-        return tableLogicCache;
     }
 
     public String getLogicField() {

@@ -152,7 +152,7 @@ public class JdbcAction extends AbstractSqlBuilder {
         }else {
             selectSql = tableSqlBuilder.getSelectSql();
         }
-        selectSql += "\n" + checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), wrapper.getFinalConditional(), getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
+        selectSql += checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), wrapper.getFinalConditional(), getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
         if(CustomUtil.isNotBlank(wrapper.getOrderBy().toString())) {
             selectSql = String.format("%s \n%s %s", selectSql, DbSymbol.ORDER_BY.getSymbol(), wrapper.getOrderBy().toString());
         }

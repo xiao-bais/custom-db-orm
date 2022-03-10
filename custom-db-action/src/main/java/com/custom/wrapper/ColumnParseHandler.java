@@ -1,6 +1,5 @@
 package com.custom.wrapper;
 
-import com.custom.annotations.DbKey;
 import com.custom.comm.CustomUtil;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.exceptions.CustomCheckException;
@@ -41,14 +40,14 @@ public class ColumnParseHandler<T> {
      */
     public String getColumn(SFunction<T,?> fun) {
         Field field = getField(fun);
-        TableSqlBuilder<T> tableModel = TableParserModelCache.getTableModel(cls);
+        TableSqlBuilder<T> tableModel = TableInfoCache.getTableModel(cls);
         return parseField(field, tableModel);
     }
 
     @SafeVarargs
     public final String[] getColumn(SFunction<T, ?>... fun) {
         Field[] targetFields = parseColumns(fun);
-        TableSqlBuilder<T> tableModel = TableParserModelCache.getTableModel(cls);
+        TableSqlBuilder<T> tableModel = TableInfoCache.getTableModel(cls);
         String[] selectColumns = new String[targetFields.length];
         for (int i = 0; i < targetFields.length; i++) {
             selectColumns[i] = parseField(targetFields[i], tableModel);
