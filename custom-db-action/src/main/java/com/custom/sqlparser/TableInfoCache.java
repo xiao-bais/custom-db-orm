@@ -41,8 +41,8 @@ public class TableInfoCache {
         tableLogic.put(key, key);
     }
 
-    public static Boolean isExistsLogic(String key) {
-        return (Boolean) tableLogic.get(key);
+    public static Boolean isExistsLogic(String table) {
+        return (Boolean) tableLogic.get(table);
     }
 
 }

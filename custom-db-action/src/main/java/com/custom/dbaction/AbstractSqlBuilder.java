@@ -23,6 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Date 2021/12/8 14:49
  * @Desc：方法执行处理抽象入口
  **/
+@SuppressWarnings("unchecked")
 public abstract class AbstractSqlBuilder {
 
     /*--------------------------------------- select ---------------------------------------*/
@@ -114,11 +115,7 @@ public abstract class AbstractSqlBuilder {
         }
         String existSql = String.format("select count(*) count from information_schema.columns where table_name = '%s' and column_name = '%s'", tableName, logicField);
         long count = sqlExecuteAction.executeExist(existSql);
-        if (count > 0) {
-            TableInfoCache.setTableLogic(tableName, true);
-        }else {
-            TableInfoCache.setTableLogic(tableName, false);
-        }
+        TableInfoCache.setTableLogic(tableName, count > 0);
         return count > 0;
     }
     /**
@@ -216,13 +213,15 @@ public abstract class AbstractSqlBuilder {
 
 
     /**
-     * 从缓存中获取实体解析模板，若缓存中没有，就重新构造模板
+     * 从缓存中获取实体解析模板，若缓存中没有，就重新构造模板（查询、删除、创建删除表）
      */
     protected <T> TableSqlBuilder<T> getEntityModelCache(Class<T> t) {
         return TableInfoCache.getTableModel(t);
     }
 
-    @SuppressWarnings("unchecked")
+    /**
+     * 从缓存中获取实体解析模板，若缓存中没有，就重新构造模板（增改记录）
+     */
     protected <T> TableSqlBuilder<T> getUpdateEntityModelCache(T t) {
         TableSqlBuilder<T> tableModelCache = (TableSqlBuilder<T>) TableInfoCache.getTableModel(t.getClass());
         TableSqlBuilder<T> tableModel = tableModelCache.clone();
@@ -231,7 +230,9 @@ public abstract class AbstractSqlBuilder {
         return tableModel;
     }
 
-    @SuppressWarnings("unchecked")
+    /**
+     * 从缓存中获取实体解析模板，若缓存中没有，就重新构造模板（批量增加记录）
+     */
     protected <T> TableSqlBuilder<T> getUpdateEntityModelCache(List<T> tList) {
         TableSqlBuilder<T> tableModelCache = (TableSqlBuilder<T>) TableInfoCache.getTableModel(tList.get(0).getClass());
         TableSqlBuilder<T> tableModel = tableModelCache.clone();
@@ -240,6 +241,9 @@ public abstract class AbstractSqlBuilder {
         return tableModel;
     }
 
+    /**
+     * 在增改的模板里注入需要增改的实体
+     */
     private <T> void injectEntity(TableSqlBuilder<T> tableSqlBuilder, T entity) {
         if (tableSqlBuilder.getKeyParserModel() != null) {
             tableSqlBuilder.getKeyParserModel().setEntity(entity);

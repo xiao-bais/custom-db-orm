@@ -21,7 +21,7 @@ import java.util.*;
  * Children：为继承该抽象类的子类类型
  **/
 @SuppressWarnings("all")
-public abstract class ConditionAdapterHandler<T, R, Children, OrderBy> extends ConditionWrapper<T> {
+public abstract class ConditionAdapterHandler<T, R, Children> extends ConditionWrapper<T> {
 
     /**
      * 适用（orderBy, is null, is not null,）
@@ -176,7 +176,7 @@ public abstract class ConditionAdapterHandler<T, R, Children, OrderBy> extends C
     /**
      * 添加新的条件，并合并同类项
      */
-    protected void handleNewCondition(boolean isAndType, ConditionAdapterHandler<T, R, Children, OrderBy> conditionEntity) {
+    protected void handleNewCondition(boolean isAndType, ConditionAdapterHandler<T, R, Children> conditionEntity) {
         // 1. 合并查询列-select
         mergeSelect(conditionEntity);
         // 2. 合并添加条件-condition
@@ -188,7 +188,7 @@ public abstract class ConditionAdapterHandler<T, R, Children, OrderBy> extends C
     /**
      * 合并查询列
      */
-    private void mergeSelect(ConditionAdapterHandler<T, R, Children, OrderBy> conditionEntity) {
+    private void mergeSelect(ConditionAdapterHandler<T, R, Children> conditionEntity) {
         if(conditionEntity.getSelectColumns() != null) {
             if(getSelectColumns() == null) {
                 setSelectColumns(conditionEntity.getSelectColumns());
@@ -213,12 +213,12 @@ public abstract class ConditionAdapterHandler<T, R, Children, OrderBy> extends C
      * 合并前：name = 'aaa'
      * 合并后：name = 'aaa' and (age > 22)
      */
-    private void mergeCondition(boolean isAndType, ConditionAdapterHandler<T, R, Children, OrderBy> conditionEntity) {
+    private void mergeCondition(boolean isAndType, ConditionAdapterHandler<T, R, Children> conditionEntity) {
         append(isAndType ? DbSymbol.AND : DbSymbol.OR, conditionEntity.getFinalConditional());
         getParamValues().addAll(conditionEntity.getParamValues());
     }
 
-    private void mergeOrderBy(ConditionAdapterHandler<T, R, Children, OrderBy> conditionEntity) {
+    private void mergeOrderBy(ConditionAdapterHandler<T, R, Children> conditionEntity) {
         getOrderBy().merge(conditionEntity.getOrderBy());
     }
 

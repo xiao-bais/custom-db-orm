@@ -13,7 +13,7 @@ import java.util.*;
  * @Date 2022/3/3 17:17
  * @Desc：lambda表达式的条件构造对象
  **/
-public class LambdaConditionEntity<T> extends ConditionAdapterHandler<T, SFunction<T, ?>, LambdaConditionEntity<T>, Map<SFunction<T, ?>, SqlOrderBy>>
+public class LambdaConditionEntity<T> extends ConditionAdapterHandler<T, SFunction<T, ?>, LambdaConditionEntity<T>>
         implements Wrapper<SFunction<T, ?>, LambdaConditionEntity<T>> {
 
 

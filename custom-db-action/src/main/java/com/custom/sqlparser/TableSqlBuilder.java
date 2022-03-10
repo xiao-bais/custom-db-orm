@@ -497,11 +497,7 @@ public class TableSqlBuilder<T> implements Cloneable{
         }
         Field[] fields = this.fields == null ? CustomUtil.getFields(this.cls) : this.fields;
         for (Field field : fields) {
-            if (field.isAnnotationPresent(DbRelated.class)) {
-                DbRelationParserModel<T> relatedParserModel = new DbRelationParserModel<>(this.cls, field, this.table, this.alias);
-                relatedParserModels.add(relatedParserModel);
-
-            } else if (field.isAnnotationPresent(DbKey.class) && keyParserModel == null) {
+            if (field.isAnnotationPresent(DbKey.class) && keyParserModel == null) {
                 keyParserModel = new DbKeyParserModel<>(field, this.table, this.alias);
 
             } else if (field.isAnnotationPresent(DbField.class)) {
@@ -511,6 +507,10 @@ public class TableSqlBuilder<T> implements Cloneable{
             } else if (field.isAnnotationPresent(DbMapper.class)) {
                 DbJoinTableParserModel<T> joinTableParserModel = new DbJoinTableParserModel<>(field);
                 joinDbMappers.add(joinTableParserModel);
+            }else if (field.isAnnotationPresent(DbRelated.class)) {
+                DbRelationParserModel<T> relatedParserModel = new DbRelationParserModel<>(this.cls, field, this.table, this.alias);
+                relatedParserModels.add(relatedParserModel);
+
             }
         }
     }

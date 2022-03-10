@@ -15,7 +15,7 @@ import java.util.*;
  * @Date 2022/2/16 14:11
  * @Desc：条件构造实例对象
  **/
-public class ConditionEntity<T> extends ConditionAdapterHandler<T, String, ConditionEntity<T>, StringJoiner>
+public class ConditionEntity<T> extends ConditionAdapterHandler<T, String, ConditionEntity<T>>
         implements Wrapper<String, ConditionEntity<T>> {
 
 
