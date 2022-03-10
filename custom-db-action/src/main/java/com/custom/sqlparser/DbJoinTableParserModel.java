@@ -50,12 +50,12 @@ public class DbJoinTableParserModel<T> extends AbstractTableModel<T> {
     }
 
     @Override
-    public String buildTableSql() {
+    protected String buildTableSql() {
         return null;
     }
 
     @Override
-    public Object getValue(T x) {
+    protected Object getValue(T x) {
         return null;
     }
 
@@ -65,12 +65,12 @@ public class DbJoinTableParserModel<T> extends AbstractTableModel<T> {
     }
 
     @Override
-    public String getSelectFieldSql() {
+    protected String getSelectFieldSql() {
         return String.format("%s %s", joinName, fieldName);
     }
 
     @Override
-    public String getSelectFieldSql(String column) {
+    protected String getSelectFieldSql(String column) {
         return String.format("%s %s", column, fieldName);
     }
 }

@@ -92,7 +92,7 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
         return field;
     }
 
-    public Object getValue() {
+    protected Object getValue() {
         if(entity == null) throw new NullPointerException();
         try {
             this.value = getFieldValue(entity, key);
@@ -106,7 +106,7 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
     }
 
     @Override
-    public Object getValue(T t) {
+    protected Object getValue(T t) {
         try {
             this.value = getFieldValue(t, key);
         }catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
@@ -119,7 +119,7 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
     /**
     * 生成主键
     */
-    public Object generateKey() {
+    protected Object generateKey() {
         Object key = null;
         switch (strategy) {
             case AUTO:
@@ -148,12 +148,12 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
     }
 
     @Override
-    public String getSelectFieldSql() {
+    protected String getSelectFieldSql() {
         return String.format("%s.%s %s", this.getAlias(), this.dbKey, this.key);
     }
 
     @Override
-    public String getSelectFieldSql(String column) {
+    protected String getSelectFieldSql(String column) {
         return String.format("%s %s", column, this.key);
     }
 
@@ -162,19 +162,18 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
     }
 
     @Override
-    public String buildTableSql() {
-
+    protected String buildTableSql() {
         StringBuilder keyFieldSql = new StringBuilder(String.format("`%s` ", this.dbKey));
         keyFieldSql.append(this.dbMediaType.getType())
                 .append(SymbolConst.BRACKETS_LEFT)
                 .append(this.length)
-                .append(SymbolConst.BRACKETS_RIGHT).append(" PRIMARY KEY ");
+                .append(SymbolConst.BRACKETS_RIGHT)
+                .append(" PRIMARY KEY ");
 
-        if(this.strategy == KeyStrategy.AUTO)
+        if(this.strategy == KeyStrategy.AUTO) {
             keyFieldSql.append(" AUTO_INCREMENT ");
-
-        keyFieldSql.append(" NOT NULL ")
-                .append(String.format(" COMMENT '%s'", this.desc));
+        }
+        keyFieldSql.append(" NOT NULL ").append(String.format(" COMMENT '%s'", this.desc));
         return keyFieldSql.toString();
     }
 

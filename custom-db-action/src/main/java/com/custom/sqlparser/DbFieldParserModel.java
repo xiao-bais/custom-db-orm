@@ -73,7 +73,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     * 构建创建表的sql语句
     */
     @Override
-    public String buildTableSql(){
+    protected String buildTableSql(){
         StringBuilder fieldSql = new StringBuilder(String.format("`%s` ", this.column));
         if(dbMediaType == DbMediaType.DbDate || dbMediaType == DbMediaType.DbDateTime)
             fieldSql.append(dbMediaType.getType()).append(" ");
@@ -145,7 +145,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     }
 
     @Override
-    public Object getValue(T x) {
+    protected Object getValue(T x) {
         try {
             value = getFieldValue(x, fieldName);
         }catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
@@ -161,12 +161,12 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     }
 
     @Override
-    public String getSelectFieldSql() {
+    protected String getSelectFieldSql() {
         return String.format("%s.%s %s", this.getAlias(), this.column, this.fieldName);
     }
 
     @Override
-    public String getSelectFieldSql(String column) {
+    protected String getSelectFieldSql(String column) {
         return String.format("%s %s", column, this.fieldName);
     }
 

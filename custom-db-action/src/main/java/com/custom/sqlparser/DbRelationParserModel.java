@@ -58,7 +58,7 @@ public class DbRelationParserModel<T> extends AbstractTableModel<T> {
 
 
     @Override
-    public Object getValue(T x) {
+    protected Object getValue(T x) {
         return null;
     }
 
@@ -68,12 +68,12 @@ public class DbRelationParserModel<T> extends AbstractTableModel<T> {
     }
 
     @Override
-    public String getSelectFieldSql() {
+    protected String getSelectFieldSql() {
         return String.format("%s.%s %s", this.joinAlias, this.column, this.fieldName);
     }
 
     @Override
-    public String getSelectFieldSql(String column) {
+    protected String getSelectFieldSql(String column) {
         return String.format("%s %s", column, this.fieldName);
     }
 

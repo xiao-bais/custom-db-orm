@@ -60,10 +60,10 @@ public abstract class AbstractTableModel<T> {
         return value;
     }
 
-    public abstract String buildTableSql();
-    public abstract Object getValue(T x);
+    protected abstract String buildTableSql();
+    protected abstract Object getValue(T x);
     public abstract String getFieldSql();
-    public abstract String getSelectFieldSql();
-    public abstract String getSelectFieldSql(String column);
+    protected abstract String getSelectFieldSql();
+    protected abstract String getSelectFieldSql(String column);
 
 }
