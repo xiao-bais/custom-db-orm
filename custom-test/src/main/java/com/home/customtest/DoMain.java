@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
  * @Date 2021/11/29 12:54
  * @Desc：
  **/
+@SuppressWarnings("all")
 public class DoMain {
 
 
@@ -45,25 +46,7 @@ public class DoMain {
 
 //        List<Location> locations = customDao.selectList(Location.class, new ConditionEntity<>(Location.class).like("name", "区"));
 
-        TableInfoCache.underlineToCamel = true;
-        long time = System.currentTimeMillis();
-
-
-        List<Student> students2 = customDao.selectList(Student.class, new ConditionEntity<>(Student.class)
-                .ge("age", 22).like("address", "山东")
-                .between("age", 21, 25)
-                .select("name", "pro.name", "cy.name", "lo.name")
-                .or(new ConditionEntity<>(Student.class)
-                        .select("age")
-                        .exists("select 1 from student2 stu2 where stu2.id = a.id and stu2.password = '12345678zcy'")
-                        .orderByAsc("id").orderByDesc("age")
-                )
-        );
-
-
-        long time1 = System.currentTimeMillis();
-
-        System.out.println("====================================================================");
+        TableInfoCache.setUnderlineToCamel(true);
 
         List<Student> students1 = customDao.selectList(Student.class, new LambdaConditionEntity<>(Student.class)
                 .ge(Student::getAge, 22).like(Student::getAddress, "山东")
@@ -76,11 +59,6 @@ public class DoMain {
                         .orderByDesc(Student::getAge)
                 )
         );
-
-        long time2 = System.currentTimeMillis();
-
-        System.out.println("time1 = " + (time1-time));
-        System.out.println("time2 = " + (time2-time1));
 
 
     }

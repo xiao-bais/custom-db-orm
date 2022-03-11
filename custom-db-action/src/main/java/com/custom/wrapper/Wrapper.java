@@ -97,16 +97,6 @@ public interface Wrapper<Param, Result>  {
         return isNotNull(true, column);
     }
 
-    Result or(boolean condition, Result conditionEntity);
-    default Result or(Result conditionEntity) {
-        return or(true, conditionEntity);
-    }
-
-    Result and(boolean condition, Result conditionEntity);
-    default Result and(Result conditionEntity) {
-        return and(true, conditionEntity);
-    }
-
     Result orderByAsc(boolean condition, Param... columns);
 
     @SuppressWarnings("all")

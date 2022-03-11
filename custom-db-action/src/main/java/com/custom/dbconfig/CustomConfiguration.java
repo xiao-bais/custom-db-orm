@@ -51,7 +51,7 @@ public class CustomConfiguration {
         if(CustomUtil.isDataSourceEmpty(dbDataSource)) {
             return null;
         }
-        TableInfoCache.underlineToCamel = dbCustomStrategy.isUnderlineToCamel();
+        TableInfoCache.setUnderlineToCamel(dbCustomStrategy.isUnderlineToCamel());
         logger.info("JdbcDao Initialized Successfully !");
         return new JdbcDao(dbDataSource, dbCustomStrategy);
     }

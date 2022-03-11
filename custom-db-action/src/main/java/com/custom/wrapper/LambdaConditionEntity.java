@@ -20,132 +20,117 @@ public class LambdaConditionEntity<T> extends ConditionAdapterHandler<T, SFuncti
     @Override
     protected LambdaConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, SFunction<T, ?> column) {
         appendCondition(dbSymbol, condition, parseColumn(column), null, null, null);
-        return this;
+        return childrenClass;
     }
 
 
     @Override
     protected LambdaConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, String columnSql) {
         appendCondition(dbSymbol, condition, columnSql, null, null, columnSql);
-        return this;
+        return childrenClass;
     }
 
 
     @Override
     protected LambdaConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, SFunction<T, ?> column, Object val) {
         appendCondition(dbSymbol, condition, parseColumn(column), val, null, null);
-        return this;
+        return childrenClass;
     }
 
 
     @Override
     protected LambdaConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, SFunction<T, ?> column, Object val1, Object val2) {
         appendCondition(dbSymbol, condition, parseColumn(column), val1, val2, null);
-        return this;
+        return childrenClass;
     }
 
 
     @Override
     protected LambdaConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, SFunction<T, ?> column, String express) {
         appendCondition(dbSymbol, condition, parseColumn(column), null, null, express);
-        return this;
+        return childrenClass;
     }
 
     @SafeVarargs
     @Override
     public final LambdaConditionEntity<T> select(SFunction<T, ?>... columns) {
         setSelectColumns(parseColumn(columns));
-        return this;
+        return childrenClass;
     }
 
     @Override
     public LambdaConditionEntity<T> eq(boolean condition, SFunction<T, ?> column, Object val) {
-        adapter(DbSymbol.EQUALS, condition, column, val);
-        return this;
+        return adapter(DbSymbol.EQUALS, condition, column, val);
     }
 
     @Override
     public LambdaConditionEntity<T> ge(boolean condition, SFunction<T, ?> column, Object val) {
-        adapter(DbSymbol.GREATER_THAN_EQUALS, condition, column, val);
-        return this;
+        return adapter(DbSymbol.GREATER_THAN_EQUALS, condition, column, val);
     }
 
     @Override
     public LambdaConditionEntity<T> le(boolean condition, SFunction<T, ?> column, Object val) {
-        adapter(DbSymbol.LESS_THAN_EQUALS, condition, column, val);
-        return this;
+        return adapter(DbSymbol.LESS_THAN_EQUALS, condition, column, val);
     }
 
     @Override
     public LambdaConditionEntity<T> lt(boolean condition, SFunction<T, ?> column, Object val) {
-        adapter(DbSymbol.LESS_THAN, condition, column, val);
-        return this;
+        return adapter(DbSymbol.LESS_THAN, condition, column, val);
     }
 
     @Override
     public LambdaConditionEntity<T> gt(boolean condition, SFunction<T, ?> column, Object val) {
-        adapter(DbSymbol.GREATER_THAN, condition, column, val);
-        return this;
+        return adapter(DbSymbol.GREATER_THAN, condition, column, val);
     }
 
     @Override
     public LambdaConditionEntity<T> in(boolean condition, SFunction<T, ?> column, Collection<? extends Serializable> val) {
-        adapter(DbSymbol.IN, condition, column, val);
-        return this;
+        return adapter(DbSymbol.IN, condition, column, val);
     }
 
     @Override
     public LambdaConditionEntity<T> notIn(boolean condition, SFunction<T, ?> column, Collection<? extends Serializable> val) {
-        adapter(DbSymbol.NOT_IN, condition, column, val);
-        return this;
+        return adapter(DbSymbol.NOT_IN, condition, column, val);
     }
 
     @Override
     public LambdaConditionEntity<T> exists(boolean condition, String existsSql) {
-        adapter(DbSymbol.EXISTS, condition, existsSql);
-        return this;
+        return adapter(DbSymbol.EXISTS, condition, existsSql);
     }
 
     @Override
     public LambdaConditionEntity<T> notExists(boolean condition, String notExistsSql) {
-        adapter(DbSymbol.EXISTS, condition, notExistsSql);
-        return this;
+        return adapter(DbSymbol.EXISTS, condition, notExistsSql);
     }
 
     @Override
     public LambdaConditionEntity<T> like(boolean condition, SFunction<T, ?> column, Object val) {
-        adapter(DbSymbol.LIKE, condition, column, sqlConcat(SqlLike.LIKE, val));
-        return this;
+        return adapter(DbSymbol.LIKE, condition, column, sqlConcat(SqlLike.LIKE, val));
     }
 
     @Override
     public LambdaConditionEntity<T> notLike(boolean condition, SFunction<T, ?> column, Object val) {
-        adapter(DbSymbol.NOT_LIKE, condition, column, sqlConcat(SqlLike.LIKE, val));
-        return this;
+        return adapter(DbSymbol.NOT_LIKE, condition, column, sqlConcat(SqlLike.LIKE, val));
     }
 
     @Override
     public LambdaConditionEntity<T> likeLeft(boolean condition, SFunction<T, ?> column, Object val) {
-        adapter(DbSymbol.LIKE, condition, column, sqlConcat(SqlLike.LEFT, val));
-        return this;
+        return adapter(DbSymbol.LIKE, condition, column, sqlConcat(SqlLike.LEFT, val));
     }
 
     @Override
     public LambdaConditionEntity<T> likeRight(boolean condition, SFunction<T, ?> column, Object val) {
-        adapter(DbSymbol.LIKE, condition, column, sqlConcat(SqlLike.RIGHT, val));
-        return this;
+        return adapter(DbSymbol.LIKE, condition, column, sqlConcat(SqlLike.RIGHT, val));
     }
 
     @Override
     public LambdaConditionEntity<T> between(boolean condition, SFunction<T, ?> column, Object val1, Object val2) {
-        adapter(DbSymbol.BETWEEN, condition, column, val1, val2);
-        return this;
+        return adapter(DbSymbol.BETWEEN, condition, column, val1, val2);
     }
 
     @Override
     public LambdaConditionEntity<T> notBetween(boolean condition, SFunction<T, ?> column, Object val1, Object val2) {
-        adapter(DbSymbol.NOT_BETWEEN, condition, column, val1, val2);
-        return this;
+        return adapter(DbSymbol.NOT_BETWEEN, condition, column, val1, val2);
     }
 
     @Override
@@ -156,26 +141,7 @@ public class LambdaConditionEntity<T> extends ConditionAdapterHandler<T, SFuncti
 
     @Override
     public LambdaConditionEntity<T> isNotNull(boolean condition, SFunction<T, ?> column) {
-        adapter(DbSymbol.IS_NOT_NULL, condition, column);
-        return this;
-    }
-
-    @Override
-    public LambdaConditionEntity<T> or(boolean condition, LambdaConditionEntity<T> conditionEntity) {
-        if(condition && conditionEntity != null) {
-            handleNewCondition(false, conditionEntity);
-        }
-        return this;
-    }
-
-
-
-    @Override
-    public LambdaConditionEntity<T> and(boolean condition, LambdaConditionEntity<T> conditionEntity) {
-        if(condition && conditionEntity != null) {
-            handleNewCondition(true, conditionEntity);
-        }
-        return this;
+        return adapter(DbSymbol.IS_NOT_NULL, condition, column);
     }
 
     @SafeVarargs
@@ -185,7 +151,7 @@ public class LambdaConditionEntity<T> extends ConditionAdapterHandler<T, SFuncti
             String orderByField = orderByField(column, SqlOrderBy.ASC);
             adapter(DbSymbol.ORDER_BY, condition, orderByField);
         }
-        return this;
+        return childrenClass;
     }
 
     @SafeVarargs
@@ -195,7 +161,7 @@ public class LambdaConditionEntity<T> extends ConditionAdapterHandler<T, SFuncti
             String orderByField = orderByField(column, SqlOrderBy.DESC);
             adapter(DbSymbol.ORDER_BY, condition, orderByField);
         }
-        return this;
+        return childrenClass;
     }
 
 

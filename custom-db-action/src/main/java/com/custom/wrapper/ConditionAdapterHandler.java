@@ -130,17 +130,6 @@ public abstract class ConditionAdapterHandler<T, R, Children> extends ConditionW
     }
 
     /**
-     * 条件暂存(where后面的条件)
-     */
-    protected void storeCondition(Condition condition) {
-        if(condition.cond) {
-            commonlyCondition.add(condition);
-        }
-    }
-
-
-
-    /**
      * 拼接下一段大条件
      */
     public void append(DbSymbol dbSymbol, String condition) {
@@ -173,11 +162,32 @@ public abstract class ConditionAdapterHandler<T, R, Children> extends ConditionW
         return String.format("%s %s", column, (orderBy == SqlOrderBy.ASC ? SqlOrderBy.ASC.getName() : SqlOrderBy.DESC.getName()));
     }
 
+//    @Override
+    public Children or(boolean condition, ConditionWrapper<T> wrapper) {
+        if(condition && wrapper != null) {
+            handleNewCondition(false, wrapper);
+        }
+        return childrenClass;
+    }
+    public Children or (ConditionWrapper<T> wrapper) {
+        return or(true, wrapper);
+    }
+
+//    @Override
+    public Children and(boolean condition, ConditionWrapper<T> wrapper) {
+        if(condition && wrapper != null) {
+            handleNewCondition(true, wrapper);
+        }
+        return childrenClass;
+    }
+    public Children and(ConditionWrapper<T> wrapper) {
+        return and(true, wrapper);
+    }
 
     /**
      * 添加新的条件，并合并同类项
      */
-    protected void handleNewCondition(boolean isAndType, ConditionAdapterHandler<T, R, Children> conditionEntity) {
+    protected void handleNewCondition(boolean isAndType, ConditionWrapper<T> conditionEntity) {
         // 1. 合并查询列-select
         mergeSelect(conditionEntity);
         // 2. 合并添加条件-condition
@@ -189,7 +199,7 @@ public abstract class ConditionAdapterHandler<T, R, Children> extends ConditionW
     /**
      * 合并查询列
      */
-    private void mergeSelect(ConditionAdapterHandler<T, R, Children> conditionEntity) {
+    private void mergeSelect(ConditionWrapper<T> conditionEntity) {
         if(conditionEntity.getSelectColumns() != null) {
             if(getSelectColumns() == null) {
                 setSelectColumns(conditionEntity.getSelectColumns());
@@ -214,20 +224,16 @@ public abstract class ConditionAdapterHandler<T, R, Children> extends ConditionW
      * 合并前：name = 'aaa'
      * 合并后：name = 'aaa' and (age > 22)
      */
-    private void mergeCondition(boolean isAndType, ConditionAdapterHandler<T, R, Children> conditionEntity) {
+    private void mergeCondition(boolean isAndType, ConditionWrapper<T> conditionEntity) {
         append(isAndType ? DbSymbol.AND : DbSymbol.OR, conditionEntity.getFinalConditional());
         getParamValues().addAll(conditionEntity.getParamValues());
     }
 
-    private void mergeOrderBy(ConditionAdapterHandler<T, R, Children> conditionEntity) {
+    private void mergeOrderBy(ConditionWrapper<T> conditionEntity) {
         getOrderBy().merge(conditionEntity.getOrderBy());
     }
 
-    private final List<Condition> commonlyCondition = new ArrayList<>();
-
-    public List<Condition> getCommonlyCondition() {
-        return commonlyCondition;
-    }
+    protected final Children childrenClass = (Children) this;
 
 
     /**

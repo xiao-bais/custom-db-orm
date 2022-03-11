@@ -105,21 +105,21 @@ public class ConditionEntity<T> extends ConditionAdapterHandler<T, String, Condi
         return adapter(DbSymbol.IS_NOT_NULL, condition, column, null, null);
     }
 
-    @Override
-    public ConditionEntity<T> or(boolean condition, ConditionEntity<T> conditionEntity) {
-        if(condition && conditionEntity != null) {
-            handleNewCondition(false, conditionEntity);
-        }
-        return this;
-    }
-
-    @Override
-    public ConditionEntity<T> and(boolean condition, ConditionEntity<T> conditionEntity) {
-        if(condition && conditionEntity != null) {
-            handleNewCondition(true, conditionEntity);
-        }
-        return this;
-    }
+//    @Override
+//    public ConditionEntity<T> or(boolean condition, ConditionEntity<T> conditionEntity) {
+//        if(condition && conditionEntity != null) {
+//            handleNewCondition(false, conditionEntity);
+//        }
+//        return this;
+//    }
+//
+//    @Override
+//    public ConditionEntity<T> and(boolean condition, ConditionEntity<T> conditionEntity) {
+//        if(condition && conditionEntity != null) {
+//            handleNewCondition(true, conditionEntity);
+//        }
+//        return this;
+//    }
 
     @Override
     public ConditionEntity<T> orderByAsc(boolean condition, String... columns) {
@@ -148,25 +148,25 @@ public class ConditionEntity<T> extends ConditionAdapterHandler<T, String, Condi
     @Override
     protected ConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, String column) {
         appendCondition(dbSymbol, condition, column, null, null, null);
-        return this;
+        return childrenClass;
     }
 
     @Override
     protected ConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, String column, Object val) {
         appendCondition(dbSymbol, condition, column, val, null, null);
-        return this;
+        return childrenClass;
     }
 
     @Override
     protected ConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, String column, Object val1, Object val2) {
         appendCondition(dbSymbol, condition, column, val1, val2, null);
-        return this;
+        return childrenClass;
     }
 
     @Override
     protected ConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, String column, String express) {
         appendCondition(dbSymbol, condition, column, null, null, express);
-        return this;
+        return childrenClass;
     }
 
     /**
@@ -176,7 +176,7 @@ public class ConditionEntity<T> extends ConditionAdapterHandler<T, String, Condi
     @Override
     public ConditionEntity<T> select(String... columns) {
         setSelectColumns(columns);
-        return this;
+        return childrenClass;
     }
 
 
