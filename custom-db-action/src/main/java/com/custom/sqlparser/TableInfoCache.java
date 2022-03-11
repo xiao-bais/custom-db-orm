@@ -36,7 +36,7 @@ public class TableInfoCache {
     private final static Map<String, Object> tableLogic = new CustomLocalCache();
 
     public static void setTableLogic(String key, Object val) {
-        tableLogic.put(key, key);
+        tableLogic.put(key, val);
     }
 
     public static Boolean isExistsLogic(String table) {

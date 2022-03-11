@@ -26,7 +26,7 @@ public class LambdaConditionEntity<T> extends ConditionAdapterHandler<T, SFuncti
 
     @Override
     protected LambdaConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, String columnSql) {
-        appendCondition(dbSymbol, condition, columnSql, null, null, null);
+        appendCondition(dbSymbol, condition, columnSql, null, null, columnSql);
         return this;
     }
 
@@ -191,7 +191,10 @@ public class LambdaConditionEntity<T> extends ConditionAdapterHandler<T, SFuncti
     @SafeVarargs
     @Override
     public final LambdaConditionEntity<T> orderByDesc(boolean condition, SFunction<T, ?>... columns) {
-
+        for (String column : parseColumn(columns)) {
+            String orderByField = orderByField(column, SqlOrderBy.DESC);
+            adapter(DbSymbol.ORDER_BY, condition, orderByField);
+        }
         return this;
     }
 

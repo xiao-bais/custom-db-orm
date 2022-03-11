@@ -10,40 +10,40 @@ import java.util.Collection;
  * column: 表字段
  **/
 @SuppressWarnings("unchecked")
-public interface Wrapper<P, Result>  {
+public interface Wrapper<Param, Result>  {
 
-    Result eq(boolean condition, P column, Object val);
-    default Result eq(P column, Object val) {
+    Result eq(boolean condition, Param column, Object val);
+    default Result eq(Param column, Object val) {
         return eq(true, column, val);
     }
 
-    Result ge(boolean condition, P column, Object val);
-    default Result ge(P column, Object val) {
+    Result ge(boolean condition, Param column, Object val);
+    default Result ge(Param column, Object val) {
         return ge(true, column, val);
     }
 
-    Result le(boolean condition, P column, Object val);
-    default Result le(P column, Object val) {
+    Result le(boolean condition, Param column, Object val);
+    default Result le(Param column, Object val) {
         return le(true, column, val);
     }
 
-    Result lt(boolean condition, P column, Object val);
-    default Result lt(P column, Object val) {
+    Result lt(boolean condition, Param column, Object val);
+    default Result lt(Param column, Object val) {
         return lt(true, column, val);
     }
 
-    Result gt(boolean condition, P column, Object val);
-    default Result gt(P column, Object val) {
+    Result gt(boolean condition, Param column, Object val);
+    default Result gt(Param column, Object val) {
         return gt(true, column, val);
     }
 
-    Result in(boolean condition, P column, Collection<? extends Serializable> val);
-    default Result in(P column, Collection<? extends Serializable> val) {
+    Result in(boolean condition, Param column, Collection<? extends Serializable> val);
+    default Result in(Param column, Collection<? extends Serializable> val) {
         return in(true, column, val);
     }
 
-    Result notIn(boolean condition, P column, Collection<? extends Serializable> val);
-    default Result notIn(P column, Collection<? extends Serializable> val) {
+    Result notIn(boolean condition, Param column, Collection<? extends Serializable> val);
+    default Result notIn(Param column, Collection<? extends Serializable> val) {
         return notIn(true, column, val);
     }
 
@@ -57,43 +57,43 @@ public interface Wrapper<P, Result>  {
         return notExists(true, notExistsSql);
     }
 
-    Result like(boolean condition, P column, Object val);
-    default Result like(P column, Object val) {
+    Result like(boolean condition, Param column, Object val);
+    default Result like(Param column, Object val) {
         return like(true, column, val);
     }
 
-    Result notLike(boolean condition, P column, Object val);
-    default Result notLike(P column, Object val) {
+    Result notLike(boolean condition, Param column, Object val);
+    default Result notLike(Param column, Object val) {
         return notLike(true, column, val);
     }
 
-    Result likeLeft(boolean condition, P column, Object val);
-    default Result likeLeft(P column, Object val) {
+    Result likeLeft(boolean condition, Param column, Object val);
+    default Result likeLeft(Param column, Object val) {
         return likeLeft(true, column, val);
     }
 
-    Result likeRight(boolean condition, P column, Object val);
-    default Result likeRight(P column, Object val) {
+    Result likeRight(boolean condition, Param column, Object val);
+    default Result likeRight(Param column, Object val) {
         return likeRight(true, column, val);
     }
 
-    Result between(boolean condition, P column, Object val1, Object val2);
-    default Result between(P column, Object val1, Object val2) {
+    Result between(boolean condition, Param column, Object val1, Object val2);
+    default Result between(Param column, Object val1, Object val2) {
         return between(true, column, val1, val2);
     }
 
-    Result notBetween(boolean condition, P column, Object val1, Object val2);
-    default Result notBetween(P column, Object val1, Object val2) {
+    Result notBetween(boolean condition, Param column, Object val1, Object val2);
+    default Result notBetween(Param column, Object val1, Object val2) {
         return notBetween(true, column, val1, val2);
     }
 
-    Result isNull(boolean condition, P column);
-    default Result isNull(P column) {
+    Result isNull(boolean condition, Param column);
+    default Result isNull(Param column) {
         return isNull(true, column);
     }
 
-    Result isNotNull(boolean condition, P column);
-    default Result isNotNull(P column) {
+    Result isNotNull(boolean condition, Param column);
+    default Result isNotNull(Param column) {
         return isNotNull(true, column);
     }
 
@@ -107,16 +107,17 @@ public interface Wrapper<P, Result>  {
         return and(true, conditionEntity);
     }
 
-    Result orderByAsc(boolean condition, P... columns);
+    Result orderByAsc(boolean condition, Param... columns);
 
-    @SuppressWarnings("unchecked")
-    default Result orderByAsc(P... columns) {
+    @SuppressWarnings("all")
+    default Result orderByAsc(Param... columns) {
         return orderByAsc(true, columns);
     }
 
 
-    Result orderByDesc(boolean condition, P... columns);
-    default Result orderByDesc(P... columns) {
+    @SuppressWarnings("all")
+    Result orderByDesc(boolean condition, Param... columns);
+    default Result orderByDesc(Param... columns) {
         return orderByDesc(true, columns);
     }
 

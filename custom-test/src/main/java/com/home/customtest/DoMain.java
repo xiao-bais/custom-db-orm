@@ -46,10 +46,41 @@ public class DoMain {
 //        List<Location> locations = customDao.selectList(Location.class, new ConditionEntity<>(Location.class).like("name", "区"));
 
         TableInfoCache.underlineToCamel = true;
-        List<Student> students = customDao.selectList(Student.class, new LambdaConditionEntity<>(Student.class)
-                .between(Student::getAge, 20, 24).likeLeft(Student::getProvince, "西")
+        long time = System.currentTimeMillis();
+
+
+        List<Student> students2 = customDao.selectList(Student.class, new ConditionEntity<>(Student.class)
+                .ge("age", 22).like("address", "山东")
+                .between("age", 21, 25)
+                .select("name", "pro.name", "cy.name", "lo.name")
+                .or(new ConditionEntity<>(Student.class)
+                        .select("age")
+                        .exists("select 1 from student2 stu2 where stu2.id = a.id and stu2.password = '12345678zcy'")
+                        .orderByAsc("id").orderByDesc("age")
+                )
         );
-        System.out.println("students = " + students);
+
+
+        long time1 = System.currentTimeMillis();
+
+        System.out.println("====================================================================");
+
+        List<Student> students1 = customDao.selectList(Student.class, new LambdaConditionEntity<>(Student.class)
+                .ge(Student::getAge, 22).like(Student::getAddress, "山东")
+                .between(Student::getAge, 21, 25)
+                .select(Student::getName, Student::getProvince, Student::getCity, Student::getArea)
+                .or(new LambdaConditionEntity<>(Student.class)
+                        .select(Student::getAge)
+                        .exists("select 1 from student2 stu2 where stu2.id = a.id and stu2.password = '12345678zcy'")
+                        .orderByAsc(Student::getId)
+                        .orderByDesc(Student::getAge)
+                )
+        );
+
+        long time2 = System.currentTimeMillis();
+
+        System.out.println("time1 = " + (time1-time));
+        System.out.println("time2 = " + (time2-time1));
 
 
     }

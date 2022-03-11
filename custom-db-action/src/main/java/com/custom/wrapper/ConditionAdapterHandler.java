@@ -57,9 +57,10 @@ public abstract class ConditionAdapterHandler<T, R, Children> extends ConditionW
         if(CustomUtil.isBlank(column) && DbSymbol.EXISTS != dbSymbol && DbSymbol.NOT_EXISTS != dbSymbol) {
             throw new CustomCheckException("column cannot be empty");
         }
-        if(!column.contains(SymbolConst.POINT)) {
+        if(JudgeUtilsAx.isNotEmpty(column) && !column.contains(SymbolConst.POINT)) {
             column = String.format("%s.%s", getTableSqlBuilder().getAlias(), column);
         }
+
 
         String and = SymbolConst.AND;
         switch (dbSymbol) {
@@ -200,7 +201,7 @@ public abstract class ConditionAdapterHandler<T, R, Children> extends ConditionW
                     if(i <= thisLen - 1) {
                         newSelectColumns[i] = getSelectColumns()[i];
                     }else {
-                        newSelectColumns[i] = conditionEntity.getSelectColumns()[i];
+                        newSelectColumns[i] = conditionEntity.getSelectColumns()[i - thisLen];
                     }
                 }
                 setSelectColumns(newSelectColumns);

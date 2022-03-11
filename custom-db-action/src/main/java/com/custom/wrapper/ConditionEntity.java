@@ -57,7 +57,7 @@ public class ConditionEntity<T> extends ConditionAdapterHandler<T, String, Condi
 
     @Override
     public ConditionEntity<T> exists(boolean condition, String existsSql) {
-        return adapter(DbSymbol.EXISTS, condition, null, null, existsSql);
+        return adapter(DbSymbol.EXISTS, condition, null,  existsSql);
     }
 
     @Override
@@ -107,20 +107,16 @@ public class ConditionEntity<T> extends ConditionAdapterHandler<T, String, Condi
 
     @Override
     public ConditionEntity<T> or(boolean condition, ConditionEntity<T> conditionEntity) {
-        if(condition) {
-            super.setLastCondition(SymbolConst.EMPTY);
-            super.append(DbSymbol.OR, conditionEntity.getFinalConditional());
-            super.getParamValues().addAll(conditionEntity.getParamValues());
+        if(condition && conditionEntity != null) {
+            handleNewCondition(false, conditionEntity);
         }
         return this;
     }
 
     @Override
     public ConditionEntity<T> and(boolean condition, ConditionEntity<T> conditionEntity) {
-        if(condition) {
-            super.setLastCondition(SymbolConst.EMPTY);
-            super.append(DbSymbol.AND, conditionEntity.getFinalConditional());
-            super.getParamValues().addAll(conditionEntity.getParamValues());
+        if(condition && conditionEntity != null) {
+            handleNewCondition(true, conditionEntity);
         }
         return this;
     }

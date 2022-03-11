@@ -121,4 +121,5 @@ public abstract class ConditionWrapper<T> implements Serializable {
 
 
     public abstract T getEntity();
+
 }

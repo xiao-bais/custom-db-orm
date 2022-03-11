@@ -91,10 +91,12 @@ public class TableSqlBuilder<T> implements Cloneable{
      */
     public String getSelectSql() {
         try {
-            if (CustomUtil.isDbRelationTag(this.cls) || this.cls.isAnnotationPresent(DbJoinTables.class)) {
-                getSelectRelationSql();
-            } else {
-                getSelectBaseTableSql();
+            if(JudgeUtilsAx.isEmpty(selectSql)) {
+                if (CustomUtil.isDbRelationTag(this.cls) || this.cls.isAnnotationPresent(DbJoinTables.class)) {
+                    getSelectRelationSql();
+                } else {
+                    getSelectBaseTableSql();
+                }
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
