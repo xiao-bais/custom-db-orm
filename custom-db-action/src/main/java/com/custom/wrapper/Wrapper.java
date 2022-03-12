@@ -1,7 +1,10 @@
 package com.custom.wrapper;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @Author Xiao-Bai
@@ -37,13 +40,20 @@ public interface Wrapper<Param, Result>  {
         return gt(true, column, val);
     }
 
-    Result in(boolean condition, Param column, Collection<? extends Serializable> val);
-    default Result in(Param column, Collection<? extends Serializable> val) {
+    Result in(boolean condition, Param column, Collection<?> val);
+    default Result in(Param column, Collection<?> val) {
         return in(true, column, val);
     }
 
-    Result notIn(boolean condition, Param column, Collection<? extends Serializable> val);
-    default Result notIn(Param column, Collection<? extends Serializable> val) {
+    default Result in(boolean condition, Param column, Object... values) {
+        return in(condition, column, Arrays.stream(Optional.ofNullable(values).orElseGet(() -> new Object[]{})).collect(Collectors.toList()));
+    }
+    default Result in(Param column, Object... values) {
+        return in(true, column, values);
+    }
+
+    Result notIn(boolean condition, Param column, Collection<?> val);
+    default Result notIn(Param column, Collection<?> val) {
         return notIn(true, column, val);
     }
 

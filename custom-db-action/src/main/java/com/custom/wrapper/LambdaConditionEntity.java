@@ -84,12 +84,12 @@ public class LambdaConditionEntity<T> extends ConditionAdapterHandler<T, SFuncti
     }
 
     @Override
-    public LambdaConditionEntity<T> in(boolean condition, SFunction<T, ?> column, Collection<? extends Serializable> val) {
+    public LambdaConditionEntity<T> in(boolean condition, SFunction<T, ?> column, Collection<?> val) {
         return adapter(DbSymbol.IN, condition, column, val);
     }
 
     @Override
-    public LambdaConditionEntity<T> notIn(boolean condition, SFunction<T, ?> column, Collection<? extends Serializable> val) {
+    public LambdaConditionEntity<T> notIn(boolean condition, SFunction<T, ?> column, Collection<?> val) {
         return adapter(DbSymbol.NOT_IN, condition, column, val);
     }
 

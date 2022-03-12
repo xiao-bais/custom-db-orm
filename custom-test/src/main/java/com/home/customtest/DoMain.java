@@ -48,17 +48,17 @@ public class DoMain {
 
         TableInfoCache.setUnderlineToCamel(true);
 
-        List<Student> students1 = customDao.selectList(Student.class, new LambdaConditionEntity<>(Student.class)
-                .ge(Student::getAge, 22).like(Student::getAddress, "山东")
-                .between(Student::getAge, 21, 25)
-                .select(Student::getName, Student::getProvince, Student::getCity, Student::getArea)
-                .or(new LambdaConditionEntity<>(Student.class)
-                        .select(Student::getAge)
-                        .exists("select 1 from student2 stu2 where stu2.id = a.id and stu2.password = '12345678zcy'")
-                        .orderByAsc(Student::getId)
-                        .orderByDesc(Student::getAge)
-                )
-        );
+//        List<Student> students1 = customDao.selectList(Student.class, new LambdaConditionEntity<>(Student.class)
+//                .ge(Student::getAge, 22).like(Student::getAddress, "山东")
+//                .between(Student::getAge, 21, 25)
+//                .select(Student::getName, Student::getProvince, Student::getCity, Student::getArea)
+//                .or(new LambdaConditionEntity<>(Student.class)
+//                        .select(Student::getAge)
+//                        .exists("select 1 from student2 stu2 where stu2.id = a.id and stu2.password = '12345678zcy'")
+//                        .orderByAsc(Student::getId)
+//                        .orderByDesc(Student::getAge)
+//                )
+//        );
 
 
     }

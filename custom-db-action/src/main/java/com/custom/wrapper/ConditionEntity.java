@@ -10,6 +10,7 @@ import com.custom.sqlparser.TableSqlBuilder;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @Author Xiao-Bai
@@ -46,12 +47,12 @@ public class ConditionEntity<T> extends ConditionAdapterHandler<T, String, Condi
     }
 
     @Override
-    public ConditionEntity<T> in(boolean condition, String column, Collection<? extends Serializable> val) {
+    public ConditionEntity<T> in(boolean condition, String column, Collection<?> val) {
         return adapter(DbSymbol.IN, condition, column, val);
     }
 
     @Override
-    public ConditionEntity<T> notIn(boolean condition, String column, Collection<? extends Serializable> val) {
+    public ConditionEntity<T> notIn(boolean condition, String column, Collection<?> val) {
         return adapter(DbSymbol.NOT_IN, condition, column, val);
     }
 
@@ -105,22 +106,6 @@ public class ConditionEntity<T> extends ConditionAdapterHandler<T, String, Condi
         return adapter(DbSymbol.IS_NOT_NULL, condition, column, null, null);
     }
 
-//    @Override
-//    public ConditionEntity<T> or(boolean condition, ConditionEntity<T> conditionEntity) {
-//        if(condition && conditionEntity != null) {
-//            handleNewCondition(false, conditionEntity);
-//        }
-//        return this;
-//    }
-//
-//    @Override
-//    public ConditionEntity<T> and(boolean condition, ConditionEntity<T> conditionEntity) {
-//        if(condition && conditionEntity != null) {
-//            handleNewCondition(true, conditionEntity);
-//        }
-//        return this;
-//    }
-
     @Override
     public ConditionEntity<T> orderByAsc(boolean condition, String... columns) {
         StringBuilder orderBy = new StringBuilder(SymbolConst.EMPTY);
@@ -142,7 +127,7 @@ public class ConditionEntity<T> extends ConditionAdapterHandler<T, String, Condi
 
     public ConditionEntity(Class<T> entityClass) {
         setCls(entityClass);
-        setTableSqlBuilder(new TableSqlBuilder<>(entityClass, ExecuteMethod.NONE, TableInfoCache.underlineToCamel));
+        setTableSqlBuilder(new TableSqlBuilder<>(entityClass, ExecuteMethod.NONE, false));
     }
 
     @Override
