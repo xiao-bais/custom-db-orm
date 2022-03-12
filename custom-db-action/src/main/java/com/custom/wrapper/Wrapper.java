@@ -46,7 +46,10 @@ public interface Wrapper<Param, Result>  {
     }
 
     default Result in(boolean condition, Param column, Object... values) {
-        return in(condition, column, Arrays.stream(Optional.ofNullable(values).orElseGet(() -> new Object[]{})).collect(Collectors.toList()));
+        return in(condition, column,
+                Arrays.stream(Optional.ofNullable(values).orElseGet(() -> new Object[]{}))
+                        .collect(Collectors.toList())
+        );
     }
     default Result in(Param column, Object... values) {
         return in(true, column, values);
