@@ -91,8 +91,7 @@ public class JdbcAction extends AbstractSqlBuilder {
         TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t);
         String condition = String.format("and %s = ?", tableSqlBuilder.getKeyParserModel().getFieldSql());
         condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
-        String selectSql = String.format("%s %s", tableSqlBuilder.getSelectSql(), condition);
-        return selectOneBySql(t, selectSql, key);
+        return selectOneBySql(t, tableSqlBuilder.getSelectSql() + condition, key);
     }
 
     @Override
@@ -103,8 +102,7 @@ public class JdbcAction extends AbstractSqlBuilder {
         keys.forEach(x -> symbol.add(SymbolConst.QUEST));
         String condition = String.format("and %s in (%s)", tableSqlBuilder.getKeyParserModel().getFieldSql(), symbol);
         condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
-        String selectSql = String.format("%s %s", tableSqlBuilder.getSelectSql(), condition);
-        return selectBySql(t, selectSql, keys.toArray());
+        return selectBySql(t, tableSqlBuilder.getSelectSql() + condition, keys.toArray());
     }
 
     @Override
@@ -112,8 +110,7 @@ public class JdbcAction extends AbstractSqlBuilder {
     public <T> T selectOneByCondition(Class<T> t, String condition, Object... params) throws Exception {
         TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t);
         condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
-        String selectSql = String.format("%s %s", tableSqlBuilder.getSelectSql(), condition);
-        return selectOneBySql(t, selectSql, params);
+        return selectOneBySql(t, tableSqlBuilder.getSelectSql() + condition, params);
     }
 
     @Override
