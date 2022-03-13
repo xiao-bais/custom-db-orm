@@ -25,7 +25,7 @@ public class Employee {
     @DbKey
     private Integer id;
 
-    @DbField("emp_name")
+    @DbField
     private String empName;
 
     @DbField
@@ -40,10 +40,10 @@ public class Employee {
     @DbField
     private Date birthday;
 
-    @DbField("dept_id")
+    @DbField
     private Integer deptId;
 
-    @DbField("area_id")
+    @DbField
     private Integer areaId;
 
     @DbField

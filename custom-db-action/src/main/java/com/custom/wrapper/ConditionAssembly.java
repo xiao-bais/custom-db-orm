@@ -21,7 +21,8 @@ import java.util.*;
  * Children：为继承该抽象类的子类类型
  **/
 @SuppressWarnings("all")
-public abstract class ConditionAdapterHandler<T, R, Children> extends ConditionWrapper<T> {
+public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper<T> implements ConditionSplice<Children, R>{
+
 
     /**
      * 适用（orderBy, is null, is not null,）
@@ -44,12 +45,10 @@ public abstract class ConditionAdapterHandler<T, R, Children> extends ConditionW
      */
     protected abstract Children adapter(DbSymbol dbSymbol, boolean condition, R column, String express);
 
-    public abstract Children select(R... columns);
-
     /**
     * 适配各种sql条件的拼接
     */
-    public void appendCondition(DbSymbol dbSymbol, boolean condition, String column, Object val1, Object val2, String express) {
+    protected void appendCondition(DbSymbol dbSymbol, boolean condition, String column, Object val1, Object val2, String express) {
 
         if(!condition) {
             return;
@@ -132,7 +131,7 @@ public abstract class ConditionAdapterHandler<T, R, Children> extends ConditionW
     /**
      * 拼接下一段大条件
      */
-    public void append(DbSymbol dbSymbol, String condition) {
+    protected void append(DbSymbol dbSymbol, String condition) {
         getFinalCondition().append(String.format(" %s (%s)", dbSymbol.getSymbol(), CustomUtil.trimSqlCondition(condition)));
     }
 
@@ -158,40 +157,31 @@ public abstract class ConditionAdapterHandler<T, R, Children> extends ConditionW
     /**
     * 排序字段整合
     */
-    public String orderByField(String column, SqlOrderBy orderBy) {
+    protected String orderByField(String column, SqlOrderBy orderBy) {
         return String.format("%s %s", column, (orderBy == SqlOrderBy.ASC ? SqlOrderBy.ASC.getName() : SqlOrderBy.DESC.getName()));
     }
 
-//    @Override
-    public Children or(boolean condition, ConditionWrapper<T> wrapper) {
+
+
+    /**
+     * 拼接大条件
+     */
+    public Children spliceCondition(boolean condition, boolean spliceType, ConditionWrapper<T> wrapper) {
         if(condition && wrapper != null) {
-            handleNewCondition(false, wrapper);
+            handleNewCondition(spliceType, wrapper);
         }
         return childrenClass;
-    }
-    public Children or (ConditionWrapper<T> wrapper) {
-        return or(true, wrapper);
     }
 
-//    @Override
-    public Children and(boolean condition, ConditionWrapper<T> wrapper) {
-        if(condition && wrapper != null) {
-            handleNewCondition(true, wrapper);
-        }
-        return childrenClass;
-    }
-    public Children and(ConditionWrapper<T> wrapper) {
-        return and(true, wrapper);
-    }
 
     /**
      * 添加新的条件，并合并同类项
      */
-    protected void handleNewCondition(boolean isAndType, ConditionWrapper<T> conditionEntity) {
+    protected void handleNewCondition(boolean spliceType, ConditionWrapper<T> conditionEntity) {
         // 1. 合并查询列-select
         mergeSelect(conditionEntity);
         // 2. 合并添加条件-condition
-        mergeCondition(isAndType, conditionEntity);
+        mergeCondition(spliceType, conditionEntity);
         // 3. 合并排序字段-orderBy
         mergeOrderBy(conditionEntity);
     }
@@ -224,8 +214,8 @@ public abstract class ConditionAdapterHandler<T, R, Children> extends ConditionW
      * 合并前：name = 'aaa'
      * 合并后：name = 'aaa' and (age > 22)
      */
-    private void mergeCondition(boolean isAndType, ConditionWrapper<T> conditionEntity) {
-        append(isAndType ? DbSymbol.AND : DbSymbol.OR, conditionEntity.getFinalConditional());
+    private void mergeCondition(boolean spliceType, ConditionWrapper<T> conditionEntity) {
+        append(spliceType ? DbSymbol.AND : DbSymbol.OR, conditionEntity.getFinalConditional());
         getParamValues().addAll(conditionEntity.getParamValues());
     }
 
@@ -236,75 +226,5 @@ public abstract class ConditionAdapterHandler<T, R, Children> extends ConditionW
     protected final Children childrenClass = (Children) this;
 
 
-    /**
-     * 条件对象
-     */
-    public static class Condition {
 
-        final boolean cond;
-        /**
-         * 条件字段属性
-         */
-        final Field field;
-        /**
-         * 条件
-         */
-        final DbSymbol dbSymbol;
-
-        /**
-         * 参数值1
-         */
-        Object val1;
-
-        /**
-         * 参数值2
-         */
-        Object val2;
-
-        /**
-         * 表达式
-         */
-        String express;
-
-        Condition(boolean cond, Field field, DbSymbol dbSymbol, Object val1, Object val2) {
-            this.cond = cond;
-            this.field = field;
-            this.dbSymbol = dbSymbol;
-            this.val1 = val1;
-            this.val2 = val2;
-        }
-
-        Condition(boolean cond, Field field, String express, DbSymbol dbSymbol) {
-            this.cond = cond;
-            this.field = field;
-            this.dbSymbol = dbSymbol;
-            this.express = express;
-        }
-
-        Condition(boolean cond, Field field, DbSymbol dbSymbol) {
-            this.cond = cond;
-            this.field = field;
-            this.dbSymbol = dbSymbol;
-        }
-
-        public Field getField() {
-            return field;
-        }
-
-        public DbSymbol getDbSymbol() {
-            return dbSymbol;
-        }
-
-        public Object getVal1() {
-            return val1;
-        }
-
-        public Object getVal2() {
-            return val2;
-        }
-
-        public String getExpress() {
-            return express;
-        }
-    }
 }

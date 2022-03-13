@@ -5,7 +5,6 @@ import com.custom.enums.SqlLike;
 import com.custom.enums.SqlOrderBy;
 import com.custom.sqlparser.TableSqlBuilder;
 
-import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -13,7 +12,7 @@ import java.util.*;
  * @Date 2022/3/3 17:17
  * @Desc：lambda表达式的条件构造对象
  **/
-public class LambdaConditionEntity<T> extends ConditionAdapterHandler<T, SFunction<T, ?>, LambdaConditionEntity<T>>
+public class LambdaConditionEntity<T> extends ConditionAssembly<T, SFunction<T, ?>, LambdaConditionEntity<T>>
         implements Wrapper<SFunction<T, ?>, LambdaConditionEntity<T>> {
 
 
@@ -49,6 +48,16 @@ public class LambdaConditionEntity<T> extends ConditionAdapterHandler<T, SFuncti
     protected LambdaConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, SFunction<T, ?> column, String express) {
         appendCondition(dbSymbol, condition, parseColumn(column), null, null, express);
         return childrenClass;
+    }
+
+    @Override
+    public LambdaConditionEntity<T> or(boolean condition, LambdaConditionEntity<T> wrapper) {
+        return spliceCondition(condition, false, wrapper);
+    }
+
+    @Override
+    public LambdaConditionEntity<T> and(boolean condition, LambdaConditionEntity<T> wrapper) {
+        return spliceCondition(condition, true, wrapper);
     }
 
     @SafeVarargs

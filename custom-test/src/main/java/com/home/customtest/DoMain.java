@@ -7,11 +7,13 @@ import com.custom.sqlparser.TableInfoCache;
 import com.custom.wrapper.ConditionEntity;
 import com.custom.wrapper.ConditionWrapper;
 import com.custom.wrapper.LambdaConditionEntity;
+import com.custom.wrapper.Wrapper;
 import com.home.customtest.entity.City;
 import com.home.customtest.entity.Employee;
 import com.home.customtest.entity.Location;
 import com.home.customtest.entity.Student;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -47,6 +49,15 @@ public class DoMain {
 //        List<Location> locations = customDao.selectList(Location.class, new ConditionEntity<>(Location.class).like("name", "区"));
 
         TableInfoCache.setUnderlineToCamel(true);
+
+//        List<Employee> employees = customDao.selectListByKeys(Employee.class, Arrays.asList(1, 5, 8, 10));
+//        System.out.println("employees = " + employees);
+
+        LambdaConditionEntity<Employee> lambdaConditionEntity = new LambdaConditionEntity(Employee.class);
+        lambdaConditionEntity.eq(Employee::getAge, "25");
+
+        Employee employee = customDao.selectOne(lambdaConditionEntity);
+        System.out.println("employee = " + employee);
 
 //        List<Student> students1 = customDao.selectList(Student.class, new LambdaConditionEntity<>(Student.class)
 //                .ge(Student::getAge, 22).like(Student::getAddress, "山东")

@@ -21,8 +21,6 @@ public abstract class ConditionWrapper<T> implements Serializable {
      * 若是查询单表（查询的实体中(包括父类)没有@DbRelated,@DbJoinTables之类的关联注解）则column为表字段，例如 name, age
      * 若是查询关联表字段，则需附带关联表别名，例如：tp.name, tp.age
      */
-    private Field[] selects;
-
     private String[] selectColumns;
 
     /**
@@ -39,7 +37,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
     /**
      * 最终的sql条件语句
      */
-    private StringBuilder finalConditional = new StringBuilder();
+    private final StringBuilder finalConditional = new StringBuilder();
 
     /**
      * 上一次的拼接条件
@@ -55,7 +53,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
     private final StringJoiner orderBy = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
 
 
-    public TableSqlBuilder<T> getTableSqlBuilder() {
+    protected TableSqlBuilder<T> getTableSqlBuilder() {
         return tableSqlBuilder;
     }
 
@@ -83,7 +81,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
         return finalConditional;
     }
 
-    public String getLastCondition() {
+    protected String getLastCondition() {
         return lastCondition;
     }
 
@@ -91,19 +89,11 @@ public abstract class ConditionWrapper<T> implements Serializable {
         this.lastCondition = lastCondition;
     }
 
-    public Field[] getSelects() {
-        return selects;
-    }
-
-    public void setSelects(Field[] selects) {
-        this.selects = selects;
-    }
-
     public String[] getSelectColumns() {
         return selectColumns;
     }
 
-    public void setSelectColumns(String[] selectColumns) {
+    protected void setSelectColumns(String[] selectColumns) {
         this.selectColumns = selectColumns;
     }
 
@@ -111,14 +101,9 @@ public abstract class ConditionWrapper<T> implements Serializable {
         return orderBy;
     }
 
-    protected void setFinalConditional(StringBuilder finalConditional) {
-        this.finalConditional = finalConditional;
-    }
-
     protected TableSqlBuilder<T> getTableParserModelCache(Class<T> key) {
         return TableInfoCache.getTableModel(key);
     }
-
 
     public abstract T getEntity();
 

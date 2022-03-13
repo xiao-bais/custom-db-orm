@@ -101,7 +101,7 @@ public class JdbcAction extends AbstractSqlBuilder {
         TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t);
         StringJoiner symbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1);
         keys.forEach(x -> symbol.add(SymbolConst.QUEST));
-        String condition = String.format("and %s in (%s)", tableSqlBuilder.getKeyParserModel().getFieldSql(), symbol.toString());
+        String condition = String.format("and %s in (%s)", tableSqlBuilder.getKeyParserModel().getFieldSql(), symbol);
         condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
         String selectSql = String.format("%s %s", tableSqlBuilder.getSelectSql(), condition);
         return selectBySql(t, selectSql, keys.toArray());

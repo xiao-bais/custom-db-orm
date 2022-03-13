@@ -5,19 +5,16 @@ import com.custom.enums.DbSymbol;
 import com.custom.enums.ExecuteMethod;
 import com.custom.enums.SqlLike;
 import com.custom.enums.SqlOrderBy;
-import com.custom.sqlparser.TableInfoCache;
 import com.custom.sqlparser.TableSqlBuilder;
 
-import java.io.Serializable;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @Author Xiao-Bai
  * @Date 2022/2/16 14:11
  * @Desc：条件构造实例对象
  **/
-public class ConditionEntity<T> extends ConditionAdapterHandler<T, String, ConditionEntity<T>>
+public class ConditionEntity<T> extends ConditionAssembly<T, String, ConditionEntity<T>>
         implements Wrapper<String, ConditionEntity<T>> {
 
 
@@ -152,6 +149,16 @@ public class ConditionEntity<T> extends ConditionAdapterHandler<T, String, Condi
     protected ConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, String column, String express) {
         appendCondition(dbSymbol, condition, column, null, null, express);
         return childrenClass;
+    }
+
+    @Override
+    public ConditionEntity<T> or(boolean condition, ConditionEntity<T> wrapper) {
+        return spliceCondition(condition, false, wrapper);
+    }
+
+    @Override
+    public ConditionEntity<T> and(boolean condition, ConditionEntity<T> wrapper) {
+        return spliceCondition(condition, true, wrapper);
     }
 
     /**
