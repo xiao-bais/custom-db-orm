@@ -49,9 +49,10 @@ public abstract class ConditionWrapper<T> implements Serializable {
      */
     private final List<Object> paramValues = new ArrayList<>();
 
-
+    /**
+     * 排序
+     */
     private final StringJoiner orderBy = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
-
 
     protected TableSqlBuilder<T> getTableSqlBuilder() {
         return tableSqlBuilder;

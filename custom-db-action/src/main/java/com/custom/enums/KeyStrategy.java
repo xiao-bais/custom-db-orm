@@ -4,7 +4,7 @@ package com.custom.enums;
  * @Author Xiao-Bai
  * @Date 2021/1/10 0010 16:27
  * @Version 1.0
- * @Description KeyMediaType
+ * @Description 主键增值类型
  */
 public enum KeyStrategy {
 

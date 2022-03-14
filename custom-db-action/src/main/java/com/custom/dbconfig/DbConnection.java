@@ -71,7 +71,7 @@ public class DbConnection {
     }
 
     //线程隔离
-    private static ThreadLocal<Connection> CONN_LOCAL = new ThreadLocal<>();
+    private final ThreadLocal<Connection> CONN_LOCAL = new ThreadLocal<>();
 
     protected Connection getConnection() {
         try {

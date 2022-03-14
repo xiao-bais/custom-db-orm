@@ -32,8 +32,8 @@ public enum DbMediaType {
 
     DbDateTime("datetime", "0");
 
-    private String type;
-    private String length;
+    private final String type;
+    private final String length;
 
     DbMediaType(String type, String length) {
         this.type = type;

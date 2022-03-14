@@ -1,6 +1,5 @@
 package com.custom.dbconfig;
 
-import com.custom.sqlparser.TableInfoCache;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -19,12 +18,18 @@ public class DbCustomStrategy {
     private boolean underlineToCamel = false;
 
     /**
-     * 打印sql（默认只开启查询的sql）
+     * 打印预编译的sql（默认只开启查询的sql）
      */
     private boolean sqlOutPrinting = false;
 
     /**
-    * 开启打印增删改的sql
+     * true- 打印的是可执行的sql
+     * false- 打印的是预编译的sql
+     */
+    private boolean sqlOutPrintExecute = false;
+
+    /**
+    * 开启打印增删改的预编译sql
     */
     private boolean sqlOutUpdate = false;
 
@@ -52,16 +57,6 @@ public class DbCustomStrategy {
     * 开启dao层的扫描包（mapperScanEnable = true后，才会开始扫描 `packageScans` 中指定的路径）
     */
     private boolean mapperScanEnable = false;
-
-    /**
-     * 需要扫描的实体类扫描路径，在spring容器启动后，加入缓存中
-     */
-    private String[] entityScans;
-
-    /**
-     * 实体模板缓存
-     */
-    private TableInfoCache tableParserModelCache;
 
 
     public boolean isMapperScanEnable() {
@@ -128,19 +123,11 @@ public class DbCustomStrategy {
         this.underlineToCamel = underlineToCamel;
     }
 
-    public String[] getEntityScans() {
-        return entityScans;
+    public boolean isSqlOutPrintExecute() {
+        return sqlOutPrintExecute;
     }
 
-    public void setEntityScans(String[] entityScans) {
-        this.entityScans = entityScans;
-    }
-
-    public TableInfoCache getTableParserModelCache() {
-        return tableParserModelCache;
-    }
-
-    public void setTableParserModelCache(TableInfoCache tableParserModelCache) {
-        this.tableParserModelCache = tableParserModelCache;
+    public void setSqlOutPrintExecute(boolean sqlOutPrintExecute) {
+        this.sqlOutPrintExecute = sqlOutPrintExecute;
     }
 }

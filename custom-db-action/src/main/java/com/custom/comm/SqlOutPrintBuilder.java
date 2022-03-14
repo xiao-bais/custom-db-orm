@@ -2,6 +2,7 @@ package com.custom.comm;
 
 import com.alibaba.fastjson.JSON;
 import com.custom.dbconfig.SymbolConst;
+import com.custom.exceptions.CustomCheckException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,35 +26,59 @@ public class SqlOutPrintBuilder implements Serializable {
      * PRINT-ERROR-SQL
      */
     public void sqlErrPrint() {
-        logger.error(
-                "\nsql error\n===================\nSQL ====>\n {}\n===================\nparams = {}\n===================\n"
-                , sql, getFormatterParams());
+        if(sqlExecute) {
+            handleExecuteSql();
+            logger.error("QUERY-SQL ====>\n \n{}\n===================\n", sql);
+        }else {
+            logger.error(
+                    "\nsql error\n===================\nSQL ====>\n {}\n===================\nparams = {}\n===================\n"
+                    , sql, getFormatterParams());
+        }
+
     }
 
     /**
      * PRINT-INFO-QUERY-SQL
      */
     public void sqlInfoQueryPrint() {
-        System.out.printf("QUERY-SQL ====>\n \n%s\n===================\nparams = %s\n===================\n"
-                , sql, getFormatterParams());
+        if(sqlExecute) {
+            handleExecuteSql();
+            System.out.printf("QUERY-SQL ====>\n \n%s\n===================\n", sql);
+        }else {
+            System.out.printf("QUERY-SQL ====>\n \n%s\n===================\nparams = %s\n===================\n"
+                    , sql, getFormatterParams());
+        }
+
     }
 
     /**
      * PRINT-INFO-UPDATE-SQL
      */
     public void sqlInfoUpdatePrint() {
-        System.out.printf("UPDATE-SQL ====>\n %s\n===================\nparams = %s\n===================\n"
-                , sql, getFormatterParams());
+        if(sqlExecute) {
+            handleExecuteSql();
+            System.out.printf("UPDATE-SQL ====>\n \n%s\n===================\n", sql);
+        }else {
+            System.out.printf("UPDATE-SQL ====>\n \n%s\n===================\nparams = %s\n===================\n"
+                    , sql, getFormatterParams());
+        }
     }
 
 
-    private final String sql;
+    private  String sql;
 
     private final Object[] params;
 
-    public SqlOutPrintBuilder(String sql, Object[] params) {
+    /**
+     * true- 打印的是可执行的sql
+     * false- 打印的是预编译的sql
+     */
+    private boolean sqlExecute = false;
+
+    public SqlOutPrintBuilder(String sql, Object[] params, boolean sqlExecute) {
         this.sql = sql;
         this.params = params;
+        this.sqlExecute = sqlExecute;
     }
 
     /**
@@ -70,4 +95,27 @@ public class SqlOutPrintBuilder implements Serializable {
         }
         return sqlParams.toString();
     }
+
+
+    /**
+     * 可执行的sql打印
+     */
+    private void handleExecuteSql() {
+        int symbolSize = CustomUtil.countStr(sql, SymbolConst.QUEST);
+        if(symbolSize != params.length) {
+            sqlErrPrint();
+            throw new CustomCheckException(String.format("参数数量与需要设置的参数数量不对等，需设置参数数量：%s, 实际参数数量：%s", symbolSize, params.length));
+        }
+
+        int index = 0;
+        while (index < symbolSize) {
+            Object param = params[index];
+            if(param.getClass() == String.class) {
+                param = String.format("'%s'", param);
+            }
+            sql = sql.replaceFirst("\\?", param.toString());
+            index ++;
+        }
+    }
+
 }

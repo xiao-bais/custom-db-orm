@@ -4,19 +4,10 @@ import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.sqlparser.CustomDao;
 import com.custom.sqlparser.TableInfoCache;
-import com.custom.wrapper.ConditionEntity;
-import com.custom.wrapper.ConditionWrapper;
 import com.custom.wrapper.LambdaConditionEntity;
-import com.custom.wrapper.Wrapper;
-import com.home.customtest.entity.City;
-import com.home.customtest.entity.Employee;
-import com.home.customtest.entity.Location;
 import com.home.customtest.entity.Student;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
 
 /**
  * @Author Xiao-Bai
@@ -39,38 +30,33 @@ public class DoMain {
         DbCustomStrategy dbCustomStrategy = new DbCustomStrategy();
         dbCustomStrategy.setSqlOutPrinting(true);
         dbCustomStrategy.setSqlOutUpdate(true);
+        dbCustomStrategy.setSqlOutPrintExecute(true);
         dbCustomStrategy.setUnderlineToCamel(true);
         dbCustomStrategy.setDbFieldDeleteLogic("state");
         dbCustomStrategy.setDeleteLogicValue("1");
         dbCustomStrategy.setNotDeleteLogicValue("0");
-
+//
         CustomDao customDao = new CustomDao(dbDataSource, dbCustomStrategy);
 
 //        List<Location> locations = customDao.selectList(Location.class, new ConditionEntity<>(Location.class).like("name", "区"));
 
         TableInfoCache.setUnderlineToCamel(true);
 
-//        List<Employee> employees = customDao.selectListByKeys(Employee.class, Arrays.asList(1, 5, 8, 10));
-//        System.out.println("employees = " + employees);
 
-        LambdaConditionEntity<Employee> lambdaConditionEntity = new LambdaConditionEntity(Employee.class);
-        lambdaConditionEntity.eq(Employee::getAge, "25");
 
-        Employee employee = customDao.selectOne(lambdaConditionEntity);
-        System.out.println("employee = " + employee);
+        List<Student> students1 = customDao.selectList(Student.class, new LambdaConditionEntity<>(Student.class)
+                .ge(Student::getAge, 22).like(Student::getAddress, "山东")
+                .between(Student::getAge, 21, 25)
+                .select(Student::getName, Student::getProvince, Student::getCity, Student::getArea)
+                .or(new LambdaConditionEntity<>(Student.class)
+                        .select(Student::getAge)
+                        .exists("select 1 from student2 stu2 where stu2.id = a.id and stu2.password = '12345678zcy'")
+                        .orderByAsc(Student::getId)
+                        .orderByDesc(Student::getAge)
+                )
+        );
 
-//        List<Student> students1 = customDao.selectList(Student.class, new LambdaConditionEntity<>(Student.class)
-//                .ge(Student::getAge, 22).like(Student::getAddress, "山东")
-//                .between(Student::getAge, 21, 25)
-//                .select(Student::getName, Student::getProvince, Student::getCity, Student::getArea)
-//                .or(new LambdaConditionEntity<>(Student.class)
-//                        .select(Student::getAge)
-//                        .exists("select 1 from student2 stu2 where stu2.id = a.id and stu2.password = '12345678zcy'")
-//                        .orderByAsc(Student::getId)
-//                        .orderByDesc(Student::getAge)
-//                )
-//        );
-
+        System.out.println("students1 = " + students1);
 
     }
 

@@ -60,8 +60,6 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
             column = String.format("%s.%s", getTableSqlBuilder().getAlias(), column);
         }
 
-
-        String and = SymbolConst.AND;
         switch (dbSymbol) {
             case EQUALS:
             case NOT_EQUALS:
@@ -69,12 +67,12 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
             case GREATER_THAN:
             case LESS_THAN_EQUALS:
             case GREATER_THAN_EQUALS:
-                setLastCondition(String.format(" %s %s %s ?", and, column, dbSymbol.getSymbol()));
+                setLastCondition(String.format(" %s %s %s ?", appendSybmol, column, dbSymbol.getSymbol()));
                 getParamValues().add(val1);
                 break;
             case LIKE:
             case NOT_LIKE:
-                setLastCondition(String.format(" %s %s %s ?", and, column, dbSymbol.getSymbol()));
+                setLastCondition(String.format(" %s %s %s ?", appendSybmol, column, dbSymbol.getSymbol()));
                 getParamValues().add(express);
                 break;
             case IN:
@@ -95,11 +93,11 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
                     getParamValues().addAll(objects);
                     objects.forEach(x -> symbol.add(SymbolConst.QUEST));
                 }
-                setLastCondition(String.format(" %s %s %s (%s)", and, column, dbSymbol.getSymbol(), symbol));
+                setLastCondition(String.format(" %s %s %s (%s)", appendSybmol, column, dbSymbol.getSymbol(), symbol));
                 break;
             case EXISTS:
             case NOT_EXISTS:
-                setLastCondition(String.format(" %s %s (%s)", and, dbSymbol.getSymbol(), express));
+                setLastCondition(String.format(" %s %s (%s)", appendSybmol, dbSymbol.getSymbol(), express));
                 break;
             case BETWEEN:
             case NOT_BETWEEN:
@@ -109,13 +107,13 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
                 if(JudgeUtilsAx.isEmpty(val1) || JudgeUtilsAx.isEmpty(val2)) {
                     throw new NullPointerException("At least one null value exists between val1 and val2");
                 }
-                setLastCondition(String.format(" %s %s %s", and, column, dbSymbol.getSymbol()));
+                setLastCondition(String.format(" %s %s %s", appendSybmol, column, dbSymbol.getSymbol()));
                 getParamValues().add(val1);
                 getParamValues().add(val2);
                 break;
             case IS_NULL:
             case IS_NOT_NULL:
-                setLastCondition(String.format(" %s %s %s", and, column, dbSymbol.getSymbol()));
+                setLastCondition(String.format(" %s %s %s", appendSybmol, column, dbSymbol.getSymbol()));
                 break;
             case ORDER_BY:
                 getOrderBy().add(column);
@@ -224,6 +222,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
     }
 
     protected final Children childrenClass = (Children) this;
+    protected static String appendSybmol = SymbolConst.AND;
 
 
 

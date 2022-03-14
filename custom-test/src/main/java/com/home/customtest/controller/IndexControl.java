@@ -6,11 +6,13 @@ import com.custom.sqlparser.CustomDao;
 import com.custom.wrapper.ConditionEntity;
 import com.custom.wrapper.LambdaConditionEntity;
 import com.home.customtest.entity.Employee;
+import com.home.customtest.entity.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -19,6 +21,7 @@ import java.util.stream.Stream;
  * @Date 2021/11/27 15:32
  * @Desc：
  **/
+@SuppressWarnings("all")
 @RestController
 @RequestMapping("/one")
 public class IndexControl {
@@ -32,14 +35,18 @@ public class IndexControl {
 
 
     @GetMapping("/getMain")
-    public BackResult<Employee> getIndex(String key) throws Exception {
-        ConditionEntity<Employee> conditionEntity = new ConditionEntity<>(Employee.class);
-        conditionEntity.like("emp_name", "工")
-                .eq("sex", true)
-                .in("age", Stream.of(20,23,26).collect(Collectors.toList()))
-                .and(new ConditionEntity<>(Employee.class).like("dept.name", "财务"));
-        Employee employee = customDao.selectOne(new LambdaConditionEntity<>(Employee.class).like(Employee::getEmpName, "沾上干"));
-        return BackResult.bySuccess("success01", employee);
+    public BackResult<List<Student>> getIndex(String key) throws Exception {
+        List<Student> students = customDao.selectList(Student.class, new LambdaConditionEntity<>(Student.class)
+                .ge(Student::getAge, 22).like(Student::getAddress, "山东")
+                .between(Student::getAge, 21, 25)
+                .select(Student::getName, Student::getProvince, Student::getCity, Student::getArea)
+                .or(new LambdaConditionEntity<>(Student.class)
+                        .select(Student::getAge)
+                        .exists("select 1 from student2 stu2 where stu2.id = a.id and stu2.password = '12345678zcy'")
+                        .orderByAsc(Student::getId)
+                        .orderByDesc(Student::getAge)
+                ));
+        return BackResult.bySuccess("success01", students);
     }
 
 }
