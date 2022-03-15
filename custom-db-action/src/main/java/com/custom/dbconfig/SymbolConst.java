@@ -21,6 +21,7 @@ public class SymbolConst {
     public final static String IS = "is";//is
     public final static String IN = "in";//is
     public final static String AND = "and";//and
+    public final static String OR = "or";//or
     public final static String ASC = "asc";//asc
     public final static String DESC = "desc";//desc
     public final static String UPDATE = "update ";//update

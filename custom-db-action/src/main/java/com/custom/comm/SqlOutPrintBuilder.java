@@ -73,7 +73,7 @@ public class SqlOutPrintBuilder implements Serializable {
      * true- 打印的是可执行的sql
      * false- 打印的是预编译的sql
      */
-    private boolean sqlExecute = false;
+    private final boolean sqlExecute;
 
     public SqlOutPrintBuilder(String sql, Object[] params, boolean sqlExecute) {
         this.sql = sql;
@@ -87,11 +87,7 @@ public class SqlOutPrintBuilder implements Serializable {
     private String getFormatterParams() {
         StringJoiner sqlParams = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
         for (Object param : params) {
-            if(param == null) {
-                sqlParams.add("null");
-            }else {
-                sqlParams.add(param + SymbolConst.BRACKETS_LEFT + param.getClass().getSimpleName() + SymbolConst.BRACKETS_RIGHT);
-            }
+            sqlParams.add(param == null ? "null" : param + SymbolConst.BRACKETS_LEFT + param.getClass().getSimpleName() + SymbolConst.BRACKETS_RIGHT);
         }
         return sqlParams.toString();
     }

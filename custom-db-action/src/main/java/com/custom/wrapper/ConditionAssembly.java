@@ -11,6 +11,7 @@ import com.custom.exceptions.CustomCheckException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * @Author Xiao-Bai
@@ -46,11 +47,16 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
     protected abstract Children adapter(DbSymbol dbSymbol, boolean condition, R column, String express);
 
     /**
+     * 子类的实例化
+     */
+    protected abstract Children getInstance();
+
+    /**
     * 适配各种sql条件的拼接
     */
     protected void appendCondition(DbSymbol dbSymbol, boolean condition, String column, Object val1, Object val2, String express) {
 
-        if(!condition) {
+        if(!condition || !appendState) {
             return;
         }
         if(CustomUtil.isBlank(column) && DbSymbol.EXISTS != dbSymbol && DbSymbol.NOT_EXISTS != dbSymbol) {
@@ -123,7 +129,9 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
             getFinalCondition().append(getLastCondition());
             setLastCondition(SymbolConst.EMPTY);
         }
-
+        if(appendSybmol.equals(SymbolConst.OR)) {
+            appendSybmol = SymbolConst.AND;
+        }
     }
 
     /**
@@ -168,6 +176,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
         if(condition && wrapper != null) {
             handleNewCondition(spliceType, wrapper);
         }
+        appendState = true;
         return childrenClass;
     }
 
@@ -176,16 +185,24 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
      * 添加新的条件，并合并同类项
      */
     protected void handleNewCondition(boolean spliceType, ConditionWrapper<T> conditionEntity) {
+
         // 1. 合并查询列-select
-        mergeSelect(conditionEntity);
+        if (conditionEntity.getSelectColumns() != null) {
+            mergeSelect(conditionEntity);
+        }
         // 2. 合并添加条件-condition
-        mergeCondition(spliceType, conditionEntity);
+        if (JudgeUtilsAx.isNotEmpty(conditionEntity.getFinalConditional())) {
+            mergeCondition(spliceType, conditionEntity);
+        }
+
         // 3. 合并排序字段-orderBy
-        mergeOrderBy(conditionEntity);
+        if (conditionEntity.getOrderBy().length() > 0) {
+            mergeOrderBy(conditionEntity);
+        }
     }
 
     /**
-     * 合并查询列
+     * 合并查询列(数组合并)
      */
     private void mergeSelect(ConditionWrapper<T> conditionEntity) {
         if(conditionEntity.getSelectColumns() != null) {
@@ -221,8 +238,13 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
         getOrderBy().merge(conditionEntity.getOrderBy());
     }
 
+
     protected final Children childrenClass = (Children) this;
     protected static String appendSybmol = SymbolConst.AND;
+    /**
+     * 拼接and or 方法时，对于后面方法的调用
+     */
+    protected static boolean appendState = true;
 
 
 

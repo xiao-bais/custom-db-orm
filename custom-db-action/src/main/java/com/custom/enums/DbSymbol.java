@@ -1,5 +1,7 @@
 package com.custom.enums;
 
+import com.custom.dbconfig.SymbolConst;
+
 /**
  * @Author Xiao-Bai
  * @Date 2021/12/11 13:30
@@ -17,8 +19,8 @@ public enum DbSymbol {
     NOT_EXISTS("not exists"),
     BETWEEN("between ? and ?"),
     NOT_BETWEEN("not between ? and ?"),
-    AND("and"),
-    OR("or"),
+    AND(SymbolConst.AND),
+    OR(SymbolConst.OR),
     LIKE("like"),
     NOT_LIKE("not like"),
     IS_NOT_NULL("is not null"),

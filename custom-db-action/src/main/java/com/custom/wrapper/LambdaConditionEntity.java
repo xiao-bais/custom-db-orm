@@ -1,11 +1,13 @@
 package com.custom.wrapper;
 
+import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.DbSymbol;
 import com.custom.enums.SqlLike;
 import com.custom.enums.SqlOrderBy;
 import com.custom.sqlparser.TableSqlBuilder;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * @Author Xiao-Bai
@@ -51,13 +53,47 @@ public class LambdaConditionEntity<T> extends ConditionAssembly<T, SFunction<T, 
     }
 
     @Override
+    protected LambdaConditionEntity<T> getInstance() {
+        return new LambdaConditionEntity<>(getCls());
+    }
+
+    @Override
     public LambdaConditionEntity<T> or(boolean condition, LambdaConditionEntity<T> wrapper) {
         return spliceCondition(condition, false, wrapper);
     }
 
     @Override
+    public LambdaConditionEntity<T> or(boolean condition, Consumer<LambdaConditionEntity<T>> consumer) {
+        if (condition) {
+            LambdaConditionEntity<T> instance = getInstance();
+            consumer.accept(instance);
+            return spliceCondition(true, false, instance);
+        }
+        return childrenClass;
+    }
+
+    @Override
+    public LambdaConditionEntity<T> or(boolean condition) {
+        appendState = condition;
+        if(condition) {
+            appendSybmol = SymbolConst.OR;
+        }
+        return childrenClass;
+    }
+
+    @Override
     public LambdaConditionEntity<T> and(boolean condition, LambdaConditionEntity<T> wrapper) {
         return spliceCondition(condition, true, wrapper);
+    }
+
+    @Override
+    public LambdaConditionEntity<T> and(boolean condition, Consumer<LambdaConditionEntity<T>> consumer) {
+        if (condition) {
+            LambdaConditionEntity<T> instance = getInstance();
+            consumer.accept(instance);
+            return spliceCondition(true, true, instance);
+        }
+        return childrenClass;
     }
 
     @SafeVarargs

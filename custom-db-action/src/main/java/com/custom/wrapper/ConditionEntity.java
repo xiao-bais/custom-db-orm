@@ -8,6 +8,7 @@ import com.custom.enums.SqlOrderBy;
 import com.custom.sqlparser.TableSqlBuilder;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * @Author Xiao-Bai
@@ -152,13 +153,47 @@ public class ConditionEntity<T> extends ConditionAssembly<T, String, ConditionEn
     }
 
     @Override
+    protected ConditionEntity<T> getInstance() {
+        return new ConditionEntity<>(getCls());
+    }
+
+    @Override
     public ConditionEntity<T> or(boolean condition, ConditionEntity<T> wrapper) {
         return spliceCondition(condition, false, wrapper);
     }
 
     @Override
+    public ConditionEntity<T> or(boolean condition, Consumer<ConditionEntity<T>> consumer) {
+        if (condition) {
+            ConditionEntity<T> instance = getInstance();
+            consumer.accept(instance);
+            return spliceCondition(true, false, instance);
+        }
+        return childrenClass;
+    }
+
+    @Override
+    public ConditionEntity<T> or(boolean condition) {
+        appendState = condition;
+        if(condition) {
+            appendSybmol = SymbolConst.OR;
+        }
+        return childrenClass;
+    }
+
+    @Override
     public ConditionEntity<T> and(boolean condition, ConditionEntity<T> wrapper) {
         return spliceCondition(condition, true, wrapper);
+    }
+
+    @Override
+    public ConditionEntity<T> and(boolean condition, Consumer<ConditionEntity<T>> consumer) {
+        if (condition) {
+            ConditionEntity<T> instance = getInstance();
+            consumer.accept(instance);
+            return spliceCondition(true, true, instance);
+        }
+        return childrenClass;
     }
 
     /**
