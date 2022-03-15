@@ -1,10 +1,7 @@
 package com.custom.wrapper;
 
 import com.custom.dbconfig.SymbolConst;
-import com.custom.enums.DbSymbol;
-import com.custom.enums.ExecuteMethod;
-import com.custom.enums.SqlLike;
-import com.custom.enums.SqlOrderBy;
+import com.custom.enums.*;
 import com.custom.sqlparser.TableSqlBuilder;
 
 import java.util.*;
@@ -164,12 +161,7 @@ public class ConditionEntity<T> extends ConditionAssembly<T, String, ConditionEn
 
     @Override
     public ConditionEntity<T> or(boolean condition, Consumer<ConditionEntity<T>> consumer) {
-        if (condition) {
-            ConditionEntity<T> instance = getInstance();
-            consumer.accept(instance);
-            return spliceCondition(true, false, instance);
-        }
-        return childrenClass;
+        return mergeConsmerCondition(condition, false, consumer);
     }
 
     @Override
@@ -188,12 +180,7 @@ public class ConditionEntity<T> extends ConditionAssembly<T, String, ConditionEn
 
     @Override
     public ConditionEntity<T> and(boolean condition, Consumer<ConditionEntity<T>> consumer) {
-        if (condition) {
-            ConditionEntity<T> instance = getInstance();
-            consumer.accept(instance);
-            return spliceCondition(true, true, instance);
-        }
-        return childrenClass;
+        return mergeConsmerCondition(condition, true, consumer);
     }
 
     /**
@@ -203,6 +190,13 @@ public class ConditionEntity<T> extends ConditionAssembly<T, String, ConditionEn
     @Override
     public ConditionEntity<T> select(String... columns) {
         setSelectColumns(columns);
+        return childrenClass;
+    }
+
+    @Override
+    public ConditionEntity<T> select(SqlAggregateFunc... funcs) {
+
+
         return childrenClass;
     }
 

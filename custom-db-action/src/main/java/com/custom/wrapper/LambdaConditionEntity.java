@@ -2,6 +2,7 @@ package com.custom.wrapper;
 
 import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.DbSymbol;
+import com.custom.enums.SqlAggregateFunc;
 import com.custom.enums.SqlLike;
 import com.custom.enums.SqlOrderBy;
 import com.custom.sqlparser.TableSqlBuilder;
@@ -64,12 +65,7 @@ public class LambdaConditionEntity<T> extends ConditionAssembly<T, SFunction<T, 
 
     @Override
     public LambdaConditionEntity<T> or(boolean condition, Consumer<LambdaConditionEntity<T>> consumer) {
-        if (condition) {
-            LambdaConditionEntity<T> instance = getInstance();
-            consumer.accept(instance);
-            return spliceCondition(true, false, instance);
-        }
-        return childrenClass;
+        return mergeConsmerCondition(condition, false, consumer);
     }
 
     @Override
@@ -88,12 +84,7 @@ public class LambdaConditionEntity<T> extends ConditionAssembly<T, SFunction<T, 
 
     @Override
     public LambdaConditionEntity<T> and(boolean condition, Consumer<LambdaConditionEntity<T>> consumer) {
-        if (condition) {
-            LambdaConditionEntity<T> instance = getInstance();
-            consumer.accept(instance);
-            return spliceCondition(true, true, instance);
-        }
-        return childrenClass;
+        return mergeConsmerCondition(condition, true, consumer);
     }
 
     @SafeVarargs
@@ -101,6 +92,11 @@ public class LambdaConditionEntity<T> extends ConditionAssembly<T, SFunction<T, 
     public final LambdaConditionEntity<T> select(SFunction<T, ?>... columns) {
         setSelectColumns(parseColumn(columns));
         return childrenClass;
+    }
+
+    @Override
+    public LambdaConditionEntity<T> select(SqlAggregateFunc... funcs) {
+        return null;
     }
 
     @Override

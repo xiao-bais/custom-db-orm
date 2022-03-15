@@ -70,11 +70,5 @@ public interface ConditionSplice<Children, R> {
         return and(true, consumer);
     }
 
-    /**
-     * 自定义查询字段
-     */
-    @SuppressWarnings("all")
-    public abstract Children select(R... columns);
-
 
 }

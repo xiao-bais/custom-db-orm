@@ -22,7 +22,8 @@ import java.util.function.Consumer;
  * Children：为继承该抽象类的子类类型
  **/
 @SuppressWarnings("all")
-public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper<T> implements ConditionSplice<Children, R>{
+public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper<T>
+        implements ConditionSplice<Children, R>, SelectFunction<Children, R> {
 
 
     /**
@@ -236,6 +237,19 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
 
     private void mergeOrderBy(ConditionWrapper<T> conditionEntity) {
         getOrderBy().merge(conditionEntity.getOrderBy());
+    }
+
+
+    /**
+     * 合并消费类型的条件
+     */
+    public Children mergeConsmerCondition(boolean condition, boolean spliceType, Consumer<Children> consumer) {
+        if (condition) {
+            Children instance = getInstance();
+            consumer.accept(instance);
+            return spliceCondition(true, spliceType, (ConditionWrapper<T>) instance);
+        }
+        return childrenClass;
     }
 
 

@@ -6,7 +6,7 @@ import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
-import com.custom.logic.LogicDeleteFieldSqlHandler;
+import com.custom.interfaces.LogicDeleteFieldSqlHandler;
 import com.custom.comm.page.DbPageRows;
 import com.custom.sqlparser.TableInfoCache;
 import com.custom.sqlparser.TableSqlBuilder;
@@ -16,7 +16,6 @@ import com.custom.wrapper.ConditionEntity;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @Author Xiao-Bai

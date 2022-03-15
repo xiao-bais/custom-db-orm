@@ -4,6 +4,7 @@ import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.sqlparser.CustomDao;
 import com.custom.sqlparser.TableInfoCache;
+import com.custom.wrapper.Conditions;
 import com.custom.wrapper.LambdaConditionEntity;
 import com.home.customtest.entity.Student;
 
@@ -45,7 +46,7 @@ public class DoMain {
         TableInfoCache.setUnderlineToCamel(true);
 
 
-        List<Student> students1 = customDao.selectList(Student.class, new LambdaConditionEntity<>(Student.class)
+        List<Student> students1 = customDao.selectList(Student.class, Conditions.lambdaConditionQuery(Student.class)
                 .ge(Student::getAge, 22).like(Student::getAddress, "山东")
                 .between(Student::getAge, 21, 25)
                 .select(Student::getName, Student::getProvince, Student::getCity, Student::getArea)

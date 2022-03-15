@@ -1,4 +1,4 @@
-package com.custom.logic;
+package com.custom.interfaces;
 
 /**
  * @author Xiao-Bai
