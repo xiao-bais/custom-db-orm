@@ -122,16 +122,16 @@ public class JdbcAction extends AbstractSqlBuilder {
         if(dbPageRows == null) {
             dbPageRows = new DbPageRows<>();
         }
-        TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t);
-        String selectSql = tableSqlBuilder.getSelectSql();
-        String condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), wrapper.getFinalConditional(),
-                getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
+        String selectSql = getFullSelectSql(t, wrapper);
+        String condition = SymbolConst.EMPTY;
         if(CustomUtil.isNotBlank(wrapper.getOrderBy().toString())) {
             condition += String.format("%s \n%s %s", selectSql, DbSymbol.ORDER_BY.getSymbol(), wrapper.getOrderBy().toString());
         }
         selectSql += "\n" + condition;
-        Object[] params = wrapper.getParamValues().toArray();
-        buildPageResult(t, selectSql, condition, dbPageRows, params);
+        if(!wrapper.getHavingParams().isEmpty()) {
+            wrapper.getParamValues().addAll(wrapper.getHavingParams());
+        }
+        buildPageResult(t, selectSql, condition, dbPageRows, wrapper.getParamValues().toArray());
         return dbPageRows;
 
     }
@@ -142,16 +142,12 @@ public class JdbcAction extends AbstractSqlBuilder {
         if(wrapper == null) {
             return selectBySql(t, getEntityModelCache(t).getSelectSql());
         }
-        TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t);
-        String selectSql;
-        if(wrapper.getSelectColumns() != null) {
-            selectSql = tableSqlBuilder.selectColumns(wrapper.getSelectColumns());
-        }else {
-            selectSql = tableSqlBuilder.getSelectSql();
-        }
-        selectSql += checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), wrapper.getFinalConditional(), getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
+        String selectSql = getFullSelectSql(t, wrapper);
         if(CustomUtil.isNotBlank(wrapper.getOrderBy().toString())) {
             selectSql = String.format("%s \n%s %s", selectSql, DbSymbol.ORDER_BY.getSymbol(), wrapper.getOrderBy().toString());
+        }
+        if(!wrapper.getHavingParams().isEmpty()) {
+            wrapper.getParamValues().addAll(wrapper.getHavingParams());
         }
         return selectBySql(t, selectSql, wrapper.getParamValues().toArray());
     }
@@ -161,7 +157,14 @@ public class JdbcAction extends AbstractSqlBuilder {
         if(wrapper == null) {
             throw new CustomCheckException("condition cannot be empty");
         }
-        return selectOneByCondition(wrapper.getCls(), wrapper.getFinalConditional(), wrapper.getParamValues().toArray());
+        String selectSql = getFullSelectSql(wrapper.getCls(), wrapper);
+        if(CustomUtil.isNotBlank(wrapper.getOrderBy().toString())) {
+            selectSql = String.format("%s \n%s %s", selectSql, DbSymbol.ORDER_BY.getSymbol(), wrapper.getOrderBy().toString());
+        }
+        if(!wrapper.getHavingParams().isEmpty()) {
+            wrapper.getParamValues().addAll(wrapper.getHavingParams());
+        }
+        return selectOneBySql(wrapper.getCls(), selectSql, wrapper.getParamValues().toArray());
     }
 
     @Override

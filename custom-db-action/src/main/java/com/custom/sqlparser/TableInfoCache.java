@@ -32,6 +32,21 @@ public class TableInfoCache {
 
 
     /**
+     * 获取表字段到java字段的映射
+     */
+    public static <T> Map<String, String> getColumnMap(Class<T> cls) {
+        return getTableModel(cls).getColumnMapper();
+    }
+
+    /**
+     * 获取java字段到表字段的映射
+     */
+    public static <T> Map<String, String> getFieldMap(Class<T> cls) {
+        return getTableModel(cls).getFieldMapper();
+    }
+
+
+    /**
      * 表的逻辑删除字段缓存
      * key-实体全路径名称
      * value-true or false

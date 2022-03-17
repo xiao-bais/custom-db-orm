@@ -5,7 +5,7 @@ package com.custom.enums;
  * @Date 2022/3/15 17:34
  * @Desc：查询列表的sql聚合函数
  **/
-public enum SqlAggregateFunc {
+public enum SqlAggregate {
 
 
     /**
@@ -27,7 +27,11 @@ public enum SqlAggregateFunc {
     /**
      * 总数量
      */
-    COUNT
+    COUNT,
+    /**
+     * 如果空
+     */
+    IFNULL
 
 
 }

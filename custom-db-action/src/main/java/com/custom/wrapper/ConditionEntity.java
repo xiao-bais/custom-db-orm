@@ -193,16 +193,22 @@ public class ConditionEntity<T> extends ConditionAssembly<T, String, ConditionEn
         return childrenClass;
     }
 
-    @Override
-    public ConditionEntity<T> select(SqlAggregateFunc... funcs) {
-
-
-        return childrenClass;
-    }
-
 
     @Override
     public T getEntity() {
         return null;
     }
+
+
+    @Override
+    public ConditionEntity<T> select(Consumer<SqlFunc<T>> consumer) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public ConditionEntity<T> groupBy(String... columns) {
+        Arrays.stream(columns).forEach(x -> adapter(DbSymbol.GROUP_BY, true, x));
+        return childrenClass;
+    }
+
 }

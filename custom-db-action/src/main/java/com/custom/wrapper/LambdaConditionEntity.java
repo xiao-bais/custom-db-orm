@@ -2,7 +2,6 @@ package com.custom.wrapper;
 
 import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.DbSymbol;
-import com.custom.enums.SqlAggregateFunc;
 import com.custom.enums.SqlLike;
 import com.custom.enums.SqlOrderBy;
 import com.custom.sqlparser.TableSqlBuilder;
@@ -95,8 +94,18 @@ public class LambdaConditionEntity<T> extends ConditionAssembly<T, SFunction<T, 
     }
 
     @Override
-    public LambdaConditionEntity<T> select(SqlAggregateFunc... funcs) {
-        return null;
+    public LambdaConditionEntity<T> select(Consumer<SqlFunc<T>> consumer) {
+        SqlFunc<T> sqlFunc = new SqlFunc<>(getCls());
+        consumer.accept(sqlFunc);
+        mergeSelect(sqlFunc.getSelectColumns().split(SymbolConst.SEPARATOR_COMMA_2));
+        return childrenClass;
+    }
+
+    @SafeVarargs
+    @Override
+    public final LambdaConditionEntity<T> groupBy(SFunction<T, ?>... columns) {
+        Arrays.stream(parseColumn(columns)).forEach(x -> adapter(DbSymbol.GROUP_BY, true, x));
+        return childrenClass;
     }
 
     @Override
@@ -215,7 +224,7 @@ public class LambdaConditionEntity<T> extends ConditionAssembly<T, SFunction<T, 
         setCls(entityClass);
         TableSqlBuilder<T> tableSqlBuilder = getTableParserModelCache(entityClass);
         setTableSqlBuilder(tableSqlBuilder);
-        columnParseHandler = new ColumnParseHandler<>(entityClass, tableSqlBuilder.getFields());
+        columnParseHandler = new ColumnParseHandler<>(entityClass);
     }
 
 

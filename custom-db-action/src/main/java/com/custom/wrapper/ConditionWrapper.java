@@ -53,6 +53,16 @@ public abstract class ConditionWrapper<T> implements Serializable {
      * 排序
      */
     private final StringJoiner orderBy = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+    /**
+     * 分组
+     */
+    private final StringJoiner groupBy = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+    /**
+     * 筛选
+     */
+    private final StringBuilder having = new StringBuilder();
+    private final List<Object> havingParams = new ArrayList<>();
+
 
     protected TableSqlBuilder<T> getTableSqlBuilder() {
         return tableSqlBuilder;
@@ -100,6 +110,18 @@ public abstract class ConditionWrapper<T> implements Serializable {
 
     public StringJoiner getOrderBy() {
         return orderBy;
+    }
+
+    public StringJoiner getGroupBy() {
+        return groupBy;
+    }
+
+    public StringBuilder getHaving() {
+        return having;
+    }
+
+    public List<Object> getHavingParams() {
+        return havingParams;
     }
 
     protected TableSqlBuilder<T> getTableParserModelCache(Class<T> key) {

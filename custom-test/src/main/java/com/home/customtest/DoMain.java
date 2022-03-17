@@ -10,7 +10,6 @@ import com.home.customtest.entity.Student;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * @Author Xiao-Bai
@@ -33,7 +32,7 @@ public class DoMain {
         DbCustomStrategy dbCustomStrategy = new DbCustomStrategy();
         dbCustomStrategy.setSqlOutPrinting(true);
         dbCustomStrategy.setSqlOutUpdate(true);
-//        dbCustomStrategy.setSqlOutPrintExecute(true);
+        dbCustomStrategy.setSqlOutPrintExecute(true);
         dbCustomStrategy.setUnderlineToCamel(true);
         dbCustomStrategy.setDbFieldDeleteLogic("state");
         dbCustomStrategy.setDeleteLogicValue("1");
@@ -46,22 +45,34 @@ public class DoMain {
         TableInfoCache.setUnderlineToCamel(true);
 
 
-        List<Student> students1 = customDao.selectList(Student.class, Conditions.lambdaConditionQuery(Student.class)
+//        SqlFunc<Student> dbFunction = new SqlFunc<>(Student.class);
+//        dbFunction.avg(Student::getAge).max(Student::getId).min(Student::getCityId).sum(Student::getAge)
+//                        .count(Student::getId, true);
+//        System.out.println("dbFunction.getSelectColumns() = " + dbFunction.getSelectColumns());
+
+//        Student student = customDao.selectOne(Conditions.lambdaConditionQuery(Student.class)
+//                .select(x -> x.sum(Student::getAge)).isNotNull(Student::getArea)
+//        );
+
+//        System.out.println("student = " + student);
+
+        long time = System.currentTimeMillis();
+        List<Student> students = customDao.selectList(Student.class, Conditions.lambdaConditionQuery(Student.class)
+                .select(Student::getAge)
+                .select(x -> x.sum(Student::getAge, Student::getArea) )
                 .ge(Student::getAge, 22).like(Student::getAddress, "山东")
                 .between(Student::getAge, 21, 25)
-                .select(Student::getName, Student::getProvince, Student::getCity, Student::getArea)
-                .or(x -> x.select(Student::getAge)
-                        .exists("select 1 from student2 stu2 where stu2.id = a.id and stu2.password = '12345678zcy'")
-                        .like(Student::getArea, "哈哈")
+                .or(x -> x.like(Student::getArea, "哈哈")
                         .orderByAsc(Student::getId)
                         .orderByDesc(Student::getProvince)
                 ).or().in(Student::getAreaId, Arrays.asList(1,5,8,9))
                 .isNull(Student::getName)
-                .and(new LambdaConditionEntity<>(Student.class))
-                .or().or().or().likeLeft(Student::getAddress, "济南")
+                .or().or().likeLeft(Student::getAddress, "济南")
+                        .groupBy(Student::getAge)
         );
 
-        System.out.println("students1 = " + students1);
+        System.out.println("students = " + students);
+
 
     }
 

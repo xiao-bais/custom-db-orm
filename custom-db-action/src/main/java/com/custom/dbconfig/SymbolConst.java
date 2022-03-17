@@ -26,6 +26,8 @@ public class SymbolConst {
     public final static String DESC = "desc";//desc
     public final static String UPDATE = "update ";//update
     public final static String WHERE = " where ";//where
+    public final static String GROUP_BY = "\ngroup by ";//where
+    public final static String HAVING = "\nhaving ";//where
 
 
 

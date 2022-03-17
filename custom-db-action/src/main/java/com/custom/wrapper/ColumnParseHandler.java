@@ -1,6 +1,7 @@
 package com.custom.wrapper;
 
 import com.custom.comm.CustomUtil;
+import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.sqlparser.*;
@@ -9,10 +10,7 @@ import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @Author Xiao-Bai
@@ -22,83 +20,53 @@ import java.util.Optional;
 public class ColumnParseHandler<T> {
 
     private final Class<T> cls;
-
     private final Field[] fields;
-
-    public ColumnParseHandler(Class<T> cls, Field[] fields) {
-        this.cls = cls;
-        this.fields = fields;
-    }
+    private final Map<String, String> fieldMapper;
 
     public ColumnParseHandler(Class<T> cls) {
         this.cls = cls;
-        this.fields = CustomUtil.getFields(cls);
+        TableSqlBuilder<T> tableModel = TableInfoCache.getTableModel(cls);
+        fields = tableModel.getFields();
+        this.fieldMapper = tableModel.getFieldMapper();
     }
+
 
     /**
-     * 获取表字段column
+     * 获取java属性字段
      */
-    public String getColumn(SFunction<T,?> fun) {
-        Field field = getField(fun);
-        TableSqlBuilder<T> tableModel = TableInfoCache.getTableModel(cls);
-        return parseField(field, tableModel);
-    }
-
     @SafeVarargs
-    public final String[] getColumn(SFunction<T, ?>... fun) {
-        Field[] targetFields = parseColumns(fun);
-        TableSqlBuilder<T> tableModel = TableInfoCache.getTableModel(cls);
-        String[] selectColumns = new String[targetFields.length];
-        for (int i = 0; i < targetFields.length; i++) {
-            selectColumns[i] = parseField(targetFields[i], tableModel);
+    public final String[] getField(SFunction<T, ?>... funs) {
+        String[] selectColumns = new String[funs.length];
+        for (int i = 0; i < selectColumns.length; i++) {
+            selectColumns[i] = getField(funs[i]);
         }
         return selectColumns;
     }
 
-
-    private String parseField(Field targetField, TableSqlBuilder<T> tableModel) {
-
-        // 主键解析模板
-        DbKeyParserModel<T> keyParserModel = tableModel.getKeyParserModel();
-        if (keyParserModel != null && keyParserModel.getField().equals(targetField)) {
-            return keyParserModel.getFieldSql();
+    /**
+     * 获取java属性字段对应的表字段
+     */
+    @SafeVarargs
+    public final String[] getColumn(SFunction<T, ?>... funs) {
+        String[] selectColumns = new String[funs.length];
+        for (int i = 0; i < selectColumns.length; i++) {
+            selectColumns[i] = fieldMapper.get(getField(funs[i]));
         }
-        // 除主键外的表字段解析模板
-        List<DbFieldParserModel<T>> fieldParserModels = tableModel.getFieldParserModels();
-        Optional<DbFieldParserModel<T>> firstDbFieldParserModel = fieldParserModels.stream().filter(x -> x.getField().equals(targetField)).findFirst();
-        if(firstDbFieldParserModel.isPresent()) {
-            return firstDbFieldParserModel.get().getFieldSql();
-        }
-
-        // 关联表方式1的解析模板
-        List<DbRelationParserModel<T>> relatedParserModels = tableModel.getRelatedParserModels();
-        Optional<DbRelationParserModel<T>> firstDbRelationParserModel = relatedParserModels.stream().filter(x -> x.getField().equals(targetField)).findFirst();
-        if(firstDbRelationParserModel.isPresent()) {
-            return firstDbRelationParserModel.get().getFieldSql();
-        }
-
-        // 关联表方式2的解析模板
-        List<DbJoinTableParserModel<T>> joinDbMappers = tableModel.getJoinDbMappers();
-        Optional<DbJoinTableParserModel<T>> firstDbJoinTableParserModel = joinDbMappers.stream().filter(x -> x.getField().equals(targetField)).findFirst();
-        if(firstDbJoinTableParserModel.isPresent()) {
-            return firstDbJoinTableParserModel.get().getFieldSql();
-        }
-        throw new CustomCheckException(targetField + " 未找到 @Db*注解");
+        return selectColumns;
     }
 
     /**
-     * 从Function中获取实体的属性字段
+     * 获取java属性字段对应的表字段
      */
-    @SafeVarargs
-    public final Field[] parseColumns(SFunction<T, ?>... fun) {
-        List<Field> fieldList = new ArrayList<>(fun.length);
-        for (SFunction<T, ?> function : fun) {
-            fieldList.add(getField(function));
-        }
-        return fieldList.toArray(new Field[0]);
+    public final String getColumn(SFunction<T, ?> func) {
+        return fieldMapper.get(getField(func));
     }
 
-    public Field getField(SFunction<T, ?> fun) {
+
+    /**
+     * 获取java属性字段
+     */
+    public String getField(SFunction<T, ?> fun) {
         SerializedLambda serializedLambda = getSerializedLambda(fun);
         String implMethodName = serializedLambda.getImplMethodName();
         String fieldName = implMethodName.substring(SymbolConst.GET.length());
@@ -106,7 +74,7 @@ public class ColumnParseHandler<T> {
         String finalFieldName = fieldName;
         Optional<Field> firstField = Arrays.stream(fields).filter(x -> x.getName().equals(finalFieldName)).findFirst();
         if (firstField.isPresent()) {
-            return firstField.get();
+            return firstField.get().getName();
         }
         throw new CustomCheckException(String.format("Unknown method: '%s', not found in class'%s', or please create getter or setter method with boxing type", implMethodName, cls.getName()));
     }

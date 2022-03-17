@@ -23,7 +23,7 @@ public class JudgeUtilsAx {
     }
 
     public static boolean isEmpty(Object el) {
-        if(el == null) return true;
+        if(el == null || "".equals(el.toString())) return true;
 
         if(el instanceof String)
             return isEmpty(el.toString().trim());

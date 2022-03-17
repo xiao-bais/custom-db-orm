@@ -23,7 +23,7 @@ import java.util.function.Consumer;
  **/
 @SuppressWarnings("all")
 public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper<T>
-        implements ConditionSplice<Children, R>, SelectFunction<Children, R> {
+        implements ConditionSplice<Children>, SelectFunction<Children, T, R> {
 
 
     /**
@@ -125,6 +125,13 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
             case ORDER_BY:
                 getOrderBy().add(column);
                 break;
+            case GROUP_BY:
+                getGroupBy().add(column);
+                break;
+            case HAVING:
+                getHaving().append(column);
+                getHavingParams().addAll((List<Object>)val1);
+                break;
         }
         if(CustomUtil.isNotBlank(getLastCondition())) {
             getFinalCondition().append(getLastCondition());
@@ -173,7 +180,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
     /**
      * 拼接大条件
      */
-    public Children spliceCondition(boolean condition, boolean spliceType, ConditionWrapper<T> wrapper) {
+    protected Children spliceCondition(boolean condition, boolean spliceType, ConditionWrapper<T> wrapper) {
         if(condition && wrapper != null) {
             handleNewCondition(spliceType, wrapper);
         }
@@ -189,7 +196,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
 
         // 1. 合并查询列-select
         if (conditionEntity.getSelectColumns() != null) {
-            mergeSelect(conditionEntity);
+            mergeSelect(conditionEntity.getSelectColumns());
         }
         // 2. 合并添加条件-condition
         if (JudgeUtilsAx.isNotEmpty(conditionEntity.getFinalConditional())) {
@@ -205,19 +212,19 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
     /**
      * 合并查询列(数组合并)
      */
-    private void mergeSelect(ConditionWrapper<T> conditionEntity) {
-        if(conditionEntity.getSelectColumns() != null) {
+    protected void mergeSelect(String[] selectColumns) {
+        if(selectColumns != null) {
             if(getSelectColumns() == null) {
-                setSelectColumns(conditionEntity.getSelectColumns());
+                setSelectColumns(selectColumns);
             }else {
                 int thisLen = getSelectColumns().length;
-                int addLen = conditionEntity.getSelectColumns().length;
+                int addLen = selectColumns.length;
                 String[] newSelectColumns = new String[thisLen + addLen];
                 for (int i = 0; i < newSelectColumns.length; i++) {
                     if(i <= thisLen - 1) {
                         newSelectColumns[i] = getSelectColumns()[i];
                     }else {
-                        newSelectColumns[i] = conditionEntity.getSelectColumns()[i - thisLen];
+                        newSelectColumns[i] = selectColumns[i - thisLen];
                     }
                 }
                 setSelectColumns(newSelectColumns);
@@ -243,7 +250,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
     /**
      * 合并消费类型的条件
      */
-    public Children mergeConsmerCondition(boolean condition, boolean spliceType, Consumer<Children> consumer) {
+    protected Children mergeConsmerCondition(boolean condition, boolean spliceType, Consumer<Children> consumer) {
         if (condition) {
             Children instance = getInstance();
             consumer.accept(instance);
@@ -252,6 +259,11 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
         return childrenClass;
     }
 
+    @Override
+    public Children having(boolean condition, String havingSql, Object... params) {
+        appendCondition(DbSymbol.HAVING, condition, havingSql, params, null, null);
+        return childrenClass;
+    }
 
     protected final Children childrenClass = (Children) this;
     protected static String appendSybmol = SymbolConst.AND;

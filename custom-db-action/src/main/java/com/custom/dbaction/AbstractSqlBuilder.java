@@ -4,6 +4,7 @@ import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.SymbolConst;
+import com.custom.enums.DbSymbol;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
 import com.custom.interfaces.LogicDeleteFieldSqlHandler;
@@ -248,6 +249,27 @@ public abstract class AbstractSqlBuilder {
             tableSqlBuilder.getKeyParserModel().setEntity(entity);
         }
         tableSqlBuilder.getFieldParserModels().forEach(fieldParserModel -> fieldParserModel.setEntity(entity));
+    }
+
+    /**
+     * 公共获取查询sql
+     */
+    protected  <T> String getFullSelectSql(Class<T> t, ConditionWrapper<T> wrapper) throws Exception {
+        TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t);
+        StringBuilder selectSql = new StringBuilder();
+        if(wrapper.getSelectColumns() != null) {
+            selectSql.append(tableSqlBuilder.selectColumns(wrapper.getSelectColumns()));
+        }else {
+            selectSql.append(tableSqlBuilder.getSelectSql());
+        }
+        selectSql.append(checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), wrapper.getFinalConditional(), getLogicDeleteQuerySql(), tableSqlBuilder.getTable()));
+        if(JudgeUtilsAx.isNotEmpty(wrapper.getGroupBy())) {
+            selectSql.append(SymbolConst.GROUP_BY).append(wrapper.getGroupBy());
+        }
+        if(JudgeUtilsAx.isNotEmpty(wrapper.getHaving())) {
+            selectSql.append(SymbolConst.HAVING).append(wrapper.getHaving());
+        }
+        return selectSql.toString();
     }
 
 

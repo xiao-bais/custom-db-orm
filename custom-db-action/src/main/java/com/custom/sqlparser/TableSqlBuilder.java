@@ -60,24 +60,31 @@ public class TableSqlBuilder<T> implements Cloneable{
     /**
      * @Desc:查询的sql语句
      */
-    private StringBuilder selectSql = new StringBuilder();
+    private final StringBuilder selectSql = new StringBuilder();
     /**
      * @Desc:插入的sql语句
      */
-    private StringJoiner insertSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+    private final StringJoiner insertSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
     /**
      * @Desc:插入的`?`
      */
-    private StringJoiner insetSymbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1);
+    private final StringJoiner insetSymbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1);
     /**
      * @Desc:对象的所有值
      */
-    private List<Object> objValues = new ArrayList<>();
+    private final List<Object> objValues = new ArrayList<>();
     /**
      * @desc:修改的sql语句
      */
-    private StringBuilder updateSql = new StringBuilder();
-
+    private final StringBuilder updateSql = new StringBuilder();
+    /**
+     * @desc:对于java属性字段到表字段的映射关系
+     */
+    private final Map<String, String> fieldMapper = new HashMap<>();
+    /**
+     * @desc:对于表字段到java属性字段的映射关系
+     */
+    private final Map<String, String>  columnMapper= new HashMap<>();
 
 
     /**
@@ -124,39 +131,8 @@ public class TableSqlBuilder<T> implements Cloneable{
     public String selectColumns(String[] columns) {
         StringJoiner columnStr = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
         for (String x : columns) {
-            boolean isPoint = x.contains(SymbolConst.POINT);
-            boolean isMatch = false;
-            if (keyParserModel != null && (x.equals(keyParserModel.getDbKey()) || x.equals(keyParserModel.getFieldSql()))) {
-                columnStr.add(isPoint ? keyParserModel.getSelectFieldSql(x) : keyParserModel.getSelectFieldSql());
-                isMatch = true;
-            }
-            if (!fieldParserModels.isEmpty() && !isMatch) {
-                Optional<DbFieldParserModel<T>> firstDbFieldParserModel = fieldParserModels.stream().filter(field -> field.getColumn().equals(x) || field.getFieldSql().equals(x)).findFirst();
-                if (firstDbFieldParserModel.isPresent()) {
-                    DbFieldParserModel<T> fieldParserModel = firstDbFieldParserModel.get();
-                    columnStr.add(isPoint ? fieldParserModel.getSelectFieldSql(x) : fieldParserModel.getSelectFieldSql());
-                    isMatch = true;
-                }
-            }
-            if (!relatedParserModels.isEmpty()  && !isMatch) {
-                Optional<DbRelationParserModel<T>> firstDbFieldParserModel = relatedParserModels.stream().filter(field -> field.getFieldSql().equals(x)).findFirst();
-                if (firstDbFieldParserModel.isPresent()) {
-                    DbRelationParserModel<T> relationParserModel = firstDbFieldParserModel.get();
-                    columnStr.add(relationParserModel.getSelectFieldSql(x));
-                    isMatch = true;
-                }
-            }
-            if (!joinDbMappers.isEmpty() && !isMatch) {
-                Optional<DbJoinTableParserModel<T>> firstDbJoinTableParserModel = joinDbMappers.stream().filter(field -> field.getJoinName().equals(x)).findFirst();
-                if(firstDbJoinTableParserModel.isPresent()) {
-                    DbJoinTableParserModel<T> model = firstDbJoinTableParserModel.get();
-                    columnStr.add(model.getSelectFieldSql());
-                    isMatch = true;
-                }
-            }
-            if (!isMatch){
-                columnStr.add(x);
-            }
+            String field = columnMapper.get(x);
+            columnStr.add(field == null ? x : String.format("%s %s", x, field));
         }
         String selectSql = getSelectSql();
         selectSql = String.format("select %s\n %s", columnStr, selectSql.substring(selectSql.indexOf("from")));
@@ -407,6 +383,35 @@ public class TableSqlBuilder<T> implements Cloneable{
 
 
     /**
+     * 构建字段映射
+     */
+    private void buildMapper() {
+        if(keyParserModel != null) {
+            columnMapper.put(keyParserModel.getFieldSql(), keyParserModel.getKey());
+            fieldMapper.put(keyParserModel.getKey(), keyParserModel.getFieldSql());
+        }
+        if(!fieldParserModels.isEmpty()) {
+            fieldParserModels.forEach(x -> {
+                columnMapper.put(x.getFieldSql(), x.getFieldName());
+                fieldMapper.put(x.getFieldName(), x.getFieldSql());
+            });
+        }
+        if(!joinDbMappers.isEmpty()) {
+            joinDbMappers.forEach(x -> {
+                columnMapper.put(x.getJoinName(), x.getFieldName());
+                fieldMapper.put(x.getFieldName(), x.getJoinName());
+            });
+        }
+        if(!relatedParserModels.isEmpty()) {
+            relatedParserModels.forEach(x -> {
+                columnMapper.put(x.getFieldSql(), x.getFieldName());
+                fieldMapper.put(x.getFieldName(), x.getFieldSql());
+            });
+        }
+    }
+
+
+    /**
      * 初始化
      */
     void initTableBuild(ExecuteMethod method) {
@@ -448,42 +453,7 @@ public class TableSqlBuilder<T> implements Cloneable{
             this.fields = CustomUtil.getFields(this.cls);
             initTableBuild(method);
         }
-    }
-
-    public TableSqlBuilder(Class<T> cls, ExecuteMethod method, Field[] fields) {
-        this.cls = cls;
-        DbTable annotation = cls.getAnnotation(DbTable.class);
-        this.alias = annotation.alias();
-        this.table = annotation.table();
-        this.desc = annotation.desc();
-        if(method != ExecuteMethod.NONE && fields != null) {
-            this.fields = fields;
-            initTableBuild(method);
-        }
-    }
-
-    public TableSqlBuilder(T t, boolean isBuildUpdateModels) {
-        this.entity = t;
-        this.list = new ArrayList<>();
-        this.list.add(t);
-        DbTable annotation = t.getClass().getAnnotation(DbTable.class);
-        this.fields = CustomUtil.getFields(t.getClass());
-        this.alias = annotation.alias();
-        this.table = annotation.table();
-        this.desc = annotation.desc();
-        buildUpdateModels(isBuildUpdateModels);
-    }
-
-    public TableSqlBuilder(List<T> tList) {
-        if(tList == null) throw new NullPointerException();
-        this.list = tList;
-        this.entity = tList.get(0);
-        DbTable annotation = entity.getClass().getAnnotation(DbTable.class);
-        this.fields = CustomUtil.getFields(entity.getClass());
-        this.alias = annotation.alias();
-        this.table = annotation.table();
-        this.desc = annotation.desc();
-        buildUpdateModels(false);
+        buildMapper();
     }
 
     /**
@@ -637,8 +607,12 @@ public class TableSqlBuilder<T> implements Cloneable{
         return joinDbMappers;
     }
 
-    public void setUnderlineToCamel(boolean underlineToCamel) {
-        this.underlineToCamel = underlineToCamel;
+    public Map<String, String> getFieldMapper() {
+        return fieldMapper;
+    }
+
+    public Map<String, String> getColumnMapper() {
+        return columnMapper;
     }
 
     @Override

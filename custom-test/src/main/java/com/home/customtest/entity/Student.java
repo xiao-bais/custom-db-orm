@@ -33,7 +33,7 @@ public class Student {
     private String password;
 
     @DbField
-    private String age;
+    private Integer age;
 
     @DbField
     private Boolean sex;
