@@ -14,8 +14,8 @@ public interface ConditionSplice<Children> {
     /**
      * 拼接sql的or条件
      * 例如：where a.age = 30 or (a.name = 'zhangsan')
-     * @param wrapper
-     * @return children
+     * @param wrapper 条件构造对象
+     * @return Children
      */
     Children or(boolean condition, Children wrapper);
     default Children or(Children wrapper) {
@@ -24,9 +24,9 @@ public interface ConditionSplice<Children> {
 
     /**
      * 消费型
-     * @param condition
-     * @param consumer
-     * @return
+     * @param condition 是否满足条件
+     * @param consumer 条件构造对象
+     * @return Children
      */
     Children or(boolean condition, Consumer<Children> consumer);
     default Children or(Consumer<Children> consumer) {
@@ -40,8 +40,8 @@ public interface ConditionSplice<Children> {
      * 例：若condition = false
      * 则1：or(false).eq(false).gt(false).....
      * 则2：or(false).eq(false).gt(false).or(new().eq(true/false)).ge(true).....
-     * @param condition
-     * @return
+     * @param condition 是否满足条件
+     * @return Children
      */
     Children or(boolean condition);
     default Children or() {
@@ -51,7 +51,7 @@ public interface ConditionSplice<Children> {
     /**
      * 拼接sql的and条件
      * 例如：where a.age = 30 and (a.name = 'zhangsan')
-     * @param wrapper
+     * @param wrapper 条件构造对象
      * @return children
      */
     Children and(boolean condition, Children wrapper);
@@ -61,9 +61,9 @@ public interface ConditionSplice<Children> {
 
     /**
      * 消费型
-     * @param condition
-     * @param consumer
-     * @return
+     * @param condition 是否满足条件
+     * @param consumer 消费型条件构造对象
+     * @return children
      */
     Children and(boolean condition, Consumer<Children> consumer);
     default Children and(Consumer<Children> consumer) {

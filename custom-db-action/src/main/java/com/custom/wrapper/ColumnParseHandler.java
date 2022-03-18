@@ -50,7 +50,12 @@ public class ColumnParseHandler<T> {
     public final String[] getColumn(SFunction<T, ?>... funs) {
         String[] selectColumns = new String[funs.length];
         for (int i = 0; i < selectColumns.length; i++) {
-            selectColumns[i] = fieldMapper.get(getField(funs[i]));
+            String field = getField(funs[i]);
+            String targetField = fieldMapper.get(field);
+            if(targetField == null) {
+                throw new CustomCheckException("属性" + field + "上未标注Db*注解");
+            }
+            selectColumns[i] = targetField;
         }
         return selectColumns;
     }

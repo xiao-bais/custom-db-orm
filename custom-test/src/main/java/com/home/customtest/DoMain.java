@@ -58,7 +58,7 @@ public class DoMain {
 
         long time = System.currentTimeMillis();
         List<Student> students = customDao.selectList(Student.class, Conditions.lambdaConditionQuery(Student.class)
-                .select(Student::getAge)
+                .select(Student::getSumAge)
                 .select(x -> x.sum(Student::getAge, Student::getArea) )
                 .ge(Student::getAge, 22).like(Student::getAddress, "山东")
                 .between(Student::getAge, 21, 25)

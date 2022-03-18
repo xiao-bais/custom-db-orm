@@ -31,7 +31,7 @@ public enum SqlAggregate {
     /**
      * 如果空
      */
-    IFNULL
+    IF_NULL
 
 
 }

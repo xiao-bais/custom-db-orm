@@ -71,4 +71,11 @@ public class Student {
     @DbMapper("lo.name")
     private String area;
 
+    private Integer sumAge;
+    private Integer ifNullAge;
+    private Integer countAge;
+    private Integer minAge;
+    private Integer maxAge;
+    private Integer avgAge;
+
 }

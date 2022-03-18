@@ -7,6 +7,7 @@ import java.util.function.Consumer;
  * @Date 2022/3/15 15:43
  * @Desc：查询函数接口
  **/
+@SuppressWarnings("all")
 public interface SelectFunction<Children, T, R> {
 
     /**
@@ -41,6 +42,17 @@ public interface SelectFunction<Children, T, R> {
         return having(true, havingSql, params);
     }
 
-    
+    /**
+     *  limit分页
+     * @param condition 是否满足条件
+     * @param pageIndex 第几页
+     * @param pageSize 每页的记录数量
+     * @return
+     */
+    Children limit(boolean condition, Integer pageIndex, Integer pageSize);
+    default Children limit(Integer pageIndex, Integer pageSize) {
+        return limit(true, pageIndex, pageSize);
+    }
+
 
 }

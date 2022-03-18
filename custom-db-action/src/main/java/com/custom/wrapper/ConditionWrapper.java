@@ -63,6 +63,12 @@ public abstract class ConditionWrapper<T> implements Serializable {
     private final StringBuilder having = new StringBuilder();
     private final List<Object> havingParams = new ArrayList<>();
 
+    /**
+     * 分页
+     */
+    private Integer pageIndex;
+    private Integer pageSize;
+
 
     protected TableSqlBuilder<T> getTableSqlBuilder() {
         return tableSqlBuilder;
@@ -122,6 +128,22 @@ public abstract class ConditionWrapper<T> implements Serializable {
 
     public List<Object> getHavingParams() {
         return havingParams;
+    }
+
+    public Integer getPageIndex() {
+        return pageIndex;
+    }
+
+    public void setPageIndex(Integer pageIndex) {
+        this.pageIndex = pageIndex;
+    }
+
+    public Integer getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
     }
 
     protected TableSqlBuilder<T> getTableParserModelCache(Class<T> key) {

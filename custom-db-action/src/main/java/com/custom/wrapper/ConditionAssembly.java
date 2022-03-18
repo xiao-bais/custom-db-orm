@@ -265,6 +265,19 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
         return childrenClass;
     }
 
+    @Override
+    public Children limit(boolean condition, Integer pageIndex, Integer pageSize) {
+        if(pageIndex == null || pageSize == null) {
+            throw new CustomCheckException("分页参数不可为空");
+        }
+        setPageIndex(pageIndex);
+        setPageSize(pageSize);
+        return childrenClass;
+    }
+
+
+
+
     protected final Children childrenClass = (Children) this;
     protected static String appendSybmol = SymbolConst.AND;
     /**
