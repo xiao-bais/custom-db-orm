@@ -8,13 +8,13 @@ import java.util.function.Consumer;
  * @Desc：查询函数接口
  **/
 @SuppressWarnings("all")
-public interface SelectFunction<Children, T, R> {
+public interface SelectFunction<Children, T, Param> {
 
     /**
      * 自定义查询字段
      */
     @SuppressWarnings("all")
-    Children select(R... columns);
+    Children select(Param... columns);
     
     /**
      * sql函数的查询接口
@@ -22,14 +22,14 @@ public interface SelectFunction<Children, T, R> {
      * @param consumer x -> x.sum(Student::getAge)
      * @return Children
      */
-    Children select(Consumer<SqlFunc<T>> consumer);
+    Children select(Consumer<SqlSelectFunc<T>> consumer);
 
     /**
      * group by分组
      * @param columns 表字段名称
      * @return Children
      */
-    Children groupBy(R... columns);
+    Children groupBy(Param... columns);
 
     /**
      * having函数
@@ -54,5 +54,27 @@ public interface SelectFunction<Children, T, R> {
         return limit(true, pageIndex, pageSize);
     }
 
+
+    /**
+     * order by排序（升序）
+     * @param condition 是否满足排序的条件
+     * @param consumer 消费型排序函数
+     * @return Children
+     */
+    Children orderByAsc(boolean condition, Consumer<SqlOrderByFunc<T>> consumer);
+    default Children orderByAsc(Consumer<SqlOrderByFunc<T>> consumer) {
+        return orderByAsc(true, consumer);
+    }
+
+    /**
+     * order by排序（降序）
+     * @param condition 是否满足排序的条件
+     * @param consumer 消费型排序函数
+     * @return Children
+     */
+    Children orderByDesc(boolean condition, Consumer<SqlOrderByFunc<T>> consumer);
+    default Children orderByDesc(Consumer<SqlOrderByFunc<T>> consumer) {
+        return orderByDesc(true, consumer);
+    }
 
 }

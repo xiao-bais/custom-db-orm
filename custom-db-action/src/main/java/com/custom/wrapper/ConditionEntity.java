@@ -6,6 +6,7 @@ import com.custom.sqlparser.TableSqlBuilder;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * @Author Xiao-Bai
@@ -103,20 +104,14 @@ public class ConditionEntity<T> extends ConditionAssembly<T, String, ConditionEn
 
     @Override
     public ConditionEntity<T> orderByAsc(boolean condition, String... columns) {
-        StringBuilder orderBy = new StringBuilder(SymbolConst.EMPTY);
-        for (String column : columns) {
-            orderBy.append(orderByField(column, SqlOrderBy.ASC));
-        }
-        return adapter(DbSymbol.ORDER_BY, condition, orderBy.toString());
+        String orderBy = Arrays.stream(columns).map(column -> orderByField(column, SqlOrderBy.ASC)).collect(Collectors.joining("", SymbolConst.EMPTY, ""));
+        return adapter(DbSymbol.ORDER_BY, condition, orderBy);
     }
 
     @Override
     public ConditionEntity<T> orderByDesc(boolean condition, String... columns) {
-        StringBuilder orderBy = new StringBuilder(SymbolConst.EMPTY);
-        for (String column : columns) {
-            orderBy.append(orderByField(column, SqlOrderBy.DESC));
-        }
-        return adapter(DbSymbol.ORDER_BY, condition, orderBy.toString());
+        String orderBy = Arrays.stream(columns).map(column -> orderByField(column, SqlOrderBy.DESC)).collect(Collectors.joining("", SymbolConst.EMPTY, ""));
+        return adapter(DbSymbol.ORDER_BY, condition, orderBy);
     }
 
 
@@ -201,7 +196,7 @@ public class ConditionEntity<T> extends ConditionAssembly<T, String, ConditionEn
 
 
     @Override
-    public ConditionEntity<T> select(Consumer<SqlFunc<T>> consumer) {
+    public ConditionEntity<T> select(Consumer<SqlSelectFunc<T>> consumer) {
         throw new UnsupportedOperationException();
     }
 
@@ -209,6 +204,16 @@ public class ConditionEntity<T> extends ConditionAssembly<T, String, ConditionEn
     public ConditionEntity<T> groupBy(String... columns) {
         Arrays.stream(columns).forEach(x -> adapter(DbSymbol.GROUP_BY, true, x));
         return childrenClass;
+    }
+
+    @Override
+    public ConditionEntity<T> orderByAsc(boolean condition, Consumer<SqlOrderByFunc<T>> consumer) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public ConditionEntity<T> orderByDesc(boolean condition, Consumer<SqlOrderByFunc<T>> consumer) {
+        throw new UnsupportedOperationException();
     }
 
 }

@@ -134,7 +134,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
         return pageIndex;
     }
 
-    public void setPageIndex(Integer pageIndex) {
+    protected void setPageIndex(Integer pageIndex) {
         this.pageIndex = pageIndex;
     }
 
@@ -142,7 +142,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
         return pageSize;
     }
 
-    public void setPageSize(Integer pageSize) {
+    protected void setPageSize(Integer pageSize) {
         this.pageSize = pageSize;
     }
 

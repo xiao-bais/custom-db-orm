@@ -58,17 +58,19 @@ public class DoMain {
 
         long time = System.currentTimeMillis();
         List<Student> students = customDao.selectList(Student.class, Conditions.lambdaConditionQuery(Student.class)
-                .select(Student::getSumAge)
-                .select(x -> x.sum(Student::getAge, Student::getArea) )
-                .ge(Student::getAge, 22).like(Student::getAddress, "山东")
-                .between(Student::getAge, 21, 25)
-                .or(x -> x.like(Student::getArea, "哈哈")
-                        .orderByAsc(Student::getId)
-                        .orderByDesc(Student::getProvince)
-                ).or().in(Student::getAreaId, Arrays.asList(1,5,8,9))
-                .isNull(Student::getName)
-                .or().or().likeLeft(Student::getAddress, "济南")
+                .select(Student::getAge)
+                .select(x -> x.count(Student::getId, Student::getSumAge))
+
+//                .ge(Student::getAge, 22).like(Student::getAddress, "山东")
+//                .between(Student::getAge, 21, 25)
+//                .or(x -> x.like(Student::getArea, "哈哈")
+//                        .orderByAsc(Student::getId)
+//                        .orderByDesc(Student::getProvince)
+//                ).or().in(Student::getAreaId, Arrays.asList(1,5,8,9))
+//                .isNull(Student::getName)
+//                .or().or().likeLeft(Student::getAddress, "济南")
                         .groupBy(Student::getAge)
+                        .orderByAsc(x -> x.max(null))
         );
 
         System.out.println("students = " + students);

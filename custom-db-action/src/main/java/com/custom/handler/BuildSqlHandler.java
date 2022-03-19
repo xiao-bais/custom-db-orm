@@ -137,7 +137,7 @@ public class BuildSqlHandler extends AbstractSqlBuilder {
     }
 
     @Override
-    public <T> DbPageRows<T> selectPageRows(Class<T> t, DbPageRows<T> dbPageRows, ConditionWrapper<T> wrapper) throws Exception {
+    public <T> DbPageRows<T> selectPageRows(Class<T> t, ConditionWrapper<T> wrapper) throws Exception {
         return null;
     }
 

@@ -108,8 +108,8 @@ public class CustomDao {
     /**
      * 条件构造器查询
      */
-    public <T> DbPageRows<T> selectPageRows(Class<T> t, DbPageRows<T> dbPageRows, ConditionWrapper<T> wrapper) throws Exception {
-        return jdbcAction.selectPageRows(t, dbPageRows, wrapper);
+    public <T> DbPageRows<T> selectPageRows(Class<T> t, ConditionWrapper<T> wrapper) throws Exception {
+        return jdbcAction.selectPageRows(t, wrapper);
     }
 
     /**

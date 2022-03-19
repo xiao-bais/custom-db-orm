@@ -28,6 +28,7 @@ public enum DbSymbol {
     NOT_IN("not in"),
     ORDER_BY("order by"),
     IN("in"),
+    SELECT("select"),
     GROUP_BY("group by"),
     HAVING("having");
 

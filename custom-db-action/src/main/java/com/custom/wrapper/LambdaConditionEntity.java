@@ -94,11 +94,8 @@ public class LambdaConditionEntity<T> extends ConditionAssembly<T, SFunction<T, 
     }
 
     @Override
-    public LambdaConditionEntity<T> select(Consumer<SqlFunc<T>> consumer) {
-        SqlFunc<T> sqlFunc = new SqlFunc<>(getCls());
-        consumer.accept(sqlFunc);
-        mergeSelect(sqlFunc.getSelectColumns().split(SymbolConst.SEPARATOR_COMMA_2));
-        return childrenClass;
+    public LambdaConditionEntity<T> select(Consumer<SqlSelectFunc<T>> consumer) {
+        return doSelectSqlFunc(consumer);
     }
 
     @SafeVarargs
@@ -106,6 +103,16 @@ public class LambdaConditionEntity<T> extends ConditionAssembly<T, SFunction<T, 
     public final LambdaConditionEntity<T> groupBy(SFunction<T, ?>... columns) {
         Arrays.stream(parseColumn(columns)).forEach(x -> adapter(DbSymbol.GROUP_BY, true, x));
         return childrenClass;
+    }
+
+    @Override
+    public LambdaConditionEntity<T> orderByAsc(boolean condition, Consumer<SqlOrderByFunc<T>> consumer) {
+        return doOrderBySqlFunc(SymbolConst.ASC, consumer);
+    }
+
+    @Override
+    public LambdaConditionEntity<T> orderByDesc(boolean condition, Consumer<SqlOrderByFunc<T>> consumer) {
+        return doOrderBySqlFunc(SymbolConst.DESC, consumer);
     }
 
     @Override
@@ -197,20 +204,14 @@ public class LambdaConditionEntity<T> extends ConditionAssembly<T, SFunction<T, 
     @SafeVarargs
     @Override
     public final LambdaConditionEntity<T> orderByAsc(boolean condition, SFunction<T, ?>... columns) {
-        for (String column : parseColumn(columns)) {
-            String orderByField = orderByField(column, SqlOrderBy.ASC);
-            adapter(DbSymbol.ORDER_BY, condition, orderByField);
-        }
+        Arrays.stream(parseColumn(columns)).map(column -> orderByField(column, SqlOrderBy.ASC)).forEach(orderByField -> adapter(DbSymbol.ORDER_BY, condition, orderByField));
         return childrenClass;
     }
 
     @SafeVarargs
     @Override
     public final LambdaConditionEntity<T> orderByDesc(boolean condition, SFunction<T, ?>... columns) {
-        for (String column : parseColumn(columns)) {
-            String orderByField = orderByField(column, SqlOrderBy.DESC);
-            adapter(DbSymbol.ORDER_BY, condition, orderByField);
-        }
+        Arrays.stream(parseColumn(columns)).map(column -> orderByField(column, SqlOrderBy.DESC)).forEach(orderByField -> adapter(DbSymbol.ORDER_BY, condition, orderByField));
         return childrenClass;
     }
 
@@ -241,6 +242,25 @@ public class LambdaConditionEntity<T> extends ConditionAssembly<T, SFunction<T, 
     @SafeVarargs
     private final String[] parseColumn(SFunction<T, ?>... func) {
         return columnParseHandler.getColumn(func);
+    }
+
+    /**
+     * sql查询函数执行方法
+     */
+    private LambdaConditionEntity<T> doSelectSqlFunc(Consumer<SqlSelectFunc<T>> consumer) {
+        SqlSelectFunc<T> sqlFunc = new SqlSelectFunc<>(getCls());
+        consumer.accept(sqlFunc);
+        mergeSelect(sqlFunc.getColumns().split(SymbolConst.SEPARATOR_COMMA_2));
+        return childrenClass;
+    }
+
+    /**
+     * sql排序函数执行方法
+     */
+    private LambdaConditionEntity<T> doOrderBySqlFunc(String orderByStyle, Consumer<SqlOrderByFunc<T>> consumer) {
+        SqlOrderByFunc<T> sqlFunc = new SqlOrderByFunc<>(getCls(), orderByStyle);
+        consumer.accept(sqlFunc);
+        return adapter(DbSymbol.ORDER_BY, true, sqlFunc.getColumns());
     }
 
 

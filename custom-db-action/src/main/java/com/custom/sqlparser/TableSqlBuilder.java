@@ -6,6 +6,7 @@ import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.DbFieldsConst;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.ExecuteMethod;
+import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -445,6 +446,12 @@ public class TableSqlBuilder<T> implements Cloneable{
     public TableSqlBuilder(Class<T> cls, ExecuteMethod method, boolean underlineToCamel) {
         this.cls = cls;
         DbTable annotation = cls.getAnnotation(DbTable.class);
+        if(annotation == null) {
+            throw new CustomCheckException(cls.getName() + "未标注@DbTable注解");
+        }
+        if(JudgeUtilsAx.isEmpty(annotation.table())) {
+            throw new CustomCheckException(cls.getName() + "未指定@DbTable注解上实体映射的表名");
+        }
         this.alias = annotation.alias();
         this.table = annotation.table();
         this.desc = annotation.desc();

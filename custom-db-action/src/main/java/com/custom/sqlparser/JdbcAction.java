@@ -115,13 +115,12 @@ public class JdbcAction extends AbstractSqlBuilder {
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> DbPageRows<T> selectPageRows(Class<T> t, DbPageRows<T> dbPageRows, ConditionWrapper<T> wrapper) throws Exception {
+    public <T> DbPageRows<T> selectPageRows(Class<T> t, ConditionWrapper<T> wrapper) throws Exception {
+        DbPageRows<T> dbPageRows = new DbPageRows<>();
         if(wrapper == null) {
-            return selectPageRows(t, null,null, dbPageRows);
+            throw new NullPointerException("缺少分页参数");
         }
-        if(dbPageRows == null) {
-            dbPageRows = new DbPageRows<>();
-        }
+        dbPageRows.setPageIndex(wrapper.getPageIndex()).setPageSize(wrapper.getPageSize());
         String selectSql = getFullSelectSql(t, wrapper);
         String condition = SymbolConst.EMPTY;
         if(CustomUtil.isNotBlank(wrapper.getOrderBy().toString())) {

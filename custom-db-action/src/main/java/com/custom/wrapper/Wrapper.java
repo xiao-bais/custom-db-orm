@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -12,7 +13,7 @@ import java.util.stream.Collectors;
  * @Desc：顶级条件构造器
  * column: 表字段
  **/
-@SuppressWarnings("unchecked")
+@SuppressWarnings("all")
 public interface Wrapper<Param, Result>  {
 
     Result eq(boolean condition, Param column, Object val);
@@ -111,14 +112,10 @@ public interface Wrapper<Param, Result>  {
     }
 
     Result orderByAsc(boolean condition, Param... columns);
-
-    @SuppressWarnings("all")
     default Result orderByAsc(Param... columns) {
         return orderByAsc(true, columns);
     }
 
-
-    @SuppressWarnings("all")
     Result orderByDesc(boolean condition, Param... columns);
     default Result orderByDesc(Param... columns) {
         return orderByDesc(true, columns);
