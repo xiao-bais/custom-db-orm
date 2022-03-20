@@ -94,7 +94,7 @@ public class LambdaConditionEntity<T> extends ConditionAssembly<T, SFunction<T, 
     }
 
     @Override
-    public LambdaConditionEntity<T> select(Consumer<SqlSelectFunc<T>> consumer) {
+    public LambdaConditionEntity<T> select(Consumer<SelectFunc<T>> consumer) {
         return doSelectSqlFunc(consumer);
     }
 
@@ -106,12 +106,12 @@ public class LambdaConditionEntity<T> extends ConditionAssembly<T, SFunction<T, 
     }
 
     @Override
-    public LambdaConditionEntity<T> orderByAsc(boolean condition, Consumer<SqlOrderByFunc<T>> consumer) {
+    public LambdaConditionEntity<T> orderByAsc(boolean condition, Consumer<OrderByFunc<T>> consumer) {
         return doOrderBySqlFunc(SymbolConst.ASC, consumer);
     }
 
     @Override
-    public LambdaConditionEntity<T> orderByDesc(boolean condition, Consumer<SqlOrderByFunc<T>> consumer) {
+    public LambdaConditionEntity<T> orderByDesc(boolean condition, Consumer<OrderByFunc<T>> consumer) {
         return doOrderBySqlFunc(SymbolConst.DESC, consumer);
     }
 
@@ -247,8 +247,8 @@ public class LambdaConditionEntity<T> extends ConditionAssembly<T, SFunction<T, 
     /**
      * sql查询函数执行方法
      */
-    private LambdaConditionEntity<T> doSelectSqlFunc(Consumer<SqlSelectFunc<T>> consumer) {
-        SqlSelectFunc<T> sqlFunc = new SqlSelectFunc<>(getCls());
+    private LambdaConditionEntity<T> doSelectSqlFunc(Consumer<SelectFunc<T>> consumer) {
+        SelectFunc<T> sqlFunc = new SelectFunc<>(getCls());
         consumer.accept(sqlFunc);
         mergeSelect(sqlFunc.getColumns().split(SymbolConst.SEPARATOR_COMMA_2));
         return childrenClass;
@@ -257,8 +257,8 @@ public class LambdaConditionEntity<T> extends ConditionAssembly<T, SFunction<T, 
     /**
      * sql排序函数执行方法
      */
-    private LambdaConditionEntity<T> doOrderBySqlFunc(String orderByStyle, Consumer<SqlOrderByFunc<T>> consumer) {
-        SqlOrderByFunc<T> sqlFunc = new SqlOrderByFunc<>(getCls(), orderByStyle);
+    private LambdaConditionEntity<T> doOrderBySqlFunc(String orderByStyle, Consumer<OrderByFunc<T>> consumer) {
+        OrderByFunc<T> sqlFunc = new OrderByFunc<>(getCls(), orderByStyle);
         consumer.accept(sqlFunc);
         return adapter(DbSymbol.ORDER_BY, true, sqlFunc.getColumns());
     }

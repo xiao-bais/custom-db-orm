@@ -1,5 +1,6 @@
 package com.home.customtest;
 
+import com.custom.comm.page.DbPageRows;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.sqlparser.CustomDao;
@@ -57,20 +58,13 @@ public class DoMain {
 //        System.out.println("student = " + student);
 
         long time = System.currentTimeMillis();
-        List<Student> students = customDao.selectList(Student.class, Conditions.lambdaConditionQuery(Student.class)
+        DbPageRows<Student> students = customDao.selectPageRows(Student.class, Conditions.lambdaConditionQuery(Student.class)
                 .select(Student::getAge)
                 .select(x -> x.count(Student::getId, Student::getSumAge))
-
-//                .ge(Student::getAge, 22).like(Student::getAddress, "山东")
-//                .between(Student::getAge, 21, 25)
-//                .or(x -> x.like(Student::getArea, "哈哈")
-//                        .orderByAsc(Student::getId)
-//                        .orderByDesc(Student::getProvince)
-//                ).or().in(Student::getAreaId, Arrays.asList(1,5,8,9))
-//                .isNull(Student::getName)
-//                .or().or().likeLeft(Student::getAddress, "济南")
+                .limit(1, 10)
+//
                         .groupBy(Student::getAge)
-                        .orderByAsc(x -> x.max(null))
+                        .orderByAsc(x -> x.count(Student::getAreaId))
         );
 
         System.out.println("students = " + students);

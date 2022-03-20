@@ -90,7 +90,7 @@ public class ColumnParseHandler<T> {
      * 从Function中获取序列化的信息
      */
     private SerializedLambda getSerializedLambda(SFunction<T, ?> fun) {
-
+        if(fun == null) throw new NullPointerException();
         Method writeMethod;
         SerializedLambda serializedLambda = null;
         try {

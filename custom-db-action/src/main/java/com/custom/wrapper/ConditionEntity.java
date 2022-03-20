@@ -196,7 +196,7 @@ public class ConditionEntity<T> extends ConditionAssembly<T, String, ConditionEn
 
 
     @Override
-    public ConditionEntity<T> select(Consumer<SqlSelectFunc<T>> consumer) {
+    public ConditionEntity<T> select(Consumer<SelectFunc<T>> consumer) {
         throw new UnsupportedOperationException();
     }
 
@@ -207,12 +207,12 @@ public class ConditionEntity<T> extends ConditionAssembly<T, String, ConditionEn
     }
 
     @Override
-    public ConditionEntity<T> orderByAsc(boolean condition, Consumer<SqlOrderByFunc<T>> consumer) {
+    public ConditionEntity<T> orderByAsc(boolean condition, Consumer<OrderByFunc<T>> consumer) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public ConditionEntity<T> orderByDesc(boolean condition, Consumer<SqlOrderByFunc<T>> consumer) {
+    public ConditionEntity<T> orderByDesc(boolean condition, Consumer<OrderByFunc<T>> consumer) {
         throw new UnsupportedOperationException();
     }
 

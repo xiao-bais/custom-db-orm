@@ -137,7 +137,7 @@ public abstract class SqlFunc<T, Child> {
         return columnParseHandler;
     }
 
-    public Map<String, String> getFieldMapper() {
+    protected Map<String, String> getFieldMapper() {
         return fieldMapper;
     }
 

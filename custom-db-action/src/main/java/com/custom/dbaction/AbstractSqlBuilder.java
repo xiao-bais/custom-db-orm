@@ -254,7 +254,7 @@ public abstract class AbstractSqlBuilder {
     /**
      * 公共获取查询sql
      */
-    protected  <T> String getFullSelectSql(Class<T> t, ConditionWrapper<T> wrapper) throws Exception {
+    protected  <T> String getFullSelectSql(Class<T> t, DbPageRows<T> dbPageRows, ConditionWrapper<T> wrapper) throws Exception {
         TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t);
         StringBuilder selectSql = new StringBuilder();
         if(wrapper.getSelectColumns() != null) {
@@ -262,12 +262,22 @@ public abstract class AbstractSqlBuilder {
         }else {
             selectSql.append(tableSqlBuilder.getSelectSql());
         }
-        selectSql.append(checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), wrapper.getFinalConditional(), getLogicDeleteQuerySql(), tableSqlBuilder.getTable()));
+        String condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), wrapper.getFinalConditional(), getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
+        if(dbPageRows != null) {
+            dbPageRows.setCondition(condition);
+        }
+        selectSql.append(condition);
         if(JudgeUtilsAx.isNotEmpty(wrapper.getGroupBy())) {
             selectSql.append(SymbolConst.GROUP_BY).append(wrapper.getGroupBy());
         }
         if(JudgeUtilsAx.isNotEmpty(wrapper.getHaving())) {
             selectSql.append(SymbolConst.HAVING).append(wrapper.getHaving());
+        }
+        if(CustomUtil.isNotBlank(wrapper.getOrderBy().toString())) {
+            selectSql.append(SymbolConst.ORDER_BY).append(wrapper.getOrderBy());
+        }
+        if(!wrapper.getHavingParams().isEmpty()) {
+            wrapper.getParamValues().addAll(wrapper.getHavingParams());
         }
         return selectSql.toString();
     }

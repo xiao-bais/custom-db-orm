@@ -9,7 +9,6 @@ import com.custom.enums.SqlOrderBy;
 import com.custom.exceptions.CustomCheckException;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.Field;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -23,7 +22,7 @@ import java.util.function.Consumer;
  **/
 @SuppressWarnings("all")
 public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper<T>
-        implements ConditionSplice<Children>, SelectFunction<Children, T, R> {
+        implements ConditionSplice<Children>, QueryFunction<Children, T, R> {
 
 
     /**

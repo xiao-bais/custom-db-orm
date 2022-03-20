@@ -8,7 +8,7 @@ import java.util.function.Consumer;
  * @Desc：查询函数接口
  **/
 @SuppressWarnings("all")
-public interface SelectFunction<Children, T, Param> {
+public interface QueryFunction<Children, T, Param> {
 
     /**
      * 自定义查询字段
@@ -22,7 +22,7 @@ public interface SelectFunction<Children, T, Param> {
      * @param consumer x -> x.sum(Student::getAge)
      * @return Children
      */
-    Children select(Consumer<SqlSelectFunc<T>> consumer);
+    Children select(Consumer<SelectFunc<T>> consumer);
 
     /**
      * group by分组
@@ -61,8 +61,8 @@ public interface SelectFunction<Children, T, Param> {
      * @param consumer 消费型排序函数
      * @return Children
      */
-    Children orderByAsc(boolean condition, Consumer<SqlOrderByFunc<T>> consumer);
-    default Children orderByAsc(Consumer<SqlOrderByFunc<T>> consumer) {
+    Children orderByAsc(boolean condition, Consumer<OrderByFunc<T>> consumer);
+    default Children orderByAsc(Consumer<OrderByFunc<T>> consumer) {
         return orderByAsc(true, consumer);
     }
 
@@ -72,8 +72,8 @@ public interface SelectFunction<Children, T, Param> {
      * @param consumer 消费型排序函数
      * @return Children
      */
-    Children orderByDesc(boolean condition, Consumer<SqlOrderByFunc<T>> consumer);
-    default Children orderByDesc(Consumer<SqlOrderByFunc<T>> consumer) {
+    Children orderByDesc(boolean condition, Consumer<OrderByFunc<T>> consumer);
+    default Children orderByDesc(Consumer<OrderByFunc<T>> consumer) {
         return orderByDesc(true, consumer);
     }
 

@@ -7,9 +7,9 @@ import com.custom.enums.SqlAggregate;
  * @Date 2022/3/15 19:55
  * @Desc：sql查询函数，方法中，func参数的字段必须要标注Db*注解，alias可不带
  **/
-public class SqlSelectFunc<T> extends SqlFunc<T, SqlSelectFunc<T>> {
+public class SelectFunc<T> extends SqlFunc<T, SelectFunc<T>> {
 
-    public SqlSelectFunc(Class<T> entityClass) {
+    public SelectFunc(Class<T> entityClass) {
         super.init(entityClass);
     }
 
@@ -20,7 +20,7 @@ public class SqlSelectFunc<T> extends SqlFunc<T, SqlSelectFunc<T>> {
      * @return SqlFunc
      */
     @Override
-    public final SqlSelectFunc<T> sum(SFunction<T, ?> func) {
+    public final SelectFunc<T> sum(SFunction<T, ?> func) {
         String field = getColumnParseHandler().getField(func);
         return doFunc(getFormatRex(SqlAggregate.SUM, null), SqlAggregate.SUM, getFieldMapper().get(field), field);
     }
@@ -32,7 +32,7 @@ public class SqlSelectFunc<T> extends SqlFunc<T, SqlSelectFunc<T>> {
      * @param alias 映射的别名属性 Student::getSumAge
      * @return SqlFunc
      */
-    public final SqlSelectFunc<T> sum(SFunction<T, ?> func, SFunction<T, ?> alias) {
+    public final SelectFunc<T> sum(SFunction<T, ?> func, SFunction<T, ?> alias) {
         String field = getColumnParseHandler().getField(func);
         return doFunc(getFormatRex(SqlAggregate.SUM,  null), SqlAggregate.SUM, getFieldMapper().get(field), alias);
     }
@@ -44,7 +44,7 @@ public class SqlSelectFunc<T> extends SqlFunc<T, SqlSelectFunc<T>> {
      * @return SqlFunc
      */
     @Override
-    public final SqlSelectFunc<T> avg(SFunction<T, ?> func) {
+    public final SelectFunc<T> avg(SFunction<T, ?> func) {
         String field = getColumnParseHandler().getField(func);
         return doFunc(getFormatRex(SqlAggregate.AVG,  null), SqlAggregate.AVG, getFieldMapper().get(field), field);
     }
@@ -56,7 +56,7 @@ public class SqlSelectFunc<T> extends SqlFunc<T, SqlSelectFunc<T>> {
      * @param alias 映射的别名属性 Student::getAvgAge
      * @return SqlFunc
      */
-    public final SqlSelectFunc<T> avg(SFunction<T, ?> func, SFunction<T, ?> alias) {
+    public final SelectFunc<T> avg(SFunction<T, ?> func, SFunction<T, ?> alias) {
         String field = getColumnParseHandler().getField(func);
         String aliasField = getColumnParseHandler().getField(alias);
         return doFunc(getFormatRex(SqlAggregate.AVG, null), SqlAggregate.AVG, getFieldMapper().get(field), aliasField);
@@ -71,7 +71,7 @@ public class SqlSelectFunc<T> extends SqlFunc<T, SqlSelectFunc<T>> {
      * @return SqlFunc
      */
     @Override
-    public final SqlSelectFunc<T> count(SFunction<T, ?> func, boolean distinct) {
+    public final SelectFunc<T> count(SFunction<T, ?> func, boolean distinct) {
         String field = getColumnParseHandler().getField(func);
         String column = getFieldMapper().get(field);
         return  doFunc(getFormatRex(SqlAggregate.IF_NULL, distinct), SqlAggregate.COUNT, column, field);
@@ -85,12 +85,12 @@ public class SqlSelectFunc<T> extends SqlFunc<T, SqlSelectFunc<T>> {
      * @param alias 映射的别名属性 Student::getCountAge
      * @return SqlFunc
      */
-    public final SqlSelectFunc<T> count(SFunction<T, ?> func, boolean distinct, SFunction<T, ?> alias) {
+    public final SelectFunc<T> count(SFunction<T, ?> func, boolean distinct, SFunction<T, ?> alias) {
         String column = getFieldMapper().get(getColumnParseHandler().getField(func));
         String aliasField = getColumnParseHandler().getField(alias);
         return doFunc(getFormatRex(SqlAggregate.COUNT, distinct), SqlAggregate.COUNT, column, aliasField);
     }
-    public final SqlSelectFunc<T> count(SFunction<T, ?> func, SFunction<T, ?> alias) {
+    public final SelectFunc<T> count(SFunction<T, ?> func, SFunction<T, ?> alias) {
         return count(func, false, alias);
     }
 
@@ -102,7 +102,7 @@ public class SqlSelectFunc<T> extends SqlFunc<T, SqlSelectFunc<T>> {
      * @return SqlFunc
      */
     @Override
-    public final SqlSelectFunc<T> ifNull(SFunction<T, ?> func, Object elseVal) {
+    public final SelectFunc<T> ifNull(SFunction<T, ?> func, Object elseVal) {
         String field = getColumnParseHandler().getField(func);
         String column = getFieldMapper().get(field);
         return doFunc(getFormatRex(SqlAggregate.IF_NULL,null), SqlAggregate.IF_NULL, column, elseVal, field);
@@ -116,7 +116,7 @@ public class SqlSelectFunc<T> extends SqlFunc<T, SqlSelectFunc<T>> {
      * @param alias 映射的别名 Student::getNotNullAge
      * @return SqlFunc
      */
-    public final SqlSelectFunc<T> ifNull(SFunction<T, ?> func, Object elseVal, SFunction<T, ?> alias) {
+    public final SelectFunc<T> ifNull(SFunction<T, ?> func, Object elseVal, SFunction<T, ?> alias) {
         String column = getFieldMapper().get(getColumnParseHandler().getField(func));
         String aliasField = getColumnParseHandler().getField(alias);
         return doFunc(getFormatRex(SqlAggregate.IF_NULL, null), SqlAggregate.IF_NULL, column, elseVal, aliasField);
@@ -129,7 +129,7 @@ public class SqlSelectFunc<T> extends SqlFunc<T, SqlSelectFunc<T>> {
      * @return SqlFunc
      */
     @Override
-    public final SqlSelectFunc<T> max(SFunction<T, ?> func) {
+    public final SelectFunc<T> max(SFunction<T, ?> func) {
         String field = getColumnParseHandler().getField(func);
         return doFunc(getFormatRex(SqlAggregate.MAX, null), SqlAggregate.MAX, getFieldMapper().get(field), field);
     }
@@ -141,7 +141,7 @@ public class SqlSelectFunc<T> extends SqlFunc<T, SqlSelectFunc<T>> {
      * @param alias 映射的别名 Student::getMaxAge
      * @return SqlFunc
      */
-    public final SqlSelectFunc<T> max(SFunction<T, ?> func, SFunction<T, ?> alias) {
+    public final SelectFunc<T> max(SFunction<T, ?> func, SFunction<T, ?> alias) {
         String field = getColumnParseHandler().getField(func);
         String aliasField = getColumnParseHandler().getField(alias);
         return doFunc(getFormatRex(SqlAggregate.MAX, null), SqlAggregate.MAX, getFieldMapper().get(field), aliasField);
@@ -155,7 +155,7 @@ public class SqlSelectFunc<T> extends SqlFunc<T, SqlSelectFunc<T>> {
      * @return SqlFunc
      */
     @Override
-    public final SqlSelectFunc<T> min(SFunction<T, ?> func) {
+    public final SelectFunc<T> min(SFunction<T, ?> func) {
         String field = getColumnParseHandler().getField(func);
        return doFunc(getFormatRex(SqlAggregate.MIN,null), SqlAggregate.MIN, getFieldMapper().get(field), field);
     }
@@ -167,7 +167,7 @@ public class SqlSelectFunc<T> extends SqlFunc<T, SqlSelectFunc<T>> {
      * @param alias 映射的别名 Student::getMinAge
      * @return SqlFunc
      */
-    public final SqlSelectFunc<T> min(SFunction<T, ?> func, SFunction<T, ?> alias) {
+    public final SelectFunc<T> min(SFunction<T, ?> func, SFunction<T, ?> alias) {
         String field = getColumnParseHandler().getField(func);
         String aliasField = getColumnParseHandler().getField(alias);
        return doFunc(getFormatRex(SqlAggregate.MIN, null), SqlAggregate.MIN, getFieldMapper().get(field), aliasField);
