@@ -129,7 +129,7 @@ public class CustomDao {
     /**
      * 条件构造器查询-查询数量
      */
-    public <T> int selectCount(ConditionWrapper<T> wrapper) throws Exception {
+    public <T> long selectCount(ConditionWrapper<T> wrapper) throws Exception {
         return jdbcAction.selectCount(wrapper);
     }
 

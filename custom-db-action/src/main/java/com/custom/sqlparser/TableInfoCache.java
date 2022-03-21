@@ -1,5 +1,7 @@
 package com.custom.sqlparser;
 
+import com.custom.fill.TableFillObject;
+
 import java.util.Map;
 
 /**
@@ -59,6 +61,22 @@ public class TableInfoCache {
 
     public static Boolean isExistsLogic(String table) {
         return (Boolean) tableLogic.get(table);
+    }
+
+
+    /**
+     * 字段自动填充缓存
+     * key - java实体对象Class
+     * value - 填充策略对象
+     */
+    private final static Map<String, Object> TableFill = new CustomLocalCache();
+
+    public static void setTableFill(String key, Object val) {
+        TableFill.put(key, val);
+    }
+
+    public static TableFillObject getTableFill(String key) {
+        return  (TableFillObject) TableFill.get(key);
     }
 
 }

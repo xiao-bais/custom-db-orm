@@ -27,7 +27,6 @@ public class CustomConfiguration {
     private static final Logger logger = LoggerFactory.getLogger(CustomConfiguration.class);
 
     private final DbDataSource dbDataSource;
-
     private final DbCustomStrategy dbCustomStrategy;
 
     public CustomConfiguration(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
@@ -65,7 +64,6 @@ public class CustomConfiguration {
         logger.info("CustomDao Initialized Successfully !");
         return new CustomDao(dbDataSource, dbCustomStrategy);
     }
-
 
 
 }

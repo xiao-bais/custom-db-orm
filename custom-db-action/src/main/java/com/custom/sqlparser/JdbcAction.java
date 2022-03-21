@@ -152,9 +152,9 @@ public class JdbcAction extends AbstractSqlBuilder {
     }
 
     @Override
-    public <T> int selectCount(ConditionWrapper<T> wrapper) throws Exception {
+    public <T> long selectCount(ConditionWrapper<T> wrapper) throws Exception {
         String selectSql = getFullSelectSql(wrapper.getCls(), null, wrapper);
-        return (int) selectObjBySql(String.format("select count(0) from (%s) xxx ", selectSql), wrapper.getParamValues());
+        return (long) selectObjBySql(String.format("select count(0) from (%s) xxx ", selectSql), wrapper.getParamValues().toArray());
     }
 
     @Override

@@ -49,7 +49,8 @@ public class DoMain {
 //        List<Student> students = customDao.selectList(Student.class, " and a.age > ?", 22);
 //        DbPageRows<Student> pageRows = customDao.selectPageRows(Student.class, " and a.age > ?", 1, 10, 22);
 
-        List<Student> students = customDao.selectListByKeys(Student.class, Arrays.asList(2, 5, 8, 10));
+        long sex = customDao.selectCount(Conditions.conditionQuery(Student.class).eq("sex", true));
+        System.out.println("sex = " + sex);
 
 //        SqlFunc<Student> dbFunction = new SqlFunc<>(Student.class);
 //        dbFunction.avg(Student::getAge).max(Student::getId).min(Student::getCityId).sum(Student::getAge)

@@ -36,7 +36,7 @@ public abstract class AbstractSqlBuilder {
     public abstract <T> DbPageRows<T> selectPageRows(Class<T> t,  ConditionWrapper<T> wrapper) throws Exception;
     public abstract <T> List<T> selectList(Class<T> t, ConditionWrapper<T> wrapper) throws Exception;
     public abstract <T> T selectOneByCondition(ConditionWrapper<T> wrapper) throws Exception;
-    public abstract <T> int selectCount(ConditionWrapper<T> wrapper) throws Exception;
+    public abstract <T> long selectCount(ConditionWrapper<T> wrapper) throws Exception;
 
 
     /*--------------------------------------- delete ---------------------------------------*/

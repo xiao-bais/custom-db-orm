@@ -152,7 +152,7 @@ public class BuildSqlHandler extends AbstractSqlBuilder {
     }
 
     @Override
-    public <T> int selectCount(ConditionWrapper<T> wrapper) {
+    public <T> long selectCount(ConditionWrapper<T> wrapper) {
         throw new UnsupportedOperationException();
     }
 
