@@ -47,6 +47,7 @@ public class SymbolConst {
     public final static String CLASS = ".class";
     public final static String POINT = ".";
     public final static String SLASH = "/";
+    public final static String NORMAL = "normal";
 
 
 

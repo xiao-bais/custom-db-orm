@@ -70,8 +70,7 @@ public abstract class AbstractSqlBuilder {
      */
     public void initLogic() {
         if(JudgeUtilsAx.isLogicDeleteOpen(dbCustomStrategy)) {
-            if(JudgeUtilsAx.isEmpty(dbCustomStrategy.getNotDeleteLogicValue())
-                    || JudgeUtilsAx.isEmpty(dbCustomStrategy.getDeleteLogicValue())) {
+            if(JudgeUtilsAx.isEmpty(dbCustomStrategy.getNotDeleteLogicValue()) || JudgeUtilsAx.isEmpty(dbCustomStrategy.getDeleteLogicValue())) {
                 throw new CustomCheckException(ExceptionConst.EX_LOGIC_EMPTY_VALUE);
             }
             this.logicField = dbCustomStrategy.getDbFieldDeleteLogic();

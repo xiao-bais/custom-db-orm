@@ -157,6 +157,7 @@ public class JdbcAction extends AbstractSqlBuilder {
         return (long) selectObjBySql(String.format("select count(0) from (%s) xxx ", selectSql), wrapper.getParamValues().toArray());
     }
 
+
     @Override
     @CheckExecute(target = ExecuteMethod.DELETE)
     public <T> int deleteByKey(Class<T> t, Object key) throws Exception {
@@ -166,7 +167,13 @@ public class JdbcAction extends AbstractSqlBuilder {
         if(!CustomUtil.isKeyAllowType(keyParserModel.getType(), key)) {
             throw new CustomCheckException("Illegal primary key parameter : " + key);
         }
-        return executeSql(deleteSql, key);
+        int res = executeSql(deleteSql, key);
+        if(res > 0 && JudgeUtilsAx.isNotEmpty(getLogicField())) {
+//            String.format("update %s set ");
+
+
+        }
+        return 0;
     }
 
     @Override

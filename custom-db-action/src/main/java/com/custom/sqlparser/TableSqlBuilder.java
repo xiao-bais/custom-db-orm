@@ -8,9 +8,11 @@ import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.ExecuteMethod;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
+import com.custom.fill.TableFillObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.plaf.ViewportUI;
 import java.lang.reflect.Field;
 import java.util.*;
 
@@ -21,7 +23,7 @@ import java.util.*;
  **/
 public class TableSqlBuilder<T> implements Cloneable{
 
-    private static Logger logger = LoggerFactory.getLogger(TableSqlBuilder.class);
+    private static final Logger logger = LoggerFactory.getLogger(TableSqlBuilder.class);
 
     private Class<T> cls;
 
@@ -33,11 +35,11 @@ public class TableSqlBuilder<T> implements Cloneable{
 
     private String alias;
 
-    private String desc;
+    private final String desc;
 
     private Field[] fields;
 
-    private boolean underlineToCamel;
+    private final boolean underlineToCamel;
     /**
      * @Desc：对于@DbRelated注解的解析
      */
@@ -110,7 +112,7 @@ public class TableSqlBuilder<T> implements Cloneable{
     /**
      * 获取查询sql（主动指定是否需要拼接表连接的sql）
      */
-    public String getSelectSql(boolean isRelated) {
+    protected String getSelectSql(boolean isRelated) {
         try {
             if(isRelated) {
                 if (CustomUtil.isDbRelationTag(this.cls) || this.cls.isAnnotationPresent(DbJoinTables.class)) {
@@ -143,7 +145,7 @@ public class TableSqlBuilder<T> implements Cloneable{
     /**
      * 获取对象所有字段的值(多个对象)
      */
-    public List<Object> getManyObjValues() {
+    protected List<Object> getManyObjValues() {
         if (objValues.isEmpty()) {
             for (T t : list) {
                 if (keyParserModel != null) {
@@ -161,7 +163,7 @@ public class TableSqlBuilder<T> implements Cloneable{
     /**
      * 获取对象所有字段的值(单个对象)
      */
-    public List<Object> getOneObjValues() {
+    protected List<Object> getOneObjValues() {
         if (objValues.isEmpty()) {
             if (keyParserModel != null) {
                 objValues.add(keyParserModel.generateKey());
@@ -176,7 +178,7 @@ public class TableSqlBuilder<T> implements Cloneable{
     /**
      * 获取添加sql
      */
-    public String getInsertSql() {
+    protected String getInsertSql() {
         try {
             if (keyParserModel != null) {
                 insertSql.add(keyParserModel.getDbKey());
@@ -213,7 +215,7 @@ public class TableSqlBuilder<T> implements Cloneable{
     /**
      * 创建表结构
      */
-    public String geCreateTableSql() {
+    protected String geCreateTableSql() {
         StringBuilder createTableSql = new StringBuilder();
         StringJoiner fieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1);
         if (this.keyParserModel != null) {
@@ -235,14 +237,14 @@ public class TableSqlBuilder<T> implements Cloneable{
     /**
      * 删除表结构
      */
-    public String getDropTableSql() {
+    protected String getDropTableSql() {
         return String.format("DROP TABLE IF EXISTS `%s`", this.table);
     }
 
     /**
     * 表是否存在
     */
-    public String getExitsTableSql(Class<?> cls) {
+    protected String getExitsTableSql(Class<?> cls) {
         DbTable annotation = cls.getAnnotation(DbTable.class);
         String table = annotation.table();
         return String.format("SELECT COUNT(1) COUNT FROM " +
@@ -332,7 +334,7 @@ public class TableSqlBuilder<T> implements Cloneable{
     /**
      * 构建修改的sql语句
      */
-    public void buildUpdateSql(String[] updateDbFields, String logicDeleteQuerySql) {
+    protected void buildUpdateSql(String[] updateDbFields, String logicDeleteQuerySql) {
         StringJoiner updateFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
         if(updateDbFields.length > 0) {
             for (String field : updateDbFields) {
@@ -360,14 +362,14 @@ public class TableSqlBuilder<T> implements Cloneable{
     /**
      * 获取修改的逻辑删除字段sql
      */
-    public String getLogicUpdateSql(String key, String logicDeleteQuerySql) {
+    private String getLogicUpdateSql(String key, String logicDeleteQuerySql) {
         return JudgeUtilsAx.isNotBlank(logicDeleteQuerySql) ? String.format("%s and %s = ?", logicDeleteQuerySql, key) : String.format("%s = ?", key);
     }
 
     /**
      * 构建修改的sql字段语句
      */
-    public void buildUpdateField(String condition, List<Object> conditionVals) {
+    protected void buildUpdateField(String condition, List<Object> conditionVals) {
         StringJoiner updateFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
         for (DbFieldParserModel<T> fieldParserModel : fieldParserModels) {
             Object value = fieldParserModel.getValue();
@@ -412,6 +414,23 @@ public class TableSqlBuilder<T> implements Cloneable{
 
 
     /**
+     * 自动填充的sql构造（采用增改后进行Update操作的方式进行自动填充）
+     */
+    protected void buildAutoUpdateSql() {
+        StringBuilder autoUpdateSql = new StringBuilder();
+        autoUpdateSql.append(SymbolConst.UPDATE);
+        TableFillObject tableFill = TableInfoCache.getTableFill(cls.getName());
+        if(tableFill != null) {
+            String column = fieldMapper.get(tableFill.getFieldName());
+        }else {
+
+        }
+
+
+    }
+
+
+    /**
      * 初始化
      */
     void initTableBuild(ExecuteMethod method) {
@@ -434,7 +453,6 @@ public class TableSqlBuilder<T> implements Cloneable{
         }
     }
 
-    public TableSqlBuilder(){}
     /**
      * 默认构造方法为查询
      */
@@ -620,6 +638,7 @@ public class TableSqlBuilder<T> implements Cloneable{
     public Map<String, String> getColumnMapper() {
         return columnMapper;
     }
+
 
     @Override
     @SuppressWarnings("unchecked")

@@ -1,6 +1,7 @@
 package com.custom.fill;
 
 import com.custom.comm.JudgeUtilsAx;
+import com.custom.dbconfig.SymbolConst;
 import com.custom.sqlparser.TableInfoCache;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
@@ -41,7 +42,7 @@ public class FillStrategyHandler implements  ApplicationContextAware {
         for (TableFillObject fillObject : tableFillObjects) {
             if(!ObjectUtils.isEmpty(fillObject) && JudgeUtilsAx.isNotEmpty(fillObject.getFieldName()) && JudgeUtilsAx.isNotEmpty(fillObject.getStrategy())) {
                 if (fillObject.getEntityClass() == null) {
-                    TableInfoCache.setTableFill("normal", fillObject);
+                    TableInfoCache.setTableFill(SymbolConst.NORMAL, fillObject);
                 }else {
                     TableInfoCache.setTableFill(fillObject.getEntityClass().getName(), fillObject);
                 }
