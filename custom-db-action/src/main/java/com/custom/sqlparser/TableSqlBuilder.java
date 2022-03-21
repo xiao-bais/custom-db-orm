@@ -266,7 +266,7 @@ public class TableSqlBuilder<T> implements Cloneable{
         }
 
         // 第三步 拼接主表
-        selectSql.append(String.format("select %s\n from %s %s \n", baseFieldSql.toString(), this.table, this.alias));
+        selectSql.append(String.format("select %s\n from %s %s", baseFieldSql, this.table, this.alias));
     }
 
 
@@ -311,7 +311,6 @@ public class TableSqlBuilder<T> implements Cloneable{
         if (!relatedParserModels.isEmpty()) {
             selectSql.append(getRelatedTableSql(relatedParserModels));
         }
-        selectSql.append("\n");
     }
 
     /**

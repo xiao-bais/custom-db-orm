@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Author Xiao-Bai
@@ -77,5 +78,7 @@ public class Student {
     private Integer minAge;
     private Integer maxAge;
     private Integer avgAge;
+
+    private List<Street> modelList;
 
 }

@@ -44,9 +44,11 @@ public class JdbcAction extends AbstractSqlBuilder {
     public <T> List<T> selectList(Class<T> t, String condition, String orderBy, Object... params) throws Exception {
         TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t);
         condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
-        String selectSql = String.format("%s \n%s \n%s", tableSqlBuilder.getSelectSql(), JudgeUtilsAx.isNotEmpty(condition) ? condition : SymbolConst.EMPTY,
-                JudgeUtilsAx.isNotEmpty(orderBy) ? orderBy : SymbolConst.EMPTY);
-        return selectBySql(t, selectSql, params);
+        String selectSql = tableSqlBuilder.getSelectSql();
+        if(JudgeUtilsAx.isNotEmpty(orderBy)) {
+            condition += SymbolConst.ORDER_BY + orderBy;
+        }
+        return selectBySql(t, selectSql + condition, params);
     }
 
     @Override
@@ -63,18 +65,17 @@ public class JdbcAction extends AbstractSqlBuilder {
             dbPageRows = new DbPageRows<>();
         }
         TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t);
-        condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
+        String selectSql = tableSqlBuilder.getSelectSql();
+        String finalCondition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
         if (JudgeUtilsAx.isNotEmpty(orderBy)) {
-            orderBy = String.format("\n%s %s", DbSymbol.ORDER_BY.getSymbol(), orderBy);
+            finalCondition += SymbolConst.ORDER_BY + orderBy;
         }
-        String selectSql = String.format("%s %s %s", tableSqlBuilder.getSelectSql(), JudgeUtilsAx.isNotEmpty(condition) ? condition : SymbolConst.EMPTY,
-                JudgeUtilsAx.isNotEmpty(orderBy) ? orderBy : SymbolConst.EMPTY);
-        buildPageResult(t, selectSql, condition, dbPageRows, params);
+        buildPageResult(t, selectSql + finalCondition, condition, dbPageRows, params);
         return dbPageRows;
     }
 
     /**
-     * 数据整合
+     * 分页数据整合
      */
     private <T> void buildPageResult(Class<T> t, String selectSql, String condition, DbPageRows<T> dbPageRows, Object... params) throws Exception {
         List<T> dataList = new ArrayList<>();
@@ -103,7 +104,7 @@ public class JdbcAction extends AbstractSqlBuilder {
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> List<T> selectBatchByKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception {
         TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t);
-        StringJoiner symbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1);
+        StringJoiner symbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
         keys.forEach(x -> symbol.add(SymbolConst.QUEST));
         String condition = String.format("and %s in (%s)", tableSqlBuilder.getKeyParserModel().getFieldSql(), symbol);
         condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
@@ -129,7 +130,6 @@ public class JdbcAction extends AbstractSqlBuilder {
         String selectSql = getFullSelectSql(t, dbPageRows, wrapper);
         buildPageResult(t, selectSql, null, dbPageRows, wrapper.getParamValues().toArray());
         return dbPageRows;
-
     }
 
     @Override
@@ -149,6 +149,12 @@ public class JdbcAction extends AbstractSqlBuilder {
         }
         String selectSql = getFullSelectSql(wrapper.getCls(), null, wrapper);
         return selectOneBySql(wrapper.getCls(), selectSql, wrapper.getParamValues().toArray());
+    }
+
+    @Override
+    public <T> int selectCount(ConditionWrapper<T> wrapper) throws Exception {
+        String selectSql = getFullSelectSql(wrapper.getCls(), null, wrapper);
+        return (int) selectObjBySql(String.format("select count(0) from (%s) xxx ", selectSql), wrapper.getParamValues());
     }
 
     @Override
@@ -190,11 +196,11 @@ public class JdbcAction extends AbstractSqlBuilder {
 
     @Override
     @CheckExecute(target = ExecuteMethod.DELETE)
-    public <T> int deleteByCondition(Class<T> t, ConditionEntity<T> conditionEntity) throws Exception {
-        if(JudgeUtilsAx.isEmpty(conditionEntity) || JudgeUtilsAx.isEmpty(conditionEntity.getFinalConditional())) {
+    public <T> int deleteByCondition(ConditionWrapper<T> wrapper) throws Exception {
+        if(JudgeUtilsAx.isEmpty(wrapper) || JudgeUtilsAx.isEmpty(wrapper.getFinalConditional())) {
             throw new CustomCheckException("delete condition cannot be empty");
         }
-        return deleteByCondition(t, conditionEntity.getFinalConditional());
+        return deleteByCondition(wrapper.getCls(), wrapper.getFinalConditional());
     }
 
     @Override
@@ -225,10 +231,10 @@ public class JdbcAction extends AbstractSqlBuilder {
 
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
-    public <T> int updateByCondition(T t, ConditionEntity<T> conditionEntity) throws Exception {
+    public <T> int updateByCondition(T t, ConditionWrapper<T> wrapper) throws Exception {
         TableSqlBuilder<T> tableSqlBuilder = getUpdateEntityModelCache(t);
-        String condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), conditionEntity.getFinalConditional(), getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
-        tableSqlBuilder.buildUpdateField(condition, conditionEntity.getParamValues());
+        String condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), wrapper.getFinalConditional(), getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
+        tableSqlBuilder.buildUpdateField(condition, wrapper.getParamValues());
         return executeSql(tableSqlBuilder.getUpdateSql().toString(), tableSqlBuilder.getObjValues().toArray());
     }
 

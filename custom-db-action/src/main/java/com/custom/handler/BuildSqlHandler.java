@@ -138,17 +138,22 @@ public class BuildSqlHandler extends AbstractSqlBuilder {
 
     @Override
     public <T> DbPageRows<T> selectPageRows(Class<T> t, ConditionWrapper<T> wrapper) throws Exception {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public <T> List<T> selectList(Class<T> t, ConditionWrapper<T> wrapper) throws Exception {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public <T> T selectOneByCondition(ConditionWrapper<T> wrapper) throws Exception {
-        return null;
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <T> int selectCount(ConditionWrapper<T> wrapper) {
+        throw new UnsupportedOperationException();
     }
 
 
@@ -190,7 +195,7 @@ public class BuildSqlHandler extends AbstractSqlBuilder {
     }
 
     @Override
-    public <T> int deleteByCondition(Class<T> t, ConditionEntity<T> conditionEntity) throws Exception {
+    public <T> int deleteByCondition(ConditionWrapper<T> wrapper) throws Exception {
         return 0;
     }
 
@@ -322,7 +327,7 @@ public class BuildSqlHandler extends AbstractSqlBuilder {
     }
 
     @Override
-    public <T> int updateByCondition(T t, ConditionEntity<T> conditionEntity) throws Exception {
+    public <T> int updateByCondition(T t, ConditionWrapper<T> wrapper) throws Exception {
         return 0;
     }
 

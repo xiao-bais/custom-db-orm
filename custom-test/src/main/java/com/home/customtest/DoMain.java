@@ -7,6 +7,7 @@ import com.custom.sqlparser.CustomDao;
 import com.custom.sqlparser.TableInfoCache;
 import com.custom.wrapper.Conditions;
 import com.custom.wrapper.LambdaConditionEntity;
+import com.home.customtest.entity.Street;
 import com.home.customtest.entity.Student;
 
 import java.util.Arrays;
@@ -45,6 +46,10 @@ public class DoMain {
 
         TableInfoCache.setUnderlineToCamel(true);
 
+//        List<Student> students = customDao.selectList(Student.class, " and a.age > ?", 22);
+//        DbPageRows<Student> pageRows = customDao.selectPageRows(Student.class, " and a.age > ?", 1, 10, 22);
+
+        List<Student> students = customDao.selectListByKeys(Student.class, Arrays.asList(2, 5, 8, 10));
 
 //        SqlFunc<Student> dbFunction = new SqlFunc<>(Student.class);
 //        dbFunction.avg(Student::getAge).max(Student::getId).min(Student::getCityId).sum(Student::getAge)
@@ -57,18 +62,17 @@ public class DoMain {
 
 //        System.out.println("student = " + student);
 
-        long time = System.currentTimeMillis();
-        DbPageRows<Student> students = customDao.selectPageRows(Student.class, Conditions.lambdaConditionQuery(Student.class)
-                .select(Student::getAge)
-                .select(x -> x.count(Student::getId, Student::getSumAge))
-                .limit(1, 10)
-//
-                        .groupBy(Student::getAge)
-                        .orderByAsc(x -> x.count(Student::getAreaId))
-        );
+        Student student = new Student();
+//        long time = System.currentTimeMillis();
+//        DbPageRows<Student> students = customDao.selectPageRows(Student.class, Conditions.lambdaConditionQuery(Student.class)
+//                .select(Student::getAge)
+//                .select(x -> x.count(Student::getId, Student::getCountAge))
+//                .limit(1, 10)
+//                        .groupBy(Student::getAge)
+//                        .orderByAsc(x -> x.count(Student::getId))
+//        );
 
-        System.out.println("students = " + students);
-
+//        System.out.println("students = " + students);
 
     }
 

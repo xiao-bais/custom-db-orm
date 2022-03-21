@@ -36,13 +36,14 @@ public abstract class AbstractSqlBuilder {
     public abstract <T> DbPageRows<T> selectPageRows(Class<T> t,  ConditionWrapper<T> wrapper) throws Exception;
     public abstract <T> List<T> selectList(Class<T> t, ConditionWrapper<T> wrapper) throws Exception;
     public abstract <T> T selectOneByCondition(ConditionWrapper<T> wrapper) throws Exception;
+    public abstract <T> int selectCount(ConditionWrapper<T> wrapper) throws Exception;
 
 
     /*--------------------------------------- delete ---------------------------------------*/
     public abstract <T> int deleteByKey(Class<T> t, Object key) throws Exception;
     public abstract <T> int deleteBatchKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception;
     public abstract <T> int deleteByCondition(Class<T> t, String condition, Object... params) throws Exception;
-    public abstract <T> int deleteByCondition(Class<T> t, ConditionEntity<T> conditionEntity) throws Exception;
+    public abstract <T> int deleteByCondition(ConditionWrapper<T> wrapper) throws Exception;
 
     /*--------------------------------------- insert ---------------------------------------*/
     public abstract <T> int insert(T t, boolean isGeneratedKey) throws Exception;
@@ -50,7 +51,7 @@ public abstract class AbstractSqlBuilder {
 
     /*--------------------------------------- update ---------------------------------------*/
     public abstract <T> int updateByKey(T t, String... updateDbFields) throws Exception;
-    public abstract <T> int updateByCondition(T t, ConditionEntity<T> conditionEntity) throws Exception;
+    public abstract <T> int updateByCondition(T t, ConditionWrapper<T> wrapper) throws Exception;
 
     /*--------------------------------------- comm ---------------------------------------*/
     public abstract <T> long save(T t) throws Exception;
@@ -130,15 +131,15 @@ public abstract class AbstractSqlBuilder {
             String sql;
             if (JudgeUtilsAx.isNotEmpty(condition)) {
                 if (JudgeUtilsAx.isNotEmpty(finalLogicSql)) {
-                    sql = String.format("where %s.%s %s ", alias, finalLogicSql, condition.trim());
+                    sql = String.format("\nwhere %s.%s %s ", alias, finalLogicSql, condition.trim());
                 }else {
-                    sql = String.format("where %s ", CustomUtil.trimSqlCondition(condition));
+                    sql = String.format("\nwhere %s ", CustomUtil.trimSqlCondition(condition));
                 }
             } else {
                 if (JudgeUtilsAx.isNotEmpty(finalLogicSql)) {
-                    sql = String.format("where %s.%s ", alias, finalLogicSql);
+                    sql = String.format("\nwhere %s.%s ", alias, finalLogicSql);
                 }else {
-                    sql = condition.trim();
+                    sql = condition == null ? SymbolConst.EMPTY : condition.trim();
                 }
             }
             return sql;

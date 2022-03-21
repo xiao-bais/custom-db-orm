@@ -106,24 +106,31 @@ public class CustomDao {
     }
 
     /**
-     * 条件构造器查询
+     * 条件构造器查询-分页查询
      */
     public <T> DbPageRows<T> selectPageRows(Class<T> t, ConditionWrapper<T> wrapper) throws Exception {
         return jdbcAction.selectPageRows(t, wrapper);
     }
 
     /**
-     * 条件构造器查询
+     * 条件构造器查询-查询多个
      */
     public <T> List<T> selectList(Class<T> t, ConditionWrapper<T> wrapper) throws Exception {
         return jdbcAction.selectList(t, wrapper);
     }
 
     /**
-     * 条件构造器查询
+     * 条件构造器查询-查询单个对象
      */
     public <T> T selectOne(ConditionWrapper<T> wrapper) throws Exception {
         return jdbcAction.selectOneByCondition(wrapper);
+    }
+
+    /**
+     * 条件构造器查询-查询数量
+     */
+    public <T> int selectCount(ConditionWrapper<T> wrapper) throws Exception {
+        return jdbcAction.selectCount(wrapper);
     }
 
     /* ----------------------------------------------------------------delete---------------------------------------------------------------- */
@@ -152,8 +159,8 @@ public class CustomDao {
     /**
      * 根据条件删除记录
      */
-    public <T> int deleteByCondition(Class<T> t, ConditionEntity<T> conditionEntity) throws Exception {
-        return jdbcAction.deleteByCondition(t, conditionEntity);
+    public <T> int deleteByCondition(ConditionWrapper<T> wrapper) throws Exception {
+        return jdbcAction.deleteByCondition(wrapper);
     }
 
     /* ----------------------------------------------------------------insert---------------------------------------------------------------- */
@@ -191,8 +198,8 @@ public class CustomDao {
     /**
      * 根据条件修改一条记录
      */
-    public <T> int updateByCondition(T t, ConditionEntity<T> conditionEntity) throws Exception {
-        return jdbcAction.updateByCondition(t, conditionEntity);
+    public <T> int updateByCondition(T t, ConditionWrapper<T> wrapper) throws Exception {
+        return jdbcAction.updateByCondition(t, wrapper);
     }
 
     /* ----------------------------------------------------------------common---------------------------------------------------------------- */
