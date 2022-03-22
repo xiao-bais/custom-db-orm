@@ -145,7 +145,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
      * 拼接下一段大条件
      */
     protected void append(DbSymbol dbSymbol, String condition) {
-        getFinalCondition().append(String.format(" %s (%s)", dbSymbol.getSymbol(), CustomUtil.trimSqlCondition(condition)));
+        getFinalCondition().append(String.format(" %s (%s)", dbSymbol.getSymbol(), CustomUtil.trimSqlCondition(condition, dbSymbol.getSymbol())));
     }
 
     /**

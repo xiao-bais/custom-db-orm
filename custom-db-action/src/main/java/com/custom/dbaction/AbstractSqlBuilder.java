@@ -86,7 +86,7 @@ public abstract class AbstractSqlBuilder {
      */
     public String getLogicDeleteKeySql(String key, String dbKey, String table, String alias, boolean isMore) throws Exception {
         String sql;
-        String keySql  = String.format("%s.%s %s %s", alias,
+        String keySql  = String.format("%s.%s%s%s", alias,
                 dbKey, isMore ? SymbolConst.IN : SymbolConst.EQUALS, key);
 
         if (JudgeUtilsAx.isNotEmpty(logicDeleteUpdateSql)) {

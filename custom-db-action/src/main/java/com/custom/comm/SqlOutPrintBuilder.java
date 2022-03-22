@@ -102,16 +102,7 @@ public class SqlOutPrintBuilder implements Serializable {
             sqlErrPrint();
             throw new CustomCheckException(String.format("参数数量与需要设置的参数数量不对等，需设置参数数量：%s, 实际参数数量：%s", symbolSize, params.length));
         }
-
-        int index = 0;
-        while (index < symbolSize) {
-            Object param = params[index];
-            if(param.getClass() == String.class) {
-                param = String.format("'%s'", param);
-            }
-            sql = sql.replaceFirst("\\?", param.toString());
-            index ++;
-        }
+        sql = CustomUtil.handleExecuteSql(sql, params);
     }
 
 }

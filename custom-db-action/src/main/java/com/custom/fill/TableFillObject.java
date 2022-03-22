@@ -2,6 +2,8 @@ package com.custom.fill;
 
 import com.custom.enums.FillStrategy;
 
+import java.util.Map;
+
 /**
  * @Author Xiao-Bai
  * @Date 2022/3/21 14:47
@@ -9,48 +11,32 @@ import com.custom.enums.FillStrategy;
  **/
 public class TableFillObject {
 
-    /**
-     * 填充字段
-     */
-    private String fieldName;
+    private Class<?> entityClass;
 
     /**
-     * 实体Class
+     * 当字段未找到时，是否抛出异常？
      */
-    private Class<?> entityClass = null;
+    private Boolean notFoundFieldThrowException = false;
 
     /**
-     * 填充的字段值
+     * 自动填充字段与值的映射
      */
-    private Object fieldVal;
+    private Map<String, Object> tableFillMapper;
 
     /**
-     * 填充策略
+     * 自动填充的策略
      */
-    private FillStrategy strategy;
+    private FillStrategy strategy = FillStrategy.DEFAULT;
 
 
-    public TableFillObject(String fieldName, Class<?> entityClass, Object fieldVal, FillStrategy strategy) {
-        this.fieldName = fieldName;
+    public TableFillObject(Class<?> entityClass, Boolean notFoundFieldThrowException, FillStrategy strategy, Map<String, Object> tableFillMapper) {
         this.entityClass = entityClass;
-        this.fieldVal = fieldVal;
+        this.notFoundFieldThrowException = notFoundFieldThrowException;
         this.strategy = strategy;
+        this.tableFillMapper = tableFillMapper;
     }
 
-    public TableFillObject(String fieldName,  String fieldVal, FillStrategy strategy) {
-        this(fieldName, null, fieldVal, strategy);
-    }
-
-    public TableFillObject() {};
-
-
-    public String getFieldName() {
-        return fieldName;
-    }
-
-    public void setFieldName(String fieldName) {
-        this.fieldName = fieldName;
-    }
+    public TableFillObject() {}
 
     public Class<?> getEntityClass() {
         return entityClass;
@@ -60,12 +46,20 @@ public class TableFillObject {
         this.entityClass = entityClass;
     }
 
-    public Object getFieldVal() {
-        return fieldVal;
+    public Boolean getNotFoundFieldThrowException() {
+        return notFoundFieldThrowException;
     }
 
-    public void setFieldVal(Object fieldVal) {
-        this.fieldVal = fieldVal;
+    public void setNotFoundFieldThrowException(Boolean notFoundFieldThrowException) {
+        this.notFoundFieldThrowException = notFoundFieldThrowException;
+    }
+
+    public Map<String, Object> getTableFillMapper() {
+        return tableFillMapper;
+    }
+
+    public void setTableFillMapper(Map<String, Object> tableFillMapper) {
+        this.tableFillMapper = tableFillMapper;
     }
 
     public FillStrategy getStrategy() {

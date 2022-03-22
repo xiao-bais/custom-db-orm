@@ -19,7 +19,7 @@ public class SymbolConst {
     public final static String GET = "get";//get
     public final static String SET = " set ";//set
     public final static String IS = "is";//is
-    public final static String IN = "in";//is
+    public final static String IN = " in ";//in
     public final static String AND = "and";//and
     public final static String OR = "or";//or
     public final static String ASC = "asc";//asc
@@ -35,7 +35,7 @@ public class SymbolConst {
     public final static char UNDERLINE = '_'; //下划线
     public final static char CENTERLINE = '-'; //中划线
     public final static String EMPTY = "";//空字符串
-    public final static String EQUALS = "=";//等于
+    public final static String EQUALS = " = ";//等于
     public final static String QUEST = "?";//占位符
     public final static String PERCENT = "%";//百分号
     public final static String PREPARE_BEGIN_REX_1 = "#{";

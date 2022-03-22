@@ -419,12 +419,37 @@ public class CustomUtil {
     /**
      * 消除sql条件中的第一个and
      */
+    public static String trimSqlCondition(String condition, String symbol) {
+        String finalCondition = condition;
+        if(condition.trim().startsWith(symbol)) {
+            finalCondition = condition.replaceFirst(symbol, SymbolConst.EMPTY);
+        }
+        return finalCondition.trim();
+    }
+
     public static String trimSqlCondition(String condition) {
         String finalCondition = condition;
         if(condition.trim().startsWith(SymbolConst.AND)) {
             finalCondition = condition.replaceFirst(SymbolConst.AND, SymbolConst.EMPTY);
         }
         return finalCondition.trim();
+    }
+
+    /**
+     * 可执行的sql打印
+     */
+    public static String handleExecuteSql(String sql, Object[] params) {
+        int symbolSize = countStr(sql, SymbolConst.QUEST);
+        int index = 0;
+        while (index < symbolSize) {
+            Object param = params[index];
+            if(param.getClass() == String.class) {
+                param = String.format("'%s'", param);
+            }
+            sql = sql.replaceFirst("\\?", param.toString());
+            index ++;
+        }
+        return sql;
     }
 
 

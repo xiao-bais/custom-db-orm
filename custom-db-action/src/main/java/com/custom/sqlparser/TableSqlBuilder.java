@@ -6,13 +6,14 @@ import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.DbFieldsConst;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.ExecuteMethod;
+import com.custom.enums.FillStrategy;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
 import com.custom.fill.TableFillObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.ObjectUtils;
 
-import javax.swing.plaf.ViewportUI;
 import java.lang.reflect.Field;
 import java.util.*;
 
@@ -190,7 +191,7 @@ public class TableSqlBuilder<T> implements Cloneable{
             logger.error(e.getMessage(), e);
             return SymbolConst.EMPTY;
         }
-        return String.format("insert into %s(%s) values %s ", this.table, insertSql.toString(), getInsertSymbol());
+        return String.format("insert into %s(%s) values %s ", this.table, insertSql, getInsertSymbol());
     }
 
     /**
@@ -416,17 +417,43 @@ public class TableSqlBuilder<T> implements Cloneable{
     /**
      * 自动填充的sql构造（采用增改后进行Update操作的方式进行自动填充）
      */
-    protected void buildAutoUpdateSql() {
+    protected String buildAutoUpdateSql(FillStrategy strategy, String whereKeySql, Object... params) {
         StringBuilder autoUpdateSql = new StringBuilder();
-        autoUpdateSql.append(SymbolConst.UPDATE);
+        autoUpdateSql.append(SymbolConst.UPDATE).append(table)
+                .append(" ").append(alias).append(SymbolConst.SET);
         TableFillObject tableFill = TableInfoCache.getTableFill(cls.getName());
-        if(tableFill != null) {
-            String column = fieldMapper.get(tableFill.getFieldName());
-        }else {
-
+        if(ObjectUtils.isEmpty(tableFill)) {
+            tableFill = TableInfoCache.getTableFill(SymbolConst.NORMAL);
+            if(ObjectUtils.isEmpty(tableFill)) {
+                return null;
+            }
         }
+        if(!strategy.toString().contains(tableFill.getStrategy().toString())) {
+            return null;
+        }
+        autoUpdateSql.append(buildAssignAutoUpdateSqlFragment(tableFill.getTableFillMapper()));
+
+        autoUpdateSql.append(SymbolConst.WHERE).append(CustomUtil.handleExecuteSql(whereKeySql, params));
+        return autoUpdateSql.toString();
+    }
+
+    /**
+     * 构建指定自动填充的sql片段
+     */
+    private String buildAssignAutoUpdateSqlFragment(Map<String, Object> tableFillObjects) {
+        StringJoiner autoUpdateFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+        StringBuilder updateField;
+        if(!ObjectUtils.isEmpty(tableFillObjects)) {
+            for (String fieldName : tableFillObjects.keySet()) {
+                if(ObjectUtils.isEmpty(fieldMapper.get(fieldName))) {
+                    throw new CustomCheckException("未找到可匹配的java属性字段");
+                }
+                Object fieldVal = tableFillObjects.get(fieldName);
 
 
+            }
+        }
+        return autoUpdateFieldSql.toString();
     }
 
 

@@ -15,6 +15,6 @@ public interface AutoFillColumnHandler {
     /**
      * 自动填充
      */
-    List<TableFillObject> fillStrategy();
+    List<TableAutoUpdateObject> fillStrategy();
 
 }
