@@ -28,7 +28,7 @@ public class SqlOutPrintBuilder implements Serializable {
     public void sqlErrPrint() {
         if(sqlExecute) {
             handleExecuteSql();
-            logger.error("QUERY-SQL ====>\n \n{}\n===================\n", sql);
+            logger.error("sql error ====>\n \n{}\n===================\n", sql);
         }else {
             logger.error(
                     "\nsql error\n===================\nSQL ====>\n {}\n===================\nparams = {}\n===================\n"

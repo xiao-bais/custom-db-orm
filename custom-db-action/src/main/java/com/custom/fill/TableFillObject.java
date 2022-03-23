@@ -2,6 +2,7 @@ package com.custom.fill;
 
 import com.custom.enums.FillStrategy;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -55,6 +56,9 @@ public class TableFillObject {
     }
 
     public Map<String, Object> getTableFillMapper() {
+        if(tableFillMapper == null) {
+            tableFillMapper = new HashMap<>();
+        }
         return tableFillMapper;
     }
 

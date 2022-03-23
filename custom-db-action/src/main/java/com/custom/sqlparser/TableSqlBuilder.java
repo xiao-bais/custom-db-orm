@@ -433,7 +433,7 @@ public class TableSqlBuilder<T> implements Cloneable{
         }
         autoUpdateSql.append(buildAssignAutoUpdateSqlFragment(tableFill.getTableFillMapper()));
 
-        autoUpdateSql.append(SymbolConst.WHERE).append(CustomUtil.handleExecuteSql(whereKeySql, params));
+        autoUpdateSql.append(CustomUtil.handleExecuteSql(whereKeySql, params));
         return autoUpdateSql.toString();
     }
 
@@ -448,9 +448,11 @@ public class TableSqlBuilder<T> implements Cloneable{
                 if(ObjectUtils.isEmpty(fieldMapper.get(fieldName))) {
                     throw new CustomCheckException("未找到可匹配的java属性字段");
                 }
+                updateField = new StringBuilder();
                 Object fieldVal = tableFillObjects.get(fieldName);
-
-
+                if(ObjectUtils.isEmpty(fieldVal)) continue;
+                updateField.append(fieldMapper.get(fieldName)).append(SymbolConst.EQUALS).append(fieldVal);
+                autoUpdateFieldSql.add(updateField);
             }
         }
         return autoUpdateFieldSql.toString();

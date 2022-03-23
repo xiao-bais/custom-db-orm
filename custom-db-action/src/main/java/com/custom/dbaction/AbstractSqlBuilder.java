@@ -188,6 +188,16 @@ public abstract class AbstractSqlBuilder {
     }
 
     /**
+     * 直接执行，属于内部执行
+     */
+    public void executeUpdateNotPrintSql(String sql) throws Exception {
+        if (JudgeUtilsAx.isEmpty(sql)) {
+            throw new NullPointerException();
+        }
+        sqlExecuteAction.executeUpdateNotPrintSql(sql);
+    }
+
+    /**
     * 创建/删除表
     */
     public void execTable(String sql) throws SQLException {

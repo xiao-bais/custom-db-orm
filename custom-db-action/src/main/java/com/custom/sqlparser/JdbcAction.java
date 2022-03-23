@@ -11,6 +11,7 @@ import com.custom.enums.DbSymbol;
 import com.custom.enums.ExecuteMethod;
 import com.custom.annotations.check.CheckExecute;
 import com.custom.comm.page.DbPageRows;
+import com.custom.enums.FillStrategy;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.wrapper.ConditionWrapper;
 import com.custom.wrapper.ConditionEntity;
@@ -192,13 +193,21 @@ public class JdbcAction extends AbstractSqlBuilder {
     public <T> int deleteByCondition(Class<T> t, String condition, Object... params) throws Exception {
         TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t);
         String deleteSql;
-        if(JudgeUtilsAx.isNotEmpty(getLogicDeleteUpdateSql()) && checkLogicFieldIsExist(tableSqlBuilder.getTable())) {
+        boolean isLogicMatch = JudgeUtilsAx.isNotEmpty(getLogicDeleteUpdateSql()) && checkLogicFieldIsExist(tableSqlBuilder.getTable());
+        if(isLogicMatch) {
             deleteSql = String.format("update %s %s set %s.%s where %s.%s %s", tableSqlBuilder.getTable(), tableSqlBuilder.getAlias(),
                     tableSqlBuilder.getAlias(), getLogicDeleteUpdateSql(), tableSqlBuilder.getAlias(), getLogicDeleteQuerySql(), condition);
         }else {
             deleteSql = String.format("delete from %s %s where %s", tableSqlBuilder.getTable(), tableSqlBuilder.getAlias(), CustomUtil.trimSqlCondition(condition));
         }
-        return executeSql(deleteSql, params);
+        int i = executeSql(deleteSql, params);
+        if(i > 0 && isLogicMatch) {
+            String autoUpdateWhereSqlCondition = deleteSql.substring(deleteSql.indexOf(SymbolConst.WHERE)).replace(getLogicDeleteQuerySql(), getLogicDeleteUpdateSql());
+            FillStrategy strategy = TableInfoCache.getTableFill(t.getName()).getStrategy();
+            String autoUpdateSql = tableSqlBuilder.buildAutoUpdateSql(strategy, autoUpdateWhereSqlCondition, params);
+            executeUpdateNotPrintSql(autoUpdateSql);
+        }
+        return i;
     }
 
     @Override
@@ -233,7 +242,16 @@ public class JdbcAction extends AbstractSqlBuilder {
     public <T> int updateByKey(T t, String... updateDbFields) throws Exception {
         TableSqlBuilder<T> tableSqlBuilder = getUpdateEntityModelCache(t);
         tableSqlBuilder.buildUpdateSql(updateDbFields, getLogicDeleteQuerySql());
-        return executeSql(tableSqlBuilder.getUpdateSql().toString(), tableSqlBuilder.getObjValues().toArray());
+//        return executeSql(tableSqlBuilder.getUpdateSql().toString(), tableSqlBuilder.getObjValues().toArray());
+        String updateSql = tableSqlBuilder.getUpdateSql().toString();
+        if(JudgeUtilsAx.isNotEmpty(getLogicField())) {
+            String autoUpdateWhereSqlCondition = updateSql.substring(updateSql.indexOf(SymbolConst.WHERE)).replace(getLogicDeleteQuerySql(), getLogicDeleteUpdateSql());
+            FillStrategy strategy = TableInfoCache.getTableFill(t.getClass().getName()).getStrategy();
+//            String autoUpdateSql = tableSqlBuilder.buildAutoUpdateSql(strategy, autoUpdateWhereSqlCondition, params);
+//            executeUpdateNotPrintSql(autoUpdateSql);
+
+        }
+        return 0;
     }
 
     @Override

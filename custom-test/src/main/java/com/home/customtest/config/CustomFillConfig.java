@@ -17,19 +17,16 @@ import java.util.List;
 @Component
 public class CustomFillConfig implements AutoFillColumnHandler {
     @Override
-    public List<TableAutoUpdateObject> fillStrategy() {
+    public List<TableFillObject> fillStrategy() {
 
-        List<TableAutoUpdateObject> tableFillObjects = new ArrayList<>();
+        List<TableFillObject> tableFillObjects = new ArrayList<>();
 
         TableFillObject tableFillObject = new TableFillObject();
-        tableFillObject.setStrategy(FillStrategy.INSERT);
-        tableFillObject.setFieldName("createTime");
-        tableFillObject.setFieldVal((int) (System.currentTimeMillis() / 1000));
-
-        TableAutoUpdateObject tableAutoUpdateObject = new TableAutoUpdateObject();
-        tableAutoUpdateObject.setEntityClass(Aklis.class);
-        tableAutoUpdateObject.getTableFillObjects().add(tableFillObject);
-        tableFillObjects.add(tableAutoUpdateObject);
+        tableFillObject.setStrategy(FillStrategy.UPDATE);
+        tableFillObject.getTableFillMapper().put("createTime", (int) (System.currentTimeMillis() / 1000));
+        tableFillObject.getTableFillMapper().put("updateTime", (int) (System.currentTimeMillis() / 1000));
+        tableFillObject.setEntityClass(Aklis.class);
+        tableFillObjects.add(tableFillObject);
         return tableFillObjects;
     }
 }

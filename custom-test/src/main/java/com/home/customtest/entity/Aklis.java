@@ -39,13 +39,13 @@ public class Aklis {
     private String phone;
 
     @DbField
-    private BigDecimal money;
-
-    @DbField
     private String address;
 
     @DbField("birthday")
     private Date birth;
+
+    @DbField
+    private Integer state;
 
     @DbField
     private Integer createTime;

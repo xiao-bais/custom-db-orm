@@ -36,11 +36,11 @@ public class FillStrategyHandler implements  ApplicationContextAware {
         }
         if(ObjectUtils.isEmpty(autoFillColumnHandler)) return;
 
-        List<TableAutoUpdateObject> tableAutoUpdateObjects = autoFillColumnHandler.fillStrategy();
+        List<TableFillObject> tableAutoUpdateObjects = autoFillColumnHandler.fillStrategy();
         if (CollectionUtils.isEmpty(tableAutoUpdateObjects)) return;
 
-        for (TableAutoUpdateObject autoUpdateObject : tableAutoUpdateObjects) {
-            if(!ObjectUtils.isEmpty(autoUpdateObject) && !ObjectUtils.isEmpty(autoUpdateObject.getTableFillObjects())) {
+        for (TableFillObject autoUpdateObject : tableAutoUpdateObjects) {
+            if(!ObjectUtils.isEmpty(autoUpdateObject) && !ObjectUtils.isEmpty(autoUpdateObject.getTableFillMapper())) {
                 if(ObjectUtils.isEmpty(autoUpdateObject.getEntityClass())) {
                     TableInfoCache.setTableFill(SymbolConst.NORMAL, autoUpdateObject);
                 }else {

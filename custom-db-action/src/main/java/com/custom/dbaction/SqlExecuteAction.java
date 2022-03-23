@@ -277,6 +277,14 @@ public class SqlExecuteAction extends DbConnection {
     }
 
     /**
+     * 直接执行，不打印
+     */
+    public void executeUpdateNotPrintSql(String sql) throws SQLException {
+        statement = conn.prepareStatement(sql);
+        statement.execute();
+    }
+
+    /**
      * 查询表是否存在,字段是否存在
      */
     public long executeExist(String sql) throws Exception {
