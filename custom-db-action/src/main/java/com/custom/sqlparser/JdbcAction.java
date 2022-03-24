@@ -224,7 +224,7 @@ public class JdbcAction extends AbstractSqlBuilder {
         DbKeyParserModel<T> keyParserModel = tableSqlBuilder.getKeyParserModel();
         int i = executeInsert(insertSql, Collections.singletonList(t), isGeneratedKey, keyParserModel.getKey(), keyParserModel.getType(), tableSqlBuilder.getOneObjValues().toArray());
         String updateSql = String.format(" where %s = ?", tableSqlBuilder.getKeyParserModel().getFieldSql());
-        handleLogicDelAfter(t.getClass(), updateSql, tableSqlBuilder, tableSqlBuilder.getKeyParserModel().getValue());
+        handleLogicDelAfter(t.getClass(), updateSql, tableSqlBuilder, tableSqlBuilder.getKeyParserModel().getValue(t));
         return i;
     }
 
