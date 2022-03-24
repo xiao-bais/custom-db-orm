@@ -5,14 +5,14 @@ import com.custom.handler.JdbcDao;
 import com.custom.sqlparser.CustomDao;
 import com.custom.wrapper.ConditionEntity;
 import com.custom.wrapper.LambdaConditionEntity;
+import com.home.customtest.entity.Aklis;
 import com.home.customtest.entity.Employee;
 import com.home.customtest.entity.Student;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -47,6 +47,17 @@ public class IndexControl {
                         .orderByDesc(Student::getAge)
                 ));
         return BackResult.bySuccess("success01", students);
+    }
+
+    @PostMapping("saveInfo")
+    public BackResult<Aklis> saveInfo(@RequestBody Map<String, Object> map) throws Exception {
+
+        Aklis aklis = new Aklis();
+        aklis.setName(map.get("name").toString());
+        aklis.setAge(22);
+        customDao.insert(aklis);
+
+        return BackResult.bySuccess(aklis);
     }
 
 }

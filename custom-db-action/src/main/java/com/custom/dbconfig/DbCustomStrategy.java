@@ -58,6 +58,11 @@ public class DbCustomStrategy {
     */
     private boolean mapperScanEnable = false;
 
+    /**
+     * 是否自动填充，无需手动配置，实现AutoFillColumnHandler接口，配置了自动填充的字段后，会自动开启
+     */
+    private boolean openAutoUpdateFill = false;
+
 
     public boolean isMapperScanEnable() {
         return mapperScanEnable;
@@ -129,5 +134,13 @@ public class DbCustomStrategy {
 
     public void setSqlOutPrintExecute(boolean sqlOutPrintExecute) {
         this.sqlOutPrintExecute = sqlOutPrintExecute;
+    }
+
+    public boolean isOpenAutoUpdateFill() {
+        return openAutoUpdateFill;
+    }
+
+    public void setOpenAutoUpdateFill(boolean openAutoUpdateFill) {
+        this.openAutoUpdateFill = openAutoUpdateFill;
     }
 }

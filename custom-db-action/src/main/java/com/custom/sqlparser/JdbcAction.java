@@ -222,7 +222,10 @@ public class JdbcAction extends AbstractSqlBuilder {
         TableSqlBuilder<T> tableSqlBuilder = getUpdateEntityModelCache(t);
         String insertSql = tableSqlBuilder.getInsertSql();
         DbKeyParserModel<T> keyParserModel = tableSqlBuilder.getKeyParserModel();
-        return executeInsert(insertSql, Collections.singletonList(t), isGeneratedKey, keyParserModel.getKey(), keyParserModel.getType(), tableSqlBuilder.getOneObjValues().toArray());
+        int i = executeInsert(insertSql, Collections.singletonList(t), isGeneratedKey, keyParserModel.getKey(), keyParserModel.getType(), tableSqlBuilder.getOneObjValues().toArray());
+        String updateSql = String.format(" where %s = ?", tableSqlBuilder.getKeyParserModel().getFieldSql());
+        handleLogicDelAfter(t.getClass(), updateSql, tableSqlBuilder, tableSqlBuilder.getKeyParserModel().getValue());
+        return i;
     }
 
     @Override
@@ -231,7 +234,17 @@ public class JdbcAction extends AbstractSqlBuilder {
         TableSqlBuilder<T> tableSqlBuilder = getUpdateEntityModelCache(ts);
         String insertSql = tableSqlBuilder.getInsertSql();
         DbKeyParserModel<T> keyParserModel = tableSqlBuilder.getKeyParserModel();
-        return executeInsert(insertSql, ts, isGeneratedKey, keyParserModel.getKey(), keyParserModel.getType(), tableSqlBuilder.getManyObjValues().toArray());
+        int i = executeInsert(insertSql, ts, isGeneratedKey, keyParserModel.getKey(), keyParserModel.getType(), tableSqlBuilder.getManyObjValues().toArray());
+
+        StringJoiner keyInject = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1, SymbolConst.BRACKETS_LEFT, SymbolConst.BRACKETS_RIGHT);
+        List<Object> keyValues = new ArrayList<>();
+        ts.stream().filter(Objects::nonNull).forEach(x -> {
+            keyInject.add(SymbolConst.QUEST);
+            keyValues.add(tableSqlBuilder.getKeyParserModel().getValue(x));
+        });
+        String updateSql = String.format(" where %s in %s", tableSqlBuilder.getKeyParserModel().getFieldSql(), keyInject);
+        handleLogicDelAfter(ts.get(0).getClass(), updateSql, tableSqlBuilder, keyValues.toArray());
+        return i;
     }
 
     @Override
@@ -241,9 +254,7 @@ public class JdbcAction extends AbstractSqlBuilder {
         String updateSql = tableSqlBuilder.getUpdateSql().toString();
         tableSqlBuilder.buildUpdateSql(updateDbFields, getLogicDeleteQuerySql());
         int i = executeSql(updateSql, tableSqlBuilder.getObjValues().toArray());
-        if(JudgeUtilsAx.isNotEmpty(getLogicField()) && checkLogicFieldIsExist(tableSqlBuilder.getTable())) {
-            handleLogicDelAfter(t.getClass(), updateSql, tableSqlBuilder, tableSqlBuilder.getKeyParserModel().getValue());
-        }
+        handleLogicDelAfter(t.getClass(), updateSql, tableSqlBuilder, tableSqlBuilder.getKeyParserModel().getValue());
         return i;
     }
 
@@ -255,9 +266,7 @@ public class JdbcAction extends AbstractSqlBuilder {
         tableSqlBuilder.buildUpdateField(condition, wrapper.getParamValues());
         String updateSql = tableSqlBuilder.getUpdateSql().toString();
         int i = executeSql(updateSql, tableSqlBuilder.getObjValues().toArray());
-        if(JudgeUtilsAx.isNotEmpty(getLogicField()) && checkLogicFieldIsExist(tableSqlBuilder.getTable())) {
-            handleLogicDelAfter(t.getClass(), updateSql, tableSqlBuilder, tableSqlBuilder.getKeyParserModel().getValue());
-        }
+        handleLogicDelAfter(t.getClass(), updateSql, tableSqlBuilder, tableSqlBuilder.getKeyParserModel().getValue());
         return i;
     }
 

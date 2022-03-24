@@ -12,6 +12,7 @@ import com.custom.comm.page.DbPageRows;
 import com.custom.sqlparser.TableInfoCache;
 import com.custom.sqlparser.TableSqlBuilder;
 import com.custom.wrapper.ConditionWrapper;
+import org.springframework.util.ObjectUtils;
 
 import java.io.Serializable;
 import java.sql.SQLException;
@@ -63,6 +64,7 @@ public abstract class AbstractSqlBuilder {
     private String logicField = SymbolConst.EMPTY;
     private String logicDeleteUpdateSql = SymbolConst.EMPTY;
     private String logicDeleteQuerySql = SymbolConst.EMPTY;
+    private Boolean openAutoUpdateFill  = false;
 
     /**
      * 初始化逻辑删除的sql
@@ -78,6 +80,7 @@ public abstract class AbstractSqlBuilder {
             this.logicDeleteQuerySql = String.format("%s = %s",
                     logicField, dbCustomStrategy.getNotDeleteLogicValue());
         }
+        this.openAutoUpdateFill = dbCustomStrategy.isOpenAutoUpdateFill();
     }
 
     /**
@@ -149,10 +152,13 @@ public abstract class AbstractSqlBuilder {
      * 在删除数据时，若是有逻辑删除，则在逻辑删除后，进行固定字段的自动填充
      */
     public <T> void handleLogicDelAfter(Class<?> t, String deleteSql, TableSqlBuilder<T> tableSqlBuilder, Object... params) throws Exception {
+        if(!openAutoUpdateFill) return;
         String autoUpdateWhereSqlCondition = deleteSql.substring(deleteSql.indexOf(SymbolConst.WHERE)).replace(getLogicDeleteQuerySql(), getLogicDeleteUpdateSql());
         FillStrategy strategy = TableInfoCache.getTableFill(t.getName()).getStrategy();
         String autoUpdateSql = tableSqlBuilder.buildAutoUpdateSql(strategy, autoUpdateWhereSqlCondition, params);
-        executeUpdateNotPrintSql(autoUpdateSql);
+        if(!ObjectUtils.isEmpty(autoUpdateSql)) {
+            executeUpdateNotPrintSql(autoUpdateSql);
+        }
     }
 
 
@@ -244,11 +250,7 @@ public abstract class AbstractSqlBuilder {
      * 从缓存中获取实体解析模板，若缓存中没有，就重新构造模板（增改记录）
      */
     protected <T> TableSqlBuilder<T> getUpdateEntityModelCache(T t) {
-        TableSqlBuilder<T> tableModelCache = (TableSqlBuilder<T>) TableInfoCache.getTableModel(t.getClass());
-        TableSqlBuilder<T> tableModel = tableModelCache.clone();
-        tableModel.setEntity(t);
-        injectEntity(tableModel, t);
-        return tableModel;
+        return getUpdateEntityModelCache(Collections.singletonList(t));
     }
 
     /**

@@ -64,23 +64,23 @@ public class TableSqlBuilder<T> implements Cloneable{
     /**
      * @Desc:查询的sql语句
      */
-    private final StringBuilder selectSql = new StringBuilder();
+    private StringBuilder selectSql = new StringBuilder();
     /**
      * @Desc:插入的sql语句
      */
-    private final StringJoiner insertSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+    private StringJoiner insertSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
     /**
      * @Desc:插入的`?`
      */
-    private final StringJoiner insetSymbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1);
+    private StringJoiner insetSymbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1);
     /**
      * @Desc:对象的所有值
      */
-    private final List<Object> objValues = new ArrayList<>();
+    private List<Object> objValues = new ArrayList<>();
     /**
      * @desc:修改的sql语句
      */
-    private final StringBuilder updateSql = new StringBuilder();
+    private StringBuilder updateSql = new StringBuilder();
     /**
      * @desc:对于java属性字段到表字段的映射关系
      */
@@ -170,7 +170,12 @@ public class TableSqlBuilder<T> implements Cloneable{
                 objValues.add(keyParserModel.generateKey());
             }
             if (!fieldParserModels.isEmpty()) {
-                fieldParserModels.forEach(x -> objValues.add(x.getValue(entity)));
+                fieldParserModels.forEach(x -> {
+                    Object value = x.getValue(entity);
+                    if(value != null) {
+                        objValues.add(value);
+                    }
+                });
             }
         }
         return objValues;
@@ -185,7 +190,11 @@ public class TableSqlBuilder<T> implements Cloneable{
                 insertSql.add(keyParserModel.getDbKey());
             }
             if (!fieldParserModels.isEmpty()) {
-                fieldParserModels.forEach(x -> insertSql.add(x.getColumn()));
+                fieldParserModels.forEach(x -> {
+                    if(x.getValue(entity) != null) {
+                        insertSql.add(x.getColumn());
+                    }
+                });
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -205,7 +214,11 @@ public class TableSqlBuilder<T> implements Cloneable{
                 brackets.add(SymbolConst.QUEST);
             }
             if (!fieldParserModels.isEmpty()) {
-                fieldParserModels.forEach(x -> brackets.add(SymbolConst.QUEST));
+                fieldParserModels.forEach(x -> {
+                    if(x.getValue(entity) != null) {
+                        brackets.add(SymbolConst.QUEST);
+                    }
+                });
             }
             insetSymbol.add(brackets.toString());
         }
@@ -563,6 +576,17 @@ public class TableSqlBuilder<T> implements Cloneable{
         fieldOptional.ifPresent(field -> keyParserModel = new DbKeyParserModel<>(field, this.table, this.alias, this.underlineToCamel));
     }
 
+    /**
+     * 初始化
+     */
+    private void init(TableSqlBuilder<T> tableSqlBuilder) {
+        tableSqlBuilder.selectSql = new StringBuilder();
+        tableSqlBuilder.updateSql = new StringBuilder();
+        tableSqlBuilder.insertSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+        tableSqlBuilder.insetSymbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1);
+        tableSqlBuilder.objValues = new ArrayList<>();
+    }
+
     public String getTable() {
         return table;
     }
@@ -683,6 +707,7 @@ public class TableSqlBuilder<T> implements Cloneable{
             builder.setRelatedParserModels(this.relatedParserModels);
             builder.setJoinTableParserModels(this.joinTableParserModels);
             builder.setJoinDbMappers(this.joinDbMappers);
+            init(builder);
         } catch (CloneNotSupportedException e) {
             logger.error(e.toString(), e);
         }

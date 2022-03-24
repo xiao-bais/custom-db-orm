@@ -1,6 +1,7 @@
 package com.custom.fill;
 
 import com.custom.comm.JudgeUtilsAx;
+import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.sqlparser.TableInfoCache;
 import lombok.extern.slf4j.Slf4j;
@@ -48,5 +49,8 @@ public class FillStrategyHandler implements  ApplicationContextAware {
                 }
             }
         }
+
+        DbCustomStrategy customStrategy = applicationContext.getBean(DbCustomStrategy.class);
+        customStrategy.setOpenAutoUpdateFill(true);
     }
 }
