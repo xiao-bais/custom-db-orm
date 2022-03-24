@@ -4,7 +4,7 @@ import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.SymbolConst;
-import com.custom.enums.DbSymbol;
+import com.custom.enums.FillStrategy;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
 import com.custom.interfaces.LogicDeleteFieldSqlHandler;
@@ -12,7 +12,6 @@ import com.custom.comm.page.DbPageRows;
 import com.custom.sqlparser.TableInfoCache;
 import com.custom.sqlparser.TableSqlBuilder;
 import com.custom.wrapper.ConditionWrapper;
-import com.custom.wrapper.ConditionEntity;
 
 import java.io.Serializable;
 import java.sql.SQLException;
@@ -145,6 +144,18 @@ public abstract class AbstractSqlBuilder {
         };
         return handler.handleLogic();
     }
+
+    /**
+     * 在删除数据时，若是有逻辑删除，则在逻辑删除后，进行固定字段的自动填充
+     */
+    public <T> void handleLogicDelAfter(Class<?> t, String deleteSql, TableSqlBuilder<T> tableSqlBuilder, Object... params) throws Exception {
+        String autoUpdateWhereSqlCondition = deleteSql.substring(deleteSql.indexOf(SymbolConst.WHERE)).replace(getLogicDeleteQuerySql(), getLogicDeleteUpdateSql());
+        FillStrategy strategy = TableInfoCache.getTableFill(t.getName()).getStrategy();
+        String autoUpdateSql = tableSqlBuilder.buildAutoUpdateSql(strategy, autoUpdateWhereSqlCondition, params);
+        executeUpdateNotPrintSql(autoUpdateSql);
+    }
+
+
 
     /**
     * 纯sql查询集合

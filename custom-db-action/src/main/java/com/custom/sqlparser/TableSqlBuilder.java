@@ -364,7 +364,7 @@ public class TableSqlBuilder<T> implements Cloneable{
      * 获取修改的逻辑删除字段sql
      */
     private String getLogicUpdateSql(String key, String logicDeleteQuerySql) {
-        return JudgeUtilsAx.isNotBlank(logicDeleteQuerySql) ? String.format("%s and %s = ?", logicDeleteQuerySql, key) : String.format("%s = ?", key);
+        return JudgeUtilsAx.isNotBlank(logicDeleteQuerySql) ? String.format("%s.%s and %s = ?", alias, logicDeleteQuerySql, key) : String.format("%s = ?", key);
     }
 
     /**
@@ -417,7 +417,7 @@ public class TableSqlBuilder<T> implements Cloneable{
     /**
      * 自动填充的sql构造（采用增改后进行Update操作的方式进行自动填充）
      */
-    protected String buildAutoUpdateSql(FillStrategy strategy, String whereKeySql, Object... params) {
+    public String buildAutoUpdateSql(FillStrategy strategy, String whereKeySql, Object... params) {
         StringBuilder autoUpdateSql = new StringBuilder();
         autoUpdateSql.append(SymbolConst.UPDATE).append(table)
                 .append(" ").append(alias).append(SymbolConst.SET);
@@ -431,9 +431,8 @@ public class TableSqlBuilder<T> implements Cloneable{
         if(!strategy.toString().contains(tableFill.getStrategy().toString())) {
             return null;
         }
-        autoUpdateSql.append(buildAssignAutoUpdateSqlFragment(tableFill.getTableFillMapper()));
-
-        autoUpdateSql.append(CustomUtil.handleExecuteSql(whereKeySql, params));
+        autoUpdateSql.append(buildAssignAutoUpdateSqlFragment(tableFill.getTableFillMapper()))
+                .append(CustomUtil.handleExecuteSql(whereKeySql, params));
         return autoUpdateSql.toString();
     }
 

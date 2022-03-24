@@ -7,14 +7,12 @@ import com.custom.dbaction.SqlExecuteAction;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.dbconfig.SymbolConst;
-import com.custom.enums.DbSymbol;
 import com.custom.enums.ExecuteMethod;
 import com.custom.annotations.check.CheckExecute;
 import com.custom.comm.page.DbPageRows;
 import com.custom.enums.FillStrategy;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.wrapper.ConditionWrapper;
-import com.custom.wrapper.ConditionEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -168,13 +166,11 @@ public class JdbcAction extends AbstractSqlBuilder {
         if(!CustomUtil.isKeyAllowType(keyParserModel.getType(), key)) {
             throw new CustomCheckException("Illegal primary key parameter : " + key);
         }
-        int res = executeSql(deleteSql, key);
-        if(res > 0 && JudgeUtilsAx.isNotEmpty(getLogicField())) {
-//            String.format("update %s set ");
-
-
+        int i = executeSql(deleteSql, key);
+        if(i > 0 && JudgeUtilsAx.isNotEmpty(getLogicDeleteUpdateSql()) && checkLogicFieldIsExist(tableSqlBuilder.getTable())) {
+            handleLogicDelAfter(t, deleteSql, tableSqlBuilder, key);
         }
-        return 0;
+        return i;
     }
 
     @Override
@@ -185,7 +181,11 @@ public class JdbcAction extends AbstractSqlBuilder {
         StringJoiner delSymbols = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
         IntStream.range(0, keys.size()).mapToObj(i -> SymbolConst.QUEST).forEach(delSymbols::add);
         String deleteSql = getLogicDeleteKeySql(String.format("(%s)", delSymbols), keyParserModel.getDbKey(), tableSqlBuilder.getTable(), tableSqlBuilder.getAlias(), true);
-        return executeSql(deleteSql, keys.toArray());
+        int i = executeSql(deleteSql, keys.toArray());
+        if(i > 0 && JudgeUtilsAx.isNotEmpty(getLogicDeleteUpdateSql()) && checkLogicFieldIsExist(tableSqlBuilder.getTable())) {
+            handleLogicDelAfter(t, deleteSql, tableSqlBuilder, keys.toArray());
+        }
+        return i;
     }
 
     @Override
@@ -202,10 +202,7 @@ public class JdbcAction extends AbstractSqlBuilder {
         }
         int i = executeSql(deleteSql, params);
         if(i > 0 && isLogicMatch) {
-            String autoUpdateWhereSqlCondition = deleteSql.substring(deleteSql.indexOf(SymbolConst.WHERE)).replace(getLogicDeleteQuerySql(), getLogicDeleteUpdateSql());
-            FillStrategy strategy = TableInfoCache.getTableFill(t.getName()).getStrategy();
-            String autoUpdateSql = tableSqlBuilder.buildAutoUpdateSql(strategy, autoUpdateWhereSqlCondition, params);
-            executeUpdateNotPrintSql(autoUpdateSql);
+            handleLogicDelAfter(t, deleteSql, tableSqlBuilder, params);
         }
         return i;
     }
@@ -241,17 +238,13 @@ public class JdbcAction extends AbstractSqlBuilder {
     @CheckExecute(target = ExecuteMethod.UPDATE)
     public <T> int updateByKey(T t, String... updateDbFields) throws Exception {
         TableSqlBuilder<T> tableSqlBuilder = getUpdateEntityModelCache(t);
-        tableSqlBuilder.buildUpdateSql(updateDbFields, getLogicDeleteQuerySql());
-//        return executeSql(tableSqlBuilder.getUpdateSql().toString(), tableSqlBuilder.getObjValues().toArray());
         String updateSql = tableSqlBuilder.getUpdateSql().toString();
-        if(JudgeUtilsAx.isNotEmpty(getLogicField())) {
-            String autoUpdateWhereSqlCondition = updateSql.substring(updateSql.indexOf(SymbolConst.WHERE)).replace(getLogicDeleteQuerySql(), getLogicDeleteUpdateSql());
-            FillStrategy strategy = TableInfoCache.getTableFill(t.getClass().getName()).getStrategy();
-//            String autoUpdateSql = tableSqlBuilder.buildAutoUpdateSql(strategy, autoUpdateWhereSqlCondition, params);
-//            executeUpdateNotPrintSql(autoUpdateSql);
-
+        tableSqlBuilder.buildUpdateSql(updateDbFields, getLogicDeleteQuerySql());
+        int i = executeSql(updateSql, tableSqlBuilder.getObjValues().toArray());
+        if(JudgeUtilsAx.isNotEmpty(getLogicField()) && checkLogicFieldIsExist(tableSqlBuilder.getTable())) {
+            handleLogicDelAfter(t.getClass(), updateSql, tableSqlBuilder, tableSqlBuilder.getKeyParserModel().getValue());
         }
-        return 0;
+        return i;
     }
 
     @Override
@@ -260,7 +253,12 @@ public class JdbcAction extends AbstractSqlBuilder {
         TableSqlBuilder<T> tableSqlBuilder = getUpdateEntityModelCache(t);
         String condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), wrapper.getFinalConditional(), getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
         tableSqlBuilder.buildUpdateField(condition, wrapper.getParamValues());
-        return executeSql(tableSqlBuilder.getUpdateSql().toString(), tableSqlBuilder.getObjValues().toArray());
+        String updateSql = tableSqlBuilder.getUpdateSql().toString();
+        int i = executeSql(updateSql, tableSqlBuilder.getObjValues().toArray());
+        if(JudgeUtilsAx.isNotEmpty(getLogicField()) && checkLogicFieldIsExist(tableSqlBuilder.getTable())) {
+            handleLogicDelAfter(t.getClass(), updateSql, tableSqlBuilder, tableSqlBuilder.getKeyParserModel().getValue());
+        }
+        return i;
     }
 
     @Override

@@ -97,6 +97,9 @@ public class CustomUtil {
     * 是否是主键的允许类型
     */
     public static boolean isKeyAllowType(Class<?> type, Object val) {
+        if(!isBasicType(val.getClass())) {
+            throw new CustomCheckException("不允许的主键类型：" + val+ "(" + val.getClass() + ")");
+        }
         if(type == String.class) {
             return true;
         }

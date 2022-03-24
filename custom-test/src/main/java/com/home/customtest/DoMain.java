@@ -54,10 +54,12 @@ public class DoMain {
             TableInfoCache.setTableFill(Aklis.class.getName(), fillObject);
         }
 
-        Aklis aklis = new Aklis();
-        aklis.setId(10);
-        aklis.setAddress("浙江杭州");
-        customDao.updateByKey(aklis);
+        customDao.deleteByKey(Aklis.class, 9);
+
+//        Aklis aklis = new Aklis();
+//        aklis.setId(10);
+//        aklis.setAddress("河南商丘");
+//        customDao.updateByKey(aklis);
 
 //        List<Location> locations = customDao.selectList(Location.class, new ConditionEntity<>(Location.class).like("name", "区"));
 
