@@ -60,6 +60,10 @@ public abstract class AbstractTableModel<T> {
         return value;
     }
 
+    /**
+     * set实体值
+     */
+
     protected abstract String buildTableSql();
     protected abstract Object getValue(T x);
     public abstract String getFieldSql();

@@ -79,4 +79,8 @@ public class TableInfoCache {
         return  (TableFillObject) TableFill.get(key);
     }
 
+    public static Boolean isExistsTableFill() {
+        return TableFill.isEmpty();
+    }
+
 }

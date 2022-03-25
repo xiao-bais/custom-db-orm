@@ -9,6 +9,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -23,6 +24,7 @@ import java.util.List;
  **/
 @Slf4j
 @Component
+@Order(7)
 public class FillStrategyHandler implements  ApplicationContextAware {
 
     @Override
@@ -49,8 +51,5 @@ public class FillStrategyHandler implements  ApplicationContextAware {
                 }
             }
         }
-
-        DbCustomStrategy customStrategy = applicationContext.getBean(DbCustomStrategy.class);
-        customStrategy.setOpenAutoUpdateFill(true);
     }
 }

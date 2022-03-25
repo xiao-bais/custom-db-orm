@@ -54,12 +54,12 @@ public class DoMain {
             TableInfoCache.setTableFill(Aklis.class.getName(), fillObject);
         }
 
-        customDao.deleteByKey(Aklis.class, 9);
 
 //        Aklis aklis = new Aklis();
 //        aklis.setId(10);
+//        aklis.setName("张超艾");
 //        aklis.setAddress("河南商丘");
-//        customDao.updateByKey(aklis);
+//        customDao.insert(aklis);
 
 //        List<Location> locations = customDao.selectList(Location.class, new ConditionEntity<>(Location.class).like("name", "区"));
 
@@ -85,15 +85,17 @@ public class DoMain {
 
 //        Student student = new Student();
 //        long time = System.currentTimeMillis();
-//        DbPageRows<Student> students = customDao.selectPageRows(Student.class, Conditions.lambdaConditionQuery(Student.class)
-//                .select(Student::getAge)
-//                .select(x -> x.count(Student::getId, Student::getCountAge))
-//                .limit(1, 10)
-//                        .groupBy(Student::getAge)
-//                        .orderByAsc(x -> x.count(Student::getId))
-//        );
+        DbPageRows<Student> students = customDao.selectPageRows(Student.class, Conditions.lambdaConditionQuery(Student.class)
+                .select(Student::getAge)
+                .select(x -> x.count(Student::getId, Student::getCountAge))
+                        .gt(Student::getAge, 22)
+                        .eq(Student::getArea, "aaa")
+                .limit(1, 10)
+                        .groupBy(Student::getAge)
+                        .orderByAsc(x -> x.count(Student::getId))
+        );
 
-//        System.out.println("students = " + students);
+        System.out.println("students = " + students);
 
     }
 

@@ -64,7 +64,7 @@ public abstract class AbstractSqlBuilder {
     private String logicField = SymbolConst.EMPTY;
     private String logicDeleteUpdateSql = SymbolConst.EMPTY;
     private String logicDeleteQuerySql = SymbolConst.EMPTY;
-    private Boolean openAutoUpdateFill  = false;
+    private boolean openAutoUpdateFill = false;
 
     /**
      * 初始化逻辑删除的sql
@@ -80,7 +80,7 @@ public abstract class AbstractSqlBuilder {
             this.logicDeleteQuerySql = String.format("%s = %s",
                     logicField, dbCustomStrategy.getNotDeleteLogicValue());
         }
-        this.openAutoUpdateFill = dbCustomStrategy.isOpenAutoUpdateFill();
+        this.openAutoUpdateFill = TableInfoCache.isExistsTableFill();
     }
 
     /**
@@ -155,12 +155,11 @@ public abstract class AbstractSqlBuilder {
         if(!openAutoUpdateFill) return;
         String autoUpdateWhereSqlCondition = deleteSql.substring(deleteSql.indexOf(SymbolConst.WHERE)).replace(getLogicDeleteQuerySql(), getLogicDeleteUpdateSql());
         FillStrategy strategy = TableInfoCache.getTableFill(t.getName()).getStrategy();
-        String autoUpdateSql = tableSqlBuilder.buildAutoUpdateSql(strategy, autoUpdateWhereSqlCondition, params);
+        String autoUpdateSql = tableSqlBuilder.buildLogicDelAfterAutoUpdateSql(strategy, autoUpdateWhereSqlCondition, params);
         if(!ObjectUtils.isEmpty(autoUpdateSql)) {
             executeUpdateNotPrintSql(autoUpdateSql);
         }
     }
-
 
 
     /**

@@ -64,23 +64,23 @@ public class TableSqlBuilder<T> implements Cloneable{
     /**
      * @Desc:查询的sql语句
      */
-    private StringBuilder selectSql = new StringBuilder();
+    private StringBuilder selectSql;
     /**
      * @Desc:插入的sql语句
      */
-    private StringJoiner insertSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+    private StringJoiner insertSql;
     /**
      * @Desc:插入的`?`
      */
-    private StringJoiner insetSymbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1);
+    private StringJoiner insetSymbol;
     /**
      * @Desc:对象的所有值
      */
-    private List<Object> objValues = new ArrayList<>();
+    private List<Object> objValues;
     /**
      * @desc:修改的sql语句
      */
-    private StringBuilder updateSql = new StringBuilder();
+    private StringBuilder updateSql;
     /**
      * @desc:对于java属性字段到表字段的映射关系
      */
@@ -184,29 +184,27 @@ public class TableSqlBuilder<T> implements Cloneable{
     /**
      * 获取添加sql
      */
-    protected String getInsertSql() {
-        try {
-            if (keyParserModel != null) {
-                insertSql.add(keyParserModel.getDbKey());
-            }
-            if (!fieldParserModels.isEmpty()) {
-                fieldParserModels.forEach(x -> {
-                    if(x.getValue(entity) != null) {
-                        insertSql.add(x.getColumn());
-                    }
-                });
-            }
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            return SymbolConst.EMPTY;
+    protected String getInsertSql() throws NoSuchFieldException {
+        if (keyParserModel != null) {
+            insertSql.add(keyParserModel.getDbKey());
         }
+        if (!fieldParserModels.isEmpty()) {
+            fieldParserModels.forEach(x -> {
+                if(x.getValue(entity) != null) {
+                    insertSql.add(x.getColumn());
+                }
+            });
+        }
+        // 做自动填充
+        handleAutoFillColumn(insertSql, true);
+
         return String.format("insert into %s(%s) values %s ", this.table, insertSql, getInsertSymbol());
     }
 
     /**
      * 获取添加的？
      */
-    private String getInsertSymbol() {
+    private String getInsertSymbol() throws NoSuchFieldException {
         int size = list.size();
         for (int i = 0; i < size; i++) {
             StringJoiner brackets = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1, SymbolConst.BRACKETS_LEFT, SymbolConst.BRACKETS_RIGHT);
@@ -220,9 +218,35 @@ public class TableSqlBuilder<T> implements Cloneable{
                     }
                 });
             }
+            // 做自动填充
+            handleAutoFillColumn(brackets, false);
             insetSymbol.add(brackets.toString());
         }
         return insetSymbol.toString();
+    }
+
+    /**
+     * 添加时的自动填充
+     */
+    private void handleAutoFillColumn(StringJoiner columnStr, boolean isFillColumn) throws NoSuchFieldException {
+        TableFillObject tableFill = TableInfoCache.getTableFill(entity.getClass().getName());
+        if(tableFill != null) {
+            for (String key : tableFill.getTableFillMapper().keySet()) {
+                String columnName = fieldMapper.get(key);
+                if(JudgeUtilsAx.isEmpty(columnName)) {
+                    if (tableFill.getNotFoundFieldThrowException()) {
+                        throw new NoSuchFieldException("在类" + entity.getClass().getName() + "中不存在该字段：" + key);
+                    }
+                    continue;
+                }
+                if (isFillColumn) {
+                    columnStr.add(columnName);
+
+                }else {
+                    columnStr.add(SymbolConst.QUEST);
+                }
+            }
+        }
     }
 
 
@@ -428,9 +452,9 @@ public class TableSqlBuilder<T> implements Cloneable{
 
 
     /**
-     * 自动填充的sql构造（采用增改后进行Update操作的方式进行自动填充）
+     * 自动填充的sql构造（采用逻辑后进行Update操作的方式进行自动填充）
      */
-    public String buildAutoUpdateSql(FillStrategy strategy, String whereKeySql, Object... params) {
+    public String buildLogicDelAfterAutoUpdateSql(FillStrategy strategy, String whereKeySql, Object... params) {
         StringBuilder autoUpdateSql = new StringBuilder();
         autoUpdateSql.append(SymbolConst.UPDATE).append(table)
                 .append(" ").append(alias).append(SymbolConst.SET);
@@ -450,7 +474,7 @@ public class TableSqlBuilder<T> implements Cloneable{
     }
 
     /**
-     * 构建指定自动填充的sql片段
+     * 构建指定逻辑删除时自动填充的sql片段
      */
     private String buildAssignAutoUpdateSqlFragment(Map<String, Object> tableFillObjects) {
         StringJoiner autoUpdateFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
@@ -519,6 +543,7 @@ public class TableSqlBuilder<T> implements Cloneable{
             initTableBuild(method);
         }
         buildMapper();
+        init(this);
     }
 
     /**
