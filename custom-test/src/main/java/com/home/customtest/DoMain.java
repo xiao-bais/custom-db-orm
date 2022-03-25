@@ -39,7 +39,7 @@ public class DoMain {
         DbCustomStrategy dbCustomStrategy = new DbCustomStrategy();
         dbCustomStrategy.setSqlOutPrinting(true);
         dbCustomStrategy.setSqlOutUpdate(true);
-        dbCustomStrategy.setSqlOutPrintExecute(true);
+//        dbCustomStrategy.setSqlOutPrintExecute(true);
         dbCustomStrategy.setUnderlineToCamel(true);
         dbCustomStrategy.setDbFieldDeleteLogic("state");
         dbCustomStrategy.setDeleteLogicValue("1");
@@ -85,14 +85,11 @@ public class DoMain {
 
 //        Student student = new Student();
 //        long time = System.currentTimeMillis();
-        DbPageRows<Student> students = customDao.selectPageRows(Student.class, Conditions.lambdaConditionQuery(Student.class)
-                .select(Student::getAge)
-                .select(x -> x.count(Student::getId, Student::getCountAge))
+        List<Student> students = customDao.selectList(Student.class, Conditions.lambdaConditionQuery(Student.class)
                         .gt(Student::getAge, 22)
                         .eq(Student::getArea, "aaa")
-                .limit(1, 10)
-                        .groupBy(Student::getAge)
-                        .orderByAsc(x -> x.count(Student::getId))
+                        .like(Student::getAddress, "山东")
+                        .orderByAsc(Student::getId)
         );
 
         System.out.println("students = " + students);
