@@ -230,21 +230,24 @@ public class TableSqlBuilder<T> implements Cloneable{
      */
     private void handleAutoFillColumn(StringJoiner columnStr, boolean isFillColumn) throws NoSuchFieldException {
         TableFillObject tableFill = TableInfoCache.getTableFill(entity.getClass().getName());
-        if(tableFill != null) {
-            for (String key : tableFill.getTableFillMapper().keySet()) {
-                String columnName = fieldMapper.get(key);
-                if(JudgeUtilsAx.isEmpty(columnName)) {
-                    if (tableFill.getNotFoundFieldThrowException()) {
-                        throw new NoSuchFieldException("在类" + entity.getClass().getName() + "中不存在该字段：" + key);
-                    }
-                    continue;
-                }
+        if(Objects.isNull(tableFill)) return;
+        for (String key : tableFill.getTableFillMapper().keySet()) {
+            String columnName;
+            Optional<DbFieldParserModel<T>> firstDbFieldParserModel = fieldParserModels.stream().filter(x -> x.getFieldName().equals(key)).findFirst();
+            if(firstDbFieldParserModel.isPresent()) {
+                DbFieldParserModel<T> autoFillFieldModel = firstDbFieldParserModel.get();
+                columnName = autoFillFieldModel.getColumn();
+                Object columnValue = tableFill.getTableFillMapper().get(key);
                 if (isFillColumn) {
                     columnStr.add(columnName);
-
                 }else {
                     columnStr.add(SymbolConst.QUEST);
+                    this.getOneObjValues().add(columnValue);
+                    autoFillFieldModel.setValue(columnValue);
                 }
+            }
+            else if (tableFill.getNotFoundFieldThrowException()) {
+                throw new NoSuchFieldException("在类" + entity.getClass().getName() + "中不存在该字段：" + key);
             }
         }
     }
@@ -666,6 +669,12 @@ public class TableSqlBuilder<T> implements Cloneable{
 
     public void setEntity(T entity) {
         this.entity = entity;
+        if(Objects.nonNull(keyParserModel)) {
+            keyParserModel.setEntity(entity);
+        }
+        if(!fieldParserModels.isEmpty()) {
+            fieldParserModels.forEach(x -> x.setEntity(entity));
+        }
     }
 
     public void setList(List<T> list) {

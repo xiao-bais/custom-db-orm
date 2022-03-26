@@ -21,7 +21,7 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class DbKeyParserModel<T> extends AbstractTableModel<T> {
 
-    private static Logger logger = LoggerFactory.getLogger(DbKeyParserModel.class);
+    private static final Logger logger = LoggerFactory.getLogger(DbKeyParserModel.class);
 
     private T entity;
 
@@ -30,8 +30,6 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
     private String key;
 
     private Field field;
-
-    private boolean underlineToCamel;
 
     private DbMediaType dbMediaType;
 
@@ -160,7 +158,7 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
     }
 
     public void setValue(Object value) {
-        this.value = value;
+        super.setFieldValue(this.entity, this.field, value);
     }
 
     @Override
@@ -197,7 +195,6 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
         }
         this.field = field;
         this.type = field.getType();
-        this.underlineToCamel = underlineToCamel;
         this.dbMediaType = annotation.dbType();
         this.strategy = annotation.strategy();
         this.desc = annotation.desc();

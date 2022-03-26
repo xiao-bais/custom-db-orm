@@ -420,7 +420,7 @@ public class CustomUtil {
     }
 
     /**
-     * 消除sql条件中的第一个and
+     * 消除sql条件中的第一个and/or
      */
     public static String trimSqlCondition(String condition, String symbol) {
         String finalCondition = condition;
