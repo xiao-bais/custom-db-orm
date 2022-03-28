@@ -1,7 +1,12 @@
 package com.custom.dbaction;
 
 import com.custom.dbconfig.SymbolConst;
+import com.custom.sqlparser.DbKeyParserModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.ObjectUtils;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -11,6 +16,8 @@ import java.lang.reflect.Method;
  * @desc:
  */
 public abstract class AbstractTableModel<T> {
+
+    private static final Logger logger = LoggerFactory.getLogger(AbstractTableModel.class);
 
     private String table;
 
@@ -61,11 +68,25 @@ public abstract class AbstractTableModel<T> {
     }
 
     /**
-     * set实体值
+     * 将值设置进实体的指定属性中
      */
+    protected void setFieldValue(T entity, Field field, Object value) {
+        if(ObjectUtils.isEmpty(entity)) {
+            throw new NullPointerException();
+        }
+        try {
+            field.setAccessible(true);
+            field.set(entity, value);
+            field.setAccessible(false);
+        }catch (IllegalAccessException e) {
+            logger.error(e.toString(), e);
+        }
+    }
+
 
     protected abstract String buildTableSql();
     protected abstract Object getValue(T x);
+    protected abstract void setValue(Object value);
     public abstract String getFieldSql();
     protected abstract String getSelectFieldSql();
     protected abstract String getSelectFieldSql(String column);

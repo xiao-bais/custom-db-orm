@@ -54,12 +54,17 @@ public class DbJoinTableParserModel<T> extends AbstractTableModel<T> {
 
     @Override
     protected String buildTableSql() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     protected Object getValue(T x) {
-        return null;
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    protected void setValue(Object value) {
+        throw new UnsupportedOperationException();
     }
 
     @Override

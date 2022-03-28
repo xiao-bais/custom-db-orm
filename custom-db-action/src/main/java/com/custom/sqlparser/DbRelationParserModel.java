@@ -63,13 +63,18 @@ public class DbRelationParserModel<T> extends AbstractTableModel<T> {
 
     @Override
     public String buildTableSql() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
 
     @Override
     protected Object getValue(T x) {
-        return null;
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    protected void setValue(Object value) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
