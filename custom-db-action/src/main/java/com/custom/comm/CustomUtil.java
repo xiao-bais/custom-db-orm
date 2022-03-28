@@ -6,7 +6,6 @@ import com.custom.annotations.DbKey;
 import com.custom.annotations.DbRelated;
 import com.custom.annotations.DbTable;
 import com.custom.dbconfig.DbDataSource;
-import com.custom.dbconfig.DbFieldsConst;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.DbMediaType;
 import com.custom.exceptions.CustomCheckException;
@@ -420,17 +419,22 @@ public class CustomUtil {
     }
 
     /**
-     * 消除sql条件中的第一个and
+     * 消除sql条件中的第一个and/or
      */
-    public static String trimSqlCondition(String condition, String symbol) {
+    public static String trimSqlCondition(String condition) {
         String finalCondition = condition;
-        if(condition.trim().startsWith(symbol)) {
-            finalCondition = condition.replaceFirst(symbol, SymbolConst.EMPTY);
+        if(condition.trim().startsWith(SymbolConst.AND)) {
+            finalCondition = condition.replaceFirst(SymbolConst.AND, SymbolConst.EMPTY);
+        }else if(condition.trim().startsWith(SymbolConst.OR)) {
+            finalCondition = condition.replaceFirst(SymbolConst.OR, SymbolConst.EMPTY);
         }
         return finalCondition.trim();
     }
 
-    public static String trimSqlCondition(String condition) {
+    /**
+     * 消除sql条件中的第一个and
+     */
+    public static String trimAppendSqlCondition(String condition) {
         String finalCondition = condition;
         if(condition.trim().startsWith(SymbolConst.AND)) {
             finalCondition = condition.replaceFirst(SymbolConst.AND, SymbolConst.EMPTY);

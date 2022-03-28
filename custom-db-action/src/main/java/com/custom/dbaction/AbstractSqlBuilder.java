@@ -134,7 +134,7 @@ public abstract class AbstractSqlBuilder {
                 if (JudgeUtilsAx.isNotEmpty(finalLogicSql)) {
                     sql = String.format("\nwhere %s.%s %s ", alias, finalLogicSql, condition.trim());
                 }else {
-                    sql = String.format("\nwhere %s ", CustomUtil.trimSqlCondition(condition));
+                    sql = String.format("\nwhere %s ", CustomUtil.trimAppendSqlCondition(condition));
                 }
             } else {
                 if (JudgeUtilsAx.isNotEmpty(finalLogicSql)) {

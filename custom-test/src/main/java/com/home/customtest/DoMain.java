@@ -89,7 +89,12 @@ public class DoMain {
                         .gt(Student::getAge, 22)
                         .eq(Student::getArea, "aaa")
                         .like(Student::getAddress, "山东")
-                        .orderByAsc(Student::getId)
+                        .or().ge(Student::getAge, 23)
+                        .le(Student::getId, 10)
+                        .or(x -> x.exists("select 1 from student stu2 where stu2.address is not null")
+                                .eq(Student::getSex, false)
+                        )
+                        .orderByDesc(Student::getId)
         );
 
         System.out.println("students = " + students);
