@@ -222,8 +222,8 @@ public class JdbcAction extends AbstractSqlBuilder {
         String insertSql = tableSqlBuilder.getInsertSql();
         DbKeyParserModel<T> keyParserModel = tableSqlBuilder.getKeyParserModel();
         int i = executeInsert(insertSql, Collections.singletonList(t), isGeneratedKey, keyParserModel.getKey(), keyParserModel.getType(), tableSqlBuilder.getOneObjValues().toArray());
-        String updateSql = String.format(" where %s = ?", tableSqlBuilder.getKeyParserModel().getFieldSql());
-        handleLogicDelAfter(t.getClass(), updateSql, tableSqlBuilder, tableSqlBuilder.getKeyParserModel().getValue(t));
+//        String updateSql = String.format(" where %s = ?", tableSqlBuilder.getKeyParserModel().getFieldSql());
+//        handleLogicDelAfter(t.getClass(), updateSql, tableSqlBuilder, tableSqlBuilder.getKeyParserModel().getValue(t));
         return i;
     }
 
@@ -250,11 +250,9 @@ public class JdbcAction extends AbstractSqlBuilder {
     @CheckExecute(target = ExecuteMethod.UPDATE)
     public <T> int updateByKey(T t, String... updateDbFields) throws Exception {
         TableSqlBuilder<T> tableSqlBuilder = getUpdateEntityModelCache(t);
-        String updateSql = tableSqlBuilder.getUpdateSql().toString();
         tableSqlBuilder.buildUpdateSql(updateDbFields, getLogicDeleteQuerySql());
-        int i = executeSql(updateSql, tableSqlBuilder.getObjValues().toArray());
-        handleLogicDelAfter(t.getClass(), updateSql, tableSqlBuilder, tableSqlBuilder.getKeyParserModel().getValue());
-        return i;
+        String updateSql = tableSqlBuilder.getUpdateSql().toString();
+        return executeSql(updateSql, tableSqlBuilder.getObjValues().toArray());
     }
 
     @Override
@@ -264,9 +262,7 @@ public class JdbcAction extends AbstractSqlBuilder {
         String condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), wrapper.getFinalConditional(), getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
         tableSqlBuilder.buildUpdateField(condition, wrapper.getParamValues());
         String updateSql = tableSqlBuilder.getUpdateSql().toString();
-        int i = executeSql(updateSql, tableSqlBuilder.getObjValues().toArray());
-        handleLogicDelAfter(t.getClass(), updateSql, tableSqlBuilder, tableSqlBuilder.getKeyParserModel().getValue());
-        return i;
+        return executeSql(updateSql, tableSqlBuilder.getObjValues().toArray());
     }
 
     @Override

@@ -27,8 +27,8 @@ public class CustomFillConfig implements AutoFillColumnHandler {
         tableFillObject.getTableFillMapper().put("updateTime", (int) (System.currentTimeMillis() / 1000));
         tableFillObject.setEntityClass(Aklis.class);
 
-
         tableFillObjects.add(tableFillObject);
         return tableFillObjects;
     }
+
 }

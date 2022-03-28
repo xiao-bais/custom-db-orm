@@ -54,13 +54,13 @@ public class Student {
     @DbField
     private Integer state;
 
-    @DbField("pro_id")
+    @DbField
     private Integer proId;
 
-    @DbField("city_id")
+    @DbField
     private Integer cityId;
 
-    @DbField("area_id")
+    @DbField
     private Integer areaId;
 
     @DbMapper("pro.name")

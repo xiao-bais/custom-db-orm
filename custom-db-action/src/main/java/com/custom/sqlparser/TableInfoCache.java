@@ -64,23 +64,4 @@ public class TableInfoCache {
     }
 
 
-    /**
-     * 字段自动填充缓存
-     * key - java实体对象Class
-     * value - 填充策略对象
-     */
-    private final static Map<String, Object> TableFill = new CustomLocalCache();
-
-    public static void setTableFill(String key, Object val) {
-        TableFill.put(key, val);
-    }
-
-    public static TableFillObject getTableFill(String key) {
-        return  (TableFillObject) TableFill.get(key);
-    }
-
-    public static Boolean isExistsTableFill() {
-        return TableFill.isEmpty();
-    }
-
 }

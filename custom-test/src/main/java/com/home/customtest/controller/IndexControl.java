@@ -56,6 +56,9 @@ public class IndexControl {
         aklis.setAge(22);
         customDao.insert(aklis);
 
+        aklis.setAddress("河南洛阳");
+        customDao.updateByKey(aklis);
+
         return BackResult.bySuccess(aklis);
     }
 

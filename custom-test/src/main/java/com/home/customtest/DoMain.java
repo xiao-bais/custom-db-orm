@@ -48,11 +48,11 @@ public class DoMain {
         CustomDao customDao = new CustomDao(dbDataSource, dbCustomStrategy);
         TableInfoCache.setUnderlineToCamel(true);
 
-        AutoFillColumnHandler autoFillColumnHandler = new CustomFillConfig();
-        List<TableFillObject> tableFillObjects = autoFillColumnHandler.fillStrategy();
-        for (TableFillObject fillObject : tableFillObjects) {
-            TableInfoCache.setTableFill(Aklis.class.getName(), fillObject);
-        }
+//        AutoFillColumnHandler autoFillColumnHandler = new CustomFillConfig();
+//        List<TableFillObject> tableFillObjects = autoFillColumnHandler.fillStrategy();
+//        for (TableFillObject fillObject : tableFillObjects) {
+//            TableInfoCache.setTableFill(Aklis.class.getName(), fillObject);
+//        }
 
 
 //        Aklis aklis = new Aklis();

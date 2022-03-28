@@ -2,11 +2,14 @@ package com.custom.dbaction;
 
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
+import com.custom.dbconfig.CustomApplicationUtils;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.FillStrategy;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
+import com.custom.fill.AutoFillColumnHandler;
+import com.custom.fill.TableFillObject;
 import com.custom.interfaces.LogicDeleteFieldSqlHandler;
 import com.custom.comm.page.DbPageRows;
 import com.custom.sqlparser.TableInfoCache;
@@ -64,7 +67,6 @@ public abstract class AbstractSqlBuilder {
     private String logicField = SymbolConst.EMPTY;
     private String logicDeleteUpdateSql = SymbolConst.EMPTY;
     private String logicDeleteQuerySql = SymbolConst.EMPTY;
-    private boolean openAutoUpdateFill = false;
 
     /**
      * 初始化逻辑删除的sql
@@ -80,7 +82,6 @@ public abstract class AbstractSqlBuilder {
             this.logicDeleteQuerySql = String.format("%s = %s",
                     logicField, dbCustomStrategy.getNotDeleteLogicValue());
         }
-        this.openAutoUpdateFill = TableInfoCache.isExistsTableFill();
     }
 
     /**
@@ -152,13 +153,24 @@ public abstract class AbstractSqlBuilder {
      * 在删除数据时，若是有逻辑删除，则在逻辑删除后，进行固定字段的自动填充
      */
     public <T> void handleLogicDelAfter(Class<?> t, String deleteSql, TableSqlBuilder<T> tableSqlBuilder, Object... params) throws Exception {
-        if(!openAutoUpdateFill) return;
-        String autoUpdateWhereSqlCondition = deleteSql.substring(deleteSql.indexOf(SymbolConst.WHERE)).replace(getLogicDeleteQuerySql(), getLogicDeleteUpdateSql());
-        FillStrategy strategy = TableInfoCache.getTableFill(t.getName()).getStrategy();
-        String autoUpdateSql = tableSqlBuilder.buildLogicDelAfterAutoUpdateSql(strategy, autoUpdateWhereSqlCondition, params);
-        if(!ObjectUtils.isEmpty(autoUpdateSql)) {
-            executeUpdateNotPrintSql(autoUpdateSql);
+        AutoFillColumnHandler fillColumnHandler = CustomApplicationUtils.getBean(AutoFillColumnHandler.class);
+        if(Objects.isNull(fillColumnHandler)) {
+            return;
         }
+        Optional<TableFillObject> first = fillColumnHandler.fillStrategy().stream().filter(x -> x.getEntityClass().equals(t)).findFirst();
+        first.ifPresent(op -> {
+            String autoUpdateWhereSqlCondition = deleteSql.substring(deleteSql.indexOf(SymbolConst.WHERE)).replace(getLogicDeleteQuerySql(), getLogicDeleteUpdateSql());
+            FillStrategy strategy = op.getStrategy();
+            String autoUpdateSql = tableSqlBuilder.buildLogicDelAfterAutoUpdateSql(strategy, autoUpdateWhereSqlCondition, params);
+            if(!ObjectUtils.isEmpty(autoUpdateSql)) {
+                try {
+                    executeUpdateNotPrintSql(autoUpdateSql);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
     }
 
 

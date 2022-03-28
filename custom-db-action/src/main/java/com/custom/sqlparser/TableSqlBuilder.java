@@ -3,12 +3,14 @@ package com.custom.sqlparser;
 import com.custom.annotations.*;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
+import com.custom.dbconfig.CustomApplicationUtils;
 import com.custom.dbconfig.DbFieldsConst;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.ExecuteMethod;
 import com.custom.enums.FillStrategy;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
+import com.custom.fill.AutoFillColumnHandler;
 import com.custom.fill.TableFillObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -229,27 +231,30 @@ public class TableSqlBuilder<T> implements Cloneable{
      * 添加时的自动填充
      */
     private void handleAutoFillColumn(StringJoiner columnStr, boolean isFillColumn) throws NoSuchFieldException {
-        TableFillObject tableFill = TableInfoCache.getTableFill(entity.getClass().getName());
-        if(Objects.isNull(tableFill)) return;
-        for (String key : tableFill.getTableFillMapper().keySet()) {
-            String columnName;
-            Optional<DbFieldParserModel<T>> firstDbFieldParserModel = fieldParserModels.stream().filter(x -> x.getFieldName().equals(key)).findFirst();
-            if(firstDbFieldParserModel.isPresent()) {
-                DbFieldParserModel<T> autoFillFieldModel = firstDbFieldParserModel.get();
-                columnName = autoFillFieldModel.getColumn();
-                Object columnValue = tableFill.getTableFillMapper().get(key);
-                if (isFillColumn) {
-                    columnStr.add(columnName);
-                }else {
-                    columnStr.add(SymbolConst.QUEST);
-                    this.getOneObjValues().add(columnValue);
-                    autoFillFieldModel.setValue(columnValue);
+        Optional<TableFillObject> first = Objects.requireNonNull(CustomApplicationUtils.getBean(AutoFillColumnHandler.class)).fillStrategy().stream().filter(x -> x.getEntityClass().equals(cls)).findFirst();
+        if (first.isPresent()) {
+            TableFillObject tableFill = first.get();
+            for (String key : tableFill.getTableFillMapper().keySet()) {
+                String columnName;
+                Optional<DbFieldParserModel<T>> firstDbFieldParserModel = fieldParserModels.stream().filter(x -> x.getFieldName().equals(key)).findFirst();
+                if(firstDbFieldParserModel.isPresent()) {
+                    DbFieldParserModel<T> autoFillFieldModel = firstDbFieldParserModel.get();
+                    columnName = autoFillFieldModel.getColumn();
+                    Object columnValue = tableFill.getTableFillMapper().get(key);
+                    if (isFillColumn) {
+                        columnStr.add(columnName);
+                    }else {
+                        columnStr.add(SymbolConst.QUEST);
+                        this.getOneObjValues().add(columnValue);
+                        autoFillFieldModel.setValue(columnValue);
+                    }
+                }
+                else if (tableFill.getNotFoundFieldThrowException()) {
+                    throw new NoSuchFieldException("在类" + entity.getClass().getName() + "中不存在该字段：" + key);
                 }
             }
-            else if (tableFill.getNotFoundFieldThrowException()) {
-                throw new NoSuchFieldException("在类" + entity.getClass().getName() + "中不存在该字段：" + key);
-            }
         }
+
     }
 
 
@@ -459,20 +464,21 @@ public class TableSqlBuilder<T> implements Cloneable{
      */
     public String buildLogicDelAfterAutoUpdateSql(FillStrategy strategy, String whereKeySql, Object... params) {
         StringBuilder autoUpdateSql = new StringBuilder();
-        autoUpdateSql.append(SymbolConst.UPDATE).append(table)
-                .append(" ").append(alias).append(SymbolConst.SET);
-        TableFillObject tableFill = TableInfoCache.getTableFill(cls.getName());
-        if(ObjectUtils.isEmpty(tableFill)) {
-            tableFill = TableInfoCache.getTableFill(SymbolConst.NORMAL);
-            if(ObjectUtils.isEmpty(tableFill)) {
-                return null;
+
+        Optional<TableFillObject> first = Objects.requireNonNull(CustomApplicationUtils.getBean(AutoFillColumnHandler.class))
+                .fillStrategy().stream().filter(x -> x.getEntityClass().equals(cls)).findFirst();
+        first.ifPresent(op -> {
+            autoUpdateSql.append(SymbolConst.UPDATE)
+                    .append(table)
+                    .append(" ")
+                    .append(alias)
+                    .append(SymbolConst.SET);
+
+            if(strategy.toString().contains(op.getStrategy().toString())) {
+                autoUpdateSql.append(buildAssignAutoUpdateSqlFragment(op.getTableFillMapper()))
+                        .append(CustomUtil.handleExecuteSql(whereKeySql, params));
             }
-        }
-        if(!strategy.toString().contains(tableFill.getStrategy().toString())) {
-            return null;
-        }
-        autoUpdateSql.append(buildAssignAutoUpdateSqlFragment(tableFill.getTableFillMapper()))
-                .append(CustomUtil.handleExecuteSql(whereKeySql, params));
+        });
         return autoUpdateSql.toString();
     }
 
@@ -492,6 +498,9 @@ public class TableSqlBuilder<T> implements Cloneable{
                 if(ObjectUtils.isEmpty(fieldVal)) continue;
                 updateField.append(fieldMapper.get(fieldName)).append(SymbolConst.EQUALS).append(fieldVal);
                 autoUpdateFieldSql.add(updateField);
+                fieldParserModels.stream().filter(x -> x.getFieldName().equals(fieldName)).findFirst().ifPresent(op -> {
+                    op.setValue(fieldVal);
+                });
             }
         }
         return autoUpdateFieldSql.toString();
