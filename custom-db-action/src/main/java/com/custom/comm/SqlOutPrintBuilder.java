@@ -99,7 +99,9 @@ public class SqlOutPrintBuilder implements Serializable {
     private void handleExecuteSql() {
         int symbolSize = CustomUtil.countStr(sql, SymbolConst.QUEST);
         if(symbolSize != params.length) {
-            sqlErrPrint();
+            logger.error(
+                    "\nsql error\n===================\nSQL ====>\n {}\n===================\nparams = {}\n===================\n"
+                    , sql, getFormatterParams());
             throw new CustomCheckException(String.format("参数数量与需要设置的参数数量不对等，需设置参数数量：%s, 实际参数数量：%s", symbolSize, params.length));
         }
         sql = CustomUtil.handleExecuteSql(sql, params);

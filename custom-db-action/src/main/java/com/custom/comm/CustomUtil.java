@@ -450,7 +450,9 @@ public class CustomUtil {
         int index = 0;
         while (index < symbolSize) {
             Object param = params[index];
-            if(param.getClass() == String.class) {
+            if(Objects.isNull(param)) {
+                param = "null";
+            }else if (param.getClass() == String.class) {
                 param = String.format("'%s'", param);
             }
             sql = sql.replaceFirst("\\?", param.toString());

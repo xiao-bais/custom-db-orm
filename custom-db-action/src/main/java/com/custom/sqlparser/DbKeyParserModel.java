@@ -161,6 +161,7 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
         super.setFieldValue(this.entity, this.field, value);
     }
 
+
     @Override
     protected String buildTableSql() {
         StringBuilder keyFieldSql = new StringBuilder(String.format("`%s` ", this.dbKey));

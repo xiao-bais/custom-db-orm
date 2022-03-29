@@ -11,6 +11,7 @@ import com.custom.enums.FillStrategy;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
 import com.custom.fill.AutoFillColumnHandler;
+import com.custom.fill.FieldAutoFillHandleUtils;
 import com.custom.fill.TableFillObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,7 @@ import java.util.*;
  * @Date 2021/12/2 14:10
  * @Desc：构建实体表的基础模板，以及提供一系列的sql语句或字段
  **/
-public class TableSqlBuilder<T> implements Cloneable{
+public class TableSqlBuilder<T> implements Cloneable {
 
     private static final Logger logger = LoggerFactory.getLogger(TableSqlBuilder.class);
 
@@ -90,7 +91,7 @@ public class TableSqlBuilder<T> implements Cloneable{
     /**
      * @desc:对于表字段到java属性字段的映射关系
      */
-    private final Map<String, String>  columnMapper= new HashMap<>();
+    private final Map<String, String> columnMapper = new HashMap<>();
 
 
     /**
@@ -98,7 +99,7 @@ public class TableSqlBuilder<T> implements Cloneable{
      */
     public String getSelectSql() {
         try {
-            if(JudgeUtilsAx.isEmpty(selectSql)) {
+            if (JudgeUtilsAx.isEmpty(selectSql)) {
                 if (CustomUtil.isDbRelationTag(this.cls) || this.cls.isAnnotationPresent(DbJoinTables.class)) {
                     getSelectRelationSql();
                 } else {
@@ -117,11 +118,11 @@ public class TableSqlBuilder<T> implements Cloneable{
      */
     protected String getSelectSql(boolean isRelated) {
         try {
-            if(isRelated) {
+            if (isRelated) {
                 if (CustomUtil.isDbRelationTag(this.cls) || this.cls.isAnnotationPresent(DbJoinTables.class)) {
                     getSelectRelationSql();
                 }
-            }else {
+            } else {
                 getSelectBaseTableSql();
             }
         } catch (Exception e) {
@@ -132,8 +133,8 @@ public class TableSqlBuilder<T> implements Cloneable{
     }
 
     /**
-    * 自定义查询表列名
-    */
+     * 自定义查询表列名
+     */
     public String selectColumns(String[] columns) {
         StringJoiner columnStr = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
         for (String x : columns) {
@@ -148,113 +149,80 @@ public class TableSqlBuilder<T> implements Cloneable{
     /**
      * 获取对象所有字段的值(多个对象)
      */
-    protected List<Object> getManyObjValues() {
-        if (objValues.isEmpty()) {
-            for (T t : list) {
-                if (keyParserModel != null) {
-                    if (t == null) throw new NullPointerException();
-                    objValues.add(keyParserModel.getValue(t));
-                }
-                if (!fieldParserModels.isEmpty()) {
-                    fieldParserModels.forEach(x -> objValues.add(x.getValue(t)));
-                }
-            }
-        }
-        return objValues;
-    }
+//    protected List<Object> getManyObjValues() {
+//        if (objValues.isEmpty()) {
+//            for (T t : list) {
+//                if (keyParserModel != null) {
+//                    if (t == null) throw new NullPointerException();
+//                    objValues.add(keyParserModel.getValue(t));
+//                }
+//                if (!fieldParserModels.isEmpty()) {
+//                    fieldParserModels.forEach(x -> objValues.add(x.getValue(t)));
+//                }
+//            }
+//        }
+//        return objValues;
+//    }
 
     /**
      * 获取对象所有字段的值(单个对象)
      */
-    protected List<Object> getOneObjValues() {
-        if (objValues.isEmpty()) {
-            if (keyParserModel != null) {
-                objValues.add(keyParserModel.generateKey());
-            }
-            if (!fieldParserModels.isEmpty()) {
-                fieldParserModels.forEach(x -> {
-                    Object value = x.getValue(entity);
-                    if(value != null) {
-                        objValues.add(value);
-                    }
-                });
-            }
-        }
-        return objValues;
-    }
+//    protected List<Object> getOneObjValues() {
+//        if (objValues.isEmpty()) {
+//            if (keyParserModel != null) {
+//                objValues.add(keyParserModel.generateKey());
+//            }
+//            if (!fieldParserModels.isEmpty()) {
+//                fieldParserModels.forEach(x -> {
+//                    Object value = x.getValue(entity);
+//                    if(value != null) {
+//                        objValues.add(value);
+//                    }
+//                });
+//            }
+//        }
+//        return objValues;
+//    }
 
     /**
      * 获取添加sql
      */
-    protected String getInsertSql() throws NoSuchFieldException {
+    protected String getInsertSql() {
         if (keyParserModel != null) {
             insertSql.add(keyParserModel.getDbKey());
         }
         if (!fieldParserModels.isEmpty()) {
-            fieldParserModels.forEach(x -> {
-                if(x.getValue(entity) != null) {
-                    insertSql.add(x.getColumn());
-                }
-            });
+            fieldParserModels.forEach(x -> insertSql.add(x.getColumn()));
         }
-        // 做自动填充
-        handleAutoFillColumn(insertSql, true);
-
         return String.format("insert into %s(%s) values %s ", this.table, insertSql, getInsertSymbol());
     }
 
     /**
      * 获取添加的？
      */
-    private String getInsertSymbol() throws NoSuchFieldException {
-        int size = list.size();
-        for (int i = 0; i < size; i++) {
+    private String getInsertSymbol() {
+        for (T currEntity : list) {
+            setEntity(currEntity);
             StringJoiner brackets = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1, SymbolConst.BRACKETS_LEFT, SymbolConst.BRACKETS_RIGHT);
             if (keyParserModel != null) {
                 brackets.add(SymbolConst.QUEST);
+                this.objValues.add(keyParserModel.getValue());
             }
             if (!fieldParserModels.isEmpty()) {
                 fieldParserModels.forEach(x -> {
-                    if(x.getValue(entity) != null) {
-                        brackets.add(SymbolConst.QUEST);
+                    brackets.add(SymbolConst.QUEST);
+                    Object fieldValue = x.getValue();
+                    if (FieldAutoFillHandleUtils.exists(cls, x.getFieldName())
+                            && Objects.isNull(fieldValue) ) {
+                        fieldValue = FieldAutoFillHandleUtils.getFillValue(cls, x.getFieldName());
+                        x.setValue(fieldValue);
                     }
+                    this.objValues.add(fieldValue);
                 });
             }
-            // 做自动填充
-            handleAutoFillColumn(brackets, false);
             insetSymbol.add(brackets.toString());
         }
         return insetSymbol.toString();
-    }
-
-    /**
-     * 添加时的自动填充
-     */
-    private void handleAutoFillColumn(StringJoiner columnStr, boolean isFillColumn) throws NoSuchFieldException {
-        Optional<TableFillObject> first = Objects.requireNonNull(CustomApplicationUtils.getBean(AutoFillColumnHandler.class)).fillStrategy().stream().filter(x -> x.getEntityClass().equals(cls)).findFirst();
-        if (first.isPresent()) {
-            TableFillObject tableFill = first.get();
-            for (String key : tableFill.getTableFillMapper().keySet()) {
-                String columnName;
-                Optional<DbFieldParserModel<T>> firstDbFieldParserModel = fieldParserModels.stream().filter(x -> x.getFieldName().equals(key)).findFirst();
-                if(firstDbFieldParserModel.isPresent()) {
-                    DbFieldParserModel<T> autoFillFieldModel = firstDbFieldParserModel.get();
-                    columnName = autoFillFieldModel.getColumn();
-                    Object columnValue = tableFill.getTableFillMapper().get(key);
-                    if (isFillColumn) {
-                        columnStr.add(columnName);
-                    }else {
-                        columnStr.add(SymbolConst.QUEST);
-                        this.getOneObjValues().add(columnValue);
-                        autoFillFieldModel.setValue(columnValue);
-                    }
-                }
-                else if (tableFill.getNotFoundFieldThrowException()) {
-                    throw new NoSuchFieldException("在类" + entity.getClass().getName() + "中不存在该字段：" + key);
-                }
-            }
-        }
-
     }
 
 
@@ -274,7 +242,7 @@ public class TableSqlBuilder<T> implements Cloneable{
 
         createTableSql.append(String.format("create table `%s` (\n%s)", this.table, fieldSql));
 
-        if(JudgeUtilsAx.isNotEmpty(this.desc)) {
+        if (JudgeUtilsAx.isNotEmpty(this.desc)) {
             createTableSql.append(String.format(" COMMENT = '%s'", this.desc));
         }
         return createTableSql.toString();
@@ -288,8 +256,8 @@ public class TableSqlBuilder<T> implements Cloneable{
     }
 
     /**
-    * 表是否存在
-    */
+     * 表是否存在
+     */
     protected String getExitsTableSql(Class<?> cls) {
         DbTable annotation = cls.getAnnotation(DbTable.class);
         String table = annotation.table();
@@ -382,7 +350,7 @@ public class TableSqlBuilder<T> implements Cloneable{
      */
     protected void buildUpdateSql(String[] updateDbFields, String logicDeleteQuerySql) {
         StringJoiner updateFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
-        if(updateDbFields.length > 0) {
+        if (updateDbFields.length > 0) {
             for (String field : updateDbFields) {
                 Optional<DbFieldParserModel<T>> updateFieldOP = fieldParserModels.stream().filter(x -> x.getColumn().equals(field)).findFirst();
                 updateFieldOP.ifPresent(op -> {
@@ -390,7 +358,7 @@ public class TableSqlBuilder<T> implements Cloneable{
                     objValues.add(op.getValue());
                 });
             }
-        }else {
+        } else {
             fieldParserModels.forEach(x -> {
                 Object value = x.getValue();
                 if (value != null) {
@@ -419,7 +387,7 @@ public class TableSqlBuilder<T> implements Cloneable{
         StringJoiner updateFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
         for (DbFieldParserModel<T> fieldParserModel : fieldParserModels) {
             Object value = fieldParserModel.getValue();
-            if(value != null) {
+            if (value != null) {
                 updateFieldSql.add(fieldParserModel.getFieldSql() + " = ?");
                 objValues.add(value);
             }
@@ -434,23 +402,23 @@ public class TableSqlBuilder<T> implements Cloneable{
      * 构建字段映射
      */
     private void buildMapper() {
-        if(keyParserModel != null) {
+        if (keyParserModel != null) {
             columnMapper.put(keyParserModel.getFieldSql(), keyParserModel.getKey());
             fieldMapper.put(keyParserModel.getKey(), keyParserModel.getFieldSql());
         }
-        if(!fieldParserModels.isEmpty()) {
+        if (!fieldParserModels.isEmpty()) {
             fieldParserModels.forEach(x -> {
                 columnMapper.put(x.getFieldSql(), x.getFieldName());
                 fieldMapper.put(x.getFieldName(), x.getFieldSql());
             });
         }
-        if(!joinDbMappers.isEmpty()) {
+        if (!joinDbMappers.isEmpty()) {
             joinDbMappers.forEach(x -> {
                 columnMapper.put(x.getJoinName(), x.getFieldName());
                 fieldMapper.put(x.getFieldName(), x.getJoinName());
             });
         }
-        if(!relatedParserModels.isEmpty()) {
+        if (!relatedParserModels.isEmpty()) {
             relatedParserModels.forEach(x -> {
                 columnMapper.put(x.getFieldSql(), x.getFieldName());
                 fieldMapper.put(x.getFieldName(), x.getFieldSql());
@@ -474,7 +442,7 @@ public class TableSqlBuilder<T> implements Cloneable{
                     .append(alias)
                     .append(SymbolConst.SET);
 
-            if(strategy.toString().contains(op.getStrategy().toString())) {
+            if (strategy.toString().contains(op.getStrategy().toString())) {
                 autoUpdateSql.append(buildAssignAutoUpdateSqlFragment(op.getTableFillMapper()))
                         .append(CustomUtil.handleExecuteSql(whereKeySql, params));
             }
@@ -488,14 +456,14 @@ public class TableSqlBuilder<T> implements Cloneable{
     private String buildAssignAutoUpdateSqlFragment(Map<String, Object> tableFillObjects) {
         StringJoiner autoUpdateFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
         StringBuilder updateField;
-        if(!ObjectUtils.isEmpty(tableFillObjects)) {
+        if (!ObjectUtils.isEmpty(tableFillObjects)) {
             for (String fieldName : tableFillObjects.keySet()) {
-                if(ObjectUtils.isEmpty(fieldMapper.get(fieldName))) {
+                if (ObjectUtils.isEmpty(fieldMapper.get(fieldName))) {
                     throw new CustomCheckException("未找到可匹配的java属性字段");
                 }
                 updateField = new StringBuilder();
                 Object fieldVal = tableFillObjects.get(fieldName);
-                if(ObjectUtils.isEmpty(fieldVal)) continue;
+                if (ObjectUtils.isEmpty(fieldVal)) continue;
                 updateField.append(fieldMapper.get(fieldName)).append(SymbolConst.EQUALS).append(fieldVal);
                 autoUpdateFieldSql.add(updateField);
                 fieldParserModels.stream().filter(x -> x.getFieldName().equals(fieldName)).findFirst().ifPresent(op -> {
@@ -540,17 +508,17 @@ public class TableSqlBuilder<T> implements Cloneable{
     public TableSqlBuilder(Class<T> cls, ExecuteMethod method, boolean underlineToCamel) {
         this.cls = cls;
         DbTable annotation = cls.getAnnotation(DbTable.class);
-        if(annotation == null) {
+        if (annotation == null) {
             throw new CustomCheckException(cls.getName() + "未标注@DbTable注解");
         }
-        if(JudgeUtilsAx.isEmpty(annotation.table())) {
+        if (JudgeUtilsAx.isEmpty(annotation.table())) {
             throw new CustomCheckException(cls.getName() + "未指定@DbTable注解上实体映射的表名");
         }
         this.alias = annotation.alias();
         this.table = annotation.table();
         this.desc = annotation.desc();
         this.underlineToCamel = underlineToCamel;
-        if(method != ExecuteMethod.NONE) {
+        if (method != ExecuteMethod.NONE) {
             this.fields = CustomUtil.getFields(this.cls);
             initTableBuild(method);
         }
@@ -578,7 +546,7 @@ public class TableSqlBuilder<T> implements Cloneable{
             } else if (field.isAnnotationPresent(DbMapper.class)) {
                 DbJoinTableParserModel<T> joinTableParserModel = new DbJoinTableParserModel<>(field, this.underlineToCamel);
                 joinDbMappers.add(joinTableParserModel);
-            }else if (field.isAnnotationPresent(DbRelated.class)) {
+            } else if (field.isAnnotationPresent(DbRelated.class)) {
                 DbRelationParserModel<T> relatedParserModel = new DbRelationParserModel<>(this.cls, field, this.table, this.alias, this.underlineToCamel);
                 relatedParserModels.add(relatedParserModel);
 
@@ -598,7 +566,7 @@ public class TableSqlBuilder<T> implements Cloneable{
                 DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(entity, field, this.table, this.alias, this.underlineToCamel);
                 fieldParserModels.add(fieldParserModel);
 
-            }else if (field.isAnnotationPresent(DbField.class)) {
+            } else if (field.isAnnotationPresent(DbField.class)) {
                 DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias, this.underlineToCamel);
                 fieldParserModels.add(fieldParserModel);
             }
@@ -678,10 +646,10 @@ public class TableSqlBuilder<T> implements Cloneable{
 
     public void setEntity(T entity) {
         this.entity = entity;
-        if(Objects.nonNull(keyParserModel)) {
+        if (Objects.nonNull(keyParserModel)) {
             keyParserModel.setEntity(entity);
         }
-        if(!fieldParserModels.isEmpty()) {
+        if (!fieldParserModels.isEmpty()) {
             fieldParserModels.forEach(x -> x.setEntity(entity));
         }
     }
@@ -756,7 +724,6 @@ public class TableSqlBuilder<T> implements Cloneable{
         }
         return builder;
     }
-
 
 
 }

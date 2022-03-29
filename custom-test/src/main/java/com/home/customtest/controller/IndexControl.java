@@ -11,6 +11,7 @@ import com.home.customtest.entity.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -51,13 +52,21 @@ public class IndexControl {
     @PostMapping("saveInfo")
     public BackResult<Aklis> saveInfo(@RequestBody Map<String, Object> map) throws Exception {
 
+        List<Aklis> aklisList = new ArrayList<>();
+
         Aklis aklis = new Aklis();
         aklis.setName(map.get("name").toString());
-        aklis.setAge(22);
-        customDao.insert(aklis);
+        aklis.setAge(25);
 
-        aklis.setAddress("河南洛阳");
-        customDao.updateByKey(aklis);
+
+        Aklis aklis2 = new Aklis();
+        aklis2.setName(map.get("name").toString());
+        aklis2.setAge(28);
+
+        aklisList.add(aklis);
+        aklisList.add(aklis2);
+
+        customDao.insert(aklisList);
 
         return BackResult.bySuccess(aklis);
     }
