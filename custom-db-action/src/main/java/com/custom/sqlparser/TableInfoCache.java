@@ -3,6 +3,7 @@ package com.custom.sqlparser;
 import com.custom.fill.TableFillObject;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @Author Xiao-Bai
@@ -60,7 +61,12 @@ public class TableInfoCache {
     }
 
     public static Boolean isExistsLogic(String table) {
-        return (Boolean) tableLogic.get(table);
+        Boolean exists = (Boolean) tableLogic.get(table);
+        if(Objects.isNull(exists)) {
+
+        }
+
+        return exists;
     }
 
 

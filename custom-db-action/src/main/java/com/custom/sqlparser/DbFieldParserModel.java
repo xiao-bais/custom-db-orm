@@ -190,7 +190,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
         return value;
     }
 
-    public void setValue(Object value) {
+    protected void setValue(Object value) {
         super.setFieldValue(entity, this.field, value);
     }
 
@@ -198,6 +198,11 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
         return field;
     }
 
+    public Class<?> getType() {
+        return type;
+    }
 
-
+    public void setType(Class<?> type) {
+        this.type = type;
+    }
 }

@@ -187,20 +187,23 @@ public class TableSqlBuilder<T> implements Cloneable {
     /**
      * 获取添加sql
      */
-    protected String getInsertSql() {
+    protected String getInsertSql(String logicColumn, Object val) {
         if (keyParserModel != null) {
             insertSql.add(keyParserModel.getDbKey());
         }
         if (!fieldParserModels.isEmpty()) {
             fieldParserModels.forEach(x -> insertSql.add(x.getColumn()));
         }
-        return String.format("insert into %s(%s) values %s ", this.table, insertSql, getInsertSymbol());
+        return String.format("insert into %s(%s) values %s ", this.table, insertSql, getInsertSymbol(logicColumn, val));
     }
 
     /**
-     * 获取添加的？
+     * 获取添加时的？
+     * @param logicColumn 逻辑删除的
+     * @param val
+     * @return
      */
-    private String getInsertSymbol() {
+    private String getInsertSymbol(String logicColumn, Object val) {
         for (T currEntity : list) {
             setEntity(currEntity);
             StringJoiner brackets = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1, SymbolConst.BRACKETS_LEFT, SymbolConst.BRACKETS_RIGHT);
@@ -216,6 +219,10 @@ public class TableSqlBuilder<T> implements Cloneable {
                             && Objects.isNull(fieldValue) ) {
                         fieldValue = FieldAutoFillHandleUtils.getFillValue(cls, x.getFieldName());
                         x.setValue(fieldValue);
+                    }else if(JudgeUtilsAx.isNotEmpty(logicColumn) && TableInfoCache.isExistsLogic(table)  && x.getColumn().equals(logicColumn)) {
+                        fieldValue = val;
+                        x.get
+                        x.setValue(val);
                     }
                     this.objValues.add(fieldValue);
                 });

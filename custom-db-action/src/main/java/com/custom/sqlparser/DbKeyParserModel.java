@@ -157,7 +157,7 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
         return String.format("%s %s", column, this.key);
     }
 
-    public void setValue(Object value) {
+    protected void setValue(Object value) {
         super.setFieldValue(this.entity, this.field, value);
     }
 

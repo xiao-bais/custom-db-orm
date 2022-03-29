@@ -219,7 +219,7 @@ public class JdbcAction extends AbstractSqlBuilder {
     @CheckExecute(target = ExecuteMethod.INSERT)
     public <T> int insert(T t, boolean isGeneratedKey) throws Exception {
         TableSqlBuilder<T> tableSqlBuilder = getUpdateEntityModelCache(t);
-        String insertSql = tableSqlBuilder.getInsertSql();
+        String insertSql = tableSqlBuilder.getInsertSql(getDbCustomStrategy().getDbFieldDeleteLogic(), getDbCustomStrategy().getNotDeleteLogicValue());
         DbKeyParserModel<T> keyParserModel = tableSqlBuilder.getKeyParserModel();
         return executeInsert(insertSql, Collections.singletonList(t), isGeneratedKey, keyParserModel.getKey(), keyParserModel.getType(), tableSqlBuilder.getObjValues().toArray());
     }
@@ -228,7 +228,8 @@ public class JdbcAction extends AbstractSqlBuilder {
     @CheckExecute(target = ExecuteMethod.INSERT)
     public <T> int insert(List<T> ts, boolean isGeneratedKey) throws Exception {
         TableSqlBuilder<T> tableSqlBuilder = getUpdateEntityModelCache(ts);
-        String insertSql = tableSqlBuilder.getInsertSql();
+        String insertSql = tableSqlBuilder.getInsertSql(checkLogicFieldIsExist(tableSqlBuilder.getTable()) ? getDbCustomStrategy().getDbFieldDeleteLogic() : null,
+                getDbCustomStrategy().getNotDeleteLogicValue());
         DbKeyParserModel<T> keyParserModel = tableSqlBuilder.getKeyParserModel();
         return executeInsert(insertSql, ts, isGeneratedKey, keyParserModel.getKey(), keyParserModel.getType(), tableSqlBuilder.getObjValues().toArray());
     }
