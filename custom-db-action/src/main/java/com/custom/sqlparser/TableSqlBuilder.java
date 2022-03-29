@@ -488,9 +488,12 @@ public class TableSqlBuilder<T> implements Cloneable {
         this.underlineToCamel = underlineToCamel;
         if (method != ExecuteMethod.NONE) {
             this.fields = CustomUtil.getFields(this.cls);
+            // 构建字段解析模板
             initTableBuild(method);
         }
+        // 构建字段映射缓存
         buildMapper();
+        // 初始化数据结构
         initDataStructure(this);
     }
 

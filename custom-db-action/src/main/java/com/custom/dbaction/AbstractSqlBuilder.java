@@ -161,6 +161,9 @@ public abstract class AbstractSqlBuilder {
         first.ifPresent(op -> {
             String autoUpdateWhereSqlCondition = deleteSql.substring(deleteSql.indexOf(SymbolConst.WHERE)).replace(getLogicDeleteQuerySql(), getLogicDeleteUpdateSql());
             FillStrategy strategy = op.getStrategy();
+            if(strategy.equals(FillStrategy.DEFAULT)) {
+                return;
+            }
             String autoUpdateSql = tableSqlBuilder.buildLogicDelAfterAutoUpdateSql(strategy, autoUpdateWhereSqlCondition, params);
             if(!ObjectUtils.isEmpty(autoUpdateSql)) {
                 try {

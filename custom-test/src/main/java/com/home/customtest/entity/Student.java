@@ -37,12 +37,6 @@ public class Student {
     private Integer age;
 
     @DbField
-    private Boolean sex;
-
-    @DbField
-    private String phone;
-
-    @DbField
     private BigDecimal money;
 
     @DbField
@@ -71,13 +65,6 @@ public class Student {
 
     @DbMapper("lo.name")
     private String area;
-
-    private Integer sumAge;
-    private Integer ifNullAge;
-    private Integer countAge;
-    private Integer minAge;
-    private Integer maxAge;
-    private Integer avgAge;
 
     private List<Street> modelList;
 
