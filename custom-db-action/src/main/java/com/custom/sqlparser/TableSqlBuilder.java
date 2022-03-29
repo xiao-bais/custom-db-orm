@@ -148,44 +148,6 @@ public class TableSqlBuilder<T> implements Cloneable {
     }
 
     /**
-     * 获取对象所有字段的值(多个对象)
-     */
-//    protected List<Object> getManyObjValues() {
-//        if (objValues.isEmpty()) {
-//            for (T t : list) {
-//                if (keyParserModel != null) {
-//                    if (t == null) throw new NullPointerException();
-//                    objValues.add(keyParserModel.getValue(t));
-//                }
-//                if (!fieldParserModels.isEmpty()) {
-//                    fieldParserModels.forEach(x -> objValues.add(x.getValue(t)));
-//                }
-//            }
-//        }
-//        return objValues;
-//    }
-
-    /**
-     * 获取对象所有字段的值(单个对象)
-     */
-//    protected List<Object> getOneObjValues() {
-//        if (objValues.isEmpty()) {
-//            if (keyParserModel != null) {
-//                objValues.add(keyParserModel.generateKey());
-//            }
-//            if (!fieldParserModels.isEmpty()) {
-//                fieldParserModels.forEach(x -> {
-//                    Object value = x.getValue(entity);
-//                    if(value != null) {
-//                        objValues.add(value);
-//                    }
-//                });
-//            }
-//        }
-//        return objValues;
-//    }
-
-    /**
      * 获取添加sql
      */
     protected String getInsertSql(String logicColumn, Object val) {
