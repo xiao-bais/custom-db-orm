@@ -5,6 +5,7 @@ import com.custom.dbconfig.DbCustomStrategy;
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @Author Xiao-Bai
@@ -75,7 +76,11 @@ public class JudgeUtilsAx {
 
 
     public static <T> void checkObjNotNull(Class<T> t) throws NullPointerException {
-        if(null == t) throw new NullPointerException();
+        if(Objects.isNull(t)) throw new NullPointerException();
+    }
+
+    public static void checkObjNotNull(Object val) throws NullPointerException {
+        if(Objects.isNull(val)) throw new NullPointerException();
     }
 
     /**

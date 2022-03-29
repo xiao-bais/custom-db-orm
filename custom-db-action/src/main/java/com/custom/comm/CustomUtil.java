@@ -35,6 +35,7 @@ import java.util.*;
  * @Description CommUtils
  */
 @Slf4j
+@SuppressWarnings("unchecked")
 public class CustomUtil {
 
     public static String getDataBase(String url){
@@ -89,7 +90,8 @@ public class CustomUtil {
                 || (el.equals(Float.class) || el.equals(float.class))
                 || (el.equals(Boolean.class) || el.equals(boolean.class))
                 || (el.equals(Byte.class) || el.equals(byte.class))
-                || (el.equals(BigDecimal.class));
+                || el.equals(BigDecimal.class)
+                || el.equals(Date.class);
     }
 
     /**
@@ -109,22 +111,6 @@ public class CustomUtil {
             return (int) val > 0;
         }
         return false;
-    }
-
-
-    /**
-     * 获取默认值
-     */
-    public static Object getDefaultVal(String type){
-        if(type.equalsIgnoreCase("int")) return 0;
-        if(type.equalsIgnoreCase("char")) return '\u0000';
-        if(type.equalsIgnoreCase("double")) return 0.0d;
-        if(type.equalsIgnoreCase("long") ) return 0L;
-        if(type.equalsIgnoreCase("short")) return (short)0;
-        if(type.equalsIgnoreCase("boolean")) return false;
-        if(type.equalsIgnoreCase("float")) return 0.0f;
-        if(type.equalsIgnoreCase("byte")) return (byte)0;
-        return null;
     }
 
     /**

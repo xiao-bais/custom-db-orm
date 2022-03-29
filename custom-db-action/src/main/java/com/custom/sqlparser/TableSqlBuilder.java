@@ -1,6 +1,7 @@
 package com.custom.sqlparser;
 
 import com.custom.annotations.*;
+import com.custom.comm.ConvertUtil;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.CustomApplicationUtils;
@@ -220,9 +221,8 @@ public class TableSqlBuilder<T> implements Cloneable {
                         fieldValue = FieldAutoFillHandleUtils.getFillValue(cls, x.getFieldName());
                         x.setValue(fieldValue);
                     }else if(JudgeUtilsAx.isNotEmpty(logicColumn) && TableInfoCache.isExistsLogic(table)  && x.getColumn().equals(logicColumn)) {
-                        fieldValue = val;
-                        x.get
-                        x.setValue(val);
+                        fieldValue = ConvertUtil.transToObject(x.getType(), val);
+                        x.setValue(fieldValue);
                     }
                     this.objValues.add(fieldValue);
                 });

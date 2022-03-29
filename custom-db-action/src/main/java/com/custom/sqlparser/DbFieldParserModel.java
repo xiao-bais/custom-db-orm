@@ -19,7 +19,7 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class DbFieldParserModel<T> extends AbstractTableModel<T> {
 
-    private static Logger logger = LoggerFactory.getLogger(DbFieldParserModel.class);
+    private static final Logger logger = LoggerFactory.getLogger(DbFieldParserModel.class);
 
     private T entity;
 
@@ -68,11 +68,6 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     */
     private boolean isNull;
 
-    /**
-     * 下划线转驼峰
-     */
-    private boolean underlineToCamel;
-
 
     /**
     * 构建创建表的sql语句
@@ -114,7 +109,6 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
         this.desc = annotation.desc();
         this.dbMediaType = annotation.dataType() == DbMediaType.DbVarchar ? CustomUtil.getDbFieldType(field.getType()) : annotation.dataType();
         this.length = this.dbMediaType.getLength();
-        this.underlineToCamel = underlineToCamel;
         super.setTable(table);
         super.setAlias(alias);
     }

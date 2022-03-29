@@ -42,7 +42,7 @@ public class IndexControl {
                 .between(Student::getAge, 21, 25)
                 .select(Student::getName, Student::getProvince, Student::getCity, Student::getArea)
                 .or(x -> x.select(Student::getAge)
-                        .exists("select 1 from student2 stu2 where stu2.id = a.id and stu2.password = '12345678zcy'")
+                        .exists("select 1 from student stu2 where stu2.id = a.id and stu2.password = '12345678zcy'")
                         .orderByAsc(Student::getId)
                         .orderByDesc(Student::getAge)
                 ));
@@ -50,7 +50,7 @@ public class IndexControl {
     }
 
     @PostMapping("saveInfo")
-    public BackResult<Aklis> saveInfo(@RequestBody Map<String, Object> map) throws Exception {
+    public BackResult<List<Aklis>> saveInfo(@RequestBody Map<String, Object> map) throws Exception {
 
         List<Aklis> aklisList = new ArrayList<>();
 
@@ -68,7 +68,7 @@ public class IndexControl {
 
         customDao.insert(aklisList);
 
-        return BackResult.bySuccess(aklis);
+        return BackResult.bySuccess(aklisList);
     }
 
 }

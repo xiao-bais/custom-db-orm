@@ -1,5 +1,7 @@
 package com.custom.dbaction;
 
+import com.custom.comm.CustomUtil;
+import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.sqlparser.DbKeyParserModel;
 import org.slf4j.Logger;
@@ -9,6 +11,7 @@ import org.springframework.util.ObjectUtils;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 /**
  * @author Xiao-Bai
@@ -45,7 +48,7 @@ public abstract class AbstractTableModel<T> {
      * fieldName: 字段名称
      */
     protected Object getFieldValue(T x, String fieldName) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-        if(x == null) throw  new NullPointerException();
+        JudgeUtilsAx.checkObjNotNull(x);
         Object value;
         String firstLetter;
         String getter;
@@ -71,9 +74,7 @@ public abstract class AbstractTableModel<T> {
      * 将值设置进实体的指定属性中
      */
     protected void setFieldValue(T entity, Field field, Object value) {
-        if(ObjectUtils.isEmpty(entity)) {
-            throw new NullPointerException();
-        }
+        JudgeUtilsAx.checkObjNotNull(entity);
         try {
             field.setAccessible(true);
             field.set(entity, value);
