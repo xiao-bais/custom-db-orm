@@ -230,17 +230,7 @@ public class JdbcAction extends AbstractSqlBuilder {
         TableSqlBuilder<T> tableSqlBuilder = getUpdateEntityModelCache(ts);
         String insertSql = tableSqlBuilder.getInsertSql();
         DbKeyParserModel<T> keyParserModel = tableSqlBuilder.getKeyParserModel();
-        int i = executeInsert(insertSql, ts, isGeneratedKey, keyParserModel.getKey(), keyParserModel.getType(), tableSqlBuilder.getObjValues().toArray());
-
-//        StringJoiner keyInject = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1, SymbolConst.BRACKETS_LEFT, SymbolConst.BRACKETS_RIGHT);
-//        List<Object> keyValues = new ArrayList<>();
-//        ts.stream().filter(Objects::nonNull).forEach(x -> {
-//            keyInject.add(SymbolConst.QUEST);
-//            keyValues.add(tableSqlBuilder.getKeyParserModel().getValue(x));
-//        });
-//        String updateSql = String.format(" where %s in %s", tableSqlBuilder.getKeyParserModel().getFieldSql(), keyInject);
-//        handleLogicDelAfter(ts.get(0).getClass(), updateSql, tableSqlBuilder, keyValues.toArray());
-        return i;
+        return executeInsert(insertSql, ts, isGeneratedKey, keyParserModel.getKey(), keyParserModel.getType(), tableSqlBuilder.getObjValues().toArray());
     }
 
     @Override
