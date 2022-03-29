@@ -21,6 +21,8 @@ public class TableFillObject {
 
     /**
      * 自动填充字段与值的映射
+     * key-java属性字段
+     * value-指定填充的值
      */
     private Map<String, Object> tableFillMapper;
 
