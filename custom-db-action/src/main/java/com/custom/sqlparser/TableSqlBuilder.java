@@ -529,7 +529,7 @@ public class TableSqlBuilder<T> implements Cloneable {
             initTableBuild(method);
         }
         buildMapper();
-        init(this);
+        initDataStructure(this);
     }
 
     /**
@@ -590,7 +590,7 @@ public class TableSqlBuilder<T> implements Cloneable {
     /**
      * 初始化
      */
-    private void init(TableSqlBuilder<T> tableSqlBuilder) {
+    private void initDataStructure(TableSqlBuilder<T> tableSqlBuilder) {
         tableSqlBuilder.selectSql = new StringBuilder();
         tableSqlBuilder.updateSql = new StringBuilder();
         tableSqlBuilder.insertSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
@@ -724,7 +724,7 @@ public class TableSqlBuilder<T> implements Cloneable {
             builder.setRelatedParserModels(this.relatedParserModels);
             builder.setJoinTableParserModels(this.joinTableParserModels);
             builder.setJoinDbMappers(this.joinDbMappers);
-            init(builder);
+            initDataStructure(builder);
         } catch (CloneNotSupportedException e) {
             logger.error(e.toString(), e);
         }
