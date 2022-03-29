@@ -1,22 +1,8 @@
 package com.home.customtest;
 
-import com.custom.comm.page.DbPageRows;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
-import com.custom.fill.AutoFillColumnHandler;
-import com.custom.fill.TableFillObject;
 import com.custom.sqlparser.CustomDao;
-import com.custom.sqlparser.TableInfoCache;
-import com.custom.wrapper.Conditions;
-import com.custom.wrapper.LambdaConditionEntity;
-import com.home.customtest.config.CustomFillConfig;
-import com.home.customtest.entity.Aklis;
-import com.home.customtest.entity.Street;
-import com.home.customtest.entity.Student;
-
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @Author Xiao-Bai

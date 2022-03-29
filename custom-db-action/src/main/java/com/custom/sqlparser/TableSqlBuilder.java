@@ -11,9 +11,9 @@ import com.custom.enums.ExecuteMethod;
 import com.custom.enums.FillStrategy;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
-import com.custom.fill.AutoFillColumnHandler;
-import com.custom.fill.FieldAutoFillHandleUtils;
-import com.custom.fill.TableFillObject;
+import com.custom.fieldfill.AutoFillColumnHandler;
+import com.custom.fieldfill.FieldAutoFillHandleUtils;
+import com.custom.fieldfill.TableFillObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ObjectUtils;
@@ -200,9 +200,8 @@ public class TableSqlBuilder<T> implements Cloneable {
 
     /**
      * 获取添加时的？
-     * @param logicColumn 逻辑删除的
-     * @param val
-     * @return
+     * @param logicColumn 逻辑删除的字段
+     * @param val 未逻辑删除的值
      */
     private String getInsertSymbol(String logicColumn, Object val) {
         for (T currEntity : list) {
