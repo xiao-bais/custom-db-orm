@@ -59,12 +59,7 @@ public class TableInfoCache {
     }
 
     public static Boolean isExistsLogic(String table) {
-        Boolean exists = (Boolean) tableLogic.get(table);
-        if(Objects.isNull(exists)) {
-
-        }
-
-        return exists;
+        return (Boolean) tableLogic.get(table);
     }
 
 
