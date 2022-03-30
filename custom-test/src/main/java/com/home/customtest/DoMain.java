@@ -91,7 +91,7 @@ public class DoMain {
 
 
         List<ChildStudent> students = customDao.selectList(ChildStudent.class, Conditions.lambdaQuery(ChildStudent.class)
-                .select(x -> x.ifNull(ChildStudent::getProvince, 0))
+                .select(x -> x.ifNull(ChildStudent::getPassword, "aaa"))
         );
 
         System.out.println("students = " + students);

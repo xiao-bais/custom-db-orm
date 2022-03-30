@@ -96,17 +96,14 @@ public class ColumnParseHandler<T> {
      * 从Function中获取序列化的信息
      */
     private SerializedLambda getSerializedLambda(SFunction<T, ?> fun) {
-        if(fun == null) throw new NullPointerException();
         Method writeMethod;
         SerializedLambda serializedLambda = null;
         try {
             // 从function中取出序列化方法
             writeMethod = fun.getClass().getDeclaredMethod("writeReplace");
             writeMethod.setAccessible(true);
-
-            boolean accessible = writeMethod.isAccessible();
             serializedLambda = (SerializedLambda)writeMethod.invoke(fun);
-            writeMethod.setAccessible(accessible);
+            writeMethod.setAccessible(false);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         } catch (IllegalAccessException | InvocationTargetException e) {

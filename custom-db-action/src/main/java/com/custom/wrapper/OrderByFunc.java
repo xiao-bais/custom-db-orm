@@ -11,38 +11,38 @@ public class OrderByFunc<T> extends SqlFunc<T, OrderByFunc<T>>{
 
     @Override
     public OrderByFunc<T> sum(SFunction<T, ?> func) {
-        String field = getColumnParseHandler().getField(func);
-        return doFunc(getFormatRex(SqlAggregate.SUM, null), SqlAggregate.SUM, getFieldMapper().get(field), orderByStyle);
+        String column = getColumnParseHandler().getColumn(func);
+        return doFunc(getFormatRex(SqlAggregate.SUM, null), SqlAggregate.SUM, column, orderByStyle);
     }
 
     @Override
     public OrderByFunc<T> avg(SFunction<T, ?> func) {
-        String field = getColumnParseHandler().getField(func);
-        return doFunc(getFormatRex(SqlAggregate.AVG, null), SqlAggregate.AVG, getFieldMapper().get(field), orderByStyle);
+        String column = getColumnParseHandler().getColumn(func);
+        return doFunc(getFormatRex(SqlAggregate.AVG, null), SqlAggregate.AVG, column, orderByStyle);
     }
 
     @Override
     public OrderByFunc<T> count(SFunction<T, ?> func, boolean distinct) {
-        String field = getColumnParseHandler().getField(func);
-        return doFunc(getFormatRex(SqlAggregate.COUNT, distinct), SqlAggregate.COUNT, getFieldMapper().get(field), orderByStyle);
+        String column = getColumnParseHandler().getColumn(func);
+        return doFunc(getFormatRex(SqlAggregate.COUNT, distinct), SqlAggregate.COUNT, column, orderByStyle);
     }
 
     @Override
     public OrderByFunc<T> ifNull(SFunction<T, ?> func, Object elseVal) {
-        String field = getColumnParseHandler().getField(func);
-        return doFunc(getFormatRex(SqlAggregate.IFNULL, null), SqlAggregate.IFNULL, getFieldMapper().get(field), elseVal, orderByStyle);
+        String column = getColumnParseHandler().getColumn(func);
+        return doFunc(getFormatRex(SqlAggregate.IFNULL, null), SqlAggregate.IFNULL, column, elseVal, orderByStyle);
     }
 
     @Override
     public OrderByFunc<T> max(SFunction<T, ?> func) {
-        String field = getColumnParseHandler().getField(func);
-        return doFunc(getFormatRex(SqlAggregate.MAX, null), SqlAggregate.MAX, getFieldMapper().get(field), orderByStyle);
+        String column = getColumnParseHandler().getColumn(func);
+        return doFunc(getFormatRex(SqlAggregate.MAX, null), SqlAggregate.MAX, column, orderByStyle);
     }
 
     @Override
     public OrderByFunc<T> min(SFunction<T, ?> func) {
-        String field = getColumnParseHandler().getField(func);
-        return doFunc(getFormatRex(SqlAggregate.MIN, null), SqlAggregate.MIN, getFieldMapper().get(field), orderByStyle);
+        String column = getColumnParseHandler().getColumn(func);
+        return doFunc(getFormatRex(SqlAggregate.MIN, null), SqlAggregate.MIN, column, orderByStyle);
     }
 
     private final String orderByStyle;
