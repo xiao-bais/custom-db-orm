@@ -13,11 +13,11 @@ import java.util.List;
  * @Desc：
  **/
 @Data
-@DbTable(table = "student")
+@DbTable(table = "student", alias = "stu")
 @DbJoinTables({
-        @DbJoinTable("left join province pro on pro.id = a.pro_id"),
-        @DbJoinTable("left join city cy on cy.id = a.city_id"),
-        @DbJoinTable("left join location lo on lo.id = a.area_id")
+        @DbJoinTable("left join province pro on pro.id = stu.pro_id"),
+        @DbJoinTable("left join city cy on cy.id = stu.city_id"),
+        @DbJoinTable("left join location lo on lo.id = stu.area_id")
 })
 public class Student {
 

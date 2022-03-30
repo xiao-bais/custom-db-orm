@@ -64,7 +64,12 @@ public class ColumnParseHandler<T> {
      * 获取java属性字段对应的表字段
      */
     public final String getColumn(SFunction<T, ?> func) {
-        return fieldMapper.get(getField(func));
+        String field = getField(func);
+        String column = fieldMapper.get(field);
+        if(Objects.isNull(column)) {
+            throw new CustomCheckException("属性" + field + "上未标注Db*注解");
+        }
+        return column;
     }
 
 
@@ -72,6 +77,7 @@ public class ColumnParseHandler<T> {
      * 获取java属性字段
      */
     public String getField(SFunction<T, ?> fun) {
+        JudgeUtilsAx.checkObjNotNull(fun);
         SerializedLambda serializedLambda = getSerializedLambda(fun);
         String implMethodName = serializedLambda.getImplMethodName();
         String fieldName = implMethodName.substring(SymbolConst.GET.length());

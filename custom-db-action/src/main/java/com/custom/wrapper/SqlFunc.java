@@ -1,7 +1,6 @@
 package com.custom.wrapper;
 
 import com.custom.dbconfig.SymbolConst;
-import com.custom.enums.DbSymbol;
 import com.custom.enums.SqlAggregate;
 import com.custom.sqlparser.TableInfoCache;
 
@@ -78,15 +77,26 @@ public abstract class SqlFunc<T, Child> {
      */
     private Map<String, String> fieldMapper;
     /**
+     * 表字段到实体字段的映射缓存
+     */
+    private Map<String, String> columnMapper;
+    /**
      * sql片段
      */
     private StringJoiner sqlFragment;
+
+    /**
+     * 主表的别名
+     */
+    private String alias;
 
 
     // 初始化
     protected void init(Class<T> cls) {
         columnParseHandler = new ColumnParseHandler<>(cls);
         fieldMapper = TableInfoCache.getFieldMap(cls);
+        columnMapper = TableInfoCache.getColumnMap(cls);
+        alias = TableInfoCache.getTableModel(cls).getAlias();
         sqlFragment = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
     }
 
@@ -106,7 +116,7 @@ public abstract class SqlFunc<T, Child> {
             case COUNT:
                 template = distinct ? "%s(distinct %s) %s" : "%s(%s) %s";
                 break;
-            case IF_NULL:
+            case IFNULL:
                 template = "%s(%s, '%s') %s";
                 break;
         }
@@ -139,6 +149,14 @@ public abstract class SqlFunc<T, Child> {
 
     protected Map<String, String> getFieldMapper() {
         return fieldMapper;
+    }
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public Map<String, String> getColumnMapper() {
+        return columnMapper;
     }
 
     private final Child childClass = (Child) this;

@@ -3,9 +3,11 @@ package com.home.customtest;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.sqlparser.CustomDao;
-import com.custom.sqlparser.TableSqlBuilder;
+import com.custom.sqlparser.TableInfoCache;
+import com.custom.wrapper.Conditions;
 import com.home.customtest.entity.ChildStudent;
-import com.home.customtest.entity.Student;
+
+import java.util.List;
 
 /**
  * @Author Xiao-Bai
@@ -28,14 +30,14 @@ public class DoMain {
         DbCustomStrategy dbCustomStrategy = new DbCustomStrategy();
         dbCustomStrategy.setSqlOutPrinting(true);
         dbCustomStrategy.setSqlOutUpdate(true);
-//        dbCustomStrategy.setSqlOutPrintExecute(true);
+        dbCustomStrategy.setSqlOutPrintExecute(true);
         dbCustomStrategy.setUnderlineToCamel(true);
         dbCustomStrategy.setDbFieldDeleteLogic("state");
         dbCustomStrategy.setDeleteLogicValue("1");
         dbCustomStrategy.setNotDeleteLogicValue("0");
 //
         CustomDao customDao = new CustomDao(dbDataSource, dbCustomStrategy);
-//        TableInfoCache.setUnderlineToCamel(true);
+        TableInfoCache.setUnderlineToCamel(true);
 
 //        AutoFillColumnHandler autoFillColumnHandler = new CustomFillConfig();
 //        List<TableFillObject> tableFillObjects = autoFillColumnHandler.fillStrategy();
@@ -74,22 +76,29 @@ public class DoMain {
 
 //        Student student = new Student();
 //        long time = System.currentTimeMillis();
-//        List<Student> students = customDao.selectList(Student.class, Conditions.lambdaConditionQuery(Student.class)
-//                        .gt(Student::getAge, 22)
-//                        .eq(Student::getArea, "aaa")
-//                        .like(Student::getAddress, "山东")
-//                        .or().ge(Student::getAge, 23)
-//                        .le(Student::getId, 10)
+//        List<ChildStudent> students = customDao.selectList(ChildStudent.class, Conditions.lambdaQuery(ChildStudent.class)
+//                        .gt(ChildStudent::getAge, 22)
+//                        .eq(ChildStudent::getArea, "aaa")
+//                        .like(ChildStudent::getAddress, "山东")
+//                        .or().ge(ChildStudent::getAge, 23)
+//                        .le(ChildStudent::getId, 10)
 //                        .or(x -> x.exists("select 1 from student stu2 where stu2.address is not null")
-//                                .eq(Student::getSex, false)
+//                                .or().eq(ChildStudent::getSex, false)
+//                                .or().like(ChildStudent::getAddress, "南")
 //                        )
-//                        .orderByDesc(Student::getId)
+//                        .orderByDesc(ChildStudent::getId)
 //        );
 
-//        System.out.println("students = " + students);
+
+        List<ChildStudent> students = customDao.selectList(ChildStudent.class, Conditions.lambdaQuery(ChildStudent.class)
+                .select(x -> x.ifNull(ChildStudent::getProvince, 0))
+        );
+
+        System.out.println("students = " + students);
 
 
     }
+
 
 
 }

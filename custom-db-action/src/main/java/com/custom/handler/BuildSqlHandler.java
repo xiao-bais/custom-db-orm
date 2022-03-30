@@ -196,7 +196,7 @@ public class BuildSqlHandler extends AbstractSqlBuilder {
 
     @Override
     public <T> int deleteByCondition(ConditionWrapper<T> wrapper) throws Exception {
-        return 0;
+        throw new UnsupportedOperationException();
     }
 
     /* ----------------------------------------------------------------insert---------------------------------------------------------------- */
@@ -328,7 +328,7 @@ public class BuildSqlHandler extends AbstractSqlBuilder {
 
     @Override
     public <T> int updateByCondition(T t, ConditionWrapper<T> wrapper) throws Exception {
-        return 0;
+        throw new UnsupportedOperationException();
     }
 
     /* ----------------------------------------------------------------common---------------------------------------------------------------- */

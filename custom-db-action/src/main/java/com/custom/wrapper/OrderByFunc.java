@@ -30,7 +30,7 @@ public class OrderByFunc<T> extends SqlFunc<T, OrderByFunc<T>>{
     @Override
     public OrderByFunc<T> ifNull(SFunction<T, ?> func, Object elseVal) {
         String field = getColumnParseHandler().getField(func);
-        return doFunc(getFormatRex(SqlAggregate.IF_NULL, null), SqlAggregate.IF_NULL, getFieldMapper().get(field), elseVal, orderByStyle);
+        return doFunc(getFormatRex(SqlAggregate.IFNULL, null), SqlAggregate.IFNULL, getFieldMapper().get(field), elseVal, orderByStyle);
     }
 
     @Override

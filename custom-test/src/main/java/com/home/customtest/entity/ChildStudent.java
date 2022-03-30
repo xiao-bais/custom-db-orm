@@ -1,8 +1,10 @@
 package com.home.customtest.entity;
 
 import com.custom.annotations.DbField;
+import com.custom.annotations.DbTable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * @author Xiao-Bai
@@ -11,6 +13,7 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
+@ToString(callSuper = true)
 public class ChildStudent extends Student {
 
 

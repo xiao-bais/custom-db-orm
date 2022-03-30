@@ -10,14 +10,14 @@ public class Conditions {
     /**
      * 以lambda表达式的方式去进行sql的条件构造
      */
-    public static <T> LambdaConditionEntity<T> lambdaConditionQuery(Class<T> entityClass) {
+    public static <T> LambdaConditionEntity<T> lambdaQuery(Class<T> entityClass) {
         return new LambdaConditionEntity<>(entityClass);
     }
 
     /**
      * 以键值对的方式去进行sql的条件构造
      */
-    public static <T> ConditionEntity<T> conditionQuery(Class<T> entityClass) {
+    public static <T> ConditionEntity<T> query(Class<T> entityClass) {
         return new ConditionEntity<>(entityClass);
     }
     
