@@ -90,11 +90,17 @@ public class DoMain {
 //        );
 
 
-        List<ChildStudent> students = customDao.selectList(ChildStudent.class, Conditions.lambdaQuery(ChildStudent.class)
-                .select(x -> x.ifNull(ChildStudent::getPassword, "aaa"))
-        );
+//        List<ChildStudent> students = customDao.selectList(ChildStudent.class, Conditions.lambdaQuery(ChildStudent.class)
+//                .select(x -> x.ifNull(ChildStudent::getPassword, "aaa"))
+//        );
 
-        System.out.println("students = " + students);
+//        System.out.println("students = " + students);
+
+        String prefix = "https://hougu-gui.oss-cn-hangzhou.aliyuncs.com/";
+        String filePath = "https://hougu-gui.oss-cn-hangzhou.aliyuncs.com/1648706240714-%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20220329195933%20-%20%E5%89%AF%E6%9C%AC%20(2).jpg";
+
+        String fileName = filePath.substring(prefix.length() + 14, filePath.lastIndexOf("."));
+        System.out.println("fileName = " + fileName);
 
 
     }
