@@ -142,7 +142,7 @@ public class JdbcAction extends AbstractSqlBuilder {
 
     @Override
     public <T> T selectOneByCondition(ConditionWrapper<T> wrapper) throws Exception {
-        if(wrapper == null) {
+        if(Objects.isNull(wrapper)) {
             throw new CustomCheckException("condition cannot be empty");
         }
         String selectSql = getFullSelectSql(wrapper.getCls(), null, wrapper);

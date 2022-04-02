@@ -21,7 +21,7 @@ public class TableInfoCache {
 
     public static <T> TableSqlBuilder<T> getTableModel(Class<T> cls) {
         TableSqlBuilder<T> tableSqlBuilder = (TableSqlBuilder<T>) tableModel.get(cls.getName());
-        if(tableSqlBuilder == null) {
+        if(Objects.isNull(tableSqlBuilder)) {
             tableSqlBuilder = new TableSqlBuilder<>(cls, underlineToCamel);
             tableModel.put(cls.getName(), tableSqlBuilder);
         }

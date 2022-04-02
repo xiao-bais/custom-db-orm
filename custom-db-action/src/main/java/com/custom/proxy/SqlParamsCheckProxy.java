@@ -16,6 +16,7 @@ import org.springframework.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @Author Xiao-Bai
@@ -50,7 +51,7 @@ public class SqlParamsCheckProxy<T> implements MethodInterceptor {
     public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
 
         CheckExecute annotation = method.getAnnotation(CheckExecute.class);
-        if(annotation == null) {
+        if(Objects.isNull(annotation)) {
             return methodProxy.invokeSuper(o, objects);
         }
         if(JudgeUtilsAx.isEmpty(objects[0])) throw new NullPointerException();

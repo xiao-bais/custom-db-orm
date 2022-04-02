@@ -180,7 +180,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
      * 拼接大条件
      */
     protected Children spliceCondition(boolean condition, boolean spliceType, ConditionWrapper<T> wrapper) {
-        if(condition && wrapper != null) {
+        if(condition && Objects.nonNull(wrapper)) {
             handleNewCondition(spliceType, wrapper);
         }
         appendState = true;
@@ -194,7 +194,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
     protected void handleNewCondition(boolean spliceType, ConditionWrapper<T> conditionEntity) {
 
         // 1. 合并查询列-select
-        if (conditionEntity.getSelectColumns() != null) {
+        if (Objects.nonNull(conditionEntity.getSelectColumns())) {
             mergeSelect(conditionEntity.getSelectColumns());
         }
         // 2. 合并添加条件-condition
@@ -212,23 +212,24 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
      * 合并查询列(数组合并)
      */
     protected void mergeSelect(String[] selectColumns) {
-        if(selectColumns != null) {
-            if(getSelectColumns() == null) {
-                setSelectColumns(selectColumns);
+        if(Objects.isNull(selectColumns)) {
+            return;
+        }
+        if(Objects.isNull(getSelectColumns())) {
+            setSelectColumns(selectColumns);
+            return;
+        }
+        int thisLen = getSelectColumns().length;
+        int addLen = selectColumns.length;
+        String[] newSelectColumns = new String[thisLen + addLen];
+        for (int i = 0; i < newSelectColumns.length; i++) {
+            if(i <= thisLen - 1) {
+                newSelectColumns[i] = getSelectColumns()[i];
             }else {
-                int thisLen = getSelectColumns().length;
-                int addLen = selectColumns.length;
-                String[] newSelectColumns = new String[thisLen + addLen];
-                for (int i = 0; i < newSelectColumns.length; i++) {
-                    if(i <= thisLen - 1) {
-                        newSelectColumns[i] = getSelectColumns()[i];
-                    }else {
-                        newSelectColumns[i] = selectColumns[i - thisLen];
-                    }
-                }
-                setSelectColumns(newSelectColumns);
+                newSelectColumns[i] = selectColumns[i - thisLen];
             }
         }
+        setSelectColumns(newSelectColumns);
     }
 
     /**
@@ -266,7 +267,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
 
     @Override
     public Children limit(boolean condition, Integer pageIndex, Integer pageSize) {
-        if(pageIndex == null || pageSize == null) {
+        if((Objects.isNull(pageIndex) || Objects.isNull(pageSize))) {
             throw new CustomCheckException("缺少分页参数：pageIndex：" + pageIndex + ",pageSize：" + pageSize);
         }
         setPageIndex(pageIndex);

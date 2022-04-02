@@ -140,7 +140,7 @@ public class TableSqlBuilder<T> implements Cloneable {
         StringJoiner columnStr = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
         for (String x : columns) {
             String field = columnMapper.get(x);
-            columnStr.add(field == null ? x : String.format("%s %s", x, field));
+            columnStr.add(Objects.isNull(field) ? x : String.format("%s %s", x, field));
         }
         String selectSql = getSelectSql();
         selectSql = String.format("select %s\n %s", columnStr, selectSql.substring(selectSql.indexOf("from")));
@@ -151,7 +151,7 @@ public class TableSqlBuilder<T> implements Cloneable {
      * 获取添加sql
      */
     protected String getInsertSql(String logicColumn, Object val) {
-        if (keyParserModel != null) {
+        if (Objects.nonNull(keyParserModel)) {
             insertSql.add(keyParserModel.getDbKey());
         }
         if (!fieldParserModels.isEmpty()) {
@@ -169,7 +169,7 @@ public class TableSqlBuilder<T> implements Cloneable {
         for (T currEntity : list) {
             setEntity(currEntity);
             StringJoiner brackets = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1, SymbolConst.BRACKETS_LEFT, SymbolConst.BRACKETS_RIGHT);
-            if (keyParserModel != null) {
+            if (Objects.nonNull(keyParserModel)) {
                 brackets.add(SymbolConst.QUEST);
                 this.objValues.add(keyParserModel.getValue());
             }
@@ -200,7 +200,7 @@ public class TableSqlBuilder<T> implements Cloneable {
     protected String geCreateTableSql() {
         StringBuilder createTableSql = new StringBuilder();
         StringJoiner fieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1);
-        if (this.keyParserModel != null) {
+        if (Objects.nonNull(keyParserModel)) {
             fieldSql.add(keyParserModel.buildTableSql() + "\n");
         }
 
@@ -240,7 +240,7 @@ public class TableSqlBuilder<T> implements Cloneable {
         StringJoiner baseFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
 
         // 第一步 拼接主键
-        if (keyParserModel != null) {
+        if (Objects.nonNull(keyParserModel)) {
             baseFieldSql.add(keyParserModel.getSelectFieldSql());
         }
 
@@ -264,7 +264,7 @@ public class TableSqlBuilder<T> implements Cloneable {
         StringJoiner baseFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
 
         // 第一步 拼接主键
-        if (keyParserModel != null) {
+        if (Objects.nonNull(keyParserModel)) {
             baseFieldSql.add(keyParserModel.getSelectFieldSql());
         }
 
@@ -329,7 +329,7 @@ public class TableSqlBuilder<T> implements Cloneable {
         } else {
             fieldParserModels.forEach(x -> {
                 Object value = x.getValue();
-                if (value != null) {
+                if (Objects.nonNull(value)) {
                     updateFieldSql.add(String.format("%s = ?", x.getFieldSql()));
                     objValues.add(value);
                 }
@@ -355,13 +355,15 @@ public class TableSqlBuilder<T> implements Cloneable {
         StringJoiner updateFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
         for (DbFieldParserModel<T> fieldParserModel : fieldParserModels) {
             Object value = fieldParserModel.getValue();
-            if (value != null) {
+            if (Objects.nonNull(value)) {
                 updateFieldSql.add(fieldParserModel.getFieldSql() + " = ?");
                 objValues.add(value);
             }
         }
-        updateSql.append(SymbolConst.UPDATE).append(table).append(" ").append(alias)
-                .append(SymbolConst.SET).append(updateFieldSql).append(" ").append(condition);
+        updateSql.append(SymbolConst.UPDATE).append(table)
+                .append(" ").append(alias)
+                .append(SymbolConst.SET).append(updateFieldSql)
+                .append(" ").append(condition);
         objValues.addAll(conditionVals);
     }
 
@@ -370,7 +372,7 @@ public class TableSqlBuilder<T> implements Cloneable {
      * 构建字段映射
      */
     private void buildMapper() {
-        if (keyParserModel != null) {
+        if (Objects.nonNull(keyParserModel)) {
             columnMapper.put(keyParserModel.getFieldSql(), keyParserModel.getKey());
             fieldMapper.put(keyParserModel.getKey(), keyParserModel.getFieldSql());
         }
@@ -476,7 +478,7 @@ public class TableSqlBuilder<T> implements Cloneable {
     public TableSqlBuilder(Class<T> cls, ExecuteMethod method, boolean underlineToCamel) {
         this.cls = cls;
         DbTable annotation = cls.getAnnotation(DbTable.class);
-        if (annotation == null) {
+        if (Objects.isNull(annotation)) {
             throw new CustomCheckException(cls.getName() + "未标注@DbTable注解");
         }
         if (JudgeUtilsAx.isEmpty(annotation.table())) {
@@ -502,12 +504,12 @@ public class TableSqlBuilder<T> implements Cloneable {
      */
     private void buildSelectModels() {
         DbJoinTables joinTables = this.cls.getAnnotation(DbJoinTables.class);
-        if (joinTables != null) {
+        if (Objects.nonNull(joinTables)) {
             Arrays.stream(joinTables.value()).map(DbJoinTable::value).forEach(joinTableParserModels::add);
         }
-        Field[] fields = this.fields == null ? CustomUtil.getFields(this.cls) : this.fields;
+        Field[] fields = Objects.isNull(this.fields) ? CustomUtil.getFields(this.cls) : this.fields;
         for (Field field : fields) {
-            if (field.isAnnotationPresent(DbKey.class) && keyParserModel == null) {
+            if (field.isAnnotationPresent(DbKey.class) && Objects.isNull(keyParserModel)) {
                 keyParserModel = new DbKeyParserModel<>(field, this.table, this.alias, this.underlineToCamel);
 
             } else if (field.isAnnotationPresent(DbField.class)) {
@@ -530,7 +532,7 @@ public class TableSqlBuilder<T> implements Cloneable {
      */
     private void buildUpdateModels(boolean isBuildUpdateModels) {
         for (Field field : fields) {
-            if (field.isAnnotationPresent(DbKey.class) && keyParserModel == null) {
+            if (field.isAnnotationPresent(DbKey.class) && Objects.isNull(keyParserModel)) {
                 keyParserModel = new DbKeyParserModel<>(entity, field, this.table, this.alias, this.underlineToCamel);
 
             } else if (field.isAnnotationPresent(DbField.class) && isBuildUpdateModels) {
