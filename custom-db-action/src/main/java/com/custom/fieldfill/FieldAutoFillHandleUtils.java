@@ -1,6 +1,10 @@
 package com.custom.fieldfill;
 
 import com.custom.dbconfig.CustomApplicationUtils;
+import com.custom.exceptions.CustomCheckException;
+import com.custom.sqlparser.TableSqlBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
@@ -13,6 +17,8 @@ import java.util.Optional;
  * @Desc：对于字段自动填充的工具处理
  **/
 public class FieldAutoFillHandleUtils {
+
+    private static final Logger logger = LoggerFactory.getLogger(FieldAutoFillHandleUtils.class);
 
     /**
      * 通过java属性获取需要填充的字段值
@@ -29,15 +35,20 @@ public class FieldAutoFillHandleUtils {
         if(ObjectUtils.isEmpty(tableFillObjects)) {
             return null;
         }
-        Optional<TableFillObject> first = tableFillObjects.stream().filter(x -> x.getEntityClass().equals(t)).findFirst();
-        if (first.isPresent()) {
-            TableFillObject tableFillObject = first.get();
-            Object propertyValue = tableFillObject.getTableFillMapper().get(proName);
-            if(Objects.nonNull(propertyValue)) {
-                return propertyValue;
+        TableFillObject fillObject = tableFillObjects.stream().filter(x -> x.getEntityClass().equals(t)).findFirst().orElse(null);
+        if (Objects.isNull(fillObject)) {
+            return null;
+        }
+        Object propertyValue = fillObject.getTableFillMapper().get(proName);
+        if(Objects.isNull(propertyValue)) {
+            String error = String.format("%s中未找到属性：%s的指定填充值", t, proName);
+            if(fillObject.getNotFoundFieldThrowException()) {
+                throw new CustomCheckException(error);
+            }else {
+                logger.error(error);
             }
         }
-        return null;
+        return propertyValue;
     }
 
     /**

@@ -2,7 +2,7 @@ package com.custom.sqlparser;
 
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
-import com.custom.dbaction.AbstractSqlBuilder;
+import com.custom.dbaction.AbstractSqlExecutor;
 import com.custom.dbaction.SqlExecuteAction;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
@@ -24,7 +24,7 @@ import java.util.stream.IntStream;
  * @Date 2021/12/8 14:20
  * @Desc：方法执行处理入口
  **/
-public class JdbcAction extends AbstractSqlBuilder {
+public class JdbcAction extends AbstractSqlExecutor {
 
     private static final Logger logger = LoggerFactory.getLogger(JdbcAction.class);
 

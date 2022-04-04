@@ -3,7 +3,7 @@ package com.custom.handler;
 import com.custom.annotations.check.CheckExecute;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
-import com.custom.dbaction.AbstractSqlBuilder;
+import com.custom.dbaction.AbstractSqlExecutor;
 import com.custom.dbaction.SqlExecuteAction;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
@@ -13,7 +13,6 @@ import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
 import com.custom.comm.page.DbPageRows;
 import com.custom.wrapper.ConditionWrapper;
-import com.custom.wrapper.ConditionEntity;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -26,7 +25,7 @@ import java.util.stream.IntStream;
  * @Date 2021/7/4
  * @Description
  */
-public class BuildSqlHandler extends AbstractSqlBuilder {
+public class BuildSqlHandler extends AbstractSqlExecutor {
 
     private DbParserFieldHandler dbParserFieldHandler;
     private SqlExecuteAction sqlExecuteAction;

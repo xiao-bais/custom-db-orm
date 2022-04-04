@@ -3,6 +3,7 @@ package com.custom.sqlparser;
 import com.custom.annotations.DbJoinTables;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
+import com.custom.dbaction.AbstractSqlBuilder;
 import com.custom.dbconfig.SymbolConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,27 +15,22 @@ import java.util.*;
  * @Date 2022/4/1 17:22
  * @Desc：针对select查询做sql的构建
  **/
-public class HandleSelectSqlBuilder<T> {
+public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private StringBuilder selectSql;
-    private String table;
-    private String alias;
-    private Class<T> entityClass;
-    private boolean underlineToCamel;
-    private DbKeyParserModel<T> keyParserModel;
-    private List<DbFieldParserModel<T>> fieldParserModels;
-    private List<DbRelationParserModel<T>> relatedParserModels;
-    private List<DbJoinTableParserModel<T>> joinDbMappers;
-    private List<String> joinTableParserModels;
-    private Map<String, String> fieldMapper;
-    private Map<String, String> columnMapper;
+    private final StringBuilder selectSql;
+    private final List<DbRelationParserModel<T>> relatedParserModels;
+    private final List<DbJoinTableParserModel<T>> joinDbMappers;
+    private final List<String> joinTableParserModels;
 
-    public HandleSelectSqlBuilder(Class<T> entityClass, String table, String alias, boolean underlineToCamel, DbKeyParserModel<T> keyParserModel
-        , List<DbFieldParserModel<T>> fieldParserModels, List<DbRelationParserModel<T>> relatedParserModels, List<DbJoinTableParserModel<T>> joinDbMappers
-    ) {
-
+    public HandleSelectSqlBuilder(List<DbRelationParserModel<T>> relatedParserModels,
+                                  List<DbJoinTableParserModel<T>> joinDbMappers,
+                                  List<String> joinTableParserModels) {
+        this.selectSql = new StringBuilder();
+        this.relatedParserModels = relatedParserModels;
+        this.joinDbMappers = joinDbMappers;
+        this.joinTableParserModels = joinTableParserModels;
     }
 
 
@@ -42,10 +38,11 @@ public class HandleSelectSqlBuilder<T> {
     /**
      * 获取查询sql（代码自行判定是否需要拼接表连接的sql）
      */
-    public String getSelectSql() {
+    @Override
+    protected String buildSql() {
         try {
             if (JudgeUtilsAx.isEmpty(selectSql)) {
-                if (CustomUtil.isDbRelationTag(this.entityClass) || this.entityClass.isAnnotationPresent(DbJoinTables.class)) {
+                if (CustomUtil.isDbRelationTag(getEntityClass()) || getEntityClass().isAnnotationPresent(DbJoinTables.class)) {
                     getSelectRelationSql();
                 } else {
                     getSelectBaseTableSql();
@@ -63,7 +60,7 @@ public class HandleSelectSqlBuilder<T> {
      */
     protected String getSelectSql(boolean isRelated) {
         try {
-            if (isRelated && (CustomUtil.isDbRelationTag(this.entityClass) || this.entityClass.isAnnotationPresent(DbJoinTables.class))) {
+            if (isRelated && (CustomUtil.isDbRelationTag(getEntityClass()) || getEntityClass().isAnnotationPresent(DbJoinTables.class))) {
                 getSelectRelationSql();
             } else {
                 getSelectBaseTableSql();
@@ -82,17 +79,17 @@ public class HandleSelectSqlBuilder<T> {
         StringJoiner baseFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
 
         // 第一步 拼接主键
-        if (keyParserModel != null) {
-            baseFieldSql.add(keyParserModel.getSelectFieldSql());
+        if (getKeyParserModel() != null) {
+            baseFieldSql.add(getKeyParserModel().getSelectFieldSql());
         }
 
         // 第二步 拼接此表的其他字段
-        if (!fieldParserModels.isEmpty()) {
-            fieldParserModels.stream().map(DbFieldParserModel::getSelectFieldSql).forEach(baseFieldSql::add);
+        if (!getFieldParserModels().isEmpty()) {
+            getFieldParserModels().stream().map(DbFieldParserModel::getSelectFieldSql).forEach(baseFieldSql::add);
         }
 
         // 第三步 拼接主表
-        selectSql.append(String.format("select %s\n from %s %s", baseFieldSql, this.table, this.alias));
+        selectSql.append(String.format("select %s\n from %s %s", baseFieldSql, getTable(), getAlias()));
     }
 
     /**
@@ -105,13 +102,13 @@ public class HandleSelectSqlBuilder<T> {
         StringJoiner baseFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
 
         // 第一步 拼接主键
-        if (keyParserModel != null) {
-            baseFieldSql.add(keyParserModel.getSelectFieldSql());
+        if (getKeyParserModel() != null) {
+            baseFieldSql.add(getKeyParserModel().getSelectFieldSql());
         }
 
         // 第二步 拼接此表的其他字段
-        if (!fieldParserModels.isEmpty()) {
-            fieldParserModels.stream().map(DbFieldParserModel::getSelectFieldSql).forEach(baseFieldSql::add);
+        if (!getFieldParserModels().isEmpty()) {
+            getFieldParserModels().stream().map(DbFieldParserModel::getSelectFieldSql).forEach(baseFieldSql::add);
         }
 
         // 第三步 拼接以joinTables的方式关联的查询字段
@@ -125,7 +122,7 @@ public class HandleSelectSqlBuilder<T> {
         }
 
         // 第四步 拼接主表
-        selectSql.append(String.format("select %s\n from %s %s", baseFieldSql, this.table, this.alias));
+        selectSql.append(String.format("select %s\n from %s %s", baseFieldSql, getTable(), getAlias()));
 
         // 第五步 拼接以joinTables方式的关联条件
         if (!joinTableParserModels.isEmpty()) {
@@ -160,10 +157,10 @@ public class HandleSelectSqlBuilder<T> {
     public String selectColumns(String[] columns) {
         StringJoiner columnStr = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
         for (String x : columns) {
-            String field = columnMapper.get(x);
+            String field = getColumnMapper().get(x);
             columnStr.add(field == null ? x : String.format("%s %s", x, field));
         }
-        String selectSql = getSelectSql();
+        String selectSql = buildSql();
         selectSql = String.format("select %s\n %s", columnStr, selectSql.substring(selectSql.indexOf("from")));
         return selectSql;
     }

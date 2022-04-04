@@ -1,12 +1,11 @@
 package com.custom.sqlparser;
 
 import com.custom.comm.page.DbPageRows;
-import com.custom.dbaction.AbstractSqlBuilder;
+import com.custom.dbaction.AbstractSqlExecutor;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.proxy.SqlParamsCheckProxy;
 import com.custom.wrapper.ConditionWrapper;
-import com.custom.wrapper.ConditionEntity;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -232,7 +231,7 @@ public class CustomDao {
         jdbcAction.createTables(arr);
     }
 
-    private final  AbstractSqlBuilder jdbcAction;
+    private final AbstractSqlExecutor jdbcAction;
 
     public CustomDao(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         jdbcAction = new SqlParamsCheckProxy<>(new JdbcAction(), dbDataSource, dbCustomStrategy).createProxy();
