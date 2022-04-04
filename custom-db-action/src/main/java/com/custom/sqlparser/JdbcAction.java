@@ -120,11 +120,10 @@ public class JdbcAction extends AbstractSqlExecutor {
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> DbPageRows<T> selectPageRows(Class<T> t, ConditionWrapper<T> wrapper) throws Exception {
-        DbPageRows<T> dbPageRows = new DbPageRows<>();
-        if(wrapper == null) {
+        if(Objects.isNull(wrapper)) {
             throw new NullPointerException("缺少分页参数");
         }
-        dbPageRows.setPageIndex(wrapper.getPageIndex()).setPageSize(wrapper.getPageSize());
+        DbPageRows<T> dbPageRows = new DbPageRows<>(wrapper.getPageIndex(), wrapper.getPageSize());
         String selectSql = getFullSelectSql(t, dbPageRows, wrapper);
         buildPageResult(t, selectSql, null, dbPageRows, wrapper.getParamValues().toArray());
         return dbPageRows;
@@ -133,7 +132,7 @@ public class JdbcAction extends AbstractSqlExecutor {
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> List<T> selectList(Class<T> t, ConditionWrapper<T> wrapper) throws Exception {
-        if(wrapper == null) {
+        if(Objects.isNull(wrapper)) {
             return selectBySql(t, getEntityModelCache(t).getSelectSql());
         }
         String selectSql = getFullSelectSql(t, null, wrapper);

@@ -104,7 +104,7 @@ public abstract class SqlFunc<T, Child> {
     /**
      * 获取格式化的sql函数模板
      */
-    protected String getFormatRex(SqlAggregate aggregate, Boolean distinct) {
+    protected String formatRex(SqlAggregate aggregate, Boolean distinct) {
         String template = SymbolConst.EMPTY;
         switch (aggregate) {
             case SUM:

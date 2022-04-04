@@ -113,5 +113,7 @@ public class ColumnParseHandler<T> {
         return serializedLambda;
     }
 
-
+    public Field[] getFields() {
+        return fields;
+    }
 }

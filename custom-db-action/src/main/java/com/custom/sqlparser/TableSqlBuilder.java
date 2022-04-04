@@ -96,103 +96,103 @@ public class TableSqlBuilder<T> implements Cloneable {
     private final Map<String, String> columnMapper = new HashMap<>();
 
 
-//    /**
-//     * 获取查询sql（代码自行判定是否需要拼接表连接的sql）
-//     */
-//    public String getSelectSql() {
-//        try {
-//            if (JudgeUtilsAx.isEmpty(selectSql)) {
-//                if (CustomUtil.isDbRelationTag(this.cls) || this.cls.isAnnotationPresent(DbJoinTables.class)) {
-//                    getSelectRelationSql();
-//                } else {
-//                    getSelectBaseTableSql();
-//                }
-//            }
-//        } catch (Exception e) {
-//            logger.error(e.getMessage(), e);
-//            return SymbolConst.EMPTY;
-//        }
-//        return selectSql.toString();
-//    }
-//
-//    /**
-//     * 获取查询sql（主动指定是否需要拼接表连接的sql）
-//     */
-//    protected String getSelectSql(boolean isRelated) {
-//        try {
-//            if (isRelated) {
-//                if (CustomUtil.isDbRelationTag(this.cls) || this.cls.isAnnotationPresent(DbJoinTables.class)) {
-//                    getSelectRelationSql();
-//                }
-//            } else {
-//                getSelectBaseTableSql();
-//            }
-//        } catch (Exception e) {
-//            logger.error(e.getMessage(), e);
-//            return SymbolConst.EMPTY;
-//        }
-//        return selectSql.toString();
-//    }
-//
-//    /**
-//     * 自定义查询表列名
-//     */
-//    public String selectColumns(String[] columns) {
-//        StringJoiner columnStr = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
-//        for (String x : columns) {
-//            String field = columnMapper.get(x);
-//            columnStr.add(Objects.isNull(field) ? x : String.format("%s %s", x, field));
-//        }
-//        String selectSql = getSelectSql();
-//        selectSql = String.format("select %s\n %s", columnStr, selectSql.substring(selectSql.indexOf("from")));
-//        return selectSql;
-//    }
+    /**
+     * 获取查询sql（代码自行判定是否需要拼接表连接的sql）
+     */
+    public String getSelectSql() {
+        try {
+            if (JudgeUtilsAx.isEmpty(selectSql)) {
+                if (CustomUtil.isDbRelationTag(this.cls) || this.cls.isAnnotationPresent(DbJoinTables.class)) {
+                    getSelectRelationSql();
+                } else {
+                    getSelectBaseTableSql();
+                }
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return SymbolConst.EMPTY;
+        }
+        return selectSql.toString();
+    }
 
-//    /**
-//     * 获取添加sql
-//     */
-//    protected String getInsertSql(String logicColumn, Object val) {
-//        if (Objects.nonNull(keyParserModel)) {
-//            insertSql.add(keyParserModel.getDbKey());
-//        }
-//        if (!fieldParserModels.isEmpty()) {
-//            fieldParserModels.forEach(x -> insertSql.add(x.getColumn()));
-//        }
-//        return String.format("insert into %s(%s) values %s ", this.table, insertSql, getInsertSymbol(logicColumn, val));
-//    }
-//
-//    /**
-//     * 获取添加时的？
-//     * @param logicColumn 逻辑删除的字段
-//     * @param val 未逻辑删除的值
-//     */
-//    private String getInsertSymbol(String logicColumn, Object val) {
-//        for (T currEntity : list) {
-//            setEntity(currEntity);
-//            StringJoiner brackets = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1, SymbolConst.BRACKETS_LEFT, SymbolConst.BRACKETS_RIGHT);
-//            if (Objects.nonNull(keyParserModel)) {
-//                brackets.add(SymbolConst.QUEST);
-//                this.objValues.add(keyParserModel.getValue());
-//            }
-//            if (!fieldParserModels.isEmpty()) {
-//                fieldParserModels.forEach(x -> {
-//                    brackets.add(SymbolConst.QUEST);
-//                    Object fieldValue = x.getValue();
-//                    if (FieldAutoFillHandleUtils.exists(cls, x.getFieldName())
-//                            && Objects.isNull(fieldValue) ) {
-//                        fieldValue = FieldAutoFillHandleUtils.getFillValue(cls, x.getFieldName());
-//                        x.setValue(fieldValue);
-//                    }else if(JudgeUtilsAx.isNotEmpty(logicColumn) && TableInfoCache.isExistsLogic(table)  && x.getColumn().equals(logicColumn)) {
-//                        fieldValue = ConvertUtil.transToObject(x.getType(), val);
-//                        x.setValue(fieldValue);
-//                    }
-//                    this.objValues.add(fieldValue);
-//                });
-//            }
-//            insetSymbol.add(brackets.toString());
-//        }
-//        return insetSymbol.toString();
-//    }
+    /**
+     * 获取查询sql（主动指定是否需要拼接表连接的sql）
+     */
+    protected String getSelectSql(boolean isRelated) {
+        try {
+            if (isRelated) {
+                if (CustomUtil.isDbRelationTag(this.cls) || this.cls.isAnnotationPresent(DbJoinTables.class)) {
+                    getSelectRelationSql();
+                }
+            } else {
+                getSelectBaseTableSql();
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return SymbolConst.EMPTY;
+        }
+        return selectSql.toString();
+    }
+
+    /**
+     * 自定义查询表列名
+     */
+    public String selectColumns(String[] columns) {
+        StringJoiner columnStr = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+        for (String x : columns) {
+            String field = columnMapper.get(x);
+            columnStr.add(Objects.isNull(field) ? x : String.format("%s %s", x, field));
+        }
+        String selectSql = getSelectSql();
+        selectSql = String.format("select %s\n %s", columnStr, selectSql.substring(selectSql.indexOf("from")));
+        return selectSql;
+    }
+
+    /**
+     * 获取添加sql
+     */
+    protected String getInsertSql(String logicColumn, Object val) {
+        if (Objects.nonNull(keyParserModel)) {
+            insertSql.add(keyParserModel.getDbKey());
+        }
+        if (!fieldParserModels.isEmpty()) {
+            fieldParserModels.forEach(x -> insertSql.add(x.getColumn()));
+        }
+        return String.format("insert into %s(%s) values %s ", this.table, insertSql, getInsertSymbol(logicColumn, val));
+    }
+
+    /**
+     * 获取添加时的？
+     * @param logicColumn 逻辑删除的字段
+     * @param val 未逻辑删除的值
+     */
+    private String getInsertSymbol(String logicColumn, Object val) {
+        for (T currEntity : list) {
+            setEntity(currEntity);
+            StringJoiner brackets = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1, SymbolConst.BRACKETS_LEFT, SymbolConst.BRACKETS_RIGHT);
+            if (Objects.nonNull(keyParserModel)) {
+                brackets.add(SymbolConst.QUEST);
+                this.objValues.add(keyParserModel.getValue());
+            }
+            if (!fieldParserModels.isEmpty()) {
+                fieldParserModels.forEach(x -> {
+                    brackets.add(SymbolConst.QUEST);
+                    Object fieldValue = x.getValue();
+                    if (FieldAutoFillHandleUtils.exists(cls, x.getFieldName())
+                            && Objects.isNull(fieldValue) ) {
+                        fieldValue = FieldAutoFillHandleUtils.getFillValue(cls, x.getFieldName());
+                        x.setValue(fieldValue);
+                    }else if(JudgeUtilsAx.isNotEmpty(logicColumn) && TableInfoCache.isExistsLogic(table)  && x.getColumn().equals(logicColumn)) {
+                        fieldValue = ConvertUtil.transToObject(x.getType(), val);
+                        x.setValue(fieldValue);
+                    }
+                    this.objValues.add(fieldValue);
+                });
+            }
+            insetSymbol.add(brackets.toString());
+        }
+        return insetSymbol.toString();
+    }
 
 
     /**
@@ -234,85 +234,85 @@ public class TableSqlBuilder<T> implements Cloneable {
                 "`information_schema`.`TABLES` WHERE TABLE_NAME = '%s' AND TABLE_SCHEMA = '%s';", table, ExceptionConst.currMap.get(DbFieldsConst.DATA_BASE));
     }
 
-//    /**
-//     * 生成表查询sql语句
-//     */
-//    private void getSelectBaseTableSql() {
-//        StringJoiner baseFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
-//
-//        // 第一步 拼接主键
-//        if (Objects.nonNull(keyParserModel)) {
-//            baseFieldSql.add(keyParserModel.getSelectFieldSql());
-//        }
-//
-//        // 第二步 拼接此表的其他字段
-//        if (!fieldParserModels.isEmpty()) {
-//            fieldParserModels.stream().map(DbFieldParserModel::getSelectFieldSql).forEach(baseFieldSql::add);
-//        }
-//
-//        // 第三步 拼接主表
-//        selectSql.append(String.format("select %s\n from %s %s", baseFieldSql, this.table, this.alias));
-//    }
-//
-//
-//    /**
-//     * 关联的sql分为两部分
-//     * 一是 @DbJoinTables注解，二是@DbRelated注解
-//     * 默认按注解放置顺序载入，优先加载DbJoinTables注解(顺带优先@DbMap的查询字段)
-//     */
-//    private void getSelectRelationSql() {
-//
-//        StringJoiner baseFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
-//
-//        // 第一步 拼接主键
-//        if (Objects.nonNull(keyParserModel)) {
-//            baseFieldSql.add(keyParserModel.getSelectFieldSql());
-//        }
-//
-//        // 第二步 拼接此表的其他字段
-//        if (!fieldParserModels.isEmpty()) {
-//            fieldParserModels.stream().map(DbFieldParserModel::getSelectFieldSql).forEach(baseFieldSql::add);
-//        }
-//
-//        // 第三步 拼接以joinTables的方式关联的查询字段
-//        if (!joinDbMappers.isEmpty()) {
-//            joinDbMappers.forEach(x -> baseFieldSql.add(x.getSelectFieldSql()));
-//        }
-//
-//        // 第三步 拼接以related方式关联的查询字段
-//        if (!relatedParserModels.isEmpty()) {
-//            relatedParserModels.stream().map(DbRelationParserModel::getSelectFieldSql).forEach(baseFieldSql::add);
-//        }
-//
-//        // 第四步 拼接主表
-//        selectSql.append(String.format("select %s\n from %s %s", baseFieldSql, this.table, this.alias));
-//
-//        // 第五步 拼接以joinTables方式的关联条件
-//        if (!joinTableParserModels.isEmpty()) {
-//            joinTableParserModels.stream().map(model -> String.format("\n %s", model)).forEach(selectSql::append);
-//        }
-//
-//        // 第六步 拼接以related方式的关联条件
-//        if (!relatedParserModels.isEmpty()) {
-//            selectSql.append(getRelatedTableSql(relatedParserModels));
-//        }
-//    }
-//
-//    /**
-//     * 拼接related的表关联
-//     */
-//    private String getRelatedTableSql(List<DbRelationParserModel<T>> relatedParserModels) {
-//        StringBuilder joinTableSql = new StringBuilder();
-//        List<String> conditions = new ArrayList<>();
-//        for (DbRelationParserModel<T> model : relatedParserModels) {
-//            String condition = String.format("%s@%s@%s", model.getJoinTable(), model.getJoinAlias(), model.getCondition());
-//            if (!conditions.contains(condition)) {
-//                joinTableSql.append("\n").append(String.format("%s %s %s on %s", model.getJoinStyle().getStyle(), model.getJoinTable(), model.getJoinAlias(), model.getCondition()));
-//                conditions.add(condition);
-//            }
-//        }
-//        return joinTableSql.toString();
-//    }
+    /**
+     * 生成表查询sql语句
+     */
+    private void getSelectBaseTableSql() {
+        StringJoiner baseFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+
+        // 第一步 拼接主键
+        if (Objects.nonNull(keyParserModel)) {
+            baseFieldSql.add(keyParserModel.getSelectFieldSql());
+        }
+
+        // 第二步 拼接此表的其他字段
+        if (!fieldParserModels.isEmpty()) {
+            fieldParserModels.stream().map(DbFieldParserModel::getSelectFieldSql).forEach(baseFieldSql::add);
+        }
+
+        // 第三步 拼接主表
+        selectSql.append(String.format("select %s\n from %s %s", baseFieldSql, this.table, this.alias));
+    }
+
+
+    /**
+     * 关联的sql分为两部分
+     * 一是 @DbJoinTables注解，二是@DbRelated注解
+     * 默认按注解放置顺序载入，优先加载DbJoinTables注解(顺带优先@DbMap的查询字段)
+     */
+    private void getSelectRelationSql() {
+
+        StringJoiner baseFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+
+        // 第一步 拼接主键
+        if (Objects.nonNull(keyParserModel)) {
+            baseFieldSql.add(keyParserModel.getSelectFieldSql());
+        }
+
+        // 第二步 拼接此表的其他字段
+        if (!fieldParserModels.isEmpty()) {
+            fieldParserModels.stream().map(DbFieldParserModel::getSelectFieldSql).forEach(baseFieldSql::add);
+        }
+
+        // 第三步 拼接以joinTables的方式关联的查询字段
+        if (!joinDbMappers.isEmpty()) {
+            joinDbMappers.forEach(x -> baseFieldSql.add(x.getSelectFieldSql()));
+        }
+
+        // 第三步 拼接以related方式关联的查询字段
+        if (!relatedParserModels.isEmpty()) {
+            relatedParserModels.stream().map(DbRelationParserModel::getSelectFieldSql).forEach(baseFieldSql::add);
+        }
+
+        // 第四步 拼接主表
+        selectSql.append(String.format("select %s\n from %s %s", baseFieldSql, this.table, this.alias));
+
+        // 第五步 拼接以joinTables方式的关联条件
+        if (!joinTableParserModels.isEmpty()) {
+            joinTableParserModels.stream().map(model -> String.format("\n %s", model)).forEach(selectSql::append);
+        }
+
+        // 第六步 拼接以related方式的关联条件
+        if (!relatedParserModels.isEmpty()) {
+            selectSql.append(getRelatedTableSql(relatedParserModels));
+        }
+    }
+
+    /**
+     * 拼接related的表关联
+     */
+    private String getRelatedTableSql(List<DbRelationParserModel<T>> relatedParserModels) {
+        StringBuilder joinTableSql = new StringBuilder();
+        List<String> conditions = new ArrayList<>();
+        for (DbRelationParserModel<T> model : relatedParserModels) {
+            String condition = String.format("%s@%s@%s", model.getJoinTable(), model.getJoinAlias(), model.getCondition());
+            if (!conditions.contains(condition)) {
+                joinTableSql.append("\n").append(String.format("%s %s %s on %s", model.getJoinStyle().getStyle(), model.getJoinTable(), model.getJoinAlias(), model.getCondition()));
+                conditions.add(condition);
+            }
+        }
+        return joinTableSql.toString();
+    }
 
     /**
      * 构建修改的sql语句
@@ -496,7 +496,6 @@ public class TableSqlBuilder<T> implements Cloneable {
         }
         // 构建字段映射缓存
         buildMapper();
-        //构建sql构建模板
 
         // 初始化数据结构
         initDataStructure(this);

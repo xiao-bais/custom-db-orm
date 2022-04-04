@@ -91,7 +91,10 @@ public class DoMain {
 
 
         List<ChildStudent> students = customDao.selectList(ChildStudent.class, Conditions.lambdaQuery(ChildStudent.class)
+                .select(ChildStudent::getSex)
+                .select(x -> x.ifNull(ChildStudent::getSex, 5, ChildStudent::getIfNullAge))
                 .like(ChildStudent::getName, "李")
+                .and(false, x -> x.eq(ChildStudent::getAddress, "湖南长沙").ge(ChildStudent::getAge, 20))
         );
 
         System.out.println("students = " + students);

@@ -12,37 +12,37 @@ public class OrderByFunc<T> extends SqlFunc<T, OrderByFunc<T>>{
     @Override
     public OrderByFunc<T> sum(SFunction<T, ?> func) {
         String column = getColumnParseHandler().getColumn(func);
-        return doFunc(getFormatRex(SqlAggregate.SUM, null), SqlAggregate.SUM, column, orderByStyle);
+        return doFunc(formatRex(SqlAggregate.SUM, null), SqlAggregate.SUM, column, orderByStyle);
     }
 
     @Override
     public OrderByFunc<T> avg(SFunction<T, ?> func) {
         String column = getColumnParseHandler().getColumn(func);
-        return doFunc(getFormatRex(SqlAggregate.AVG, null), SqlAggregate.AVG, column, orderByStyle);
+        return doFunc(formatRex(SqlAggregate.AVG, null), SqlAggregate.AVG, column, orderByStyle);
     }
 
     @Override
     public OrderByFunc<T> count(SFunction<T, ?> func, boolean distinct) {
         String column = getColumnParseHandler().getColumn(func);
-        return doFunc(getFormatRex(SqlAggregate.COUNT, distinct), SqlAggregate.COUNT, column, orderByStyle);
+        return doFunc(formatRex(SqlAggregate.COUNT, distinct), SqlAggregate.COUNT, column, orderByStyle);
     }
 
     @Override
     public OrderByFunc<T> ifNull(SFunction<T, ?> func, Object elseVal) {
         String column = getColumnParseHandler().getColumn(func);
-        return doFunc(getFormatRex(SqlAggregate.IFNULL, null), SqlAggregate.IFNULL, column, elseVal, orderByStyle);
+        return doFunc(formatRex(SqlAggregate.IFNULL, null), SqlAggregate.IFNULL, column, elseVal, orderByStyle);
     }
 
     @Override
     public OrderByFunc<T> max(SFunction<T, ?> func) {
         String column = getColumnParseHandler().getColumn(func);
-        return doFunc(getFormatRex(SqlAggregate.MAX, null), SqlAggregate.MAX, column, orderByStyle);
+        return doFunc(formatRex(SqlAggregate.MAX, null), SqlAggregate.MAX, column, orderByStyle);
     }
 
     @Override
     public OrderByFunc<T> min(SFunction<T, ?> func) {
         String column = getColumnParseHandler().getColumn(func);
-        return doFunc(getFormatRex(SqlAggregate.MIN, null), SqlAggregate.MIN, column, orderByStyle);
+        return doFunc(formatRex(SqlAggregate.MIN, null), SqlAggregate.MIN, column, orderByStyle);
     }
 
     private final String orderByStyle;
