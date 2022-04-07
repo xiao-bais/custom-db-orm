@@ -83,23 +83,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
                 break;
             case IN:
             case NOT_IN:
-                StringJoiner symbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
-                if(CustomUtil.isBasicType(val1)) {
-                    getParamValues().add(val1);
-
-                }else if(val1.getClass().isArray()) {
-                    int len = Array.getLength(val1);
-                    for (int i = 0; i < len; i++) {
-                        symbol.add(SymbolConst.QUEST);
-                        getParamValues().add(Array.get(val1, i));
-                    }
-
-                }else if(val1 instanceof Collection) {
-                    Collection<?> objects = (Collection<?>) val1;
-                    getParamValues().addAll(objects);
-                    objects.forEach(x -> symbol.add(SymbolConst.QUEST));
-                }
-                setLastCondition(String.format(" %s %s %s (%s)", appendSybmol, column, dbSymbol.getSymbol(), symbol));
+                ConditionOnInsqlAssembly(dbSymbol, column, val1);
                 break;
             case EXISTS:
             case NOT_EXISTS:
@@ -107,15 +91,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
                 break;
             case BETWEEN:
             case NOT_BETWEEN:
-                if(!CustomUtil.isBasicType(val1.getClass()) || !CustomUtil.isBasicType(val2.getClass())) {
-                    throw new IllegalArgumentException("val1 or val2 can only be basic types");
-                }
-                if(JudgeUtilsAx.isEmpty(val1) || JudgeUtilsAx.isEmpty(val2)) {
-                    throw new NullPointerException("At least one null value exists between val1 and val2");
-                }
-                setLastCondition(String.format(" %s %s %s", appendSybmol, column, dbSymbol.getSymbol()));
-                getParamValues().add(val1);
-                getParamValues().add(val2);
+                ConditionOnSqlBetweenAssembly(dbSymbol, column, val1, val2);
                 break;
             case IS_NULL:
             case IS_NOT_NULL:
@@ -139,6 +115,44 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
         if(appendSybmol.equals(SymbolConst.OR)) {
             appendSybmol = SymbolConst.AND;
         }
+    }
+
+    /**
+     * between not between 的条件组装
+     */
+    private void ConditionOnSqlBetweenAssembly(DbSymbol dbSymbol, String column, Object val1, Object val2) {
+        if(!CustomUtil.isBasicType(val1.getClass()) || !CustomUtil.isBasicType(val2.getClass())) {
+            throw new IllegalArgumentException("val1 or val2 can only be basic types");
+        }
+        if(JudgeUtilsAx.isEmpty(val1) || JudgeUtilsAx.isEmpty(val2)) {
+            throw new NullPointerException("At least one null value exists between val1 and val2");
+        }
+        setLastCondition(String.format(" %s %s %s", appendSybmol, column, dbSymbol.getSymbol()));
+        getParamValues().add(val1);
+        getParamValues().add(val2);
+    }
+
+    /**
+     * in 、not in的条件组装
+     */
+    private void ConditionOnInsqlAssembly(DbSymbol dbSymbol, String column, Object val1) {
+        StringJoiner symbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+        if(CustomUtil.isBasicType(val1)) {
+            getParamValues().add(val1);
+
+        }else if(val1.getClass().isArray()) {
+            int len = Array.getLength(val1);
+            for (int i = 0; i < len; i++) {
+                symbol.add(SymbolConst.QUEST);
+                getParamValues().add(Array.get(val1, i));
+            }
+
+        }else if(val1 instanceof Collection) {
+            Collection<?> objects = (Collection<?>) val1;
+            getParamValues().addAll(objects);
+            objects.forEach(x -> symbol.add(SymbolConst.QUEST));
+        }
+        setLastCondition(String.format(" %s %s %s (%s)", appendSybmol, column, dbSymbol.getSymbol(), symbol));
     }
 
     /**
