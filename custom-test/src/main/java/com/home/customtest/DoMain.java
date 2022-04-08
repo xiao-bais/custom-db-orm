@@ -19,6 +19,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -103,15 +105,17 @@ public class DoMain {
 //        );
 
 
-        LambdaConditionEntity<Aklis> conditionEntity = Conditions.lambdaQuery(Aklis.class)
-                .like(Aklis::getName, "李")
-                .eq(Aklis::getExplain, "张三")
-                .and(false, x -> x.eq(Aklis::getAddress, "湖南长沙").ge(Aklis::getAge, 20)
-                );
 
-        List<Aklis> aklis = customDao.selectList(Aklis.class, conditionEntity);
-
-        System.out.println("aklis = " + aklis);
+                //待匹配的字符串："Hello"Hi"Nice"Good
+                String content=" aaa #{dd} da";
+                System.out.println(content);
+                //匹配双引号的正则表达式
+                String pattStr = "(?<=#\\{).*?(?=\\})";
+                //创建Pattern并进行匹配
+                Pattern pattern= Pattern.compile(pattStr);
+                Matcher matcher=pattern.matcher(content);
+                //将所有匹配的结果打印输出
+                System.out.println(matcher.find());
 
 
     }

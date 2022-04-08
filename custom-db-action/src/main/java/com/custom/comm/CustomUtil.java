@@ -27,6 +27,8 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @Author Xiao-Bai
@@ -150,7 +152,6 @@ public class CustomUtil {
         String alias = field.substring(SymbolConst.DEFAULT_ZERO, index + SymbolConst.DEFAULT_ONE);
         return String.format("%s`%s`", alias, fieldName);
     }
-
 
 
 

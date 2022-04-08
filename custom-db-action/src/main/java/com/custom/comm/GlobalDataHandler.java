@@ -45,6 +45,9 @@ public class GlobalDataHandler {
      * 该字段是否是sql关键字
      */
     public static boolean hasSqlKeyword(String column) {
+        if (RexUtil.hasRegex(RexUtil.back_quotes, column)) {
+            return false;
+        }
        return SQL_KEYWORDS.contains(column.toUpperCase(Locale.ROOT));
     }
 
