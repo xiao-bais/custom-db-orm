@@ -41,11 +41,11 @@ public class TableSqlBuilder<T> implements Cloneable {
 
     private String alias;
 
-    private final String desc;
+    private String desc;
 
     private Field[] fields;
 
-    private final boolean underlineToCamel;
+    private boolean underlineToCamel;
     /**
      * @Desc：对于@DbRelated注解的解析
      */
@@ -403,7 +403,6 @@ public class TableSqlBuilder<T> implements Cloneable {
      */
     public String buildLogicDelAfterAutoUpdateSql(FillStrategy strategy, String whereKeySql, Object... params) {
         StringBuilder autoUpdateSql = new StringBuilder();
-
         Optional<TableFillObject> first = Objects.requireNonNull(CustomApplicationUtils.getBean(AutoFillColumnHandler.class))
                 .fillStrategy().stream().filter(x -> x.getEntityClass().equals(cls)).findFirst();
         first.ifPresent(op -> {
@@ -414,8 +413,11 @@ public class TableSqlBuilder<T> implements Cloneable {
                     .append(SymbolConst.SET);
 
             if (strategy.toString().contains(op.getStrategy().toString())) {
-                autoUpdateSql.append(buildAssignAutoUpdateSqlFragment(op.getTableFillMapper()))
-                        .append(CustomUtil.handleExecuteSql(whereKeySql, params));
+                String sqlFragment = buildAssignAutoUpdateSqlFragment(op.getTableFillMapper());
+                if (Objects.nonNull(sqlFragment)) {
+                    autoUpdateSql.append(sqlFragment);
+                }
+                autoUpdateSql.append(CustomUtil.handleExecuteSql(whereKeySql, params));
             }
         });
         return autoUpdateSql.toString();
@@ -427,20 +429,21 @@ public class TableSqlBuilder<T> implements Cloneable {
     private String buildAssignAutoUpdateSqlFragment(Map<String, Object> tableFillObjects) {
         StringJoiner autoUpdateFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
         StringBuilder updateField;
-        if (!ObjectUtils.isEmpty(tableFillObjects)) {
-            for (String fieldName : tableFillObjects.keySet()) {
-                if (ObjectUtils.isEmpty(fieldMapper.get(fieldName))) {
-                    throw new CustomCheckException("未找到可匹配的java属性字段");
-                }
-                updateField = new StringBuilder();
-                Object fieldVal = tableFillObjects.get(fieldName);
-                if (ObjectUtils.isEmpty(fieldVal)) continue;
-                updateField.append(fieldMapper.get(fieldName)).append(SymbolConst.EQUALS).append(fieldVal);
-                autoUpdateFieldSql.add(updateField);
-                fieldParserModels.stream().filter(x -> x.getFieldName().equals(fieldName)).findFirst().ifPresent(op -> {
-                    op.setValue(fieldVal);
-                });
+        if (ObjectUtils.isEmpty(tableFillObjects)) {
+            return autoUpdateFieldSql.toString();
+        }
+        for (String fieldName : tableFillObjects.keySet()) {
+            if (ObjectUtils.isEmpty(fieldMapper.get(fieldName))) {
+                throw new CustomCheckException("未找到可匹配的java属性字段");
             }
+            updateField = new StringBuilder();
+            Object fieldVal = tableFillObjects.get(fieldName);
+            if (ObjectUtils.isEmpty(fieldVal)) continue;
+            updateField.append(fieldMapper.get(fieldName)).append(SymbolConst.EQUALS).append(fieldVal);
+            autoUpdateFieldSql.add(updateField);
+            fieldParserModels.stream().filter(x -> x.getFieldName().equals(fieldName)).findFirst().ifPresent(op -> {
+                op.setValue(fieldVal);
+            });
         }
         return autoUpdateFieldSql.toString();
     }
@@ -477,6 +480,24 @@ public class TableSqlBuilder<T> implements Cloneable {
     }
 
     public TableSqlBuilder(Class<T> cls, ExecuteMethod method, boolean underlineToCamel) {
+        // 初始化本对象属性
+        initLocalProperty(cls, underlineToCamel);
+        if (method != ExecuteMethod.NONE) {
+            this.fields = CustomUtil.getFields(this.cls);
+            // 构建字段解析模板
+            initTableBuild(method);
+        }
+        // 构建字段映射缓存
+        buildMapper();
+
+        // 初始化数据结构
+        initDataStructure(this);
+    }
+
+    /**
+     * 初始化本对象属性
+     */
+    private void initLocalProperty(Class<T> cls, boolean underlineToCamel) {
         this.cls = cls;
         DbTable annotation = cls.getAnnotation(DbTable.class);
         if (Objects.isNull(annotation)) {
@@ -489,16 +510,6 @@ public class TableSqlBuilder<T> implements Cloneable {
         this.table = annotation.table();
         this.desc = annotation.desc();
         this.underlineToCamel = underlineToCamel;
-        if (method != ExecuteMethod.NONE) {
-            this.fields = CustomUtil.getFields(this.cls);
-            // 构建字段解析模板
-            initTableBuild(method);
-        }
-        // 构建字段映射缓存
-        buildMapper();
-
-        // 初始化数据结构
-        initDataStructure(this);
     }
 
     private AbstractSqlBuilder<T> initSqlBuildModel(ExecuteMethod method) {
@@ -533,7 +544,7 @@ public class TableSqlBuilder<T> implements Cloneable {
                 fieldParserModels.add(fieldParserModel);
 
             } else if (field.isAnnotationPresent(DbMapper.class)) {
-                DbJoinTableParserModel<T> joinTableParserModel = new DbJoinTableParserModel<>(field, this.underlineToCamel);
+                DbJoinTableParserModel<T> joinTableParserModel = new DbJoinTableParserModel<>(field);
                 joinDbMappers.add(joinTableParserModel);
             } else if (field.isAnnotationPresent(DbRelated.class)) {
                 DbRelationParserModel<T> relatedParserModel = new DbRelationParserModel<>(this.cls, field, this.table, this.alias, this.underlineToCamel);

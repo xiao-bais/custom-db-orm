@@ -1,6 +1,7 @@
 package com.custom.wrapper;
 
 import com.custom.comm.CustomUtil;
+import com.custom.comm.GlobalDataHandler;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.exceptions.CustomCheckException;
@@ -65,6 +66,9 @@ public class ColumnParseHandler<T> {
      */
     public final String getColumn(SFunction<T, ?> func) {
         String field = getField(func);
+        if(GlobalDataHandler.hasSqlKeyword(field)) {
+            field = String.format("`%s`", field);
+        }
         String column = fieldMapper.get(field);
         if(Objects.isNull(column)) {
             throw new CustomCheckException("属性" + field + "上未标注Db*注解");

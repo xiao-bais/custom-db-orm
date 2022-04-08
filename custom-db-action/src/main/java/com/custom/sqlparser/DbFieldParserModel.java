@@ -2,6 +2,7 @@ package com.custom.sqlparser;
 
 import com.custom.annotations.DbField;
 import com.custom.comm.CustomUtil;
+import com.custom.comm.GlobalDataHandler;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbaction.AbstractTableModel;
 import com.custom.dbconfig.SymbolConst;
@@ -96,7 +97,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     }
 
     public DbFieldParserModel(Field field, String table, String alias, boolean underlineToCamel) {
-        this.fieldName = field.getName();
+        this.fieldName = GlobalDataHandler.hasSqlKeyword(field.getName()) ? String.format("`%s`", field.getName()) : field.getName();
         this.type = field.getType();
         DbField annotation = field.getAnnotation(DbField.class);
         this.field = field;
@@ -104,6 +105,9 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
             this.column = underlineToCamel ? CustomUtil.camelToUnderline(this.fieldName) : this.fieldName;
         }else {
             this.column = annotation.value();
+        }
+        if(GlobalDataHandler.hasSqlKeyword(column)) {
+            this.column = String.format("`%s`", column);
         }
         this.isNull = annotation.isNull();
         this.desc = annotation.desc();

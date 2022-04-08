@@ -2,6 +2,7 @@ package com.custom.sqlparser;
 
 import com.custom.annotations.DbKey;
 import com.custom.comm.CustomUtil;
+import com.custom.comm.GlobalDataHandler;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbaction.AbstractTableModel;
 import com.custom.dbconfig.SymbolConst;
@@ -187,13 +188,14 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
     }
 
     public DbKeyParserModel(Field field, String table, String alias, boolean underlineToCamel){
-        this.key = field.getName();
+        this.key = GlobalDataHandler.hasSqlKeyword(field.getName()) ? String.format("`%s`", field.getName()) : field.getName();
         DbKey annotation = field.getAnnotation(DbKey.class);
         if (JudgeUtilsAx.isEmpty(annotation.value())) {
             this.dbKey = underlineToCamel ? CustomUtil.camelToUnderline(this.key) : this.key;
         }else {
             this.dbKey = annotation.value();
         }
+        this.dbKey = GlobalDataHandler.hasSqlKeyword(dbKey) ? String.format("`%s`", dbKey) : dbKey;
         this.field = field;
         this.type = field.getType();
         this.dbMediaType = annotation.dbType();
