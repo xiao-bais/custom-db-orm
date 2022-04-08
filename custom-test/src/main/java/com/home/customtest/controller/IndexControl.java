@@ -4,13 +4,16 @@ import com.custom.comm.BackResult;
 import com.custom.handler.JdbcDao;
 import com.custom.sqlparser.CustomDao;
 import com.custom.wrapper.ConditionEntity;
+import com.custom.wrapper.Conditions;
 import com.custom.wrapper.LambdaConditionEntity;
+import com.custom.wrapper.Wrapper;
 import com.home.customtest.entity.Aklis;
 import com.home.customtest.entity.Employee;
 import com.home.customtest.entity.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

@@ -51,7 +51,7 @@ public class DbCustomStrategy {
     /**
     * 需要扫描的dao层包路径，加入spring容器中
     */
-    private String[] packageScans;
+    private String[] mapperPackageScans;
 
     /**
     * 开启dao层的扫描包（mapperScanEnable = true后，才会开始扫描 `packageScans` 中指定的路径）
@@ -67,12 +67,12 @@ public class DbCustomStrategy {
         this.mapperScanEnable = mapperScanEnable;
     }
 
-    public String[] getPackageScans() {
-        return packageScans;
+    public String[] getMapperPackageScans() {
+        return mapperPackageScans;
     }
 
-    public void setPackageScans(String[] packageScans) {
-        this.packageScans = packageScans;
+    public void setMapperPackageScans(String[] mapperPackageScans) {
+        this.mapperPackageScans = mapperPackageScans;
     }
 
     public boolean isSqlOutUpdate() {

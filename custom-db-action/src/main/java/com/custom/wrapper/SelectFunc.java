@@ -126,11 +126,10 @@ public class SelectFunc<T> extends SqlFunc<T, SelectFunc<T>> {
     public final SelectFunc<T> ifNull(SFunction<T, ?> func, Object elseVal, SFunction<T, ?> alias) {
         String column = getColumnParseHandler().getColumn(func);
         String aliasField = getColumnParseHandler().getField(alias);
-        String fieldName = getColumnMapper().get(column);
         Field targetField = Arrays.stream(getColumnParseHandler().getFields())
-                .filter(x -> x.getName().equals(fieldName))
+                .filter(x -> x.getName().equals(getColumnMapper().get(column)))
                 .findFirst()
-                .orElseThrow(() -> new CustomCheckException("未找到字段：" + fieldName));
+                .orElseThrow(() -> new CustomCheckException("未找到字段：" + getColumnMapper().get(column)));
         if (targetField.getType().equals(CharSequence.class)) {
             elseVal = new StringBuilder().append(SymbolConst.SINGLE_QUOTES).append(elseVal).append(SymbolConst.SINGLE_QUOTES);
         }

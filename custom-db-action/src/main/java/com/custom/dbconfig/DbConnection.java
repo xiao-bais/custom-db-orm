@@ -3,6 +3,7 @@ package com.custom.dbconfig;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
+import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +30,9 @@ public class DbConnection {
         try {
             isExistClass(dbDataSource.getDriver());
             init(dbDataSource);
-        }catch (Exception e){
-            e.printStackTrace();
+        }catch (Exception e) {
+            logger.error("不存在mysql驱动：" + DbFieldsConst.CUSTOM_DRIVER);
+            throw new CustomCheckException(e.getMessage());
         }
     }
 
