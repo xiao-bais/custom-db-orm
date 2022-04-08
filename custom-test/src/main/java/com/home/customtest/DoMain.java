@@ -2,12 +2,25 @@ package com.home.customtest;
 
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
+import com.custom.dbconfig.SymbolConst;
 import com.custom.sqlparser.CustomDao;
 import com.custom.sqlparser.TableInfoCache;
 import com.custom.wrapper.Conditions;
+import com.custom.wrapper.LambdaConditionEntity;
+import com.home.customtest.entity.Aklis;
 import com.home.customtest.entity.ChildStudent;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.util.CollectionUtils;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @Author Xiao-Bai
@@ -90,20 +103,15 @@ public class DoMain {
 //        );
 
 
-        List<ChildStudent> students = customDao.selectList(ChildStudent.class, Conditions.lambdaQuery(ChildStudent.class)
-                .select(ChildStudent::getSex)
-                .select(x -> x.ifNull(ChildStudent::getSex, 5, ChildStudent::getIfNullAge))
-                .like(ChildStudent::getName, "李")
-                .and(false, x -> x.eq(ChildStudent::getAddress, "湖南长沙").ge(ChildStudent::getAge, 20))
-        );
+        LambdaConditionEntity<Aklis> conditionEntity = Conditions.lambdaQuery(Aklis.class)
+                .like(Aklis::getName, "李")
+                .eq(Aklis::getExplain, "张三")
+                .and(false, x -> x.eq(Aklis::getAddress, "湖南长沙").ge(Aklis::getAge, 20)
+                );
 
-        System.out.println("students = " + students);
+        List<Aklis> aklis = customDao.selectList(Aklis.class, conditionEntity);
 
-//        String prefix = "https://hougu-gui.oss-cn-hangzhou.aliyuncs.com/";
-//        String filePath = "https://hougu-gui.oss-cn-hangzhou.aliyuncs.com/1648706240714-%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20220329195933%20-%20%E5%89%AF%E6%9C%AC%20(2).jpg";
-//
-//        String fileName = filePath.substring(prefix.length() + 14, filePath.lastIndexOf("."));
-//        System.out.println("fileName = " + fileName);
+        System.out.println("aklis = " + aklis);
 
 
     }

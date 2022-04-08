@@ -1,5 +1,6 @@
 package com.custom.wrapper;
 
+import com.custom.comm.CustomUtil;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.sqlparser.TableInfoCache;
 import com.custom.sqlparser.TableSqlBuilder;
@@ -68,7 +69,6 @@ public abstract class ConditionWrapper<T> implements Serializable {
      */
     private Integer pageIndex;
     private Integer pageSize;
-
 
     protected TableSqlBuilder<T> getTableSqlBuilder() {
         return tableSqlBuilder;
@@ -148,6 +148,15 @@ public abstract class ConditionWrapper<T> implements Serializable {
 
     protected TableSqlBuilder<T> getTableParserModelCache(Class<T> key) {
         return TableInfoCache.getTableModel(key);
+    }
+
+    /**
+     * 参数注入后的sql条件
+     * 原sql(a.name = ?, params = 20)
+     * 返回sql(a.name = 20)
+     */
+    public String getInjectorParamsFinalConditional() {
+        return CustomUtil.handleExecuteSql(this.finalConditional.toString(), this.paramValues.toArray());
     }
 
     public abstract T getEntity();

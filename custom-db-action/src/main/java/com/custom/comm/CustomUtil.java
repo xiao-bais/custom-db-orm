@@ -429,7 +429,7 @@ public class CustomUtil {
     }
 
     /**
-     * 可执行的sql打印
+     * 可执行的sql条件
      */
     public static String handleExecuteSql(String sql, Object[] params) {
         int symbolSize = countStr(sql, SymbolConst.QUEST);

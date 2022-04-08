@@ -1,5 +1,6 @@
 package com.custom.wrapper;
 
+import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.SqlAggregate;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.sqlparser.TableSqlBuilder;
@@ -125,18 +126,14 @@ public class SelectFunc<T> extends SqlFunc<T, SelectFunc<T>> {
     public final SelectFunc<T> ifNull(SFunction<T, ?> func, Object elseVal, SFunction<T, ?> alias) {
         String column = getColumnParseHandler().getColumn(func);
         String aliasField = getColumnParseHandler().getField(alias);
-//        String fieldName = getColumnMapper().get(column);
-//        Field targetField = Arrays.stream(getColumnParseHandler().getFields())
-//                .filter(x -> x.getName().equals(fieldName))
-//                .findFirst()
-//                .orElseThrow(() -> new CustomCheckException("未找到字段：" + fieldName));
-//        Class<?> fieldType = targetField.getType();
-//        if (fieldType.equals(Integer.class) || fieldType.equals(Integer.TYPE)
-//            || fieldType.equals(Long.class) || fieldType.equals(Long.TYPE)
-//            || fieldType.equals(Double.class) || fieldType.equals(Double.TYPE)
-//            || fieldType.equals(Float.class) || fieldType.equals(Float.TYPE)) {
-//            elseVal = String.format("");
-//        }
+        String fieldName = getColumnMapper().get(column);
+        Field targetField = Arrays.stream(getColumnParseHandler().getFields())
+                .filter(x -> x.getName().equals(fieldName))
+                .findFirst()
+                .orElseThrow(() -> new CustomCheckException("未找到字段：" + fieldName));
+        if (targetField.getType().equals(CharSequence.class)) {
+            elseVal = new StringBuilder().append(SymbolConst.SINGLE_QUOTES).append(elseVal).append(SymbolConst.SINGLE_QUOTES);
+        }
         return doFunc(formatRex(SqlAggregate.IFNULL, null), SqlAggregate.IFNULL, column, elseVal, aliasField);
     }
 

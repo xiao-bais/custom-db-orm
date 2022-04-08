@@ -51,4 +51,6 @@ public class Aklis {
     private Integer createTime;
     @DbField
     private Integer updateTime;
+    @DbField
+    private String explain;
 }

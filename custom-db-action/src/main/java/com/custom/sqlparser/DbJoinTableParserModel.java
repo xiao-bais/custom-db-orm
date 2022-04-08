@@ -1,7 +1,10 @@
 package com.custom.sqlparser;
 
 import com.custom.annotations.DbMapper;
+import com.custom.comm.GlobalDataHandler;
+import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbaction.AbstractTableModel;
+import com.custom.dbconfig.SymbolConst;
 
 import java.lang.reflect.Field;
 
@@ -18,14 +21,28 @@ public class DbJoinTableParserModel<T> extends AbstractTableModel<T> {
 
     private String fieldName;
 
-    private boolean underlineToCamel;
-
-    public DbJoinTableParserModel(Field field, boolean underlineToCamel) {
-        DbMapper dbMap = field.getAnnotation(DbMapper.class);
-        this.joinName = dbMap.value();
+    public DbJoinTableParserModel(Field field) {
+        initJoinName(field);
         this.fieldName = field.getName();
+        if(GlobalDataHandler.hasSqlKeyword(fieldName)) {
+            this.fieldName = String.format("`%s`", this.fieldName);
+        }
         this.field = field;
-        this.underlineToCamel = underlineToCamel;
+    }
+
+    private void initJoinName(Field field) {
+        DbMapper dbMap = field.getAnnotation(DbMapper.class);
+        this.joinName = JudgeUtilsAx.isEmpty(dbMap.value()) ? field.getName() : dbMap.value();
+        if(!joinName.contains(SymbolConst.POINT)) {
+            return;
+        }
+        int pointIndex = joinName.indexOf(SymbolConst.POINT);
+        String fieldPrefix = joinName.substring(0, pointIndex);
+        String fieldSuffix = joinName.substring(pointIndex + 1);
+        if(GlobalDataHandler.hasSqlKeyword(fieldSuffix)) {
+            fieldSuffix = String.format("`%s`", fieldSuffix);
+        }
+        this.joinName = fieldPrefix + SymbolConst.POINT + fieldSuffix;
     }
 
     public Field getField() {
