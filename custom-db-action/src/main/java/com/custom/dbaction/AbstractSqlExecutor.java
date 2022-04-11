@@ -238,7 +238,7 @@ public abstract class AbstractSqlExecutor {
     /**
      * 查询该表是否存在
      */
-    public boolean existTable(String sql) throws Exception {
+    public boolean notExistTable(String sql) throws Exception {
         return sqlExecuteAction.executeExist(sql) == 0L;
     }
 

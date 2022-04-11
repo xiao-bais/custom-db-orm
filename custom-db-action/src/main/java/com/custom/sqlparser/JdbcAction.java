@@ -247,7 +247,7 @@ public class JdbcAction extends AbstractSqlExecutor {
     public <T> int updateByCondition(T t, ConditionWrapper<T> wrapper) throws Exception {
         TableSqlBuilder<T> tableSqlBuilder = getUpdateEntityModelCache(t);
         String condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), wrapper.getFinalConditional(), getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
-        tableSqlBuilder.buildUpdateField(condition, wrapper.getParamValues());
+        tableSqlBuilder.buildUpdateWrapper(condition, wrapper.getParamValues());
         String updateSql = tableSqlBuilder.getUpdateSql().toString();
         return executeSql(updateSql, tableSqlBuilder.getObjValues().toArray());
     }
@@ -268,7 +268,7 @@ public class JdbcAction extends AbstractSqlExecutor {
         for (int i = arr.length - 1; i >= 0; i--) {
             tableSqlBuilder = getEntityModelCache(arr[i]);
             String exitsTableSql = tableSqlBuilder.getExitsTableSql(arr[i]);
-            if(existTable(exitsTableSql)) {
+            if(notExistTable(exitsTableSql)) {
                 String createTableSql = tableSqlBuilder.geCreateTableSql();
                 execTable(createTableSql);
                 logger.info("createTableSql ->\n " + createTableSql);

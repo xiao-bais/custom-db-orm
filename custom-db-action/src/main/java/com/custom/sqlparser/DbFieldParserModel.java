@@ -169,7 +169,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     }
 
     @Override
-    protected String getSelectFieldSql() {
+    public String getSelectFieldSql() {
         return String.format("%s.%s %s", this.getAlias(), this.column, this.fieldName);
     }
 

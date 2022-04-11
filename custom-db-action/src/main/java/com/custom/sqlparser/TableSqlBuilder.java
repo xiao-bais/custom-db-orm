@@ -352,7 +352,7 @@ public class TableSqlBuilder<T> implements Cloneable {
     /**
      * 构建修改的sql字段语句
      */
-    protected void buildUpdateField(String condition, List<Object> conditionVals) {
+    protected void buildUpdateWrapper(String condition, List<Object> conditionVals) {
         StringJoiner updateFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
         for (DbFieldParserModel<T> fieldParserModel : fieldParserModels) {
             Object value = fieldParserModel.getValue();
@@ -702,7 +702,7 @@ public class TableSqlBuilder<T> implements Cloneable {
         return columnMapper;
     }
 
-    private void sqlBuilderInitialize(AbstractSqlBuilder<T> sqlBuilder) {
+    private void initializeSqlBuilder(AbstractSqlBuilder<T> sqlBuilder) {
         sqlBuilder.setTable(this.table);
         sqlBuilder.setAlias(this.alias);
         sqlBuilder.setEntityClass(this.cls);
