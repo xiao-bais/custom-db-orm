@@ -279,16 +279,6 @@ public abstract class AbstractSqlExecutor {
     }
 
     /**
-     * 在增改的模板里注入需要增改的实体
-     */
-    private <T> void injectEntity(TableSqlBuilder<T> tableSqlBuilder, T entity) {
-        if (tableSqlBuilder.getKeyParserModel() != null) {
-            tableSqlBuilder.getKeyParserModel().setEntity(entity);
-        }
-        tableSqlBuilder.getFieldParserModels().forEach(fieldParserModel -> fieldParserModel.setEntity(entity));
-    }
-
-    /**
      * 公共获取查询sql
      */
     protected  <T> String getFullSelectSql(Class<T> t, DbPageRows<T> dbPageRows, ConditionWrapper<T> wrapper) throws Exception {

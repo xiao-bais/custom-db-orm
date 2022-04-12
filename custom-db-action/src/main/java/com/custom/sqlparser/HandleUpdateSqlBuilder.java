@@ -17,21 +17,20 @@ import java.util.StringJoiner;
 public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
     private final StringBuilder updateSql;
+    private String condition;
+    private List<Object> conditionVals;
+    private String[] updateDbFields;
 
     public HandleUpdateSqlBuilder() {
         updateSql = new StringBuilder();
     }
 
 
-    @Override
-    protected String buildSql() {
-        return null;
-    }
-
     /**
      * 构建修改的sql字段语句
      */
-    protected void buildUpdateWrapper(String condition, List<Object> conditionVals) {
+    @Override
+    protected String buildSql() {
         StringJoiner updateFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
         for (DbFieldParserModel<T> fieldParserModel : getFieldParserModels()) {
             Object value = fieldParserModel.getValue();
@@ -45,19 +44,20 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
                 .append(SymbolConst.SET).append(updateFieldSql)
                 .append(" ").append(condition);
         getSqlParams().addAll(conditionVals);
+        return updateSql.toString();
     }
 
     /**
      * 获取修改的逻辑删除字段sql
      */
-    private String getLogicUpdateSql(String key, String logicDeleteQuerySql) {
-        return JudgeUtilsAx.isNotBlank(logicDeleteQuerySql) ? String.format("%s.%s and %s = ?", getAlias(), logicDeleteQuerySql, key) : String.format("%s = ?", key);
+    private String getLogicUpdateSql(String key) {
+        return JudgeUtilsAx.isNotBlank(getLogicDeleteQuerySql()) ? String.format("%s.%s and %s = ?", getAlias(), getLogicDeleteQuerySql(), key) : String.format("%s = ?", key);
     }
 
     /**
      * 构建修改的sql语句
      */
-    protected void buildUpdateSql(String[] updateDbFields, String logicDeleteQuerySql) {
+    protected void buildUpdateSql() {
         StringJoiner updateFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
         if (updateDbFields.length > 0) {
             for (String field : updateDbFields) {
@@ -78,7 +78,19 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
         }
         updateSql.append(SymbolConst.UPDATE).append(getTable()).append(" ").append(getAlias())
                 .append(SymbolConst.SET).append(updateFieldSql).append(SymbolConst.WHERE)
-                .append(getLogicUpdateSql(getKeyParserModel().getFieldSql(), logicDeleteQuerySql));
+                .append(getLogicUpdateSql(getKeyParserModel().getFieldSql()));
         getSqlParams().add(getKeyParserModel().getValue(getEntity()));
+    }
+
+    protected void setCondition(String condition) {
+        this.condition = condition;
+    }
+
+    protected void setConditionVals(List<Object> conditionVals) {
+        this.conditionVals = conditionVals;
+    }
+
+    protected void setUpdateDbFields(String[] updateDbFields) {
+        this.updateDbFields = updateDbFields;
     }
 }

@@ -20,8 +20,6 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
     private final StringBuilder insertSql;
     private List<T> entityList;
-    private String logicColumn;
-    private Object logicValue;
 
     public HandleInsertSqlBuilder() {
         this.insertSql = new StringBuilder();
@@ -37,15 +35,14 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
         if (!getFieldParserModels().isEmpty()) {
             getFieldParserModels().forEach(x -> insertColumn.add(x.getColumn()));
         }
-        return String.format("insert into %s(%s) values %s ", getTable(), insertColumn, getInsertSymbol(logicColumn, logicValue));
+        return String.format("insert into %s(%s) values %s ", getTable(), insertColumn, getInsertSymbol());
     }
+
 
     /**
      * 获取添加时的？
-     * @param logicColumn 逻辑删除的字段
-     * @param val 未逻辑删除的值
      */
-    private String getInsertSymbol(String logicColumn, Object val) {
+    private String getInsertSymbol() {
         StringJoiner insertSymbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1);
         for (T currEntity : entityList) {
             setEntity(currEntity);
@@ -60,8 +57,8 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
                         && Objects.isNull(fieldValue) ) {
                     fieldValue = FieldAutoFillHandleUtils.getFillValue(getEntityClass(), x.getFieldName());
                     x.setValue(fieldValue);
-                }else if(JudgeUtilsAx.isNotEmpty(logicColumn) && TableInfoCache.isExistsLogic(getTable())  && x.getColumn().equals(logicColumn)) {
-                    fieldValue = ConvertUtil.transToObject(x.getType(), val);
+                }else if(JudgeUtilsAx.isNotEmpty(getLogicColumn()) && TableInfoCache.isExistsLogic(getTable())  && x.getColumn().equals(getLogicColumn())) {
+                    fieldValue = ConvertUtil.transToObject(x.getType(), getLogicNotDeleteValue());
                     x.setValue(fieldValue);
                 }
                 this.getSqlParams().add(fieldValue);
@@ -80,21 +77,5 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
     public void setEntityList(List<T> entityList) {
         this.entityList = entityList;
-    }
-
-    public String getLogicColumn() {
-        return logicColumn;
-    }
-
-    public void setLogicColumn(String logicColumn) {
-        this.logicColumn = logicColumn;
-    }
-
-    public Object getLogicValue() {
-        return logicValue;
-    }
-
-    public void setLogicValue(Object logicValue) {
-        this.logicValue = logicValue;
     }
 }

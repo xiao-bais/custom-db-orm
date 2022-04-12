@@ -95,7 +95,6 @@ public class TableSqlBuilder<T> implements Cloneable {
      */
     private final Map<String, String> columnMapper = new HashMap<>();
 
-
     /**
      * 获取查询sql（代码自行判定是否需要拼接表连接的sql）
      */
@@ -512,20 +511,6 @@ public class TableSqlBuilder<T> implements Cloneable {
         this.underlineToCamel = underlineToCamel;
     }
 
-    private AbstractSqlBuilder<T> initSqlBuildModel(ExecuteMethod method) {
-        AbstractSqlBuilder<T> sqlBuilder = null;
-        switch (method) {
-            case SELECT:
-                sqlBuilder = new HandleSelectSqlBuilder<>(this.relatedParserModels, this.joinDbMappers, this.joinTableParserModels);
-                break;
-            case INSERT:
-            case DELETE:
-            case UPDATE:
-                sqlBuilder = new HandleInsertSqlBuilder<>();
-        }
-        return sqlBuilder;
-    }
-
     /**
      * 构造查询模板
      */
@@ -582,7 +567,7 @@ public class TableSqlBuilder<T> implements Cloneable {
     }
 
     /**
-     * 初始化
+     * 初始化数据结构
      */
     private void initDataStructure(TableSqlBuilder<T> tableSqlBuilder) {
         tableSqlBuilder.selectSql = new StringBuilder();
@@ -591,6 +576,33 @@ public class TableSqlBuilder<T> implements Cloneable {
         tableSqlBuilder.insetSymbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1);
         tableSqlBuilder.objValues = new ArrayList<>();
     }
+
+    /**
+     * 实例化sql构造模板
+     */
+    public AbstractSqlBuilder<T> buildSqlConstructorModel(ExecuteMethod method) {
+        AbstractSqlBuilder<T> sqlBuilder = null;
+        switch (method) {
+            case SELECT:
+                sqlBuilder = new HandleSelectSqlBuilder<>(relatedParserModels, joinDbMappers, joinTableParserModels);
+                break;
+            case UPDATE:
+                sqlBuilder = new HandleUpdateSqlBuilder<>();
+                break;
+            case INSERT:
+                sqlBuilder = new HandleInsertSqlBuilder<>();
+                break;
+            case DELETE:
+                sqlBuilder = new HandleDeleteSqlBuilder<>();
+        }
+        if (Objects.nonNull(sqlBuilder)) {
+            initializeSqlBuilder(sqlBuilder);
+        }
+        return sqlBuilder;
+    }
+
+
+
 
     public String getTable() {
         return table;
@@ -710,7 +722,6 @@ public class TableSqlBuilder<T> implements Cloneable {
         sqlBuilder.setFieldMapper(this.fieldMapper);
         sqlBuilder.setColumnMapper(this.columnMapper);
     }
-
 
     @Override
     @SuppressWarnings("unchecked")

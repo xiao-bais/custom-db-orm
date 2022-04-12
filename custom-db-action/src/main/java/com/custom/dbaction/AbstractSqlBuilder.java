@@ -1,5 +1,6 @@
 package com.custom.dbaction;
 
+import com.custom.dbconfig.SymbolConst;
 import com.custom.sqlparser.DbFieldParserModel;
 import com.custom.sqlparser.DbKeyParserModel;
 
@@ -23,6 +24,11 @@ public abstract class AbstractSqlBuilder<T> {
     private List<DbFieldParserModel<T>> fieldParserModels;
     private Map<String, String> fieldMapper;
     private Map<String, String> columnMapper;
+    private String logicColumn;
+    private Object logicDeleteValue;
+    private Object logicNotDeleteValue;
+    private String logicDeleteQuerySql;
+    private String logicDeleteUpdateSql;
     private List<Object> sqlParams = new ArrayList<>();
 
     // 构建sql语句
@@ -104,5 +110,43 @@ public abstract class AbstractSqlBuilder<T> {
 
     public void setColumnMapper(Map<String, String> columnMapper) {
         this.columnMapper = columnMapper;
+    }
+
+    public String getLogicColumn() {
+        return logicColumn;
+    }
+
+    public void setLogicColumn(String logicColumn) {
+        this.logicColumn = logicColumn;
+    }
+
+    public Object getLogicDeleteValue() {
+        return logicDeleteValue;
+    }
+
+    public void setLogicDeleteValue(Object logicDeleteValue) {
+        this.logicDeleteValue = logicDeleteValue;
+    }
+
+    public Object getLogicNotDeleteValue() {
+        return logicNotDeleteValue;
+    }
+
+    public void setLogicNotDeleteValue(Object logicNotDeleteValue) {
+        this.logicNotDeleteValue = logicNotDeleteValue;
+    }
+
+    public String getLogicDeleteQuerySql() {
+        if(Objects.isNull(this.logicDeleteQuerySql)) {
+            this.logicDeleteQuerySql = logicColumn + SymbolConst.EQUALS + logicNotDeleteValue;
+        }
+        return this.logicDeleteQuerySql;
+    }
+
+    public String getLogicDeleteUpdateSql() {
+        if(Objects.isNull(this.logicDeleteQuerySql)) {
+            this.logicDeleteQuerySql = logicColumn + SymbolConst.EQUALS + logicNotDeleteValue;
+        }
+        return this.logicDeleteQuerySql = logicColumn + SymbolConst.EQUALS + logicDeleteValue;
     }
 }

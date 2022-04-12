@@ -36,12 +36,12 @@ public class DbCustomStrategy {
     /**
     * 默认已删除字段值
     */
-    private String deleteLogicValue = SymbolConst.EMPTY;
+    private Object deleteLogicValue = SymbolConst.EMPTY;
 
     /**
     * 默认未删除字段值
     */
-    private String notDeleteLogicValue = SymbolConst.EMPTY;
+    private Object notDeleteLogicValue = SymbolConst.EMPTY;
 
     /**
     * 需要扫描的dao层包路径，加入spring容器中
@@ -78,19 +78,19 @@ public class DbCustomStrategy {
         this.dbFieldDeleteLogic = dbFieldDeleteLogic;
     }
 
-    public String getDeleteLogicValue() {
+    public Object getDeleteLogicValue() {
         return deleteLogicValue;
     }
 
-    public void setDeleteLogicValue(String deleteLogicValue) {
+    public void setDeleteLogicValue(Object deleteLogicValue) {
         this.deleteLogicValue = deleteLogicValue;
     }
 
-    public String getNotDeleteLogicValue() {
+    public Object getNotDeleteLogicValue() {
         return notDeleteLogicValue;
     }
 
-    public void setNotDeleteLogicValue(String notDeleteLogicValue) {
+    public void setNotDeleteLogicValue(Object notDeleteLogicValue) {
         this.notDeleteLogicValue = notDeleteLogicValue;
     }
 

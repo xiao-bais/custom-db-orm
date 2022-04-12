@@ -91,24 +91,24 @@ public class DoMain {
 //        System.out.println("student = " + student);
 
 //        Student student = new Student();
-//        List<ChildStudent> students = customDao.selectList(ChildStudent.class, Conditions.lambdaQuery(ChildStudent.class)
-//                        .gt(ChildStudent::getAge, 22)
-//                        .eq(ChildStudent::getArea, "aaa")
-//                        .like(ChildStudent::getAddress, "山东")
-//                        .or().ge(ChildStudent::getAge, 23)
-//                        .le(ChildStudent::getId, 10)
-//                        .or(x -> x.exists("select 1 from student stu2 where stu2.address is not null")
-//                                .or().eq(ChildStudent::getSex, false)
-//                                .or().like(ChildStudent::getAddress, "南")
-//                        )
-//                        .orderByDesc(ChildStudent::getId)
-//        );
-//        System.out.println("students = " + students);
+        List<ChildStudent> students = customDao.selectList(ChildStudent.class, Conditions.lambdaQuery(ChildStudent.class)
+                        .gt(ChildStudent::getAge, 22)
+                        .eq(ChildStudent::getArea, "aaa")
+                        .like(ChildStudent::getAddress, "山东")
+                        .or().ge(ChildStudent::getAge, 23)
+                        .le(ChildStudent::getId, 10)
+                        .or(x -> x.exists("select 1 from student stu2 where stu2.address is not null")
+                                .or().eq(ChildStudent::getSex, false)
+                                .or().like(ChildStudent::getAddress, "南")
+                        )
+                        .orderByDesc(ChildStudent::getId)
+        );
+        System.out.println("students = " + students);
 
-        ConditionEntity<ChildStudent> query = Conditions.query(ChildStudent.class);
-        query.eq("", "林涂").eq("pro.name", "湖南");
-        List<ChildStudent> childStudents = customDao.selectList(ChildStudent.class, query);
-        System.out.println("childStudents = " + childStudents);
+//        ConditionEntity<ChildStudent> query = Conditions.query(ChildStudent.class);
+//        query.eq("", "林涂").eq("pro.name", "湖南");
+//        List<ChildStudent> childStudents = customDao.selectList(ChildStudent.class, query);
+//        System.out.println("childStudents = " + childStudents);
 
     }
 

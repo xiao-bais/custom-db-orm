@@ -14,4 +14,5 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
     protected String buildSql() {
         return null;
     }
+
 }
