@@ -1,15 +1,12 @@
-package com.custom.comm;
+package com.custom.dbaction;
 
-import com.alibaba.fastjson.JSON;
+import com.custom.comm.CustomUtil;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.exceptions.CustomCheckException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
 import java.util.StringJoiner;
 
 /**
@@ -25,7 +22,7 @@ public class SqlOutPrintBuilder implements Serializable {
     /**
      * PRINT-ERROR-SQL
      */
-    public void sqlErrPrint() {
+    protected void sqlErrPrint() {
         if(sqlExecute) {
             handleExecuteSql();
             logger.error("sql error ====>\n \n{}\n===================\n", sql);
@@ -40,7 +37,7 @@ public class SqlOutPrintBuilder implements Serializable {
     /**
      * PRINT-INFO-QUERY-SQL
      */
-    public void sqlInfoQueryPrint() {
+    protected void sqlInfoQueryPrint() {
         if(sqlExecute) {
             handleExecuteSql();
             System.out.printf("QUERY-SQL ====>\n \n%s\n===================\n", sql);
@@ -54,7 +51,7 @@ public class SqlOutPrintBuilder implements Serializable {
     /**
      * PRINT-INFO-UPDATE-SQL
      */
-    public void sqlInfoUpdatePrint() {
+    protected void sqlInfoUpdatePrint() {
         if(sqlExecute) {
             handleExecuteSql();
             System.out.printf("UPDATE-SQL ====>\n \n%s\n===================\n", sql);
@@ -75,11 +72,20 @@ public class SqlOutPrintBuilder implements Serializable {
      */
     private final boolean sqlExecute;
 
-    public SqlOutPrintBuilder(String sql, Object[] params, boolean sqlExecute) {
+    private SqlOutPrintBuilder(String sql, Object[] params, boolean sqlExecute) {
         this.sql = sql;
         this.params = params;
         this.sqlExecute = sqlExecute;
     }
+
+
+    /**
+     * 构建sql打印
+     */
+    protected static SqlOutPrintBuilder build(String sql, Object[] params, boolean sqlExecute) {
+        return new SqlOutPrintBuilder(sql, params, sqlExecute);
+    }
+
 
     /**
      * 格式化参数打印

@@ -55,7 +55,6 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
                 this.getSqlParams().add(getKeyParserModel().getValue());
             }
             getFieldParserModels().forEach(x -> {
-                brackets.add(SymbolConst.QUEST);
                 Object fieldValue = x.getValue();
                 if (FieldAutoFillHandleUtils.exists(getEntityClass(), x.getFieldName())
                         && Objects.isNull(fieldValue) ) {
@@ -66,6 +65,7 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
                     x.setValue(fieldValue);
                 }
                 this.getSqlParams().add(fieldValue);
+                brackets.add(SymbolConst.QUEST);
             });
             insertSymbol.add(brackets.toString());
         }

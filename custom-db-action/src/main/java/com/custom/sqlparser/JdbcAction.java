@@ -28,9 +28,12 @@ public class JdbcAction extends AbstractSqlExecutor {
 
     private static final Logger logger = LoggerFactory.getLogger(JdbcAction.class);
 
-    public JdbcAction(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy){
+    public JdbcAction(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
+        // 配置sql执行器
         this.setSqlExecuteAction(new SqlExecuteAction(dbDataSource, dbCustomStrategy));
+        // 配置sql执行策略
         this.setDbCustomStrategy(dbCustomStrategy);
+        // 初始化逻辑删除策略
         initLogic();
     }
 

@@ -44,9 +44,8 @@ public class FieldAutoFillHandleUtils {
             String error = String.format("%s中未找到属性：%s的指定填充值", t, proName);
             if(fillObject.getNotFoundFieldThrowException()) {
                 throw new CustomCheckException(error);
-            }else {
-                logger.error(error);
             }
+            logger.error(error);
         }
         return propertyValue;
     }

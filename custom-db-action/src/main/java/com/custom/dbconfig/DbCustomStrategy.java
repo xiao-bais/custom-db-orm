@@ -29,11 +29,6 @@ public class DbCustomStrategy {
     private boolean sqlOutPrintExecute = false;
 
     /**
-    * 开启打印增删改的预编译sql
-    */
-    private boolean sqlOutUpdate = false;
-
-    /**
     * 逻辑删除字段
     */
     private String dbFieldDeleteLogic = SymbolConst.EMPTY;
@@ -73,14 +68,6 @@ public class DbCustomStrategy {
 
     public void setMapperPackageScans(String[] mapperPackageScans) {
         this.mapperPackageScans = mapperPackageScans;
-    }
-
-    public boolean isSqlOutUpdate() {
-        return sqlOutUpdate;
-    }
-
-    public void setSqlOutUpdate(boolean sqlOutUpdate) {
-        this.sqlOutUpdate = sqlOutUpdate;
     }
 
     public String getDbFieldDeleteLogic() {

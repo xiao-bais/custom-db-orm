@@ -2,7 +2,6 @@ package com.custom.dbaction;
 
 import com.alibaba.fastjson.JSONObject;
 import com.custom.comm.CustomUtil;
-import com.custom.comm.SqlOutPrintBuilder;
 import com.custom.dbconfig.DbConnection;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
@@ -40,8 +39,8 @@ public class SqlExecuteAction extends DbConnection {
      */
     private void statementUpdate(boolean isSave, String sql, Object... params) throws Exception {
         statement = isSave ? conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS) : conn.prepareStatement(sql);
-        if (dbCustomStrategy.isSqlOutPrinting() && dbCustomStrategy.isSqlOutUpdate()) {
-            new SqlOutPrintBuilder(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlInfoUpdatePrint();
+        if (dbCustomStrategy.isSqlOutPrinting()) {
+            SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlInfoUpdatePrint();
         }
         if (params.length <= 0) return;
         for (int i = 0; i < params.length; i++) {
@@ -55,7 +54,7 @@ public class SqlExecuteAction extends DbConnection {
     private void statementQuery(String sql, boolean outFlag, Object... params) throws Exception {
         statement = conn.prepareStatement(sql);
         if (dbCustomStrategy.isSqlOutPrinting() && outFlag) {
-            new SqlOutPrintBuilder(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlInfoQueryPrint();
+            SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlInfoQueryPrint();
         }
         if (params.length <= 0) return;
         for (int i = 0; i < params.length; i++) {
@@ -66,11 +65,11 @@ public class SqlExecuteAction extends DbConnection {
     /**
     * 预编译-查询2（可预先获取结果集行数）
     */
-    private void statementQuery2(String sql, Object... params) throws Exception {
+    private void statementQueryReturnRows(String sql, Object... params) throws Exception {
         String execSql = CustomUtil.prepareSql(sql, params);
         statement = conn.prepareStatement(execSql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         if (dbCustomStrategy.isSqlOutPrinting()) {
-            new SqlOutPrintBuilder(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlInfoQueryPrint();
+            SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlInfoQueryPrint();
         }
     }
 
@@ -99,7 +98,7 @@ public class SqlExecuteAction extends DbConnection {
                 list.add(t);
             }
         } catch (SQLException e) {
-            new SqlOutPrintBuilder(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
+            SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
             throw e;
         }
         return list;
@@ -123,7 +122,7 @@ public class SqlExecuteAction extends DbConnection {
                 resSet.add(object);
             }
         } catch (SQLException e) {
-            new SqlOutPrintBuilder(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
+            SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
             throw e;
         }
         return resSet;
@@ -135,7 +134,7 @@ public class SqlExecuteAction extends DbConnection {
     @SuppressWarnings("unchecked")
     public  <T> T[] queryArray(Class<T> t, String sql, String className, String methodName, Object... params) throws Exception {
         try {
-            statementQuery2(sql, params);
+            statementQueryReturnRows(sql, params);
             resultSet = statement.executeQuery();
             resultSet.last();
             final int rowsCount = resultSet.getRow();
@@ -157,7 +156,7 @@ public class SqlExecuteAction extends DbConnection {
             //todo... 泛型数组无法实例化后返回 办法1-> 测试 GenericArray工具实例化
             return (T[])res;
         } catch (SQLException e) {
-            new SqlOutPrintBuilder(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
+            SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
             throw e;
         }catch (RuntimeException e) {
             if(e instanceof ClassCastException && t.isPrimitive()) {
@@ -191,7 +190,7 @@ public class SqlExecuteAction extends DbConnection {
                 result = resultSet.getObject(SymbolConst.DEFAULT_ONE);
             }
         } catch (SQLException e) {
-            new SqlOutPrintBuilder(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
+            SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
             throw e;
         }
         return result;
@@ -215,7 +214,7 @@ public class SqlExecuteAction extends DbConnection {
                 return (T) map;
             }
         } catch (SQLException e) {
-            new SqlOutPrintBuilder(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
+            SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
             throw e;
         }
         return JSONObject.parseObject(JSONObject.toJSONString(map), t);
@@ -231,7 +230,7 @@ public class SqlExecuteAction extends DbConnection {
             statementUpdate(false, sql, params);
             res = statement.executeUpdate();
         } catch (SQLException e) {
-            new SqlOutPrintBuilder(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
+            SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
             throw e;
         }
         return res;
@@ -247,7 +246,7 @@ public class SqlExecuteAction extends DbConnection {
             statementUpdate(true, sql, params);
             res = statement.executeUpdate();
         } catch (SQLException e) {
-            new SqlOutPrintBuilder(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
+            SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
             throw e;
         }
         resultSet = statement.getGeneratedKeys();
