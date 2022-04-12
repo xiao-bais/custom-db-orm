@@ -1,6 +1,7 @@
 package com.custom.wrapper;
 
 import com.custom.comm.CustomUtil;
+import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.sqlparser.TableInfoCache;
 import com.custom.sqlparser.TableSqlBuilder;
@@ -83,6 +84,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
     }
 
     protected void setCls(Class<T> cls) {
+        JudgeUtilsAx.checkObjNotNull(cls);
         this.cls = cls;
     }
 
@@ -147,11 +149,12 @@ public abstract class ConditionWrapper<T> implements Serializable {
     }
 
     protected TableSqlBuilder<T> getTableParserModelCache(Class<T> key) {
+        JudgeUtilsAx.checkObjNotNull(key);
         return TableInfoCache.getTableModel(key);
     }
 
     /**
-     * 参数注入后的sql条件
+     * 参数注入后的sql条件（只针对where后面的查询条件，不带有group by, order by, having, limit 等特殊聚合条件）
      * 原sql(a.name = ?, params = 20)
      * 返回sql(a.name = 20)
      */

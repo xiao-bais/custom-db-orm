@@ -7,6 +7,7 @@ import com.custom.fieldfill.AutoFillColumnHandler;
 import com.custom.fieldfill.TableFillObject;
 import com.custom.sqlparser.CustomDao;
 import com.custom.sqlparser.TableInfoCache;
+import com.custom.wrapper.ConditionEntity;
 import com.custom.wrapper.Conditions;
 import com.custom.wrapper.LambdaConditionEntity;
 import com.home.customtest.config.CustomFillConfig;
@@ -104,8 +105,10 @@ public class DoMain {
 //        );
 //        System.out.println("students = " + students);
 
-        long count = customDao.selectCount(Conditions.lambdaQuery(Aklis.class));
-        System.out.println("count = " + count);
+        ConditionEntity<ChildStudent> query = Conditions.query(ChildStudent.class);
+        query.eq("", "林涂").eq("pro.name", "湖南");
+        List<ChildStudent> childStudents = customDao.selectList(ChildStudent.class, query);
+        System.out.println("childStudents = " + childStudents);
 
     }
 
