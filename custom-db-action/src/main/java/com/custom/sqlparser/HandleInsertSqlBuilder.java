@@ -27,7 +27,7 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
 
     @Override
-    protected String buildSql() {
+    public String buildSql() {
         StringJoiner insertColumn = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
         if (Objects.nonNull(getKeyParserModel())) {
             insertColumn.add(getKeyParserModel().getDbKey());

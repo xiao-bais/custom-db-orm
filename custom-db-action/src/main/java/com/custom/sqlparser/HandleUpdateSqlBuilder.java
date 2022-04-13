@@ -30,7 +30,7 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
      * 构建修改的sql字段语句
      */
     @Override
-    protected String buildSql() {
+    public String buildSql() {
         StringJoiner updateFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
         for (DbFieldParserModel<T> fieldParserModel : getFieldParserModels()) {
             Object value = fieldParserModel.getValue();

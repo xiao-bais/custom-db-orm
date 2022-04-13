@@ -5,6 +5,7 @@ import com.custom.comm.ConvertUtil;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbaction.AbstractSqlBuilder;
+import com.custom.dbaction.SqlExecuteAction;
 import com.custom.dbconfig.CustomApplicationUtils;
 import com.custom.dbconfig.DbFieldsConst;
 import com.custom.dbconfig.SymbolConst;
@@ -94,6 +95,20 @@ public class TableSqlBuilder<T> implements Cloneable {
      * @desc:对于表字段到java属性字段的映射关系
      */
     private final Map<String, String> columnMapper = new HashMap<>();
+
+    /**
+     * JDBC操作解析对象（增，删，改，查）四个对象
+     * @see HandleInsertSqlBuilder
+     * @see HandleDeleteSqlBuilder
+     * @see HandleUpdateSqlBuilder
+     * @see HandleSelectSqlBuilder
+     */
+    private AbstractSqlBuilder<T> sqlBuilder;
+
+    /**
+     * sql执行对象（jdbc）
+     */
+    private SqlExecuteAction sqlExecuteAction;
 
     /**
      * 获取查询sql（代码自行判定是否需要拼接表连接的sql）
@@ -481,6 +496,7 @@ public class TableSqlBuilder<T> implements Cloneable {
     public TableSqlBuilder(Class<T> cls, ExecuteMethod method, boolean underlineToCamel) {
         // 初始化本对象属性
         initLocalProperty(cls, underlineToCamel);
+
         if (method != ExecuteMethod.NONE) {
             this.fields = CustomUtil.getFields(this.cls);
             // 构建字段解析模板
@@ -519,6 +535,11 @@ public class TableSqlBuilder<T> implements Cloneable {
         if (Objects.nonNull(joinTables)) {
             Arrays.stream(joinTables.value()).map(DbJoinTable::value).forEach(joinTableParserModels::add);
         }
+        DbJoinTable joinTable = this.cls.getAnnotation(DbJoinTable.class);
+        if(Objects.nonNull(joinTable)) {
+            joinTableParserModels.add(joinTable.value());
+        }
+
         Field[] fields = Objects.isNull(this.fields) ? CustomUtil.getFields(this.cls) : this.fields;
         for (Field field : fields) {
             if (field.isAnnotationPresent(DbKey.class) && Objects.isNull(keyParserModel)) {
@@ -580,8 +601,7 @@ public class TableSqlBuilder<T> implements Cloneable {
     /**
      * 实例化sql构造模板
      */
-    public AbstractSqlBuilder<T> buildSqlConstructorModel(ExecuteMethod method) {
-        AbstractSqlBuilder<T> sqlBuilder = null;
+    public void buildSqlConstructorModel(ExecuteMethod method) {
         switch (method) {
             case SELECT:
                 sqlBuilder = new HandleSelectSqlBuilder<>(relatedParserModels, joinDbMappers, joinTableParserModels);
@@ -596,9 +616,13 @@ public class TableSqlBuilder<T> implements Cloneable {
                 sqlBuilder = new HandleDeleteSqlBuilder<>();
         }
         if (Objects.nonNull(sqlBuilder)) {
+            // 初始化
             initializeSqlBuilder(sqlBuilder);
+            // 注入sql执行对象
+            sqlBuilder.setSqlExecuteAction(sqlExecuteAction);
+            sqlBuilder.setKeyParserModel(keyParserModel);
+            sqlBuilder.setFieldParserModels(fieldParserModels);
         }
-        return sqlBuilder;
     }
 
 
@@ -714,11 +738,21 @@ public class TableSqlBuilder<T> implements Cloneable {
         return columnMapper;
     }
 
+    public void setSqlExecuteAction(SqlExecuteAction sqlExecuteAction) {
+        this.sqlExecuteAction = sqlExecuteAction;
+    }
+
+    public AbstractSqlBuilder<T> getSqlBuilder() {
+        return sqlBuilder;
+    }
+
     private void initializeSqlBuilder(AbstractSqlBuilder<T> sqlBuilder) {
         sqlBuilder.setTable(this.table);
         sqlBuilder.setAlias(this.alias);
         sqlBuilder.setEntityClass(this.cls);
-        sqlBuilder.setEntity(this.entity);
+        if(Objects.nonNull(this.entity)) {
+            sqlBuilder.setEntity(this.entity);
+        }
         sqlBuilder.setFieldMapper(this.fieldMapper);
         sqlBuilder.setColumnMapper(this.columnMapper);
     }

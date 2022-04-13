@@ -1,8 +1,10 @@
 package com.custom.dbaction;
 
+import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.sqlparser.DbFieldParserModel;
 import com.custom.sqlparser.DbKeyParserModel;
+import com.custom.sqlparser.TableInfoCache;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +14,7 @@ import java.util.Objects;
 /**
  * @author Xiao-Bai
  * @date 2022/4/3 17:33
- * @desc:
+ * @desc: sql操作模板父类
  */
 public abstract class AbstractSqlBuilder<T> {
 
@@ -24,6 +26,7 @@ public abstract class AbstractSqlBuilder<T> {
     private List<DbFieldParserModel<T>> fieldParserModels;
     private Map<String, String> fieldMapper;
     private Map<String, String> columnMapper;
+    private SqlExecuteAction sqlExecuteAction;
     private String logicColumn;
     private Object logicDeleteValue;
     private Object logicNotDeleteValue;
@@ -32,7 +35,7 @@ public abstract class AbstractSqlBuilder<T> {
     private List<Object> sqlParams = new ArrayList<>();
 
     // 构建sql语句
-    protected abstract String buildSql();
+    public abstract String buildSql();
 
     public String getTable() {
         return table;
@@ -148,5 +151,33 @@ public abstract class AbstractSqlBuilder<T> {
             this.logicDeleteQuerySql = logicColumn + SymbolConst.EQUALS + logicNotDeleteValue;
         }
         return this.logicDeleteQuerySql = logicColumn + SymbolConst.EQUALS + logicDeleteValue;
+    }
+
+    public void setSqlExecuteAction(SqlExecuteAction sqlExecuteAction) {
+        this.sqlExecuteAction = sqlExecuteAction;
+    }
+
+    /**
+     * 直接执行，属于内部执行
+     */
+    public void executeUpdateNotPrintSql(String sql) throws Exception {
+        if (JudgeUtilsAx.isEmpty(sql)) {
+            throw new NullPointerException();
+        }
+        sqlExecuteAction.executeUpdateNotPrintSql(sql);
+    }
+
+    /**
+     * 由于部分表可能没有逻辑删除字段，所以在每一次执行时，都需检查该表有没有逻辑删除的字段，以保证sql正常执行
+     */
+    public boolean checkLogicFieldIsExist(String tableName) throws Exception {
+        Boolean existsLogic = TableInfoCache.isExistsLogic(tableName);
+        if (existsLogic != null) {
+            return existsLogic;
+        }
+        String existSql = String.format("select count(*) count from information_schema.columns where table_name = '%s' and column_name = '%s'", tableName, getLogicColumn());
+        long count = sqlExecuteAction.executeExist(existSql);
+        TableInfoCache.setTableLogic(tableName, count > 0);
+        return count > 0;
     }
 }

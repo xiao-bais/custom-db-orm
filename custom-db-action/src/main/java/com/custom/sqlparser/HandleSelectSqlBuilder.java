@@ -42,14 +42,15 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
      * 获取查询sql（代码自行判定是否需要拼接表连接的sql）
      */
     @Override
-    protected String buildSql() {
+    public String buildSql() {
         try {
-            if (JudgeUtilsAx.isEmpty(selectSql)) {
-                if (CustomUtil.isDbRelationTag(getEntityClass()) || getEntityClass().isAnnotationPresent(DbJoinTables.class)) {
-                    getSelectRelationSql();
-                } else {
-                    getSelectBaseTableSql();
-                }
+            if (JudgeUtilsAx.isNotEmpty(selectSql)) {
+                return selectSql.toString();
+            }
+            if (CustomUtil.isDbRelationTag(getEntityClass()) || getEntityClass().isAnnotationPresent(DbJoinTables.class)) {
+                getSelectRelationSql();
+            } else {
+                getSelectBaseTableSql();
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

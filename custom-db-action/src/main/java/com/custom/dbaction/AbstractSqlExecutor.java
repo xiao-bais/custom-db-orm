@@ -5,6 +5,7 @@ import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.CustomApplicationUtils;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.SymbolConst;
+import com.custom.enums.ExecuteMethod;
 import com.custom.enums.FillStrategy;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
@@ -12,6 +13,7 @@ import com.custom.fieldfill.AutoFillColumnHandler;
 import com.custom.fieldfill.TableFillObject;
 import com.custom.interfaces.LogicDeleteFieldSqlHandler;
 import com.custom.comm.page.DbPageRows;
+import com.custom.sqlparser.HandleSelectSqlBuilder;
 import com.custom.sqlparser.TableInfoCache;
 import com.custom.sqlparser.TableSqlBuilder;
 import com.custom.wrapper.ConditionWrapper;
@@ -238,7 +240,7 @@ public abstract class AbstractSqlExecutor {
     /**
      * 查询该表是否存在
      */
-    public boolean notExistTable(String sql) throws Exception {
+    public boolean hasTableInfo(String sql) throws Exception {
         return sqlExecuteAction.executeExist(sql) == 0L;
     }
 
@@ -257,7 +259,9 @@ public abstract class AbstractSqlExecutor {
      * 从缓存中获取实体解析模板，若缓存中没有，就重新构造模板（查询、删除、创建删除表）
      */
     protected <T> TableSqlBuilder<T> getEntityModelCache(Class<T> t) {
-        return TableInfoCache.getTableModel(t);
+        TableSqlBuilder<T> tableModel = TableInfoCache.getTableModel(t);
+        tableModel.setSqlExecuteAction(sqlExecuteAction);
+        return tableModel;
     }
 
     /**
@@ -275,21 +279,40 @@ public abstract class AbstractSqlExecutor {
         TableSqlBuilder<T> tableModel = tableModelCache.clone();
         tableModel.setEntity(tList.get(0));
         tableModel.setList(tList);
+        tableModel.setSqlExecuteAction(sqlExecuteAction);
         return tableModel;
     }
+
+    /**
+     * 获取实体解析模板中的操作对象
+     */
+    protected <T, R extends AbstractSqlBuilder<T>> R buildSqlOperationTemplate(Class<T> entityClass) {
+        return buildSqlOperationTemplate(entityClass, ExecuteMethod.SELECT);
+    }
+
+    /**
+     * 获取实体解析模板中的操作对象
+     */
+    protected <T, R extends AbstractSqlBuilder<T>> R buildSqlOperationTemplate(Class<T> entityClass, ExecuteMethod method) {
+        TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(entityClass);
+        tableSqlBuilder.buildSqlConstructorModel(method);
+        return (R) tableSqlBuilder.getSqlBuilder();
+    }
+
+
 
     /**
      * 公共获取查询sql
      */
     protected  <T> String getFullSelectSql(Class<T> t, DbPageRows<T> dbPageRows, ConditionWrapper<T> wrapper) throws Exception {
-        TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t);
+        HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
         StringBuilder selectSql = new StringBuilder();
         if(wrapper.getSelectColumns() != null) {
-            selectSql.append(tableSqlBuilder.selectColumns(wrapper.getSelectColumns()));
+            selectSql.append(sqlBuilder.selectColumns(wrapper.getSelectColumns()));
         }else {
-            selectSql.append(tableSqlBuilder.getSelectSql());
+            selectSql.append(sqlBuilder.buildSql());
         }
-        String condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), wrapper.getFinalConditional(), getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
+        String condition = checkConditionAndLogicDeleteSql(sqlBuilder.getAlias(), wrapper.getFinalConditional(), getLogicDeleteQuerySql(), sqlBuilder.getTable());
         if(dbPageRows != null) {
             dbPageRows.setCondition(condition);
         }

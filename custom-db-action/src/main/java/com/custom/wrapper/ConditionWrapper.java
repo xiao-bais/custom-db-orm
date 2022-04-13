@@ -70,6 +70,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
      */
     private Integer pageIndex;
     private Integer pageSize;
+    private boolean hasPageParams = false;
 
     protected TableSqlBuilder<T> getTableSqlBuilder() {
         return tableSqlBuilder;
@@ -160,6 +161,14 @@ public abstract class ConditionWrapper<T> implements Serializable {
      */
     public String getInjectorParamsFinalConditional() {
         return CustomUtil.handleExecuteSql(this.finalConditional.toString(), this.paramValues.toArray());
+    }
+
+    public boolean isHasPageParams() {
+        return hasPageParams;
+    }
+
+    public void setHasPageParams(boolean hasPageParams) {
+        this.hasPageParams = hasPageParams;
     }
 
     public abstract T getEntity();

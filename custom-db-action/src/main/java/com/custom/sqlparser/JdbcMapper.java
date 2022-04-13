@@ -1,15 +1,16 @@
 package com.custom.sqlparser;
 
+import com.custom.annotations.check.CheckExecute;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.page.DbPageRows;
+import com.custom.dbaction.AbstractSqlBuilder;
 import com.custom.dbaction.AbstractSqlExecutor;
 import com.custom.dbaction.SqlExecuteAction;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.ExecuteMethod;
-import com.custom.annotations.check.CheckExecute;
-import com.custom.comm.page.DbPageRows;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.wrapper.ConditionWrapper;
 import org.slf4j.Logger;
@@ -20,15 +21,14 @@ import java.util.*;
 import java.util.stream.IntStream;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/12/8 14:20
- * @Desc：方法执行处理入口
- **/
-public class JdbcAction extends AbstractSqlExecutor {
+ * @author Xiao-Bai
+ * @date 2022/4/13 20:49
+ * @desc:
+ */
+public class JdbcMapper extends AbstractSqlExecutor {
+    private static final Logger logger = LoggerFactory.getLogger(JdbcMapper.class);
 
-    private static final Logger logger = LoggerFactory.getLogger(JdbcAction.class);
-
-    public JdbcAction(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
+    public JdbcMapper(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         // 配置sql执行器
         this.setSqlExecuteAction(new SqlExecuteAction(dbDataSource, dbCustomStrategy));
         // 配置sql执行策略
@@ -37,19 +37,18 @@ public class JdbcAction extends AbstractSqlExecutor {
         initLogic();
     }
 
-    public JdbcAction(){}
+    public JdbcMapper(){}
 
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> List<T> selectList(Class<T> t, String condition, String orderBy, Object... params) throws Exception {
-        TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t);
-        condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
-        String selectSql = tableSqlBuilder.getSelectSql();
+        HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
+        condition = checkConditionAndLogicDeleteSql(sqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
         if(JudgeUtilsAx.isNotEmpty(orderBy)) {
             condition += SymbolConst.ORDER_BY + orderBy;
         }
-        return selectBySql(t, selectSql + condition, params);
+        return selectBySql(t, sqlBuilder.buildSql() + condition, params);
     }
 
     @Override
@@ -65,13 +64,12 @@ public class JdbcAction extends AbstractSqlExecutor {
         if(dbPageRows == null) {
             dbPageRows = new DbPageRows<>();
         }
-        TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t);
-        String selectSql = tableSqlBuilder.getSelectSql();
-        String finalCondition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
+        HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
+        String finalCondition = checkConditionAndLogicDeleteSql(sqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
         if (JudgeUtilsAx.isNotEmpty(orderBy)) {
             finalCondition += SymbolConst.ORDER_BY + orderBy;
         }
-        buildPageResult(t, selectSql + finalCondition, condition, dbPageRows, params);
+        buildPageResult(t, sqlBuilder.buildSql() + finalCondition, condition, dbPageRows, params);
         return dbPageRows;
     }
 
@@ -95,29 +93,29 @@ public class JdbcAction extends AbstractSqlExecutor {
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> T selectOneByKey(Class<T> t, Object key) throws Exception {
-        TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t);
-        String condition = String.format("and %s = ?", tableSqlBuilder.getKeyParserModel().getFieldSql());
-        condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
-        return selectOneBySql(t, tableSqlBuilder.getSelectSql() + condition, key);
+        HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
+        String condition = String.format("and %s = ?", sqlBuilder.getKeyParserModel().getFieldSql());
+        condition = checkConditionAndLogicDeleteSql(sqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
+        return selectOneBySql(t, sqlBuilder.buildSql() + condition, key);
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> List<T> selectBatchByKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception {
-        TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t);
+        HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
         StringJoiner symbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
         keys.forEach(x -> symbol.add(SymbolConst.QUEST));
-        String condition = String.format("and %s in (%s)", tableSqlBuilder.getKeyParserModel().getFieldSql(), symbol);
-        condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
-        return selectBySql(t, tableSqlBuilder.getSelectSql() + condition, keys.toArray());
+        String condition = String.format("and %s in (%s)", sqlBuilder.getKeyParserModel().getFieldSql(), symbol);
+        condition = checkConditionAndLogicDeleteSql(sqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
+        return selectBySql(t, sqlBuilder.buildSql() + condition, keys.toArray());
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> T selectOneByCondition(Class<T> t, String condition, Object... params) throws Exception {
-        TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t);
-        condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
-        return selectOneBySql(t, tableSqlBuilder.getSelectSql() + condition, params);
+        HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
+        condition = checkConditionAndLogicDeleteSql(sqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
+        return selectOneBySql(t, sqlBuilder.buildSql() + condition, params);
     }
 
     @Override
@@ -125,6 +123,9 @@ public class JdbcAction extends AbstractSqlExecutor {
     public <T> DbPageRows<T> selectPageRows(Class<T> t, ConditionWrapper<T> wrapper) throws Exception {
         if(Objects.isNull(wrapper)) {
             throw new NullPointerException("缺少分页参数");
+        }
+        if(!wrapper.isHasPageParams()) {
+            throw new CustomCheckException("缺少分页参数：pageIndex：" + wrapper.getPageIndex() + ", pageSize：" + wrapper.getPageSize());
         }
         DbPageRows<T> dbPageRows = new DbPageRows<>(wrapper.getPageIndex(), wrapper.getPageSize());
         String selectSql = getFullSelectSql(t, dbPageRows, wrapper);
@@ -161,15 +162,15 @@ public class JdbcAction extends AbstractSqlExecutor {
     @Override
     @CheckExecute(target = ExecuteMethod.DELETE)
     public <T> int deleteByKey(Class<T> t, Object key) throws Exception {
-        TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t);
-        DbKeyParserModel<T> keyParserModel = tableSqlBuilder.getKeyParserModel();
-        String deleteSql = getLogicDeleteKeySql(SymbolConst.QUEST, keyParserModel.getDbKey(), tableSqlBuilder.getTable(), tableSqlBuilder.getAlias(), false);
+        HandleDeleteSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.DELETE);
+        DbKeyParserModel<T> keyParserModel = sqlBuilder.getKeyParserModel();
+        String deleteSql = getLogicDeleteKeySql(SymbolConst.QUEST, keyParserModel.getDbKey(), sqlBuilder.getTable(), sqlBuilder.getAlias(), false);
         if(!CustomUtil.isKeyAllowType(keyParserModel.getType(), key)) {
             throw new CustomCheckException("Illegal primary key parameter : " + key);
         }
         int i = executeSql(deleteSql, key);
-        if(i > 0 && JudgeUtilsAx.isNotEmpty(getLogicDeleteUpdateSql()) && checkLogicFieldIsExist(tableSqlBuilder.getTable())) {
-            handleLogicDelAfter(t, deleteSql, tableSqlBuilder, key);
+        if(i > 0 && JudgeUtilsAx.isNotEmpty(getLogicDeleteUpdateSql()) && checkLogicFieldIsExist(sqlBuilder.getTable())) {
+            sqlBuilder.handleLogicDelAfter(t, deleteSql, sqlBuilder, key);
         }
         return i;
     }
@@ -177,14 +178,14 @@ public class JdbcAction extends AbstractSqlExecutor {
     @Override
     @CheckExecute(target = ExecuteMethod.DELETE)
     public <T> int deleteBatchKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception {
-        TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t);
-        DbKeyParserModel<T> keyParserModel = tableSqlBuilder.getKeyParserModel();
+        HandleDeleteSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
+        DbKeyParserModel<T> keyParserModel = sqlBuilder.getKeyParserModel();
         StringJoiner delSymbols = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
         IntStream.range(0, keys.size()).mapToObj(i -> SymbolConst.QUEST).forEach(delSymbols::add);
-        String deleteSql = getLogicDeleteKeySql(String.format("(%s)", delSymbols), keyParserModel.getDbKey(), tableSqlBuilder.getTable(), tableSqlBuilder.getAlias(), true);
+        String deleteSql = getLogicDeleteKeySql(String.format("(%s)", delSymbols), keyParserModel.getDbKey(), sqlBuilder.getTable(), sqlBuilder.getAlias(), true);
         int i = executeSql(deleteSql, keys.toArray());
-        if(i > 0 && JudgeUtilsAx.isNotEmpty(getLogicDeleteUpdateSql()) && checkLogicFieldIsExist(tableSqlBuilder.getTable())) {
-            handleLogicDelAfter(t, deleteSql, tableSqlBuilder, keys.toArray());
+        if(i > 0 && JudgeUtilsAx.isNotEmpty(getLogicDeleteUpdateSql()) && checkLogicFieldIsExist(sqlBuilder.getTable())) {
+            sqlBuilder.handleLogicDelAfter(t, deleteSql, keys.toArray());
         }
         return i;
     }
@@ -192,18 +193,18 @@ public class JdbcAction extends AbstractSqlExecutor {
     @Override
     @CheckExecute(target = ExecuteMethod.DELETE)
     public <T> int deleteByCondition(Class<T> t, String condition, Object... params) throws Exception {
-        TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(t);
+        HandleDeleteSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
         String deleteSql;
-        boolean isLogicMatch = JudgeUtilsAx.isNotEmpty(getLogicDeleteUpdateSql()) && checkLogicFieldIsExist(tableSqlBuilder.getTable());
+        boolean isLogicMatch = JudgeUtilsAx.isNotEmpty(getLogicDeleteUpdateSql()) && checkLogicFieldIsExist(sqlBuilder.getTable());
         if(isLogicMatch) {
-            deleteSql = String.format("update %s %s set %s.%s where %s.%s %s", tableSqlBuilder.getTable(), tableSqlBuilder.getAlias(),
-                    tableSqlBuilder.getAlias(), getLogicDeleteUpdateSql(), tableSqlBuilder.getAlias(), getLogicDeleteQuerySql(), condition);
+            deleteSql = String.format("update %s %s set %s.%s where %s.%s %s", sqlBuilder.getTable(), sqlBuilder.getAlias(),
+                    sqlBuilder.getAlias(), getLogicDeleteUpdateSql(), sqlBuilder.getAlias(), getLogicDeleteQuerySql(), condition);
         }else {
-            deleteSql = String.format("delete from %s %s where %s", tableSqlBuilder.getTable(), tableSqlBuilder.getAlias(), CustomUtil.trimAppendSqlCondition(condition));
+            deleteSql = String.format("delete from %s %s where %s", sqlBuilder.getTable(), sqlBuilder.getAlias(), CustomUtil.trimAppendSqlCondition(condition));
         }
         int i = executeSql(deleteSql, params);
         if(i > 0 && isLogicMatch) {
-            handleLogicDelAfter(t, deleteSql, tableSqlBuilder, params);
+            sqlBuilder.handleLogicDelAfter(t, deleteSql, params);
         }
         return i;
     }

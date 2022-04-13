@@ -1,18 +1,20 @@
 package com.home.customtest;
 
+import com.custom.comm.page.DbPageRows;
+import com.custom.dbaction.AbstractSqlBuilder;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.fieldfill.AutoFillColumnHandler;
 import com.custom.fieldfill.TableFillObject;
-import com.custom.sqlparser.CustomDao;
-import com.custom.sqlparser.TableInfoCache;
+import com.custom.sqlparser.*;
 import com.custom.wrapper.ConditionEntity;
 import com.custom.wrapper.Conditions;
 import com.custom.wrapper.LambdaConditionEntity;
 import com.home.customtest.config.CustomFillConfig;
 import com.home.customtest.entity.Aklis;
 import com.home.customtest.entity.ChildStudent;
+import com.home.customtest.entity.Student;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.CollectionUtils;
@@ -91,24 +93,31 @@ public class DoMain {
 //        System.out.println("student = " + student);
 
 //        Student student = new Student();
-        List<ChildStudent> students = customDao.selectList(ChildStudent.class, Conditions.lambdaQuery(ChildStudent.class)
-                        .gt(ChildStudent::getAge, 22)
-                        .eq(ChildStudent::getArea, "aaa")
-                        .like(ChildStudent::getAddress, "山东")
-                        .or().ge(ChildStudent::getAge, 23)
-                        .le(ChildStudent::getId, 10)
-                        .or(x -> x.exists("select 1 from student stu2 where stu2.address is not null")
-                                .or().eq(ChildStudent::getSex, false)
-                                .or().like(ChildStudent::getAddress, "南")
-                        )
-                        .orderByDesc(ChildStudent::getId)
-        );
-        System.out.println("students = " + students);
+//        List<ChildStudent> students = customDao.selectList(ChildStudent.class, Conditions.lambdaQuery(ChildStudent.class)
+//                        .select(ChildStudent::getAge)
+//                        .select(x -> x.count(ChildStudent::getAge, ChildStudent::getCountAge))
+//                        .gt(ChildStudent::getAge, 22)
+//                        .eq(ChildStudent::getArea, "aaa")
+//                        .like(ChildStudent::getAddress, "山东")
+//                        .or().ge(ChildStudent::getAge, 23)
+//                        .le(ChildStudent::getId, 10)
+//                        .or(x -> x.exists("select 1 from student stu2 where stu2.address is not null")
+//                                .or().eq(ChildStudent::getSex, false)
+//                                .or().like(ChildStudent::getAddress, "南")
+//                        )
+//                .groupBy(ChildStudent::getAge)
+////                        .orderByDesc(ChildStudent::getId)
+//                        .orderByAsc(x -> x.count(ChildStudent::getAge))
+//        );
+//        System.out.println("students = " + students);
 
 //        ConditionEntity<ChildStudent> query = Conditions.query(ChildStudent.class);
 //        query.eq("", "林涂").eq("pro.name", "湖南");
 //        List<ChildStudent> childStudents = customDao.selectList(ChildStudent.class, query);
 //        System.out.println("childStudents = " + childStudents);
+
+        int i = customDao.deleteByKey(ChildStudent.class, 239);
+
 
     }
 

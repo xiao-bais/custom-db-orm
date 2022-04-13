@@ -234,7 +234,7 @@ public class CustomDao {
     private final AbstractSqlExecutor jdbcAction;
 
     public CustomDao(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
-        jdbcAction = new SqlParamsCheckProxy<>(new JdbcAction(), dbDataSource, dbCustomStrategy).createProxy();
+        jdbcAction = new SqlParamsCheckProxy<>(new JdbcMapper(), dbDataSource, dbCustomStrategy).createProxy();
     }
     
 }

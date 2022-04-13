@@ -282,8 +282,9 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
     @Override
     public Children limit(boolean condition, Integer pageIndex, Integer pageSize) {
         if((Objects.isNull(pageIndex) || Objects.isNull(pageSize))) {
-            throw new CustomCheckException("缺少分页参数：pageIndex：" + pageIndex + ",pageSize：" + pageSize);
+            throw new CustomCheckException("缺少分页参数：pageIndex：" + pageIndex + ", pageSize：" + pageSize);
         }
+        setHasPageParams(true);
         setPageIndex(pageIndex);
         setPageSize(pageSize);
         return childrenClass;
