@@ -54,8 +54,8 @@ public class DoMain {
         dbCustomStrategy.setSqlOutPrintExecute(true);
         dbCustomStrategy.setUnderlineToCamel(true);
         dbCustomStrategy.setDbFieldDeleteLogic("state");
-        dbCustomStrategy.setDeleteLogicValue("1");
-        dbCustomStrategy.setNotDeleteLogicValue("0");
+        dbCustomStrategy.setDeleteLogicValue(1);
+        dbCustomStrategy.setNotDeleteLogicValue(0);
 
         CustomDao customDao = new CustomDao(dbDataSource, dbCustomStrategy);
         TableInfoCache.setUnderlineToCamel(true);
@@ -116,7 +116,7 @@ public class DoMain {
 //        List<ChildStudent> childStudents = customDao.selectList(ChildStudent.class, query);
 //        System.out.println("childStudents = " + childStudents);
 
-        int i = customDao.deleteByKey(ChildStudent.class, 239);
+        int i = customDao.deleteBatchKeys(Aklis.class, Arrays.asList(100,101,102));
 
 
     }

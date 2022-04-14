@@ -293,9 +293,31 @@ public abstract class AbstractSqlExecutor {
     /**
      * 获取实体解析模板中的操作对象
      */
+    protected <T, R extends AbstractSqlBuilder<T>> R buildSqlOperationTemplate(T entity, ExecuteMethod method) {
+        return buildSqlOperationTemplate(Collections.singletonList(entity), method);
+    }
+
+    /**
+     * 获取实体解析模板中的操作对象
+     */
+    protected <T, R extends AbstractSqlBuilder<T>> R buildSqlOperationTemplate(List<T> entityList, ExecuteMethod method) {
+        TableSqlBuilder<T> tableModelCache = getUpdateEntityModelCache(entityList);
+        TableSqlBuilder<T> tableModel = tableModelCache.clone();
+        tableModel.setEntity(entityList.get(0));
+        tableModel.setList(entityList);
+        tableModel.setSqlExecuteAction(sqlExecuteAction);
+        tableModel.setLogicFieldInfo(logicField, dbCustomStrategy.getDeleteLogicValue(), dbCustomStrategy.getNotDeleteLogicValue());
+        tableModel.buildSqlConstructorModel(method);
+        return (R) tableModel.getSqlBuilder();
+    }
+
+    /**
+     * 获取实体解析模板中的操作对象
+     */
     protected <T, R extends AbstractSqlBuilder<T>> R buildSqlOperationTemplate(Class<T> entityClass, ExecuteMethod method) {
         TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(entityClass);
         tableSqlBuilder.buildSqlConstructorModel(method);
+        tableSqlBuilder.setLogicFieldInfo(logicField, dbCustomStrategy.getDeleteLogicValue(), dbCustomStrategy.getNotDeleteLogicValue());
         return (R) tableSqlBuilder.getSqlBuilder();
     }
 

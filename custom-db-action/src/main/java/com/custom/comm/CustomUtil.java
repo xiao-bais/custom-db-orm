@@ -27,8 +27,6 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @Author Xiao-Bai
@@ -425,6 +423,17 @@ public class CustomUtil {
         String finalCondition = condition;
         if(condition.trim().startsWith(SymbolConst.AND)) {
             finalCondition = condition.replaceFirst(SymbolConst.AND, SymbolConst.EMPTY);
+        }
+        return finalCondition.trim();
+    }
+
+    /**
+     * sql中若以OR开头，则替换成AND
+     */
+    public static String replaceOrWithAndOnSqlCondition(String condition) {
+        String finalCondition = condition;
+        if(condition.trim().startsWith(SymbolConst.OR)) {
+            finalCondition = condition.replaceFirst(SymbolConst.OR, SymbolConst.AND);
         }
         return finalCondition.trim();
     }

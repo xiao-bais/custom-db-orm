@@ -10,6 +10,7 @@ import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
 import com.custom.annotations.check.CheckExecute;
 import com.custom.wrapper.ConditionEntity;
+import com.custom.wrapper.ConditionWrapper;
 import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;
 import org.springframework.cglib.proxy.MethodProxy;
@@ -94,6 +95,16 @@ public class SqlParamsCheckProxy<T> implements MethodInterceptor {
     * 删除的时候做参数的预检查
     */
     private void delete(Object[] objects) {
+        int length = objects.length;
+        if(length == 1) {
+            if(Objects.isNull(objects[0])) {
+                throw new CustomCheckException("delete condition cannot be empty");
+            }
+            if(objects[0] instanceof ConditionWrapper && JudgeUtilsAx.isEmpty(((ConditionWrapper<?>) objects[0]).getFinalConditional())) {
+                throw new CustomCheckException("delete condition cannot be empty");
+            }
+            return;
+        }
         Object deleteParam = objects[1];
         if(!((Class<?>)objects[0]).isAnnotationPresent(DbTable.class)) {
             throw new CustomCheckException(ExceptionConst.EX_DBTABLE__NOTFOUND + objects[0].getClass().getName());

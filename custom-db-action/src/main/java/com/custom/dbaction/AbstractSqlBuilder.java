@@ -128,7 +128,11 @@ public abstract class AbstractSqlBuilder<T> {
     }
 
     public void setLogicDeleteValue(Object logicDeleteValue) {
+        if(logicDeleteValue instanceof CharSequence) {
+            logicDeleteValue = String.format("'%s'", logicDeleteValue);
+        }
         this.logicDeleteValue = logicDeleteValue;
+        this.logicDeleteUpdateSql = String.format("%s.%s = %s", alias, logicColumn, logicDeleteValue);
     }
 
     public Object getLogicNotDeleteValue() {
@@ -136,21 +140,19 @@ public abstract class AbstractSqlBuilder<T> {
     }
 
     public void setLogicNotDeleteValue(Object logicNotDeleteValue) {
+        if(logicNotDeleteValue instanceof CharSequence) {
+            logicNotDeleteValue = String.format("'%s'", logicNotDeleteValue);
+        }
         this.logicNotDeleteValue = logicNotDeleteValue;
+        this.logicDeleteQuerySql = String.format("%s.%s = %s", alias, logicColumn, logicNotDeleteValue);
     }
 
     public String getLogicDeleteQuerySql() {
-        if(Objects.isNull(this.logicDeleteQuerySql)) {
-            this.logicDeleteQuerySql = logicColumn + SymbolConst.EQUALS + logicNotDeleteValue;
-        }
         return this.logicDeleteQuerySql;
     }
 
     public String getLogicDeleteUpdateSql() {
-        if(Objects.isNull(this.logicDeleteQuerySql)) {
-            this.logicDeleteQuerySql = logicColumn + SymbolConst.EQUALS + logicNotDeleteValue;
-        }
-        return this.logicDeleteQuerySql = logicColumn + SymbolConst.EQUALS + logicDeleteValue;
+        return this.logicDeleteUpdateSql;
     }
 
     public void setSqlExecuteAction(SqlExecuteAction sqlExecuteAction) {
@@ -170,14 +172,14 @@ public abstract class AbstractSqlBuilder<T> {
     /**
      * 由于部分表可能没有逻辑删除字段，所以在每一次执行时，都需检查该表有没有逻辑删除的字段，以保证sql正常执行
      */
-    public boolean checkLogicFieldIsExist(String tableName) throws Exception {
-        Boolean existsLogic = TableInfoCache.isExistsLogic(tableName);
+    public boolean checkLogicFieldIsExist() throws Exception {
+        Boolean existsLogic = TableInfoCache.isExistsLogic(table);
         if (existsLogic != null) {
             return existsLogic;
         }
-        String existSql = String.format("select count(*) count from information_schema.columns where table_name = '%s' and column_name = '%s'", tableName, getLogicColumn());
+        String existSql = String.format("select count(*) count from information_schema.columns where table_name = '%s' and column_name = '%s'", table, logicColumn);
         long count = sqlExecuteAction.executeExist(existSql);
-        TableInfoCache.setTableLogic(tableName, count > 0);
+        TableInfoCache.setTableLogic(table, count > 0);
         return count > 0;
     }
 }

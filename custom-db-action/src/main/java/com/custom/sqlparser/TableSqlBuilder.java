@@ -620,9 +620,19 @@ public class TableSqlBuilder<T> implements Cloneable {
             initializeSqlBuilder(sqlBuilder);
             // 注入sql执行对象
             sqlBuilder.setSqlExecuteAction(sqlExecuteAction);
+            // 注入sql注解解析对象
             sqlBuilder.setKeyParserModel(keyParserModel);
             sqlBuilder.setFieldParserModels(fieldParserModels);
         }
+    }
+
+    /**
+     * 注入逻辑删除字段值
+     */
+    public void setLogicFieldInfo(String logicColumn, Object logicDeleteValue, Object logicNotDeleteValue) {
+        sqlBuilder.setLogicColumn(logicColumn);
+        sqlBuilder.setLogicDeleteValue(logicDeleteValue);
+        sqlBuilder.setLogicNotDeleteValue(logicNotDeleteValue);
     }
 
 

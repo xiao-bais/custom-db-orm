@@ -27,7 +27,7 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
     public String buildSql() {
         String deleteSql = String.format(" delete from %s %s where ", getTable(), getAlias());
         try {
-            if ((JudgeUtilsAx.isNotEmpty(getLogicColumn()) && checkLogicFieldIsExist(getTable()))) {
+            if ((JudgeUtilsAx.isNotEmpty(getLogicColumn()) && checkLogicFieldIsExist())) {
                 return String.format(" update %s %s set %s where %s ", getTable(), getAlias(), getLogicDeleteUpdateSql(), getLogicDeleteQuerySql());
             }
         }catch (Exception e) {
@@ -117,23 +117,23 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
     /**
      * 获取根据主键删除的sql
      */
-    public String getLogicDeleteKeySql(String key, String dbKey, String table, String alias, boolean isMore) throws Exception {
-        String sql;
-        String keySql  = String.format("%s.%s%s%s", alias,
-                dbKey, isMore ? SymbolConst.IN : SymbolConst.EQUALS, key);
-
-        if (JudgeUtilsAx.isNotEmpty(getLogicDeleteUpdateSql())) {
-            String logicDeleteQuerySql = String.format("%s.%s", alias, getLogicDeleteQuerySql());
-            String logicDeleteUpdateSql = String.format("%s.%s", alias, getLogicDeleteUpdateSql());
-            if(checkLogicFieldIsExist(table)) {
-                sql = String.format("update %s %s set %s where %s and %s", table,
-                        alias, logicDeleteUpdateSql, logicDeleteQuerySql, keySql);
-            }else {
-                sql = String.format("delete from %s %s where %s", table, alias, keySql);
-            }
-        }else {
-            sql = String.format("delete from %s %s where %s", table, alias, keySql);
-        }
-        return sql;
-    }
+//    public String getLogicDeleteKeySql(String key, String dbKey, String alias, boolean isMore) throws Exception {
+//        String sql;
+//        String keySql  = String.format("%s.%s%s%s", alias,
+//                dbKey, isMore ? SymbolConst.IN : SymbolConst.EQUALS, key);
+//
+//        if (JudgeUtilsAx.isNotEmpty(getLogicDeleteUpdateSql())) {
+//            String logicDeleteQuerySql = String.format("%s.%s", alias, getLogicDeleteQuerySql());
+//            String logicDeleteUpdateSql = String.format("%s.%s", alias, getLogicDeleteUpdateSql());
+//            if(checkLogicFieldIsExist()) {
+//                sql = String.format("update %s %s set %s where %s and %s", table,
+//                        alias, logicDeleteUpdateSql, logicDeleteQuerySql, keySql);
+//            }else {
+//                sql = String.format("delete from %s %s where %s", table, alias, keySql);
+//            }
+//        }else {
+//            sql = String.format("delete from %s %s where %s", table, alias, keySql);
+//        }
+//        return sql;
+//    }
 }

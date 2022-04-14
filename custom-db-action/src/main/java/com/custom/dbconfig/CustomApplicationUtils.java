@@ -7,6 +7,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 /**
  * @Author Xiao-Bai
  * @Date 2022/3/28 15:01
@@ -30,6 +32,9 @@ public class CustomApplicationUtils implements ApplicationContextAware {
     public static <T> T getBean(Class<T> t) {
         T bean;
         try {
+            if(Objects.isNull(applicationContext)) {
+                return null;
+            }
             bean = applicationContext.getBean(t);
         }catch (NoSuchBeanDefinitionException e) {
             log.error(e.getMessage(), e);
@@ -42,6 +47,9 @@ public class CustomApplicationUtils implements ApplicationContextAware {
     public static <T> T getBean(String beanName) {
         T bean;
         try {
+            if(Objects.isNull(applicationContext)) {
+                return null;
+            }
             bean = (T) applicationContext.getBean(beanName);
         }catch (NoSuchBeanDefinitionException e) {
             log.error(e.getMessage(), e);
@@ -52,7 +60,10 @@ public class CustomApplicationUtils implements ApplicationContextAware {
 
 
     public static <T> T getBean(Class<T> t, String beanName) {
-        return (T) applicationContext.getBean(beanName, t);
+        if(Objects.isNull(applicationContext)) {
+            return null;
+        }
+        return applicationContext.getBean(beanName, t);
     }
 
 

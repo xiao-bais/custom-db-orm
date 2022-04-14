@@ -163,8 +163,11 @@ public class JdbcMapper extends AbstractSqlExecutor {
     @CheckExecute(target = ExecuteMethod.DELETE)
     public <T> int deleteByKey(Class<T> t, Object key) throws Exception {
         HandleDeleteSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.DELETE);
+        String deleteFrom = sqlBuilder.buildSql();
         DbKeyParserModel<T> keyParserModel = sqlBuilder.getKeyParserModel();
-        String deleteSql = getLogicDeleteKeySql(SymbolConst.QUEST, keyParserModel.getDbKey(), sqlBuilder.getTable(), sqlBuilder.getAlias(), false);
+        String deleteSql = deleteFrom + (sqlBuilder.checkLogicFieldIsExist()
+                ? String.format("and %s = ?", keyParserModel.getFieldSql())
+                : String.format("%s = ?", keyParserModel.getFieldSql()));
         if(!CustomUtil.isKeyAllowType(keyParserModel.getType(), key)) {
             throw new CustomCheckException("Illegal primary key parameter : " + key);
         }
@@ -178,11 +181,16 @@ public class JdbcMapper extends AbstractSqlExecutor {
     @Override
     @CheckExecute(target = ExecuteMethod.DELETE)
     public <T> int deleteBatchKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception {
-        HandleDeleteSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
+        HandleDeleteSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.DELETE);
+        String deleteFrom = sqlBuilder.buildSql();
         DbKeyParserModel<T> keyParserModel = sqlBuilder.getKeyParserModel();
-        StringJoiner delSymbols = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+        StringJoiner delSymbols = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2, SymbolConst.BRACKETS_LEFT, SymbolConst.BRACKETS_RIGHT);
         IntStream.range(0, keys.size()).mapToObj(i -> SymbolConst.QUEST).forEach(delSymbols::add);
-        String deleteSql = getLogicDeleteKeySql(String.format("(%s)", delSymbols), keyParserModel.getDbKey(), sqlBuilder.getTable(), sqlBuilder.getAlias(), true);
+        String deleteSql = deleteFrom + (sqlBuilder.checkLogicFieldIsExist()
+                ? String.format("and %s in %s", keyParserModel.getFieldSql(), delSymbols)
+                : String.format("%s in %s", keyParserModel.getFieldSql(), delSymbols));
+
+//        String deleteSql = getLogicDeleteKeySql(String.format("(%s)", delSymbols), keyParserModel.getDbKey(), sqlBuilder.getTable(), sqlBuilder.getAlias(), true);
         int i = executeSql(deleteSql, keys.toArray());
         if(i > 0 && JudgeUtilsAx.isNotEmpty(getLogicDeleteUpdateSql()) && checkLogicFieldIsExist(sqlBuilder.getTable())) {
             sqlBuilder.handleLogicDelAfter(t, deleteSql, keys.toArray());
@@ -193,14 +201,14 @@ public class JdbcMapper extends AbstractSqlExecutor {
     @Override
     @CheckExecute(target = ExecuteMethod.DELETE)
     public <T> int deleteByCondition(Class<T> t, String condition, Object... params) throws Exception {
-        HandleDeleteSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
+        HandleDeleteSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.DELETE);
         String deleteSql;
         boolean isLogicMatch = JudgeUtilsAx.isNotEmpty(getLogicDeleteUpdateSql()) && checkLogicFieldIsExist(sqlBuilder.getTable());
         if(isLogicMatch) {
             deleteSql = String.format("update %s %s set %s.%s where %s.%s %s", sqlBuilder.getTable(), sqlBuilder.getAlias(),
-                    sqlBuilder.getAlias(), getLogicDeleteUpdateSql(), sqlBuilder.getAlias(), getLogicDeleteQuerySql(), condition);
+                    sqlBuilder.getAlias(), getLogicDeleteUpdateSql(), sqlBuilder.getAlias(), getLogicDeleteQuerySql(), CustomUtil.replaceOrWithAndOnSqlCondition(condition));
         }else {
-            deleteSql = String.format("delete from %s %s where %s", sqlBuilder.getTable(), sqlBuilder.getAlias(), CustomUtil.trimAppendSqlCondition(condition));
+            deleteSql = String.format("delete from %s %s where %s", sqlBuilder.getTable(), sqlBuilder.getAlias(), CustomUtil.trimSqlCondition(condition));
         }
         int i = executeSql(deleteSql, params);
         if(i > 0 && isLogicMatch) {
@@ -212,15 +220,13 @@ public class JdbcMapper extends AbstractSqlExecutor {
     @Override
     @CheckExecute(target = ExecuteMethod.DELETE)
     public <T> int deleteByCondition(ConditionWrapper<T> wrapper) throws Exception {
-        if(JudgeUtilsAx.isEmpty(wrapper) || JudgeUtilsAx.isEmpty(wrapper.getFinalConditional())) {
-            throw new CustomCheckException("delete condition cannot be empty");
-        }
-        return deleteByCondition(wrapper.getCls(), wrapper.getFinalConditional());
+        return deleteByCondition(wrapper.getCls(), wrapper.getFinalConditional(), wrapper.getParamValues().toArray());
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.INSERT)
     public <T> int insert(T t, boolean isGeneratedKey) throws Exception {
+        HandleInsertSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.INSERT);
         TableSqlBuilder<T> tableSqlBuilder = getUpdateEntityModelCache(t);
         String insertSql = tableSqlBuilder.getInsertSql(getDbCustomStrategy().getDbFieldDeleteLogic(), getDbCustomStrategy().getNotDeleteLogicValue());
         DbKeyParserModel<T> keyParserModel = tableSqlBuilder.getKeyParserModel();
@@ -230,6 +236,7 @@ public class JdbcMapper extends AbstractSqlExecutor {
     @Override
     @CheckExecute(target = ExecuteMethod.INSERT)
     public <T> int insert(List<T> ts, boolean isGeneratedKey) throws Exception {
+        HandleInsertSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(ts, ExecuteMethod.INSERT);
         TableSqlBuilder<T> tableSqlBuilder = getUpdateEntityModelCache(ts);
         String insertSql = tableSqlBuilder.getInsertSql(checkLogicFieldIsExist(tableSqlBuilder.getTable()) ? getDbCustomStrategy().getDbFieldDeleteLogic() : null,
                 getDbCustomStrategy().getNotDeleteLogicValue());
