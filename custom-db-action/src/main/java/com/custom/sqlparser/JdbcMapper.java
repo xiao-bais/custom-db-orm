@@ -202,16 +202,10 @@ public class JdbcMapper extends AbstractSqlExecutor {
     @CheckExecute(target = ExecuteMethod.DELETE)
     public <T> int deleteByCondition(Class<T> t, String condition, Object... params) throws Exception {
         HandleDeleteSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.DELETE);
-        String deleteSql;
-        boolean isLogicMatch = JudgeUtilsAx.isNotEmpty(getLogicDeleteUpdateSql()) && checkLogicFieldIsExist(sqlBuilder.getTable());
-        if(isLogicMatch) {
-            deleteSql = String.format("update %s %s set %s.%s where %s.%s %s", sqlBuilder.getTable(), sqlBuilder.getAlias(),
-                    sqlBuilder.getAlias(), getLogicDeleteUpdateSql(), sqlBuilder.getAlias(), getLogicDeleteQuerySql(), CustomUtil.replaceOrWithAndOnSqlCondition(condition));
-        }else {
-            deleteSql = String.format("delete from %s %s where %s", sqlBuilder.getTable(), sqlBuilder.getAlias(), CustomUtil.trimSqlCondition(condition));
-        }
+        String deleteFrom = sqlBuilder.buildSql();
+        String deleteSql = deleteFrom + (sqlBuilder.checkLogicFieldIsExist() ? CustomUtil.replaceOrWithAndOnSqlCondition(condition) : CustomUtil.trimSqlCondition(condition));
         int i = executeSql(deleteSql, params);
-        if(i > 0 && isLogicMatch) {
+        if(i > 0 && sqlBuilder.checkLogicFieldIsExist()) {
             sqlBuilder.handleLogicDelAfter(t, deleteSql, params);
         }
         return i;
@@ -227,21 +221,18 @@ public class JdbcMapper extends AbstractSqlExecutor {
     @CheckExecute(target = ExecuteMethod.INSERT)
     public <T> int insert(T t, boolean isGeneratedKey) throws Exception {
         HandleInsertSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.INSERT);
-        TableSqlBuilder<T> tableSqlBuilder = getUpdateEntityModelCache(t);
-        String insertSql = tableSqlBuilder.getInsertSql(getDbCustomStrategy().getDbFieldDeleteLogic(), getDbCustomStrategy().getNotDeleteLogicValue());
-        DbKeyParserModel<T> keyParserModel = tableSqlBuilder.getKeyParserModel();
-        return executeInsert(insertSql, Collections.singletonList(t), isGeneratedKey, keyParserModel.getKey(), keyParserModel.getType(), tableSqlBuilder.getObjValues().toArray());
+        String insertSql = sqlBuilder.buildSql();
+        DbKeyParserModel<T> keyParserModel = sqlBuilder.getKeyParserModel();
+        return executeInsert(insertSql, Collections.singletonList(t), isGeneratedKey, keyParserModel.getKey(), keyParserModel.getType(), sqlBuilder.getSqlParams().toArray());
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.INSERT)
     public <T> int insert(List<T> ts, boolean isGeneratedKey) throws Exception {
         HandleInsertSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(ts, ExecuteMethod.INSERT);
-        TableSqlBuilder<T> tableSqlBuilder = getUpdateEntityModelCache(ts);
-        String insertSql = tableSqlBuilder.getInsertSql(checkLogicFieldIsExist(tableSqlBuilder.getTable()) ? getDbCustomStrategy().getDbFieldDeleteLogic() : null,
-                getDbCustomStrategy().getNotDeleteLogicValue());
-        DbKeyParserModel<T> keyParserModel = tableSqlBuilder.getKeyParserModel();
-        return executeInsert(insertSql, ts, isGeneratedKey, keyParserModel.getKey(), keyParserModel.getType(), tableSqlBuilder.getObjValues().toArray());
+        String insertSql = sqlBuilder.buildSql();
+        DbKeyParserModel<T> keyParserModel = sqlBuilder.getKeyParserModel();
+        return executeInsert(insertSql, ts, isGeneratedKey, keyParserModel.getKey(), keyParserModel.getType(), sqlBuilder.getSqlParams().toArray());
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.custom.dbaction;
 
 import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.RexUtil;
 import com.custom.dbconfig.SymbolConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,11 +45,14 @@ public abstract class AbstractTableModel<T> {
      * fieldName: 字段名称
      */
     protected Object getFieldValue(T x, String fieldName) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-        JudgeUtilsAx.checkObjNotNull(x);
+        JudgeUtilsAx.checkObjNotNull(x, fieldName);
         Object value;
         String firstLetter;
         String getter;
         try {
+            if(RexUtil.hasRegex(fieldName, RexUtil.back_quotes)) {
+                fieldName = RexUtil.regexStr(fieldName, RexUtil.back_quotes);
+            }
             firstLetter = fieldName.substring(0, 1).toUpperCase();
             getter = SymbolConst.GET + firstLetter + fieldName.substring(1);
             Method method = x.getClass().getMethod(getter);

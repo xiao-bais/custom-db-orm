@@ -616,13 +616,13 @@ public class TableSqlBuilder<T> implements Cloneable {
                 sqlBuilder = new HandleDeleteSqlBuilder<>();
         }
         if (Objects.nonNull(sqlBuilder)) {
+            // 注入sql注解解析对象
+            sqlBuilder.setKeyParserModel(keyParserModel);
+            sqlBuilder.setFieldParserModels(fieldParserModels);
             // 初始化
             initializeSqlBuilder(sqlBuilder);
             // 注入sql执行对象
             sqlBuilder.setSqlExecuteAction(sqlExecuteAction);
-            // 注入sql注解解析对象
-            sqlBuilder.setKeyParserModel(keyParserModel);
-            sqlBuilder.setFieldParserModels(fieldParserModels);
         }
     }
 
@@ -762,6 +762,9 @@ public class TableSqlBuilder<T> implements Cloneable {
         sqlBuilder.setEntityClass(this.cls);
         if(Objects.nonNull(this.entity)) {
             sqlBuilder.setEntity(this.entity);
+        }
+        if(Objects.nonNull(this.list)) {
+            sqlBuilder.setEntityList(this.list);
         }
         sqlBuilder.setFieldMapper(this.fieldMapper);
         sqlBuilder.setColumnMapper(this.columnMapper);

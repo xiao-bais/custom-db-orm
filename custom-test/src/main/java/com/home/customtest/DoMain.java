@@ -5,6 +5,7 @@ import com.custom.dbaction.AbstractSqlBuilder;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.dbconfig.SymbolConst;
+import com.custom.enums.FillStrategy;
 import com.custom.fieldfill.AutoFillColumnHandler;
 import com.custom.fieldfill.TableFillObject;
 import com.custom.sqlparser.*;
@@ -22,6 +23,7 @@ import org.springframework.util.CollectionUtils;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
@@ -64,61 +66,21 @@ public class DoMain {
         List<TableFillObject> tableFillObjects = autoFillColumnHandler.fillStrategy();
 
 
-//        Aklis aklis = new Aklis();
-//        aklis.setId(10);
-//        aklis.setName("张超艾");
-//        aklis.setAddress("河南商丘");
-//        customDao.insert(aklis);
+//        int i = customDao.deleteByCondition(Conditions.lambdaQuery(Aklis.class).eq(Aklis::getExplain, "张三"));
 
-//        List<Location> locations = customDao.selectList(Location.class, new ConditionEntity<>(Location.class).like("name", "区"));
+        List<Aklis> aklisList = new ArrayList<>();
 
-
-
-
-//        List<Student> students = customDao.selectList(Student.class, " and a.age > ?", 22);
-//        DbPageRows<Student> pageRows = customDao.selectPageRows(Student.class, " and a.age > ?", 1, 10, 22);
-
-//        long sex = customDao.selectCount(Conditions.conditionQuery(Student.class).eq("sex", true));
-//        System.out.println("sex = " + sex);
-
-//        SqlFunc<Student> dbFunction = new SqlFunc<>(Student.class);
-//        dbFunction.avg(Student::getAge).max(Student::getId).min(Student::getCityId).sum(Student::getAge)
-//                        .count(Student::getId, true);
-//        System.out.println("dbFunction.getSelectColumns() = " + dbFunction.getSelectColumns());
-
-//        Student student = customDao.selectOne(Conditions.lambdaConditionQuery(Student.class)
-//                .select(x -> x.sum(Student::getAge)).isNotNull(Student::getArea)
-//        );
-
-//        System.out.println("student = " + student);
-
-//        Student student = new Student();
-//        List<ChildStudent> students = customDao.selectList(ChildStudent.class, Conditions.lambdaQuery(ChildStudent.class)
-//                        .select(ChildStudent::getAge)
-//                        .select(x -> x.count(ChildStudent::getAge, ChildStudent::getCountAge))
-//                        .gt(ChildStudent::getAge, 22)
-//                        .eq(ChildStudent::getArea, "aaa")
-//                        .like(ChildStudent::getAddress, "山东")
-//                        .or().ge(ChildStudent::getAge, 23)
-//                        .le(ChildStudent::getId, 10)
-//                        .or(x -> x.exists("select 1 from student stu2 where stu2.address is not null")
-//                                .or().eq(ChildStudent::getSex, false)
-//                                .or().like(ChildStudent::getAddress, "南")
-//                        )
-//                .groupBy(ChildStudent::getAge)
-////                        .orderByDesc(ChildStudent::getId)
-//                        .orderByAsc(x -> x.count(ChildStudent::getAge))
-//        );
-//        System.out.println("students = " + students);
-
-//        ConditionEntity<ChildStudent> query = Conditions.query(ChildStudent.class);
-//        query.eq("", "林涂").eq("pro.name", "湖南");
-//        List<ChildStudent> childStudents = customDao.selectList(ChildStudent.class, query);
-//        System.out.println("childStudents = " + childStudents);
-
-        int i = customDao.deleteBatchKeys(Aklis.class, Arrays.asList(100,101,102));
+        for (int i = 0; i < 5; i++) {
+            Aklis aklis = new Aklis();
+            aklis.setName("马回峰" + i);
+            aklis.setAddress("湖南长沙");
+            aklis.setAge(19);
+            aklis.setExplain("aaaa");
+            aklisList.add(aklis);
+        }
 
 
+        customDao.insertBatch(aklisList);
     }
 
 

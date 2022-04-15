@@ -21,6 +21,7 @@ public abstract class AbstractSqlBuilder<T> {
     private String table;
     private String alias;
     private T entity;
+    private List<T> entityList;
     private Class<T> entityClass;
     private DbKeyParserModel<T> keyParserModel;
     private List<DbFieldParserModel<T>> fieldParserModels;
@@ -65,6 +66,14 @@ public abstract class AbstractSqlBuilder<T> {
         if (!fieldParserModels.isEmpty()) {
             fieldParserModels.forEach(x -> x.setEntity(entity));
         }
+    }
+
+    public List<T> getEntityList() {
+        return entityList;
+    }
+
+    public void setEntityList(List<T> entityList) {
+        this.entityList = entityList;
     }
 
     public Class<T> getEntityClass() {

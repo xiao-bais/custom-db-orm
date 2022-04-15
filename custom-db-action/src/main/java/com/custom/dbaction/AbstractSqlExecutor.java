@@ -305,9 +305,8 @@ public abstract class AbstractSqlExecutor {
         TableSqlBuilder<T> tableModel = tableModelCache.clone();
         tableModel.setEntity(entityList.get(0));
         tableModel.setList(entityList);
-        tableModel.setSqlExecuteAction(sqlExecuteAction);
-        tableModel.setLogicFieldInfo(logicField, dbCustomStrategy.getDeleteLogicValue(), dbCustomStrategy.getNotDeleteLogicValue());
         tableModel.buildSqlConstructorModel(method);
+        tableModel.setLogicFieldInfo(logicField, dbCustomStrategy.getDeleteLogicValue(), dbCustomStrategy.getNotDeleteLogicValue());
         return (R) tableModel.getSqlBuilder();
     }
 

@@ -83,6 +83,12 @@ public class JudgeUtilsAx {
         if(Objects.isNull(val)) throw new NullPointerException();
     }
 
+    public static void checkObjNotNull(Object... vals) throws NullPointerException {
+        for (Object val : vals) {
+            if(Objects.isNull(val)) throw new NullPointerException();
+        }
+    }
+
     /**
     * 是否开启了逻辑删除字段
     */

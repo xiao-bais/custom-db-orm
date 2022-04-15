@@ -18,13 +18,6 @@ import java.util.StringJoiner;
  */
 public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
-    private final StringBuilder insertSql;
-    private List<T> entityList;
-
-    public HandleInsertSqlBuilder() {
-        this.insertSql = new StringBuilder();
-    }
-
 
     @Override
     public String buildSql() {
@@ -44,7 +37,7 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
      */
     private String getInsertSymbol() {
         StringJoiner insertSymbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1);
-        for (T currEntity : entityList) {
+        for (T currEntity : getEntityList()) {
             setEntity(currEntity);
             StringJoiner brackets = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1, SymbolConst.BRACKETS_LEFT, SymbolConst.BRACKETS_RIGHT);
             if (Objects.nonNull(getKeyParserModel())) {
@@ -57,9 +50,15 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
                         && Objects.isNull(fieldValue) ) {
                     fieldValue = FieldAutoFillHandleUtils.getFillValue(getEntityClass(), x.getFieldName());
                     x.setValue(fieldValue);
-                }else if(JudgeUtilsAx.isNotEmpty(getLogicColumn()) && TableInfoCache.isExistsLogic(getTable())  && x.getColumn().equals(getLogicColumn())) {
-                    fieldValue = ConvertUtil.transToObject(x.getType(), getLogicNotDeleteValue());
-                    x.setValue(fieldValue);
+                }else {
+                    try {
+                        if(checkLogicFieldIsExist() && x.getColumn().equals(getLogicColumn())) {
+                            fieldValue = ConvertUtil.transToObject(x.getType(), getLogicNotDeleteValue());
+                            x.setValue(fieldValue);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
                 this.getSqlParams().add(fieldValue);
                 brackets.add(SymbolConst.QUEST);
@@ -69,13 +68,4 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
         return insertSymbol.toString();
     }
 
-
-
-    public String getInsertSql() {
-        return insertSql.toString();
-    }
-
-    public void setEntityList(List<T> entityList) {
-        this.entityList = entityList;
-    }
 }

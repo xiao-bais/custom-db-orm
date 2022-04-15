@@ -174,7 +174,7 @@ public class CustomDao {
     /**
      * 插入多条记录(默认在实体中set新的主键)
      */
-    public <T> int insert(List<T> tList) throws Exception {
+    public <T> int insertBatch(List<T> tList) throws Exception {
         return jdbcAction.insert(tList, true);
     }
 
