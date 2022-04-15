@@ -17,6 +17,7 @@ import com.custom.sqlparser.HandleSelectSqlBuilder;
 import com.custom.sqlparser.TableInfoCache;
 import com.custom.sqlparser.TableSqlBuilder;
 import com.custom.wrapper.ConditionWrapper;
+import com.custom.wrapper.SFunction;
 import org.springframework.util.ObjectUtils;
 
 import java.io.Serializable;
@@ -56,6 +57,7 @@ public abstract class AbstractSqlExecutor {
 
     /*--------------------------------------- update ---------------------------------------*/
     public abstract <T> int updateByKey(T t, String... updateDbFields) throws Exception;
+//    public abstract <T> int updateByKey(T t, SFunction<T, ?>... updateFuncs) throws Exception;
     public abstract <T> int updateByCondition(T t, ConditionWrapper<T> wrapper) throws Exception;
 
     /*--------------------------------------- comm ---------------------------------------*/

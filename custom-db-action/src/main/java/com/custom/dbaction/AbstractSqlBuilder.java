@@ -1,10 +1,12 @@
 package com.custom.dbaction;
 
+import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.sqlparser.DbFieldParserModel;
 import com.custom.sqlparser.DbKeyParserModel;
 import com.custom.sqlparser.TableInfoCache;
+import com.custom.wrapper.ColumnParseHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +30,7 @@ public abstract class AbstractSqlBuilder<T> {
     private Map<String, String> fieldMapper;
     private Map<String, String> columnMapper;
     private SqlExecuteAction sqlExecuteAction;
+    private ColumnParseHandler<T> columnParseHandler;
     private String logicColumn;
     private Object logicDeleteValue;
     private Object logicNotDeleteValue;
@@ -82,6 +85,7 @@ public abstract class AbstractSqlBuilder<T> {
 
     public void setEntityClass(Class<T> entityClass) {
         this.entityClass = entityClass;
+        this.columnParseHandler = new ColumnParseHandler<>(entityClass);
     }
 
     public List<Object> getSqlParams() {
@@ -168,6 +172,10 @@ public abstract class AbstractSqlBuilder<T> {
         this.sqlExecuteAction = sqlExecuteAction;
     }
 
+    public ColumnParseHandler<T> getColumnParseHandler() {
+        return columnParseHandler;
+    }
+
     /**
      * 直接执行，属于内部执行
      */
@@ -182,6 +190,9 @@ public abstract class AbstractSqlBuilder<T> {
      * 由于部分表可能没有逻辑删除字段，所以在每一次执行时，都需检查该表有没有逻辑删除的字段，以保证sql正常执行
      */
     public boolean checkLogicFieldIsExist() throws Exception {
+        if(CustomUtil.isBlank(logicColumn)) {
+            return false;
+        }
         Boolean existsLogic = TableInfoCache.isExistsLogic(table);
         if (existsLogic != null) {
             return existsLogic;

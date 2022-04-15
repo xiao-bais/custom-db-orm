@@ -13,6 +13,7 @@ import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
 import com.custom.comm.page.DbPageRows;
 import com.custom.wrapper.ConditionWrapper;
+import com.custom.wrapper.SFunction;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;

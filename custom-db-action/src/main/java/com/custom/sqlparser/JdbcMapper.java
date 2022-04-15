@@ -13,6 +13,7 @@ import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.ExecuteMethod;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.wrapper.ConditionWrapper;
+import com.custom.wrapper.SFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -238,20 +239,21 @@ public class JdbcMapper extends AbstractSqlExecutor {
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
     public <T> int updateByKey(T t, String... updateDbFields) throws Exception {
-        TableSqlBuilder<T> tableSqlBuilder = getUpdateEntityModelCache(t);
-        tableSqlBuilder.buildUpdateSql(updateDbFields, getLogicDeleteQuerySql());
-        String updateSql = tableSqlBuilder.getUpdateSql().toString();
-        return executeSql(updateSql, tableSqlBuilder.getObjValues().toArray());
+        HandleUpdateSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.UPDATE);
+        if(updateDbFields.length > 0) {
+            sqlBuilder.setUpdateStrColumns(updateDbFields);
+        }
+        String updateSql = sqlBuilder.buildSql();
+        return executeSql(updateSql, sqlBuilder.getSqlParams().toArray());
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
     public <T> int updateByCondition(T t, ConditionWrapper<T> wrapper) throws Exception {
-        TableSqlBuilder<T> tableSqlBuilder = getUpdateEntityModelCache(t);
-        String condition = checkConditionAndLogicDeleteSql(tableSqlBuilder.getAlias(), wrapper.getFinalConditional(), getLogicDeleteQuerySql(), tableSqlBuilder.getTable());
-        tableSqlBuilder.buildUpdateWrapper(condition, wrapper.getParamValues());
-        String updateSql = tableSqlBuilder.getUpdateSql().toString();
-        return executeSql(updateSql, tableSqlBuilder.getObjValues().toArray());
+        HandleUpdateSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.UPDATE);
+        sqlBuilder.setConditionVals(wrapper.getParamValues());
+        String updateSql = sqlBuilder.buildSql();
+        return executeSql(updateSql, sqlBuilder.getSqlParams().toArray());
     }
 
     @Override
