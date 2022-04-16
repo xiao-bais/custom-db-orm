@@ -134,21 +134,13 @@ public abstract class AbstractSqlExecutor {
         }
         final String finalLogicSql = logicSql;
         LogicDeleteFieldSqlHandler handler = () -> {
-            String sql;
             if (JudgeUtilsAx.isNotEmpty(condition)) {
-                if (JudgeUtilsAx.isNotEmpty(finalLogicSql)) {
-                    sql = String.format("\nwhere %s.%s %s ", alias, finalLogicSql, condition.trim());
-                }else {
-                    sql = String.format("\nwhere %s ", CustomUtil.trimAppendSqlCondition(condition));
-                }
+                return JudgeUtilsAx.isNotEmpty(finalLogicSql) ? String.format("\nwhere %s.%s %s ", alias, finalLogicSql, condition.trim())
+                        : String.format("\nwhere %s ", CustomUtil.trimAppendSqlCondition(condition));
             } else {
-                if (JudgeUtilsAx.isNotEmpty(finalLogicSql)) {
-                    sql = String.format("\nwhere %s.%s ", alias, finalLogicSql);
-                }else {
-                    sql = condition == null ? SymbolConst.EMPTY : condition.trim();
-                }
+                return JudgeUtilsAx.isNotEmpty(finalLogicSql) ? String.format("\nwhere %s.%s ", alias, finalLogicSql)
+                        : condition == null ? SymbolConst.EMPTY : condition.trim();
             }
-            return sql;
         };
         return handler.handleLogic();
     }
