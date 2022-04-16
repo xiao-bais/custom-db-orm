@@ -12,6 +12,7 @@ import com.custom.dbconfig.DbDataSource;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.ExecuteMethod;
 import com.custom.exceptions.CustomCheckException;
+import com.custom.exceptions.ExCustomThrows;
 import com.custom.wrapper.ConditionWrapper;
 import com.custom.wrapper.SFunction;
 import org.slf4j.Logger;
@@ -147,7 +148,7 @@ public class JdbcMapper extends AbstractSqlExecutor {
     @Override
     public <T> T selectOneByCondition(ConditionWrapper<T> wrapper) throws Exception {
         if(Objects.isNull(wrapper)) {
-            throw new CustomCheckException("condition cannot be empty");
+            ExCustomThrows.goCustom("condition cannot be empty");
         }
         String selectSql = getFullSelectSql(wrapper.getCls(), null, wrapper);
         return selectOneBySql(wrapper.getCls(), selectSql, wrapper.getParamValues().toArray());
@@ -251,6 +252,7 @@ public class JdbcMapper extends AbstractSqlExecutor {
     @CheckExecute(target = ExecuteMethod.UPDATE)
     public <T> int updateByCondition(T t, ConditionWrapper<T> wrapper) throws Exception {
         HandleUpdateSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.UPDATE);
+        sqlBuilder.setCondition(wrapper.getFinalConditional());
         sqlBuilder.setConditionVals(wrapper.getParamValues());
         String updateSql = sqlBuilder.buildSql();
         return executeSql(updateSql, sqlBuilder.getSqlParams().toArray());

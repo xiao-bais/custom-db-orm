@@ -1,5 +1,6 @@
 package com.custom.fieldfill;
 
+import com.custom.comm.RexUtil;
 import com.custom.dbconfig.CustomApplicationUtils;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.sqlparser.TableSqlBuilder;
@@ -27,6 +28,9 @@ public class FieldAutoFillHandleUtils {
      * @return 需要填充的指定值
      */
     public static <T> Object getFillValue(Class<T> t, String proName) {
+        if(RexUtil.hasRegex(proName, RexUtil.back_quotes)) {
+            proName = RexUtil.regexStr(proName, RexUtil.back_quotes);
+        }
         AutoFillColumnHandler columnHandler = CustomApplicationUtils.getBean(AutoFillColumnHandler.class);
         if(ObjectUtils.isEmpty(columnHandler)) {
             return null;

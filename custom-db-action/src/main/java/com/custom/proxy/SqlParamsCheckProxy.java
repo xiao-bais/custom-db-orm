@@ -132,7 +132,7 @@ public class SqlParamsCheckProxy<T> implements MethodInterceptor {
                 throw new CustomCheckException("update condition cannot be empty");
             }
             if (JudgeUtilsAx.isNotEmpty(objects[1])) {
-                ConditionEntity<Object> conditionEntity = (ConditionEntity<Object>) objects[1];
+                ConditionWrapper<T> conditionEntity = (ConditionWrapper<T>) objects[1];
                 if(JudgeUtilsAx.isEmpty(conditionEntity.getFinalConditional())) {
                     throw new CustomCheckException("update condition cannot be empty");
                 }

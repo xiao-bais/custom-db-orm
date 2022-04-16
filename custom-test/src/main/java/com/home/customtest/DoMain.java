@@ -68,15 +68,14 @@ public class DoMain {
 
 //        int i = customDao.deleteByCondition(Conditions.lambdaQuery(Aklis.class).eq(Aklis::getExplain, "张三"));
 
-            Aklis aklis = new Aklis();
-            aklis.setName("马回峰");
-            aklis.setAddress("湖南长沙");
-            aklis.setAge(23);
-            aklis.setExplain("aaaa");
+        Aklis aklis = new Aklis();
+        aklis.setId(239);
+        aklis.setName("马回峰");
+        aklis.setAddress("湖南长沙");
+        aklis.setAge(23);
+        aklis.setExplain("aaaa");
 
-//            customDao.selectCount(new LambdaConditionEntity<>(Aklis.class).)
-
-        customDao.updateByKey(aklis);
+        customDao.updateByCondition(aklis, Conditions.lambdaQuery(Aklis.class).isNotNull(Aklis::getExplain).like(Aklis::getName, "马回峰"));
     }
 
 

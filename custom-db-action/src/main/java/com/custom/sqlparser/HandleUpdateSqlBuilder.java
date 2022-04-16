@@ -1,12 +1,14 @@
 package com.custom.sqlparser;
 
+import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbaction.AbstractSqlBuilder;
 import com.custom.dbconfig.SymbolConst;
+import com.custom.exceptions.ExCustomThrows;
 import com.custom.fieldfill.FieldAutoFillHandleUtils;
-import com.custom.wrapper.ColumnParseHandler;
 import com.custom.wrapper.SFunction;
-import com.custom.wrapper.SelectFunc;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Objects;
@@ -19,6 +21,8 @@ import java.util.StringJoiner;
  * @desc:构建修改sql
  */
 public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
+
+    private static final Logger logger = LoggerFactory.getLogger(HandleUpdateSqlBuilder.class);
 
     private final StringBuilder updateSql;
     private final StringJoiner updateSqlColumns;
@@ -38,29 +42,80 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
      */
     @Override
     public String buildSql() {
-
-        getUpdateSqlField();
+        // 修改字段构建
+        updateSqlField();
+        String conditions;
+        if (JudgeUtilsAx.isEmpty(condition)) {
+            conditions = updateKeyCondition();
+        }else {
+            conditions = updateCustomCondition();
+        }
+        updateSql.append(SymbolConst.UPDATE)
+                .append(getTable()).append(" ")
+                .append(getAlias())
+                .append(SymbolConst.SET)
+                .append(updateSqlColumns)
+                .append(SymbolConst.WHERE)
+                .append(conditions);
 
         return updateSql.toString();
     }
 
     /**
-     * 获取修改的逻辑删除字段sql
+     * 获取修改的逻辑删除字段sql（以主键做条件去修改）
      */
-    private String getLogicUpdateSql(String key) {
-        return JudgeUtilsAx.isNotBlank(getLogicDeleteQuerySql()) ? String.format("%s and %s = ?", getLogicDeleteQuerySql(), key) : String.format("%s = ?", key);
+    private String updateKeyCondition() {
+        String keySqlField = getKeyParserModel().getFieldSql();
+        String condition = null;
+        try {
+            condition = checkLogicFieldIsExist() ? String.format("%s and %s = ?", getLogicDeleteQuerySql(), keySqlField) : String.format("%s = ?", keySqlField);
+            Object keyVal = getKeyParserModel().getValue();
+            if (Objects.isNull(keyVal)) {
+                ExCustomThrows.goNull("主键的值缺失");
+            }
+            getSqlParams().add(keyVal);
+        } catch (Exception e) {
+            ExCustomThrows.goCustom(e.toString());
+        }
+        return condition;
+    }
+
+    /**
+     * 自定义修改的条件
+     */
+    private String updateCustomCondition() {
+        String condition = null;
+        try {
+            condition = checkLogicFieldIsExist() ?  getLogicDeleteQuerySql() + this.condition : CustomUtil.trimSqlCondition(this.condition);
+            getSqlParams().addAll(this.conditionVals);
+        } catch (Exception e) {
+            ExCustomThrows.goCustom(e.toString());
+        }
+        return condition;
     }
 
 
-    private void getUpdateSqlField() {
-        if (Objects.nonNull(updateFuncColumns) && updateFuncColumns.length > 0) {
+
+
+    /**
+     * 修改字段构建（set之后 where之前）
+     */
+    private void updateSqlField() {
+        if (Objects.nonNull(updateFuncColumns)) {
             buildFixedFieldSql(true);
-        } else if(Objects.nonNull(updateStrColumns) && updateStrColumns.length > 0) {
+        } else if(Objects.nonNull(updateStrColumns)) {
             buildFixedFieldSql(false);
         } else {
             getFieldParserModels().forEach(x -> {
                 Object value = x.getValue();
-                if (Objects.nonNull(value)) {
+                if (Objects.isNull(value)) {
+                    // 修改时的自动填充，只有在填充字段为null的前提下，才进行填充
+                    Object fillValue = FieldAutoFillHandleUtils.getFillValue(getEntityClass(), x.getFieldName());
+                    if (Objects.nonNull(fillValue)) {
+                        value = fillValue;
+                    }
+                }
+                if(Objects.nonNull(value)) {
                     updateSqlColumns.add(String.format("%s = ?", x.getFieldSql()));
                     getSqlParams().add(value);
                 }
@@ -80,14 +135,6 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
                 getSqlParams().add(op.getValue());
             });
         }
-    }
-
-    /**
-     * 构建自动填充策略的修改sql字段
-     */
-    private void buildAutoFillSqlColumn() {
-//        FieldAutoFillHandleUtils.getFillValue()
-
     }
 
     protected void setCondition(String condition) {
