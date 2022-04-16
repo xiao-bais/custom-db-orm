@@ -117,7 +117,7 @@ public abstract class SqlFunc<T, Child> {
                 template = distinct ? "%s(distinct %s) %s" : "%s(%s) %s";
                 break;
             case IFNULL:
-                template = "%s(%s, %s) %s";
+                template = "%s(%s,%s) %s";
                 break;
         }
         return template;

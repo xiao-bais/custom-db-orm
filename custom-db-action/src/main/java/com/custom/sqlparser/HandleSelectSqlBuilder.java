@@ -2,7 +2,9 @@ package com.custom.sqlparser;
 
 import com.custom.annotations.DbJoinTables;
 import com.custom.comm.CustomUtil;
+import com.custom.comm.GlobalDataHandler;
 import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.RexUtil;
 import com.custom.dbaction.AbstractSqlBuilder;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.sqlparser.DbFieldParserModel;
@@ -161,8 +163,12 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
     public String selectColumns(String[] columns) {
         StringJoiner columnStr = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
         for (String x : columns) {
-            String field = getColumnMapper().get(x);
-            columnStr.add(field == null ? x : String.format("%s %s", x, field));
+            String column = GlobalDataHandler.hasSqlKeyword(x) ? String.format("`%s`", x) : x;
+            if(Objects.nonNull(column) && !column.contains(SymbolConst.POINT)) {
+                column = getAlias() + SymbolConst.POINT + column;
+            }
+            String field = getColumnMapper().get(column);
+            columnStr.add(field == null ? column : String.format("%s %s", column, field));
         }
         String selectSql = buildSql();
         selectSql = String.format("select %s\n %s", columnStr, selectSql.substring(selectSql.indexOf("from")));

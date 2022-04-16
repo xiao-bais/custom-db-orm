@@ -148,13 +148,13 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
                 return query(typeArgument, sql, params);
 
             } else if (type.equals(Map.class)) {
-                return selectOneSql(Map.class, sql, params);
+                return selectObjSql(Map.class, sql, params);
 
             } else if (type.equals(Set.class)) {
                 return querySet(typeArgument, sql, params);
             }
         } else if (CustomUtil.isBasicType(returnType)) {
-            return selectOneSql(sql, params);
+            return selectObjSql(sql, params);
 
         } else if (((Class<?>) returnType).isArray()) {
             Class<?> type = ((Class<?>) returnType).getComponentType();

@@ -112,6 +112,9 @@ public class SelectFunc<T> extends SqlFunc<T, SelectFunc<T>> {
     public final SelectFunc<T> ifNull(SFunction<T, ?> func, Object elseVal) {
         String column = getColumnParseHandler().getColumn(func);
         String field = getColumnMapper().get(column);
+        if (elseVal instanceof CharSequence) {
+            elseVal = new StringBuilder().append(SymbolConst.SINGLE_QUOTES).append(elseVal).append(SymbolConst.SINGLE_QUOTES);
+        }
         return doFunc(formatRex(SqlAggregate.IFNULL,null), SqlAggregate.IFNULL, column, elseVal, field);
     }
 

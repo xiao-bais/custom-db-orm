@@ -124,10 +124,10 @@ public class JdbcMapper extends AbstractSqlExecutor {
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> DbPageRows<T> selectPageRows(Class<T> t, ConditionWrapper<T> wrapper) throws Exception {
         if(Objects.isNull(wrapper)) {
-            throw new NullPointerException("缺少分页参数");
+            ExCustomThrows.goNull("缺少分页参数");
         }
         if(!wrapper.isHasPageParams()) {
-            throw new CustomCheckException("缺少分页参数：pageIndex：" + wrapper.getPageIndex() + ", pageSize：" + wrapper.getPageSize());
+            ExCustomThrows.goCustom("缺少分页参数：pageIndex：" + wrapper.getPageIndex() + ", pageSize：" + wrapper.getPageSize());
         }
         DbPageRows<T> dbPageRows = new DbPageRows<>(wrapper.getPageIndex(), wrapper.getPageSize());
         String selectSql = getFullSelectSql(t, dbPageRows, wrapper);
@@ -158,6 +158,18 @@ public class JdbcMapper extends AbstractSqlExecutor {
     public <T> long selectCount(ConditionWrapper<T> wrapper) throws Exception {
         String selectSql = getFullSelectSql(wrapper.getCls(), null, wrapper);
         return (long) selectObjBySql(String.format("select count(0) from (%s) xxx ", selectSql), wrapper.getParamValues().toArray());
+    }
+
+    @Override
+    public <T> Object selectObj(ConditionWrapper<T> wrapper) throws Exception {
+        String selectSql = getFullSelectSql(wrapper.getCls(), null, wrapper);
+        return selectObjBySql(selectSql, wrapper.getParamValues().toArray());
+    }
+
+    @Override
+    public <T> List<Object> selectObjs(ConditionWrapper<T> wrapper) throws Exception {
+        String selectSql = getFullSelectSql(wrapper.getCls(), null, wrapper);
+        return selectObjsBySql(selectSql, wrapper.getParamValues().toArray());
     }
 
 

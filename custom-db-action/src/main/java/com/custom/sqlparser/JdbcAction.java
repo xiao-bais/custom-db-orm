@@ -158,6 +158,16 @@ public class JdbcAction extends AbstractSqlExecutor {
         return (long) selectObjBySql(String.format("select count(0) from (%s) xxx ", selectSql), wrapper.getParamValues().toArray());
     }
 
+    @Override
+    public <T> Object selectObj(ConditionWrapper<T> wrapper) throws Exception {
+        return null;
+    }
+
+    @Override
+    public <T> List<Object> selectObjs(ConditionWrapper<T> wrapper) throws Exception {
+        return null;
+    }
+
 
     @Override
     @CheckExecute(target = ExecuteMethod.DELETE)

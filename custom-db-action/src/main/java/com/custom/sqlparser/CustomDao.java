@@ -6,6 +6,7 @@ import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.proxy.SqlParamsCheckProxy;
 import com.custom.wrapper.ConditionWrapper;
+import com.custom.wrapper.SFunction;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -130,6 +131,19 @@ public class CustomDao {
      */
     public <T> long selectCount(ConditionWrapper<T> wrapper) throws Exception {
         return jdbcAction.selectCount(wrapper);
+    }
+
+    /**
+     * 条件构造器查询单个字段值（若有多个值满足条件，默认返回第一条记录的第一个值）
+     */
+    public <T> Object selectObj(ConditionWrapper<T> wrapper) throws Exception {
+        return jdbcAction.selectObj(wrapper);
+    }
+    /**
+     * 条件构造器查询单个值（若有多条记录满足条件，默认返回所有记录的第一个字段）
+     */
+    public <T> List<Object> selectObjs(ConditionWrapper<T> wrapper) throws Exception {
+        return jdbcAction.selectObjs(wrapper);
     }
 
     /* ----------------------------------------------------------------delete---------------------------------------------------------------- */

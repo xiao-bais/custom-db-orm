@@ -17,7 +17,6 @@ import com.custom.sqlparser.HandleSelectSqlBuilder;
 import com.custom.sqlparser.TableInfoCache;
 import com.custom.sqlparser.TableSqlBuilder;
 import com.custom.wrapper.ConditionWrapper;
-import com.custom.wrapper.SFunction;
 import org.springframework.util.ObjectUtils;
 
 import java.io.Serializable;
@@ -43,6 +42,8 @@ public abstract class AbstractSqlExecutor {
     public abstract <T> List<T> selectList(Class<T> t, ConditionWrapper<T> wrapper) throws Exception;
     public abstract <T> T selectOneByCondition(ConditionWrapper<T> wrapper) throws Exception;
     public abstract <T> long selectCount(ConditionWrapper<T> wrapper) throws Exception;
+    public abstract <T> Object selectObj(ConditionWrapper<T> wrapper) throws Exception;
+    public abstract <T> List<Object> selectObjs(ConditionWrapper<T> wrapper) throws Exception;
 
 
     /*--------------------------------------- delete ---------------------------------------*/
@@ -195,13 +196,23 @@ public abstract class AbstractSqlExecutor {
     }
 
     /**
-    * 纯sql查询当个字段
+    * 纯sql查询单个字段
     */
     public Object selectObjBySql(String sql, Object... params) throws Exception {
         if (JudgeUtilsAx.isEmpty(sql)) {
             throw new CustomCheckException(ExceptionConst.EX_SQL_NOT_EMPTY);
         }
-        return sqlExecuteAction.selectOneSql(sql, params);
+        return sqlExecuteAction.selectObjSql(sql, params);
+    }
+
+    /**
+     * 纯sql查询单个字段集合
+     */
+    public List<Object> selectObjsBySql(String sql, Object... params) throws Exception {
+        if (JudgeUtilsAx.isEmpty(sql)) {
+            throw new CustomCheckException(ExceptionConst.EX_SQL_NOT_EMPTY);
+        }
+        return sqlExecuteAction.selectObjsSql(sql, params);
     }
 
     /**

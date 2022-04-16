@@ -13,7 +13,6 @@ import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
 import com.custom.comm.page.DbPageRows;
 import com.custom.wrapper.ConditionWrapper;
-import com.custom.wrapper.SFunction;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -75,7 +74,7 @@ public class BuildSqlHandler extends AbstractSqlExecutor {
         String countSql = String.format("select count(0) from (%s) xxx ", selectSql);
 
         List<T> dataList = new ArrayList<>();
-        long count = (long) sqlExecuteAction.selectOneSql(countSql, params);
+        long count = (long) sqlExecuteAction.selectObjSql(countSql, params);
         if (count > 0) {
             selectSql = String.format("%s \nlimit %s, %s", selectSql, (pageIndex - 1) * pageSize, pageSize);
             dataList = sqlExecuteAction.query(t, selectSql, params);
@@ -107,7 +106,7 @@ public class BuildSqlHandler extends AbstractSqlExecutor {
     public <T> T selectOneByKey(Class<T> t, Object key) throws Exception {
         String alias = dbParserFieldHandler.getDbTableAlias(t);
         String selectSql = String.format("%s \nwhere %s.`%s` = ?", dbParserFieldHandler.getSelectSql(t), alias, dbParserFieldHandler.getDbFieldKey(t));
-        return sqlExecuteAction.selectOneSql(t, selectSql, key);
+        return sqlExecuteAction.selectObjSql(t, selectSql, key);
     }
 
     /**
@@ -153,6 +152,16 @@ public class BuildSqlHandler extends AbstractSqlExecutor {
 
     @Override
     public <T> long selectCount(ConditionWrapper<T> wrapper) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <T> Object selectObj(ConditionWrapper<T> wrapper) throws Exception {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <T> List<Object> selectObjs(ConditionWrapper<T> wrapper) throws Exception {
         throw new UnsupportedOperationException();
     }
 

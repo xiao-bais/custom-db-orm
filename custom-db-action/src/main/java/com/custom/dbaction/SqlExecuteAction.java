@@ -181,7 +181,7 @@ public class SqlExecuteAction extends DbConnection {
     /**
      * 查询单个值SQL
      */
-    public Object selectOneSql(String sql, Object... params) throws Exception {
+    public Object selectObjSql(String sql, Object... params) throws Exception {
         Object result = null;
         try {
             statementQuery(sql, true, params);
@@ -197,10 +197,28 @@ public class SqlExecuteAction extends DbConnection {
     }
 
     /**
+     * 查询单个值SQL
+     */
+    public List<Object> selectObjsSql(String sql, Object... params) throws Exception {
+        List<Object> result = new ArrayList<>();
+        try {
+            statementQuery(sql, true, params);
+            resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                result.add(resultSet.getObject(SymbolConst.DEFAULT_ONE));
+            }
+        } catch (SQLException e) {
+            SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
+            throw e;
+        }
+        return result;
+    }
+
+    /**
      * 通用查询单个对象sql
      */
     @SuppressWarnings("unchecked")
-    public <T> T selectOneSql(Class<T> t, String sql, Object... params) throws Exception {
+    public <T> T selectObjSql(Class<T> t, String sql, Object... params) throws Exception {
         Map<String, Object> map = new HashMap<>();
         try {
             statementQuery(sql, true, params);

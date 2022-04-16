@@ -75,9 +75,10 @@ public class DoMain {
         aklis.setAge(23);
         aklis.setExplain("aaaa");
 
-        // selectObj selectListObjs
-        ChildStudent childStudent = customDao.selectOne(Conditions.query(ChildStudent.class).eq("name", "李雨"));
-        System.out.println("childStudent = " + childStudent);
+        List<Object> objects = customDao.selectObjs(Conditions.lambdaQuery(Aklis.class).like(Aklis::getName, "李")
+                .select(x -> x.ifNull(Aklis::getExplain, "未知"))
+        );
+        System.out.println("objects = " + objects);
 
 //        customDao.updateByCondition(aklis, Conditions.lambdaQuery(Aklis.class).isNotNull(Aklis::getExplain).like(Aklis::getName, "马回峰"));
     }
