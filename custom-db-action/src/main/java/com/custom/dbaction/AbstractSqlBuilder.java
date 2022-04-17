@@ -89,11 +89,16 @@ public abstract class AbstractSqlBuilder<T> {
     }
 
     public List<Object> getSqlParams() {
+        if (Objects.isNull(sqlParams)) {
+            sqlParams = new ArrayList<>();
+        }
         return sqlParams;
     }
 
     public void setSqlParams(List<Object> sqlParams) {
-        this.sqlParams = sqlParams;
+        if (Objects.nonNull(sqlParams)) {
+            this.sqlParams = sqlParams;
+        }
     }
 
     public DbKeyParserModel<T> getKeyParserModel() {
@@ -141,7 +146,7 @@ public abstract class AbstractSqlBuilder<T> {
     }
 
     public void setLogicDeleteValue(Object logicDeleteValue) {
-        if(logicDeleteValue instanceof CharSequence) {
+        if (logicDeleteValue instanceof CharSequence) {
             logicDeleteValue = String.format("'%s'", logicDeleteValue);
         }
         this.logicDeleteValue = logicDeleteValue;
@@ -153,7 +158,7 @@ public abstract class AbstractSqlBuilder<T> {
     }
 
     public void setLogicNotDeleteValue(Object logicNotDeleteValue) {
-        if(logicNotDeleteValue instanceof CharSequence) {
+        if (logicNotDeleteValue instanceof CharSequence) {
             logicNotDeleteValue = String.format("'%s'", logicNotDeleteValue);
         }
         this.logicNotDeleteValue = logicNotDeleteValue;
@@ -190,7 +195,7 @@ public abstract class AbstractSqlBuilder<T> {
      * 由于部分表可能没有逻辑删除字段，所以在每一次执行时，都需检查该表有没有逻辑删除的字段，以保证sql正常执行
      */
     public boolean checkLogicFieldIsExist() throws Exception {
-        if(CustomUtil.isBlank(logicColumn)) {
+        if (CustomUtil.isBlank(logicColumn)) {
             return false;
         }
         Boolean existsLogic = TableInfoCache.isExistsLogic(table);

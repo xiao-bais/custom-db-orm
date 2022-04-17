@@ -1,12 +1,12 @@
 package com.custom.sqlparser;
 
+import com.custom.comm.JudgeUtilsAx;
 import com.custom.comm.page.DbPageRows;
 import com.custom.dbaction.AbstractSqlExecutor;
 import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.proxy.SqlParamsCheckProxy;
 import com.custom.wrapper.ConditionWrapper;
-import com.custom.wrapper.SFunction;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -14,10 +14,10 @@ import java.util.List;
 
 /**
  * @author Xiao-Bai
- * @date 2021/12/10 21:20
- * @desc: 自定义jdbc通用操作类
+ * @date 2022/4/17 21:31
+ * @desc:
  */
-public class CustomDao {
+public class JdbcDao {
 
     /* ----------------------------------------------------------------select---------------------------------------------------------------- */
 
@@ -26,13 +26,6 @@ public class CustomDao {
      */
     public <T> List<T> selectList(Class<T> t, String condition, Object... params) throws Exception {
         return jdbcAction.selectList(t, condition, null, params);
-    }
-
-    /**
-     * 根据条件查询多条记录并排序：例（orderBy: id desc）
-     */
-    public <T> List<T> selectList(Class<T> t, String condition, String orderBy, Object... params) throws Exception {
-        return jdbcAction.selectList(t, condition, orderBy, params);
     }
 
     /**
@@ -57,24 +50,10 @@ public class CustomDao {
     }
 
     /**
-     * 根据条件进行分页查询并排序: 例（and a.name = ? orderBy: id desc）
-     */
-    public <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, int pageIndex, int pageSize, String orderBy, Object... params) throws Exception {
-        return jdbcAction.selectPageRows(t, condition, orderBy, pageIndex, pageSize, params);
-    }
-
-    /**
      * 根据条件进行分页查询: 例（and a.name = ?）
      */
     public <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, DbPageRows<T> dbPageRows, Object... params) throws Exception {
         return jdbcAction.selectPageRows(t, condition, null, dbPageRows, params);
-    }
-
-    /**
-     * 根据条件进行分页查询并排序: 例（and a.name = ? orderBy: id desc）
-     */
-    public <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, DbPageRows<T> dbPageRows, String orderBy, Object... params) throws Exception {
-        return jdbcAction.selectPageRows(t, condition, orderBy, dbPageRows, params);
     }
 
     /**
@@ -108,21 +87,24 @@ public class CustomDao {
     /**
      * 条件构造器查询-分页查询
      */
-    public <T> DbPageRows<T> selectPageRows(Class<T> t, ConditionWrapper<T> wrapper) throws Exception {
-        return jdbcAction.selectPageRows(t, wrapper);
+    public <T> DbPageRows<T> selectPageRows(ConditionWrapper<T> wrapper) throws Exception {
+        JudgeUtilsAx.checkObjNotNull(wrapper);
+        return jdbcAction.selectPageRows(wrapper.getEntityClass(), wrapper);
     }
 
     /**
      * 条件构造器查询-查询多个
      */
-    public <T> List<T> selectList(Class<T> t, ConditionWrapper<T> wrapper) throws Exception {
-        return jdbcAction.selectList(t, wrapper);
+    public <T> List<T> selectList(ConditionWrapper<T> wrapper) throws Exception {
+        JudgeUtilsAx.checkObjNotNull(wrapper);
+        return jdbcAction.selectList(wrapper.getEntityClass(), wrapper);
     }
 
     /**
      * 条件构造器查询-查询单个对象
      */
     public <T> T selectOne(ConditionWrapper<T> wrapper) throws Exception {
+        JudgeUtilsAx.checkObjNotNull(wrapper);
         return jdbcAction.selectOneByCondition(wrapper);
     }
 
@@ -130,6 +112,7 @@ public class CustomDao {
      * 条件构造器查询-查询数量
      */
     public <T> long selectCount(ConditionWrapper<T> wrapper) throws Exception {
+        JudgeUtilsAx.checkObjNotNull(wrapper);
         return jdbcAction.selectCount(wrapper);
     }
 
@@ -137,12 +120,14 @@ public class CustomDao {
      * 条件构造器查询单个字段值（若有多个值满足条件，默认返回第一条记录的第一个值）
      */
     public <T> Object selectObj(ConditionWrapper<T> wrapper) throws Exception {
+        JudgeUtilsAx.checkObjNotNull(wrapper);
         return jdbcAction.selectObj(wrapper);
     }
     /**
      * 条件构造器查询单个值（若有多条记录满足条件，默认返回所有记录的第一个字段）
      */
     public <T> List<Object> selectObjs(ConditionWrapper<T> wrapper) throws Exception {
+        JudgeUtilsAx.checkObjNotNull(wrapper);
         return jdbcAction.selectObjs(wrapper);
     }
 
@@ -173,6 +158,7 @@ public class CustomDao {
      * 根据条件删除记录
      */
     public <T> int deleteByCondition(ConditionWrapper<T> wrapper) throws Exception {
+        JudgeUtilsAx.checkObjNotNull(wrapper);
         return jdbcAction.deleteByCondition(wrapper);
     }
 
@@ -247,8 +233,7 @@ public class CustomDao {
 
     private final AbstractSqlExecutor jdbcAction;
 
-    public CustomDao(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
-        jdbcAction = new SqlParamsCheckProxy<>(new JdbcMapper(), dbDataSource, dbCustomStrategy).createProxy();
+    public JdbcDao(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
+        jdbcAction = new SqlParamsCheckProxy<>(new JdbcAction(), dbDataSource, dbCustomStrategy).createProxy();
     }
-    
 }

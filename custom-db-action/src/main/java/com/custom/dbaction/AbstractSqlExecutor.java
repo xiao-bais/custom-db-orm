@@ -89,28 +89,6 @@ public abstract class AbstractSqlExecutor {
         }
     }
 
-    /**
-     * 获取根据主键删除的sql
-     */
-    public String getLogicDeleteKeySql(String key, String dbKey, String table, String alias, boolean isMore) throws Exception {
-        String sql;
-        String keySql  = String.format("%s.%s%s%s", alias,
-                dbKey, isMore ? SymbolConst.IN : SymbolConst.EQUALS, key);
-
-        if (JudgeUtilsAx.isNotEmpty(logicDeleteUpdateSql)) {
-            String logicDeleteQuerySql = String.format("%s.%s", alias, this.logicDeleteQuerySql);
-            String logicDeleteUpdateSql = String.format("%s.%s", alias, this.logicDeleteUpdateSql);
-            if(checkLogicFieldIsExist(table)) {
-                sql = String.format("update %s %s set %s where %s and %s", table,
-                        alias, logicDeleteUpdateSql, logicDeleteQuerySql, keySql);
-            }else {
-                sql = String.format("delete from %s %s where %s", table, alias, keySql);
-            }
-        }else {
-            sql = String.format("delete from %s %s where %s", table, alias, keySql);
-        }
-        return sql;
-    }
 
 
     /**
@@ -144,33 +122,6 @@ public abstract class AbstractSqlExecutor {
             }
         };
         return handler.handleLogic();
-    }
-
-    /**
-     * 在删除数据时，若是有逻辑删除，则在逻辑删除后，进行固定字段的自动填充
-     */
-    public <T> void handleLogicDelAfter(Class<?> t, String deleteSql, TableSqlBuilder<T> tableSqlBuilder, Object... params) throws Exception {
-        AutoFillColumnHandler fillColumnHandler = CustomApplicationUtils.getBean(AutoFillColumnHandler.class);
-        if(Objects.isNull(fillColumnHandler)) {
-            return;
-        }
-        Optional<TableFillObject> first = fillColumnHandler.fillStrategy().stream().filter(x -> x.getEntityClass().equals(t)).findFirst();
-        first.ifPresent(op -> {
-            String autoUpdateWhereSqlCondition = deleteSql.substring(deleteSql.indexOf(SymbolConst.WHERE)).replace(getLogicDeleteQuerySql(), getLogicDeleteUpdateSql());
-            FillStrategy strategy = op.getStrategy();
-            if(strategy.equals(FillStrategy.DEFAULT)) {
-                return;
-            }
-            String autoUpdateSql = tableSqlBuilder.buildLogicDelAfterAutoUpdateSql(strategy, autoUpdateWhereSqlCondition, params);
-            if(!ObjectUtils.isEmpty(autoUpdateSql)) {
-                try {
-                    executeUpdateNotPrintSql(autoUpdateSql);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
     }
 
 
@@ -267,13 +218,6 @@ public abstract class AbstractSqlExecutor {
         TableSqlBuilder<T> tableModel = TableInfoCache.getTableModel(t);
         tableModel.setSqlExecuteAction(sqlExecuteAction);
         return tableModel;
-    }
-
-    /**
-     * 从缓存中获取实体解析模板，若缓存中没有，就重新构造模板（增改记录）
-     */
-    protected <T> TableSqlBuilder<T> getUpdateEntityModelCache(T t) {
-        return getUpdateEntityModelCache(Collections.singletonList(t));
     }
 
     /**

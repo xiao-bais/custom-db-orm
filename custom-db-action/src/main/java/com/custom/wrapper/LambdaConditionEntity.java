@@ -54,7 +54,7 @@ public class LambdaConditionEntity<T> extends ConditionAssembly<T, SFunction<T, 
 
     @Override
     protected LambdaConditionEntity<T> getInstance() {
-        return new LambdaConditionEntity<>(getCls());
+        return new LambdaConditionEntity<>(getEntityClass());
     }
 
     @Override
@@ -222,7 +222,7 @@ public class LambdaConditionEntity<T> extends ConditionAssembly<T, SFunction<T, 
     private final ColumnParseHandler<T> columnParseHandler;
 
     public LambdaConditionEntity(Class<T> entityClass) {
-        setCls(entityClass);
+        setEntityClass(entityClass);
         TableSqlBuilder<T> tableSqlBuilder = getTableParserModelCache(entityClass);
         setTableSqlBuilder(tableSqlBuilder);
         columnParseHandler = new ColumnParseHandler<>(entityClass);
@@ -248,7 +248,7 @@ public class LambdaConditionEntity<T> extends ConditionAssembly<T, SFunction<T, 
      * sql查询函数执行方法
      */
     private LambdaConditionEntity<T> doSelectSqlFunc(Consumer<SelectFunc<T>> consumer) {
-        SelectFunc<T> sqlFunc = new SelectFunc<>(getCls());
+        SelectFunc<T> sqlFunc = new SelectFunc<>(getEntityClass());
         consumer.accept(sqlFunc);
         mergeSelect(sqlFunc.getColumns().split(SymbolConst.SEPARATOR_COMMA_2));
         return childrenClass;
@@ -258,7 +258,7 @@ public class LambdaConditionEntity<T> extends ConditionAssembly<T, SFunction<T, 
      * sql排序函数执行方法
      */
     private LambdaConditionEntity<T> doOrderBySqlFunc(String orderByStyle, Consumer<OrderByFunc<T>> consumer) {
-        OrderByFunc<T> sqlFunc = new OrderByFunc<>(getCls(), orderByStyle);
+        OrderByFunc<T> sqlFunc = new OrderByFunc<>(getEntityClass(), orderByStyle);
         consumer.accept(sqlFunc);
         return adapter(DbSymbol.ORDER_BY, true, sqlFunc.getColumns());
     }

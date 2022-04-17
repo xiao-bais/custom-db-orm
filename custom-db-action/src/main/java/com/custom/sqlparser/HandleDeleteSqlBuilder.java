@@ -7,14 +7,16 @@ import com.custom.dbconfig.CustomApplicationUtils;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.FillStrategy;
 import com.custom.exceptions.CustomCheckException;
+import com.custom.exceptions.ExThrowsUtil;
 import com.custom.fieldfill.AutoFillColumnHandler;
 import com.custom.fieldfill.TableFillObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.ObjectUtils;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.StringJoiner;
+import java.io.Serializable;
+import java.util.*;
+import java.util.stream.IntStream;
 
 /**
  * @author Xiao-Bai
@@ -23,17 +25,70 @@ import java.util.StringJoiner;
  */
 public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
+    private static final Logger logger = LoggerFactory.getLogger(HandleDeleteSqlBuilder.class);
+
+    private Object key;
+    private Collection<? extends Serializable> keys;
+    private String deleteCondition;
+
     @Override
     public String buildSql() {
-        String deleteSql = String.format(" delete from %s %s where ", getTable(), getAlias());
+        String deleteSql = String.format(" delete from %s %s where %s", getTable(), getAlias(), deleteCondition);
         try {
-            if ((JudgeUtilsAx.isNotEmpty(getLogicColumn()) && checkLogicFieldIsExist())) {
-                return String.format(" update %s %s set %s where %s ", getTable(), getAlias(), getLogicDeleteUpdateSql(), getLogicDeleteQuerySql());
+            if (checkLogicFieldIsExist()) {
+                return String.format(" update %s %s set %s where %s %s", getTable(), getAlias(), getLogicDeleteUpdateSql(), getLogicDeleteQuerySql(), deleteCondition);
             }
         }catch (Exception e) {
+            logger.error(e.toString(), e);
             return null;
         }
         return deleteSql;
+    }
+
+    /**
+     * 处理单个主键删除
+     */
+    private void handleByKey() {
+        DbKeyParserModel<T> keyParserModel = getKeyParserModel();
+        try {
+            this.deleteCondition = checkLogicFieldIsExist() ? String.format("and %s = ?", keyParserModel.getFieldSql())
+                    : String.format("%s = ?", keyParserModel.getFieldSql());
+        } catch (Exception e) {
+            logger.error(e.toString(), e);
+            return;
+        }
+        if(!CustomUtil.isKeyAllowType(keyParserModel.getType(), key)) {
+            ExThrowsUtil.toCustom("不允许的主键参数: " + key);
+        }
+        getSqlParams().add(key);
+    }
+
+    /**
+     * 处理多个主键删除
+     */
+    private void handleByKeys() {
+        DbKeyParserModel<T> keyParserModel = getKeyParserModel();
+        try {
+            StringJoiner delSymbols = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2, SymbolConst.BRACKETS_LEFT, SymbolConst.BRACKETS_RIGHT);
+            IntStream.range(0, keys.size()).mapToObj(i -> SymbolConst.QUEST).forEach(delSymbols::add);
+            this.deleteCondition = checkLogicFieldIsExist() ? String.format("and %s in %s", keyParserModel.getFieldSql(), delSymbols)
+                    : String.format("%s in %s", keyParserModel.getFieldSql(), delSymbols);
+        } catch (Exception e) {
+            logger.error(e.toString(), e);
+            return;
+        }
+        if (Objects.nonNull(keys) && keys.stream().noneMatch(x -> CustomUtil.isKeyAllowType(keyParserModel.getType(), x))) {
+            ExThrowsUtil.toCustom("不允许的主键参数: " + keys);
+        }
+        getSqlParams().addAll(keys);
+    }
+
+    private void handleByCondition() {
+        try {
+            deleteCondition = checkLogicFieldIsExist() ? CustomUtil.replaceOrWithAndOnSqlCondition(deleteCondition) : CustomUtil.trimSqlCondition(deleteCondition);
+        } catch (Exception e) {
+            logger.error(e.toString(), e);
+        }
     }
 
 
@@ -100,7 +155,7 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
         }
         for (String fieldName : tableFillObjects.keySet()) {
             if (ObjectUtils.isEmpty(getFieldMapper().get(fieldName))) {
-                throw new CustomCheckException("未找到可匹配的java属性字段");
+                ExThrowsUtil.toCustom("未找到可匹配的java属性字段");
             }
             updateField = new StringBuilder();
             Object fieldVal = tableFillObjects.get(fieldName);
@@ -114,26 +169,18 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
         return autoUpdateFieldSql.toString();
     }
 
-    /**
-     * 获取根据主键删除的sql
-     */
-//    public String getLogicDeleteKeySql(String key, String dbKey, String alias, boolean isMore) throws Exception {
-//        String sql;
-//        String keySql  = String.format("%s.%s%s%s", alias,
-//                dbKey, isMore ? SymbolConst.IN : SymbolConst.EQUALS, key);
-//
-//        if (JudgeUtilsAx.isNotEmpty(getLogicDeleteUpdateSql())) {
-//            String logicDeleteQuerySql = String.format("%s.%s", alias, getLogicDeleteQuerySql());
-//            String logicDeleteUpdateSql = String.format("%s.%s", alias, getLogicDeleteUpdateSql());
-//            if(checkLogicFieldIsExist()) {
-//                sql = String.format("update %s %s set %s where %s and %s", table,
-//                        alias, logicDeleteUpdateSql, logicDeleteQuerySql, keySql);
-//            }else {
-//                sql = String.format("delete from %s %s where %s", table, alias, keySql);
-//            }
-//        }else {
-//            sql = String.format("delete from %s %s where %s", table, alias, keySql);
-//        }
-//        return sql;
-//    }
+    protected void setKey(Object key) {
+        this.key = key;
+        handleByKey();
+    }
+
+    public void setKeys(Collection<? extends Serializable> keys) {
+        this.keys = keys;
+        handleByKeys();
+    }
+
+    public void setDeleteCondition(String deleteCondition) {
+        this.deleteCondition = deleteCondition;
+        handleByCondition();
+    }
 }

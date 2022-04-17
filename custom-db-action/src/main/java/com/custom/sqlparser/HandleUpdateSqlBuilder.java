@@ -4,7 +4,7 @@ import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbaction.AbstractSqlBuilder;
 import com.custom.dbconfig.SymbolConst;
-import com.custom.exceptions.ExCustomThrows;
+import com.custom.exceptions.ExThrowsUtil;
 import com.custom.fieldfill.FieldAutoFillHandleUtils;
 import com.custom.wrapper.SFunction;
 import org.slf4j.Logger;
@@ -71,11 +71,11 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
             condition = checkLogicFieldIsExist() ? String.format("%s and %s = ?", getLogicDeleteQuerySql(), keySqlField) : String.format("%s = ?", keySqlField);
             Object keyVal = getKeyParserModel().getValue();
             if (Objects.isNull(keyVal)) {
-                ExCustomThrows.goNull("主键的值缺失");
+                ExThrowsUtil.toNull("主键的值缺失");
             }
             getSqlParams().add(keyVal);
         } catch (Exception e) {
-            ExCustomThrows.goCustom(e.toString());
+            ExThrowsUtil.toCustom(e.toString());
         }
         return condition;
     }
@@ -89,7 +89,7 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
             condition = checkLogicFieldIsExist() ?  getLogicDeleteQuerySql() + this.condition : CustomUtil.trimSqlCondition(this.condition);
             getSqlParams().addAll(this.conditionVals);
         } catch (Exception e) {
-            ExCustomThrows.goCustom(e.toString());
+            ExThrowsUtil.toCustom(e.toString());
         }
         return condition;
     }

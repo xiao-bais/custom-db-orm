@@ -1,24 +1,16 @@
 package com.home.customtest.controller;
 
 import com.custom.comm.BackResult;
-import com.custom.handler.JdbcDao;
-import com.custom.sqlparser.CustomDao;
-import com.custom.wrapper.ConditionEntity;
-import com.custom.wrapper.Conditions;
+import com.custom.sqlparser.JdbcDao;
 import com.custom.wrapper.LambdaConditionEntity;
-import com.custom.wrapper.Wrapper;
 import com.home.customtest.entity.Aklis;
-import com.home.customtest.entity.Employee;
 import com.home.customtest.entity.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @Author Xiao-Bai
@@ -30,17 +22,13 @@ import java.util.stream.Stream;
 @RequestMapping("/one")
 public class IndexControl {
 
-
     @Autowired
     private JdbcDao jdbcDao;
-
-    @Autowired
-    private CustomDao customDao;
 
 
     @GetMapping("/getMain")
     public BackResult<List<Student>> getIndex(String key) throws Exception {
-        List<Student> students = customDao.selectList(Student.class, new LambdaConditionEntity<>(Student.class)
+        List<Student> students = jdbcDao.selectList(new LambdaConditionEntity<>(Student.class)
                 .ge(Student::getAge, 22).like(Student::getAddress, "山东")
                 .between(Student::getAge, 21, 25)
                 .select(Student::getName, Student::getProvince, Student::getCity, Student::getArea)
@@ -69,7 +57,7 @@ public class IndexControl {
         aklisList.add(aklis);
         aklisList.add(aklis2);
 
-        customDao.insert(aklisList);
+        jdbcDao.insert(aklisList);
 
         return BackResult.bySuccess(aklisList);
     }

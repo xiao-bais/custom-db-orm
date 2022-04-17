@@ -13,9 +13,7 @@ import com.custom.wrapper.ConditionEntity;
 import com.custom.wrapper.Conditions;
 import com.custom.wrapper.LambdaConditionEntity;
 import com.home.customtest.config.CustomFillConfig;
-import com.home.customtest.entity.Aklis;
-import com.home.customtest.entity.ChildStudent;
-import com.home.customtest.entity.Student;
+import com.home.customtest.entity.*;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.CollectionUtils;
@@ -53,13 +51,13 @@ public class DoMain {
         // 增删改查映射策略配置
         DbCustomStrategy dbCustomStrategy = new DbCustomStrategy();
         dbCustomStrategy.setSqlOutPrinting(true);
-        dbCustomStrategy.setSqlOutPrintExecute(true);
+//        dbCustomStrategy.setSqlOutPrintExecute(true);
         dbCustomStrategy.setUnderlineToCamel(true);
-        dbCustomStrategy.setDbFieldDeleteLogic("state");
-        dbCustomStrategy.setDeleteLogicValue(1);
-        dbCustomStrategy.setNotDeleteLogicValue(0);
+//        dbCustomStrategy.setDbFieldDeleteLogic("state");
+//        dbCustomStrategy.setDeleteLogicValue(1);
+//        dbCustomStrategy.setNotDeleteLogicValue(0);
 
-        CustomDao customDao = new CustomDao(dbDataSource, dbCustomStrategy);
+        JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
         TableInfoCache.setUnderlineToCamel(true);
 
         AutoFillColumnHandler autoFillColumnHandler = new CustomFillConfig();
@@ -73,12 +71,19 @@ public class DoMain {
         aklis.setName("马回峰");
         aklis.setAddress("湖南长沙");
         aklis.setAge(23);
-        aklis.setExplain("aaaa");
+        aklis.setExplain("bbb");
 
-        List<Object> objects = customDao.selectObjs(Conditions.lambdaQuery(Aklis.class).like(Aklis::getName, "李")
-                .select(x -> x.ifNull(Aklis::getExplain, "未知"))
-        );
-        System.out.println("objects = " + objects);
+//        List<Object> objects = customDao.selectObjs(Conditions.lambdaQuery(Aklis.class).like(Aklis::getName, "李")
+//                .select(x -> x.ifNull(Aklis::getExplain, "未知"))
+//        );
+//        System.out.println("objects = " + objects);
+
+        List<ChildStudent> childStudents = jdbcDao.selectList(Conditions.lambdaQuery(ChildStudent.class));
+
+        System.out.println("结束");
+
+
+
 
 //        customDao.updateByCondition(aklis, Conditions.lambdaQuery(Aklis.class).isNotNull(Aklis::getExplain).like(Aklis::getName, "马回峰"));
     }

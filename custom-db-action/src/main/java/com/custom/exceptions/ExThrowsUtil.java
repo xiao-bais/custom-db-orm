@@ -5,19 +5,19 @@ package com.custom.exceptions;
  * @date 2022/4/16 12:44
  * @desc:异常处理
  */
-public class ExCustomThrows {
+public class ExThrowsUtil {
 
     /**
      * 抛出自定义异常
      */
-    public static void goCustom(String msg) {
+    public static void toCustom(String msg) {
         throw new CustomCheckException(msg);
     }
 
     /**
      * 抛出空指针异常
      */
-    public static void goNull(String msg) {
+    public static void toNull(String msg) {
         throw new NullPointerException(msg);
     }
 

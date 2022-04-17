@@ -3,6 +3,7 @@ package com.custom.comm;
 import com.custom.dbconfig.DbCustomStrategy;
 
 import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
@@ -84,9 +85,9 @@ public class JudgeUtilsAx {
     }
 
     public static void checkObjNotNull(Object... vals) throws NullPointerException {
-        for (Object val : vals) {
-            if(Objects.isNull(val)) throw new NullPointerException();
-        }
+        Arrays.stream(vals).filter(Objects::isNull).forEach(val -> {
+            throw new NullPointerException();
+        });
     }
 
     /**

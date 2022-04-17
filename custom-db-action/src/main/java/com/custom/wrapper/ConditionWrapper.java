@@ -3,11 +3,11 @@ package com.custom.wrapper;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.SymbolConst;
+import com.custom.exceptions.ExThrowsUtil;
 import com.custom.sqlparser.TableInfoCache;
 import com.custom.sqlparser.TableSqlBuilder;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.*;
 
 /**
@@ -33,7 +33,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
     /**
      * 实体Class对象
      */
-    private Class<T> cls;
+    private Class<T> entityClass;
 
 
     /**
@@ -80,13 +80,15 @@ public abstract class ConditionWrapper<T> implements Serializable {
         this.tableSqlBuilder = tableSqlBuilder;
     }
 
-    public Class<T> getCls() {
-        return cls;
+    public Class<T> getEntityClass() {
+        return entityClass;
     }
 
-    protected void setCls(Class<T> cls) {
-        JudgeUtilsAx.checkObjNotNull(cls);
-        this.cls = cls;
+    protected void setEntityClass(Class<T> entityClass) {
+        if(Objects.isNull(entityClass)) {
+            ExThrowsUtil.toNull("映射实体Class对象缺失");
+        }
+        this.entityClass = entityClass;
     }
 
     public List<Object> getParamValues() {

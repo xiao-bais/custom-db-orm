@@ -148,66 +148,6 @@ public class TableSqlBuilder<T> implements Cloneable {
         return selectSql.toString();
     }
 
-    /**
-     * 自定义查询表列名
-     */
-    public String selectColumns(String[] columns) {
-        StringJoiner columnStr = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
-        for (String x : columns) {
-            String field = columnMapper.get(x);
-            columnStr.add(Objects.isNull(field) ? x : String.format("%s %s", x, field));
-        }
-        String selectSql = getSelectSql();
-        selectSql = String.format("select %s\n %s", columnStr, selectSql.substring(selectSql.indexOf("from")));
-        return selectSql;
-    }
-
-    /**
-     * 获取添加sql
-     */
-    protected String getInsertSql(String logicColumn, Object val) {
-        if (Objects.nonNull(keyParserModel)) {
-            insertSql.add(keyParserModel.getDbKey());
-        }
-        if (!fieldParserModels.isEmpty()) {
-            fieldParserModels.forEach(x -> insertSql.add(x.getColumn()));
-        }
-        return String.format("insert into %s(%s) values %s ", this.table, insertSql, getInsertSymbol(logicColumn, val));
-    }
-
-    /**
-     * 获取添加时的？
-     * @param logicColumn 逻辑删除的字段
-     * @param val 未逻辑删除的值
-     */
-    private String getInsertSymbol(String logicColumn, Object val) {
-        for (T currEntity : list) {
-            setEntity(currEntity);
-            StringJoiner brackets = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1, SymbolConst.BRACKETS_LEFT, SymbolConst.BRACKETS_RIGHT);
-            if (Objects.nonNull(keyParserModel)) {
-                brackets.add(SymbolConst.QUEST);
-                this.objValues.add(keyParserModel.getValue());
-            }
-            if (!fieldParserModels.isEmpty()) {
-                fieldParserModels.forEach(x -> {
-                    brackets.add(SymbolConst.QUEST);
-                    Object fieldValue = x.getValue();
-                    if (FieldAutoFillHandleUtils.exists(cls, x.getFieldName())
-                            && Objects.isNull(fieldValue) ) {
-                        fieldValue = FieldAutoFillHandleUtils.getFillValue(cls, x.getFieldName());
-                        x.setValue(fieldValue);
-                    }else if(JudgeUtilsAx.isNotEmpty(logicColumn) && TableInfoCache.isExistsLogic(table)  && x.getColumn().equals(logicColumn)) {
-                        fieldValue = ConvertUtil.transToObject(x.getType(), val);
-                        x.setValue(fieldValue);
-                    }
-                    this.objValues.add(fieldValue);
-                });
-            }
-            insetSymbol.add(brackets.toString());
-        }
-        return insetSymbol.toString();
-    }
-
 
     /**
      * 创建表结构
@@ -328,60 +268,6 @@ public class TableSqlBuilder<T> implements Cloneable {
         return joinTableSql.toString();
     }
 
-    /**
-     * 构建修改的sql语句
-     */
-    protected void buildUpdateSql(String[] updateDbFields, String logicDeleteQuerySql) {
-        StringJoiner updateFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
-        if (updateDbFields.length > 0) {
-            for (String field : updateDbFields) {
-                Optional<DbFieldParserModel<T>> updateFieldOP = fieldParserModels.stream().filter(x -> x.getColumn().equals(field)).findFirst();
-                updateFieldOP.ifPresent(op -> {
-                    updateFieldSql.add(String.format("%s = ?", op.getFieldSql()));
-                    objValues.add(op.getValue());
-                });
-            }
-        } else {
-            fieldParserModels.forEach(x -> {
-                Object value = x.getValue();
-                if (Objects.nonNull(value)) {
-                    updateFieldSql.add(String.format("%s = ?", x.getFieldSql()));
-                    objValues.add(value);
-                }
-            });
-        }
-        updateSql.append(SymbolConst.UPDATE).append(table).append(" ").append(alias)
-                .append(SymbolConst.SET).append(updateFieldSql).append(SymbolConst.WHERE)
-                .append(getLogicUpdateSql(keyParserModel.getFieldSql(), logicDeleteQuerySql));
-        objValues.add(keyParserModel.getValue(entity));
-    }
-
-    /**
-     * 获取修改的逻辑删除字段sql
-     */
-    private String getLogicUpdateSql(String key, String logicDeleteQuerySql) {
-        return JudgeUtilsAx.isNotBlank(logicDeleteQuerySql) ? String.format("%s.%s and %s = ?", alias, logicDeleteQuerySql, key) : String.format("%s = ?", key);
-    }
-
-    /**
-     * 构建修改的sql字段语句
-     */
-    protected void buildUpdateWrapper(String condition, List<Object> conditionVals) {
-        StringJoiner updateFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
-        for (DbFieldParserModel<T> fieldParserModel : fieldParserModels) {
-            Object value = fieldParserModel.getValue();
-            if (Objects.nonNull(value)) {
-                updateFieldSql.add(fieldParserModel.getFieldSql() + " = ?");
-                objValues.add(value);
-            }
-        }
-        updateSql.append(SymbolConst.UPDATE).append(table)
-                .append(" ").append(alias)
-                .append(SymbolConst.SET).append(updateFieldSql)
-                .append(" ").append(condition);
-        objValues.addAll(conditionVals);
-    }
-
 
     /**
      * 构建字段映射
@@ -410,58 +296,6 @@ public class TableSqlBuilder<T> implements Cloneable {
             });
         }
     }
-
-
-    /**
-     * 自动填充的sql构造（采用逻辑后进行Update操作的方式进行自动填充）
-     */
-    public String buildLogicDelAfterAutoUpdateSql(FillStrategy strategy, String whereKeySql, Object... params) {
-        StringBuilder autoUpdateSql = new StringBuilder();
-        Optional<TableFillObject> first = Objects.requireNonNull(CustomApplicationUtils.getBean(AutoFillColumnHandler.class))
-                .fillStrategy().stream().filter(x -> x.getEntityClass().equals(cls)).findFirst();
-        first.ifPresent(op -> {
-            autoUpdateSql.append(SymbolConst.UPDATE)
-                    .append(table)
-                    .append(" ")
-                    .append(alias)
-                    .append(SymbolConst.SET);
-
-            if (strategy.toString().contains(op.getStrategy().toString())) {
-                String sqlFragment = buildAssignAutoUpdateSqlFragment(op.getTableFillMapper());
-                if (Objects.nonNull(sqlFragment)) {
-                    autoUpdateSql.append(sqlFragment);
-                }
-                autoUpdateSql.append(CustomUtil.handleExecuteSql(whereKeySql, params));
-            }
-        });
-        return autoUpdateSql.toString();
-    }
-
-    /**
-     * 构建指定逻辑删除时自动填充的sql片段
-     */
-    private String buildAssignAutoUpdateSqlFragment(Map<String, Object> tableFillObjects) {
-        StringJoiner autoUpdateFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
-        StringBuilder updateField;
-        if (ObjectUtils.isEmpty(tableFillObjects)) {
-            return autoUpdateFieldSql.toString();
-        }
-        for (String fieldName : tableFillObjects.keySet()) {
-            if (ObjectUtils.isEmpty(fieldMapper.get(fieldName))) {
-                throw new CustomCheckException("未找到可匹配的java属性字段");
-            }
-            updateField = new StringBuilder();
-            Object fieldVal = tableFillObjects.get(fieldName);
-            if (ObjectUtils.isEmpty(fieldVal)) continue;
-            updateField.append(fieldMapper.get(fieldName)).append(SymbolConst.EQUALS).append(fieldVal);
-            autoUpdateFieldSql.add(updateField);
-            fieldParserModels.stream().filter(x -> x.getFieldName().equals(fieldName)).findFirst().ifPresent(op -> {
-                op.setValue(fieldVal);
-            });
-        }
-        return autoUpdateFieldSql.toString();
-    }
-
 
     /**
      * 初始化

@@ -1,9 +1,8 @@
 package com.custom.dbconfig;
 
 import com.custom.comm.CustomUtil;
-import com.custom.handler.JdbcDao;
 import com.custom.proxy.SqlReaderExecuteProxy;
-import com.custom.sqlparser.CustomDao;
+import com.custom.sqlparser.JdbcDao;
 import com.custom.sqlparser.TableInfoCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +45,7 @@ public class CustomConfiguration {
     }
 
     @Bean
+    @Primary
     @ConditionalOnBean(DbDataSource.class)
     public JdbcDao jdbcDao(){
         if(CustomUtil.isDataSourceEmpty(dbDataSource)) {
@@ -53,21 +53,8 @@ public class CustomConfiguration {
         }
         TableInfoCache.setUnderlineToCamel(dbCustomStrategy.isUnderlineToCamel());
         JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
-        logger.info("JdbcDao Initialized Successfully !");
-        return jdbcDao;
-    }
-
-    @Bean(name = "hosCustomDao")
-    @Primary
-    @ConditionalOnBean(DbDataSource.class)
-    public CustomDao customDao(){
-        if(CustomUtil.isDataSourceEmpty(dbDataSource)) {
-            return null;
-        }
-        TableInfoCache.setUnderlineToCamel(dbCustomStrategy.isUnderlineToCamel());
-        CustomDao customDao = new CustomDao(dbDataSource, dbCustomStrategy);
         logger.info("CustomDao Initialized Successfully !");
-        return customDao;
+        return jdbcDao;
     }
 
 

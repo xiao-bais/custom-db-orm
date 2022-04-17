@@ -5,7 +5,6 @@ import com.custom.comm.JudgeUtilsAx;
 import com.custom.dbconfig.SymbolConst;
 import com.custom.exceptions.CustomCheckException;
 import com.custom.exceptions.ExceptionConst;
-import com.custom.handler.DbParserFieldHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Array;
@@ -13,8 +12,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -125,11 +122,11 @@ public class ParameterParserExecutor {
         else {
             Field[] fields = CustomUtil.getFields(paramValue.getClass());
             List<String> fieldNames = Arrays.stream(fields).map(Field::getName).collect(Collectors.toList());
-            List<Object> fieldVales = new DbParserFieldHandler().getFieldsVal(paramValue, fieldNames.toArray(new String[0]));
+//            List<Object> fieldVales = new DbParserFieldHandler().getFieldsVal(paramValue, fieldNames.toArray(new String[0]));
             for (int j = 0; j < fieldNames.size(); j++) {
                 String fieldName = fieldNames.get(j);
-                Object fieldValue = fieldVales.get(j);
-                JudgeTypeAndSetterSymbolParams(String.format("%s.%s", paramName, fieldName), fieldValue);
+//                Object fieldValue = fieldVales.get(j);
+//                JudgeTypeAndSetterSymbolParams(String.format("%s.%s", paramName, fieldName), fieldValue);
             }
         }
         prepareSql = prepareSql.replace(signName, symbol.toString());
@@ -195,11 +192,11 @@ public class ParameterParserExecutor {
         }else {
             Field[] fields = CustomUtil.getFields(paramValue.getClass());
             List<String> fieldNames = Arrays.stream(fields).map(Field::getName).collect(Collectors.toList());
-            List<Object> fieldVales = new DbParserFieldHandler().getFieldsVal(paramValue, fieldNames.toArray(new String[0]));
+//            List<Object> fieldVales = new DbParserFieldHandler().getFieldsVal(paramValue, fieldNames.toArray(new String[0]));
             for (int j = 0; j < fieldNames.size(); j++) {
                 String fieldName = fieldNames.get(j);
-                Object fieldValue = fieldVales.get(j);
-                handleParamMaps(String.format("%s.%s", paramName, fieldName), fieldValue);
+//                Object fieldValue = fieldVales.get(j);
+//                handleParamMaps(String.format("%s.%s", paramName, fieldName), fieldValue);
             }
         }
     }

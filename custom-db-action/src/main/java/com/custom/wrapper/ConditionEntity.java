@@ -116,7 +116,7 @@ public class ConditionEntity<T> extends ConditionAssembly<T, String, ConditionEn
 
 
     public ConditionEntity(Class<T> entityClass) {
-        setCls(entityClass);
+        setEntityClass(entityClass);
         setTableSqlBuilder(new TableSqlBuilder<>(entityClass, ExecuteMethod.NONE, false));
     }
 
@@ -146,7 +146,7 @@ public class ConditionEntity<T> extends ConditionAssembly<T, String, ConditionEn
 
     @Override
     protected ConditionEntity<T> getInstance() {
-        return new ConditionEntity<>(getCls());
+        return new ConditionEntity<>(getEntityClass());
     }
 
     @Override
