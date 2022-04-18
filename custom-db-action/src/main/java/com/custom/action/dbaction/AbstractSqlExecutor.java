@@ -38,8 +38,9 @@ public abstract class AbstractSqlExecutor {
     public abstract <T> T selectOneByKey(Class<T> t, Object key) throws Exception;
     public abstract <T> List<T> selectBatchByKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception;
     public abstract <T> T selectOneByCondition(Class<T> t, String condition, Object... params) throws Exception;
-    public abstract <T> DbPageRows<T> selectPageRows(Class<T> t,  ConditionWrapper<T> wrapper) throws Exception;
-    public abstract <T> List<T> selectList(Class<T> t, ConditionWrapper<T> wrapper) throws Exception;
+
+    public abstract <T> DbPageRows<T> selectPageRows(ConditionWrapper<T> wrapper) throws Exception;
+    public abstract <T> List<T> selectList(ConditionWrapper<T> wrapper) throws Exception;
     public abstract <T> T selectOneByCondition(ConditionWrapper<T> wrapper) throws Exception;
     public abstract <T> long selectCount(ConditionWrapper<T> wrapper) throws Exception;
     public abstract <T> Object selectObj(ConditionWrapper<T> wrapper) throws Exception;

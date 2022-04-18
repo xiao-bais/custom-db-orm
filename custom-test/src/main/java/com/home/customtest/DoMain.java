@@ -60,13 +60,8 @@ public class DoMain {
 //        );
 //        System.out.println("objects = " + objects);
 
-        Aklis aklis1 = new Aklis();
-        aklis1.setAddress("那就SV的");
-        int i = jdbcDao.updateByCondition(aklis1, Conditions.lambdaQuery(Aklis.class).eq(Aklis::getName, "张三"));
-
-        System.out.println("结束");
-
-
+        List<Student> students = jdbcDao.selectList(Conditions.lambdaQuery(null));
+        System.out.println("students = " + students);
 
 
 //        customDao.updateByCondition(aklis, Conditions.lambdaQuery(Aklis.class).isNotNull(Aklis::getExplain).like(Aklis::getName, "马回峰"));

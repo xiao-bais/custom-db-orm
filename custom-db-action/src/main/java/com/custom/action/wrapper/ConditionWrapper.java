@@ -155,7 +155,6 @@ public abstract class ConditionWrapper<T> implements Serializable {
     }
 
     protected TableSqlBuilder<T> getTableParserModelCache(Class<T> key) {
-        JudgeUtilsAx.checkObjNotNull(key);
         return TableInfoCache.getTableModel(key);
     }
 

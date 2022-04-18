@@ -90,15 +90,15 @@ public class JdbcDao {
      */
     public <T> DbPageRows<T> selectPageRows(ConditionWrapper<T> wrapper) throws Exception {
         JudgeUtilsAx.checkObjNotNull(wrapper);
-        return jdbcAction.selectPageRows(wrapper.getEntityClass(), wrapper);
+        return jdbcAction.selectPageRows(wrapper);
     }
 
     /**
      * 条件构造器查询-查询多个
      */
     public <T> List<T> selectList(ConditionWrapper<T> wrapper) throws Exception {
-        JudgeUtilsAx.checkObjNotNull(wrapper);
-        return jdbcAction.selectList(wrapper.getEntityClass(), wrapper);
+//        JudgeUtilsAx.checkObjNotNull(wrapper);
+        return jdbcAction.selectList(wrapper);
     }
 
     /**
