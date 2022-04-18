@@ -35,14 +35,8 @@
 
         <dependency>
             <groupId>com.custom</groupId>
-            <artifactId>custom-db-action</artifactId>
+            <artifactId>custom-springboot-starter</artifactId>
             <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid</artifactId>
-            <version>1.1.22</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->

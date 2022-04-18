@@ -1,24 +1,27 @@
 package com.custom.action.dbaction;
 
 import com.custom.action.enums.ExecuteMethod;
-import com.custom.action.exceptions.CustomCheckException;
 import com.custom.action.interfaces.LogicDeleteFieldSqlHandler;
-import com.custom.action.comm.CustomUtil;
-import com.custom.action.comm.JudgeUtilsAx;
-import com.custom.action.dbconfig.DbCustomStrategy;
-import com.custom.action.dbconfig.SymbolConst;
-import com.custom.action.exceptions.ExThrowsUtil;
-import com.custom.action.exceptions.ExceptionConst;
-import com.custom.action.comm.page.DbPageRows;
 import com.custom.action.sqlparser.HandleSelectSqlBuilder;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableSqlBuilder;
 import com.custom.action.wrapper.ConditionWrapper;
 import com.custom.action.wrapper.SFunction;
+import com.custom.comm.CustomUtil;
+import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.SymbolConst;
+import com.custom.comm.exceptions.CustomCheckException;
+import com.custom.comm.exceptions.ExThrowsUtil;
+import com.custom.comm.exceptions.ExceptionConst;
+import com.custom.comm.page.DbPageRows;
+import com.custom.configuration.DbCustomStrategy;
 
 import java.io.Serializable;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @Author Xiao-Bai
@@ -75,9 +78,9 @@ public abstract class AbstractSqlExecutor {
      * 初始化逻辑删除的sql
      */
     public void initLogic() {
-        if(JudgeUtilsAx.isLogicDeleteOpen(dbCustomStrategy)) {
+        if(isLogicDeleteOpen(dbCustomStrategy)) {
             if(JudgeUtilsAx.isEmpty(dbCustomStrategy.getNotDeleteLogicValue()) || JudgeUtilsAx.isEmpty(dbCustomStrategy.getDeleteLogicValue())) {
-                throw new CustomCheckException(ExceptionConst.EX_LOGIC_EMPTY_VALUE);
+                ExThrowsUtil.toCustom("The corresponding value of the logical deletion field is not configured");
             }
             this.logicField = dbCustomStrategy.getDbFieldDeleteLogic();
             this.logicDeleteUpdateSql = String.format("%s = %s",
@@ -85,6 +88,16 @@ public abstract class AbstractSqlExecutor {
             this.logicDeleteQuerySql = String.format("%s = %s",
                     logicField, dbCustomStrategy.getNotDeleteLogicValue());
         }
+    }
+
+    /**
+     * 是否开启了逻辑删除字段
+     */
+    public static boolean isLogicDeleteOpen(DbCustomStrategy dbCustomStrategy) {
+        if(dbCustomStrategy == null) {
+            dbCustomStrategy = new DbCustomStrategy();
+        }
+        return JudgeUtilsAx.isNotEmpty(dbCustomStrategy.getDbFieldDeleteLogic());
     }
 
 

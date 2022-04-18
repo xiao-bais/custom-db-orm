@@ -1,12 +1,12 @@
 package com.custom.action.sqlparser;
 
 import com.custom.action.annotations.DbField;
-import com.custom.action.comm.GlobalDataHandler;
-import com.custom.action.comm.JudgeUtilsAx;
 import com.custom.action.dbaction.AbstractTableModel;
-import com.custom.action.dbconfig.SymbolConst;
 import com.custom.action.enums.DbMediaType;
-import com.custom.action.comm.CustomUtil;
+import com.custom.comm.CustomUtil;
+import com.custom.comm.GlobalDataHandler;
+import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.SymbolConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,7 +111,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
         }
         this.isNull = annotation.isNull();
         this.desc = annotation.desc();
-        this.dbMediaType = annotation.dataType() == DbMediaType.DbVarchar ? CustomUtil.getDbFieldType(field.getType()) : annotation.dataType();
+        this.dbMediaType = annotation.dataType() == DbMediaType.DbVarchar ? getDbFieldType(field.getType()) : annotation.dataType();
         this.length = this.dbMediaType.getLength();
         super.setTable(table);
         super.setAlias(alias);
@@ -135,7 +135,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
 
     public DbMediaType getDbMediaType() {
         if(this.dbMediaType == DbMediaType.DbVarchar) {
-            this.dbMediaType = CustomUtil.getDbFieldType(this.type);
+            this.dbMediaType = getDbFieldType(this.type);
         }
         return dbMediaType;
     }

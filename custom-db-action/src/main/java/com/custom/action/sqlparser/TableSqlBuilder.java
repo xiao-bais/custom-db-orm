@@ -1,15 +1,15 @@
 package com.custom.action.sqlparser;
 
 import com.custom.action.annotations.*;
-import com.custom.action.dbconfig.DbFieldsConst;
-import com.custom.action.enums.ExecuteMethod;
-import com.custom.action.exceptions.CustomCheckException;
-import com.custom.action.comm.CustomUtil;
-import com.custom.action.comm.JudgeUtilsAx;
 import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.dbaction.SqlExecuteAction;
-import com.custom.action.dbconfig.SymbolConst;
-import com.custom.action.exceptions.ExceptionConst;
+import com.custom.action.enums.ExecuteMethod;
+import com.custom.action.util.DbUtil;
+import com.custom.comm.CustomUtil;
+import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.SymbolConst;
+import com.custom.comm.exceptions.ExThrowsUtil;
+import com.custom.configuration.DbConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,7 +109,7 @@ public class TableSqlBuilder<T> implements Cloneable {
     public String getSelectSql() {
         try {
             if (JudgeUtilsAx.isEmpty(selectSql)) {
-                if (CustomUtil.isDbRelationTag(this.cls) || this.cls.isAnnotationPresent(DbJoinTables.class)) {
+                if (DbUtil.isDbRelationTag(this.cls) || this.cls.isAnnotationPresent(DbJoinTables.class)) {
                     getSelectRelationSql();
                 } else {
                     getSelectBaseTableSql();
@@ -128,7 +128,7 @@ public class TableSqlBuilder<T> implements Cloneable {
     protected String getSelectSql(boolean isRelated) {
         try {
             if (isRelated) {
-                if (CustomUtil.isDbRelationTag(this.cls) || this.cls.isAnnotationPresent(DbJoinTables.class)) {
+                if (DbUtil.isDbRelationTag(this.cls) || this.cls.isAnnotationPresent(DbJoinTables.class)) {
                     getSelectRelationSql();
                 }
             } else {
@@ -178,7 +178,7 @@ public class TableSqlBuilder<T> implements Cloneable {
         DbTable annotation = cls.getAnnotation(DbTable.class);
         String table = annotation.table();
         return String.format("SELECT COUNT(1) COUNT FROM " +
-                "`information_schema`.`TABLES` WHERE TABLE_NAME = '%s' AND TABLE_SCHEMA = '%s';", table, ExceptionConst.currMap.get(DbFieldsConst.DATA_BASE));
+                "`information_schema`.`TABLES` WHERE TABLE_NAME = '%s' AND TABLE_SCHEMA = '%s';", table, DbConnection.currMap.get(SymbolConst.DATA_BASE));
     }
 
     /**
@@ -343,10 +343,10 @@ public class TableSqlBuilder<T> implements Cloneable {
         this.cls = cls;
         DbTable annotation = cls.getAnnotation(DbTable.class);
         if (Objects.isNull(annotation)) {
-            throw new CustomCheckException(cls.getName() + "未标注@DbTable注解");
+            ExThrowsUtil.toCustom(cls.getName() + "未标注@DbTable注解");
         }
         if (JudgeUtilsAx.isEmpty(annotation.table())) {
-            throw new CustomCheckException(cls.getName() + "未指定@DbTable注解上实体映射的表名");
+            ExThrowsUtil.toCustom(cls.getName() + "未指定@DbTable注解上实体映射的表名");
         }
         this.alias = annotation.alias();
         this.table = annotation.table();

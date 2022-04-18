@@ -2,10 +2,10 @@ package com.custom.action.dbaction;
 
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.wrapper.ColumnParseHandler;
-import com.custom.action.comm.CustomUtil;
-import com.custom.action.comm.JudgeUtilsAx;
 import com.custom.action.sqlparser.DbFieldParserModel;
 import com.custom.action.sqlparser.DbKeyParserModel;
+import com.custom.comm.CustomUtil;
+import com.custom.comm.JudgeUtilsAx;
 
 import java.util.ArrayList;
 import java.util.List;

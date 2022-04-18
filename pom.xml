@@ -18,7 +18,11 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>custom-comm</module>
         <module>custom-db-action</module>
+        <module>custom-db-configuration</module>
+        <module>custom-db-generator</module>
+        <module>custom-springboot-starter</module>
         <module>custom-test</module>
     </modules>
 

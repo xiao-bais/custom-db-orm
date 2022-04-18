@@ -1,8 +1,8 @@
 package com.custom.action.dbaction;
 
-import com.custom.action.exceptions.CustomCheckException;
-import com.custom.action.comm.CustomUtil;
-import com.custom.action.dbconfig.SymbolConst;
+import com.custom.comm.CustomUtil;
+import com.custom.comm.SymbolConst;
+import com.custom.comm.exceptions.ExThrowsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,7 +108,7 @@ public class SqlOutPrintBuilder implements Serializable {
             logger.error(
                     "\nsql error\n===================\nSQL ====>\n {}\n===================\nparams = {}\n===================\n"
                     , sql, getFormatterParams());
-            throw new CustomCheckException(String.format("参数数量与需要设置的参数数量不对等，需设置参数数量：%s, 实际参数数量：%s", symbolSize, params.length));
+            ExThrowsUtil.toCustom(String.format("参数数量与需要设置的参数数量不对等，需设置参数数量：%s, 实际参数数量：%s", symbolSize, params.length));
         }
         sql = CustomUtil.handleExecuteSql(sql, params);
     }

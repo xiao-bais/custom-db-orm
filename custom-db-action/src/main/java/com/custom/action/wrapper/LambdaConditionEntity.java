@@ -1,12 +1,13 @@
 package com.custom.action.wrapper;
 
-import com.custom.action.dbconfig.SymbolConst;
 import com.custom.action.enums.DbSymbol;
 import com.custom.action.enums.SqlLike;
 import com.custom.action.enums.SqlOrderBy;
 import com.custom.action.sqlparser.TableSqlBuilder;
+import com.custom.comm.SymbolConst;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.function.Consumer;
 
 /**

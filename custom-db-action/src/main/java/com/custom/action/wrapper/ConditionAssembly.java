@@ -2,14 +2,17 @@ package com.custom.action.wrapper;
 
 import com.custom.action.enums.DbSymbol;
 import com.custom.action.enums.SqlLike;
-import com.custom.action.exceptions.CustomCheckException;
-import com.custom.action.comm.CustomUtil;
-import com.custom.action.comm.JudgeUtilsAx;
-import com.custom.action.dbconfig.SymbolConst;
 import com.custom.action.enums.SqlOrderBy;
+import com.custom.comm.CustomUtil;
+import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.SymbolConst;
+import com.custom.comm.exceptions.ExThrowsUtil;
 
 import java.lang.reflect.Array;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.StringJoiner;
 import java.util.function.Consumer;
 
 /**
@@ -60,7 +63,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
             return;
         }
         if(CustomUtil.isBlank(column) && DbSymbol.EXISTS != dbSymbol && DbSymbol.NOT_EXISTS != dbSymbol) {
-            throw new CustomCheckException("column cannot be empty");
+            ExThrowsUtil.toCustom("column cannot be empty");
         }
         if(JudgeUtilsAx.isNotEmpty(column) && !column.contains(SymbolConst.POINT)) {
             column = String.format("%s.%s", getTableSqlBuilder().getAlias(), column);
@@ -282,7 +285,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
     @Override
     public Children limit(boolean condition, Integer pageIndex, Integer pageSize) {
         if((Objects.isNull(pageIndex) || Objects.isNull(pageSize))) {
-            throw new CustomCheckException("缺少分页参数：pageIndex：" + pageIndex + ", pageSize：" + pageSize);
+            ExThrowsUtil.toCustom("缺少分页参数：pageIndex：" + pageIndex + ", pageSize：" + pageSize);
         }
         setHasPageParams(true);
         setPageIndex(pageIndex);

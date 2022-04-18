@@ -1,13 +1,12 @@
 package com.custom.action.dbaction;
 
 import com.alibaba.fastjson.JSONObject;
-import com.custom.action.dbconfig.DbConnection;
-import com.custom.action.dbconfig.DbCustomStrategy;
-import com.custom.action.dbconfig.DbDataSource;
-import com.custom.action.dbconfig.SymbolConst;
-import com.custom.action.exceptions.CustomCheckException;
-import com.custom.action.exceptions.ExceptionConst;
-import com.custom.action.comm.CustomUtil;
+import com.custom.comm.CustomUtil;
+import com.custom.comm.SymbolConst;
+import com.custom.comm.exceptions.ExThrowsUtil;
+import com.custom.configuration.DbConnection;
+import com.custom.configuration.DbCustomStrategy;
+import com.custom.configuration.DbDataSource;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Array;
@@ -115,7 +114,7 @@ public class SqlExecuteAction extends DbConnection {
             statementQuery(sql, true, params);
             resultSet = statement.executeQuery();
             if (resultSet.getMetaData().getColumnCount() > 1) {
-                throw new CustomCheckException(String.format(ExceptionConst.EX_QUERY_SET_RESULT, t.getTypeName()));
+                ExThrowsUtil.toCustom(String.format("The 'Set<%s>' does not support returning multiple column results", t.getTypeName()));
             }
             while (resultSet.next()) {
                 T object = (T) resultSet.getObject(1);
@@ -143,7 +142,7 @@ public class SqlExecuteAction extends DbConnection {
             if (count == 0) {
                 return null;
             } else if (count > 1) {
-                throw new CustomCheckException(ExceptionConst.EX_QUERY_ARRAY_RESULT);
+                ExThrowsUtil.toCustom("The 'Arrays' does not support returning multiple column results");
             }
 
             Object res = Array.newInstance(t, rowsCount);
@@ -160,7 +159,7 @@ public class SqlExecuteAction extends DbConnection {
             throw e;
         }catch (RuntimeException e) {
             if(e instanceof ClassCastException && t.isPrimitive()) {
-                throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_SUPPORT_USE_BASIC_TYPE, className, methodName));
+                ExThrowsUtil.toCustom(String.format("It is recommended to use the wrapper type to receive the return value of the method ： %s.%s()", className, methodName));
             }
             throw e;
         }

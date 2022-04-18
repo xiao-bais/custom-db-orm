@@ -1,7 +1,7 @@
 package com.custom.action.proxy;
 
-import com.custom.action.comm.JudgeUtilsAx;
-import com.custom.action.dbconfig.SymbolConst;
+import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.SymbolConst;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -18,11 +18,11 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 public class ClearNotesOnSqlHandler {
 
-    private String filePath;
-    private static String SYMBOL_LINE;
-    private static String SYMBOL_START1;
-    private static String SYMBOL_START2;
-    private static String SYMBOL_END;
+    private final String filePath;
+    private static final String SYMBOL_LINE;
+    private static final String SYMBOL_START1;
+    private static final String SYMBOL_START2;
+    private static final String SYMBOL_END;
 
 
     static {

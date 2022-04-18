@@ -3,9 +3,9 @@ package com.custom.action.sqlparser;
 import com.custom.action.annotations.DbRelated;
 import com.custom.action.annotations.DbTable;
 import com.custom.action.dbaction.AbstractTableModel;
-import com.custom.action.comm.CustomUtil;
-import com.custom.action.comm.JudgeUtilsAx;
 import com.custom.action.enums.DbJoinStyle;
+import com.custom.comm.CustomUtil;
+import com.custom.comm.JudgeUtilsAx;
 
 import java.lang.reflect.Field;
 

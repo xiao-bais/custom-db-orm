@@ -1,6 +1,6 @@
 package com.custom.action.scanner;
 
-import com.custom.action.comm.JudgeUtilsAx;
+import com.custom.comm.JudgeUtilsAx;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;

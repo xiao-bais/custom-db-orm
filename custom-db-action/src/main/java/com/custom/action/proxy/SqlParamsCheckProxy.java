@@ -2,15 +2,15 @@ package com.custom.action.proxy;
 
 import com.custom.action.annotations.DbTable;
 import com.custom.action.annotations.check.CheckExecute;
-import com.custom.action.dbconfig.DbCustomStrategy;
-import com.custom.action.dbconfig.DbDataSource;
 import com.custom.action.enums.ExecuteMethod;
-import com.custom.action.exceptions.CustomCheckException;
-import com.custom.action.exceptions.ExThrowsUtil;
+import com.custom.action.util.DbUtil;
 import com.custom.action.wrapper.ConditionWrapper;
-import com.custom.action.comm.CustomUtil;
-import com.custom.action.comm.JudgeUtilsAx;
-import com.custom.action.exceptions.ExceptionConst;
+import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.exceptions.CustomCheckException;
+import com.custom.comm.exceptions.ExThrowsUtil;
+import com.custom.comm.exceptions.ExceptionConst;
+import com.custom.configuration.DbCustomStrategy;
+import com.custom.configuration.DbDataSource;
 import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;
 import org.springframework.cglib.proxy.MethodProxy;
@@ -126,7 +126,7 @@ public class SqlParamsCheckProxy<T> implements MethodInterceptor {
         if(!objects[0].getClass().isAnnotationPresent(DbTable.class)) {
             ExThrowsUtil.toCustom("@DbTable not found in class " + objects[0].getClass());
         }
-        if(!CustomUtil.isKeyTag(objects[0].getClass()) && method.getName().equals("updateByKey")) {
+        if(!DbUtil.isKeyTag(objects[0].getClass()) && method.getName().equals("updateByKey")) {
             ExThrowsUtil.toCustom("@DbKey was not found in class " + objects[0].getClass());
         }
         if(method.getName().equals("updateByCondition") && (JudgeUtilsAx.isEmpty(objects[1]) || JudgeUtilsAx.isEmpty(((ConditionWrapper<?>) objects[1]).getFinalConditional()))) {

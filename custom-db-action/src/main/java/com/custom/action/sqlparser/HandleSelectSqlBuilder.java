@@ -1,15 +1,18 @@
 package com.custom.action.sqlparser;
 
 import com.custom.action.annotations.DbJoinTables;
-import com.custom.action.comm.CustomUtil;
-import com.custom.action.comm.GlobalDataHandler;
-import com.custom.action.comm.JudgeUtilsAx;
 import com.custom.action.dbaction.AbstractSqlBuilder;
-import com.custom.action.dbconfig.SymbolConst;
+import com.custom.action.util.DbUtil;
+import com.custom.comm.GlobalDataHandler;
+import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.SymbolConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.StringJoiner;
 
 /**
  * @Author Xiao-Bai
@@ -45,7 +48,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
             if (JudgeUtilsAx.isNotEmpty(selectSql)) {
                 return selectSql.toString();
             }
-            if (CustomUtil.isDbRelationTag(getEntityClass()) || getEntityClass().isAnnotationPresent(DbJoinTables.class)) {
+            if (DbUtil.isDbRelationTag(getEntityClass()) || getEntityClass().isAnnotationPresent(DbJoinTables.class)) {
                 getSelectRelationSql();
             } else {
                 getSelectBaseTableSql();
@@ -62,7 +65,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
      */
     protected String getSelectSql(boolean isRelated) {
         try {
-            if (isRelated && (CustomUtil.isDbRelationTag(getEntityClass()) || getEntityClass().isAnnotationPresent(DbJoinTables.class))) {
+            if (isRelated && (DbUtil.isDbRelationTag(getEntityClass()) || getEntityClass().isAnnotationPresent(DbJoinTables.class))) {
                 getSelectRelationSql();
             } else {
                 getSelectBaseTableSql();

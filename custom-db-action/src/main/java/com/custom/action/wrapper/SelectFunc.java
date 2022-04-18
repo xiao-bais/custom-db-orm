@@ -1,8 +1,8 @@
 package com.custom.action.wrapper;
 
-import com.custom.action.exceptions.CustomCheckException;
-import com.custom.action.dbconfig.SymbolConst;
 import com.custom.action.enums.SqlAggregate;
+import com.custom.comm.SymbolConst;
+import com.custom.comm.exceptions.CustomCheckException;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;

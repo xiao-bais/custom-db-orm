@@ -1,12 +1,12 @@
 package com.home.customtest;
 
-import com.custom.action.dbconfig.DbCustomStrategy;
-import com.custom.action.dbconfig.DbDataSource;
 import com.custom.action.fieldfill.AutoFillColumnHandler;
 import com.custom.action.fieldfill.TableFillObject;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.wrapper.Conditions;
+import com.custom.configuration.DbCustomStrategy;
+import com.custom.configuration.DbDataSource;
 import com.home.customtest.config.CustomFillConfig;
 import com.home.customtest.entity.*;
 

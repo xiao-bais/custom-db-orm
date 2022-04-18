@@ -1,13 +1,13 @@
 package com.custom.action.sqlparser;
 
-import com.custom.action.comm.page.DbPageRows;
 import com.custom.action.dbaction.AbstractSqlExecutor;
-import com.custom.action.dbconfig.DbCustomStrategy;
-import com.custom.action.dbconfig.DbDataSource;
+import com.custom.action.proxy.SqlParamsCheckProxy;
 import com.custom.action.wrapper.ConditionWrapper;
 import com.custom.action.wrapper.SFunction;
-import com.custom.action.comm.JudgeUtilsAx;
-import com.custom.action.proxy.SqlParamsCheckProxy;
+import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.page.DbPageRows;
+import com.custom.configuration.DbCustomStrategy;
+import com.custom.configuration.DbDataSource;
 
 import java.io.Serializable;
 import java.util.Collection;

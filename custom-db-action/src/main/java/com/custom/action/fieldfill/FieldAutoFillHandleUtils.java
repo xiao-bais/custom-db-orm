@@ -1,8 +1,8 @@
 package com.custom.action.fieldfill;
 
-import com.custom.action.exceptions.CustomCheckException;
-import com.custom.action.comm.RexUtil;
-import com.custom.action.dbconfig.CustomApplicationUtils;
+import com.custom.comm.CustomApplicationUtil;
+import com.custom.comm.RexUtil;
+import com.custom.comm.exceptions.ExThrowsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ObjectUtils;
@@ -30,7 +30,7 @@ public class FieldAutoFillHandleUtils {
         if(RexUtil.hasRegex(proName, RexUtil.back_quotes)) {
             proName = RexUtil.regexStr(proName, RexUtil.back_quotes);
         }
-        AutoFillColumnHandler columnHandler = CustomApplicationUtils.getBean(AutoFillColumnHandler.class);
+        AutoFillColumnHandler columnHandler = CustomApplicationUtil.getBean(AutoFillColumnHandler.class);
         if(ObjectUtils.isEmpty(columnHandler)) {
             return null;
         }
@@ -46,7 +46,7 @@ public class FieldAutoFillHandleUtils {
         if(Objects.isNull(propertyValue)) {
             String error = String.format("%s中未找到属性：%s的指定填充值", t, proName);
             if(fillObject.getNotFoundFieldThrowException()) {
-                throw new CustomCheckException(error);
+                ExThrowsUtil.toCustom(error);
             }
             logger.error(error);
         }
@@ -57,7 +57,7 @@ public class FieldAutoFillHandleUtils {
      * 判断是否存在该实体的填充对象配置
      */
     public static <T> boolean exists(Class<T> t) {
-        AutoFillColumnHandler columnHandler = CustomApplicationUtils.getBean(AutoFillColumnHandler.class);
+        AutoFillColumnHandler columnHandler = CustomApplicationUtil.getBean(AutoFillColumnHandler.class);
         if(ObjectUtils.isEmpty(columnHandler)) {
             return false;
         }
@@ -73,7 +73,7 @@ public class FieldAutoFillHandleUtils {
      * 判断是否存在该实体中指定配置字段的填充值
      */
     public static <T> boolean exists(Class<T> t, String proName) {
-        AutoFillColumnHandler columnHandler = CustomApplicationUtils.getBean(AutoFillColumnHandler.class);
+        AutoFillColumnHandler columnHandler = CustomApplicationUtil.getBean(AutoFillColumnHandler.class);
         if(ObjectUtils.isEmpty(columnHandler)) {
             return false;
         }

@@ -1,12 +1,12 @@
 package com.custom.action.scanner;
 
-import com.custom.action.comm.BasicDao;
-import com.custom.action.exceptions.CustomCheckException;
 import com.custom.action.annotations.DbTable;
 import com.custom.action.annotations.mapper.SqlMapper;
-import com.custom.action.comm.JudgeUtilsAx;
-import com.custom.action.dbconfig.SymbolConst;
-import com.custom.action.exceptions.ExceptionConst;
+import com.custom.comm.BasicDao;
+import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.SymbolConst;
+import com.custom.comm.exceptions.CustomCheckException;
+import com.custom.comm.exceptions.ExceptionConst;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;

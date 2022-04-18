@@ -1,9 +1,9 @@
 package com.custom.action.sqlparser;
 
-import com.custom.action.fieldfill.FieldAutoFillHandleUtils;
-import com.custom.action.comm.ConvertUtil;
 import com.custom.action.dbaction.AbstractSqlBuilder;
-import com.custom.action.dbconfig.SymbolConst;
+import com.custom.action.fieldfill.FieldAutoFillHandleUtils;
+import com.custom.comm.ConvertUtil;
+import com.custom.comm.SymbolConst;
 
 import java.util.Objects;
 import java.util.StringJoiner;

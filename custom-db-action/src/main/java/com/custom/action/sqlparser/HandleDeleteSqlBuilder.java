@@ -1,13 +1,13 @@
 package com.custom.action.sqlparser;
 
+import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.enums.FillStrategy;
 import com.custom.action.fieldfill.AutoFillColumnHandler;
 import com.custom.action.fieldfill.TableFillObject;
-import com.custom.action.comm.CustomUtil;
-import com.custom.action.dbaction.AbstractSqlBuilder;
-import com.custom.action.dbconfig.CustomApplicationUtils;
-import com.custom.action.dbconfig.SymbolConst;
-import com.custom.action.exceptions.ExThrowsUtil;
+import com.custom.comm.CustomApplicationUtil;
+import com.custom.comm.CustomUtil;
+import com.custom.comm.SymbolConst;
+import com.custom.comm.exceptions.ExThrowsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ObjectUtils;
@@ -94,7 +94,7 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
      * 在删除数据时，若是有逻辑删除，则在逻辑删除后，进行固定字段的自动填充
      */
     protected void handleLogicDelAfter(Class<?> t, String deleteSql, Object... params) throws Exception {
-        AutoFillColumnHandler fillColumnHandler = CustomApplicationUtils.getBean(AutoFillColumnHandler.class);
+        AutoFillColumnHandler fillColumnHandler = CustomApplicationUtil.getBean(AutoFillColumnHandler.class);
         if(Objects.isNull(fillColumnHandler)) {
             return;
         }
@@ -122,7 +122,7 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
      */
     private String buildLogicDelAfterAutoUpdateSql(FillStrategy strategy, String whereKeySql, Object... params) {
         StringBuilder autoUpdateSql = new StringBuilder();
-        Optional<TableFillObject> first = Objects.requireNonNull(CustomApplicationUtils.getBean(AutoFillColumnHandler.class))
+        Optional<TableFillObject> first = Objects.requireNonNull(CustomApplicationUtil.getBean(AutoFillColumnHandler.class))
                 .fillStrategy().stream().filter(x -> x.getEntityClass().equals(getEntityClass())).findFirst();
         first.ifPresent(op -> {
             autoUpdateSql.append(SymbolConst.UPDATE)

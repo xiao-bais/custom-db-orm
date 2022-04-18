@@ -1,8 +1,9 @@
 package com.custom.action.dbaction;
 
-import com.custom.action.comm.JudgeUtilsAx;
-import com.custom.action.comm.RexUtil;
-import com.custom.action.dbconfig.SymbolConst;
+import com.custom.action.enums.DbMediaType;
+import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.RexUtil;
+import com.custom.comm.SymbolConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,6 +83,34 @@ public abstract class AbstractTableModel<T> {
         }catch (IllegalAccessException e) {
             logger.error(e.toString(), e);
         }
+    }
+
+    /**
+     * 根据java属性类型设置表字段类型
+     */
+    public static DbMediaType getDbFieldType(Class<?> type) {
+        if (type.getName().toLowerCase().contains(("boolean"))) {
+            return DbMediaType.DbBit;
+        }
+        if (type.getName().toLowerCase().contains(("double"))) {
+            return DbMediaType.DbDouble;
+        }
+        if (type.getName().toLowerCase().contains(("int"))) {
+            return DbMediaType.DbInt;
+        }
+        if (type.getName().toLowerCase().contains(("long"))) {
+            return DbMediaType.DbBigint;
+        }
+        if (type.getName().toLowerCase().contains(("decimal"))) {
+            return DbMediaType.DbDecimal;
+        }
+        if (type.getName().toLowerCase().contains(("date"))) {
+            return DbMediaType.DbDate;
+        }
+        if (type.getName().toLowerCase().contains(("float"))) {
+            return DbMediaType.DbFloat;
+        }
+        return DbMediaType.DbVarchar;
     }
 
 

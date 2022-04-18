@@ -1,6 +1,6 @@
 package com.custom.action.annotations;
 
-import com.custom.action.dbconfig.SymbolConst;
+import com.custom.comm.SymbolConst;
 
 import java.lang.annotation.*;
 

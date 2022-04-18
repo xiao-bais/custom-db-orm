@@ -1,6 +1,6 @@
 package com.custom.action.enums;
 
-import com.custom.action.dbconfig.SymbolConst;
+import com.custom.comm.SymbolConst;
 
 /**
  * @author Xiao-Bai

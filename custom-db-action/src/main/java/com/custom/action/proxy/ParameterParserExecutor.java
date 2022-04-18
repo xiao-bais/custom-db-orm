@@ -1,10 +1,10 @@
 package com.custom.action.proxy;
 
-import com.custom.action.exceptions.CustomCheckException;
-import com.custom.action.comm.CustomUtil;
-import com.custom.action.comm.JudgeUtilsAx;
-import com.custom.action.dbconfig.SymbolConst;
-import com.custom.action.exceptions.ExceptionConst;
+import com.custom.comm.CustomUtil;
+import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.SymbolConst;
+import com.custom.comm.exceptions.CustomCheckException;
+import com.custom.comm.exceptions.ExceptionConst;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Array;

@@ -1,14 +1,14 @@
 package com.custom.action.sqlparser;
 
 import com.custom.action.annotations.DbKey;
-import com.custom.action.comm.GlobalDataHandler;
 import com.custom.action.dbaction.AbstractTableModel;
-import com.custom.action.dbconfig.SymbolConst;
 import com.custom.action.enums.DbMediaType;
 import com.custom.action.enums.KeyStrategy;
-import com.custom.action.exceptions.CustomCheckException;
-import com.custom.action.comm.CustomUtil;
-import com.custom.action.comm.JudgeUtilsAx;
+import com.custom.comm.CustomUtil;
+import com.custom.comm.GlobalDataHandler;
+import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.SymbolConst;
+import com.custom.comm.exceptions.ExThrowsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -136,7 +136,7 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
             case INPUT:
                 key = getValue();
                 if(key == null) {
-                    throw new CustomCheckException("The value of the primary key is empty");
+                    ExThrowsUtil.toCustom("The value of the primary key is empty");
                 }
                 break;
         }

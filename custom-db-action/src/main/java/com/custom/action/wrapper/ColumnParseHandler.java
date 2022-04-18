@@ -1,18 +1,21 @@
 package com.custom.action.wrapper;
 
-import com.custom.action.exceptions.CustomCheckException;
-import com.custom.action.comm.GlobalDataHandler;
-import com.custom.action.comm.JudgeUtilsAx;
-import com.custom.action.dbconfig.SymbolConst;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableSqlBuilder;
-import com.custom.sqlparser.*;
+import com.custom.comm.GlobalDataHandler;
+import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.SymbolConst;
+import com.custom.comm.exceptions.CustomCheckException;
+import com.custom.comm.exceptions.ExThrowsUtil;
 
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @Author Xiao-Bai
@@ -55,7 +58,7 @@ public class ColumnParseHandler<T> {
             String field = getField(funs[i]);
             String targetField = fieldMapper.get(field);
             if(targetField == null) {
-                throw new CustomCheckException("属性" + field + "上未标注Db*注解");
+                ExThrowsUtil.toCustom("属性" + field + "上未标注Db*注解");
             }
             selectColumns[i] = targetField;
         }

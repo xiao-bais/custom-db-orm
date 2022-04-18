@@ -1,17 +1,17 @@
 package com.custom.action.sqlparser;
 
 import com.custom.action.annotations.check.CheckExecute;
-import com.custom.action.comm.page.DbPageRows;
 import com.custom.action.dbaction.AbstractSqlExecutor;
-import com.custom.action.dbconfig.DbCustomStrategy;
-import com.custom.action.dbconfig.DbDataSource;
-import com.custom.action.dbconfig.SymbolConst;
+import com.custom.action.dbaction.SqlExecuteAction;
 import com.custom.action.enums.ExecuteMethod;
-import com.custom.action.exceptions.ExThrowsUtil;
 import com.custom.action.wrapper.ConditionWrapper;
 import com.custom.action.wrapper.SFunction;
-import com.custom.action.comm.JudgeUtilsAx;
-import com.custom.action.dbaction.SqlExecuteAction;
+import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.SymbolConst;
+import com.custom.comm.exceptions.ExThrowsUtil;
+import com.custom.comm.page.DbPageRows;
+import com.custom.configuration.DbCustomStrategy;
+import com.custom.configuration.DbDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
