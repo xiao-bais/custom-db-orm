@@ -7,6 +7,7 @@ import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.proxy.SqlParamsCheckProxy;
 import com.custom.wrapper.ConditionWrapper;
+import com.custom.wrapper.SFunction;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -183,8 +184,8 @@ public class JdbcDao {
     /**
      * 根据主键修改一条记录（updateFields：指定要修改的表字段  为空则修改全部不为空的字段）
      */
-    public <T> int updateByKey(T t, String... updateDbFields) throws Exception {
-        return jdbcAction.updateByKey(t, updateDbFields);
+    public <T> int updateByKey(T t, SFunction<T, ?>... updateColumns) throws Exception {
+        return jdbcAction.updateByKey(t, updateColumns);
     }
 
     /**
@@ -199,6 +200,13 @@ public class JdbcDao {
      */
     public <T> int updateByCondition(T t, ConditionWrapper<T> wrapper) throws Exception {
         return jdbcAction.updateByCondition(t, wrapper);
+    }
+
+    /**
+     * 根据条件修改一条记录
+     */
+    public <T> int updateByCondition(T t, String condition, Object... params) throws Exception {
+        return jdbcAction.updateByCondition(t, condition, params);
     }
 
     /* ----------------------------------------------------------------common---------------------------------------------------------------- */

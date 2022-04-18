@@ -7,6 +7,7 @@ import com.custom.dbconfig.DbCustomStrategy;
 import com.custom.dbconfig.DbDataSource;
 import com.custom.enums.ExecuteMethod;
 import com.custom.exceptions.CustomCheckException;
+import com.custom.exceptions.ExThrowsUtil;
 import com.custom.exceptions.ExceptionConst;
 import com.custom.annotations.check.CheckExecute;
 import com.custom.wrapper.ConditionEntity;
@@ -55,7 +56,9 @@ public class SqlParamsCheckProxy<T> implements MethodInterceptor {
         if(Objects.isNull(annotation)) {
             return methodProxy.invokeSuper(o, objects);
         }
-        if(JudgeUtilsAx.isEmpty(objects[0])) throw new NullPointerException();
+        if(JudgeUtilsAx.isEmpty(objects[0])) {
+            ExThrowsUtil.toNull("实体对象空掉了");
+        }
 
         ExecuteMethod target = annotation.target();
         switch (target) {
@@ -98,19 +101,19 @@ public class SqlParamsCheckProxy<T> implements MethodInterceptor {
         int length = objects.length;
         if(length == 1) {
             if(Objects.isNull(objects[0])) {
-                throw new CustomCheckException("delete condition cannot be empty");
+                ExThrowsUtil.toCustom("delete condition cannot be empty");
             }
             if(objects[0] instanceof ConditionWrapper && JudgeUtilsAx.isEmpty(((ConditionWrapper<?>) objects[0]).getFinalConditional())) {
-                throw new CustomCheckException("delete condition cannot be empty");
+                ExThrowsUtil.toCustom("delete condition cannot be empty");
             }
             return;
         }
         Object deleteParam = objects[1];
         if(!((Class<?>)objects[0]).isAnnotationPresent(DbTable.class)) {
-            throw new CustomCheckException(ExceptionConst.EX_DBTABLE__NOTFOUND + objects[0].getClass().getName());
+            ExThrowsUtil.toCustom("@DbTable not found in class "+ objects[0].getClass());
         }
         if(JudgeUtilsAx.isEmpty(deleteParam)) {
-            throw new CustomCheckException("delete condition cannot be empty");
+            ExThrowsUtil.toCustom("delete condition cannot be empty");
         }
     }
 
@@ -118,25 +121,17 @@ public class SqlParamsCheckProxy<T> implements MethodInterceptor {
     * 修改的时候做参数的预检查
     */
     private void update(Object[] objects, Method method) {
+        if(Objects.isNull(objects[0])) {
+            ExThrowsUtil.toNull("update entity cannot be null");
+        }
         if(!objects[0].getClass().isAnnotationPresent(DbTable.class)) {
-            throw new CustomCheckException(ExceptionConst.EX_DBTABLE__NOTFOUND + objects[0].getClass().getName());
+            ExThrowsUtil.toCustom("@DbTable not found in class " + objects[0].getClass());
         }
         if(!CustomUtil.isKeyTag(objects[0].getClass()) && method.getName().equals("updateByKey")) {
-            throw new CustomCheckException(ExceptionConst.EX_DBKEY_NOTFOUND + objects[0].getClass().getName());
+            ExThrowsUtil.toCustom("@DbKey was not found in class " + objects[0].getClass());
         }
-        if(method.getName().equals("updateByCondition")) {
-            if(JudgeUtilsAx.isEmpty(objects[0])) {
-                throw new CustomCheckException("update entity cannot be null");
-            }
-            if(JudgeUtilsAx.isEmpty(objects[1])) {
-                throw new CustomCheckException("update condition cannot be empty");
-            }
-            if (JudgeUtilsAx.isNotEmpty(objects[1])) {
-                ConditionWrapper<T> conditionEntity = (ConditionWrapper<T>) objects[1];
-                if(JudgeUtilsAx.isEmpty(conditionEntity.getFinalConditional())) {
-                    throw new CustomCheckException("update condition cannot be empty");
-                }
-            }
+        if(method.getName().equals("updateByCondition") && (JudgeUtilsAx.isEmpty(objects[1]) || JudgeUtilsAx.isEmpty(((ConditionWrapper<?>) objects[1]).getFinalConditional()))) {
+            ExThrowsUtil.toCustom("update condition cannot be empty");
         }
     }
 
@@ -145,21 +140,21 @@ public class SqlParamsCheckProxy<T> implements MethodInterceptor {
     */
     private void select(Object[] objects, Method method) {
         if(!((Class<?>)objects[0]).isAnnotationPresent(DbTable.class)) {
-            throw new CustomCheckException(ExceptionConst.EX_DBTABLE__NOTFOUND + objects[0].getClass().getName());
+            ExThrowsUtil.toCustom("@DbTable not found in class " + objects[0].getClass());
         }
         String methodName = method.getName();
         if(JudgeUtilsAx.isEmpty(objects[1])) {
             switch (methodName) {
                 case "selectOneByKey":
                 case "selectBatchByKeys":
-                    throw new CustomCheckException(ExceptionConst.EX_PRIMARY_KEY_NOT_SPECIFIED);
+                    ExThrowsUtil.toCustom("The value of the primary key is not specified when querying based on the primary key");
 
                 case "selectOneBySql":
                 case "selectBySql":
-                    throw new CustomCheckException(ExceptionConst.EX_SQL_NOT_EMPTY);
+                    ExThrowsUtil.toCustom("The Sql to be Not Empty");
 
                 case "selectOneByCondition":
-                    throw new CustomCheckException("condition cannot be empty");
+                    ExThrowsUtil.toCustom("condition cannot be empty");
             }
         }
     }

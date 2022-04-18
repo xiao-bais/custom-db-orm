@@ -11,11 +11,13 @@ import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.ExecuteMethod;
 import com.custom.exceptions.ExThrowsUtil;
 import com.custom.wrapper.ConditionWrapper;
+import com.custom.wrapper.SFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Xiao-Bai
@@ -234,10 +236,18 @@ public class JdbcAction extends AbstractSqlExecutor {
 
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
-    public <T> int updateByKey(T t, String... updateDbFields) throws Exception {
+    public <T> int updateByKey(T t) throws Exception {
         HandleUpdateSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.UPDATE);
-        if(updateDbFields.length > 0) {
-            sqlBuilder.setUpdateStrColumns(updateDbFields);
+        String updateSql = sqlBuilder.buildSql();
+        return executeSql(updateSql, sqlBuilder.getSqlParams().toArray());
+    }
+
+    @Override
+    @CheckExecute(target = ExecuteMethod.UPDATE)
+    public <T> int updateByKey(T t, SFunction<T, ?>... updateColumns) throws Exception {
+        HandleUpdateSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.UPDATE);
+        if(updateColumns.length > 0) {
+            sqlBuilder.setUpdateFuncColumns(updateColumns);
         }
         String updateSql = sqlBuilder.buildSql();
         return executeSql(updateSql, sqlBuilder.getSqlParams().toArray());
@@ -249,6 +259,19 @@ public class JdbcAction extends AbstractSqlExecutor {
         HandleUpdateSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.UPDATE);
         sqlBuilder.setCondition(wrapper.getFinalConditional());
         sqlBuilder.setConditionVals(wrapper.getParamValues());
+        String updateSql = sqlBuilder.buildSql();
+        return executeSql(updateSql, sqlBuilder.getSqlParams().toArray());
+    }
+
+    @Override
+    @CheckExecute(target = ExecuteMethod.UPDATE)
+    public <T> int updateByCondition(T t, String condition, Object... params) throws Exception {
+        if (JudgeUtilsAx.isEmpty(condition)) {
+            ExThrowsUtil.toNull("修改条件不能为空");
+        }
+        HandleUpdateSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.UPDATE);
+        sqlBuilder.setCondition(condition);
+        sqlBuilder.setConditionVals(Arrays.stream(params).collect(Collectors.toList()));
         String updateSql = sqlBuilder.buildSql();
         return executeSql(updateSql, sqlBuilder.getSqlParams().toArray());
     }

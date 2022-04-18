@@ -28,7 +28,7 @@ public class SqlOutPrintBuilder implements Serializable {
             logger.error("sql error ====>\n \n{}\n===================\n", sql);
         }else {
             logger.error(
-                    "\nsql error\n===================\nSQL ====>\n {}\n===================\nparams = {}\n===================\n"
+                    "\nsql error\n===================\nERROR SQL ====>\n {}\n===================\nparams = {}\n===================\n"
                     , sql, getFormatterParams());
         }
 

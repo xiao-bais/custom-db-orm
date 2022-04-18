@@ -17,7 +17,10 @@ import java.util.Objects;
 public class JudgeUtilsAx {
 
     public static boolean isEmpty(String el) {
-        return null == el || "".equals(el) || el.length() == 0;
+        return null == el
+                || "".equals(el)
+                || el.length() == 0
+                || el.trim().length() == 0;
     }
 
     public static boolean isNotEmpty(String el) {

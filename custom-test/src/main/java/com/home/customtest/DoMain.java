@@ -51,11 +51,11 @@ public class DoMain {
         // 增删改查映射策略配置
         DbCustomStrategy dbCustomStrategy = new DbCustomStrategy();
         dbCustomStrategy.setSqlOutPrinting(true);
-//        dbCustomStrategy.setSqlOutPrintExecute(true);
+        dbCustomStrategy.setSqlOutPrintExecute(true);
         dbCustomStrategy.setUnderlineToCamel(true);
-//        dbCustomStrategy.setDbFieldDeleteLogic("state");
-//        dbCustomStrategy.setDeleteLogicValue(1);
-//        dbCustomStrategy.setNotDeleteLogicValue(0);
+        dbCustomStrategy.setDbFieldDeleteLogic("state");
+        dbCustomStrategy.setDeleteLogicValue(1);
+        dbCustomStrategy.setNotDeleteLogicValue(0);
 
         JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
         TableInfoCache.setUnderlineToCamel(true);
@@ -69,7 +69,7 @@ public class DoMain {
         Aklis aklis = new Aklis();
         aklis.setId(239);
         aklis.setName("马回峰");
-        aklis.setAddress("湖南长沙");
+        aklis.setAddress("湖南长沙111");
         aklis.setAge(23);
         aklis.setExplain("bbb");
 
@@ -78,7 +78,9 @@ public class DoMain {
 //        );
 //        System.out.println("objects = " + objects);
 
-        List<ChildStudent> childStudents = jdbcDao.selectList(Conditions.lambdaQuery(ChildStudent.class));
+        Aklis aklis1 = new Aklis();
+        aklis1.setAddress("那就SV的");
+        int i = jdbcDao.updateByCondition(aklis1, Conditions.lambdaQuery(Aklis.class).eq(Aklis::getName, "张三"));
 
         System.out.println("结束");
 

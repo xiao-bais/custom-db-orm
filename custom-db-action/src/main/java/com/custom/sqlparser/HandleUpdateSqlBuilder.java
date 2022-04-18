@@ -10,10 +10,7 @@ import com.custom.wrapper.SFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.StringJoiner;
+import java.util.*;
 
 /**
  * @author Xiao-Bai
@@ -86,7 +83,7 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
     private String updateCustomCondition() {
         String condition = null;
         try {
-            condition = checkLogicFieldIsExist() ?  getLogicDeleteQuerySql() + this.condition : CustomUtil.trimSqlCondition(this.condition);
+            condition = checkLogicFieldIsExist() ? (getLogicDeleteQuerySql() + " " + this.condition) : CustomUtil.trimSqlCondition(this.condition);
             getSqlParams().addAll(this.conditionVals);
         } catch (Exception e) {
             ExThrowsUtil.toCustom(e.toString());
@@ -122,6 +119,8 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
             });
         }
     }
+
+
 
     /**
      * 以指定修改的字段去构建修改的sql

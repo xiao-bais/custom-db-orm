@@ -8,6 +8,7 @@ import com.custom.dbconfig.SymbolConst;
 import com.custom.enums.ExecuteMethod;
 import com.custom.enums.FillStrategy;
 import com.custom.exceptions.CustomCheckException;
+import com.custom.exceptions.ExThrowsUtil;
 import com.custom.exceptions.ExceptionConst;
 import com.custom.fieldfill.AutoFillColumnHandler;
 import com.custom.fieldfill.TableFillObject;
@@ -17,6 +18,7 @@ import com.custom.sqlparser.HandleSelectSqlBuilder;
 import com.custom.sqlparser.TableInfoCache;
 import com.custom.sqlparser.TableSqlBuilder;
 import com.custom.wrapper.ConditionWrapper;
+import com.custom.wrapper.SFunction;
 import org.springframework.util.ObjectUtils;
 
 import java.io.Serializable;
@@ -57,9 +59,10 @@ public abstract class AbstractSqlExecutor {
     public abstract <T> int insert(List<T> tList, boolean isGeneratedKey) throws Exception;
 
     /*--------------------------------------- update ---------------------------------------*/
-    public abstract <T> int updateByKey(T t, String... updateDbFields) throws Exception;
-//    public abstract <T> int updateByKey(T t, SFunction<T, ?>... updateFuncs) throws Exception;
+    public abstract <T> int updateByKey(T t) throws Exception;
+    public abstract <T> int updateByKey(T t, SFunction<T, ?>... updateColumns) throws Exception;
     public abstract <T> int updateByCondition(T t, ConditionWrapper<T> wrapper) throws Exception;
+    public abstract <T> int updateByCondition(T t, String condition, Object... params) throws Exception;
 
     /*--------------------------------------- comm ---------------------------------------*/
     public abstract <T> long save(T t) throws Exception;
@@ -243,6 +246,9 @@ public abstract class AbstractSqlExecutor {
      * 获取实体解析模板中的操作对象
      */
     protected <T, R extends AbstractSqlBuilder<T>> R buildSqlOperationTemplate(T entity, ExecuteMethod method) {
+        if(Objects.isNull(entity)) {
+            ExThrowsUtil.toNull("实体对象不能为空");
+        }
         return buildSqlOperationTemplate(Collections.singletonList(entity), method);
     }
 
