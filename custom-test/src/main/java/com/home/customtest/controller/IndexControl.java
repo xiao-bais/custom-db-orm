@@ -1,8 +1,8 @@
 package com.home.customtest.controller;
 
-import com.custom.comm.BackResult;
-import com.custom.sqlparser.JdbcDao;
-import com.custom.wrapper.LambdaConditionEntity;
+import com.custom.action.comm.BackResult;
+import com.custom.action.sqlparser.JdbcDao;
+import com.custom.action.wrapper.LambdaConditionEntity;
 import com.home.customtest.entity.Aklis;
 import com.home.customtest.entity.Student;
 import org.springframework.beans.factory.annotation.Autowired;

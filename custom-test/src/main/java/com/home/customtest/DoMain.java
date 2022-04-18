@@ -1,34 +1,16 @@
 package com.home.customtest;
 
-import com.custom.comm.page.DbPageRows;
-import com.custom.dbaction.AbstractSqlBuilder;
-import com.custom.dbconfig.DbCustomStrategy;
-import com.custom.dbconfig.DbDataSource;
-import com.custom.dbconfig.SymbolConst;
-import com.custom.enums.FillStrategy;
-import com.custom.fieldfill.AutoFillColumnHandler;
-import com.custom.fieldfill.TableFillObject;
-import com.custom.sqlparser.*;
-import com.custom.wrapper.ConditionEntity;
-import com.custom.wrapper.Conditions;
-import com.custom.wrapper.LambdaConditionEntity;
+import com.custom.action.dbconfig.DbCustomStrategy;
+import com.custom.action.dbconfig.DbDataSource;
+import com.custom.action.fieldfill.AutoFillColumnHandler;
+import com.custom.action.fieldfill.TableFillObject;
+import com.custom.action.sqlparser.JdbcDao;
+import com.custom.action.sqlparser.TableInfoCache;
+import com.custom.action.wrapper.Conditions;
 import com.home.customtest.config.CustomFillConfig;
 import com.home.customtest.entity.*;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.util.CollectionUtils;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.StringJoiner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @Author Xiao-Bai

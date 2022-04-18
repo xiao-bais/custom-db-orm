@@ -1,9 +1,9 @@
 package com.home.customtest.dao;
 
-import com.custom.annotations.mapper.Query;
-import com.custom.annotations.mapper.SqlMapper;
-import com.custom.annotations.mapper.SqlPath;
-import com.custom.annotations.mapper.Update;
+import com.custom.action.annotations.mapper.Query;
+import com.custom.action.annotations.mapper.SqlMapper;
+import com.custom.action.annotations.mapper.SqlPath;
+import com.custom.action.annotations.mapper.Update;
 import com.home.customtest.entity.Employee;
 import com.home.customtest.entity.WorkEmp;
 

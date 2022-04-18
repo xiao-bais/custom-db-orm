@@ -1,11 +1,10 @@
 package com.home.customtest.entity;
 
-import com.custom.annotations.DbField;
-import com.custom.annotations.DbKey;
-import com.custom.annotations.DbTable;
+import com.custom.action.annotations.DbField;
+import com.custom.action.annotations.DbKey;
+import com.custom.action.annotations.DbTable;
 import lombok.Data;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 /**

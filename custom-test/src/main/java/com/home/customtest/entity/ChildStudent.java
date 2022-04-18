@@ -1,7 +1,6 @@
 package com.home.customtest.entity;
 
-import com.custom.annotations.DbField;
-import com.custom.annotations.DbTable;
+import com.custom.action.annotations.DbField;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

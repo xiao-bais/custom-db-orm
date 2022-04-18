@@ -1,6 +1,6 @@
 package com.home.customtest.entity;
 
-import com.custom.annotations.*;
+import com.custom.action.annotations.*;
 import lombok.Data;
 
 import java.math.BigDecimal;

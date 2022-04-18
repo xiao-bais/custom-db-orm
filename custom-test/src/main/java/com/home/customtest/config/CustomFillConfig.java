@@ -1,8 +1,8 @@
 package com.home.customtest.config;
 
-import com.custom.enums.FillStrategy;
-import com.custom.fieldfill.AutoFillColumnHandler;
-import com.custom.fieldfill.TableFillObject;
+import com.custom.action.enums.FillStrategy;
+import com.custom.action.fieldfill.AutoFillColumnHandler;
+import com.custom.action.fieldfill.TableFillObject;
 import com.home.customtest.entity.Aklis;
 import org.springframework.stereotype.Component;
 
