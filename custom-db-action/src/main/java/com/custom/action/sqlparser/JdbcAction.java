@@ -140,6 +140,7 @@ public class JdbcAction extends AbstractSqlExecutor {
     }
 
     @Override
+    @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> T selectOneByCondition(ConditionWrapper<T> wrapper) throws Exception {
         if(Objects.isNull(wrapper)) {
             ExThrowsUtil.toCustom("condition cannot be empty");
@@ -149,18 +150,21 @@ public class JdbcAction extends AbstractSqlExecutor {
     }
 
     @Override
+    @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> long selectCount(ConditionWrapper<T> wrapper) throws Exception {
         String selectSql = getFullSelectSql(wrapper.getEntityClass(), null, wrapper);
         return (long) selectObjBySql(String.format("select count(0) from (%s) xxx ", selectSql), wrapper.getParamValues().toArray());
     }
 
     @Override
+    @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> Object selectObj(ConditionWrapper<T> wrapper) throws Exception {
         String selectSql = getFullSelectSql(wrapper.getEntityClass(), null, wrapper);
         return selectObjBySql(selectSql, wrapper.getParamValues().toArray());
     }
 
     @Override
+    @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> List<Object> selectObjs(ConditionWrapper<T> wrapper) throws Exception {
         String selectSql = getFullSelectSql(wrapper.getEntityClass(), null, wrapper);
         return selectObjsBySql(selectSql, wrapper.getParamValues().toArray());

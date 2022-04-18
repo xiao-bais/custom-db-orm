@@ -97,7 +97,6 @@ public class JdbcDao {
      * 条件构造器查询-查询多个
      */
     public <T> List<T> selectList(ConditionWrapper<T> wrapper) throws Exception {
-//        JudgeUtilsAx.checkObjNotNull(wrapper);
         return jdbcAction.selectList(wrapper);
     }
 
@@ -105,7 +104,6 @@ public class JdbcDao {
      * 条件构造器查询-查询单个对象
      */
     public <T> T selectOne(ConditionWrapper<T> wrapper) throws Exception {
-        JudgeUtilsAx.checkObjNotNull(wrapper);
         return jdbcAction.selectOneByCondition(wrapper);
     }
 
@@ -113,7 +111,6 @@ public class JdbcDao {
      * 条件构造器查询-查询数量
      */
     public <T> long selectCount(ConditionWrapper<T> wrapper) throws Exception {
-        JudgeUtilsAx.checkObjNotNull(wrapper);
         return jdbcAction.selectCount(wrapper);
     }
 
@@ -121,14 +118,12 @@ public class JdbcDao {
      * 条件构造器查询单个字段值（若有多个值满足条件，默认返回第一条记录的第一个值）
      */
     public <T> Object selectObj(ConditionWrapper<T> wrapper) throws Exception {
-        JudgeUtilsAx.checkObjNotNull(wrapper);
         return jdbcAction.selectObj(wrapper);
     }
     /**
      * 条件构造器查询单个值（若有多条记录满足条件，默认返回所有记录的第一个字段）
      */
     public <T> List<Object> selectObjs(ConditionWrapper<T> wrapper) throws Exception {
-        JudgeUtilsAx.checkObjNotNull(wrapper);
         return jdbcAction.selectObjs(wrapper);
     }
 

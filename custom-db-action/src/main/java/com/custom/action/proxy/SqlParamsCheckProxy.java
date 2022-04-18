@@ -140,9 +140,13 @@ public class SqlParamsCheckProxy<T> implements MethodInterceptor {
     */
     private void select(Object[] objects, Method method) {
 
-        if (objects[0] instanceof ConditionWrapper && Objects.isNull(((ConditionWrapper<T>) objects[0]).getEntityClass())) {
-            ExThrowsUtil.toCustom("实体Class对象不能为空");
-        } else if (!objects[0].getClass().isAnnotationPresent(DbTable.class)) {
+        if (objects[0] instanceof ConditionWrapper) {
+            if (Objects.isNull(((ConditionWrapper<T>) objects[0]).getEntityClass())) {
+                ExThrowsUtil.toCustom("实体Class对象不能为空");
+            }
+            return;
+        }
+        if (!objects[0].getClass().isAnnotationPresent(DbTable.class)) {
             ExThrowsUtil.toCustom("@DbTable not found in class " + objects[0].getClass());
         }
         String methodName = method.getName();

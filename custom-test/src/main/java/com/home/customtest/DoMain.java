@@ -60,7 +60,7 @@ public class DoMain {
 //        );
 //        System.out.println("objects = " + objects);
 
-        List<Student> students = jdbcDao.selectList(Conditions.lambdaQuery(null));
+        List<Student> students = jdbcDao.selectList(Conditions.lambdaQuery(Student.class).ge(Student::getAge, 22));
         System.out.println("students = " + students);
 
 

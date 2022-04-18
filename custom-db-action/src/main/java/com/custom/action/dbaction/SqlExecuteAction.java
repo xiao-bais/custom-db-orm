@@ -84,7 +84,6 @@ public class SqlExecuteAction extends DbConnection {
             statementQuery(sql, true, params);
             resultSet = statement.executeQuery();
             ResultSetMetaData metaData = resultSet.getMetaData();
-
             while (resultSet.next()) {
                 T t;
                 if(CustomUtil.isBasicType(clazz)) {
