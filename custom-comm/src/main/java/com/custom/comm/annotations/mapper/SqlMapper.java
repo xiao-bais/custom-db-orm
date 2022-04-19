@@ -1,4 +1,4 @@
-package com.custom.action.annotations.mapper;
+package com.custom.comm.annotations.mapper;
 
 import java.lang.annotation.*;
 

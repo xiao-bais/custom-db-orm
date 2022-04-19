@@ -1,12 +1,12 @@
 package com.custom.action.sqlparser;
 
-import com.custom.action.annotations.DbField;
 import com.custom.action.dbaction.AbstractTableModel;
-import com.custom.action.enums.DbMediaType;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.GlobalDataHandler;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.comm.SymbolConst;
+import com.custom.comm.annotations.DbField;
+import com.custom.comm.enums.DbMediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,4 +1,4 @@
-package com.custom.action.annotations;
+package com.custom.comm.annotations;
 
 import com.custom.comm.SymbolConst;
 

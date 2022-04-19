@@ -1,12 +1,11 @@
 package com.custom.action.proxy;
 
-import com.custom.action.annotations.DbTable;
-import com.custom.action.annotations.check.CheckExecute;
-import com.custom.action.enums.ExecuteMethod;
 import com.custom.action.util.DbUtil;
 import com.custom.action.wrapper.ConditionWrapper;
-import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.annotations.DbTable;
+import com.custom.comm.annotations.check.CheckExecute;
+import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.exceptions.ExceptionConst;

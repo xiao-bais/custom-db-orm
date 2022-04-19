@@ -1,11 +1,11 @@
 package com.custom.action.wrapper;
 
-import com.custom.action.enums.DbSymbol;
-import com.custom.action.enums.SqlLike;
-import com.custom.action.enums.SqlOrderBy;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.comm.SymbolConst;
+import com.custom.comm.enums.DbSymbol;
+import com.custom.comm.enums.SqlLike;
+import com.custom.comm.enums.SqlOrderBy;
 import com.custom.comm.exceptions.ExThrowsUtil;
 
 import java.lang.reflect.Array;

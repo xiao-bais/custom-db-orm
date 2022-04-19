@@ -1,9 +1,9 @@
 package com.custom.action.dbaction;
 
-import com.custom.action.enums.DbMediaType;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.comm.RexUtil;
 import com.custom.comm.SymbolConst;
+import com.custom.comm.enums.DbMediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

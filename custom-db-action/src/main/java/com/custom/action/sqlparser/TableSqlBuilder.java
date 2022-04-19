@@ -1,13 +1,13 @@
 package com.custom.action.sqlparser;
 
-import com.custom.action.annotations.*;
 import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.dbaction.SqlExecuteAction;
-import com.custom.action.enums.ExecuteMethod;
 import com.custom.action.util.DbUtil;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.comm.SymbolConst;
+import com.custom.comm.annotations.*;
+import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.configuration.DbConnection;
 import org.slf4j.Logger;

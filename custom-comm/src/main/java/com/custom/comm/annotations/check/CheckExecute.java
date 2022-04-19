@@ -1,6 +1,6 @@
-package com.custom.action.annotations.check;
+package com.custom.comm.annotations.check;
 
-import com.custom.action.enums.ExecuteMethod;
+import com.custom.comm.enums.ExecuteMethod;
 
 import java.lang.annotation.*;
 

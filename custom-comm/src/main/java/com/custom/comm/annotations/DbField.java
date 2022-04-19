@@ -1,7 +1,7 @@
-package com.custom.action.annotations;
+package com.custom.comm.annotations;
 
-import com.custom.action.enums.DbMediaType;
 import com.custom.comm.SymbolConst;
+import com.custom.comm.enums.DbMediaType;
 
 import java.lang.annotation.*;
 

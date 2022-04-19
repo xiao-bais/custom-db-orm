@@ -1,10 +1,10 @@
 package com.custom.action.sqlparser;
 
-import com.custom.action.annotations.DbMapper;
 import com.custom.action.dbaction.AbstractTableModel;
 import com.custom.comm.GlobalDataHandler;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.comm.SymbolConst;
+import com.custom.comm.annotations.DbMapper;
 
 import java.lang.reflect.Field;
 

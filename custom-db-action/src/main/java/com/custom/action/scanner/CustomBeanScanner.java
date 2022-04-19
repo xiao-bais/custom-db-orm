@@ -1,10 +1,10 @@
 package com.custom.action.scanner;
 
-import com.custom.action.annotations.DbTable;
-import com.custom.action.annotations.mapper.SqlMapper;
 import com.custom.comm.BasicDao;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.comm.SymbolConst;
+import com.custom.comm.annotations.DbTable;
+import com.custom.comm.annotations.mapper.SqlMapper;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExceptionConst;
 import lombok.extern.slf4j.Slf4j;
@@ -32,12 +32,12 @@ public class CustomBeanScanner {
     /**
      * 所有需要注册的bean集合
      */
-    private Set<Class<?>> beanRegisterSet = new HashSet<>();
+    private final Set<Class<?>> beanRegisterSet = new HashSet<>();
 
     /**
      * 类加载器
      */
-    private ClassLoader classLoader = CustomBeanScanner.class.getClassLoader();
+    private final ClassLoader classLoader = CustomBeanScanner.class.getClassLoader();
 
     /**
      * 扫描的包

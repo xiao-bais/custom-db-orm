@@ -1,4 +1,4 @@
-package com.custom.action.enums;
+package com.custom.comm.enums;
 
 /**
  * @author Xiao-Bai

@@ -1,6 +1,5 @@
 package com.custom.action.dbaction;
 
-import com.custom.action.enums.ExecuteMethod;
 import com.custom.action.interfaces.LogicDeleteFieldSqlHandler;
 import com.custom.action.sqlparser.HandleSelectSqlBuilder;
 import com.custom.action.sqlparser.TableInfoCache;
@@ -10,6 +9,7 @@ import com.custom.action.wrapper.SFunction;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.comm.SymbolConst;
+import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.exceptions.ExceptionConst;

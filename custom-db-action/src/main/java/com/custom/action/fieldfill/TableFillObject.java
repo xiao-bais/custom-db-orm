@@ -1,6 +1,6 @@
 package com.custom.action.fieldfill;
 
-import com.custom.action.enums.FillStrategy;
+import com.custom.comm.enums.FillStrategy;
 
 import java.util.HashMap;
 import java.util.Map;

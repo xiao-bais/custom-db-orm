@@ -1,12 +1,12 @@
 package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractSqlBuilder;
-import com.custom.action.enums.FillStrategy;
 import com.custom.action.fieldfill.AutoFillColumnHandler;
 import com.custom.action.fieldfill.TableFillObject;
 import com.custom.comm.CustomApplicationUtil;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.SymbolConst;
+import com.custom.comm.enums.FillStrategy;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

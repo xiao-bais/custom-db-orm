@@ -1,6 +1,6 @@
 package com.home.customtest.entity;
 
-import com.custom.action.annotations.*;
+import com.custom.comm.annotations.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

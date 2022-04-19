@@ -1,11 +1,11 @@
 package com.custom.action.sqlparser;
 
-import com.custom.action.annotations.DbJoinTables;
 import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.util.DbUtil;
 import com.custom.comm.GlobalDataHandler;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.comm.SymbolConst;
+import com.custom.comm.annotations.DbJoinTables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

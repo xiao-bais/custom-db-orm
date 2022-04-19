@@ -1,6 +1,6 @@
-package com.custom.action.annotations.mapper;
+package com.custom.comm.annotations.mapper;
 
-import com.custom.action.enums.ExecuteMethod;
+import com.custom.comm.enums.ExecuteMethod;
 
 import java.lang.annotation.*;
 

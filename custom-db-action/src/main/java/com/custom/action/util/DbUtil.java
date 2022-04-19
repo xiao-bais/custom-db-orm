@@ -1,10 +1,10 @@
 package com.custom.action.util;
 
-import com.custom.action.annotations.DbKey;
-import com.custom.action.annotations.DbRelated;
-import com.custom.action.annotations.DbTable;
-import com.custom.action.enums.DbMediaType;
 import com.custom.comm.CustomUtil;
+import com.custom.comm.annotations.DbKey;
+import com.custom.comm.annotations.DbRelated;
+import com.custom.comm.annotations.DbTable;
+import com.custom.comm.enums.DbMediaType;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExceptionConst;
 

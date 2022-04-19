@@ -1,4 +1,4 @@
-package com.custom.action.enums;
+package com.custom.comm.enums;
 
 import com.custom.comm.SymbolConst;
 

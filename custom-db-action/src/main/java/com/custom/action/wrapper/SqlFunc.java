@@ -1,8 +1,8 @@
 package com.custom.action.wrapper;
 
-import com.custom.action.enums.SqlAggregate;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.comm.SymbolConst;
+import com.custom.comm.enums.SqlAggregate;
 
 import java.util.Map;
 import java.util.StringJoiner;

@@ -1,6 +1,6 @@
 package com.custom.action.wrapper;
 
-import com.custom.action.enums.SqlAggregate;
+import com.custom.comm.enums.SqlAggregate;
 
 /**
  * @Author Xiao-Bai

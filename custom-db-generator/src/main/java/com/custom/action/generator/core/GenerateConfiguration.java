@@ -8,4 +8,8 @@ package com.custom.action.generator.core;
 public class GenerateConfiguration {
 
 
+
+
+
+
 }

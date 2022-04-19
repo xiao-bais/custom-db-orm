@@ -1,7 +1,7 @@
 package com.custom.action.wrapper;
 
-import com.custom.action.enums.SqlAggregate;
 import com.custom.comm.SymbolConst;
+import com.custom.comm.enums.SqlAggregate;
 import com.custom.comm.exceptions.CustomCheckException;
 
 import java.lang.reflect.Field;

@@ -1,7 +1,7 @@
-package com.custom.action.annotations;
+package com.custom.comm.annotations;
 
-import com.custom.action.enums.DbMediaType;
-import com.custom.action.enums.KeyStrategy;
+import com.custom.comm.enums.DbMediaType;
+import com.custom.comm.enums.KeyStrategy;
 
 import java.lang.annotation.*;
 

@@ -1,8 +1,8 @@
 package com.home.customtest.entity;
 
-import com.custom.action.annotations.DbField;
-import com.custom.action.annotations.DbKey;
-import com.custom.action.annotations.DbTable;
+import com.custom.comm.annotations.DbField;
+import com.custom.comm.annotations.DbKey;
+import com.custom.comm.annotations.DbTable;
 import lombok.Data;
 
 /**

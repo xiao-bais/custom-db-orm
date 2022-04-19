@@ -1,14 +1,14 @@
 package com.custom.action.proxy;
 
-import com.custom.action.annotations.mapper.Query;
-import com.custom.action.annotations.mapper.SqlMapper;
-import com.custom.action.annotations.mapper.SqlPath;
-import com.custom.action.annotations.mapper.Update;
 import com.custom.action.dbaction.SqlExecuteAction;
-import com.custom.action.enums.ExecuteMethod;
 import com.custom.comm.BasicDao;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.SymbolConst;
+import com.custom.comm.annotations.mapper.Query;
+import com.custom.comm.annotations.mapper.SqlMapper;
+import com.custom.comm.annotations.mapper.SqlPath;
+import com.custom.comm.annotations.mapper.Update;
+import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExceptionConst;
 import com.custom.configuration.DbCustomStrategy;
