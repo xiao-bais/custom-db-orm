@@ -141,14 +141,14 @@ public abstract class AbstractSqlExecutor {
     * 纯sql查询集合
     */
     public <T> List<T> selectBySql(Class<T> t, String sql, Object... params) throws Exception {
-        return sqlExecuteAction.query(t, sql, params);
+        return sqlExecuteAction.query(t, true, sql, params);
     }
 
     /**
     * 纯sql查询单条记录
     */
     public <T> T selectOneBySql(Class<T> t, String sql, Object... params) throws Exception {
-        List<T> queryList = sqlExecuteAction.query(t, sql, params);
+        List<T> queryList = sqlExecuteAction.query(t, true, sql, params);
         int size = queryList.size();
         if (size == 0) {
             return null;
@@ -189,13 +189,23 @@ public abstract class AbstractSqlExecutor {
     }
 
     /**
-     * 直接执行，属于内部执行
+     * 直接执行增删改，属于内部执行
      */
     public void executeUpdateNotPrintSql(String sql) throws Exception {
         if (JudgeUtilsAx.isEmpty(sql)) {
             throw new NullPointerException();
         }
         sqlExecuteAction.executeUpdateNotPrintSql(sql);
+    }
+
+    /**
+     * 直接执行查询，属于内部执行
+     */
+    public <T> List<T> executeQueryNotPrintSql(Class<T> t, String sql, Object... params) throws Exception {
+        if (JudgeUtilsAx.isEmpty(sql)) {
+            throw new NullPointerException();
+        }
+        return sqlExecuteAction.query(t, false, sql, params);
     }
 
     /**

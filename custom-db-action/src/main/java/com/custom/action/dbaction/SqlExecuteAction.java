@@ -33,6 +33,10 @@ public class SqlExecuteAction extends DbConnection {
         this.dbCustomStrategy = dbCustomStrategy;
     }
 
+    public DbCustomStrategy getDbCustomStrategy() {
+        return dbCustomStrategy;
+    }
+
     /**
      * 预编译-更新
      */
@@ -77,11 +81,11 @@ public class SqlExecuteAction extends DbConnection {
      * 通用查询（Collection）
      */
     @SuppressWarnings("unchecked")
-    public <T> List<T> query(Class<T> clazz, String sql, Object... params) throws Exception {
+    public <T> List<T> query(Class<T> clazz, boolean outFlag, String sql, Object... params) throws Exception {
         Map<String, Object> map;
         List<T> list = new ArrayList<>();
         try {
-            statementQuery(sql, true, params);
+            statementQuery(sql, outFlag, params);
             resultSet = statement.executeQuery();
             ResultSetMetaData metaData = resultSet.getMetaData();
             while (resultSet.next()) {

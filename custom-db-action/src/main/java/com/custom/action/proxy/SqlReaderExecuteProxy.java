@@ -147,7 +147,7 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
             Class<?> typeArgument = (Class<?>) pt.getActualTypeArguments()[0];
             Type type = ((ParameterizedType) returnType).getRawType();
             if (type.equals(List.class)) {
-                return query(typeArgument, sql, params);
+                return query(typeArgument, getDbCustomStrategy().isSqlOutPrinting(),  sql, params);
 
             } else if (type.equals(Map.class)) {
                 return selectObjSql(Map.class, sql, params);
@@ -164,7 +164,7 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
         }else {
             String typeName = returnType.getTypeName();
             Class<?> cls = Class.forName(typeName);
-            List<?> resultList = query(cls, sql, params);
+            List<?> resultList = query(cls, getDbCustomStrategy().isSqlOutPrinting(), sql, params);
             if(resultList.isEmpty()) {
                 return null;
             }else if(resultList.size() > SymbolConst.DEFAULT_ONE) {

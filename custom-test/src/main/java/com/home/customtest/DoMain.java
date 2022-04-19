@@ -10,6 +10,10 @@ import com.custom.configuration.DbDataSource;
 import com.home.customtest.config.CustomFillConfig;
 import com.home.customtest.entity.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -60,8 +64,16 @@ public class DoMain {
 //        );
 //        System.out.println("objects = " + objects);
 
-        List<Student> students = jdbcDao.selectList(Conditions.lambdaQuery(Student.class).ge(Student::getAge, 22));
-        System.out.println("students = " + students);
+//        List<Student> students = jdbcDao.selectList(Conditions.lambdaQuery(Student.class).ge(Student::getAge, 22));
+//        System.out.println("students = " + students);
+
+        List<Object> objects = jdbcDao.selectObjs(Conditions.lambdaQuery(Aklis.class));
+        System.out.println("objects = " + objects);
+
+
+        Date date = new Date(1649779200 * 1000);
+
+        Calendar calendar = Calendar.getInstance();
 
 
 //        customDao.updateByCondition(aklis, Conditions.lambdaQuery(Aklis.class).isNotNull(Aklis::getExplain).like(Aklis::getName, "马回峰"));
