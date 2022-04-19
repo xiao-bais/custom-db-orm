@@ -2,7 +2,7 @@ package com.custom.action.dbaction;
 
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.comm.RexUtil;
-import com.custom.comm.SymbolConst;
+import com.custom.comm.SymbolConstant;
 import com.custom.comm.enums.DbMediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,13 +55,13 @@ public abstract class AbstractTableModel<T> {
                 fieldName = RexUtil.regexStr(fieldName, RexUtil.back_quotes);
             }
             firstLetter = fieldName.substring(0, 1).toUpperCase();
-            getter = SymbolConst.GET + firstLetter + fieldName.substring(1);
+            getter = SymbolConstant.GET + firstLetter + fieldName.substring(1);
             Method method = x.getClass().getMethod(getter);
             value = method.invoke(x);
         }catch (NoSuchMethodException e){
             try {
                 firstLetter = fieldName.substring(0, 1).toUpperCase();
-                Method method = x.getClass().getMethod(SymbolConst.IS + firstLetter + fieldName.substring(1));
+                Method method = x.getClass().getMethod(SymbolConstant.IS + firstLetter + fieldName.substring(1));
                 value = method.invoke(x);
             }catch (NoSuchMethodException v) {
                 Method method = x.getClass().getMethod(fieldName);

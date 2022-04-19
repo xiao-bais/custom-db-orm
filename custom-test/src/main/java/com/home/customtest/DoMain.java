@@ -2,6 +2,9 @@ package com.home.customtest;
 
 import com.custom.action.fieldfill.AutoFillColumnHandler;
 import com.custom.action.fieldfill.TableFillObject;
+import com.custom.action.generator.config.TableConfig;
+import com.custom.action.generator.core.GenerateCodeExecutor;
+import com.custom.action.generator.table.TableStructModel;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.wrapper.Conditions;
@@ -30,7 +33,7 @@ public class DoMain {
 
         // 数据库连接配置
         DbDataSource dbDataSource = new DbDataSource();
-        dbDataSource.setUrl("jdbc:mysql://39.108.225.176:3306/hos?characterEncoding=utf-8&allowMultiQueries=true&autoreconnect=true&serverTimezone=UTC");
+        dbDataSource.setUrl("jdbc:mysql://39.108.225.176:3306/shop?characterEncoding=utf-8&allowMultiQueries=true&autoreconnect=true&serverTimezone=UTC");
         dbDataSource.setUsername("root");
         dbDataSource.setPassword("xh@Mysql1524");
 
@@ -46,37 +49,24 @@ public class DoMain {
         JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
         TableInfoCache.setUnderlineToCamel(true);
 
-        AutoFillColumnHandler autoFillColumnHandler = new CustomFillConfig();
-        List<TableFillObject> tableFillObjects = autoFillColumnHandler.fillStrategy();
+
+        GenerateCodeExecutor gce = new GenerateCodeExecutor(dbDataSource, dbCustomStrategy);
+
+        // 表配置
+        TableConfig tableConfig = new TableConfig();
+        tableConfig.setTablePrefix("shop");
+        tableConfig.setEntitySuffix("PO");
+        tableConfig.setEntityDbFieldAnnotationValueEnable(true);
+        gce.setTableConfig(tableConfig);
+
+        TableStructModel tableStructModel = new TableStructModel();
+        tableStructModel.setTable("shop_user");
+
+        gce.start();
+
+        System.out.println("tableStructModel.getEntityName() = " + tableStructModel.getEntityName());
 
 
-//        int i = customDao.deleteByCondition(Conditions.lambdaQuery(Aklis.class).eq(Aklis::getExplain, "张三"));
-
-        Aklis aklis = new Aklis();
-        aklis.setId(239);
-        aklis.setName("马回峰");
-        aklis.setAddress("湖南长沙111");
-        aklis.setAge(23);
-        aklis.setExplain("bbb");
-
-//        List<Object> objects = customDao.selectObjs(Conditions.lambdaQuery(Aklis.class).like(Aklis::getName, "李")
-//                .select(x -> x.ifNull(Aklis::getExplain, "未知"))
-//        );
-//        System.out.println("objects = " + objects);
-
-//        List<Student> students = jdbcDao.selectList(Conditions.lambdaQuery(Student.class).ge(Student::getAge, 22));
-//        System.out.println("students = " + students);
-
-        List<Object> objects = jdbcDao.selectObjs(Conditions.lambdaQuery(Aklis.class));
-        System.out.println("objects = " + objects);
-
-
-        Date date = new Date(1649779200 * 1000);
-
-        Calendar calendar = Calendar.getInstance();
-
-
-//        customDao.updateByCondition(aklis, Conditions.lambdaQuery(Aklis.class).isNotNull(Aklis::getExplain).like(Aklis::getName, "马回峰"));
     }
 
 

@@ -8,11 +8,6 @@ package com.custom.action.generator.config;
 public class TableConfig {
 
     /**
-     * 是否使用lombok注解
-     */
-    private Boolean entityLombok = true;
-
-    /**
      * 生成时，若配置了表前缀，则生成后前缀会忽略
      * 例：tb_user -> User
      */
@@ -36,14 +31,6 @@ public class TableConfig {
      */
     private Boolean entityDbFieldAnnotationValueEnable = false;
 
-
-    public Boolean getEntityLombok() {
-        return entityLombok;
-    }
-
-    public void setEntityLombok(Boolean entityLombok) {
-        this.entityLombok = entityLombok;
-    }
 
     public String getTablePrefix() {
         return tablePrefix;

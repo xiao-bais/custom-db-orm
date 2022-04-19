@@ -8,7 +8,7 @@ import com.custom.action.wrapper.ConditionWrapper;
 import com.custom.action.wrapper.SFunction;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
-import com.custom.comm.SymbolConst;
+import com.custom.comm.SymbolConstant;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;
@@ -71,9 +71,9 @@ public abstract class AbstractSqlExecutor {
 
     private SqlExecuteAction sqlExecuteAction;
     private DbCustomStrategy dbCustomStrategy;
-    private String logicField = SymbolConst.EMPTY;
-    private String logicDeleteUpdateSql = SymbolConst.EMPTY;
-    private String logicDeleteQuerySql = SymbolConst.EMPTY;
+    private String logicField = SymbolConstant.EMPTY;
+    private String logicDeleteUpdateSql = SymbolConstant.EMPTY;
+    private String logicDeleteQuerySql = SymbolConstant.EMPTY;
 
     /**
      * 初始化逻辑删除的sql
@@ -121,7 +121,7 @@ public abstract class AbstractSqlExecutor {
      */
     public String checkConditionAndLogicDeleteSql(String alias, final String condition, String logicSql, String tableName) throws Exception {
         if(!checkLogicFieldIsExist(tableName)) {
-            logicSql = SymbolConst.EMPTY;
+            logicSql = SymbolConstant.EMPTY;
         }
         final String finalLogicSql = logicSql;
         LogicDeleteFieldSqlHandler handler = () -> {
@@ -130,7 +130,7 @@ public abstract class AbstractSqlExecutor {
                         : String.format("\nwhere %s ", CustomUtil.trimAppendSqlCondition(condition));
             } else {
                 return JudgeUtilsAx.isNotEmpty(finalLogicSql) ? String.format("\nwhere %s.%s ", alias, finalLogicSql)
-                        : condition == null ? SymbolConst.EMPTY : condition.trim();
+                        : condition == null ? SymbolConstant.EMPTY : condition.trim();
             }
         };
         return handler.handleLogic();
@@ -155,7 +155,7 @@ public abstract class AbstractSqlExecutor {
         } else if (size > 1) {
             throw new CustomCheckException(String.format(ExceptionConst.EX_QUERY_MORE_RESULT, size));
         }
-        return queryList.get(SymbolConst.DEFAULT_ZERO);
+        return queryList.get(SymbolConstant.DEFAULT_ZERO);
     }
 
     /**
@@ -313,13 +313,13 @@ public abstract class AbstractSqlExecutor {
         }
         selectSql.append(condition);
         if(JudgeUtilsAx.isNotEmpty(wrapper.getGroupBy())) {
-            selectSql.append(SymbolConst.GROUP_BY).append(wrapper.getGroupBy());
+            selectSql.append(SymbolConstant.GROUP_BY).append(wrapper.getGroupBy());
         }
         if(JudgeUtilsAx.isNotEmpty(wrapper.getHaving())) {
-            selectSql.append(SymbolConst.HAVING).append(wrapper.getHaving());
+            selectSql.append(SymbolConstant.HAVING).append(wrapper.getHaving());
         }
         if(CustomUtil.isNotBlank(wrapper.getOrderBy().toString())) {
-            selectSql.append(SymbolConst.ORDER_BY).append(wrapper.getOrderBy());
+            selectSql.append(SymbolConstant.ORDER_BY).append(wrapper.getOrderBy());
         }
         if(!wrapper.getHavingParams().isEmpty()) {
             wrapper.getParamValues().addAll(wrapper.getHavingParams());

@@ -1,5 +1,7 @@
 package com.custom.comm.enums;
 
+import com.custom.comm.exceptions.ExThrowsUtil;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -43,10 +45,19 @@ public enum DbMediaType {
         this.length = length;
     }
 
-    public static Class<?> getFieldType(String type) {
+    public static DbMediaType getDbMediaType(Class<?> type) {
+        for (DbMediaType value : values()) {
+            if(value.fieldType.equals(type)) {
+                return value;
+            }
+        }
+        throw new NullPointerException("找不到匹配的类型");
+    }
+
+    public static DbMediaType getDbType(String type) {
         for (DbMediaType value : values()) {
             if(value.type.equals(type)) {
-                return value.fieldType;
+                return value;
             }
         }
         return null;

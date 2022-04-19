@@ -3,7 +3,7 @@ package com.custom.action.proxy;
 import com.custom.action.dbaction.SqlExecuteAction;
 import com.custom.comm.BasicDao;
 import com.custom.comm.CustomUtil;
-import com.custom.comm.SymbolConst;
+import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.mapper.Query;
 import com.custom.comm.annotations.mapper.SqlMapper;
 import com.custom.comm.annotations.mapper.SqlPath;
@@ -104,10 +104,10 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
         String methodName = String.format(" %s.%s() ", method.getDeclaringClass().getName(), method.getName());
         checkIllegalParam(methodName, isOrder, sql);
 
-        if(sql.contains(SymbolConst.PREPARE_BEGIN_REX_1) && isOrder) {
+        if(sql.contains(SymbolConstant.PREPARE_BEGIN_REX_1) && isOrder) {
             throw new CustomCheckException(methodName + ExceptionConst.EX_USE_ORDER_FALSE);
         }
-        if(sql.contains(SymbolConst.QUEST) && !isOrder) {
+        if(sql.contains(SymbolConstant.QUEST) && !isOrder) {
             throw new CustomCheckException(methodName + ExceptionConst.EX_USE_ORDER_TRUE);
         }
         // 自定义-参数预编译
@@ -167,10 +167,10 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
             List<?> resultList = query(cls, getDbCustomStrategy().isSqlOutPrinting(), sql, params);
             if(resultList.isEmpty()) {
                 return null;
-            }else if(resultList.size() > SymbolConst.DEFAULT_ONE) {
+            }else if(resultList.size() > SymbolConstant.DEFAULT_ONE) {
                 throw new CustomCheckException(String.format(ExceptionConst.EX_QUERY_MORE_RESULT, resultList.size()));
             }else {
-                return resultList.get(SymbolConst.DEFAULT_ZERO);
+                return resultList.get(SymbolConstant.DEFAULT_ZERO);
             }
         }
         return null;
@@ -181,18 +181,18 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
      */
     private void checkIllegalParam(String methodName, boolean isOrder, String sql) {
 
-        if(sql.contains(SymbolConst.PREPARE_BEGIN_REX_1) && sql.contains(SymbolConst.QUEST)) {
+        if(sql.contains(SymbolConstant.PREPARE_BEGIN_REX_1) && sql.contains(SymbolConstant.QUEST)) {
             log.error("if isOrder=true，only allow used \"?\"  when isOrder=false only allow used \"#{ }\" set parameter");
             log.error("Error Method ==> {}", methodName);
             throw new CustomCheckException(String.format(ExceptionConst.EX_UNABLE_TO_RESOLVE_SQL, sql));
         }
         if(isOrder) {
-            if(sql.contains(SymbolConst.PREPARE_BEGIN_REX_1)) {
+            if(sql.contains(SymbolConstant.PREPARE_BEGIN_REX_1)) {
                 log.error("Error Method ==> {}", methodName);
                 throw new CustomCheckException(ExceptionConst.EX_USE_ORDER_FALSE);
             }
         }else {
-            if(sql.contains(SymbolConst.QUEST)) {
+            if(sql.contains(SymbolConstant.QUEST)) {
                 log.error("Error Method ==> {}", methodName);
                 throw new CustomCheckException(ExceptionConst.EX_USE_ORDER_TRUE);
             }

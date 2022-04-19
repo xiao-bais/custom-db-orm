@@ -4,7 +4,7 @@ import com.custom.action.dbaction.AbstractTableModel;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.GlobalDataHandler;
 import com.custom.comm.JudgeUtilsAx;
-import com.custom.comm.SymbolConst;
+import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.DbKey;
 import com.custom.comm.enums.DbMediaType;
 import com.custom.comm.enums.KeyStrategy;
@@ -167,9 +167,9 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
     protected String buildTableSql() {
         StringBuilder keyFieldSql = new StringBuilder(String.format("`%s` ", this.dbKey));
         keyFieldSql.append(this.dbMediaType.getType())
-                .append(SymbolConst.BRACKETS_LEFT)
+                .append(SymbolConstant.BRACKETS_LEFT)
                 .append(this.length)
-                .append(SymbolConst.BRACKETS_RIGHT)
+                .append(SymbolConstant.BRACKETS_RIGHT)
                 .append(" PRIMARY KEY ");
 
         if(this.strategy == KeyStrategy.AUTO) {

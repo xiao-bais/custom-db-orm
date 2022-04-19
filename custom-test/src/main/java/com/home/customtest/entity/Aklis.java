@@ -3,6 +3,8 @@ package com.home.customtest.entity;
 import com.custom.comm.annotations.DbField;
 import com.custom.comm.annotations.DbKey;
 import com.custom.comm.annotations.DbTable;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
@@ -14,6 +16,7 @@ import java.util.Date;
  **/
 @Data
 @DbTable(table = "aklis")
+@ApiModel()
 public class Aklis {
 
     @DbKey
@@ -35,6 +38,7 @@ public class Aklis {
     private Boolean sex;
 
     @DbField
+    @ApiModelProperty("电话")
     private String phone;
 
     @DbField

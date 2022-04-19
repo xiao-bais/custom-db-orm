@@ -5,7 +5,7 @@ import com.custom.action.dbaction.SqlExecuteAction;
 import com.custom.action.util.DbUtil;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
-import com.custom.comm.SymbolConst;
+import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.*;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.ExThrowsUtil;
@@ -117,7 +117,7 @@ public class TableSqlBuilder<T> implements Cloneable {
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return SymbolConst.EMPTY;
+            return SymbolConstant.EMPTY;
         }
         return selectSql.toString();
     }
@@ -136,7 +136,7 @@ public class TableSqlBuilder<T> implements Cloneable {
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return SymbolConst.EMPTY;
+            return SymbolConstant.EMPTY;
         }
         return selectSql.toString();
     }
@@ -147,7 +147,7 @@ public class TableSqlBuilder<T> implements Cloneable {
      */
     protected String geCreateTableSql() {
         StringBuilder createTableSql = new StringBuilder();
-        StringJoiner fieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1);
+        StringJoiner fieldSql = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_1);
         if (Objects.nonNull(keyParserModel)) {
             fieldSql.add(keyParserModel.buildTableSql() + "\n");
         }
@@ -178,14 +178,14 @@ public class TableSqlBuilder<T> implements Cloneable {
         DbTable annotation = cls.getAnnotation(DbTable.class);
         String table = annotation.table();
         return String.format("SELECT COUNT(1) COUNT FROM " +
-                "`information_schema`.`TABLES` WHERE TABLE_NAME = '%s' AND TABLE_SCHEMA = '%s';", table, DbConnection.currMap.get(SymbolConst.DATA_BASE));
+                "`information_schema`.`TABLES` WHERE TABLE_NAME = '%s' AND TABLE_SCHEMA = '%s';", table, DbConnection.currMap.get(SymbolConstant.DATA_BASE));
     }
 
     /**
      * 生成表查询sql语句
      */
     private void getSelectBaseTableSql() {
-        StringJoiner baseFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+        StringJoiner baseFieldSql = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
 
         // 第一步 拼接主键
         if (Objects.nonNull(keyParserModel)) {
@@ -209,7 +209,7 @@ public class TableSqlBuilder<T> implements Cloneable {
      */
     private void getSelectRelationSql() {
 
-        StringJoiner baseFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+        StringJoiner baseFieldSql = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
 
         // 第一步 拼接主键
         if (Objects.nonNull(keyParserModel)) {
@@ -420,8 +420,8 @@ public class TableSqlBuilder<T> implements Cloneable {
     private void initDataStructure(TableSqlBuilder<T> tableSqlBuilder) {
         tableSqlBuilder.selectSql = new StringBuilder();
         tableSqlBuilder.updateSql = new StringBuilder();
-        tableSqlBuilder.insertSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
-        tableSqlBuilder.insetSymbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1);
+        tableSqlBuilder.insertSql = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
+        tableSqlBuilder.insetSymbol = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_1);
         tableSqlBuilder.objValues = new ArrayList<>();
     }
 

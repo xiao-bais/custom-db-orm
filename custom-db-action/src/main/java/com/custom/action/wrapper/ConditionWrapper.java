@@ -3,8 +3,7 @@ package com.custom.action.wrapper;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableSqlBuilder;
 import com.custom.comm.CustomUtil;
-import com.custom.comm.JudgeUtilsAx;
-import com.custom.comm.SymbolConst;
+import com.custom.comm.SymbolConstant;
 import com.custom.comm.exceptions.ExThrowsUtil;
 
 import java.io.Serializable;
@@ -47,7 +46,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
     /**
      * 上一次的拼接条件
      */
-    private String lastCondition = SymbolConst.EMPTY;
+    private String lastCondition = SymbolConstant.EMPTY;
 
     /**
      * sql中的所有参数值
@@ -57,11 +56,11 @@ public abstract class ConditionWrapper<T> implements Serializable {
     /**
      * 排序
      */
-    private final StringJoiner orderBy = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+    private final StringJoiner orderBy = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
     /**
      * 分组
      */
-    private final StringJoiner groupBy = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+    private final StringJoiner groupBy = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
     /**
      * 筛选
      */

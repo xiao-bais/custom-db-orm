@@ -3,7 +3,7 @@ package com.custom.action.sqlparser;
 import com.custom.action.dbaction.AbstractTableModel;
 import com.custom.comm.GlobalDataHandler;
 import com.custom.comm.JudgeUtilsAx;
-import com.custom.comm.SymbolConst;
+import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.DbMapper;
 
 import java.lang.reflect.Field;
@@ -33,16 +33,16 @@ public class DbJoinTableParserModel<T> extends AbstractTableModel<T> {
     private void initJoinName(Field field) {
         DbMapper dbMap = field.getAnnotation(DbMapper.class);
         this.joinName = JudgeUtilsAx.isEmpty(dbMap.value()) ? field.getName() : dbMap.value();
-        if(!joinName.contains(SymbolConst.POINT)) {
+        if(!joinName.contains(SymbolConstant.POINT)) {
             return;
         }
-        int pointIndex = joinName.indexOf(SymbolConst.POINT);
+        int pointIndex = joinName.indexOf(SymbolConstant.POINT);
         String fieldPrefix = joinName.substring(0, pointIndex);
         String fieldSuffix = joinName.substring(pointIndex + 1);
         if(GlobalDataHandler.hasSqlKeyword(fieldSuffix)) {
             fieldSuffix = String.format("`%s`", fieldSuffix);
         }
-        this.joinName = fieldPrefix + SymbolConst.POINT + fieldSuffix;
+        this.joinName = fieldPrefix + SymbolConstant.POINT + fieldSuffix;
     }
 
     public Field getField() {

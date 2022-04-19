@@ -2,7 +2,7 @@ package com.custom.action.scanner;
 
 import com.custom.comm.BasicDao;
 import com.custom.comm.JudgeUtilsAx;
-import com.custom.comm.SymbolConst;
+import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.DbTable;
 import com.custom.comm.annotations.mapper.SqlMapper;
 import com.custom.comm.exceptions.CustomCheckException;
@@ -42,7 +42,7 @@ public class CustomBeanScanner {
     /**
      * 扫描的包
      */
-    private String packageScan = SymbolConst.EMPTY;
+    private String packageScan = SymbolConstant.EMPTY;
 
     /**
      * 资源路径
@@ -69,14 +69,14 @@ public class CustomBeanScanner {
      */
     private void scannerPackage() {
         try {
-            url = classLoader.getResource(packageScan.replace(SymbolConst.POINT, SymbolConst.SLASH));
+            url = classLoader.getResource(packageScan.replace(SymbolConstant.POINT, SymbolConstant.SLASH));
             if (url == null) {
                 throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_URL, packageScan));
             }
             String protocol = url.getProtocol();
-            if (SymbolConst.FILE.equals(protocol)) {
+            if (SymbolConstant.FILE.equals(protocol)) {
                 addLocalClass(packageScan);
-            } else if (SymbolConst.JAVA.equals(protocol)) {
+            } else if (SymbolConstant.JAVA.equals(protocol)) {
                 addJarClass(packageScan);
             }
         } catch (Exception e) {
@@ -93,7 +93,7 @@ public class CustomBeanScanner {
     private void addLocalClass(final String packageName) throws URISyntaxException {
 
         try {
-            url = classLoader.getResource(packageName.replace(SymbolConst.POINT, SymbolConst.SLASH));
+            url = classLoader.getResource(packageName.replace(SymbolConstant.POINT, SymbolConstant.SLASH));
             if (url == null) {
                 throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_URL, packageScan));
             }
@@ -102,15 +102,15 @@ public class CustomBeanScanner {
             classFile.listFiles(pathName -> {
                 if (pathName.isDirectory()) {
                     try {
-                        addLocalClass(packageName + SymbolConst.POINT + pathName.getName());
+                        addLocalClass(packageName + SymbolConstant.POINT + pathName.getName());
                     } catch (URISyntaxException e) {
                         e.printStackTrace();
                     }
                 }
-                if (pathName.getName().endsWith(SymbolConst.CLASS)) {
+                if (pathName.getName().endsWith(SymbolConstant.CLASS)) {
                     Class<?> clazz = null;
                     try {
-                        clazz = classLoader.loadClass(packageName + SymbolConst.POINT + pathName.getName().replace(SymbolConst.CLASS, SymbolConst.EMPTY));
+                        clazz = classLoader.loadClass(packageName + SymbolConstant.POINT + pathName.getName().replace(SymbolConstant.CLASS, SymbolConstant.EMPTY));
                     } catch (ClassNotFoundException e) {
                         e.printStackTrace();
                     }
@@ -136,7 +136,7 @@ public class CustomBeanScanner {
     @SuppressWarnings("unchecked")
     private void addJarClass(final String packageName) throws IOException {
         if (JudgeUtilsAx.isEmpty(packageName)) return;
-        String pathName = packageName.replace(SymbolConst.POINT, SymbolConst.SLASH);
+        String pathName = packageName.replace(SymbolConstant.POINT, SymbolConstant.SLASH);
         JarFile jarFile = null;
 
         url = classLoader.getResource(packageName);
@@ -150,20 +150,20 @@ public class CustomBeanScanner {
             JarEntry jarEntry = jarEntryEnumeration.nextElement();
             String jarEntryName = jarEntry.getName();
 
-            if (jarEntryName.contains(pathName) && !jarEntryName.equals(pathName + SymbolConst.SLASH)) {
+            if (jarEntryName.contains(pathName) && !jarEntryName.equals(pathName + SymbolConstant.SLASH)) {
                 if (jarEntry.isDirectory()) {
-                    String beanClassName = jarEntry.getName().replace(SymbolConst.SLASH, SymbolConst.POINT);
-                    int endIndex = beanClassName.lastIndexOf(SymbolConst.POINT);
+                    String beanClassName = jarEntry.getName().replace(SymbolConstant.SLASH, SymbolConstant.POINT);
+                    int endIndex = beanClassName.lastIndexOf(SymbolConstant.POINT);
                     String prefix = null;
                     if (endIndex > 0) {
                         prefix = beanClassName.substring(0, endIndex);
                     }
                     addJarClass(prefix);
-                    if (jarEntry.getName().endsWith(SymbolConst.CLASS)) {
+                    if (jarEntry.getName().endsWith(SymbolConstant.CLASS)) {
                         Class<?> beanClass = null;
 
                         try {
-                            beanClass = classLoader.loadClass(jarEntry.getName().replace(SymbolConst.SLASH, SymbolConst.POINT).replace(SymbolConst.CLASS, SymbolConst.EMPTY));
+                            beanClass = classLoader.loadClass(jarEntry.getName().replace(SymbolConstant.SLASH, SymbolConstant.POINT).replace(SymbolConstant.CLASS, SymbolConstant.EMPTY));
                         } catch (ClassNotFoundException e) {
                             e.printStackTrace();
                         }

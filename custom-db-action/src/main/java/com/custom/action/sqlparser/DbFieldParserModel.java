@@ -4,7 +4,7 @@ import com.custom.action.dbaction.AbstractTableModel;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.GlobalDataHandler;
 import com.custom.comm.JudgeUtilsAx;
-import com.custom.comm.SymbolConst;
+import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.DbField;
 import com.custom.comm.enums.DbMediaType;
 import org.slf4j.Logger;
@@ -80,9 +80,9 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
             fieldSql.append(dbMediaType.getType()).append(" ");
         else
             fieldSql.append(dbMediaType.getType())
-                    .append(SymbolConst.BRACKETS_LEFT)
+                    .append(SymbolConstant.BRACKETS_LEFT)
                     .append(this.length)
-                    .append(SymbolConst.BRACKETS_RIGHT).append(" ");
+                    .append(SymbolConstant.BRACKETS_RIGHT).append(" ");
 
         fieldSql.append(this.isNull ? "NULL" : "NOT NULL").append(" ");
         fieldSql.append(String.format(" COMMENT '%s'", this.desc));
@@ -111,7 +111,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
         }
         this.isNull = annotation.isNull();
         this.desc = annotation.desc();
-        this.dbMediaType = annotation.dataType() == DbMediaType.DbVarchar ? getDbFieldType(field.getType()) : annotation.dataType();
+        this.dbMediaType = annotation.dataType() == DbMediaType.DbVarchar ? DbMediaType.getDbMediaType(field.getType()) : annotation.dataType();
         this.length = this.dbMediaType.getLength();
         super.setTable(table);
         super.setAlias(alias);
@@ -131,17 +131,6 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
 
     public void setColumn(String column) {
         this.column = column;
-    }
-
-    public DbMediaType getDbMediaType() {
-        if(this.dbMediaType == DbMediaType.DbVarchar) {
-            this.dbMediaType = getDbFieldType(this.type);
-        }
-        return dbMediaType;
-    }
-
-    public void setDbMediaType(DbMediaType dbMediaType) {
-        this.dbMediaType = dbMediaType;
     }
 
     public T getEntity() {

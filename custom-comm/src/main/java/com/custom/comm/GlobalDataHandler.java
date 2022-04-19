@@ -36,7 +36,7 @@ public class GlobalDataHandler {
             br = new BufferedReader(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8));
             String str;
             while ((str = br.readLine()) != null) {
-                SQL_KEYWORDS.addAll(Arrays.asList(str.split(SymbolConst.SEPARATOR_COMMA_1)));
+                SQL_KEYWORDS.addAll(Arrays.asList(str.split(SymbolConstant.SEPARATOR_COMMA_1)));
             }
         } catch (IOException e) {
             logger.error(e.toString(), e);

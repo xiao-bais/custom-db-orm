@@ -5,7 +5,7 @@ import com.custom.action.fieldfill.AutoFillColumnHandler;
 import com.custom.action.fieldfill.TableFillObject;
 import com.custom.comm.CustomApplicationUtil;
 import com.custom.comm.CustomUtil;
-import com.custom.comm.SymbolConst;
+import com.custom.comm.SymbolConstant;
 import com.custom.comm.enums.FillStrategy;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import org.slf4j.Logger;
@@ -67,8 +67,8 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
     private void handleByKeys() {
         DbKeyParserModel<T> keyParserModel = getKeyParserModel();
         try {
-            StringJoiner delSymbols = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2, SymbolConst.BRACKETS_LEFT, SymbolConst.BRACKETS_RIGHT);
-            IntStream.range(0, keys.size()).mapToObj(i -> SymbolConst.QUEST).forEach(delSymbols::add);
+            StringJoiner delSymbols = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2, SymbolConstant.BRACKETS_LEFT, SymbolConstant.BRACKETS_RIGHT);
+            IntStream.range(0, keys.size()).mapToObj(i -> SymbolConstant.QUEST).forEach(delSymbols::add);
             this.deleteCondition = checkLogicFieldIsExist() ? String.format("and %s in %s", keyParserModel.getFieldSql(), delSymbols)
                     : String.format("%s in %s", keyParserModel.getFieldSql(), delSymbols);
         } catch (Exception e) {
@@ -100,7 +100,7 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
         }
         Optional<TableFillObject> first = fillColumnHandler.fillStrategy().stream().filter(x -> x.getEntityClass().equals(t)).findFirst();
         first.ifPresent(op -> {
-            String autoUpdateWhereSqlCondition = deleteSql.substring(deleteSql.indexOf(SymbolConst.WHERE)).replace(getLogicDeleteQuerySql(), getLogicDeleteUpdateSql());
+            String autoUpdateWhereSqlCondition = deleteSql.substring(deleteSql.indexOf(SymbolConstant.WHERE)).replace(getLogicDeleteQuerySql(), getLogicDeleteUpdateSql());
             FillStrategy strategy = op.getStrategy();
             if(strategy.equals(FillStrategy.DEFAULT)) {
                 return;
@@ -125,11 +125,11 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
         Optional<TableFillObject> first = Objects.requireNonNull(CustomApplicationUtil.getBean(AutoFillColumnHandler.class))
                 .fillStrategy().stream().filter(x -> x.getEntityClass().equals(getEntityClass())).findFirst();
         first.ifPresent(op -> {
-            autoUpdateSql.append(SymbolConst.UPDATE)
+            autoUpdateSql.append(SymbolConstant.UPDATE)
                     .append(getTable())
                     .append(" ")
                     .append(getAlias())
-                    .append(SymbolConst.SET);
+                    .append(SymbolConstant.SET);
 
             if (strategy.toString().contains(op.getStrategy().toString())) {
                 String sqlFragment = buildAssignAutoUpdateSqlFragment(op.getTableFillMapper());
@@ -146,7 +146,7 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
      * 构建指定逻辑删除时自动填充的sql片段
      */
     private String buildAssignAutoUpdateSqlFragment(Map<String, Object> tableFillObjects) {
-        StringJoiner autoUpdateFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+        StringJoiner autoUpdateFieldSql = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
         StringBuilder updateField;
         if (ObjectUtils.isEmpty(tableFillObjects)) {
             return autoUpdateFieldSql.toString();
@@ -158,7 +158,7 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
             updateField = new StringBuilder();
             Object fieldVal = tableFillObjects.get(fieldName);
             if (ObjectUtils.isEmpty(fieldVal)) continue;
-            updateField.append(getFieldMapper().get(fieldName)).append(SymbolConst.EQUALS).append(fieldVal);
+            updateField.append(getFieldMapper().get(fieldName)).append(SymbolConstant.EQUALS).append(fieldVal);
             autoUpdateFieldSql.add(updateField);
             getFieldParserModels().stream().filter(x -> x.getFieldName().equals(fieldName)).findFirst().ifPresent(op -> {
                 op.setValue(fieldVal);

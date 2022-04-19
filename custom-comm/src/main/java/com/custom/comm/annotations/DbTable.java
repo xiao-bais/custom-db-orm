@@ -1,6 +1,6 @@
 package com.custom.comm.annotations;
 
-import com.custom.comm.SymbolConst;
+import com.custom.comm.SymbolConstant;
 
 import java.lang.annotation.*;
 
@@ -31,7 +31,7 @@ public @interface DbTable {
      * 指定表的说明
      * @return
      */
-    String desc() default SymbolConst.EMPTY;
+    String desc() default SymbolConstant.EMPTY;
 
 
 }

@@ -1,7 +1,7 @@
 package com.custom.action.proxy;
 
 import com.custom.comm.JudgeUtilsAx;
-import com.custom.comm.SymbolConst;
+import com.custom.comm.SymbolConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -42,7 +42,7 @@ public class ClearNotesOnSqlHandler {
      * 加载指定路径中文件的内容
      */
     public String loadSql(){
-        String res = SymbolConst.EMPTY;
+        String res = SymbolConstant.EMPTY;
         if(JudgeUtilsAx.isEmpty(filePath)){
             log.error("找不到文件或不存在该路径");
             return res;

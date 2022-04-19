@@ -1,7 +1,7 @@
 package com.custom.action.wrapper;
 
 import com.custom.action.sqlparser.TableSqlBuilder;
-import com.custom.comm.SymbolConst;
+import com.custom.comm.SymbolConstant;
 import com.custom.comm.enums.DbSymbol;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.enums.SqlLike;
@@ -108,13 +108,13 @@ public class ConditionEntity<T> extends ConditionAssembly<T, String, ConditionEn
 
     @Override
     public ConditionEntity<T> orderByAsc(boolean condition, String... columns) {
-        String orderBy = Arrays.stream(columns).map(column -> orderByField(column, SqlOrderBy.ASC)).collect(Collectors.joining("", SymbolConst.EMPTY, ""));
+        String orderBy = Arrays.stream(columns).map(column -> orderByField(column, SqlOrderBy.ASC)).collect(Collectors.joining("", SymbolConstant.EMPTY, ""));
         return adapter(DbSymbol.ORDER_BY, condition, orderBy);
     }
 
     @Override
     public ConditionEntity<T> orderByDesc(boolean condition, String... columns) {
-        String orderBy = Arrays.stream(columns).map(column -> orderByField(column, SqlOrderBy.DESC)).collect(Collectors.joining("", SymbolConst.EMPTY, ""));
+        String orderBy = Arrays.stream(columns).map(column -> orderByField(column, SqlOrderBy.DESC)).collect(Collectors.joining("", SymbolConstant.EMPTY, ""));
         return adapter(DbSymbol.ORDER_BY, condition, orderBy);
     }
 
@@ -167,7 +167,7 @@ public class ConditionEntity<T> extends ConditionAssembly<T, String, ConditionEn
     public ConditionEntity<T> or(boolean condition) {
         appendState = condition;
         if(condition) {
-            appendSybmol = SymbolConst.OR;
+            appendSybmol = SymbolConstant.OR;
         }
         return childrenClass;
     }

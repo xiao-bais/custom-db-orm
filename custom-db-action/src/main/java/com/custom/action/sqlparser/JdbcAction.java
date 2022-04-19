@@ -5,7 +5,7 @@ import com.custom.action.dbaction.SqlExecuteAction;
 import com.custom.action.wrapper.ConditionWrapper;
 import com.custom.action.wrapper.SFunction;
 import com.custom.comm.JudgeUtilsAx;
-import com.custom.comm.SymbolConst;
+import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.check.CheckExecute;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.ExThrowsUtil;
@@ -45,7 +45,7 @@ public class JdbcAction extends AbstractSqlExecutor {
         HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
         condition = checkConditionAndLogicDeleteSql(sqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
         if(JudgeUtilsAx.isNotEmpty(orderBy)) {
-            condition += SymbolConst.ORDER_BY + orderBy;
+            condition += SymbolConstant.ORDER_BY + orderBy;
         }
         return selectBySql(t, sqlBuilder.buildSql() + condition, params);
     }
@@ -66,7 +66,7 @@ public class JdbcAction extends AbstractSqlExecutor {
         HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
         String finalCondition = checkConditionAndLogicDeleteSql(sqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
         if (JudgeUtilsAx.isNotEmpty(orderBy)) {
-            finalCondition += SymbolConst.ORDER_BY + orderBy;
+            finalCondition += SymbolConstant.ORDER_BY + orderBy;
         }
         buildPageResult(t, sqlBuilder.buildSql() + finalCondition, condition, dbPageRows, params);
         return dbPageRows;
@@ -102,8 +102,8 @@ public class JdbcAction extends AbstractSqlExecutor {
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> List<T> selectBatchByKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception {
         HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
-        StringJoiner symbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
-        keys.forEach(x -> symbol.add(SymbolConst.QUEST));
+        StringJoiner symbol = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
+        keys.forEach(x -> symbol.add(SymbolConstant.QUEST));
         String condition = String.format("and %s in (%s)", sqlBuilder.getKeyParserModel().getFieldSql(), symbol);
         condition = checkConditionAndLogicDeleteSql(sqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
         return selectBySql(t, sqlBuilder.buildSql() + condition, keys.toArray());

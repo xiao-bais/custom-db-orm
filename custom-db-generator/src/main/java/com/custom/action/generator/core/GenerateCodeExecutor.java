@@ -5,10 +5,12 @@ import com.custom.action.generator.config.GlobalConfig;
 import com.custom.action.generator.config.PackageConfig;
 import com.custom.action.generator.config.TableConfig;
 import com.custom.action.generator.table.ColumnStructModel;
+import com.custom.action.generator.table.TableStructModel;
 import com.custom.action.sqlparser.JdbcAction;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
-import com.custom.comm.SymbolConst;
+import com.custom.comm.SymbolConstant;
+import com.custom.comm.enums.DbMediaType;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
@@ -30,61 +32,207 @@ public class GenerateCodeExecutor {
 
     private final static Map<String, Object> currCache = new ConcurrentHashMap<>();
     private static String DATA_BASE;
-    private AbstractSqlExecutor sqlExecutor;
+    private final List<TableStructModel> tableStructModels = new ArrayList<>();;
+    private final AbstractSqlExecutor sqlExecutor;
 
-    public void start() {
+    public GenerateCodeExecutor(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         if (Objects.isNull(dbDataSource)) {
             ExThrowsUtil.toCustom("未配置数据源");
         }
-        DATA_BASE = CustomUtil.getDataBase(dbDataSource.getUrl());
         if(Objects.isNull(dbCustomStrategy)) {
             dbCustomStrategy = new DbCustomStrategy();
         }
-        AbstractSqlExecutor sqlExecutor = new JdbcAction(dbDataSource, dbCustomStrategy);
+        DATA_BASE = CustomUtil.getDataBase(dbDataSource.getUrl());
+        this.dbCustomStrategy = dbCustomStrategy;
+        this.sqlExecutor = new JdbcAction(dbDataSource, dbCustomStrategy);
+    }
+
+    public void start() {
 
         if(JudgeUtilsAx.isEmpty(tables)) {
             ExThrowsUtil.toCustom("未指定表名");
         }
 
+        // 构建表实体结构信息
+        buildTableEntityStructs();
+
+
+
     }
 
-    public List<Map<String, Map<String, Object>>> tableStructs() {
+    /**
+     * 构建表实体类
+     */
+    protected void buildTableEntityStructs() {
 
-        List<String> truthTables = getTruthTables();
-        if(truthTables.isEmpty()) {
-            ExThrowsUtil.toCustom("表名皆不存在");
-        }
         String tableStr = Arrays.stream(tables)
                 .filter(CustomUtil::isNotBlank)
                 .map(x -> String.format("'%s'", x))
                 .collect(Collectors.joining(","));
-        String selectTableSql = CustomUtil.loadFiles("/queryTableStruct.sql");
-        sqlExecutor.executeQueryNotPrintSql(ColumnStructModel.class, selectTableSql, )
 
+        handleTruthTables(tableStr);
+        if(tableStructModels.isEmpty()) {
+            ExThrowsUtil.toCustom("表名皆不存在");
+        }
 
+        String selectTableSql = CustomUtil.loadFiles("/sql/queryTableColumnStruct.sql");
+        List<ColumnStructModel> columnStructModels = new ArrayList<>();
+        try {
+            columnStructModels = sqlExecutor.executeQueryNotPrintSql(ColumnStructModel.class, selectTableSql);
+            if(columnStructModels.isEmpty()) {
+                return;
+            }
+        } catch (Exception e) {
+            logger.error(e.toString(), e);
+        }
 
+        // 以表名分组后，得到以表名为key 字段集合为value的map
+        Map<String, List<ColumnStructModel>> tableColumnMap = columnStructModels.stream().collect(Collectors.groupingBy(ColumnStructModel::getTable));
 
-        return null;
+        for (TableStructModel tableInfo : tableStructModels) {
+
+            // 表与实体基础配置
+            entityInitialize(tableInfo);
+
+            // 配置生成路径
+            setTableEntityPath(tableInfo);
+
+            // 获取表对应的字段集合
+            List<ColumnStructModel> columnStructModelList = tableColumnMap.get(tableInfo.getTable());
+
+            // 构建实体属性字段信息
+            buildEntityFieldInfo(tableInfo, columnStructModelList);
+
+            // 配置实体导入包信息
+            setEntityImportPackages(tableInfo);
+
+        }
     }
+
+    /**
+     * 表与实体基础配置
+     */
+    private void entityInitialize(TableStructModel tableInfo) {
+        tableInfo.setLombok(globalConfig.getEntityLombok());
+        tableInfo.setSwagger(globalConfig.getSwagger());
+        String tableName = tableInfo.getTable();
+        // 若配置了忽略前缀，则去除指定的前缀
+        if(JudgeUtilsAx.isNotEmpty(tableConfig.getTablePrefix())) {
+            tableName = tableName.replaceFirst(tableConfig.getTablePrefix(), SymbolConstant.EMPTY);
+        }
+        // 下划线转驼峰
+        if(dbCustomStrategy.isUnderlineToCamel()) {
+            tableName = CustomUtil.underlineToCamel(tableName);
+            String tableStartStr = tableName.substring(0, 1);
+            tableName = tableName.replaceFirst(tableStartStr, tableStartStr.toUpperCase(Locale.ROOT));
+        }
+        // 若配置了后缀，则拼接后缀
+        if (JudgeUtilsAx.isNotEmpty(tableConfig.getEntitySuffix())) {
+            tableName = tableName + tableConfig.getEntitySuffix();
+        }
+        tableInfo.setEntityName(tableName);
+    }
+
+    /**
+     * 设置表实体的生产路径
+     */
+    private void setTableEntityPath(TableStructModel tableInfo) {
+        String entityClassPath = "";
+        if(JudgeUtilsAx.isNotEmpty(packageConfig.getParentPackage())) {
+            entityClassPath = packageConfig.getParentPackage();
+        }
+        if(JudgeUtilsAx.isNotEmpty(packageConfig.getPackageName())) {
+            String packageName = packageConfig.getPackageName();
+            String packagePath = "";
+            if(JudgeUtilsAx.isNotEmpty(packageConfig.getEntity())) {
+                packagePath = packageName.replace(SymbolConstant.POINT, SymbolConstant.FILE_SEPARATOR) + SymbolConstant.FILE_SEPARATOR + packageConfig.getEntity();
+                tableInfo.setSourcePackage(packageName + ";");
+            }
+            entityClassPath = entityClassPath + SymbolConstant.FILE_SEPARATOR + packagePath;
+        }
+        tableInfo.setEntityClassPath(entityClassPath);
+    }
+
+    /**
+     * 设置实体的包信息导入
+     */
+    private void setEntityImportPackages(TableStructModel tableInfo) {
+
+        List<String> importOtherPackages = new ArrayList<>();
+
+        // 字段中的所有类型
+        List<? extends Class<?>> fieldTypes = tableInfo.getColumnStructModels().stream().map(ColumnStructModel::getFieldType).collect(Collectors.toList());
+        List<String> importJavaPackages = fieldTypes.stream().map(fieldType -> SymbolConstant.IMPORT + fieldType.getName() + ";").collect(Collectors.toList());
+
+        // 添加@Db*注解导入包信息
+        String dbAnnotationPackage = SymbolConstant.IMPORT + "com.custom.comm.annotations.";
+        importOtherPackages.add(dbAnnotationPackage + "DbField");
+        importOtherPackages.add( dbAnnotationPackage + "DbKey");
+        importOtherPackages.add(dbAnnotationPackage + "DbTable");
+
+        // 导入lombok
+        if(tableInfo.getLombok()) {
+            importOtherPackages.add(SymbolConstant.IMPORT + "lombok.Data;");
+        }
+        // 导入主键自增标识
+        if(tableInfo.getColumnStructModels().stream().anyMatch(x -> x.getKeyExtra().equalsIgnoreCase("auto_increment"))) {
+            importOtherPackages.add(SymbolConstant.IMPORT + "com.custom.comm.enums.KeyStrategy;");
+        }
+
+        tableInfo.setImportJavaPackages(importJavaPackages);
+        tableInfo.setImportOtherPackages(importOtherPackages);
+    }
+
+
+    /**
+     * 构建实体字段的基础信息，以及整理字段与表之间的关系
+     */
+    private void buildEntityFieldInfo(TableStructModel tableInfo, List<ColumnStructModel> columnStructModels) {
+
+        for (ColumnStructModel columnModel : columnStructModels) {
+            DbMediaType dbType = DbMediaType.getDbType(columnModel.getColumnType());
+            if(Objects.isNull(dbType)) {
+                logger.info("表{}中字段{}暂无可匹配的类型，暂用java.lang.String替代", tableInfo.getTable(), columnModel.getColumn());
+                dbType = DbMediaType.DbVarchar;
+            }
+            columnModel.setDbType(dbType);
+            columnModel.setFieldType(dbType.getFieldType());
+            String column = columnModel.getColumn();
+            if (dbCustomStrategy.isUnderlineToCamel()) {
+                column = CustomUtil.underlineToCamel(column);
+            }
+            columnModel.setFieldName(column);
+
+            // getter/setter
+            String columnStart = column.substring(0, 1);
+            columnModel.setGetterMethodName(SymbolConstant.GET + columnStart + column.substring(1));
+            columnModel.setGetterMethodName(SymbolConstant.SET + columnStart + column.substring(1));
+
+            // DbField注解信息
+            String dbFieldStr = columnModel.getPrimaryKey() ? "@DbKey" : "@DbField";
+            if(tableConfig.getEntityDbFieldAnnotationValueEnable()) {
+                dbFieldStr = String.format("%s(value = \"%s\")", dbFieldStr, columnModel.getColumn());
+            }
+            columnModel.setDbFieldAnnotation(dbFieldStr);
+            columnModel.setOutputFieldInfo(String.format("%s %s %s;", SymbolConstant.PRIVATE, columnModel.getFieldType().getSimpleName(), columnModel.getFieldName()));
+
+        }
+        tableInfo.setColumnStructModels(columnStructModels);
+    }
+
+
 
     /**
      * 获取真实表名
      */
-    private List<String> getTruthTables() {
-        List<String> truthTables = new ArrayList<>();
+    private void handleTruthTables(String tableStr) {
+        List<TableStructModel> tableStructModels = new ArrayList<>();
         try {
-            String tableStr = Arrays.stream(tables)
-                    .filter(CustomUtil::isNotBlank)
-                    .map(x -> String.format("'%s'", x))
-                    .collect(Collectors.joining(","));
-
-            String selectTableSql = String.format("SELECT TABLE_NAME COUNT FROM `information_schema`.`TABLES` WHERE TABLE_NAME in (%s) " +
-                    "AND TABLE_SCHEMA = '%s'", tableStr, DATA_BASE);
-            truthTables = sqlExecutor.executeQueryNotPrintSql(String.class, selectTableSql);
+            String selectTableSql  = String.format(CustomUtil.loadFiles("/sql/queryTableStruct.sql"), tableStr, DATA_BASE);
+            tableStructModels = sqlExecutor.executeQueryNotPrintSql(TableStructModel.class, selectTableSql);
         }catch (Exception e) {
             logger.error(e.toString(), e);
         }
-        return truthTables;
     }
 
 

@@ -28,7 +28,8 @@ public class ColumnStructModel {
     /**
      * 字段类型
      */
-    private DbMediaType columnType;
+    private DbMediaType dbType;
+    private String columnType;
 
     /**
      * java属性类型
@@ -50,6 +51,22 @@ public class ColumnStructModel {
      * 字段说明
      */
     private String desc;
+
+    /**
+     * 生成的getter/setter方法名称
+     */
+    private String getterMethodName;
+    private String setterMethodName;
+
+    /**
+     * 字段上的Db*注解配置描述
+     */
+    private String dbFieldAnnotation;
+    
+    /**
+     * 输出字段信息
+     */
+    private String outputFieldInfo;
 
 
     public String getColumn() {
@@ -76,12 +93,12 @@ public class ColumnStructModel {
         this.fieldName = fieldName;
     }
 
-    public DbMediaType getColumnType() {
-        return columnType;
+    public DbMediaType getDbType() {
+        return dbType;
     }
 
-    public void setColumnType(DbMediaType columnType) {
-        this.columnType = columnType;
+    public void setDbType(DbMediaType dbType) {
+        this.dbType = dbType;
     }
 
     public Class<?> getFieldType() {
@@ -122,5 +139,45 @@ public class ColumnStructModel {
 
     public void setKeyExtra(String keyExtra) {
         this.keyExtra = keyExtra;
+    }
+
+    public String getColumnType() {
+        return columnType;
+    }
+
+    public void setColumnType(String columnType) {
+        this.columnType = columnType;
+    }
+
+    public String getGetterMethodName() {
+        return getterMethodName;
+    }
+
+    public void setGetterMethodName(String getterMethodName) {
+        this.getterMethodName = getterMethodName;
+    }
+
+    public String getSetterMethodName() {
+        return setterMethodName;
+    }
+
+    public void setSetterMethodName(String setterMethodName) {
+        this.setterMethodName = setterMethodName;
+    }
+
+    public String getDbFieldAnnotation() {
+        return dbFieldAnnotation;
+    }
+
+    public void setDbFieldAnnotation(String dbFieldAnnotation) {
+        this.dbFieldAnnotation = dbFieldAnnotation;
+    }
+
+    public String getOutputFieldInfo() {
+        return outputFieldInfo;
+    }
+
+    public void setOutputFieldInfo(String outputFieldInfo) {
+        this.outputFieldInfo = outputFieldInfo;
     }
 }

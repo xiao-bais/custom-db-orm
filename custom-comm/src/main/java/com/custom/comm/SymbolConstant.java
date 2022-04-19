@@ -5,7 +5,7 @@ package com.custom.comm;
  * @Date 2021/10/6 17:37
  * @Desc：简短符号常量类
  **/
-public class SymbolConst {
+public class SymbolConstant {
 
     public final static int DEFAULT_ZERO = 0;//默认0
     public final static int DEFAULT_ONE = 1;//默认1
@@ -46,9 +46,14 @@ public class SymbolConst {
     public final static String FILE = "file";
     public final static String JAVA = "jar";
     public final static String CLASS = ".class";
+    public final static String DOT_JAVA = ".java";
     public final static String POINT = ".";
     public final static char SINGLE_QUOTES = '\'';
     public final static String SLASH = "/";
+    public final static String FILE_SEPARATOR = "\\";
+    public final static String IMPORT = "import ";
+    public final static String PRIVATE = "private";
+    public final static String PACKAGE = "package ";
     public final static String NORMAL = "normal";
 
 

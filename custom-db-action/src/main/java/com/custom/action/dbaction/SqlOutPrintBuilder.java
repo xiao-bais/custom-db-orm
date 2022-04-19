@@ -1,7 +1,7 @@
 package com.custom.action.dbaction;
 
 import com.custom.comm.CustomUtil;
-import com.custom.comm.SymbolConst;
+import com.custom.comm.SymbolConstant;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,9 +91,9 @@ public class SqlOutPrintBuilder implements Serializable {
      * 格式化参数打印
      */
     private String getFormatterParams() {
-        StringJoiner sqlParams = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+        StringJoiner sqlParams = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
         for (Object param : params) {
-            sqlParams.add(param == null ? "null" : param + SymbolConst.BRACKETS_LEFT + param.getClass().getSimpleName() + SymbolConst.BRACKETS_RIGHT);
+            sqlParams.add(param == null ? "null" : param + SymbolConstant.BRACKETS_LEFT + param.getClass().getSimpleName() + SymbolConstant.BRACKETS_RIGHT);
         }
         return sqlParams.toString();
     }
@@ -103,7 +103,7 @@ public class SqlOutPrintBuilder implements Serializable {
      * 可执行的sql打印
      */
     private void handleExecuteSql() {
-        int symbolSize = CustomUtil.countStr(sql, SymbolConst.QUEST);
+        int symbolSize = CustomUtil.countStr(sql, SymbolConstant.QUEST);
         if(symbolSize != params.length) {
             logger.error(
                     "\nsql error\n===================\nSQL ====>\n {}\n===================\nparams = {}\n===================\n"

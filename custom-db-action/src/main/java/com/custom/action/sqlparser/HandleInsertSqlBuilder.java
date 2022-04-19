@@ -3,7 +3,7 @@ package com.custom.action.sqlparser;
 import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.fieldfill.FieldAutoFillHandleUtils;
 import com.custom.comm.ConvertUtil;
-import com.custom.comm.SymbolConst;
+import com.custom.comm.SymbolConstant;
 
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -18,7 +18,7 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
     @Override
     public String buildSql() {
-        StringJoiner insertColumn = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+        StringJoiner insertColumn = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
         if (Objects.nonNull(getKeyParserModel())) {
             insertColumn.add(getKeyParserModel().getDbKey());
         }
@@ -33,12 +33,12 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
      * 获取添加时的？
      */
     private String getInsertSymbol() {
-        StringJoiner insertSymbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1);
+        StringJoiner insertSymbol = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_1);
         for (T currEntity : getEntityList()) {
             setEntity(currEntity);
-            StringJoiner brackets = new StringJoiner(SymbolConst.SEPARATOR_COMMA_1, SymbolConst.BRACKETS_LEFT, SymbolConst.BRACKETS_RIGHT);
+            StringJoiner brackets = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_1, SymbolConstant.BRACKETS_LEFT, SymbolConstant.BRACKETS_RIGHT);
             if (Objects.nonNull(getKeyParserModel())) {
-                brackets.add(SymbolConst.QUEST);
+                brackets.add(SymbolConstant.QUEST);
                 this.getSqlParams().add(getKeyParserModel().getValue());
             }
             getFieldParserModels().forEach(x -> {
@@ -58,7 +58,7 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
                     }
                 }
                 this.getSqlParams().add(fieldValue);
-                brackets.add(SymbolConst.QUEST);
+                brackets.add(SymbolConstant.QUEST);
             });
             insertSymbol.add(brackets.toString());
         }

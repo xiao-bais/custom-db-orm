@@ -10,13 +10,24 @@ import com.custom.comm.enums.KeyStrategy;
 public class GlobalConfig {
 
     /**
-     * 作者
+     * 生成的Java类的作者
      */
     private String author;
 
+    /**
+     * 生成的路径
+     */
     private String outputDir;
 
+    /**
+     * 是否生成Swagger注解
+     */
     private Boolean swagger = false;
+
+    /**
+     * 实体是否使用lombok注解
+     */
+    private Boolean entityLombok = false;
 
     private KeyStrategy keyStrategy;
 
@@ -80,5 +91,13 @@ public class GlobalConfig {
 
     public void setControllerName(String controllerName) {
         this.controllerName = controllerName;
+    }
+
+    public Boolean getEntityLombok() {
+        return entityLombok;
+    }
+
+    public void setEntityLombok(Boolean entityLombok) {
+        this.entityLombok = entityLombok;
     }
 }

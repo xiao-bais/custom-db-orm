@@ -4,7 +4,7 @@ import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.util.DbUtil;
 import com.custom.comm.GlobalDataHandler;
 import com.custom.comm.JudgeUtilsAx;
-import com.custom.comm.SymbolConst;
+import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.DbJoinTables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +55,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return SymbolConst.EMPTY;
+            return SymbolConstant.EMPTY;
         }
         return selectSql.toString();
     }
@@ -72,7 +72,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return SymbolConst.EMPTY;
+            return SymbolConstant.EMPTY;
         }
         return selectSql.toString();
     }
@@ -81,7 +81,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
      * 生成表查询sql语句
      */
     private void getSelectBaseTableSql() {
-        StringJoiner baseFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+        StringJoiner baseFieldSql = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
 
         // 第一步 拼接主键
         if (getKeyParserModel() != null) {
@@ -104,7 +104,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
      */
     private void getSelectRelationSql() {
 
-        StringJoiner baseFieldSql = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+        StringJoiner baseFieldSql = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
 
         // 第一步 拼接主键
         if (getKeyParserModel() != null) {
@@ -160,11 +160,11 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
      * 自定义查询表列名
      */
     public String selectColumns(String[] columns) {
-        StringJoiner columnStr = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+        StringJoiner columnStr = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
         for (String x : columns) {
             String column = GlobalDataHandler.hasSqlKeyword(x) ? String.format("`%s`", x) : x;
-            if(Objects.nonNull(column) && !column.contains(SymbolConst.POINT)) {
-                column = getAlias() + SymbolConst.POINT + column;
+            if(Objects.nonNull(column) && !column.contains(SymbolConstant.POINT)) {
+                column = getAlias() + SymbolConstant.POINT + column;
             }
             String field = getColumnMapper().get(column);
             columnStr.add(field == null ? column : String.format("%s %s", column, field));

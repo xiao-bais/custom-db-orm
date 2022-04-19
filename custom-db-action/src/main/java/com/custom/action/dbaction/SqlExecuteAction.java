@@ -2,7 +2,7 @@ package com.custom.action.dbaction;
 
 import com.alibaba.fastjson.JSONObject;
 import com.custom.comm.CustomUtil;
-import com.custom.comm.SymbolConst;
+import com.custom.comm.SymbolConstant;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.configuration.DbConnection;
 import com.custom.configuration.DbCustomStrategy;
@@ -91,7 +91,7 @@ public class SqlExecuteAction extends DbConnection {
             while (resultSet.next()) {
                 T t;
                 if(CustomUtil.isBasicType(clazz)) {
-                   t = (T) resultSet.getObject(SymbolConst.DEFAULT_ONE);
+                   t = (T) resultSet.getObject(SymbolConstant.DEFAULT_ONE);
                 }else {
                     map = new HashMap<>();
                     getResultMap(map, metaData);
@@ -189,7 +189,7 @@ public class SqlExecuteAction extends DbConnection {
             statementQuery(sql, true, params);
             resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                result = resultSet.getObject(SymbolConst.DEFAULT_ONE);
+                result = resultSet.getObject(SymbolConstant.DEFAULT_ONE);
             }
         } catch (SQLException e) {
             SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
@@ -207,7 +207,7 @@ public class SqlExecuteAction extends DbConnection {
             statementQuery(sql, true, params);
             resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                result.add(resultSet.getObject(SymbolConst.DEFAULT_ONE));
+                result.add(resultSet.getObject(SymbolConstant.DEFAULT_ONE));
             }
         } catch (SQLException e) {
             SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
@@ -311,7 +311,7 @@ public class SqlExecuteAction extends DbConnection {
         statementQuery(sql, false);
         resultSet = statement.executeQuery();
         if (resultSet.next()) {
-            count = (long) resultSet.getObject(SymbolConst.DEFAULT_ONE);
+            count = (long) resultSet.getObject(SymbolConstant.DEFAULT_ONE);
         }
         return count;
     }

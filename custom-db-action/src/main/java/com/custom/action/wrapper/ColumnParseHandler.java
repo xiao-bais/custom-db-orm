@@ -4,7 +4,7 @@ import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableSqlBuilder;
 import com.custom.comm.GlobalDataHandler;
 import com.custom.comm.JudgeUtilsAx;
-import com.custom.comm.SymbolConst;
+import com.custom.comm.SymbolConstant;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;
 
@@ -88,7 +88,7 @@ public class ColumnParseHandler<T> {
         JudgeUtilsAx.checkObjNotNull(fun);
         SerializedLambda serializedLambda = getSerializedLambda(fun);
         String implMethodName = serializedLambda.getImplMethodName();
-        String fieldName = implMethodName.substring(SymbolConst.GET.length());
+        String fieldName = implMethodName.substring(SymbolConstant.GET.length());
         fieldName = fieldName.replaceFirst(String.valueOf(fieldName.charAt(0)), String.valueOf(fieldName.charAt(0)).toLowerCase());
         String finalFieldName = fieldName;
         Optional<Field> firstField = Arrays.stream(fields).filter(x -> x.getName().equals(finalFieldName)).findFirst();

@@ -1,6 +1,6 @@
 package com.custom.comm.page;
 
-import com.custom.comm.SymbolConst;
+import com.custom.comm.SymbolConstant;
 
 import java.util.List;
 
@@ -54,7 +54,7 @@ public class DbPageRows<T> {
         this.total = list.size();
         this.pageIndex = pageIndex;
         this.pageSize = pageSize;
-        int subIndex = (pageIndex - SymbolConst.DEFAULT_ONE) * pageSize;
+        int subIndex = (pageIndex - SymbolConstant.DEFAULT_ONE) * pageSize;
         this.data = list.subList(Math.min(subIndex, list.size()), (int) Math.min(total, pageIndex * pageSize));
     }
 

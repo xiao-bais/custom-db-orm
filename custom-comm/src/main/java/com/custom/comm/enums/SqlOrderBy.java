@@ -1,6 +1,6 @@
 package com.custom.comm.enums;
 
-import com.custom.comm.SymbolConst;
+import com.custom.comm.SymbolConstant;
 
 /**
  * @author Xiao-Bai
@@ -12,13 +12,13 @@ public enum SqlOrderBy {
     /**
      * 默认，升序（从小到大）
      */
-    ASC(SymbolConst.ASC),
+    ASC(SymbolConstant.ASC),
 
 
     /**
      * 降序（从大到小）
      */
-    DESC(SymbolConst.DESC);
+    DESC(SymbolConstant.DESC);
 
 
     private final String name;

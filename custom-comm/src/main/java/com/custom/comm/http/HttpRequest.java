@@ -2,7 +2,7 @@ package com.custom.comm.http;
 
 import com.alibaba.fastjson.JSON;
 import com.custom.comm.JudgeUtilsAx;
-import com.custom.comm.SymbolConst;
+import com.custom.comm.SymbolConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +39,7 @@ public class HttpRequest {
     public static String get(String requestUrl)  {
 
         InputStream is = null;
-        String result = SymbolConst.EMPTY;
+        String result = SymbolConstant.EMPTY;
         try {
             URL url = new URL(requestUrl);
             //获取连接对象
@@ -56,7 +56,7 @@ public class HttpRequest {
             connection.connect();
 
             is = connection.getInputStream();
-            if (is == null) return SymbolConst.EMPTY;
+            if (is == null) return SymbolConstant.EMPTY;
             result = copyToString(is);
         }catch (IOException e) {
             logger.error(e.toString(), e);
@@ -95,7 +95,7 @@ public class HttpRequest {
         InputStream is = null;
         OutputStream os = null;
 
-        String result = SymbolConst.EMPTY;
+        String result = SymbolConstant.EMPTY;
 
         try {
             HttpURLConnection connection = (HttpURLConnection) new URL(requestUrl).openConnection();

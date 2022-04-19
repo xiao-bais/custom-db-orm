@@ -5,7 +5,7 @@ import com.custom.action.fieldfill.FieldAutoFillHandleUtils;
 import com.custom.action.wrapper.SFunction;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
-import com.custom.comm.SymbolConst;
+import com.custom.comm.SymbolConstant;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +33,7 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
     public HandleUpdateSqlBuilder() {
         updateSql = new StringBuilder();
-        updateSqlColumns = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+        updateSqlColumns = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
     }
 
 
@@ -50,12 +50,12 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
         }else {
             conditions = updateCustomCondition();
         }
-        updateSql.append(SymbolConst.UPDATE)
+        updateSql.append(SymbolConstant.UPDATE)
                 .append(getTable()).append(" ")
                 .append(getAlias())
-                .append(SymbolConst.SET)
+                .append(SymbolConstant.SET)
                 .append(updateSqlColumns)
-                .append(SymbolConst.WHERE)
+                .append(SymbolConstant.WHERE)
                 .append(conditions);
 
         return updateSql.toString();

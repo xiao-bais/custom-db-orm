@@ -1,6 +1,6 @@
 package com.custom.comm.annotations;
 
-import com.custom.comm.SymbolConst;
+import com.custom.comm.SymbolConstant;
 import com.custom.comm.enums.DbJoinStyle;
 
 import java.lang.annotation.*;
@@ -45,7 +45,7 @@ public @interface DbRelated {
      * 注入的字段
      * @return
      */
-    String field() default SymbolConst.EMPTY;
+    String field() default SymbolConstant.EMPTY;
 
 
 }

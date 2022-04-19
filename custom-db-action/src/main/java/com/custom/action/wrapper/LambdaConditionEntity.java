@@ -1,7 +1,7 @@
 package com.custom.action.wrapper;
 
 import com.custom.action.sqlparser.TableSqlBuilder;
-import com.custom.comm.SymbolConst;
+import com.custom.comm.SymbolConstant;
 import com.custom.comm.enums.DbSymbol;
 import com.custom.comm.enums.SqlLike;
 import com.custom.comm.enums.SqlOrderBy;
@@ -72,7 +72,7 @@ public class LambdaConditionEntity<T> extends ConditionAssembly<T, SFunction<T, 
     public LambdaConditionEntity<T> or(boolean condition) {
         appendState = condition;
         if(condition) {
-            appendSybmol = SymbolConst.OR;
+            appendSybmol = SymbolConstant.OR;
         }
         return childrenClass;
     }
@@ -108,12 +108,12 @@ public class LambdaConditionEntity<T> extends ConditionAssembly<T, SFunction<T, 
 
     @Override
     public LambdaConditionEntity<T> orderByAsc(boolean condition, Consumer<OrderByFunc<T>> consumer) {
-        return doOrderBySqlFunc(SymbolConst.ASC, consumer);
+        return doOrderBySqlFunc(SymbolConstant.ASC, consumer);
     }
 
     @Override
     public LambdaConditionEntity<T> orderByDesc(boolean condition, Consumer<OrderByFunc<T>> consumer) {
-        return doOrderBySqlFunc(SymbolConst.DESC, consumer);
+        return doOrderBySqlFunc(SymbolConstant.DESC, consumer);
     }
 
     @Override
@@ -251,7 +251,7 @@ public class LambdaConditionEntity<T> extends ConditionAssembly<T, SFunction<T, 
     private LambdaConditionEntity<T> doSelectSqlFunc(Consumer<SelectFunc<T>> consumer) {
         SelectFunc<T> sqlFunc = new SelectFunc<>(getEntityClass());
         consumer.accept(sqlFunc);
-        mergeSelect(sqlFunc.getColumns().split(SymbolConst.SEPARATOR_COMMA_2));
+        mergeSelect(sqlFunc.getColumns().split(SymbolConstant.SEPARATOR_COMMA_2));
         return childrenClass;
     }
 

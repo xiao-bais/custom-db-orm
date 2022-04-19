@@ -7,7 +7,7 @@ import java.util.List;
  * @Date 2022/4/19 14:48
  * @Desc：表结构解析模板
  **/
-public class TableStructModel<T> {
+public class TableStructModel {
 
     /**
      * 表名
@@ -21,8 +21,9 @@ public class TableStructModel<T> {
 
     /**
      * 实体生成全路径
+     * path：com/example/test/Student.java
      */
-    private String entityClassName;
+    private String entityClassPath;
 
     /**
      * 表说明
@@ -44,7 +45,18 @@ public class TableStructModel<T> {
      */
     private Boolean swagger = false;
 
-
+    /**
+     * 包的来源
+     * package com.example.test
+     */
+    private String sourcePackage;
+    /**
+     * 导入包信息
+     * java：java自带的类
+     * other：除java外的其他类
+     */
+    private List<String> importJavaPackages;
+    private List<String> importOtherPackages;
 
 
     public String getTable() {
@@ -61,14 +73,6 @@ public class TableStructModel<T> {
 
     public void setEntityName(String entityName) {
         this.entityName = entityName;
-    }
-
-    public String getEntityClassName() {
-        return entityClassName;
-    }
-
-    public void setEntityClassName(String entityClassName) {
-        this.entityClassName = entityClassName;
     }
 
     public String getDesc() {
@@ -101,5 +105,37 @@ public class TableStructModel<T> {
 
     public void setSwagger(Boolean swagger) {
         this.swagger = swagger;
+    }
+
+    public String getSourcePackage() {
+        return sourcePackage;
+    }
+
+    public void setSourcePackage(String sourcePackage) {
+        this.sourcePackage = sourcePackage;
+    }
+
+    public List<String> getImportJavaPackages() {
+        return importJavaPackages;
+    }
+
+    public void setImportJavaPackages(List<String> importJavaPackages) {
+        this.importJavaPackages = importJavaPackages;
+    }
+
+    public List<String> getImportOtherPackages() {
+        return importOtherPackages;
+    }
+
+    public void setImportOtherPackages(List<String> importOtherPackages) {
+        this.importOtherPackages = importOtherPackages;
+    }
+
+    public String getEntityClassPath() {
+        return entityClassPath;
+    }
+
+    public void setEntityClassPath(String entityClassPath) {
+        this.entityClassPath = entityClassPath;
     }
 }

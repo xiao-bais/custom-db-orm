@@ -2,7 +2,7 @@ package com.custom.action.wrapper;
 
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
-import com.custom.comm.SymbolConst;
+import com.custom.comm.SymbolConstant;
 import com.custom.comm.enums.DbSymbol;
 import com.custom.comm.enums.SqlLike;
 import com.custom.comm.enums.SqlOrderBy;
@@ -65,7 +65,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
         if(CustomUtil.isBlank(column) && DbSymbol.EXISTS != dbSymbol && DbSymbol.NOT_EXISTS != dbSymbol) {
             ExThrowsUtil.toCustom("column cannot be empty");
         }
-        if(JudgeUtilsAx.isNotEmpty(column) && !column.contains(SymbolConst.POINT)) {
+        if(JudgeUtilsAx.isNotEmpty(column) && !column.contains(SymbolConstant.POINT)) {
             column = String.format("%s.%s", getTableSqlBuilder().getAlias(), column);
         }
 
@@ -113,10 +113,10 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
         }
         if(CustomUtil.isNotBlank(getLastCondition())) {
             getFinalCondition().append(getLastCondition());
-            setLastCondition(SymbolConst.EMPTY);
+            setLastCondition(SymbolConstant.EMPTY);
         }
-        if(appendSybmol.equals(SymbolConst.OR)) {
-            appendSybmol = SymbolConst.AND;
+        if(appendSybmol.equals(SymbolConstant.OR)) {
+            appendSybmol = SymbolConstant.AND;
         }
     }
 
@@ -139,21 +139,21 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
      * in 、not in的条件组装
      */
     private void ConditionOnInsqlAssembly(DbSymbol dbSymbol, String column, Object val1) {
-        StringJoiner symbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+        StringJoiner symbol = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
         if(CustomUtil.isBasicType(val1)) {
             getParamValues().add(val1);
 
         }else if(val1.getClass().isArray()) {
             int len = Array.getLength(val1);
             for (int i = 0; i < len; i++) {
-                symbol.add(SymbolConst.QUEST);
+                symbol.add(SymbolConstant.QUEST);
                 getParamValues().add(Array.get(val1, i));
             }
 
         }else if(val1 instanceof Collection) {
             Collection<?> objects = (Collection<?>) val1;
             getParamValues().addAll(objects);
-            objects.forEach(x -> symbol.add(SymbolConst.QUEST));
+            objects.forEach(x -> symbol.add(SymbolConstant.QUEST));
         }
         setLastCondition(String.format(" %s %s %s (%s)", appendSybmol, column, dbSymbol.getSymbol(), symbol));
     }
@@ -169,16 +169,16 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
      * sql模糊查询条件拼接
      */
     protected String sqlConcat(SqlLike sqlLike, Object val) {
-        String sql = SymbolConst.EMPTY;
+        String sql = SymbolConstant.EMPTY;
         switch (sqlLike) {
             case LEFT:
-                sql = SymbolConst.PERCENT + val;
+                sql = SymbolConstant.PERCENT + val;
                 break;
             case RIGHT:
-                sql = val + SymbolConst.PERCENT;
+                sql = val + SymbolConstant.PERCENT;
                 break;
             case LIKE:
-                sql = SymbolConst.PERCENT + val + SymbolConst.PERCENT;
+                sql = SymbolConstant.PERCENT + val + SymbolConstant.PERCENT;
                 break;
         }
         return sql;
@@ -297,7 +297,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
 
 
     protected final Children childrenClass = (Children) this;
-    protected static String appendSybmol = SymbolConst.AND;
+    protected static String appendSybmol = SymbolConstant.AND;
     /**
      * 拼接and or 方法时，对于后面方法的调用
      */

@@ -1,6 +1,6 @@
 package com.custom.comm.page;
 
-import com.custom.comm.SymbolConst;
+import com.custom.comm.SymbolConstant;
 
 import java.util.List;
 
@@ -59,15 +59,15 @@ public class AutoPageHelper<T> extends DbPageRows<T> {
     public AutoPageHelper(int pageIndex, int pageSize, List<T> dataRows) {
         super(pageIndex, pageSize, dataRows);
         int size = dataRows.size();
-        this.pages = size % pageSize > SymbolConst.DEFAULT_ZERO ? size / pageSize + SymbolConst.DEFAULT_ONE : size / pageSize;
-        this.firstPage = SymbolConst.DEFAULT_ONE;
+        this.pages = size % pageSize > SymbolConstant.DEFAULT_ZERO ? size / pageSize + SymbolConstant.DEFAULT_ONE : size / pageSize;
+        this.firstPage = SymbolConstant.DEFAULT_ONE;
         this.lastPage = this.pages;
-        this.prePage = Math.max(pageIndex - SymbolConst.DEFAULT_ONE, SymbolConst.DEFAULT_ONE);
-        this.nextPage = Math.min(pageIndex + SymbolConst.DEFAULT_ONE, this.pages);
+        this.prePage = Math.max(pageIndex - SymbolConstant.DEFAULT_ONE, SymbolConstant.DEFAULT_ONE);
+        this.nextPage = Math.min(pageIndex + SymbolConstant.DEFAULT_ONE, this.pages);
         this.isFirstPage = pageIndex == this.firstPage;
         this.isLastPage = pageIndex == this.pages;
-        this.hasPreviousPage = pageIndex - SymbolConst.DEFAULT_ONE > SymbolConst.DEFAULT_ZERO;
-        this.hasNextPage = pageIndex + SymbolConst.DEFAULT_ONE < this.pages;
+        this.hasPreviousPage = pageIndex - SymbolConstant.DEFAULT_ONE > SymbolConstant.DEFAULT_ZERO;
+        this.hasNextPage = pageIndex + SymbolConstant.DEFAULT_ONE < this.pages;
     }
 
 

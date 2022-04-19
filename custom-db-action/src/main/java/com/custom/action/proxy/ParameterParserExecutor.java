@@ -2,7 +2,7 @@ package com.custom.action.proxy;
 
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
-import com.custom.comm.SymbolConst;
+import com.custom.comm.SymbolConstant;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExceptionConst;
 import lombok.extern.slf4j.Slf4j;
@@ -83,15 +83,15 @@ public class ParameterParserExecutor {
 //        if(!matcher.find()) return;
 
         String signName = String.format(sign, paramName);
-        StringJoiner symbol = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+        StringJoiner symbol = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
         if (CustomUtil.isBasicType(paramValue.getClass())) {
             paramResList.add(paramValue);
-            symbol.add(SymbolConst.QUEST);
+            symbol.add(SymbolConstant.QUEST);
 
         } else if (paramValue instanceof List) {
             List<Object> paramsForList = (List<Object>) paramValue;
             paramsForList = paramsForList.stream().filter(x -> CustomUtil.isBasicType(x.getClass())).collect(Collectors.toList());
-            paramsForList.forEach(x -> symbol.add(SymbolConst.QUEST));
+            paramsForList.forEach(x -> symbol.add(SymbolConstant.QUEST));
             paramResList.addAll(paramsForList);
 
         } else if (paramValue instanceof Map) {
@@ -107,7 +107,7 @@ public class ParameterParserExecutor {
         }else if (paramValue.getClass().isArray()) {
             int length = Array.getLength(paramValue);
             for (int j = 0; j < length; j++) {
-                symbol.add(SymbolConst.QUEST);
+                symbol.add(SymbolConstant.QUEST);
                 paramResList.add(Array.get(paramValue, j));
             }
 
@@ -115,7 +115,7 @@ public class ParameterParserExecutor {
         else if (paramValue instanceof Set) {
             Set<Object> paramsForSet = (Set<Object>) paramValue;
             paramsForSet = paramsForSet.stream().filter(x -> CustomUtil.isBasicType(x.getClass())).collect(Collectors.toSet());
-            paramsForSet.forEach(x -> symbol.add(SymbolConst.QUEST));
+            paramsForSet.forEach(x -> symbol.add(SymbolConstant.QUEST));
             paramResList.addAll(paramsForSet);
         }
         // 最终只剩下自定义的实体类
@@ -145,7 +145,7 @@ public class ParameterParserExecutor {
         int index = 0;
         // todo... 待优化 以正则表达式的格式来匹配参数的位置，以便替换
         while (true) {
-            int[] indexes = CustomUtil.replaceSqlRex(prepareSql, SymbolConst.PREPARE_BEGIN_REX_1, SymbolConst.PREPARE_END_REX, index);
+            int[] indexes = CustomUtil.replaceSqlRex(prepareSql, SymbolConstant.PREPARE_BEGIN_REX_1, SymbolConstant.PREPARE_END_REX, index);
             if (indexes == null) break;
 
             String prepareName = prepareSql.substring(indexes[0] + 2, indexes[1]);
@@ -206,13 +206,13 @@ public class ParameterParserExecutor {
      */
     private void replaceSqlSymbol() {
 
-        if(!prepareSql.contains(SymbolConst.PREPARE_BEGIN_REX_2)) {
+        if(!prepareSql.contains(SymbolConstant.PREPARE_BEGIN_REX_2)) {
             return;
         }
         // todo... 待优化 以正则表达式的格式来匹配参数的位置，以便替换
         int index = 0;
         while (true){
-            int[] indexes = CustomUtil.replaceSqlRex(prepareSql, SymbolConst.PREPARE_BEGIN_REX_2, SymbolConst.PREPARE_END_REX, index);
+            int[] indexes = CustomUtil.replaceSqlRex(prepareSql, SymbolConstant.PREPARE_BEGIN_REX_2, SymbolConstant.PREPARE_END_REX, index);
             if (indexes == null) break;
             String name = prepareSql.substring(indexes[0] + 2, indexes[1]);
             Object paramName = paramsMap.get(String.format(sign, name));

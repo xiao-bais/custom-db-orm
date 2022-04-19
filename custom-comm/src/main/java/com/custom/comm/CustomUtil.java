@@ -37,7 +37,7 @@ public class CustomUtil {
         if(is){
             return url.substring(lastIndex+1, url.indexOf("?"));
         }else{
-            return url.substring(url.lastIndexOf("/") + SymbolConst.DEFAULT_ONE);
+            return url.substring(url.lastIndexOf("/") + SymbolConstant.DEFAULT_ONE);
         }
     }
 
@@ -87,8 +87,8 @@ public class CustomUtil {
      */
     public static String getJoinFieldStr(String field) {
         int index = field.indexOf(".");
-        String fieldName = field.substring(index + SymbolConst.DEFAULT_ONE);
-        String alias = field.substring(SymbolConst.DEFAULT_ZERO, index + SymbolConst.DEFAULT_ONE);
+        String fieldName = field.substring(index + SymbolConstant.DEFAULT_ONE);
+        String alias = field.substring(SymbolConstant.DEFAULT_ZERO, index + SymbolConstant.DEFAULT_ONE);
         return String.format("%s`%s`", alias, fieldName);
     }
 
@@ -148,7 +148,7 @@ public class CustomUtil {
     * 类名转首字母小写
     */
     public static String toIndexLower(String text) {
-        String res = SymbolConst.EMPTY;
+        String res = SymbolConstant.EMPTY;
         if(JudgeUtilsAx.isEmpty(text)) {
             return res;
         }
@@ -194,7 +194,7 @@ public class CustomUtil {
         for (int i = 0; i < len; i++) {
             char c = param.charAt(i);
             if (Character.isUpperCase(c) && i > 0) {
-                sb.append(SymbolConst.UNDERLINE);
+                sb.append(SymbolConstant.UNDERLINE);
             }
             sb.append(Character.toLowerCase(c));
         }
@@ -212,7 +212,7 @@ public class CustomUtil {
         StringBuilder sb = new StringBuilder(len);
         for (int i = 0; i < len; i++) {
             char c = param.charAt(i);
-            if (c == SymbolConst.UNDERLINE) {
+            if (c == SymbolConstant.UNDERLINE) {
                 if (++i < len) {
                     sb.append(Character.toUpperCase(param.charAt(i)));
                 }
@@ -279,9 +279,9 @@ public class CustomUtil {
         StringBuilder sqlBuilder = new StringBuilder(sql);
         if(params.length > 0) {
             int index = 0;
-            int symbolNums = countStr(sql, SymbolConst.QUEST);
+            int symbolNums = countStr(sql, SymbolConstant.QUEST);
             for (int i = 0; i < symbolNums; i++) {
-                index = sqlBuilder.indexOf(SymbolConst.QUEST, index);
+                index = sqlBuilder.indexOf(SymbolConstant.QUEST, index);
                 String rexStr = params[i] instanceof String ? String.format("'%s'", params[i]) : params[i].toString();
                 sqlBuilder.replace(index, index + 1, rexStr);
                 index += rexStr.length() - 1;
@@ -321,10 +321,10 @@ public class CustomUtil {
      */
     public static String trimSqlCondition(String condition) {
         String finalCondition = condition;
-        if(condition.trim().startsWith(SymbolConst.AND)) {
-            finalCondition = condition.replaceFirst(SymbolConst.AND, SymbolConst.EMPTY);
-        }else if(condition.trim().startsWith(SymbolConst.OR)) {
-            finalCondition = condition.replaceFirst(SymbolConst.OR, SymbolConst.EMPTY);
+        if(condition.trim().startsWith(SymbolConstant.AND)) {
+            finalCondition = condition.replaceFirst(SymbolConstant.AND, SymbolConstant.EMPTY);
+        }else if(condition.trim().startsWith(SymbolConstant.OR)) {
+            finalCondition = condition.replaceFirst(SymbolConstant.OR, SymbolConstant.EMPTY);
         }
         return finalCondition.trim();
     }
@@ -334,8 +334,8 @@ public class CustomUtil {
      */
     public static String trimAppendSqlCondition(String condition) {
         String finalCondition = condition;
-        if(condition.trim().startsWith(SymbolConst.AND)) {
-            finalCondition = condition.replaceFirst(SymbolConst.AND, SymbolConst.EMPTY);
+        if(condition.trim().startsWith(SymbolConstant.AND)) {
+            finalCondition = condition.replaceFirst(SymbolConstant.AND, SymbolConstant.EMPTY);
         }
         return finalCondition.trim();
     }
@@ -345,8 +345,8 @@ public class CustomUtil {
      */
     public static String replaceOrWithAndOnSqlCondition(String condition) {
         String finalCondition = condition;
-        if(condition.trim().startsWith(SymbolConst.OR)) {
-            finalCondition = condition.replaceFirst(SymbolConst.OR, SymbolConst.AND);
+        if(condition.trim().startsWith(SymbolConstant.OR)) {
+            finalCondition = condition.replaceFirst(SymbolConstant.OR, SymbolConstant.AND);
         }
         return finalCondition.trim();
     }
@@ -355,7 +355,7 @@ public class CustomUtil {
      * 可执行的sql条件
      */
     public static String handleExecuteSql(String sql, Object[] params) {
-        int symbolSize = countStr(sql, SymbolConst.QUEST);
+        int symbolSize = countStr(sql, SymbolConstant.QUEST);
         int index = 0;
         while (index < symbolSize) {
             Object param = params[index];

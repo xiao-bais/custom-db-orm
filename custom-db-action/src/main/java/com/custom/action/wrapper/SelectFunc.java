@@ -1,6 +1,6 @@
 package com.custom.action.wrapper;
 
-import com.custom.comm.SymbolConst;
+import com.custom.comm.SymbolConstant;
 import com.custom.comm.enums.SqlAggregate;
 import com.custom.comm.exceptions.CustomCheckException;
 
@@ -112,7 +112,7 @@ public class SelectFunc<T> extends SqlFunc<T, SelectFunc<T>> {
         String column = getColumnParseHandler().getColumn(func);
         String field = getColumnMapper().get(column);
         if (elseVal instanceof CharSequence) {
-            elseVal = new StringBuilder().append(SymbolConst.SINGLE_QUOTES).append(elseVal).append(SymbolConst.SINGLE_QUOTES);
+            elseVal = new StringBuilder().append(SymbolConstant.SINGLE_QUOTES).append(elseVal).append(SymbolConstant.SINGLE_QUOTES);
         }
         return doFunc(formatRex(SqlAggregate.IFNULL,null), SqlAggregate.IFNULL, column, elseVal, field);
     }
@@ -133,7 +133,7 @@ public class SelectFunc<T> extends SqlFunc<T, SelectFunc<T>> {
                 .findFirst()
                 .orElseThrow(() -> new CustomCheckException("未找到字段：" + getColumnMapper().get(column)));
         if (targetField.getType().equals(CharSequence.class)) {
-            elseVal = new StringBuilder().append(SymbolConst.SINGLE_QUOTES).append(elseVal).append(SymbolConst.SINGLE_QUOTES);
+            elseVal = new StringBuilder().append(SymbolConstant.SINGLE_QUOTES).append(elseVal).append(SymbolConstant.SINGLE_QUOTES);
         }
         return doFunc(formatRex(SqlAggregate.IFNULL, null), SqlAggregate.IFNULL, column, elseVal, aliasField);
     }

@@ -1,7 +1,7 @@
 package com.custom.action.wrapper;
 
 import com.custom.action.sqlparser.TableInfoCache;
-import com.custom.comm.SymbolConst;
+import com.custom.comm.SymbolConstant;
 import com.custom.comm.enums.SqlAggregate;
 
 import java.util.Map;
@@ -97,7 +97,7 @@ public abstract class SqlFunc<T, Child> {
         fieldMapper = TableInfoCache.getFieldMap(cls);
         columnMapper = TableInfoCache.getColumnMap(cls);
         alias = TableInfoCache.getTableModel(cls).getAlias();
-        sqlFragment = new StringJoiner(SymbolConst.SEPARATOR_COMMA_2);
+        sqlFragment = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
     }
 
 
@@ -105,7 +105,7 @@ public abstract class SqlFunc<T, Child> {
      * 获取格式化的sql函数模板
      */
     protected String formatRex(SqlAggregate aggregate, Boolean distinct) {
-        String template = SymbolConst.EMPTY;
+        String template = SymbolConstant.EMPTY;
         switch (aggregate) {
             case SUM:
             case MAX:

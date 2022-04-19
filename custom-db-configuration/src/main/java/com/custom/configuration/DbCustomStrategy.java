@@ -1,6 +1,6 @@
 package com.custom.configuration;
 
-import com.custom.comm.SymbolConst;
+import com.custom.comm.SymbolConstant;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -32,17 +32,17 @@ public class DbCustomStrategy {
     /**
     * 逻辑删除字段
     */
-    private String dbFieldDeleteLogic = SymbolConst.EMPTY;
+    private String dbFieldDeleteLogic = SymbolConstant.EMPTY;
 
     /**
     * 默认已删除字段值
     */
-    private Object deleteLogicValue = SymbolConst.EMPTY;
+    private Object deleteLogicValue = SymbolConstant.EMPTY;
 
     /**
     * 默认未删除字段值
     */
-    private Object notDeleteLogicValue = SymbolConst.EMPTY;
+    private Object notDeleteLogicValue = SymbolConstant.EMPTY;
 
     /**
     * 需要扫描的dao层包路径，加入spring容器中
