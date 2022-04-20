@@ -70,8 +70,8 @@ public class DoMain {
         globalConfig.setAuthor("Xiao-Bai");
         globalConfig.setOutputDir("src/main/java");
         globalConfig.setKeyStrategy(KeyStrategy.AUTO);
-        globalConfig.setEntityLombok(true);
-        globalConfig.setSwagger(true);
+//        globalConfig.setEntityLombok(true);
+//        globalConfig.setSwagger(true);
 //        globalConfig.set
         gce.setGlobalConfig(globalConfig);
 

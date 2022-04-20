@@ -1,5 +1,7 @@
 package com.custom.generator.config;
 
+import java.util.Objects;
+
 /**
  * @Author Xiao-Bai
  * @Date 2022/4/19 11:23
@@ -37,7 +39,7 @@ public class PackageConfig {
     }
 
     public String getController() {
-        return controller;
+        return Objects.isNull(controller) ? "" : controller.trim();
     }
 
     public void setController(String controller) {
@@ -45,7 +47,7 @@ public class PackageConfig {
     }
 
     public String getEntity() {
-        return entity;
+        return Objects.isNull(entity) ? "" : entity.trim();
     }
 
     public void setEntity(String entity) {
@@ -53,7 +55,7 @@ public class PackageConfig {
     }
 
     public String getService() {
-        return service;
+        return Objects.isNull(service) ? "" : service.trim();
     }
 
     public void setService(String service) {

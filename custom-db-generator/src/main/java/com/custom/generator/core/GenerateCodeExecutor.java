@@ -117,7 +117,9 @@ public class GenerateCodeExecutor {
     private void entityInitialize(TableStructModel tableInfo) {
         tableInfo.setLombok(globalConfig.getEntityLombok());
         tableInfo.setSwagger(globalConfig.getSwagger());
+        tableInfo.setOverrideEnable(globalConfig.getOverrideEnable());
         tableInfo.setEntityPackage(packageConfig.getEntity());
+        tableInfo.setAuthor(globalConfig.getAuthor());
         String tableName = tableInfo.getTable();
         // 若配置了忽略前缀，则去除指定的前缀
         if(JudgeUtilsAx.isNotEmpty(tableConfig.getTablePrefix())) {
@@ -149,7 +151,7 @@ public class GenerateCodeExecutor {
             String packagePath = "";
             if(JudgeUtilsAx.isNotEmpty(packageConfig.getEntity())) {
                 packagePath = packageName.replace(SymbolConstant.POINT, SymbolConstant.FILE_SEPARATOR) + SymbolConstant.FILE_SEPARATOR + packageConfig.getEntity();
-                tableInfo.setSourcePackage(packageName + SymbolConstant.POINT + tableInfo.getEntityPackage() + ";");
+                tableInfo.setSourcePackage(packageName + SymbolConstant.POINT + tableInfo.getEntityPackage());
             }
             entityClassPath = entityClassPath + SymbolConstant.FILE_SEPARATOR + packagePath;
         }

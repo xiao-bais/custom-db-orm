@@ -21,7 +21,6 @@ public class FreemarkerUtil {
     private final static String TEMPLATE_PATH = "src/main/java/com/custom/generator/templates";
     private final static String CLASS_PATH = "src/main/java/com/home/shop";
 
-
     /**
      * 开始创建
      */
@@ -42,12 +41,14 @@ public class FreemarkerUtil {
                 parentPackage.mkdirs();
             }
             File javaFile = new File(parentPackage.getPath() + SymbolConstant.FILE_SEPARATOR + tableStructModel.getEntityName() + SymbolConstant.DOT_JAVA);
-            if(javaFile.exists()) {
+            if(javaFile.exists() && tableStructModel.getOverrideEnable()) {
                 javaFile.delete();
             }
 
             writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(javaFile)));
             template.process(tableStructModel, writer);
+
+            logger.info("生成实体：{}.{}", tableStructModel.getSourcePackage(), tableStructModel.getEntityName());
 
         } catch (Exception e) {
             logger.error(e.toString(), e);

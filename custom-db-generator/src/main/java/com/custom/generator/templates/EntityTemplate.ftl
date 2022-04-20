@@ -1,4 +1,4 @@
-package ${sourcePackage}
+package ${sourcePackage};
 
 <#list importOtherPackages as index>
  ${index}
@@ -7,6 +7,11 @@ package ${sourcePackage}
 <#list importJavaPackages as index>
 ${index}
 </#list>
+
+/**
+ * @Author ${author}
+ *
+ */
 
 <#if lombok>
 @Data
@@ -19,7 +24,9 @@ public class ${entityName} {
      * ${column.desc}
      */
     ${column.dbFieldAnnotation}
+    <#if swagger>
     @ApiModelProperty(value = "${column.desc}")
+    </#if>
     ${column.outputFieldInfo}
 
 </#list>
@@ -30,7 +37,7 @@ public class ${entityName} {
         return ${column.fieldName};
     }
 
-    public void ${column.setterMethodName} (${column.fieldTypeName} ${column.fieldName}) {
+    public void ${column.setterMethodName}(${column.fieldTypeName} ${column.fieldName}) {
         this.${column.fieldName} = ${column.fieldName};
     }
 

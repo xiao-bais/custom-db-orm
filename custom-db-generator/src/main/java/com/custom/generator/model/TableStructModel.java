@@ -63,6 +63,16 @@ public class TableStructModel {
     private List<String> importJavaPackages;
     private List<String> importOtherPackages;
 
+    /**
+     * 是否覆盖已存在的文件
+     */
+    private Boolean overrideEnable = true;
+
+    /**
+     * 作者
+     */
+    private String author;
+
 
     public String getTable() {
         return table;
@@ -150,5 +160,21 @@ public class TableStructModel {
 
     public void setEntityPackage(String entityPackage) {
         this.entityPackage = entityPackage;
+    }
+
+    public Boolean getOverrideEnable() {
+        return overrideEnable;
+    }
+
+    public void setOverrideEnable(Boolean overrideEnable) {
+        this.overrideEnable = overrideEnable;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
     }
 }

@@ -2,6 +2,8 @@ package com.custom.generator.config;
 
 import com.custom.comm.enums.KeyStrategy;
 
+import java.util.Objects;
+
 /**
  * @Author Xiao-Bai
  * @Date 2022/4/19 11:17
@@ -29,16 +31,33 @@ public class GlobalConfig {
      */
     private Boolean entityLombok = false;
 
+    /**
+     * 主键策略
+     */
     private KeyStrategy keyStrategy;
 
+    /**
+     * service接口名称
+     */
     private String serviceName;
 
+    /**
+     * service接口实现类名称
+     */
     private String serviceImplName;
 
+    /**
+     * 控制器名称
+     */
     private String controllerName;
 
+    /**
+     * 是否覆盖已存在的文件
+     */
+    private Boolean overrideEnable = true;
+
     public String getAuthor() {
-        return author;
+        return Objects.isNull(author) ? "" : author;
     }
 
     public void setAuthor(String author) {
@@ -99,5 +118,13 @@ public class GlobalConfig {
 
     public void setEntityLombok(Boolean entityLombok) {
         this.entityLombok = entityLombok;
+    }
+
+    public Boolean getOverrideEnable() {
+        return overrideEnable;
+    }
+
+    public void setOverrideEnable(Boolean overrideEnable) {
+        this.overrideEnable = overrideEnable;
     }
 }
