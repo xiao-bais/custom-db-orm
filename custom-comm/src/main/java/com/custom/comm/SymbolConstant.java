@@ -17,7 +17,8 @@ public class SymbolConstant {
     public final static String BRACKETS_RIGHT = ")";//右括号
 
     public final static String DATA_BASE = "database";//database
-    public final static String GET = "get";//get
+    public final static String GETTER = "get";//getter
+    public final static String SETTER = "set";//setter
     public final static String SET = " set ";//set
     public final static String IS = "is";//is
     public final static String IN = " in ";//in
@@ -49,7 +50,6 @@ public class SymbolConstant {
     public final static String DOT_JAVA = ".java";
     public final static String POINT = ".";
     public final static char SINGLE_QUOTES = '\'';
-    public final static String SLASH = "/";
     public final static String FILE_SEPARATOR = "\\";
     public final static String IMPORT = "import ";
     public final static String PRIVATE = "private";

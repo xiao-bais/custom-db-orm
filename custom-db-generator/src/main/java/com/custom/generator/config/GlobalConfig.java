@@ -1,4 +1,4 @@
-package com.custom.action.generator.config;
+package com.custom.generator.config;
 
 import com.custom.comm.enums.KeyStrategy;
 

@@ -1,22 +1,19 @@
 package com.home.customtest;
 
-import com.custom.action.fieldfill.AutoFillColumnHandler;
-import com.custom.action.fieldfill.TableFillObject;
-import com.custom.action.generator.config.TableConfig;
-import com.custom.action.generator.core.GenerateCodeExecutor;
-import com.custom.action.generator.table.TableStructModel;
+import com.custom.generator.config.GlobalConfig;
+import com.custom.generator.config.PackageConfig;
+import com.custom.generator.config.TableConfig;
+import com.custom.generator.core.GenerateCodeExecutor;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.TableInfoCache;
-import com.custom.action.wrapper.Conditions;
+import com.custom.comm.enums.KeyStrategy;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
-import com.home.customtest.config.CustomFillConfig;
-import com.home.customtest.entity.*;
+import com.custom.generator.ftl.FreemarkerUtil;
+import com.custom.generator.model.TableStructModel;
+import org.springframework.util.ReflectionUtils;
+import org.springframework.util.ResourceUtils;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -59,12 +56,34 @@ public class DoMain {
         tableConfig.setEntityDbFieldAnnotationValueEnable(true);
         gce.setTableConfig(tableConfig);
 
-        TableStructModel tableStructModel = new TableStructModel();
-        tableStructModel.setTable("shop_user");
+
+        // 包配置
+        PackageConfig packageConfig = new PackageConfig();
+        packageConfig.setParentPackage("com.home.shop");
+        packageConfig.setEntity("pojo");
+        packageConfig.setService("service");
+        packageConfig.setController("controller");
+        gce.setPackageConfig(packageConfig);
+
+        // 全局配置
+        GlobalConfig globalConfig = new GlobalConfig();
+        globalConfig.setAuthor("Xiao-Bai");
+        globalConfig.setOutputDir("src/main/java");
+        globalConfig.setKeyStrategy(KeyStrategy.AUTO);
+        globalConfig.setEntityLombok(true);
+        globalConfig.setSwagger(true);
+//        globalConfig.set
+        gce.setGlobalConfig(globalConfig);
+
+        String[] tables = {"shop_cart", "shop_category", "shop_order", "shop_product", "shop_user"};
+        gce.setTables(tables);
 
         gce.start();
 
-        System.out.println("tableStructModel.getEntityName() = " + tableStructModel.getEntityName());
+        List<TableStructModel> tableStructModels = gce.getTableStructModels();
+        for (TableStructModel tableStructModel : tableStructModels) {
+            FreemarkerUtil.start(tableStructModel);
+        }
 
 
     }

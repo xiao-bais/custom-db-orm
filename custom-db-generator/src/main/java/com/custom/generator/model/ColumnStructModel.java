@@ -1,4 +1,4 @@
-package com.custom.action.generator.table;
+package com.custom.generator.model;
 
 import com.custom.comm.enums.DbMediaType;
 import com.custom.comm.enums.KeyStrategy;
@@ -35,6 +35,7 @@ public class ColumnStructModel {
      * java属性类型
      */
     private Class<?> fieldType;
+    private String fieldTypeName;
 
     /**
      * 是否是主键字段
@@ -179,5 +180,13 @@ public class ColumnStructModel {
 
     public void setOutputFieldInfo(String outputFieldInfo) {
         this.outputFieldInfo = outputFieldInfo;
+    }
+
+    public String getFieldTypeName() {
+        return fieldTypeName;
+    }
+
+    public void setFieldTypeName(String fieldTypeName) {
+        this.fieldTypeName = fieldTypeName;
     }
 }

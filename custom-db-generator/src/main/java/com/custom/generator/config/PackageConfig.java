@@ -1,4 +1,4 @@
-package com.custom.action.generator.config;
+package com.custom.generator.config;
 
 /**
  * @Author Xiao-Bai
@@ -10,12 +10,8 @@ public class PackageConfig {
     /**
      * 生成的模块归于哪个包下面
      */
-    private String packageName;
-
-    /**
-     * 父类包，生成的包的父路径
-     */
     private String parentPackage;
+
 
     /**
      * 生成的controller层的包名
@@ -31,14 +27,6 @@ public class PackageConfig {
      * 生成的controller层的包名
      */
     private String service;
-
-    public String getPackageName() {
-        return packageName;
-    }
-
-    public void setPackageName(String packageName) {
-        this.packageName = packageName;
-    }
 
     public String getParentPackage() {
         return parentPackage;

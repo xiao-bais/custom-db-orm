@@ -1,11 +1,11 @@
-package com.custom.action.generator.core;
+package com.custom.generator.core;
 
 import com.custom.action.dbaction.AbstractSqlExecutor;
-import com.custom.action.generator.config.GlobalConfig;
-import com.custom.action.generator.config.PackageConfig;
-import com.custom.action.generator.config.TableConfig;
-import com.custom.action.generator.table.ColumnStructModel;
-import com.custom.action.generator.table.TableStructModel;
+import com.custom.generator.config.GlobalConfig;
+import com.custom.generator.config.PackageConfig;
+import com.custom.generator.config.TableConfig;
+import com.custom.generator.model.ColumnStructModel;
+import com.custom.generator.model.TableStructModel;
 import com.custom.action.sqlparser.JdbcAction;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
@@ -32,7 +32,7 @@ public class GenerateCodeExecutor {
 
     private final static Map<String, Object> currCache = new ConcurrentHashMap<>();
     private static String DATA_BASE;
-    private final List<TableStructModel> tableStructModels = new ArrayList<>();;
+    private List<TableStructModel> tableStructModels = new ArrayList<>();;
     private final AbstractSqlExecutor sqlExecutor;
 
     public GenerateCodeExecutor(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
@@ -56,6 +56,8 @@ public class GenerateCodeExecutor {
         // 构建表实体结构信息
         buildTableEntityStructs();
 
+        System.out.println("结束。。。");
+
 
 
     }
@@ -75,7 +77,7 @@ public class GenerateCodeExecutor {
             ExThrowsUtil.toCustom("表名皆不存在");
         }
 
-        String selectTableSql = CustomUtil.loadFiles("/sql/queryTableColumnStruct.sql");
+        String selectTableSql = String.format(CustomUtil.loadFiles("/sql/queryTableColumnStruct.sql"), tableStr, DATA_BASE);
         List<ColumnStructModel> columnStructModels = new ArrayList<>();
         try {
             columnStructModels = sqlExecutor.executeQueryNotPrintSql(ColumnStructModel.class, selectTableSql);
@@ -115,6 +117,7 @@ public class GenerateCodeExecutor {
     private void entityInitialize(TableStructModel tableInfo) {
         tableInfo.setLombok(globalConfig.getEntityLombok());
         tableInfo.setSwagger(globalConfig.getSwagger());
+        tableInfo.setEntityPackage(packageConfig.getEntity());
         String tableName = tableInfo.getTable();
         // 若配置了忽略前缀，则去除指定的前缀
         if(JudgeUtilsAx.isNotEmpty(tableConfig.getTablePrefix())) {
@@ -138,15 +141,15 @@ public class GenerateCodeExecutor {
      */
     private void setTableEntityPath(TableStructModel tableInfo) {
         String entityClassPath = "";
-        if(JudgeUtilsAx.isNotEmpty(packageConfig.getParentPackage())) {
-            entityClassPath = packageConfig.getParentPackage();
+        if(JudgeUtilsAx.isNotEmpty(globalConfig.getOutputDir())) {
+            entityClassPath = globalConfig.getOutputDir();
         }
-        if(JudgeUtilsAx.isNotEmpty(packageConfig.getPackageName())) {
-            String packageName = packageConfig.getPackageName();
+        if(JudgeUtilsAx.isNotEmpty(packageConfig.getParentPackage())) {
+            String packageName = packageConfig.getParentPackage();
             String packagePath = "";
             if(JudgeUtilsAx.isNotEmpty(packageConfig.getEntity())) {
                 packagePath = packageName.replace(SymbolConstant.POINT, SymbolConstant.FILE_SEPARATOR) + SymbolConstant.FILE_SEPARATOR + packageConfig.getEntity();
-                tableInfo.setSourcePackage(packageName + ";");
+                tableInfo.setSourcePackage(packageName + SymbolConstant.POINT + tableInfo.getEntityPackage() + ";");
             }
             entityClassPath = entityClassPath + SymbolConstant.FILE_SEPARATOR + packagePath;
         }
@@ -162,17 +165,20 @@ public class GenerateCodeExecutor {
 
         // 字段中的所有类型
         List<? extends Class<?>> fieldTypes = tableInfo.getColumnStructModels().stream().map(ColumnStructModel::getFieldType).collect(Collectors.toList());
-        List<String> importJavaPackages = fieldTypes.stream().map(fieldType -> SymbolConstant.IMPORT + fieldType.getName() + ";").collect(Collectors.toList());
+        List<String> importJavaPackages = fieldTypes.stream().filter(x -> !x.getName().contains("java.lang")).distinct().map(fieldType -> SymbolConstant.IMPORT + fieldType.getName() + ";").collect(Collectors.toList());
 
         // 添加@Db*注解导入包信息
         String dbAnnotationPackage = SymbolConstant.IMPORT + "com.custom.comm.annotations.";
-        importOtherPackages.add(dbAnnotationPackage + "DbField");
-        importOtherPackages.add( dbAnnotationPackage + "DbKey");
-        importOtherPackages.add(dbAnnotationPackage + "DbTable");
+        importOtherPackages.add(dbAnnotationPackage + "DbField;");
+        importOtherPackages.add( dbAnnotationPackage + "DbKey;");
+        importOtherPackages.add(dbAnnotationPackage + "DbTable;");
 
         // 导入lombok
         if(tableInfo.getLombok()) {
             importOtherPackages.add(SymbolConstant.IMPORT + "lombok.Data;");
+        }
+        if(tableInfo.getSwagger()) {
+            importOtherPackages.add(SymbolConstant.IMPORT + "io.swagger.annotations.ApiModelProperty;");
         }
         // 导入主键自增标识
         if(tableInfo.getColumnStructModels().stream().anyMatch(x -> x.getKeyExtra().equalsIgnoreCase("auto_increment"))) {
@@ -197,6 +203,7 @@ public class GenerateCodeExecutor {
             }
             columnModel.setDbType(dbType);
             columnModel.setFieldType(dbType.getFieldType());
+            columnModel.setFieldTypeName(dbType.getFieldType().getSimpleName());
             String column = columnModel.getColumn();
             if (dbCustomStrategy.isUnderlineToCamel()) {
                 column = CustomUtil.underlineToCamel(column);
@@ -204,9 +211,9 @@ public class GenerateCodeExecutor {
             columnModel.setFieldName(column);
 
             // getter/setter
-            String columnStart = column.substring(0, 1);
-            columnModel.setGetterMethodName(SymbolConstant.GET + columnStart + column.substring(1));
-            columnModel.setGetterMethodName(SymbolConstant.SET + columnStart + column.substring(1));
+            String columnStart = column.substring(0, 1).toUpperCase(Locale.ROOT);
+            columnModel.setGetterMethodName(SymbolConstant.GETTER + columnStart + column.substring(1));
+            columnModel.setSetterMethodName(SymbolConstant.SETTER + columnStart + column.substring(1));
 
             // DbField注解信息
             String dbFieldStr = columnModel.getPrimaryKey() ? "@DbKey" : "@DbField";
@@ -226,7 +233,6 @@ public class GenerateCodeExecutor {
      * 获取真实表名
      */
     private void handleTruthTables(String tableStr) {
-        List<TableStructModel> tableStructModels = new ArrayList<>();
         try {
             String selectTableSql  = String.format(CustomUtil.loadFiles("/sql/queryTableStruct.sql"), tableStr, DATA_BASE);
             tableStructModels = sqlExecutor.executeQueryNotPrintSql(TableStructModel.class, selectTableSql);
@@ -315,5 +321,9 @@ public class GenerateCodeExecutor {
 
     public void setTables(String[] tables) {
         this.tables = tables;
+    }
+
+    public List<TableStructModel> getTableStructModels() {
+        return tableStructModels;
     }
 }

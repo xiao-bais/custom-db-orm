@@ -1,4 +1,4 @@
-package com.custom.action.generator;
+package com.custom.generator;
 
 import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;

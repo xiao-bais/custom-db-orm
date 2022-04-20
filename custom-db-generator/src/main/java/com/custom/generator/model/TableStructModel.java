@@ -1,4 +1,4 @@
-package com.custom.action.generator.table;
+package com.custom.generator.model;
 
 import java.util.List;
 
@@ -18,6 +18,11 @@ public class TableStructModel {
      * 实体名称
      */
     private String entityName;
+
+    /**
+     * 实体里包名
+     */
+    private String entityPackage;
 
     /**
      * 实体生成全路径
@@ -137,5 +142,13 @@ public class TableStructModel {
 
     public void setEntityClassPath(String entityClassPath) {
         this.entityClassPath = entityClassPath;
+    }
+
+    public String getEntityPackage() {
+        return entityPackage;
+    }
+
+    public void setEntityPackage(String entityPackage) {
+        this.entityPackage = entityPackage;
     }
 }

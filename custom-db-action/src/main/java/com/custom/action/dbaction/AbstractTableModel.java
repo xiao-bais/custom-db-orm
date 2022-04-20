@@ -55,7 +55,7 @@ public abstract class AbstractTableModel<T> {
                 fieldName = RexUtil.regexStr(fieldName, RexUtil.back_quotes);
             }
             firstLetter = fieldName.substring(0, 1).toUpperCase();
-            getter = SymbolConstant.GET + firstLetter + fieldName.substring(1);
+            getter = SymbolConstant.GETTER + firstLetter + fieldName.substring(1);
             Method method = x.getClass().getMethod(getter);
             value = method.invoke(x);
         }catch (NoSuchMethodException e){
