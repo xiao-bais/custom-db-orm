@@ -1,4 +1,4 @@
-package com.custom.generator.ftl;
+package com.custom.generator;
 
 import com.custom.comm.SymbolConstant;
 import com.custom.generator.model.ServiceStructModel;

@@ -5,7 +5,7 @@ import com.custom.comm.date.DateTimeUtils;
 import com.custom.generator.config.GlobalConfig;
 import com.custom.generator.config.PackageConfig;
 import com.custom.generator.config.TableConfig;
-import com.custom.generator.ftl.FreemarkerUtil;
+import com.custom.generator.FreemarkerUtil;
 import com.custom.generator.model.ColumnStructModel;
 import com.custom.generator.model.ServiceStructModel;
 import com.custom.generator.model.TableStructModel;

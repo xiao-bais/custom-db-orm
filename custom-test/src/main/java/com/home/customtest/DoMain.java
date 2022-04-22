@@ -9,7 +9,7 @@ import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.comm.enums.KeyStrategy;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
-import com.custom.generator.ftl.FreemarkerUtil;
+import com.custom.generator.FreemarkerUtil;
 import com.custom.generator.model.TableStructModel;
 
 import java.util.List;
