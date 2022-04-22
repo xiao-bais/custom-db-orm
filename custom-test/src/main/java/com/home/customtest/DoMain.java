@@ -11,8 +11,6 @@ import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
 import com.custom.generator.ftl.FreemarkerUtil;
 import com.custom.generator.model.TableStructModel;
-import org.springframework.util.ReflectionUtils;
-import org.springframework.util.ResourceUtils;
 
 import java.util.List;
 
@@ -82,8 +80,9 @@ public class DoMain {
 
         List<TableStructModel> tableStructModels = gce.getTableStructModels();
         for (TableStructModel tableStructModel : tableStructModels) {
-            FreemarkerUtil.start(tableStructModel);
+            FreemarkerUtil.buildEntity(tableStructModel);
         }
+
 
 
     }

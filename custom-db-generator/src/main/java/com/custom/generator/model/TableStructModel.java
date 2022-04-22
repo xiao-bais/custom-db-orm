@@ -15,9 +15,13 @@ public class TableStructModel {
     private String table;
 
     /**
-     * 实体名称
+     * 实体名称（若有设置了后缀，则拼接后缀）
      */
     private String entityName;
+    /**
+     * 实体真实名称（不带后缀）
+     */
+    private String entityTruthName;
 
     /**
      * 实体里包名
@@ -72,6 +76,11 @@ public class TableStructModel {
      * 作者
      */
     private String author;
+
+    /**
+     * 创建日期
+     */
+    private String createDate;
 
 
     public String getTable() {
@@ -176,5 +185,21 @@ public class TableStructModel {
 
     public void setAuthor(String author) {
         this.author = author;
+    }
+
+    public String getEntityTruthName() {
+        return entityTruthName;
+    }
+
+    public void setEntityTruthName(String entityTruthName) {
+        this.entityTruthName = entityTruthName;
+    }
+
+    public String getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(String createDate) {
+        this.createDate = createDate;
     }
 }

@@ -17,7 +17,7 @@ public class UserPO {
     /**
      * 
      */
-    @DbKey(value = "id")
+    @DbKey(value = "id", strategy = KeyStrategy.AUTO)
     private Integer id;
 
     /**

@@ -14,9 +14,11 @@ import java.util.List;
  */
 public class DateTimeUtils {
 
-    private static final String yyyy = "yyyy";
-    private static final String yyyyMM_ = "yyyy-MM";
-    private static final String yyyyMMdd_ = "yyyy-MM-dd";
+    public static final String yyyy = "yyyy";
+    public static final String yyyyMM_ = "yyyy-MM";
+    public static final String yyyyMMdd_ = "yyyy-MM-dd";
+    public static final String yyyyMMddHHmm_ = "yyyy-MM-dd HH:mm";
+    public static final String yyyyMMdd_HHms_ = "yyyy-MM-dd HH:mm:ss";
 
     private static final int oneDay_1 = 86400;
     private static final int oneDay_2 = 86399;

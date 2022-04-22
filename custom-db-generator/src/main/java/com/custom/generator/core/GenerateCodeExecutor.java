@@ -1,10 +1,13 @@
 package com.custom.generator.core;
 
 import com.custom.action.dbaction.AbstractSqlExecutor;
+import com.custom.comm.date.DateTimeUtils;
 import com.custom.generator.config.GlobalConfig;
 import com.custom.generator.config.PackageConfig;
 import com.custom.generator.config.TableConfig;
+import com.custom.generator.ftl.FreemarkerUtil;
 import com.custom.generator.model.ColumnStructModel;
+import com.custom.generator.model.ServiceStructModel;
 import com.custom.generator.model.TableStructModel;
 import com.custom.action.sqlparser.JdbcAction;
 import com.custom.comm.CustomUtil;
@@ -18,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -30,9 +32,10 @@ public class GenerateCodeExecutor {
 
     private static final Logger logger = LoggerFactory.getLogger(GenerateCodeExecutor.class);
 
-    private final static Map<String, Object> currCache = new ConcurrentHashMap<>();
     private static String DATA_BASE;
-    private List<TableStructModel> tableStructModels = new ArrayList<>();;
+    private List<TableStructModel> tableStructModels;
+    private List<ServiceStructModel> serviceStructModels = new ArrayList<>();
+//    private List<TableStructModel> tableStructModels = new ArrayList<>();
     private final AbstractSqlExecutor sqlExecutor;
 
     public GenerateCodeExecutor(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
@@ -56,7 +59,28 @@ public class GenerateCodeExecutor {
         // 构建表实体结构信息
         buildTableEntityStructs();
 
+        for (TableStructModel tableStructModel : tableStructModels) {
+            // 构建java实体模板
+            FreemarkerUtil.buildEntity(tableStructModel);
+
+        }
+
+
+
         System.out.println("结束。。。");
+
+    }
+
+
+
+    /**
+     * 初始化Service类
+     */
+    private void initService(ServiceStructModel serviceInfo, TableStructModel tableInfo) {
+
+        serviceInfo.setClassName(tableInfo.getEntityTruthName());
+        serviceInfo.set
+
 
 
 
@@ -108,6 +132,9 @@ public class GenerateCodeExecutor {
             // 配置实体导入包信息
             setEntityImportPackages(tableInfo);
 
+            // 初始化Service
+            ServiceStructModel serviceInfo = new ServiceStructModel();
+            initService(serviceInfo, tableInfo);
         }
     }
 
@@ -120,6 +147,7 @@ public class GenerateCodeExecutor {
         tableInfo.setOverrideEnable(globalConfig.getOverrideEnable());
         tableInfo.setEntityPackage(packageConfig.getEntity());
         tableInfo.setAuthor(globalConfig.getAuthor());
+        tableInfo.setCreateDate(DateTimeUtils.getThisDay(DateTimeUtils.yyyyMMddHHmm_));
         String tableName = tableInfo.getTable();
         // 若配置了忽略前缀，则去除指定的前缀
         if(JudgeUtilsAx.isNotEmpty(tableConfig.getTablePrefix())) {
@@ -131,11 +159,13 @@ public class GenerateCodeExecutor {
             String tableStartStr = tableName.substring(0, 1);
             tableName = tableName.replaceFirst(tableStartStr, tableStartStr.toUpperCase(Locale.ROOT));
         }
+        tableInfo.setEntityTruthName(tableName);
         // 若配置了后缀，则拼接后缀
+        String entityName = "";
         if (JudgeUtilsAx.isNotEmpty(tableConfig.getEntitySuffix())) {
-            tableName = tableName + tableConfig.getEntitySuffix();
+            entityName = tableName + tableConfig.getEntitySuffix();
         }
-        tableInfo.setEntityName(tableName);
+        tableInfo.setEntityName(entityName);
     }
 
     /**
@@ -217,16 +247,32 @@ public class GenerateCodeExecutor {
             columnModel.setGetterMethodName(SymbolConstant.GETTER + columnStart + column.substring(1));
             columnModel.setSetterMethodName(SymbolConstant.SETTER + columnStart + column.substring(1));
 
-            // DbField注解信息
-            String dbFieldStr = columnModel.getPrimaryKey() ? "@DbKey" : "@DbField";
-            if(tableConfig.getEntityDbFieldAnnotationValueEnable()) {
-                dbFieldStr = String.format("%s(value = \"%s\")", dbFieldStr, columnModel.getColumn());
-            }
-            columnModel.setDbFieldAnnotation(dbFieldStr);
+            // @Db字段注解信息
+            columnModel.setDbFieldAnnotation(dbFieldAnnotation(columnModel));
+            // 属性字段
             columnModel.setOutputFieldInfo(String.format("%s %s %s;", SymbolConstant.PRIVATE, columnModel.getFieldType().getSimpleName(), columnModel.getFieldName()));
-
         }
+
         tableInfo.setColumnStructModels(columnStructModels);
+    }
+
+    /**
+     * 处理@Db字段注解
+     */
+    private String dbFieldAnnotation(ColumnStructModel columnModel) {
+        if (!columnModel.getPrimaryKey()) {
+            return tableConfig.getEntityDbFieldAnnotationValueEnable() ?
+                    String.format("@DbField(value = \"%s\"", columnModel.getColumn()) : "@DbField";
+        }
+        // @DbKey
+        if (!tableConfig.getEntityDbFieldAnnotationValueEnable()) {
+            return "@DbKey";
+        }
+        // 主键增值策略
+        if (Objects.nonNull(globalConfig.getKeyStrategy())) {
+            return String.format("@DbKey(value = \"%s\", strategy = KeyStrategy.%s)", columnModel.getColumn(), globalConfig.getKeyStrategy());
+        }
+        return String.format("@DbKey(value = \"%s\")", columnModel.getColumn());
     }
 
 
@@ -238,6 +284,7 @@ public class GenerateCodeExecutor {
         try {
             String selectTableSql  = String.format(CustomUtil.loadFiles("/sql/queryTableStruct.sql"), tableStr, DATA_BASE);
             tableStructModels = sqlExecutor.executeQueryNotPrintSql(TableStructModel.class, selectTableSql);
+            serviceStructModels = new ArrayList<>(tableStructModels.size());
         }catch (Exception e) {
             logger.error(e.toString(), e);
         }

@@ -18,7 +18,7 @@ public class CartPO {
     /**
      * 
      */
-    @DbKey(value = "id")
+    @DbKey(value = "id", strategy = KeyStrategy.INPUT)
     private Integer id;
 
     /**
