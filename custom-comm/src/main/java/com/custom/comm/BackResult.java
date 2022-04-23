@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public class BackResult<T> {
 
-    private static Logger logger = LoggerFactory.getLogger(BackResult.class);
+    private static final Logger logger = LoggerFactory.getLogger(BackResult.class);
 
     //状态码
     private Integer status = ResultStatus.success.getCode();

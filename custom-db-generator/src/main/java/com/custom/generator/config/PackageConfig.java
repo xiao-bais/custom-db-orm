@@ -14,21 +14,20 @@ public class PackageConfig {
      */
     private String parentPackage;
 
+    /**
+     * 生成的controller层的包名
+     */
+    private String controller = "controller";
 
     /**
      * 生成的controller层的包名
      */
-    private String controller;
+    private String entity = "entity";
 
     /**
      * 生成的controller层的包名
      */
-    private String entity;
-
-    /**
-     * 生成的controller层的包名
-     */
-    private String service;
+    private String service = "service";
 
     public String getParentPackage() {
         return parentPackage;

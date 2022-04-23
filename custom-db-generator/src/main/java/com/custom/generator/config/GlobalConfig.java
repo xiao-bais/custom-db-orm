@@ -14,12 +14,12 @@ public class GlobalConfig {
     /**
      * 生成的Java类的作者
      */
-    private String author;
+    private String author = System.getProperty("user.name");
 
     /**
      * 生成的路径
      */
-    private String outputDir;
+    private String outputDir = "src/main/java";
 
     /**
      * 是否生成Swagger注解
@@ -39,17 +39,17 @@ public class GlobalConfig {
     /**
      * service接口名称
      */
-    private String serviceName;
+    private String serviceName = "%sService";
 
     /**
      * service接口实现类名称
      */
-    private String serviceImplName;
+    private String serviceImplName = "%sServiceImpl";
 
     /**
      * 控制器名称
      */
-    private String controllerName;
+    private String controllerName = "%sController";
 
     /**
      * 是否覆盖已存在的文件

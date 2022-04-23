@@ -82,6 +82,11 @@ public class TableStructModel {
      */
     private String createDate;
 
+    /**
+     * service类模板（service+serviceImpl）
+     */
+    private ServiceStructModel serviceStructModel;
+
 
     public String getTable() {
         return table;
@@ -201,5 +206,13 @@ public class TableStructModel {
 
     public void setCreateDate(String createDate) {
         this.createDate = createDate;
+    }
+
+    public ServiceStructModel getServiceStructModel() {
+        return serviceStructModel;
+    }
+
+    public void setServiceStructModel(ServiceStructModel serviceStructModel) {
+        this.serviceStructModel = serviceStructModel;
     }
 }

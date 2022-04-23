@@ -1,7 +1,7 @@
-package ${sourcePackage};
+package ${sourcePackage}.impl;
 
 <#list importPackages as index>
- ${index}
+${index}
 </#list>
 
 /**
@@ -10,7 +10,7 @@ package ${sourcePackage};
 */
 
 @Service
-public class ${className} {
+public class ${serviceImplName} implements ${serviceName} {
 
     @Autowired
     private JdbcDao jdbcDao;

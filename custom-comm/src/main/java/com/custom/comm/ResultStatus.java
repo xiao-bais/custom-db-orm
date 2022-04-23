@@ -2,13 +2,13 @@ package com.custom.comm;
 
 /**
  * @Author Xiao-Bai
- * @Date 2021/3/11 0011 20:43
+ * @Date 2021/3/11 20:43
  */
 public enum ResultStatus {
-    success(200,"success"),
-    error(300,"error"),
-    empty(100,"empty"),
-    server_err(500,"server error");
+    success(2000,"success"),
+    error(3000,"error"),
+    empty(4000,"empty"),
+    server_err(5000,"server error");
 
     private Integer code;
     private String desc;

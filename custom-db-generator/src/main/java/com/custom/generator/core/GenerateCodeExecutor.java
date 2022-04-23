@@ -5,7 +5,7 @@ import com.custom.comm.date.DateTimeUtils;
 import com.custom.generator.config.GlobalConfig;
 import com.custom.generator.config.PackageConfig;
 import com.custom.generator.config.TableConfig;
-import com.custom.generator.FreemarkerUtil;
+import com.custom.generator.FreemarkerTemplateStructs;
 import com.custom.generator.model.ColumnStructModel;
 import com.custom.generator.model.ServiceStructModel;
 import com.custom.generator.model.TableStructModel;
@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @Author Xiao-Bai
@@ -34,7 +35,6 @@ public class GenerateCodeExecutor {
 
     private static String DATA_BASE;
     private List<TableStructModel> tableStructModels;
-    private List<ServiceStructModel> serviceStructModels = new ArrayList<>();
 //    private List<TableStructModel> tableStructModels = new ArrayList<>();
     private final AbstractSqlExecutor sqlExecutor;
 
@@ -59,14 +59,6 @@ public class GenerateCodeExecutor {
         // 构建表实体结构信息
         buildTableEntityStructs();
 
-        for (TableStructModel tableStructModel : tableStructModels) {
-            // 构建java实体模板
-            FreemarkerUtil.buildEntity(tableStructModel);
-
-        }
-
-
-
         System.out.println("结束。。。");
 
     }
@@ -76,14 +68,31 @@ public class GenerateCodeExecutor {
     /**
      * 初始化Service类
      */
-    private void initService(ServiceStructModel serviceInfo, TableStructModel tableInfo) {
+    private void initService(TableStructModel tableInfo) {
 
-        serviceInfo.setClassName(tableInfo.getEntityTruthName());
-        serviceInfo.set
+        ServiceStructModel serviceInfo = new ServiceStructModel();
+        serviceInfo.setServiceName(String.format(globalConfig.getServiceName(), tableInfo.getEntityTruthName()));
+        serviceInfo.setServiceImplName(String.format(globalConfig.getServiceImplName(), tableInfo.getEntityTruthName()));
+        serviceInfo.setAuthor(globalConfig.getAuthor());
+        serviceInfo.setServicePackage(packageConfig.getService());
+        serviceInfo.setCreateDate(DateTimeUtils.getThisDay(DateTimeUtils.yyyyMMddHHmm_));
 
-
-
-
+        // 设置导入的包
+        List<String> importPackages = Stream.of(
+                "import com.custom.action.sqlparser.JdbcDao;",
+                "import org.springframework.stereotype.Service;",
+                "import org.springframework.beans.factory.annotation.Autowired;"
+        ).collect(Collectors.toList());
+        StringJoiner serviceImportPackage = new StringJoiner(SymbolConstant.POINT);
+        if (JudgeUtilsAx.isNotEmpty(packageConfig.getParentPackage())) {
+            serviceImportPackage.add(packageConfig.getParentPackage());
+        }
+        serviceImportPackage.add(packageConfig.getService()).add(serviceInfo.getServiceName());
+        importPackages.add(String.format("import %s;", serviceImportPackage));
+        serviceInfo.setImportPackages(importPackages);
+        serviceInfo.setOverrideEnable(globalConfig.getOverrideEnable());
+        serviceInfo.setSourcePackage(packageConfig.getParentPackage() + SymbolConstant.POINT + packageConfig.getService());
+        tableInfo.setServiceStructModel(serviceInfo);
     }
 
     /**
@@ -133,8 +142,7 @@ public class GenerateCodeExecutor {
             setEntityImportPackages(tableInfo);
 
             // 初始化Service
-            ServiceStructModel serviceInfo = new ServiceStructModel();
-            initService(serviceInfo, tableInfo);
+            initService(tableInfo);
         }
     }
 
@@ -262,7 +270,7 @@ public class GenerateCodeExecutor {
     private String dbFieldAnnotation(ColumnStructModel columnModel) {
         if (!columnModel.getPrimaryKey()) {
             return tableConfig.getEntityDbFieldAnnotationValueEnable() ?
-                    String.format("@DbField(value = \"%s\"", columnModel.getColumn()) : "@DbField";
+                    String.format("@DbField(value = \"%s\")", columnModel.getColumn()) : "@DbField";
         }
         // @DbKey
         if (!tableConfig.getEntityDbFieldAnnotationValueEnable()) {
@@ -284,7 +292,6 @@ public class GenerateCodeExecutor {
         try {
             String selectTableSql  = String.format(CustomUtil.loadFiles("/sql/queryTableStruct.sql"), tableStr, DATA_BASE);
             tableStructModels = sqlExecutor.executeQueryNotPrintSql(TableStructModel.class, selectTableSql);
-            serviceStructModels = new ArrayList<>(tableStructModels.size());
         }catch (Exception e) {
             logger.error(e.toString(), e);
         }

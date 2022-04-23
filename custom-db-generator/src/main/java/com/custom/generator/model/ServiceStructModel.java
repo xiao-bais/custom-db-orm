@@ -13,7 +13,8 @@ public class ServiceStructModel {
     /**
      * 类名
      */
-    private String className;
+    private String serviceName;
+    private String serviceImplName;
 
     /**
      * 父级包名
@@ -45,12 +46,12 @@ public class ServiceStructModel {
      */
     private Boolean overrideEnable = true;
 
-    public String getClassName() {
-        return className;
+    public String getServiceName() {
+        return serviceName;
     }
 
-    public void setClassName(String className) {
-        this.className = className;
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
     }
 
     public String getSourcePackage() {
@@ -99,5 +100,13 @@ public class ServiceStructModel {
 
     public void setOverrideEnable(Boolean overrideEnable) {
         this.overrideEnable = overrideEnable;
+    }
+
+    public String getServiceImplName() {
+        return serviceImplName;
+    }
+
+    public void setServiceImplName(String serviceImplName) {
+        this.serviceImplName = serviceImplName;
     }
 }

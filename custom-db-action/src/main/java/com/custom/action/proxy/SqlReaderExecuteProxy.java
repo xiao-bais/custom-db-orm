@@ -3,6 +3,7 @@ package com.custom.action.proxy;
 import com.custom.action.dbaction.SqlExecuteAction;
 import com.custom.comm.BasicDao;
 import com.custom.comm.CustomUtil;
+import com.custom.comm.RexUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.mapper.Query;
 import com.custom.comm.annotations.mapper.SqlMapper;
@@ -10,6 +11,7 @@ import com.custom.comm.annotations.mapper.SqlPath;
 import com.custom.comm.annotations.mapper.Update;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.CustomCheckException;
+import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.exceptions.ExceptionConst;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
@@ -165,10 +167,11 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
             String typeName = returnType.getTypeName();
             Class<?> cls = Class.forName(typeName);
             List<?> resultList = query(cls, getDbCustomStrategy().isSqlOutPrinting(), sql, params);
-            if(resultList.isEmpty()) {
+            int size = resultList.size();
+            if(size == 0) {
                 return null;
-            }else if(resultList.size() > SymbolConstant.DEFAULT_ONE) {
-                throw new CustomCheckException(String.format(ExceptionConst.EX_QUERY_MORE_RESULT, resultList.size()));
+            }else if(size > SymbolConstant.DEFAULT_ONE) {
+                throw new CustomCheckException(String.format(ExceptionConst.EX_QUERY_MORE_RESULT, size));
             }else {
                 return resultList.get(SymbolConstant.DEFAULT_ZERO);
             }
@@ -182,21 +185,18 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
     private void checkIllegalParam(String methodName, boolean isOrder, String sql) {
 
         if(sql.contains(SymbolConstant.PREPARE_BEGIN_REX_1) && sql.contains(SymbolConstant.QUEST)) {
-            log.error("if isOrder=true，only allow used \"?\"  when isOrder=false only allow used \"#{ }\" set parameter");
+            log.error("如果isOrder为true，仅支持使用 \"?\"  如果isOrder为false 仅支持使用 \"#{ }\" 来设置参数");
             log.error("Error Method ==> {}", methodName);
-            throw new CustomCheckException(String.format(ExceptionConst.EX_UNABLE_TO_RESOLVE_SQL, sql));
+            ExThrowsUtil.toCustom(String.format("The SQL cannot be resolved '%s'", sql));
         }
-        if(isOrder) {
-            if(sql.contains(SymbolConstant.PREPARE_BEGIN_REX_1)) {
+        if(isOrder && RexUtil.hasRegex(sql, RexUtil.sql_param)) {
+            log.error("Error Method ==> {}", methodName);
+            ExThrowsUtil.toCustom("方法注解上建议使用 isOrder = false");
+
+        }else if(!isOrder && sql.contains(SymbolConstant.QUEST)) {
                 log.error("Error Method ==> {}", methodName);
-                throw new CustomCheckException(ExceptionConst.EX_USE_ORDER_FALSE);
+                ExThrowsUtil.toCustom("方法注解上建议使用 isOrder = true");
             }
-        }else {
-            if(sql.contains(SymbolConstant.QUEST)) {
-                log.error("Error Method ==> {}", methodName);
-                throw new CustomCheckException(ExceptionConst.EX_USE_ORDER_TRUE);
-            }
-        }
     }
 
 

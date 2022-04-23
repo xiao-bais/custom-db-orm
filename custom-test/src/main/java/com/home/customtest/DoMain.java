@@ -9,7 +9,7 @@ import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.comm.enums.KeyStrategy;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
-import com.custom.generator.FreemarkerUtil;
+import com.custom.generator.FreemarkerTemplateStructs;
 import com.custom.generator.model.TableStructModel;
 
 import java.util.List;
@@ -51,7 +51,7 @@ public class DoMain {
         TableConfig tableConfig = new TableConfig();
         tableConfig.setTablePrefix("shop");
         tableConfig.setEntitySuffix("PO");
-        tableConfig.setEntityDbFieldAnnotationValueEnable(true);
+//        tableConfig.setEntityDbFieldAnnotationValueEnable(true);
         gce.setTableConfig(tableConfig);
 
 
@@ -68,9 +68,9 @@ public class DoMain {
         globalConfig.setAuthor("Xiao-Bai");
         globalConfig.setOutputDir("src/main/java");
         globalConfig.setKeyStrategy(KeyStrategy.AUTO);
-//        globalConfig.setEntityLombok(true);
-//        globalConfig.setSwagger(true);
-//        globalConfig.set
+        globalConfig.setEntityLombok(true);
+        globalConfig.setSwagger(true);
+        globalConfig.setOverrideEnable(true);
         gce.setGlobalConfig(globalConfig);
 
         String[] tables = {"shop_cart", "shop_category", "shop_order", "shop_product", "shop_user"};
@@ -78,11 +78,13 @@ public class DoMain {
 
         gce.start();
 
+        FreemarkerTemplateStructs structs = new FreemarkerTemplateStructs();
         List<TableStructModel> tableStructModels = gce.getTableStructModels();
         for (TableStructModel tableStructModel : tableStructModels) {
-            FreemarkerUtil.buildEntity(tableStructModel);
+            structs.buildEntity(tableStructModel);
+//            structs.buildService(tableStructModel.getServiceStructModel());
+//            structs.buildServiceImpl(tableStructModel.getServiceStructModel());
         }
-
 
 
     }
