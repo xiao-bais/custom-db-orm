@@ -92,6 +92,8 @@ public class GenerateCodeExecutor {
         serviceInfo.setImportPackages(importPackages);
         serviceInfo.setOverrideEnable(globalConfig.getOverrideEnable());
         serviceInfo.setSourcePackage(packageConfig.getParentPackage() + SymbolConstant.POINT + packageConfig.getService());
+        serviceInfo.setServiceClassPath(globalConfig.getOutputDir() + SymbolConstant.FILE_SEPARATOR + serviceInfo.getSourcePackage().replace(SymbolConstant.POINT, SymbolConstant.FILE_SEPARATOR));
+        serviceInfo.setServiceImplClassPath(serviceInfo.getServiceClassPath() + SymbolConstant.FILE_SEPARATOR + "impl");
         tableInfo.setServiceStructModel(serviceInfo);
     }
 

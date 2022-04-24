@@ -20,6 +20,11 @@ public class ServiceStructModel {
      * 父级包名
      */
     private String servicePackage;
+    /**
+     * 父级包路径
+     */
+    private String serviceClassPath;
+    private String serviceImplClassPath;
 
     /**
      * 本类来源包
@@ -108,5 +113,21 @@ public class ServiceStructModel {
 
     public void setServiceImplName(String serviceImplName) {
         this.serviceImplName = serviceImplName;
+    }
+
+    public String getServiceClassPath() {
+        return serviceClassPath;
+    }
+
+    public void setServiceClassPath(String serviceClassPath) {
+        this.serviceClassPath = serviceClassPath;
+    }
+
+    public String getServiceImplClassPath() {
+        return serviceImplClassPath;
+    }
+
+    public void setServiceImplClassPath(String serviceImplClassPath) {
+        this.serviceImplClassPath = serviceImplClassPath;
     }
 }

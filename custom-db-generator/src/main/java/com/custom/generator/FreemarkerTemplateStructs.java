@@ -20,7 +20,7 @@ public class FreemarkerTemplateStructs {
     private static final Logger logger = LoggerFactory.getLogger(FreemarkerTemplateStructs.class);
 
     private final static String TEMPLATE_PATH = "src/main/resources/templates";
-    private final static String CLASS_PATH = "src/main/java/com/home/shop";
+//    private final static String CLASS_PATH = "src/main/java/com/home/shop";
 
     /**
      * 开始创建实体类
@@ -38,7 +38,7 @@ public class FreemarkerTemplateStructs {
             configuration.setDirectoryForTemplateLoading(new File(basePath + "\\custom-db-generator\\" + TEMPLATE_PATH));
             Template template = configuration.getTemplate("EntityTemplate.ftl");
 
-            File parentPackage = new File(basePath + "\\custom-test\\" + CLASS_PATH + SymbolConstant.FILE_SEPARATOR + tableStructModel.getEntityPackage());
+            File parentPackage = new File(basePath + SymbolConstant.FILE_SEPARATOR + tableStructModel.getEntityClassPath());
             if(!parentPackage.exists()) {
                 parentPackage.mkdirs();
             }
@@ -83,7 +83,7 @@ public class FreemarkerTemplateStructs {
             configuration.setDirectoryForTemplateLoading(new File(basePath +  "\\custom-db-generator" + SymbolConstant.FILE_SEPARATOR + TEMPLATE_PATH));
             Template template = configuration.getTemplate("ServiceTemplate.ftl");
 
-            File parentPackage = new File(basePath + "\\custom-test\\" + CLASS_PATH + SymbolConstant.FILE_SEPARATOR + serviceStructModel.getServicePackage());
+            File parentPackage = new File(basePath + SymbolConstant.FILE_SEPARATOR + serviceStructModel.getServiceClassPath());
             if(!parentPackage.exists()) {
                 parentPackage.mkdirs();
             }
@@ -128,7 +128,7 @@ public class FreemarkerTemplateStructs {
             configuration.setDirectoryForTemplateLoading(new File(basePath +  "\\custom-db-generator" + SymbolConstant.FILE_SEPARATOR + TEMPLATE_PATH));
             Template template = configuration.getTemplate("ServiceImplTemplate.ftl");
 
-            File parentPackage = new File(basePath + "\\custom-test\\" + CLASS_PATH + SymbolConstant.FILE_SEPARATOR + serviceStructModel.getServicePackage() + SymbolConstant.FILE_SEPARATOR + "impl");
+            File parentPackage = new File(basePath + SymbolConstant.FILE_SEPARATOR + serviceStructModel.getServiceImplClassPath());
             if(!parentPackage.exists()) {
                 parentPackage.mkdirs();
             }

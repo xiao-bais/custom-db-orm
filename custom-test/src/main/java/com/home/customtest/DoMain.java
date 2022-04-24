@@ -1,5 +1,7 @@
 package com.home.customtest;
 
+import com.custom.action.wrapper.Conditions;
+import com.custom.action.wrapper.LambdaConditionEntity;
 import com.custom.generator.config.GlobalConfig;
 import com.custom.generator.config.PackageConfig;
 import com.custom.generator.config.TableConfig;
@@ -11,7 +13,10 @@ import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
 import com.custom.generator.FreemarkerTemplateStructs;
 import com.custom.generator.model.TableStructModel;
+import com.home.customtest.entity.ChildStudent;
+import com.home.customtest.entity.Student;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -28,7 +33,7 @@ public class DoMain {
 
         // 数据库连接配置
         DbDataSource dbDataSource = new DbDataSource();
-        dbDataSource.setUrl("jdbc:mysql://39.108.225.176:3306/shop?characterEncoding=utf-8&allowMultiQueries=true&autoreconnect=true&serverTimezone=UTC");
+        dbDataSource.setUrl("jdbc:mysql://39.108.225.176:3306/hos?characterEncoding=utf-8&allowMultiQueries=true&autoreconnect=true&serverTimezone=UTC");
         dbDataSource.setUsername("root");
         dbDataSource.setPassword("xh@Mysql1524");
 
@@ -45,46 +50,11 @@ public class DoMain {
         TableInfoCache.setUnderlineToCamel(true);
 
 
-        GenerateCodeExecutor gce = new GenerateCodeExecutor(dbDataSource, dbCustomStrategy);
-
-        // 表配置
-        TableConfig tableConfig = new TableConfig();
-        tableConfig.setTablePrefix("shop");
-        tableConfig.setEntitySuffix("PO");
-//        tableConfig.setEntityDbFieldAnnotationValueEnable(true);
-        gce.setTableConfig(tableConfig);
-
-
-        // 包配置
-        PackageConfig packageConfig = new PackageConfig();
-        packageConfig.setParentPackage("com.home.shop");
-        packageConfig.setEntity("pojo");
-        packageConfig.setService("service");
-        packageConfig.setController("controller");
-        gce.setPackageConfig(packageConfig);
-
-        // 全局配置
-        GlobalConfig globalConfig = new GlobalConfig();
-        globalConfig.setAuthor("Xiao-Bai");
-        globalConfig.setOutputDir("src/main/java");
-        globalConfig.setKeyStrategy(KeyStrategy.AUTO);
-        globalConfig.setEntityLombok(true);
-        globalConfig.setSwagger(true);
-        globalConfig.setOverrideEnable(true);
-        gce.setGlobalConfig(globalConfig);
-
-        String[] tables = {"shop_cart", "shop_category", "shop_order", "shop_product", "shop_user"};
-        gce.setTables(tables);
-
-        gce.start();
-
-        FreemarkerTemplateStructs structs = new FreemarkerTemplateStructs();
-        List<TableStructModel> tableStructModels = gce.getTableStructModels();
-        for (TableStructModel tableStructModel : tableStructModels) {
-            structs.buildEntity(tableStructModel);
-//            structs.buildService(tableStructModel.getServiceStructModel());
-//            structs.buildServiceImpl(tableStructModel.getServiceStructModel());
-        }
+        LambdaConditionEntity<ChildStudent> lambdaQuery = Conditions.lambdaQuery(ChildStudent.class);
+        String[] selectColumns = lambdaQuery.select(ChildStudent::getNickName).getSelectColumns();
+//        System.out.println("selectColumns = " + Arrays.toString(selectColumns));
+//        List<Object> objects = jdbcDao.selectObjs(lambdaQuery.eq());
+//        System.out.println("objects = " + objects);
 
 
     }
