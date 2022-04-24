@@ -5,6 +5,7 @@ import com.custom.comm.annotations.mapper.SqlMapper;
 import com.custom.comm.annotations.mapper.SqlPath;
 import com.custom.comm.annotations.mapper.Update;
 import com.home.customtest.entity.Employee;
+import com.home.customtest.entity.Student;
 import com.home.customtest.entity.WorkEmp;
 
 import java.util.List;
@@ -24,7 +25,7 @@ public interface CustomTestDao {
     String selectOneByCond(int sex,  int age, String name);
 
     @SqlPath(value = "/sql/selectOne.sql")
-    Employee selectByOne(int age);
+    Student selectByOne(String stuName);
 
     @Query(value = "select age from employee where age in (#{ages}) and emp_name = #{empName}",isOrder = true)
     List<Integer> getAges(int[] ages, String empName);

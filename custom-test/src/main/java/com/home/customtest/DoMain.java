@@ -1,5 +1,6 @@
 package com.home.customtest;
 
+import com.custom.action.proxy.SqlReaderExecuteProxy;
 import com.custom.action.wrapper.Conditions;
 import com.custom.action.wrapper.LambdaConditionEntity;
 import com.custom.generator.config.GlobalConfig;
@@ -13,7 +14,9 @@ import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
 import com.custom.generator.FreemarkerTemplateStructs;
 import com.custom.generator.model.TableStructModel;
+import com.home.customtest.dao.CustomTestDao;
 import com.home.customtest.entity.ChildStudent;
+import com.home.customtest.entity.Employee;
 import com.home.customtest.entity.Student;
 
 import java.util.Arrays;
@@ -49,12 +52,11 @@ public class DoMain {
         JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
         TableInfoCache.setUnderlineToCamel(true);
 
+        SqlReaderExecuteProxy executeProxy = new SqlReaderExecuteProxy(dbDataSource, dbCustomStrategy);
+        CustomTestDao customTestDao = executeProxy.createProxy(CustomTestDao.class);
 
-        LambdaConditionEntity<ChildStudent> lambdaQuery = Conditions.lambdaQuery(ChildStudent.class);
-        String[] selectColumns = lambdaQuery.select(ChildStudent::getNickName).getSelectColumns();
-//        System.out.println("selectColumns = " + Arrays.toString(selectColumns));
-//        List<Object> objects = jdbcDao.selectObjs(lambdaQuery.eq());
-//        System.out.println("objects = " + objects);
+        Student student = customTestDao.selectByOne("李佳琪");
+        System.out.println("student = " + student);
 
 
     }

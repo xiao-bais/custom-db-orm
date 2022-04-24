@@ -1,30 +1,3 @@
-
--- 这是一段sql1
--- 这是一段sql2
-
-select * from employee a where 1=1
-
-
-/* 这是一段吗打开 */
-
-/**
-* 这是第三段注释
-* 横跨大西洋1
-* 横跨大西洋2
-* 横跨大西洋3
-* 横跨大西洋4
-*/
-
-
-
-/**
-这是第四段注释1
-这是第四段注释2
-这是第四段注释34
-这是第四段注释5
-这是第四段注释
-*/
-
-and a.age = #{age}
-
--- a.name 是人员名称
+select *
+from student a
+where a.name = #{stuName}
