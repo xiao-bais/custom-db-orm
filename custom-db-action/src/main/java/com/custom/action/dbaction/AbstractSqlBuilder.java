@@ -30,6 +30,7 @@ public abstract class AbstractSqlBuilder<T> {
     private Map<String, String> columnMapper;
     private SqlExecuteAction sqlExecuteAction;
     private ColumnParseHandler<T> columnParseHandler;
+    private Boolean primaryTable = false;
     private String logicColumn;
     private Object logicDeleteValue;
     private Object logicNotDeleteValue;
@@ -178,6 +179,14 @@ public abstract class AbstractSqlBuilder<T> {
 
     public ColumnParseHandler<T> getColumnParseHandler() {
         return columnParseHandler;
+    }
+
+    public Boolean getPrimaryTable() {
+        return primaryTable;
+    }
+
+    public void setPrimaryTable(Boolean primaryTable) {
+        this.primaryTable = primaryTable;
     }
 
     /**

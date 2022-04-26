@@ -13,12 +13,11 @@ import java.util.List;
  * @Desc：
  **/
 @Data
-@DbTable(table = "student")
 @DbJoinTables({
         @DbJoinTable("left join province pro on pro.id = a.pro_id"),
         @DbJoinTable("left join city cy on cy.id = a.city_id"),
-        @DbJoinTable("left join location lo on lo.id = a.area_id")
 })
+@DbTable(table = "student", findUpDbJoinTables = false)
 public class Student {
 
     @DbKey
@@ -63,7 +62,7 @@ public class Student {
     @DbMapper("cy.name")
     private String city;
 
-    @DbMapper("lo.name")
+//    @DbMapper("lo.name")
     private String area;
 
     private List<Street> modelList;

@@ -1,6 +1,9 @@
 package com.home.customtest.entity;
 
 import com.custom.comm.annotations.DbField;
+import com.custom.comm.annotations.DbJoinTable;
+import com.custom.comm.annotations.DbJoinTables;
+import com.custom.comm.annotations.DbTable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -13,6 +16,10 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @ToString(callSuper = true)
+@DbJoinTables(
+        @DbJoinTable("left join location lo on lo.id = a.area_id")
+)
+@DbTable(table = "student", findUpDbJoinTables = false)
 public class ChildStudent extends Student {
 
 

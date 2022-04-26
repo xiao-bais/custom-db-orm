@@ -145,7 +145,7 @@ public class SqlParamsCheckProxy<T> implements MethodInterceptor {
             }
             return;
         }
-        if (!objects[0].getClass().isAnnotationPresent(DbTable.class)) {
+        if (!((Class<?>) objects[0]).isAnnotationPresent(DbTable.class)) {
             ExThrowsUtil.toCustom("@DbTable not found in class " + objects[0].getClass());
         }
         String methodName = method.getName();

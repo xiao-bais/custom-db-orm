@@ -37,6 +37,11 @@ public abstract class ConditionWrapper<T> implements Serializable {
      */
     private Class<T> entityClass;
 
+    /**
+     * 当前条件构造是否只进行单表查询
+     */
+    private Boolean primaryTable = false;
+
 
     /**
      * 最终的sql条件语句
@@ -170,10 +175,17 @@ public abstract class ConditionWrapper<T> implements Serializable {
         return hasPageParams;
     }
 
-    public void setHasPageParams(boolean hasPageParams) {
+    protected void setHasPageParams(boolean hasPageParams) {
         this.hasPageParams = hasPageParams;
     }
 
     public abstract T getEntity();
 
+    public Boolean getPrimaryTable() {
+        return primaryTable;
+    }
+
+    protected void setPrimaryTable(Boolean primaryTable) {
+        this.primaryTable = primaryTable;
+    }
 }

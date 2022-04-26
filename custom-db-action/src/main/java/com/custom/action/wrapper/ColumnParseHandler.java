@@ -26,11 +26,12 @@ public class ColumnParseHandler<T> {
 
     private final Class<T> cls;
     private final Field[] fields;
+    private final TableSqlBuilder<T> tableModel;
     private final Map<String, String> fieldMapper;
 
     public ColumnParseHandler(Class<T> cls) {
         this.cls = cls;
-        TableSqlBuilder<T> tableModel = TableInfoCache.getTableModel(cls);
+        this.tableModel = TableInfoCache.getTableModel(cls);
         fields = tableModel.getFields();
         this.fieldMapper = tableModel.getFieldMapper();
     }
@@ -94,6 +95,9 @@ public class ColumnParseHandler<T> {
         Optional<Field> firstField = Arrays.stream(fields).filter(x -> x.getName().equals(finalFieldName)).findFirst();
         if (firstField.isPresent()) {
             return firstField.get().getName();
+        }
+        if (!tableModel.isFindUpDbJoinTables()) {
+            ExThrowsUtil.toCustom("当@DbTable的findUpDbJoinTables设置为false时，仅允许使用本类属性进行条件构造");
         }
         throw new CustomCheckException(String.format("Unknown method: '%s', not found in class'%s', or please create getter or setter method with boxing type", implMethodName, cls.getName()));
     }

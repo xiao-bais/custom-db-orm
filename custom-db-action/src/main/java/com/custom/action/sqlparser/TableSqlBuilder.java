@@ -40,6 +40,13 @@ public class TableSqlBuilder<T> implements Cloneable {
     private Field[] fields;
 
     private boolean underlineToCamel;
+
+    private boolean primaryTable = false;
+    
+    /**
+     * 当子类跟父类同时标注了@DbJoinTable(s)注解时，是否在查询时向上查找父类的@DbJoinTable(s)注解，且合并关联条件
+     */
+    private boolean findUpDbJoinTables;
     /**
      * @Desc：对于@DbRelated注解的解析
      */
@@ -102,44 +109,6 @@ public class TableSqlBuilder<T> implements Cloneable {
      * sql执行对象（jdbc）
      */
     private SqlExecuteAction sqlExecuteAction;
-
-    /**
-     * 获取查询sql（代码自行判定是否需要拼接表连接的sql）
-     */
-    public String getSelectSql() {
-        try {
-            if (JudgeUtilsAx.isEmpty(selectSql)) {
-                if (DbUtil.isDbRelationTag(this.cls) || this.cls.isAnnotationPresent(DbJoinTables.class)) {
-                    getSelectRelationSql();
-                } else {
-                    getSelectBaseTableSql();
-                }
-            }
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            return SymbolConstant.EMPTY;
-        }
-        return selectSql.toString();
-    }
-
-    /**
-     * 获取查询sql（主动指定是否需要拼接表连接的sql）
-     */
-    protected String getSelectSql(boolean isRelated) {
-        try {
-            if (isRelated) {
-                if (DbUtil.isDbRelationTag(this.cls) || this.cls.isAnnotationPresent(DbJoinTables.class)) {
-                    getSelectRelationSql();
-                }
-            } else {
-                getSelectBaseTableSql();
-            }
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            return SymbolConstant.EMPTY;
-        }
-        return selectSql.toString();
-    }
 
 
     /**
@@ -325,7 +294,7 @@ public class TableSqlBuilder<T> implements Cloneable {
         initLocalProperty(cls, underlineToCamel);
 
         if (method != ExecuteMethod.NONE) {
-            this.fields = CustomUtil.getFields(this.cls);
+            this.fields = findUpDbJoinTables ? CustomUtil.getFields(this.cls) : this.cls.getDeclaredFields();
             // 构建字段解析模板
             initTableBuild(method);
         }
@@ -351,6 +320,7 @@ public class TableSqlBuilder<T> implements Cloneable {
         this.alias = annotation.alias();
         this.table = annotation.table();
         this.desc = annotation.desc();
+        this.findUpDbJoinTables = annotation.findUpDbJoinTables();
         this.underlineToCamel = underlineToCamel;
     }
 
@@ -358,14 +328,8 @@ public class TableSqlBuilder<T> implements Cloneable {
      * 构造查询模板
      */
     private void buildSelectModels() {
-        DbJoinTables joinTables = this.cls.getAnnotation(DbJoinTables.class);
-        if (Objects.nonNull(joinTables)) {
-            Arrays.stream(joinTables.value()).map(DbJoinTable::value).forEach(joinTableParserModels::add);
-        }
-        DbJoinTable joinTable = this.cls.getAnnotation(DbJoinTable.class);
-        if(Objects.nonNull(joinTable)) {
-            joinTableParserModels.add(joinTable.value());
-        }
+        // 解析@DbJoinTables注解
+        searchDbJoinTables();
 
         Field[] fields = Objects.isNull(this.fields) ? CustomUtil.getFields(this.cls) : this.fields;
         for (Field field : fields) {
@@ -379,6 +343,7 @@ public class TableSqlBuilder<T> implements Cloneable {
             } else if (field.isAnnotationPresent(DbMapper.class)) {
                 DbJoinTableParserModel<T> joinTableParserModel = new DbJoinTableParserModel<>(field);
                 joinDbMappers.add(joinTableParserModel);
+
             } else if (field.isAnnotationPresent(DbRelated.class)) {
                 DbRelationParserModel<T> relatedParserModel = new DbRelationParserModel<>(this.cls, field, this.table, this.alias, this.underlineToCamel);
                 relatedParserModels.add(relatedParserModel);
@@ -386,6 +351,38 @@ public class TableSqlBuilder<T> implements Cloneable {
             }
         }
     }
+
+
+    /**
+     * 向上查找@DbjoinTables注解
+     */
+    private void searchDbJoinTables() {
+        Class<?> entityClass = this.cls;
+        if (findUpDbJoinTables) {
+            while (!entityClass.getName().equalsIgnoreCase("java.lang.object")) {
+                buildDbJoinTables(entityClass);
+                entityClass = entityClass.getSuperclass();
+            }
+        }else {
+            buildDbJoinTables(entityClass);
+        }
+    }
+
+    /**
+     * 解析@DbJoinTable(s)
+     */
+    private void buildDbJoinTables(Class<?> entityClass) {
+        DbJoinTables joinTables = entityClass.getAnnotation(DbJoinTables.class);
+        if (Objects.nonNull(joinTables)) {
+            Arrays.stream(joinTables.value()).map(DbJoinTable::value).forEach(joinTableParserModels::add);
+        }
+
+        DbJoinTable joinTable = entityClass.getAnnotation(DbJoinTable.class);
+        if(Objects.nonNull(joinTable)) {
+            joinTableParserModels.add(joinTable.value());
+        }
+    }
+
 
     /**
      * 构造增改模板
@@ -583,10 +580,19 @@ public class TableSqlBuilder<T> implements Cloneable {
         return sqlBuilder;
     }
 
+    public boolean isFindUpDbJoinTables() {
+        return findUpDbJoinTables;
+    }
+
+    protected void setPrimaryTable(boolean primaryTable) {
+        this.primaryTable = primaryTable;
+    }
+
     private void initializeSqlBuilder(AbstractSqlBuilder<T> sqlBuilder) {
         sqlBuilder.setTable(this.table);
         sqlBuilder.setAlias(this.alias);
         sqlBuilder.setEntityClass(this.cls);
+        sqlBuilder.setPrimaryTable(this.primaryTable);
         if(Objects.nonNull(this.entity)) {
             sqlBuilder.setEntity(this.entity);
         }

@@ -27,7 +27,7 @@ public class IndexControl {
 
 
     @GetMapping("/getMain")
-    public BackResult<List<Student>> getIndex(String key) throws Exception {
+    public BackResult<List<Student>> getIndex(String[] key) throws Exception {
         List<Student> students = jdbcDao.selectList(new LambdaConditionEntity<>(Student.class)
                 .ge(Student::getAge, 22).like(Student::getAddress, "山东")
                 .between(Student::getAge, 21, 25)

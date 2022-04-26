@@ -48,11 +48,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
             if (JudgeUtilsAx.isNotEmpty(selectSql)) {
                 return selectSql.toString();
             }
-            if (DbUtil.isDbRelationTag(getEntityClass()) || getEntityClass().isAnnotationPresent(DbJoinTables.class)) {
-                getSelectRelationSql();
-            } else {
-                getSelectBaseTableSql();
-            }
+            buildSelect(getPrimaryTable());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return SymbolConstant.EMPTY;
@@ -63,7 +59,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
     /**
      * 获取查询sql（主动指定是否需要拼接表连接的sql）
      */
-    protected String getSelectSql(boolean isRelated) {
+    protected void buildSelect(boolean isRelated) {
         try {
             if (isRelated && (DbUtil.isDbRelationTag(getEntityClass()) || getEntityClass().isAnnotationPresent(DbJoinTables.class))) {
                 getSelectRelationSql();
@@ -72,9 +68,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return SymbolConstant.EMPTY;
         }
-        return selectSql.toString();
     }
 
     /**
