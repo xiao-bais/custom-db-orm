@@ -104,19 +104,19 @@ public class ReaderExecutorProxy extends SqlExecuteAction implements InvocationH
     /**
     * 执行更新代理
     */
-    private Object doPrepareExecuteUpdate(Method method, Object[] args, String sql, boolean isOrder) throws Exception {
+    private Object doPrepareExecuteUpdate(Method method, Object[] args, String sql, boolean order) throws Exception {
         String methodName = String.format(" %s.%s() ", method.getDeclaringClass().getName(), method.getName());
-        checkIllegalParam(methodName, isOrder, sql);
+        checkIllegalParam(methodName, order, sql);
 
-        if(sql.contains(SymbolConstant.PREPARE_BEGIN_REX_1) && isOrder) {
+        if(sql.contains(SymbolConstant.PREPARE_BEGIN_REX_1) && order) {
             throw new CustomCheckException(methodName + ExceptionConst.EX_USE_ORDER_FALSE);
         }
-        if(sql.contains(SymbolConstant.QUEST) && !isOrder) {
+        if(sql.contains(SymbolConstant.QUEST) && !order) {
             throw new CustomCheckException(methodName + ExceptionConst.EX_USE_ORDER_TRUE);
         }
         // 自定义-参数预编译
         ParameterParserExecutor parameterParserExecutor = new ParameterParserExecutor(sql, method, args);
-        if(isOrder) {
+        if(order) {
             parameterParserExecutor.prepareOrderParams();
         }else {
             parameterParserExecutor.prepareDisorderParams();
@@ -129,13 +129,13 @@ public class ReaderExecutorProxy extends SqlExecuteAction implements InvocationH
     /**
     * 执行查询代理
     */
-    private Object doPrepareExecuteQuery(Method method, Object[] args, String sql, boolean isOrder) throws Exception {
+    private Object doPrepareExecuteQuery(Method method, Object[] args, String sql, boolean order) throws Exception {
         String methodName = String.format(" %s.%s() ", method.getDeclaringClass().getName(), method.getName());
-        checkIllegalParam(methodName, isOrder, sql);
+        checkIllegalParam(methodName, order, sql);
         Type returnType = method.getGenericReturnType();
         // 自定义-参数预编译
         ParameterParserExecutor parameterParserExecutor = new ParameterParserExecutor(sql, method, args);
-        if(isOrder) {
+        if(order) {
             parameterParserExecutor.prepareOrderParams();
         }else {
             parameterParserExecutor.prepareDisorderParams();
@@ -184,20 +184,20 @@ public class ReaderExecutorProxy extends SqlExecuteAction implements InvocationH
     /**
      * 检验参数合法性
      */
-    private void checkIllegalParam(String methodName, boolean isOrder, String sql) {
+    private void checkIllegalParam(String methodName, boolean order, String sql) {
 
         if(sql.contains(SymbolConstant.PREPARE_BEGIN_REX_1) && sql.contains(SymbolConstant.QUEST)) {
-            log.error("如果isOrder为true，仅支持使用 \"?\"  如果isOrder为false 仅支持使用 \"#{ }\" 来设置参数");
+            log.error("如果order为true，仅支持使用 \"?\"  如果order为false 仅支持使用 \"#{ }\" 来设置参数");
             log.error("Error Method ==> {}", methodName);
             ExThrowsUtil.toCustom(String.format("The SQL cannot be resolved '%s'", sql));
         }
-        if(isOrder && RexUtil.hasRegex(sql, RexUtil.sql_param)) {
+        if(order && RexUtil.hasRegex(sql, RexUtil.sql_param)) {
             log.error("Error Method ==> {}", methodName);
-            ExThrowsUtil.toCustom("方法注解上建议使用 isOrder = false");
+            ExThrowsUtil.toCustom("方法注解上建议使用 order = false");
 
-        }else if(!isOrder && sql.contains(SymbolConstant.QUEST)) {
+        }else if(!order && sql.contains(SymbolConstant.QUEST)) {
                 log.error("Error Method ==> {}", methodName);
-                ExThrowsUtil.toCustom("方法注解上建议使用 isOrder = true");
+                ExThrowsUtil.toCustom("方法注解上建议使用 order = true");
             }
     }
 
