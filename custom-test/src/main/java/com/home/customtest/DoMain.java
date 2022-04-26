@@ -1,31 +1,14 @@
 package com.home.customtest;
 
-import com.custom.action.wrapper.Conditions;
-import com.custom.action.wrapper.LambdaConditionEntity;
-import com.custom.comm.page.DbPageRows;
-import com.custom.generator.config.GlobalConfig;
-import com.custom.generator.config.PackageConfig;
-import com.custom.generator.config.TableConfig;
-import com.custom.generator.core.GenerateCodeExecutor;
+import com.custom.action.proxy.SqlReaderExecuteProxy;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.TableInfoCache;
-import com.custom.comm.enums.KeyStrategy;
+import com.custom.action.wrapper.Conditions;
+import com.custom.comm.page.DbPageRows;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
-import com.custom.generator.FreemarkerTemplateStructs;
-import com.custom.generator.model.TableStructModel;
-import com.home.customtest.entity.Aklis;
-import com.home.customtest.entity.ChildStudent;
+import com.home.customtest.dao.CustomTestDao;
 import com.home.customtest.entity.Student;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * @Author Xiao-Bai
@@ -57,8 +40,12 @@ public class DoMain {
         JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
         TableInfoCache.setUnderlineToCamel(true);
 
+        SqlReaderExecuteProxy executeProxy = new SqlReaderExecuteProxy(dbDataSource, dbCustomStrategy);
+        CustomTestDao customTestDao = executeProxy.createProxy(CustomTestDao.class);
+
         DbPageRows<Student> studentDbPageRows = jdbcDao.selectPageRows(Conditions.lambdaQuery(Student.class).limit(1, 5));
         System.out.println("studentDbPageRows = " + studentDbPageRows);
+
 
 
     }
