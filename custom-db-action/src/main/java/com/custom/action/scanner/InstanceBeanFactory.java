@@ -1,6 +1,6 @@
 package com.custom.action.scanner;
 
-import com.custom.action.proxy.SqlReaderExecuteProxy;
+import com.custom.action.sqlproxy.ReaderExecutorProxy;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.annotation.Lazy;
 
@@ -13,17 +13,17 @@ public class InstanceBeanFactory<T> implements FactoryBean<T> {
 
     private final Class<T> interfaceType;
 
-    private final SqlReaderExecuteProxy sqlReaderExecuteProxy;
+    private final ReaderExecutorProxy readerExecutorProxy;
 
     @Lazy
-    public InstanceBeanFactory(SqlReaderExecuteProxy sqlReaderExecuteProxy, Class<T> interfaceType) {
+    public InstanceBeanFactory(ReaderExecutorProxy readerExecutorProxy, Class<T> interfaceType) {
         this.interfaceType = interfaceType;
-        this.sqlReaderExecuteProxy = sqlReaderExecuteProxy;
+        this.readerExecutorProxy = readerExecutorProxy;
     }
 
     @Override
     public T getObject() {
-        return sqlReaderExecuteProxy.createProxy(interfaceType);
+        return readerExecutorProxy.createProxy(interfaceType);
     }
 
     @Override

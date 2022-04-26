@@ -1,7 +1,7 @@
 package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractSqlExecutor;
-import com.custom.action.proxy.SqlParamsCheckProxy;
+import com.custom.action.sqlproxy.ParamsCheckProxy;
 import com.custom.action.wrapper.ConditionWrapper;
 import com.custom.action.wrapper.SFunction;
 import com.custom.comm.JudgeUtilsAx;
@@ -237,6 +237,6 @@ public class JdbcDao {
     private final AbstractSqlExecutor jdbcAction;
 
     public JdbcDao(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
-        jdbcAction = new SqlParamsCheckProxy<>(new JdbcAction(), dbDataSource, dbCustomStrategy).createProxy();
+        jdbcAction = new ParamsCheckProxy<>(new JdbcAction(), dbDataSource, dbCustomStrategy).createProxy();
     }
 }

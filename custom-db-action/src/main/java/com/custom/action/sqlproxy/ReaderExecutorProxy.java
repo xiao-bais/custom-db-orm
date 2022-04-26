@@ -1,4 +1,4 @@
-package com.custom.action.proxy;
+package com.custom.action.sqlproxy;
 
 import com.custom.action.dbaction.SqlExecuteAction;
 import com.custom.comm.BasicDao;
@@ -29,7 +29,7 @@ import java.util.Set;
  **/
 @SuppressWarnings("unchecked")
 @Slf4j
-public class SqlReaderExecuteProxy extends SqlExecuteAction implements InvocationHandler {
+public class ReaderExecutorProxy extends SqlExecuteAction implements InvocationHandler {
 
     public <T> T createProxy(Class<T> cls) {
         ClassLoader classLoader = cls.getClassLoader();
@@ -40,7 +40,7 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
 
     private String targetClassName;
 
-    public SqlReaderExecuteProxy(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
+    public ReaderExecutorProxy(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         super(dbDataSource, dbCustomStrategy);
     }
 
@@ -76,12 +76,12 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
 
         if (method.isAnnotationPresent(Query.class)) {
             Query query = method.getAnnotation(Query.class);
-            return doPrepareExecuteQuery(method, args, query.value(), query.isOrder());
+            return doPrepareExecuteQuery(method, args, query.value(), query.order());
 
         }
         if (method.isAnnotationPresent(Update.class)) {
             Update update = method.getAnnotation(Update.class);
-            return doPrepareExecuteUpdate(method, args, update.value(), update.isOrder());
+            return doPrepareExecuteUpdate(method, args, update.value(), update.order());
 
         }
         if (method.isAnnotationPresent(SqlPath.class)) {
@@ -90,10 +90,10 @@ public class SqlReaderExecuteProxy extends SqlExecuteAction implements Invocatio
             String sql = new ClearNotesOnSqlHandler(sqlPath.value()).loadSql();
 
             if (execType == ExecuteMethod.SELECT) {
-                return doPrepareExecuteQuery(method, args, sql, sqlPath.isOrder());
+                return doPrepareExecuteQuery(method, args, sql, sqlPath.order());
             }
             if (execType == ExecuteMethod.UPDATE || execType == ExecuteMethod.DELETE || execType == ExecuteMethod.INSERT) {
-                return doPrepareExecuteUpdate(method, args, sql, sqlPath.isOrder());
+                return doPrepareExecuteUpdate(method, args, sql, sqlPath.order());
             }
             return null;
         }

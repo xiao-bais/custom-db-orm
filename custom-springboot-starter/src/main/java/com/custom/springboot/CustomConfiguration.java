@@ -1,9 +1,8 @@
 package com.custom.springboot;
 
-import com.custom.action.proxy.SqlReaderExecuteProxy;
+import com.custom.action.sqlproxy.ReaderExecutorProxy;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.TableInfoCache;
-import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
@@ -39,12 +38,12 @@ public class CustomConfiguration {
 
     @Bean
     @ConditionalOnBean(DbDataSource.class)
-    public SqlReaderExecuteProxy sqlReaderExecuteProxy() {
+    public ReaderExecutorProxy sqlReaderExecuteProxy() {
         if(isDataSourceEmpty(dbDataSource)) {
             return null;
         }
         logger.info("SqlReaderExecuteProxy Initialized Successfully !");
-        return new SqlReaderExecuteProxy(dbDataSource, dbCustomStrategy);
+        return new ReaderExecutorProxy(dbDataSource, dbCustomStrategy);
     }
 
     @Bean

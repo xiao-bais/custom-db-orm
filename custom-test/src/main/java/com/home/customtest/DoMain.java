@@ -1,14 +1,11 @@
 package com.home.customtest;
 
-import com.custom.action.proxy.SqlReaderExecuteProxy;
+import com.custom.action.sqlproxy.ReaderExecutorProxy;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.TableInfoCache;
-import com.custom.action.wrapper.Conditions;
-import com.custom.comm.page.DbPageRows;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
 import com.home.customtest.dao.CustomTestDao;
-import com.home.customtest.entity.Student;
 
 /**
  * @Author Xiao-Bai
@@ -40,11 +37,13 @@ public class DoMain {
         JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
         TableInfoCache.setUnderlineToCamel(true);
 
-        SqlReaderExecuteProxy executeProxy = new SqlReaderExecuteProxy(dbDataSource, dbCustomStrategy);
+        ReaderExecutorProxy executeProxy = new ReaderExecutorProxy(dbDataSource, dbCustomStrategy);
         CustomTestDao customTestDao = executeProxy.createProxy(CustomTestDao.class);
 
-        DbPageRows<Student> studentDbPageRows = jdbcDao.selectPageRows(Conditions.lambdaQuery(Student.class).limit(1, 5));
-        System.out.println("studentDbPageRows = " + studentDbPageRows);
+//        DbPageRows<Student> studentDbPageRows = jdbcDao.selectPageRows(Conditions.lambdaQuery(Student.class).limit(1, 5));
+//        System.out.println("studentDbPageRows = " + studentDbPageRows);
+
+        customTestDao.saveEmp2("张三mm", "湖南长沙", 18);
 
 
 

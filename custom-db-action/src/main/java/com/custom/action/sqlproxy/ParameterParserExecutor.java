@@ -1,4 +1,4 @@
-package com.custom.action.proxy;
+package com.custom.action.sqlproxy;
 
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;

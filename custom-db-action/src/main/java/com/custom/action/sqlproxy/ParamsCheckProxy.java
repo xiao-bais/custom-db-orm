@@ -1,4 +1,4 @@
-package com.custom.action.proxy;
+package com.custom.action.sqlproxy;
 
 import com.custom.action.util.DbUtil;
 import com.custom.action.wrapper.ConditionWrapper;
@@ -25,7 +25,7 @@ import java.util.Objects;
  * @Desc：在执行之前做一些必要的检查，以减少异常的出现
  **/
 @SuppressWarnings("unchecked")
-public class SqlParamsCheckProxy<T> implements MethodInterceptor {
+public class ParamsCheckProxy<T> implements MethodInterceptor {
 
     private final T obj;
 
@@ -33,7 +33,7 @@ public class SqlParamsCheckProxy<T> implements MethodInterceptor {
 
     private final DbCustomStrategy dbCustomStrategy;
 
-    public SqlParamsCheckProxy(T obj, DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
+    public ParamsCheckProxy(T obj, DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         this.obj = obj;
         this.dbDataSource = dbDataSource;
         this.dbCustomStrategy = dbCustomStrategy;

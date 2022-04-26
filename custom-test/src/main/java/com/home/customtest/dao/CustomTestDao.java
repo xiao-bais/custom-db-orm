@@ -27,7 +27,7 @@ public interface CustomTestDao {
     @SqlPath(value = "/sql/selectOne.sql")
     Student selectByOne(String stuName);
 
-    @Query(value = "select age from employee where age in (#{ages}) and emp_name = #{empName}",isOrder = true)
+    @Query(value = "select age from employee where age in (#{ages}) and emp_name = #{empName}", order = true)
     List<Integer> getAges(int[] ages, String empName);
 
     @Query("select emp_name empName from employee where age in (#{emp.ageList}) and emp_name = #{emp.empName}")
@@ -42,16 +42,16 @@ public interface CustomTestDao {
     @Query("select age from employee where age in (#{arr})")
     Integer[] getEmpInfoByArray(int[] arr);
 
-    @Query(value = "select * from employee where age = ? and address = ?",isOrder = true)
+    @Query(value = "select * from employee where age = ? and address = ?", order = true)
     Map<String, Object> getEmpInfoByMap(int age, String addr);
 
     @Update("update employee set age = #{age}, address = #{address}, dept_id = #{dept} where emp_name = #{name}")
     int updateEmp(int age, String name, String address, int dept);
 
-    @Update(value = "insert into employee(emp_name,address,age) values(?,?,?)", isOrder = true)
+    @Update(value = "insert into employee(emp_name,address,age) values(?,?,?)", order = true)
     int saveEmp(String name, String addr, int age);
 
-    @Update(value = "insert into employee(emp_name,address,age) values(#{name}, #{address}, #{age})", isOrder = true)
-    int saveEmp2(String name, String addr, int age);
+    @Update(value = "insert into employee(emp_name,address,age) values(#{name}, #{address}, #{age})")
+    int saveEmp2(String name, String address, int age);
 
 }

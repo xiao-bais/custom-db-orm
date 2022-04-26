@@ -25,7 +25,7 @@ public @interface Update {
      * false: 以参数的名称来替换sql中对应的参数名称（例如：以 name 将 #{name} 替换成 '?'）
      * 两者不可同时作用在一条sql上
      */
-    boolean isOrder() default false;
+    boolean order() default false;
 
 
 }
