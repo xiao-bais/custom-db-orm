@@ -48,7 +48,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
             if (JudgeUtilsAx.isNotEmpty(selectSql)) {
                 return selectSql.toString();
             }
-            buildSelect(getPrimaryTable());
+            buildSelect(!getPrimaryTable());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return SymbolConstant.EMPTY;

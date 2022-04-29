@@ -9,6 +9,8 @@ import com.custom.configuration.DbDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +33,7 @@ public class CustomConfiguration {
     private final DbDataSource dbDataSource;
     private final DbCustomStrategy dbCustomStrategy;
 
+
     public CustomConfiguration(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         this.dbDataSource = dbDataSource;
         this.dbCustomStrategy = dbCustomStrategy;
@@ -38,11 +41,11 @@ public class CustomConfiguration {
 
     @Bean
     @ConditionalOnBean(DbDataSource.class)
-    public ReaderExecutorProxy sqlReaderExecuteProxy() {
+    public ReaderExecutorProxy readerExecutorProxy() {
         if(isDataSourceEmpty(dbDataSource)) {
             return null;
         }
-        logger.info("SqlReaderExecuteProxy Initialized Successfully !");
+        logger.info("ReaderExecutorProxy Initialized Successfully !");
         return new ReaderExecutorProxy(dbDataSource, dbCustomStrategy);
     }
 
@@ -55,7 +58,7 @@ public class CustomConfiguration {
         }
         TableInfoCache.setUnderlineToCamel(dbCustomStrategy.isUnderlineToCamel());
         JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
-        logger.info("CustomDao Initialized Successfully !");
+        logger.info("JdbcDao Initialized Successfully !");
         return jdbcDao;
     }
 
