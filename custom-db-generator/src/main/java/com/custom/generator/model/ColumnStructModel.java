@@ -1,6 +1,6 @@
 package com.custom.generator.model;
 
-import com.custom.comm.enums.DbMediaType;
+import com.custom.comm.enums.DbType;
 import com.custom.comm.enums.KeyStrategy;
 
 /**
@@ -28,7 +28,7 @@ public class ColumnStructModel {
     /**
      * 字段类型
      */
-    private DbMediaType dbType;
+    private DbType dbType;
     private String columnType;
 
     /**
@@ -94,11 +94,11 @@ public class ColumnStructModel {
         this.fieldName = fieldName;
     }
 
-    public DbMediaType getDbType() {
+    public DbType getDbType() {
         return dbType;
     }
 
-    public void setDbType(DbMediaType dbType) {
+    public void setDbType(DbType dbType) {
         this.dbType = dbType;
     }
 

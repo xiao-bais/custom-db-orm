@@ -1,7 +1,7 @@
 package com.custom.comm.annotations;
 
 import com.custom.comm.SymbolConstant;
-import com.custom.comm.enums.DbMediaType;
+import com.custom.comm.enums.DbType;
 
 import java.lang.annotation.*;
 
@@ -26,7 +26,7 @@ public @interface DbField {
      * 数据类型
      * @return
      */
-    DbMediaType dataType() default DbMediaType.DbVarchar;
+    DbType dataType() default DbType.DbVarchar;
 
     /**
      * 字段说明

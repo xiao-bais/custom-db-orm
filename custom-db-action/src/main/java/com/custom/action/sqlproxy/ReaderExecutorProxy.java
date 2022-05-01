@@ -12,7 +12,6 @@ import com.custom.comm.annotations.mapper.Update;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;
-import com.custom.comm.exceptions.ExceptionConst;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
 import lombok.extern.slf4j.Slf4j;
@@ -71,7 +70,7 @@ public class ReaderExecutorProxy extends SqlExecuteAction implements InvocationH
 
         Class<?> execClass = method.getDeclaringClass();
         if (!BasicDao.class.isAssignableFrom(execClass) && !execClass.isAnnotationPresent(SqlMapper.class)) {
-            throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_INHERITED_BASIC_DAO, targetClassName));
+            ExThrowsUtil.toCustom(String.format("Execution error, possibly because '%s' does not inherit com.custom.comm.BasicDao or this interface is not annotated with @SqlMapper", targetClassName));
         }
 
         if (method.isAnnotationPresent(Query.class)) {
@@ -109,10 +108,10 @@ public class ReaderExecutorProxy extends SqlExecuteAction implements InvocationH
         checkIllegalParam(methodName, order, sql);
 
         if(sql.contains(SymbolConstant.PREPARE_BEGIN_REX_1) && order) {
-            throw new CustomCheckException(methodName + ExceptionConst.EX_USE_ORDER_FALSE);
+            ExThrowsUtil.toCustom(methodName + "方法注解上建议使用 isOrder = false");
         }
         if(sql.contains(SymbolConstant.QUEST) && !order) {
-            throw new CustomCheckException(methodName + ExceptionConst.EX_USE_ORDER_TRUE);
+            ExThrowsUtil.toCustom(methodName + "方法注解上建议使用 isOrder = true");
         }
         // 自定义-参数预编译
         ParameterParserExecutor parameterParserExecutor = new ParameterParserExecutor(sql, method, args);
@@ -173,7 +172,7 @@ public class ReaderExecutorProxy extends SqlExecuteAction implements InvocationH
             if(size == 0) {
                 return null;
             }else if(size > SymbolConstant.DEFAULT_ONE) {
-                throw new CustomCheckException(String.format(ExceptionConst.EX_QUERY_MORE_RESULT, size));
+                throw new CustomCheckException(String.format("One was queried, but more were found:(%s) ", size));
             }else {
                 return resultList.get(SymbolConstant.DEFAULT_ZERO);
             }
@@ -186,7 +185,7 @@ public class ReaderExecutorProxy extends SqlExecuteAction implements InvocationH
      */
     private void checkIllegalParam(String methodName, boolean order, String sql) {
 
-        if(sql.contains(SymbolConstant.PREPARE_BEGIN_REX_1) && sql.contains(SymbolConstant.QUEST)) {
+        if(RexUtil.hasRegex(sql, RexUtil.sql_param) && sql.contains(SymbolConstant.QUEST)) {
             log.error("如果order为true，仅支持使用 \"?\"  如果order为false 仅支持使用 \"#{ }\" 来设置参数");
             log.error("Error Method ==> {}", methodName);
             ExThrowsUtil.toCustom(String.format("The SQL cannot be resolved '%s'", sql));

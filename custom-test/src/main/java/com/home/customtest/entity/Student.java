@@ -17,7 +17,7 @@ import java.util.List;
         @DbJoinTable("left join province pro on pro.id = a.pro_id"),
         @DbJoinTable("left join city cy on cy.id = a.city_id"),
 })
-@DbTable(table = "student", findUpDbJoinTables = false)
+@DbTable(table = "student", mergeSuperDbJoinTables = false)
 public class Student {
 
     @DbKey

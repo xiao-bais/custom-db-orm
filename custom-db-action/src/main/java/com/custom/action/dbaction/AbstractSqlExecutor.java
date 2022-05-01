@@ -12,7 +12,6 @@ import com.custom.comm.SymbolConstant;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;
-import com.custom.comm.exceptions.ExceptionConst;
 import com.custom.comm.page.DbPageRows;
 import com.custom.configuration.DbCustomStrategy;
 
@@ -153,7 +152,7 @@ public abstract class AbstractSqlExecutor {
         if (size == 0) {
             return null;
         } else if (size > 1) {
-            throw new CustomCheckException(String.format(ExceptionConst.EX_QUERY_MORE_RESULT, size));
+            throw new CustomCheckException(String.format("One was queried, but more were found:(%s) ", size));
         }
         return queryList.get(SymbolConstant.DEFAULT_ZERO);
     }
@@ -163,7 +162,7 @@ public abstract class AbstractSqlExecutor {
     */
     public Object selectObjBySql(String sql, Object... params) throws Exception {
         if (JudgeUtilsAx.isEmpty(sql)) {
-            throw new CustomCheckException(ExceptionConst.EX_SQL_NOT_EMPTY);
+            ExThrowsUtil.toCustom("The Sql to be Not Empty");
         }
         return sqlExecuteAction.selectObjSql(sql, params);
     }
@@ -173,7 +172,7 @@ public abstract class AbstractSqlExecutor {
      */
     public List<Object> selectObjsBySql(String sql, Object... params) throws Exception {
         if (JudgeUtilsAx.isEmpty(sql)) {
-            throw new CustomCheckException(ExceptionConst.EX_SQL_NOT_EMPTY);
+            ExThrowsUtil.toNull("The Sql to be Not Empty");
         }
         return sqlExecuteAction.selectObjsSql(sql, params);
     }
@@ -183,19 +182,9 @@ public abstract class AbstractSqlExecutor {
     */
     public int executeSql(String sql, Object... params) throws Exception {
         if (JudgeUtilsAx.isEmpty(sql)) {
-            throw new NullPointerException();
+            ExThrowsUtil.toNull("The Sql to be Not Empty");
         }
         return sqlExecuteAction.executeUpdate(sql, params);
-    }
-
-    /**
-     * 直接执行增删改，属于内部执行
-     */
-    public void executeUpdateNotPrintSql(String sql) throws Exception {
-        if (JudgeUtilsAx.isEmpty(sql)) {
-            throw new NullPointerException();
-        }
-        sqlExecuteAction.executeUpdateNotPrintSql(sql);
     }
 
     /**
@@ -203,7 +192,7 @@ public abstract class AbstractSqlExecutor {
      */
     public <T> List<T> executeQueryNotPrintSql(Class<T> t, String sql, Object... params) throws Exception {
         if (JudgeUtilsAx.isEmpty(sql)) {
-            throw new NullPointerException();
+            ExThrowsUtil.toNull("The Sql to be Not Empty");
         }
         return sqlExecuteAction.query(t, false, sql, params);
     }
@@ -227,7 +216,7 @@ public abstract class AbstractSqlExecutor {
     */
     public <T> int executeInsert(String sql, List<T> obj, boolean isGeneratedKey, String key, Class<?> keyType,  Object... params) throws Exception {
         if (JudgeUtilsAx.isEmpty(sql)) {
-            throw new NullPointerException();
+            ExThrowsUtil.toNull("The Sql to be Not Empty");
         }
         return isGeneratedKey ? sqlExecuteAction.executeInsert(obj, sql, key, keyType, params) : sqlExecuteAction.executeUpdate(sql, params);
     }

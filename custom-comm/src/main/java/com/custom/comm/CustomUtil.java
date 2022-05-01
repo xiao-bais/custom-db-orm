@@ -1,9 +1,7 @@
 
 package com.custom.comm;
 
-import com.custom.comm.exceptions.DbAnnotationParserException;
 import com.custom.comm.exceptions.ExThrowsUtil;
-import com.custom.comm.exceptions.ExceptionConst;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -50,17 +48,18 @@ public class CustomUtil {
     * 是否是系统自定义的基础类型
     */
     public static boolean isBasicType(Object el) {
-        return (el.equals(String.class))
-                || (el.equals(Integer.class) || el.equals(int.class))
-                || (el.equals(Long.class) || el.equals(long.class))
-                || (el.equals(Double.class) || el.equals(double.class))
-                || (el.equals(Character.class) || el.equals(char.class))
-                || (el.equals(Short.class) || el.equals(short.class))
-                || (el.equals(Float.class) || el.equals(float.class))
-                || (el.equals(Boolean.class) || el.equals(boolean.class))
-                || (el.equals(Byte.class) || el.equals(byte.class))
-                || el.equals(BigDecimal.class)
-                || el.equals(Date.class);
+        return el instanceof String
+                || el.getClass().isPrimitive()
+                || el instanceof Integer
+                || el instanceof Long
+                || el instanceof Double
+                || el instanceof Character
+                || el instanceof Short
+                || el instanceof Float
+                || el instanceof Boolean
+                || el instanceof Byte
+                || el instanceof BigDecimal
+                || el instanceof Date;
     }
 
     /**
@@ -237,7 +236,7 @@ public class CustomUtil {
             fieldList.addAll(Arrays.asList(clz.getDeclaredFields()));
             clz = clz.getSuperclass();
         }
-        if(fieldList.size() == 0) throw new DbAnnotationParserException(ExceptionConst.EX_DBFIELD__NOTFOUND + t);
+        if(fieldList.size() == 0) ExThrowsUtil.toCustom("@DbField not found in class "+ t);
         return fieldList.toArray(new Field[0]);
     }
 

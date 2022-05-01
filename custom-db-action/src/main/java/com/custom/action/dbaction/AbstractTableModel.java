@@ -3,13 +3,14 @@ package com.custom.action.dbaction;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.comm.RexUtil;
 import com.custom.comm.SymbolConstant;
-import com.custom.comm.enums.DbMediaType;
+import com.custom.comm.enums.DbType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 /**
  * @author Xiao-Bai
@@ -54,6 +55,7 @@ public abstract class AbstractTableModel<T> {
             if(RexUtil.hasRegex(fieldName, RexUtil.back_quotes)) {
                 fieldName = RexUtil.regexStr(fieldName, RexUtil.back_quotes);
             }
+            if (Objects.isNull(fieldName)) return null;
             firstLetter = fieldName.substring(0, 1).toUpperCase();
             getter = SymbolConstant.GETTER + firstLetter + fieldName.substring(1);
             Method method = x.getClass().getMethod(getter);
@@ -83,34 +85,6 @@ public abstract class AbstractTableModel<T> {
         }catch (IllegalAccessException e) {
             logger.error(e.toString(), e);
         }
-    }
-
-    /**
-     * 根据java属性类型设置表字段类型
-     */
-    public static DbMediaType getDbFieldType(Class<?> type) {
-        if (type.getName().toLowerCase().contains(("boolean"))) {
-            return DbMediaType.DbBit;
-        }
-        if (type.getName().toLowerCase().contains(("double"))) {
-            return DbMediaType.DbDouble;
-        }
-        if (type.getName().toLowerCase().contains(("int"))) {
-            return DbMediaType.DbInt;
-        }
-        if (type.getName().toLowerCase().contains(("long"))) {
-            return DbMediaType.DbBigint;
-        }
-        if (type.getName().toLowerCase().contains(("decimal"))) {
-            return DbMediaType.DbDecimal;
-        }
-        if (type.getName().toLowerCase().contains(("date"))) {
-            return DbMediaType.DbDate;
-        }
-        if (type.getName().toLowerCase().contains(("float"))) {
-            return DbMediaType.DbFloat;
-        }
-        return DbMediaType.DbVarchar;
     }
 
 

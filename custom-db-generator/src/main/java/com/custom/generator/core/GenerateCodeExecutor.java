@@ -5,7 +5,6 @@ import com.custom.comm.date.DateTimeUtils;
 import com.custom.generator.config.GlobalConfig;
 import com.custom.generator.config.PackageConfig;
 import com.custom.generator.config.TableConfig;
-import com.custom.generator.FreemarkerTemplateStructs;
 import com.custom.generator.model.ColumnStructModel;
 import com.custom.generator.model.ServiceStructModel;
 import com.custom.generator.model.TableStructModel;
@@ -13,7 +12,7 @@ import com.custom.action.sqlparser.JdbcAction;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.comm.SymbolConstant;
-import com.custom.comm.enums.DbMediaType;
+import com.custom.comm.enums.DbType;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
@@ -238,10 +237,10 @@ public class GenerateCodeExecutor {
     private void buildEntityFieldInfo(TableStructModel tableInfo, List<ColumnStructModel> columnStructModels) {
 
         for (ColumnStructModel columnModel : columnStructModels) {
-            DbMediaType dbType = DbMediaType.getDbType(columnModel.getColumnType());
+            DbType dbType = DbType.getDbType(columnModel.getColumnType());
             if(Objects.isNull(dbType)) {
                 logger.info("表{}中字段{}暂无可匹配的类型，暂用java.lang.String替代", tableInfo.getTable(), columnModel.getColumn());
-                dbType = DbMediaType.DbVarchar;
+                dbType = DbType.DbVarchar;
             }
             columnModel.setDbType(dbType);
             columnModel.setFieldType(dbType.getFieldType());

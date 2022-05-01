@@ -6,7 +6,6 @@ import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.DbTable;
 import com.custom.comm.annotations.mapper.SqlMapper;
 import com.custom.comm.exceptions.CustomCheckException;
-import com.custom.comm.exceptions.ExceptionConst;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -71,7 +70,7 @@ public class CustomBeanScanner {
         try {
             url = classLoader.getResource(packageScan.replace(SymbolConstant.POINT, SymbolConstant.FILE_SEPARATOR));
             if (url == null) {
-                throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_URL, packageScan));
+                throw new CustomCheckException(String.format("The package url cannot be found：'%s'", packageScan));
             }
             String protocol = url.getProtocol();
             if (SymbolConstant.FILE.equals(protocol)) {
@@ -95,7 +94,7 @@ public class CustomBeanScanner {
         try {
             url = classLoader.getResource(packageName.replace(SymbolConstant.POINT, SymbolConstant.FILE_SEPARATOR));
             if (url == null) {
-                throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_URL, packageScan));
+                throw new CustomCheckException(String.format("The package url cannot be found：'%s'", packageScan));
             }
             URI uri = url.toURI();
             File classFile = new File(uri);
@@ -125,7 +124,7 @@ public class CustomBeanScanner {
                 return false;
             });
         } catch (URISyntaxException e) {
-            log.error(String.format(ExceptionConst.EX_NOT_FOUND_URL, packageScan));
+            log.error(String.format("The package url cannot be found：'%s'", packageScan));
             throw e;
         }
     }
@@ -141,7 +140,7 @@ public class CustomBeanScanner {
 
         url = classLoader.getResource(packageName);
         if (url == null) {
-            throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_URL, packageScan));
+            throw new CustomCheckException(String.format("The package url cannot be found：'%s'", packageScan));
         }
         JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
         jarFile = jarURLConnection.getJarFile();

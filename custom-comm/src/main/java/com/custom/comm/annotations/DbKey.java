@@ -1,6 +1,6 @@
 package com.custom.comm.annotations;
 
-import com.custom.comm.enums.DbMediaType;
+import com.custom.comm.enums.DbType;
 import com.custom.comm.enums.KeyStrategy;
 
 import java.lang.annotation.*;
@@ -33,7 +33,7 @@ public @interface DbKey {
      * 主键的数据类型
      * @return
      */
-    DbMediaType dbType() default DbMediaType.DbInt;
+    DbType dbType() default DbType.DbInt;
 
 
     /**

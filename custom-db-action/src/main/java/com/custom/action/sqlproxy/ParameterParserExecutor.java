@@ -4,7 +4,6 @@ import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.exceptions.CustomCheckException;
-import com.custom.comm.exceptions.ExceptionConst;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Array;
@@ -150,10 +149,10 @@ public class ParameterParserExecutor {
 
             String prepareName = prepareSql.substring(indexes[0] + 2, indexes[1]);
             if (JudgeUtilsAx.isBlank(prepareName))
-                throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_PARAMS_NAME, prepareName, sql));
+                throw new CustomCheckException(String.format("empty column, The value corresponding to parameter '%s' in SQL cannot be found \n Sql Error =====> \n%s \n==========\n", prepareName, sql));
 
             if (JudgeUtilsAx.isEmpty(paramsMap.get(String.format(sign, prepareName)))) {
-                throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_PARAMS_VALUE, prepareName, sql));
+                throw new CustomCheckException(String.format("empty column, The value corresponding to parameter '%s' in SQL cannot be found \n Sql Error =====> \n%s \n==========\n", prepareName, sql));
             }
 
             if(basicParamsMap.get(prepareName) == null) {
@@ -217,7 +216,10 @@ public class ParameterParserExecutor {
             String name = prepareSql.substring(indexes[0] + 2, indexes[1]);
             Object paramName = paramsMap.get(String.format(sign, name));
             if(JudgeUtilsAx.isEmpty(paramName)) {
-                throw new CustomCheckException(String.format(ExceptionConst.EX_NOT_FOUND_PARAMS_NAME, name, sql));
+                throw new CustomCheckException(String.format("empty column, The value corresponding to parameter '%s' in SQL cannot be found \n" +
+                        " Sql Error =====> \n" +
+                        "%s \n" +
+                        "==========\n", name, sql));
             }
             prepareSql = prepareSql.replace(prepareSql.substring(indexes[0], indexes[1] + 1), paramName.toString());
         }

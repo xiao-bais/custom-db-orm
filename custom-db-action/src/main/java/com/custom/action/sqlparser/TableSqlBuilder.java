@@ -2,7 +2,6 @@ package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.dbaction.SqlExecuteAction;
-import com.custom.action.util.DbUtil;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.comm.SymbolConstant;
@@ -320,7 +319,7 @@ public class TableSqlBuilder<T> implements Cloneable {
         this.alias = annotation.alias();
         this.table = annotation.table();
         this.desc = annotation.desc();
-        this.findUpDbJoinTables = annotation.findUpDbJoinTables();
+        this.findUpDbJoinTables = annotation.mergeSuperDbJoinTables();
         this.underlineToCamel = underlineToCamel;
     }
 

@@ -56,7 +56,7 @@ public class JudgeUtilsAx {
     }
 
     public static boolean isBlank(final CharSequence cs) {
-        if (cs == null) {
+        if (Objects.isNull(cs)) {
             return true;
         }
         int l = cs.length();

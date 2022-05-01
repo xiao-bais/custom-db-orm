@@ -6,7 +6,7 @@ import com.custom.comm.GlobalDataHandler;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.DbField;
-import com.custom.comm.enums.DbMediaType;
+import com.custom.comm.enums.DbType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +37,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     /**
     * sql字段类型
     */
-    private DbMediaType dbMediaType;
+    private DbType dbType;
 
     /**
     * java字段类型
@@ -76,10 +76,10 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     @Override
     protected String buildTableSql(){
         StringBuilder fieldSql = new StringBuilder(String.format("`%s` ", this.column));
-        if(dbMediaType == DbMediaType.DbDate || dbMediaType == DbMediaType.DbDateTime)
-            fieldSql.append(dbMediaType.getType()).append(" ");
+        if(dbType == DbType.DbDate || dbType == DbType.DbDateTime)
+            fieldSql.append(dbType.getType()).append(" ");
         else
-            fieldSql.append(dbMediaType.getType())
+            fieldSql.append(dbType.getType())
                     .append(SymbolConstant.BRACKETS_LEFT)
                     .append(this.length)
                     .append(SymbolConstant.BRACKETS_RIGHT).append(" ");
@@ -111,8 +111,8 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
         }
         this.isNull = annotation.isNull();
         this.desc = annotation.desc();
-        this.dbMediaType = annotation.dataType() == DbMediaType.DbVarchar ? DbMediaType.getDbMediaType(field.getType()) : annotation.dataType();
-        this.length = this.dbMediaType.getLength();
+        this.dbType = annotation.dataType() == DbType.DbVarchar ? DbType.getDbMediaType(field.getType()) : annotation.dataType();
+        this.length = this.dbType.getLength();
         super.setTable(table);
         super.setAlias(alias);
     }

@@ -6,9 +6,7 @@ import com.custom.comm.JudgeUtilsAx;
 import com.custom.comm.annotations.DbTable;
 import com.custom.comm.annotations.check.CheckExecute;
 import com.custom.comm.enums.ExecuteMethod;
-import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;
-import com.custom.comm.exceptions.ExceptionConst;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
 import org.springframework.cglib.proxy.Enhancer;
@@ -89,7 +87,7 @@ public class ParamsCheckProxy<T> implements MethodInterceptor {
             insertParam = ((List<Object>) objects[0]).get(0);
         }
         if(!insertParam.getClass().isAnnotationPresent(DbTable.class)) {
-            throw new CustomCheckException(ExceptionConst.EX_DBTABLE__NOTFOUND + insertParam.getClass().getName());
+            ExThrowsUtil.toCustom("@DbTable not found in class " + insertParam.getClass());
         }
     }
 

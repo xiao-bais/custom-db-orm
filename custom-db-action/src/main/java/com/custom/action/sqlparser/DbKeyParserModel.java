@@ -6,7 +6,7 @@ import com.custom.comm.GlobalDataHandler;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.DbKey;
-import com.custom.comm.enums.DbMediaType;
+import com.custom.comm.enums.DbType;
 import com.custom.comm.enums.KeyStrategy;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import org.slf4j.Logger;
@@ -32,7 +32,7 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
 
     private Field field;
 
-    private DbMediaType dbMediaType;
+    private DbType dbType;
 
     private KeyStrategy strategy;
 
@@ -69,12 +69,12 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
         this.entity = entity;
     }
 
-    public DbMediaType getDbMediaType() {
-        return dbMediaType;
+    public DbType getDbMediaType() {
+        return dbType;
     }
 
-    public void setDbMediaType(DbMediaType dbMediaType) {
-        this.dbMediaType = dbMediaType;
+    public void setDbMediaType(DbType dbType) {
+        this.dbType = dbType;
     }
 
     public KeyStrategy getStrategy() {
@@ -166,7 +166,7 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
     @Override
     protected String buildTableSql() {
         StringBuilder keyFieldSql = new StringBuilder(String.format("`%s` ", this.dbKey));
-        keyFieldSql.append(this.dbMediaType.getType())
+        keyFieldSql.append(this.dbType.getType())
                 .append(SymbolConstant.BRACKETS_LEFT)
                 .append(this.length)
                 .append(SymbolConstant.BRACKETS_RIGHT)
@@ -198,10 +198,10 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
         this.dbKey = GlobalDataHandler.hasSqlKeyword(dbKey) ? String.format("`%s`", dbKey) : dbKey;
         this.field = field;
         this.type = field.getType();
-        this.dbMediaType = annotation.dbType();
+        this.dbType = annotation.dbType();
         this.strategy = annotation.strategy();
         this.desc = annotation.desc();
-        this.length = this.dbMediaType.getLength();
+        this.length = this.dbType.getLength();
         this.setTable(table);
         this.setAlias(alias);
     }

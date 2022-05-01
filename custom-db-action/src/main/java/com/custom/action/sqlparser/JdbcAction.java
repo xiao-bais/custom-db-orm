@@ -243,9 +243,10 @@ public class JdbcAction extends AbstractSqlExecutor {
         return executeSql(updateSql, sqlBuilder.getSqlParams().toArray());
     }
 
+    @SafeVarargs
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
-    public <T> int updateByKey(T t, SFunction<T, ?>... updateColumns) throws Exception {
+    public final <T> int updateByKey(T t, SFunction<T, ?>... updateColumns) throws Exception {
         HandleUpdateSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.UPDATE);
         if(updateColumns.length > 0) {
             sqlBuilder.setUpdateFuncColumns(updateColumns);

@@ -1,7 +1,5 @@
 package com.custom.comm.enums;
 
-import com.custom.comm.exceptions.ExThrowsUtil;
-
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -11,7 +9,7 @@ import java.util.Date;
  * @Version 1.0
  * @Description DbMediaType
  */
-public enum DbMediaType {
+public enum DbType {
 
     DbInt("int", Integer.class, "11"),
 
@@ -39,14 +37,14 @@ public enum DbMediaType {
     private final Class<?> fieldType;
     private final String length;
 
-    DbMediaType(String type, Class<?> fieldType, String length) {
+    DbType(String type, Class<?> fieldType, String length) {
         this.type = type;
         this.fieldType = fieldType;
         this.length = length;
     }
 
-    public static DbMediaType getDbMediaType(Class<?> type) {
-        for (DbMediaType value : values()) {
+    public static DbType getDbMediaType(Class<?> type) {
+        for (DbType value : values()) {
             if(value.fieldType.equals(type)) {
                 return value;
             }
@@ -54,8 +52,8 @@ public enum DbMediaType {
         throw new NullPointerException("找不到匹配的类型");
     }
 
-    public static DbMediaType getDbType(String type) {
-        for (DbMediaType value : values()) {
+    public static DbType getDbType(String type) {
+        for (DbType value : values()) {
             if(value.type.equals(type)) {
                 return value;
             }
