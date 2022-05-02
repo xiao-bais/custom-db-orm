@@ -5,6 +5,7 @@ import com.custom.action.wrapper.Conditions;
 import com.custom.action.wrapper.LambdaConditionEntity;
 import com.custom.comm.BackResult;
 import com.home.customtest.entity.Aklis;
+import com.home.customtest.entity.ChildStudent;
 import com.home.customtest.entity.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -28,15 +29,15 @@ public class IndexControl {
 
 
     @GetMapping("/getMain")
-    public BackResult<List<Student>> getIndex(String[] key) throws Exception {
-        List<Student> students = jdbcDao.selectList(Conditions.lambdaQuery(Student.class)
-                .ge(Student::getAge, 22).like(Student::getAddress, "山东")
-                .between(Student::getAge, 21, 25)
-                .select(Student::getName, Student::getProvince, Student::getCity, Student::getArea)
-                .or(x -> x.select(Student::getAge)
+    public BackResult<List<ChildStudent>> getIndex(String key) throws Exception {
+        List<ChildStudent> students = jdbcDao.selectList(Conditions.lambdaQuery(ChildStudent.class)
+                .ge(ChildStudent::getAge, 22).like(Student::getAddress, "山东")
+                .between(ChildStudent::getAge, 21, 25)
+                .select(ChildStudent::getName, Student::getProvince, Student::getCity, Student::getArea)
+                .or(x -> x.select(ChildStudent::getAge)
                         .exists("select 1 from student stu2 where stu2.id = a.id and stu2.password = '12345678zcy'")
-                        .orderByAsc(Student::getId)
-                        .orderByDesc(Student::getAge)
+                        .orderByAsc(ChildStudent::getId)
+                        .orderByDesc(ChildStudent::getAge)
                 ));
         return BackResult.bySuccess("success01", students);
     }
@@ -58,7 +59,7 @@ public class IndexControl {
         aklisList.add(aklis);
         aklisList.add(aklis2);
 
-        jdbcDao.insertBatch(aklisList);
+        jdbcDao.insert(aklisList);
 
         return BackResult.bySuccess(aklisList);
     }

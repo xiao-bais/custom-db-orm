@@ -19,7 +19,7 @@ import lombok.ToString;
 @DbJoinTables(
         @DbJoinTable("left join location lo on lo.id = a.area_id")
 )
-@DbTable(table = "student", mergeSuperDbJoinTables = false)
+@DbTable(table = "student")
 public class ChildStudent extends Student {
 
 

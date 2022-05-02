@@ -124,7 +124,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
      * between not between 的条件组装
      */
     private void ConditionOnSqlBetweenAssembly(DbSymbol dbSymbol, String column, Object val1, Object val2) {
-        if(!CustomUtil.isBasicType(val1.getClass()) || !CustomUtil.isBasicType(val2.getClass())) {
+        if(!CustomUtil.isBasicType(val1) || !CustomUtil.isBasicType(val2)) {
             throw new IllegalArgumentException("val1 or val2 can only be basic types");
         }
         if(JudgeUtilsAx.isEmpty(val1) || JudgeUtilsAx.isEmpty(val2)) {

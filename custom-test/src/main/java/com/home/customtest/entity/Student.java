@@ -62,7 +62,7 @@ public class Student {
     @DbMapper("cy.name")
     private String city;
 
-//    @DbMapper("lo.name")
+    @DbMapper("lo.name")
     private String area;
 
     private List<Street> modelList;
