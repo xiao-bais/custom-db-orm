@@ -3,6 +3,7 @@ package com.custom.action.sqlparser;
 import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.fieldfill.FieldAutoFillHandleUtils;
 import com.custom.comm.ConvertUtil;
+import com.custom.comm.RexUtil;
 import com.custom.comm.SymbolConstant;
 
 import java.util.Objects;
@@ -54,7 +55,8 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
                             x.setValue(fieldValue);
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        fieldValue = ConvertUtil.transToObject(x.getType(), RexUtil.regexStr(RexUtil.single_quotes, getLogicNotDeleteValue().toString()));
+                        x.setValue(fieldValue);
                     }
                 }
                 this.getSqlParams().add(fieldValue);

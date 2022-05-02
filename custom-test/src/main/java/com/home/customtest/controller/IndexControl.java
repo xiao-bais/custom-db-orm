@@ -1,6 +1,7 @@
 package com.home.customtest.controller;
 
 import com.custom.action.sqlparser.JdbcDao;
+import com.custom.action.wrapper.Conditions;
 import com.custom.action.wrapper.LambdaConditionEntity;
 import com.custom.comm.BackResult;
 import com.home.customtest.entity.Aklis;
@@ -28,7 +29,7 @@ public class IndexControl {
 
     @GetMapping("/getMain")
     public BackResult<List<Student>> getIndex(String[] key) throws Exception {
-        List<Student> students = jdbcDao.selectList(new LambdaConditionEntity<>(Student.class)
+        List<Student> students = jdbcDao.selectList(Conditions.lambdaQuery(Student.class)
                 .ge(Student::getAge, 22).like(Student::getAddress, "山东")
                 .between(Student::getAge, 21, 25)
                 .select(Student::getName, Student::getProvince, Student::getCity, Student::getArea)
@@ -57,7 +58,7 @@ public class IndexControl {
         aklisList.add(aklis);
         aklisList.add(aklis2);
 
-        jdbcDao.insert(aklisList);
+        jdbcDao.insertBatch(aklisList);
 
         return BackResult.bySuccess(aklisList);
     }
