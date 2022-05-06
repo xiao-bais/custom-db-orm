@@ -61,7 +61,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
      */
     protected void buildSelect(boolean isRelated) {
         try {
-            if (isRelated && (!relatedParserModels.isEmpty() || getEntityClass().isAnnotationPresent(DbJoinTables.class))) {
+            if (isRelated && (!relatedParserModels.isEmpty() || !joinTableParserModels.isEmpty())) {
                 getSelectRelationSql();
             } else {
                 getSelectBaseTableSql();

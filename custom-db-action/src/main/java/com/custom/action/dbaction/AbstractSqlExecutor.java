@@ -208,7 +208,7 @@ public abstract class AbstractSqlExecutor {
      * 查询该表是否存在
      */
     public boolean hasTableInfo(String sql) throws Exception {
-        return sqlExecuteAction.executeExist(sql) == 0L;
+        return sqlExecuteAction.executeExist(sql) > 0L;
     }
 
     /**
@@ -288,8 +288,9 @@ public abstract class AbstractSqlExecutor {
     /**
      * 公共获取查询sql
      */
-    protected  <T> String getFullSelectSql(Class<T> t, DbPageRows<T> dbPageRows, ConditionWrapper<T> wrapper) throws Exception {
+    protected <T> String getFullSelectSql(Class<T> t, DbPageRows<T> dbPageRows, ConditionWrapper<T> wrapper) throws Exception {
         HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
+        sqlBuilder.setPrimaryTable(wrapper.getPrimaryTable());
         StringBuilder selectSql = new StringBuilder();
         if(wrapper.getSelectColumns() != null) {
             selectSql.append(sqlBuilder.selectColumns(wrapper.getSelectColumns()));

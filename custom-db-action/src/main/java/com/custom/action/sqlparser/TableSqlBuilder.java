@@ -39,8 +39,6 @@ public class TableSqlBuilder<T> implements Cloneable {
     private Field[] fields;
 
     private boolean underlineToCamel;
-
-    private boolean primaryTable = false;
     
     /**
      * 当子类跟父类同时标注了@DbJoinTable(s)注解时，是否在查询时向上查找父类的@DbJoinTable(s)注解，且合并关联条件
@@ -583,15 +581,10 @@ public class TableSqlBuilder<T> implements Cloneable {
         return findUpDbJoinTables;
     }
 
-    protected void setPrimaryTable(boolean primaryTable) {
-        this.primaryTable = primaryTable;
-    }
-
     private void initializeSqlBuilder(AbstractSqlBuilder<T> sqlBuilder) {
         sqlBuilder.setTable(this.table);
         sqlBuilder.setAlias(this.alias);
         sqlBuilder.setEntityClass(this.cls);
-        sqlBuilder.setPrimaryTable(this.primaryTable);
         if(Objects.nonNull(this.entity)) {
             sqlBuilder.setEntity(this.entity);
         }

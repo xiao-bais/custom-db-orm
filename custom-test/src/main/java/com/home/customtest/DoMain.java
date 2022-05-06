@@ -10,6 +10,7 @@ import com.custom.comm.page.DbPageRows;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
 import com.home.customtest.dao.CustomTestDao;
+import com.home.customtest.entity.ChildStudent;
 import com.home.customtest.entity.Student;
 
 import java.util.List;
@@ -35,7 +36,7 @@ public class DoMain {
         // 增删改查映射策略配置
         DbCustomStrategy dbCustomStrategy = new DbCustomStrategy();
         dbCustomStrategy.setSqlOutPrinting(true);
-//        dbCustomStrategy.setSqlOutPrintExecute(true);
+        dbCustomStrategy.setSqlOutPrintExecute(true);
         dbCustomStrategy.setUnderlineToCamel(true);
         dbCustomStrategy.setDbFieldDeleteLogic("state");
         dbCustomStrategy.setDeleteLogicValue(1);
@@ -44,12 +45,7 @@ public class DoMain {
         JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
         TableInfoCache.setUnderlineToCamel(true);
 
-        List<Student> students = jdbcDao.selectList(Conditions.lambdaQuery(Student.class)
-                .eq(Student::getName, "张重阳")
-                .onlyPrimary()
-        );
-        System.out.println("students = " + students);
-
+        System.out.println("jdbcDao = " + jdbcDao);
 
 
     }

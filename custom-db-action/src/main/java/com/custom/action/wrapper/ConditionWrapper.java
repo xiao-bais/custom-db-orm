@@ -185,7 +185,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
         return primaryTable;
     }
 
-    protected void setPrimaryTable(Boolean primaryTable) {
-        this.primaryTable = primaryTable;
+    protected void setPrimaryTable() {
+        this.primaryTable = true;
     }
 }

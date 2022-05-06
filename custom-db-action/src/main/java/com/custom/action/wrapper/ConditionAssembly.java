@@ -297,7 +297,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
      * 本次查询是否只查询主表
      */
     public Children onlyPrimary() {
-        setPrimaryTable(true);
+        setPrimaryTable();
         return childrenClass;
     }
 
