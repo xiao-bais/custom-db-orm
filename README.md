@@ -149,7 +149,7 @@ custom.db.datasource.password=123456
 - 修改
 
 ```java
-    根据主键修改一条记录（updateColumns：指定要修改的表字段  为空则按主键修改全部[不为空]字段）
+    根据主键修改一条记录(updateColumns：指定要修改的表字段  为空则按主键修改全部[不为空]字段)
     public final <T> int updateByKey(T t, SFunction<T, ?>... updateColumns) throws Exception;
 
     根据主键修改一条记录
