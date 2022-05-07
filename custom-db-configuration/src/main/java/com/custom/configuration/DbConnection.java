@@ -34,7 +34,7 @@ public class DbConnection {
     public DbConnection(DbDataSource dbDataSource) {
         try {
             isExistClass(dbDataSource.getDriver());
-            init(dbDataSource);
+            datasourceInitialize(dbDataSource);
         }catch (Exception e) {
             logger.error("不存在mysql驱动：" + CUSTOM_DRIVER);
             ExThrowsUtil.toCustom(e.getMessage());
@@ -45,24 +45,10 @@ public class DbConnection {
         return String.format("%s-%s-%s-%s", dbDataSource.getUrl(), dbDataSource.getUsername(), dbDataSource.getPassword(), dbDataSource.getDatabase());
     }
 
-    private void init(DbDataSource dbDataSource) throws SQLException {
+    private void datasourceInitialize(DbDataSource dbDataSource) throws SQLException {
         connection = (Connection) currMap.get(getConnKey(dbDataSource));
         if (null == connection) {
-            DruidDataSource druidDataSource = new DruidDataSource();
-            druidDataSource.setDriverClassName(dbDataSource.getDriver());
-            druidDataSource.setUrl(dbDataSource.getUrl());
-            druidDataSource.setUsername(dbDataSource.getUsername());
-            druidDataSource.setPassword(dbDataSource.getPassword());
-
-            druidDataSource.setInitialSize(dbDataSource.getInitialSize());
-            druidDataSource.setMinIdle(dbDataSource.getMinIdle());
-            druidDataSource.setMaxWait(dbDataSource.getMaxWait());
-            druidDataSource.setMaxActive(dbDataSource.getMaxActive());
-            druidDataSource.setValidationQuery(dbDataSource.getValidationQuery());
-            druidDataSource.setTestWhileIdle(dbDataSource.isTestWhileIdle());
-            druidDataSource.setTestOnBorrow(dbDataSource.isTestOnBorrow());
-            druidDataSource.setTestOnReturn(dbDataSource.isTestOnReturn());
-            connection = druidDataSource.getConnection();
+            initConnection(dbDataSource);
             logger.info("dataSource Connection Successfully !");
         }
         if (JudgeUtilsAx.isEmpty(dbDataSource.getDatabase())) {
@@ -71,6 +57,24 @@ public class DbConnection {
         currMap.put(DATA_BASE, dbDataSource.getDatabase());
         currMap.put(getConnKey(dbDataSource), connection);
 
+    }
+
+    private void initConnection(DbDataSource dbDataSource) throws SQLException {
+        DruidDataSource druidDataSource = new DruidDataSource();
+        druidDataSource.setDriverClassName(dbDataSource.getDriver());
+        druidDataSource.setUrl(dbDataSource.getUrl());
+        druidDataSource.setUsername(dbDataSource.getUsername());
+        druidDataSource.setPassword(dbDataSource.getPassword());
+
+        druidDataSource.setInitialSize(dbDataSource.getInitialSize());
+        druidDataSource.setMinIdle(dbDataSource.getMinIdle());
+        druidDataSource.setMaxWait(dbDataSource.getMaxWait());
+        druidDataSource.setMaxActive(dbDataSource.getMaxActive());
+        druidDataSource.setValidationQuery(dbDataSource.getValidationQuery());
+        druidDataSource.setTestWhileIdle(dbDataSource.isTestWhileIdle());
+        druidDataSource.setTestOnBorrow(dbDataSource.isTestOnBorrow());
+        druidDataSource.setTestOnReturn(dbDataSource.isTestOnReturn());
+        connection = druidDataSource.getConnection();
     }
 
 
