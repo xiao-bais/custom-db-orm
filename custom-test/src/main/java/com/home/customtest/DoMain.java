@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.custom.action.sqlproxy.ReaderExecutorProxy;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.TableInfoCache;
+import com.custom.action.wrapper.ConditionEntity;
 import com.custom.action.wrapper.Conditions;
+import com.custom.action.wrapper.LambdaConditionEntity;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.page.DbPageRows;
 import com.custom.configuration.DbCustomStrategy;
@@ -45,7 +47,13 @@ public class DoMain {
         JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
         TableInfoCache.setUnderlineToCamel(true);
 
-        System.out.println("jdbcDao = " + jdbcDao);
+        List<ChildStudent> childStudents = jdbcDao.selectList(Conditions.lambdaQuery(ChildStudent.class)
+                .eq(ChildStudent::getName, "张三")
+                .between(ChildStudent::getAge, 20, 25)
+                .select(ChildStudent::getAge)
+                .select(x -> x.sum(ChildStudent::getAge, ChildStudent::getSumAge))
+                .groupBy(ChildStudent::getAge)
+        );
 
 
     }

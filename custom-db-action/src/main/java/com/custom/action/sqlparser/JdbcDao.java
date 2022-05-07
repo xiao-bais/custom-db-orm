@@ -179,7 +179,8 @@ public class JdbcDao {
     /**
      * 根据主键修改一条记录（updateFields：指定要修改的表字段  为空则修改全部不为空的字段）
      */
-    public <T> int updateByKey(T t, SFunction<T, ?>... updateColumns) throws Exception {
+    @SafeVarargs
+    public final <T> int updateByKey(T t, SFunction<T, ?>... updateColumns) throws Exception {
         return jdbcAction.updateByKey(t, updateColumns);
     }
 

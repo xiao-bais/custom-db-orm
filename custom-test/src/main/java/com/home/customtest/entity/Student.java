@@ -1,6 +1,8 @@
 package com.home.customtest.entity;
 
 import com.custom.comm.annotations.*;
+import com.custom.comm.enums.DbType;
+import com.custom.comm.enums.KeyStrategy;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -20,7 +22,7 @@ import java.util.List;
 @DbTable(table = "student", mergeSuperDbJoinTables = false)
 public class Student {
 
-    @DbKey
+    @DbKey(value = "id", strategy = KeyStrategy.AUTO, dbType = DbType.DbInt)
     private Integer id;
 
     @DbField
@@ -62,7 +64,6 @@ public class Student {
     @DbMapper("cy.name")
     private String city;
 
-//    @DbMapper("lo.name")
     private String area;
 
     private List<Street> modelList;
