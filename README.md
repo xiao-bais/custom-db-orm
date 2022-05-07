@@ -9,11 +9,10 @@ custom-db-action为自定义的一款集成数据源```ORM```操作工具，底�
 - 该工具已完成```springboot```的自动配置,在```springboot```项目中引入该依赖即可，无需另外配置，轻松便捷。
 
 ### 注意
-目前依赖还未部署在maven中央仓库，所以需借助aliyun的私服进行管理，使用前，需将【[maven下的setting.xml](http://39.108.225.176/aaa.xml)
-】替换。
+目前依赖还未部署在maven中央仓库，所以需借助aliyun的私服进行管理，使用前，需将【[maven下的setting.xml文件](http://39.108.225.176/downloads/settings.xml)】替换。
 #### 安装依赖
 
-```
+```xml
          <dependency>
             <groupId>com.custom</groupId>
             <artifactId>custom-springboot-starter</artifactId>
@@ -26,7 +25,7 @@ custom-db-action为自定义的一款集成数据源```ORM```操作工具，底�
 
 1.  ```SpringBoot```项目配置数据源：因DataSource类为本工具自定义，所以在```application.yml(properties)```中进行如下基本配置即可，```mysql```驱动默认为```mysql8.0```--->```com.mysql.cj.jdbc.Driver```(配置文件中可不写)
 
-```
+```properties
 custom.db.datasource.url=jdbc:mysql://127.0.0.1:3306/hos?characterEncoding=utf-8&allowMultiQueries=true&autoreconnect=true&serverTimezone=UTC
 custom.db.datasource.username=root
 custom.db.datasource.password=123456
@@ -38,19 +37,19 @@ custom.db.datasource.password=123456
 1.  该工具提供大量的增删改查方法API
 - 示例
 
-```
+```java
 示例1：List<Employee> list = customDao.selectList(Employee.class, " and a.age > ?", 20);
 ```
-```
+```java
 示例2：DbPageRows<Employee> dbPageRows = customDao.selectPageRows(Employee.class, " and a.name = ?", new DbPageRows<Employee>().setPageIndex(1).setPageSize(10), "张三");
 ```
-```
+```java
 示例3：Employee employee = customDao.selectOneByKey(Employee.class, 25);
 ```
-```
+```java
 示例4：List<Employee> employeeList = customDao.selectListByKeys(Employee.class, Arrays.asList(21, 23));
 ```
-```
+```java
 示例5：
         // 插入一条记录
         Employee employee = new Employee();
@@ -60,7 +59,7 @@ custom.db.datasource.password=123456
         customDao.insert(employee);
 ```
 
-```
+```java
 示例6：List<Employee> list = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             Employee e = new Employee();
@@ -81,7 +80,7 @@ custom.db.datasource.password=123456
 
 - 查询
 
-```
+```java
 
     查询多条记录: 例1（and a.name = ?, "张三"），例2 (and a.name = "张三") 
     public <T> List<T> selectList(Class<T> t, String condition, Object... params) throws Exception;
@@ -118,7 +117,7 @@ custom.db.datasource.password=123456
 
 - 删除
 
-```
+```java
     根据主键删除一条记录
     public <T> int deleteByKey(Class<T> t, Object key) throws Exception;
 
@@ -132,7 +131,7 @@ custom.db.datasource.password=123456
 
 - 修改
 
-```
+```java
     根据主键修改一条记录（updateFields：指定要修改的表字段  为空则按主键修改全部字段）
     public <T> int updateByKey(T t, String... updateDbFields) throws Exception;
 
@@ -142,7 +141,7 @@ custom.db.datasource.password=123456
 
 - 添加
 
-```
+```java
     插入一条记录
     public <T> long insert(T t) throws Exception;
 
@@ -158,7 +157,7 @@ custom.db.datasource.password=123456
 - 创建表
 
 1. 创建实体类，并在表字段上标注上注解，```@key```为主键注解，```@DbField```为一般字段注解
-```
+```java
 @DbTable(table = "employee")
 @Data
 @NoArgsConstructor
@@ -195,16 +194,16 @@ public class EmployeeTemp {
 ```
 2. 第二步，执行```createTables```方法即可
 
-```
-customDao.createTables(EmployeeTemp.class);
+```java
+JdbcDao.createTables(EmployeeTemp.class);
 ```
 
 3. 执行结果
 
-```
+```sql
  create table `employee_temp` (
 `id` int(11) primary key not null auto_increment comment '主键' 
-, `emp_name` varchar(50)  comment '员工名字'
+,`emp_name` varchar(50)  comment '员工名字'
 ,`sex` bit(1)  comment '性别'
 ,`age` int(11)  comment '年龄'
 ,`address` varchar(50)  comment '居住地'
@@ -214,22 +213,3 @@ customDao.createTables(EmployeeTemp.class);
 ,`state` int(11)  comment '状态,0-未删除，1-已删除'
 ) 
 ```
-
-
-
-#### 参与贡献
-
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
-
-
-#### 特技
-
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
