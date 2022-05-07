@@ -1,22 +1,26 @@
-# custom-db-action
+# custom-springboot-starter
 
 ### 简介
-custom-db-action为自定义的一款集成数据源```ORM```操作工具，底层为最原始的```JDBC```，使用阿里的druid作为连接池，将```JDBC```进行了大量封装，将之变成一款可极大简化操作数据的轻量级第三方```ORM```工具，集成了```Mybatis-Plus```的条件构造器，在此之上添加了 **多表连接查询** 的条件构造，使增删改查变得更容易。
+custom-db-action为自定义的一款集成数据源```ORM```操作工具，底层为最原始的```JDBC```，使用阿里的druid作为连接池，将```JDBC```进行了一些封装，将之变成一款可极大简化操作数据的轻量级第三方```ORM```工具，集成了```Mybatis-Plus```的条件构造器，在此之上添加了 **多表连接查询** 的条件构造，使增删改查变得更容易。
 ### 说明：
-- ```com.custom.sqlparser.CustomDao```，该类提供了多种增删改查方法以供用户自定义使用，只需要编写部分的条件```sql```，即可完成单表的大部分增删改查操作。
+- ```com.custom.sqlparser.JdbcDao```，该类提供了多种增删改查方法以供用户自定义使用，使用时只需要在service或controller注入该对象即可，只需要编写部分的条件```sql```，即可完成单表的大部分增删改查操作。
 - 只需要创建实体类，并添加上自定义的几个注解，即可生成对应的表结构。
 - 支持可配置的表关联查询以及逻辑删除，```sql```语句打印输出，下划线转驼峰等功能。
 - 该工具已完成```springboot```的自动配置,在```springboot```项目中引入该依赖即可，无需另外配置，轻松便捷。
 
+### 注意
+目前依赖还未部署在maven中央仓库，所以需借助aliyun的私服进行管理，使用前，需将【[maven下的setting.xml](http://39.108.225.176/aaa.xml)
+】替换。
 #### 安装依赖
 
 ```
          <dependency>
             <groupId>com.custom</groupId>
-            <artifactId>custom-db-action</artifactId>
-            <version>1.0.0</version>
+            <artifactId>custom-springboot-starter</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
 ```
+
 
 #### 配置数据源
 
