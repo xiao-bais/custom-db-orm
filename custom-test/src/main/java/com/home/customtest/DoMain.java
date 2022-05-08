@@ -48,7 +48,7 @@ public class DoMain {
         TableInfoCache.setUnderlineToCamel(true);
 
         List<ChildStudent> childStudents = jdbcDao.selectList(Conditions.lambdaQuery(ChildStudent.class)
-                .eq(ChildStudent::getName, "张三11")
+                .eq(ChildStudent::getName, "张三11d,alss")
                 .between(ChildStudent::getAge, 20, 25)
                 .select(ChildStudent::getAge)
                 .select(x -> x.sum(ChildStudent::getAge, ChildStudent::getSumAge))
