@@ -1,4 +1,4 @@
-package com.custom.action.scanner;
+package com.custom.springboot.scanner;
 
 import com.custom.comm.JudgeUtilsAx;
 import lombok.extern.slf4j.Slf4j;

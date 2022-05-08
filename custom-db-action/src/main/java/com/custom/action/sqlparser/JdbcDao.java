@@ -1,7 +1,7 @@
 package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractSqlExecutor;
-import com.custom.action.sqlproxy.ParamsCheckProxy;
+import com.custom.action.proxy.ParamsCheckProxy;
 import com.custom.action.wrapper.ConditionWrapper;
 import com.custom.action.wrapper.SFunction;
 import com.custom.comm.JudgeUtilsAx;

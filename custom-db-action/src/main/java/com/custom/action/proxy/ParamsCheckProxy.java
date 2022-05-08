@@ -1,4 +1,4 @@
-package com.custom.action.sqlproxy;
+package com.custom.action.proxy;
 
 import com.custom.action.util.DbUtil;
 import com.custom.action.wrapper.ConditionWrapper;

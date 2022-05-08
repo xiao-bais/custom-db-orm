@@ -1,16 +1,14 @@
 package com.custom.springboot;
 
-import com.custom.action.sqlproxy.ReaderExecutorProxy;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
+import com.custom.proxy.InterfacesProxyExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -41,12 +39,12 @@ public class CustomConfiguration {
 
     @Bean
     @ConditionalOnBean(DbDataSource.class)
-    public ReaderExecutorProxy readerExecutorProxy() {
+    public InterfacesProxyExecutor readerExecutorProxy() {
         if(isDataSourceEmpty(dbDataSource)) {
             return null;
         }
-        logger.info("ReaderExecutorProxy Initialized Successfully !");
-        return new ReaderExecutorProxy(dbDataSource, dbCustomStrategy);
+        logger.info("InterfacesProxyExecutor Initialized Successfully !");
+        return new InterfacesProxyExecutor(dbDataSource, dbCustomStrategy);
     }
 
     @Bean

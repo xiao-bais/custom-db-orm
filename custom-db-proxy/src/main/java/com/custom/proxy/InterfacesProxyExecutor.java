@@ -1,4 +1,4 @@
-package com.custom.action.sqlproxy;
+package com.custom.proxy;
 
 import com.custom.comm.BasicDao;
 import com.custom.comm.CustomUtil;
@@ -28,7 +28,7 @@ import java.util.Set;
  **/
 @SuppressWarnings("unchecked")
 @Slf4j
-public class ReaderExecutorProxy implements InvocationHandler {
+public class InterfacesProxyExecutor implements InvocationHandler {
 
     public <T> T createProxy(Class<T> cls) {
         ClassLoader classLoader = cls.getClassLoader();
@@ -38,9 +38,9 @@ public class ReaderExecutorProxy implements InvocationHandler {
     }
 
     private String targetClassName;
-    private SqlExecuteAction executeAction;
+    private final SqlExecuteAction executeAction;
 
-    public ReaderExecutorProxy(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
+    public InterfacesProxyExecutor(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         executeAction = new SqlExecuteAction(dbDataSource, dbCustomStrategy);
     }
 
