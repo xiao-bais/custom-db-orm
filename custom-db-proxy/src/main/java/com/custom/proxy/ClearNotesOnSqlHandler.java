@@ -2,13 +2,16 @@ package com.custom.proxy;
 
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.comm.SymbolConstant;
+import com.custom.comm.exceptions.ExThrowsUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 /**
  * @author Xiao-Bai
@@ -41,15 +44,15 @@ public class ClearNotesOnSqlHandler {
     /**
      * 加载指定路径中文件的内容
      */
-    public String loadSql(){
+    public String loadSql() {
         String res = SymbolConstant.EMPTY;
         if(JudgeUtilsAx.isEmpty(filePath)){
-            log.error("找不到文件或不存在该路径");
-            return res;
+            ExThrowsUtil.toNull("filepath is null");
         }
         try {
             Resource resource = new ClassPathResource(filePath);
             BufferedReader br = new BufferedReader(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8));
+
             StringBuilder sb = new StringBuilder();
             String str;
             boolean isAppend = true;

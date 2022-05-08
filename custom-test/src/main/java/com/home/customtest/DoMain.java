@@ -3,11 +3,19 @@ package com.home.customtest;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.wrapper.Conditions;
+import com.custom.comm.CustomUtil;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
+import com.custom.proxy.InterfacesProxyExecutor;
+import com.home.customtest.dao.CustomTestDao;
 import com.home.customtest.entity.ChildStudent;
+import com.home.customtest.entity.Employee;
+import com.home.customtest.entity.WorkEmp;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @Author Xiao-Bai
@@ -36,16 +44,31 @@ public class DoMain {
         dbCustomStrategy.setDeleteLogicValue(1);
         dbCustomStrategy.setNotDeleteLogicValue(0);
 
-        JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
-        TableInfoCache.setUnderlineToCamel(true);
+        InterfacesProxyExecutor proxyExecutor = new InterfacesProxyExecutor(dbDataSource, dbCustomStrategy);
+        CustomTestDao customTestDao = proxyExecutor.createProxy(CustomTestDao.class);
 
-        List<ChildStudent> childStudents = jdbcDao.selectList(Conditions.lambdaQuery(ChildStudent.class)
-                .eq(ChildStudent::getName, "张三11d,a21lss")
-                .between(ChildStudent::getAge, 20, 25)
-                .select(ChildStudent::getAge)
-                .select(x -> x.sum(ChildStudent::getAge, ChildStudent::getSumAge))
-                .groupBy(ChildStudent::getAge)
-        );
+        System.out.println(CustomUtil.isBasicType(String.class));
+
+        WorkEmp emp = new WorkEmp();
+        emp.setAge(23);
+        emp.setAgeList(Stream.of(21,22,26).collect(Collectors.toList()));
+        emp.setEmpName(null);
+        emp.getMap().put("admin", "admin123");
+        emp.getMap().put("ads", 259);
+        List<Employee> employees = customTestDao.getConditr(null);
+
+        System.out.println("employees = " + employees);
+
+//        JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
+//        TableInfoCache.setUnderlineToCamel(true);
+
+//        List<ChildStudent> childStudents = jdbcDao.selectList(Conditions.lambdaQuery(ChildStudent.class)
+//                .eq(ChildStudent::getName, "张三11d,a21lss")
+//                .between(ChildStudent::getAge, 20, 25)
+//                .select(ChildStudent::getAge)
+//                .select(x -> x.sum(ChildStudent::getAge, ChildStudent::getSumAge))
+//                .groupBy(ChildStudent::getAge)
+//        );
 
 
     }

@@ -69,6 +69,7 @@ public class InterfacesProxyExecutor implements InvocationHandler {
     */
     private Object doInvoke(Method method, Object[] args) throws Exception {
 
+        AbstractProxyHandler proxyHandler;
         Class<?> execClass = method.getDeclaringClass();
         if (!BasicDao.class.isAssignableFrom(execClass) && !execClass.isAnnotationPresent(SqlMapper.class)) {
             ExThrowsUtil.toCustom(String.format("Execution error, possibly because '%s' does not inherit com.custom.comm.BasicDao or this interface is not annotated with @SqlMapper", targetClassName));
@@ -76,7 +77,10 @@ public class InterfacesProxyExecutor implements InvocationHandler {
 
         if (method.isAnnotationPresent(Query.class)) {
             Query query = method.getAnnotation(Query.class);
-            return doPrepareExecuteQuery(method, args, query.value(), query.order());
+            proxyHandler = new SelectProxyHandler(executeAction, args, query.value(), method);
+            proxyHandler.prepareAndParamsParsing();
+//            return doPrepareExecuteQuery(method, args, query.value(), query.order());
+            return null;
 
         }
         if (method.isAnnotationPresent(Update.class)) {

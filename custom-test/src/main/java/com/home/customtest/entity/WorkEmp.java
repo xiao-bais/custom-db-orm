@@ -1,7 +1,9 @@
 package com.home.customtest.entity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Xiao-Bai
@@ -15,6 +17,16 @@ public class WorkEmp {
     private String empName;
 
     private int age;
+
+    private Map<String, Object> map = new HashMap<>();
+
+    public Map<String, Object> getMap() {
+        return map;
+    }
+
+    public void setMap(Map<String, Object> map) {
+        this.map = map;
+    }
 
     public int getAge() {
         return age;

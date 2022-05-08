@@ -48,7 +48,7 @@ public class CustomUtil {
     * 是否是系统自定义的基础类型
     */
     public static boolean isBasicType(Object el) {
-        return el instanceof String
+        return el instanceof CharSequence
                 || el.getClass().isPrimitive()
                 || el instanceof Integer
                 || el instanceof Long
@@ -60,6 +60,24 @@ public class CustomUtil {
                 || el instanceof Byte
                 || el instanceof BigDecimal
                 || el instanceof Date;
+    }
+
+    /**
+     * 是否是系统自定义的基础类型
+     */
+    public static boolean isBasicClass(Class<?> cls) {
+        return CharSequence.class.isAssignableFrom(cls)
+                || cls.isPrimitive()
+                || Integer.class.equals(cls)
+                || Long.class.equals(cls)
+                || Double.class.equals(cls)
+                || Character.class.equals(cls)
+                || Short.class.equals(cls)
+                || Float.class.equals(cls)
+                || Boolean.class.equals(cls)
+                || Byte.class.equals(cls)
+                || BigDecimal.class.equals(cls)
+                || Date.class.equals(cls);
     }
 
     /**
@@ -89,6 +107,36 @@ public class CustomUtil {
         String fieldName = field.substring(index + SymbolConstant.DEFAULT_ONE);
         String alias = field.substring(SymbolConstant.DEFAULT_ZERO, index + SymbolConstant.DEFAULT_ONE);
         return String.format("%s`%s`", alias, fieldName);
+    }
+
+    /**
+     * 获取字段的值
+     */
+    public static <T> Object getFieldValue(T x, String fieldName) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+        JudgeUtilsAx.checkObjNotNull(x, fieldName);
+        Object value;
+        String firstLetter;
+        String getter;
+        try {
+            if(RexUtil.hasRegex(fieldName, RexUtil.back_quotes)) {
+                fieldName = RexUtil.regexStr(fieldName, RexUtil.back_quotes);
+            }
+            if (Objects.isNull(fieldName)) return null;
+            firstLetter = fieldName.substring(0, 1).toUpperCase();
+            getter = SymbolConstant.GETTER + firstLetter + fieldName.substring(1);
+            Method method = x.getClass().getMethod(getter);
+            value = method.invoke(x);
+        }catch (NoSuchMethodException e){
+            try {
+                firstLetter = fieldName.substring(0, 1).toUpperCase();
+                Method method = x.getClass().getMethod(SymbolConstant.IS + firstLetter + fieldName.substring(1));
+                value = method.invoke(x);
+            }catch (NoSuchMethodException v) {
+                Method method = x.getClass().getMethod(fieldName);
+                value = method.invoke(x);
+            }
+        }
+        return value;
     }
 
 
