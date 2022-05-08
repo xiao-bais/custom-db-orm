@@ -137,17 +137,16 @@ public class ParsingObjectStructs {
         });
     }
 
-
     private void parseArray(String name, Object value) {
         if (Objects.isNull(value)) {
             return;
         }
+        List<Object> list = new ArrayList<>();
         int length = Array.getLength(value);
         for (int i = 0; i < length; i++) {
-            String tempName = String.format("%s[%s]", name, i);
-            Object tempValue = Array.get(value, i);
-            parser(tempName, tempValue);
+            list.add(Array.get(value, i));
         }
+        parseList(name, list);
     }
 
     public Map<String, Object> getParamsMap() {
