@@ -1,7 +1,6 @@
 package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractSqlExecutor;
-import com.custom.action.dbaction.SqlExecuteAction;
 import com.custom.action.wrapper.ConditionWrapper;
 import com.custom.action.wrapper.SFunction;
 import com.custom.comm.JudgeUtilsAx;
@@ -12,6 +11,7 @@ import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.page.DbPageRows;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
+import com.custom.jdbc.SqlExecuteAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

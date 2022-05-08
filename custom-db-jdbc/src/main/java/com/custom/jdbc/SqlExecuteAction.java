@@ -1,4 +1,4 @@
-package com.custom.action.dbaction;
+package com.custom.jdbc;
 
 import com.alibaba.fastjson.JSONObject;
 import com.custom.comm.CustomUtil;

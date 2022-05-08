@@ -1,4 +1,4 @@
-package com.custom.action.dbaction;
+package com.custom.jdbc;
 
 import com.custom.comm.CustomUtil;
 import com.custom.comm.SymbolConstant;

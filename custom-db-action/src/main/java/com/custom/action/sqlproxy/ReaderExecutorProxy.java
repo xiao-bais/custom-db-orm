@@ -1,6 +1,5 @@
 package com.custom.action.sqlproxy;
 
-import com.custom.action.dbaction.SqlExecuteAction;
 import com.custom.comm.BasicDao;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.RexUtil;
@@ -14,6 +13,7 @@ import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
+import com.custom.jdbc.SqlExecuteAction;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.*;
@@ -28,7 +28,7 @@ import java.util.Set;
  **/
 @SuppressWarnings("unchecked")
 @Slf4j
-public class ReaderExecutorProxy extends SqlExecuteAction implements InvocationHandler {
+public class ReaderExecutorProxy implements InvocationHandler {
 
     public <T> T createProxy(Class<T> cls) {
         ClassLoader classLoader = cls.getClassLoader();
@@ -38,9 +38,10 @@ public class ReaderExecutorProxy extends SqlExecuteAction implements InvocationH
     }
 
     private String targetClassName;
+    private SqlExecuteAction executeAction;
 
     public ReaderExecutorProxy(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
-        super(dbDataSource, dbCustomStrategy);
+        executeAction = new SqlExecuteAction(dbDataSource, dbCustomStrategy);
     }
 
 
@@ -121,7 +122,7 @@ public class ReaderExecutorProxy extends SqlExecuteAction implements InvocationH
             parameterParserExecutor.prepareDisorderParams();
         }
         List<Object> paramValues = parameterParserExecutor.getParamResList();
-        return executeUpdate(parameterParserExecutor.getPrepareSql(), paramValues.toArray());
+        return executeAction.executeUpdate(parameterParserExecutor.getPrepareSql(), paramValues.toArray());
     }
 
 
@@ -150,24 +151,24 @@ public class ReaderExecutorProxy extends SqlExecuteAction implements InvocationH
             Class<?> typeArgument = (Class<?>) pt.getActualTypeArguments()[0];
             Type type = ((ParameterizedType) returnType).getRawType();
             if (type.equals(List.class)) {
-                return query(typeArgument, getDbCustomStrategy().isSqlOutPrinting(),  sql, params);
+                return executeAction.query(typeArgument, executeAction.getDbCustomStrategy().isSqlOutPrinting(),  sql, params);
 
             } else if (type.equals(Map.class)) {
-                return selectObjSql(Map.class, sql, params);
+                return executeAction.selectObjSql(Map.class, sql, params);
 
             } else if (type.equals(Set.class)) {
-                return querySet(typeArgument, sql, params);
+                return executeAction.querySet(typeArgument, sql, params);
             }
         } else if (CustomUtil.isBasicType(returnType)) {
-            return selectObjSql(sql, params);
+            return executeAction.selectObjSql(sql, params);
 
         } else if (((Class<?>) returnType).isArray()) {
             Class<?> type = ((Class<?>) returnType).getComponentType();
-            return queryArray(type, sql, method.getDeclaringClass().getName(), method.getName(), params);
+            return executeAction.queryArray(type, sql, method.getDeclaringClass().getName(), method.getName(), params);
         }else {
             String typeName = returnType.getTypeName();
             Class<?> cls = Class.forName(typeName);
-            List<?> resultList = query(cls, getDbCustomStrategy().isSqlOutPrinting(), sql, params);
+            List<?> resultList = executeAction.query(cls, executeAction.getDbCustomStrategy().isSqlOutPrinting(), sql, params);
             int size = resultList.size();
             if(size == 0) {
                 return null;
