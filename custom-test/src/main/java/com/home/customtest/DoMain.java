@@ -44,31 +44,32 @@ public class DoMain {
         dbCustomStrategy.setDeleteLogicValue(1);
         dbCustomStrategy.setNotDeleteLogicValue(0);
 
-        InterfacesProxyExecutor proxyExecutor = new InterfacesProxyExecutor(dbDataSource, dbCustomStrategy);
-        CustomTestDao customTestDao = proxyExecutor.createProxy(CustomTestDao.class);
+//        InterfacesProxyExecutor proxyExecutor = new InterfacesProxyExecutor(dbDataSource, dbCustomStrategy);
+//        CustomTestDao customTestDao = proxyExecutor.createProxy(CustomTestDao.class);
 
-        System.out.println(CustomUtil.isBasicType(String.class));
+//        System.out.println(CustomUtil.isBasicType(String.class));
 
-        WorkEmp emp = new WorkEmp();
-        emp.setAge(23);
-        emp.setAgeList(Stream.of(21,22,26).collect(Collectors.toList()));
-        emp.setEmpName(null);
-        emp.getMap().put("admin", "admin123");
-        emp.getMap().put("ads", 259);
-        List<Employee> employees = customTestDao.getConditr(null);
+//        WorkEmp emp = new WorkEmp();
+//        emp.setAge(23);
+//        emp.setAgeList(Stream.of(21,22,26).collect(Collectors.toList()));
+//        emp.setEmpName(null);
+//        emp.getMap().put("admin", "admin123");
+//        emp.getMap().put("ads", 259);
+//        List<Employee> employees = customTestDao.getConditr(emp);
+//
+//        System.out.println("employees = " + employees);
 
-        System.out.println("employees = " + employees);
+        JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
+        TableInfoCache.setUnderlineToCamel(true);
 
-//        JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
-//        TableInfoCache.setUnderlineToCamel(true);
-
-//        List<ChildStudent> childStudents = jdbcDao.selectList(Conditions.lambdaQuery(ChildStudent.class)
-//                .eq(ChildStudent::getName, "张三11d,a21lss")
-//                .between(ChildStudent::getAge, 20, 25)
+        List<ChildStudent> childStudents = jdbcDao.selectList(Conditions.lambdaQuery(ChildStudent.class)
+                .eq(ChildStudent::getName, "张三11d")
+                .between(ChildStudent::getAge, 20, 25)
+                .like(ChildStudent::getAddress, "湖南")
 //                .select(ChildStudent::getAge)
 //                .select(x -> x.sum(ChildStudent::getAge, ChildStudent::getSumAge))
 //                .groupBy(ChildStudent::getAge)
-//        );
+        );
 
 
     }

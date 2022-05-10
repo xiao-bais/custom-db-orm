@@ -87,13 +87,13 @@ public class CustomUtil {
         if(!isBasicType(val.getClass())) {
             ExThrowsUtil.toCustom("不允许的主键类型：" + val+ "(" + val.getClass() + ")");
         }
-        if(type == String.class) {
+        if(CharSequence.class.isAssignableFrom(type)) {
             return true;
         }
-        if(type == Long.class) {
+        if(Long.class.isAssignableFrom(type)) {
             return (long) val > 0;
         }
-        if(type == Integer.class) {
+        if(Integer.class.isAssignableFrom(type)) {
             return (int) val > 0;
         }
         return false;
@@ -137,50 +137,6 @@ public class CustomUtil {
             }
         }
         return value;
-    }
-
-
-
-    /**
-     * map转对象
-     */
-    public static <T> T mapToObject(Class<T> t, Map<String, Object> map) throws IllegalAccessException, IntrospectionException, InvocationTargetException, InstantiationException {
-        if(map == null) return null;
-        T obj = null;
-        obj = t.newInstance();
-        BeanInfo beanInfo = Introspector.getBeanInfo(t);
-        PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-        for (PropertyDescriptor property : propertyDescriptors) {
-            Method setter = property.getWriteMethod();
-            if(setter != null){
-                Object val = map.get(property.getName());
-                if(val != null){
-                    setter.invoke(obj, val);
-                }
-            }
-        }
-        return obj;
-    }
-
-    /**
-     * 对象转map
-     */
-    public static <T> Map<String, Object> objectToMap(T t) throws Exception {
-        if(t == null) return null;
-
-        Map<String, Object> map = new HashMap<>();
-        BeanInfo beanInfo = Introspector.getBeanInfo(t.getClass());
-        PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-        for (PropertyDescriptor property : propertyDescriptors) {
-            String key = property.getName();
-            if(key.compareToIgnoreCase("class") == 0){
-                continue;
-            }
-            Method getter = property.getReadMethod();
-            Object val = getter != null ? getter.invoke(t) : null;
-            map.put(key, val);
-        }
-        return map;
     }
 
     /**
@@ -269,9 +225,6 @@ public class CustomUtil {
         }
         return sb.toString();
     }
-
-
-
 
 
     /**
@@ -408,7 +361,7 @@ public class CustomUtil {
             Object param = params[index];
             if(Objects.isNull(param)) {
                 param = "null";
-            }else if (param.getClass() == String.class) {
+            }else if (param instanceof CharSequence) {
                 param = String.format("'%s'", param);
             }
             sql = sql.replaceFirst("\\?", param.toString());

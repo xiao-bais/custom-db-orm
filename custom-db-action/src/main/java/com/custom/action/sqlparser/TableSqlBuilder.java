@@ -45,7 +45,7 @@ public class TableSqlBuilder<T> implements Cloneable {
      */
     private boolean findUpDbJoinTables;
     /**
-     * @Desc：对于@DbRelated注解的解析
+     * @Desc：对于@DbKey注解的解析
      */
     private DbKeyParserModel<T> keyParserModel = null;
     /**

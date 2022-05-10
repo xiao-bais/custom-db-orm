@@ -1,5 +1,7 @@
 package com.custom.comm.enums;
 
+import com.custom.comm.exceptions.CustomCheckException;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -49,7 +51,7 @@ public enum DbType {
                 return value;
             }
         }
-        throw new NullPointerException("找不到匹配的类型");
+        throw new CustomCheckException("找不到匹配的类型");
     }
 
     public static DbType getDbType(String type) {

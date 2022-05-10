@@ -34,7 +34,6 @@ public class GenerateCodeExecutor {
 
     private static String DATA_BASE;
     private List<TableStructModel> tableStructModels;
-//    private List<TableStructModel> tableStructModels = new ArrayList<>();
     private final AbstractSqlExecutor sqlExecutor;
 
     public GenerateCodeExecutor(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {

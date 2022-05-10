@@ -120,9 +120,6 @@ public class JdbcAction extends AbstractSqlExecutor {
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> DbPageRows<T> selectPageRows(ConditionWrapper<T> wrapper) throws Exception {
-        if(Objects.isNull(wrapper)) {
-            ExThrowsUtil.toNull("缺少分页参数");
-        }
         if(!wrapper.isHasPageParams()) {
             ExThrowsUtil.toCustom("缺少分页参数：pageIndex：" + wrapper.getPageIndex() + ", pageSize：" + wrapper.getPageSize());
         }
