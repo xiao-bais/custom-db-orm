@@ -287,10 +287,13 @@ public abstract class AbstractSqlExecutor {
 
 
     /**
-     * 公共获取查询sql
+     * 公共获取完整查询sql
      */
-    protected <T> String getFullSelectSql(Class<T> t, DbPageRows<T> dbPageRows, ConditionWrapper<T> wrapper) throws Exception {
-        HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
+    protected <T> String getFullSelectSql(ConditionWrapper<T> wrapper) throws Exception {
+        return getFullSelectSql(wrapper, null);
+    }
+    protected <T> String getFullSelectSql(ConditionWrapper<T> wrapper, DbPageRows<T> dbPageRows) throws Exception {
+        HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(wrapper.getEntityClass());
         sqlBuilder.setPrimaryTable(wrapper.getPrimaryTable());
         StringBuilder selectSql = new StringBuilder();
         if(wrapper.getSelectColumns() != null) {

@@ -124,7 +124,7 @@ public class JdbcAction extends AbstractSqlExecutor {
             ExThrowsUtil.toCustom("缺少分页参数：pageIndex：" + wrapper.getPageIndex() + ", pageSize：" + wrapper.getPageSize());
         }
         DbPageRows<T> dbPageRows = new DbPageRows<>(wrapper.getPageIndex(), wrapper.getPageSize());
-        String selectSql = getFullSelectSql(wrapper.getEntityClass(), dbPageRows, wrapper);
+        String selectSql = getFullSelectSql(wrapper, dbPageRows);
         buildPageResult(wrapper.getEntityClass(), selectSql, null, dbPageRows, wrapper.getParamValues().toArray());
         return dbPageRows;
     }
@@ -132,38 +132,35 @@ public class JdbcAction extends AbstractSqlExecutor {
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> List<T> selectList(ConditionWrapper<T> wrapper) throws Exception {
-        String selectSql = getFullSelectSql(wrapper.getEntityClass(), null, wrapper);
+        String selectSql = getFullSelectSql(wrapper);
         return selectBySql(wrapper.getEntityClass(), selectSql, wrapper.getParamValues().toArray());
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> T selectOneByCondition(ConditionWrapper<T> wrapper) throws Exception {
-        if(Objects.isNull(wrapper)) {
-            ExThrowsUtil.toCustom("condition cannot be empty");
-        }
-        String selectSql = getFullSelectSql(wrapper.getEntityClass(), null, wrapper);
+        String selectSql = getFullSelectSql(wrapper);
         return selectOneBySql(wrapper.getEntityClass(), selectSql, wrapper.getParamValues().toArray());
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> long selectCount(ConditionWrapper<T> wrapper) throws Exception {
-        String selectSql = getFullSelectSql(wrapper.getEntityClass(), null, wrapper);
+        String selectSql = getFullSelectSql(wrapper);
         return (long) selectObjBySql(String.format("select count(0) from (%s) xxx ", selectSql), wrapper.getParamValues().toArray());
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> Object selectObj(ConditionWrapper<T> wrapper) throws Exception {
-        String selectSql = getFullSelectSql(wrapper.getEntityClass(), null, wrapper);
+        String selectSql = getFullSelectSql(wrapper);
         return selectObjBySql(selectSql, wrapper.getParamValues().toArray());
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> List<Object> selectObjs(ConditionWrapper<T> wrapper) throws Exception {
-        String selectSql = getFullSelectSql(wrapper.getEntityClass(), null, wrapper);
+        String selectSql = getFullSelectSql(wrapper);
         return selectObjsBySql(selectSql, wrapper.getParamValues().toArray());
     }
 

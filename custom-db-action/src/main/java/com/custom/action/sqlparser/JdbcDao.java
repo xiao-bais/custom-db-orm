@@ -1,7 +1,7 @@
 package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractSqlExecutor;
-import com.custom.action.proxy.ParamsCheckProxy;
+import com.custom.action.proxy.JdbcActionProxy;
 import com.custom.action.wrapper.ConditionWrapper;
 import com.custom.action.wrapper.SFunction;
 import com.custom.comm.JudgeUtilsAx;
@@ -80,6 +80,8 @@ public class JdbcDao {
 
     /**
      * 根据条件查询一条记录
+     * @param condition and a.name = ?
+     * @param params "zhangsan"
      */
     public <T> T selectOne(Class<T> t, String condition, Object... params) throws Exception {
         return jdbcAction.selectOneByCondition(t, condition, params);
@@ -89,7 +91,6 @@ public class JdbcDao {
      * 条件构造器查询-分页查询
      */
     public <T> DbPageRows<T> selectPageRows(ConditionWrapper<T> wrapper) throws Exception {
-        JudgeUtilsAx.checkObjNotNull(wrapper);
         return jdbcAction.selectPageRows(wrapper);
     }
 
@@ -238,6 +239,6 @@ public class JdbcDao {
     private final AbstractSqlExecutor jdbcAction;
 
     public JdbcDao(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
-        jdbcAction = new ParamsCheckProxy<>(new JdbcAction(), dbDataSource, dbCustomStrategy).createProxy();
+        jdbcAction = new JdbcActionProxy<>(new JdbcAction(), dbDataSource, dbCustomStrategy).createProxy();
     }
 }

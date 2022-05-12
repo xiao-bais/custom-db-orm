@@ -1,19 +1,28 @@
-package com.home.customtest;
+package com.home;
 
+import com.custom.action.SqlConstants;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.TableInfoCache;
+import com.custom.action.wrapper.ConditionWrapper;
 import com.custom.action.wrapper.Conditions;
 import com.custom.comm.CustomUtil;
+import com.custom.comm.RexUtil;
+import com.custom.comm.page.DbPageRows;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
 import com.custom.proxy.InterfacesProxyExecutor;
 import com.home.customtest.dao.CustomTestDao;
 import com.home.customtest.entity.ChildStudent;
 import com.home.customtest.entity.Employee;
+import com.home.customtest.entity.Student;
 import com.home.customtest.entity.WorkEmp;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -62,14 +71,29 @@ public class DoMain {
         JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
         TableInfoCache.setUnderlineToCamel(true);
 
-        List<ChildStudent> childStudents = jdbcDao.selectList(Conditions.lambdaQuery(ChildStudent.class)
-                .eq(ChildStudent::getName, "张三11d")
-                .between(ChildStudent::getAge, 20, 25)
-                .like(ChildStudent::getAddress, "湖南")
-//                .select(ChildStudent::getAge)
-//                .select(x -> x.sum(ChildStudent::getAge, ChildStudent::getSumAge))
-//                .groupBy(ChildStudent::getAge)
-        );
+        String regexStr = RexUtil.replaceRex(SqlConstants.SELECT_TEMPLATE, RexUtil.custom_format, "columns", "aaaaa");
+        System.out.println("regexStr = " + regexStr);
+
+//        Map<String, String> data = new HashMap<>();
+//        data.put("name", "zhangs");
+//        data.put("code", "2222");
+//        String content = "恭喜${name}报名成功，请凭报名编号${code}到现场参加活动";
+//        String pattern = "\\$\\{(.+?)\\}";
+//        Pattern p = Pattern.compile(pattern);
+//        Matcher m = p.matcher(content);
+//        StringBuffer sb = new StringBuffer();
+//        while (m.find())
+//        {
+//            String key = m.group(1);
+//            String value = data.get(key);
+//            m.appendReplacement(sb, value == null ? "" : value);
+//        }
+//        m.appendTail(sb);
+//        System.out.println(sb.toString());
+
+
+
+
 
 
     }

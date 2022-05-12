@@ -23,7 +23,7 @@ import java.util.Objects;
  * @Desc：在执行之前做一些必要的检查，以减少异常的出现
  **/
 @SuppressWarnings("unchecked")
-public class ParamsCheckProxy<T> implements MethodInterceptor {
+public class JdbcActionProxy<T> implements MethodInterceptor {
 
     private final T obj;
 
@@ -31,7 +31,7 @@ public class ParamsCheckProxy<T> implements MethodInterceptor {
 
     private final DbCustomStrategy dbCustomStrategy;
 
-    public ParamsCheckProxy(T obj, DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
+    public JdbcActionProxy(T obj, DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         this.obj = obj;
         this.dbDataSource = dbDataSource;
         this.dbCustomStrategy = dbCustomStrategy;
@@ -54,7 +54,7 @@ public class ParamsCheckProxy<T> implements MethodInterceptor {
             return methodProxy.invokeSuper(o, objects);
         }
         if(JudgeUtilsAx.isEmpty(objects[0])) {
-            ExThrowsUtil.toNull("实体对象空掉了");
+            ExThrowsUtil.toNull("执行参数不能为空");
         }
 
         ExecuteMethod target = annotation.target();
