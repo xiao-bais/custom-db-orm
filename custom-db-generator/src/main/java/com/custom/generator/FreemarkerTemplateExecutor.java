@@ -15,9 +15,9 @@ import java.io.*;
  * @Date 2022/4/20 10:14
  * @Desc：
  **/
-public class FreemarkerTemplateStructs {
+public class FreemarkerTemplateExecutor {
 
-    private static final Logger logger = LoggerFactory.getLogger(FreemarkerTemplateStructs.class);
+    private static final Logger logger = LoggerFactory.getLogger(FreemarkerTemplateExecutor.class);
 
     private final static String TEMPLATE_PATH = "src/main/resources/templates";
 //    private final static String CLASS_PATH = "src/main/java/com/home/shop";

@@ -1,11 +1,9 @@
 package com.home.shop;
 
-import com.custom.action.sqlparser.JdbcDao;
-import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.comm.enums.KeyStrategy;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
-import com.custom.generator.FreemarkerTemplateStructs;
+import com.custom.generator.FreemarkerTemplateExecutor;
 import com.custom.generator.config.GlobalConfig;
 import com.custom.generator.config.PackageConfig;
 import com.custom.generator.config.TableConfig;
@@ -37,8 +35,8 @@ public class Action {
         dbCustomStrategy.setDeleteLogicValue(1);
         dbCustomStrategy.setNotDeleteLogicValue(0);
 
-        JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
-        TableInfoCache.setUnderlineToCamel(true);
+//        JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
+//        TableInfoCache.setUnderlineToCamel(true);
 
 
         GenerateCodeExecutor gce = new GenerateCodeExecutor(dbDataSource, dbCustomStrategy);
@@ -74,7 +72,7 @@ public class Action {
 
         gce.start();
 
-        FreemarkerTemplateStructs structs = new FreemarkerTemplateStructs();
+        FreemarkerTemplateExecutor structs = new FreemarkerTemplateExecutor();
         List<TableStructModel> tableStructModels = gce.getTableStructModels();
         for (TableStructModel tableStructModel : tableStructModels) {
             structs.buildEntity(tableStructModel);

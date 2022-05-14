@@ -71,9 +71,6 @@ public class DoMain {
         JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
         TableInfoCache.setUnderlineToCamel(true);
 
-        String regexStr = RexUtil.replaceRex(SqlConstants.SELECT_TEMPLATE, RexUtil.custom_format, "columns", "aaaaa");
-        System.out.println("regexStr = " + regexStr);
-
 //        Map<String, String> data = new HashMap<>();
 //        data.put("name", "zhangs");
 //        data.put("code", "2222");
