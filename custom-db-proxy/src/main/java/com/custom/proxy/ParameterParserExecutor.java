@@ -144,7 +144,7 @@ public class ParameterParserExecutor {
         int index = 0;
         // todo... 待优化 以正则表达式的格式来匹配参数的位置，以便替换
         while (true) {
-            int[] indexes = CustomUtil.replaceSqlRex(prepareSql, SymbolConstant.PREPARE_BEGIN_REX_1, SymbolConstant.PREPARE_END_REX, index);
+            int[] indexes = CustomUtil.replaceSqlRex(prepareSql, SymbolConstant.PREPARE_BEGIN_SHARP, SymbolConstant.PREPARE_END_REX, index);
             if (indexes == null) break;
 
             String prepareName = prepareSql.substring(indexes[0] + 2, indexes[1]);
@@ -205,13 +205,13 @@ public class ParameterParserExecutor {
      */
     private void replaceSqlSymbol() {
 
-        if(!prepareSql.contains(SymbolConstant.PREPARE_BEGIN_REX_2)) {
+        if(!prepareSql.contains(SymbolConstant.PREPARE_BEGIN_DOLLAR)) {
             return;
         }
         // todo... 待优化 以正则表达式的格式来匹配参数的位置，以便替换
         int index = 0;
         while (true){
-            int[] indexes = CustomUtil.replaceSqlRex(prepareSql, SymbolConstant.PREPARE_BEGIN_REX_2, SymbolConstant.PREPARE_END_REX, index);
+            int[] indexes = CustomUtil.replaceSqlRex(prepareSql, SymbolConstant.PREPARE_BEGIN_DOLLAR, SymbolConstant.PREPARE_END_REX, index);
             if (indexes == null) break;
             String name = prepareSql.substring(indexes[0] + 2, indexes[1]);
             Object paramName = paramsMap.get(String.format(sign, name));

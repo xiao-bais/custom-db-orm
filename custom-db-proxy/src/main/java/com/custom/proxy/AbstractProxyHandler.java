@@ -1,6 +1,6 @@
 package com.custom.proxy;
 
-import com.custom.jdbc.SqlExecuteAction;
+import com.custom.jdbc.ExecuteSqlHandler;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -15,7 +15,7 @@ public abstract class AbstractProxyHandler {
     /**
      * jdbc执行对象
      */
-    private SqlExecuteAction executeAction;
+    private ExecuteSqlHandler executeAction;
     /**
      * 方法参数
      */
@@ -44,11 +44,11 @@ public abstract class AbstractProxyHandler {
      */
     protected abstract Object execute();
 
-    protected SqlExecuteAction getExecuteAction() {
+    protected ExecuteSqlHandler getExecuteAction() {
         return executeAction;
     }
 
-    protected void setExecuteAction(SqlExecuteAction executeAction) {
+    protected void setExecuteAction(ExecuteSqlHandler executeAction) {
         this.executeAction = executeAction;
     }
 

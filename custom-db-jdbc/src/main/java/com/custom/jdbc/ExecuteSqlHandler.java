@@ -20,14 +20,14 @@ import java.util.*;
  * @Version 1.0
  * @Description SqlExecuteHandler
  */
-public class SqlExecuteAction extends DbConnection {
+public class ExecuteSqlHandler extends DbConnection {
 
     private final Connection conn;
     private PreparedStatement statement = null;
     private ResultSet resultSet = null;
     private final DbCustomStrategy dbCustomStrategy;
 
-    public SqlExecuteAction(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
+    public ExecuteSqlHandler(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         super(dbDataSource);
         this.conn = super.getConnection();
         this.dbCustomStrategy = dbCustomStrategy;
@@ -76,16 +76,15 @@ public class SqlExecuteAction extends DbConnection {
         }
     }
 
-
     /**
      * 通用查询（Collection）
      */
     @SuppressWarnings("unchecked")
-    public <T> List<T> query(Class<T> clazz, boolean outFlag, String sql, Object... params) throws Exception {
+    public <T> List<T> query(Class<T> clazz, boolean sqlOutPrint, String sql, Object... params) throws Exception {
         Map<String, Object> map;
         List<T> list = new ArrayList<>();
         try {
-            statementQuery(sql, outFlag, params);
+            statementQuery(sql, sqlOutPrint, params);
             resultSet = statement.executeQuery();
             ResultSetMetaData metaData = resultSet.getMetaData();
             while (resultSet.next()) {
@@ -95,6 +94,7 @@ public class SqlExecuteAction extends DbConnection {
                 }else {
                     map = new HashMap<>();
                     getResultMap(map, metaData);
+
                     t = JSONObject.parseObject(JSONObject.toJSONString(map), clazz);
                 }
                 list.add(t);

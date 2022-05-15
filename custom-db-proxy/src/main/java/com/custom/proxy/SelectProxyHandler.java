@@ -2,7 +2,7 @@ package com.custom.proxy;
 
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.comm.exceptions.ExThrowsUtil;
-import com.custom.jdbc.SqlExecuteAction;
+import com.custom.jdbc.ExecuteSqlHandler;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -15,10 +15,10 @@ import java.util.Objects;
  */
 public class SelectProxyHandler extends AbstractProxyHandler {
 
-    protected SelectProxyHandler(SqlExecuteAction sqlExecuteAction, Object[] methodParams,
-                              String prepareSql, Method method) {
+    protected SelectProxyHandler(ExecuteSqlHandler executeSqlHandler, Object[] methodParams,
+                                 String prepareSql, Method method) {
 
-        super.setExecuteAction(sqlExecuteAction);
+        super.setExecuteAction(executeSqlHandler);
         super.setMethodParams(methodParams);
         super.setPrepareSql(prepareSql);
         super.setMethod(method);

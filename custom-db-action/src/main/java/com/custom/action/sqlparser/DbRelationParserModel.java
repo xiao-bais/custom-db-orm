@@ -22,8 +22,6 @@ public class DbRelationParserModel<T> extends AbstractTableModel<T> {
 
     private String joinAlias;
 
-    private boolean underlineToCamel;
-
     private Field field;
 
     private String condition;
@@ -47,7 +45,6 @@ public class DbRelationParserModel<T> extends AbstractTableModel<T> {
         }else {
             this.column = annotation.field();
         }
-        this.underlineToCamel = underlineToCamel;
         this.field = field;
         this.joinAlias = annotation.joinAlias();
         this.joinStyle = annotation.joinStyle();
@@ -86,11 +83,6 @@ public class DbRelationParserModel<T> extends AbstractTableModel<T> {
     @Override
     protected String getSelectFieldSql() {
         return String.format("%s.%s %s", this.joinAlias, this.column, this.fieldName);
-    }
-
-    @Override
-    protected String getSelectFieldSql(String column) {
-        return String.format("%s %s", column, this.fieldName);
     }
 
 

@@ -31,7 +31,7 @@ public class Student {
     @DbField("nick_code")
     private String nickName;
 
-    @DbField
+    @DbField(nullToEmpty = true, wrapperColumn = "concat(a.password, 'aaa')")
     private String password;
 
     @DbField

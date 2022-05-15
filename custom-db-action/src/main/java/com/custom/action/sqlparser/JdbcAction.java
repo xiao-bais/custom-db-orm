@@ -11,7 +11,7 @@ import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.page.DbPageRows;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
-import com.custom.jdbc.SqlExecuteAction;
+import com.custom.jdbc.ExecuteSqlHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +29,7 @@ public class JdbcAction extends AbstractSqlExecutor {
 
     public JdbcAction(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         // 配置sql执行器
-        this.setSqlExecuteAction(new SqlExecuteAction(dbDataSource, dbCustomStrategy));
+        this.setSqlExecuteAction(new ExecuteSqlHandler(dbDataSource, dbCustomStrategy));
         // 配置sql执行策略
         this.setDbCustomStrategy(dbCustomStrategy);
         // 初始化逻辑删除策略
@@ -52,22 +52,19 @@ public class JdbcAction extends AbstractSqlExecutor {
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, String orderBy, int pageIndex, int pageSize, Object... params) throws Exception {
+    public <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, int pageIndex, int pageSize, Object... params) throws Exception {
         DbPageRows<T> dbPageRows = new DbPageRows<>(pageIndex, pageSize);
-        return selectPageRows(t, condition, orderBy, dbPageRows, params);
+        return selectPageRows(t, condition, dbPageRows, params);
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, String orderBy, DbPageRows<T> dbPageRows, Object... params) throws Exception {
+    public <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, DbPageRows<T> dbPageRows, Object... params) throws Exception {
         if(dbPageRows == null) {
             dbPageRows = new DbPageRows<>();
         }
         HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
         String finalCondition = checkConditionAndLogicDeleteSql(sqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
-        if (JudgeUtilsAx.isNotEmpty(orderBy)) {
-            finalCondition += SymbolConstant.ORDER_BY + orderBy;
-        }
         buildPageResult(t, sqlBuilder.buildSql() + finalCondition, condition, dbPageRows, params);
         return dbPageRows;
     }
@@ -213,20 +210,20 @@ public class JdbcAction extends AbstractSqlExecutor {
 
     @Override
     @CheckExecute(target = ExecuteMethod.INSERT)
-    public <T> int insert(T t, boolean isGeneratedKey) throws Exception {
+    public <T> int insert(T t) throws Exception {
         HandleInsertSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.INSERT);
         String insertSql = sqlBuilder.buildSql();
         DbKeyParserModel<T> keyParserModel = sqlBuilder.getKeyParserModel();
-        return executeInsert(insertSql, Collections.singletonList(t), isGeneratedKey, keyParserModel.getKey(), keyParserModel.getType(), sqlBuilder.getSqlParams().toArray());
+        return executeInsert(insertSql, Collections.singletonList(t), true, keyParserModel.getKey(), keyParserModel.getType(), sqlBuilder.getSqlParams().toArray());
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.INSERT)
-    public <T> int insert(List<T> ts, boolean isGeneratedKey) throws Exception {
+    public <T> int insert(List<T> ts) throws Exception {
         HandleInsertSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(ts, ExecuteMethod.INSERT);
         String insertSql = sqlBuilder.buildSql();
         DbKeyParserModel<T> keyParserModel = sqlBuilder.getKeyParserModel();
-        return executeInsert(insertSql, ts, isGeneratedKey, keyParserModel.getKey(), keyParserModel.getType(), sqlBuilder.getSqlParams().toArray());
+        return executeInsert(insertSql, ts, true, keyParserModel.getKey(), keyParserModel.getType(), sqlBuilder.getSqlParams().toArray());
     }
 
     @Override
@@ -274,12 +271,9 @@ public class JdbcAction extends AbstractSqlExecutor {
 
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
-    public <T> long save(T t) throws Exception {
-        long update = updateByKey(t);
-        if (update == 0) {
-            update = insert(t, false);
-        }
-        return update;
+    public <T> long save(T entity) throws Exception {
+        TableSqlBuilder<T> sqlBuilder = getUpdateEntityModelCache(Collections.singletonList(entity));
+        return Objects.nonNull(sqlBuilder.getDbKeyVal()) ? updateByKey(entity) : insert(entity);
     }
 
     @Override

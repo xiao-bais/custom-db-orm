@@ -28,17 +28,22 @@ public class RexUtil {
     /**
      * 匹配mybatis参数格式
      */
-    public final static String sql_param = "\\#\\{(.+?)\\}";;
+    public final static String sql_param = "\\#\\{(.+?)\\}";
+
+    /**
+     * 匹配sql-ifnull函数
+     */
+    public final static String sql_if_null = "ifnull(.+?)$";
 
     /**
      * 匹配自定义格式化设定
      * this is {name} -> this is zhangsan
      */
-    public final static String custom_format = "\\{(.+?)\\}";;
+    public final static String custom_format = "\\{(.+?)\\}";
 
 
     /**
-     * 匹配正则
+     * 返回第一个满足正则条件的字符串
      */
     public static String regexStr(String str, String regex) {
         Pattern pattern= Pattern.compile(regex);
@@ -50,7 +55,7 @@ public class RexUtil {
     }
 
     /**
-     * 替换匹配正则的字符串(替换首次出现的字符)
+     * 替换匹配正则的字符串(只替换首次出现的)
      * 例: this is {name} -> this is {zhangsan}
      */
     public static String replaceStr(String str, String regex, String replaceStr) {
@@ -63,7 +68,7 @@ public class RexUtil {
     }
 
     /**
-     * 替换匹配正则的字符串(替换首次首先的字符)
+     * 替换匹配正则的字符串(全部替换)
      * 例: this is {name} -> this is zhangsan
      */
     public static String replaceStr(String str, String regex, String oldStr, String replaceStr) {

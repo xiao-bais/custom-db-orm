@@ -80,6 +80,7 @@ public class CustomUtil {
                 || Date.class.equals(cls);
     }
 
+
     /**
     * 是否是主键的允许类型
     */
@@ -100,17 +101,7 @@ public class CustomUtil {
     }
 
     /**
-     * example : a.name replace the a.`name`
-     */
-    public static String getJoinFieldStr(String field) {
-        int index = field.indexOf(".");
-        String fieldName = field.substring(index + SymbolConstant.DEFAULT_ONE);
-        String alias = field.substring(SymbolConstant.DEFAULT_ZERO, index + SymbolConstant.DEFAULT_ONE);
-        return String.format("%s`%s`", alias, fieldName);
-    }
-
-    /**
-     * 获取字段的值
+     * 获取字java属性值
      */
     public static <T> Object getFieldValue(T x, String fieldName) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
         JudgeUtilsAx.checkObjNotNull(x, fieldName);

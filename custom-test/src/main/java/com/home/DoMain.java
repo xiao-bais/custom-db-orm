@@ -71,26 +71,8 @@ public class DoMain {
         JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
         TableInfoCache.setUnderlineToCamel(true);
 
-//        Map<String, String> data = new HashMap<>();
-//        data.put("name", "zhangs");
-//        data.put("code", "2222");
-//        String content = "恭喜${name}报名成功，请凭报名编号${code}到现场参加活动";
-//        String pattern = "\\$\\{(.+?)\\}";
-//        Pattern p = Pattern.compile(pattern);
-//        Matcher m = p.matcher(content);
-//        StringBuffer sb = new StringBuffer();
-//        while (m.find())
-//        {
-//            String key = m.group(1);
-//            String value = data.get(key);
-//            m.appendReplacement(sb, value == null ? "" : value);
-//        }
-//        m.appendTail(sb);
-//        System.out.println(sb.toString());
-
-
-
-
+        Student student = jdbcDao.selectOneByKey(Student.class, 1);
+        System.out.println("student = " + student);
 
 
     }

@@ -1,5 +1,7 @@
 package com.custom.comm.annotations;
 
+import com.custom.comm.SymbolConstant;
+
 import java.lang.annotation.*;
 
 /**
@@ -18,4 +20,17 @@ public @interface DbMapper {
      * value=emp.name
      */
     String value();
+
+    /**
+     * 查询时若当前字段为字符类型，是否null转为空字符
+     * @return nullToEmpty
+     */
+    boolean nullToEmpty() default false;
+
+    /**
+     * 查询时，指定查询字段的包装
+     * 例：concat('user-', tp.name) columnName
+     * @return wrapperColumn
+     */
+    String wrapperColumn() default SymbolConstant.EMPTY;
 }

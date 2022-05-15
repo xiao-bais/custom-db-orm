@@ -164,46 +164,46 @@ public class JdbcDao {
     /**
      * 插入一条记录(默认在实体中set新的主键)
      */
-    public <T> long insert(T t) throws Exception {
-        return jdbcAction.insert(t, true);
+    public <T> long insert(T entity) throws Exception {
+        return jdbcAction.insert(entity);
     }
 
     /**
      * 插入多条记录(默认在实体中set新的主键)
      */
-    public <T> int insertBatch(List<T> tList) throws Exception {
-        return jdbcAction.insert(tList, true);
+    public <T> int insertBatch(List<T> entityList) throws Exception {
+        return jdbcAction.insert(entityList);
     }
 
     /* ----------------------------------------------------------------update---------------------------------------------------------------- */
 
     /**
-     * 根据主键修改一条记录（updateFields：指定要修改的表字段  为空则修改全部不为空的字段）
+     * 根据主键修改一条记录（updateFields：指定要修改的表字段，否则则修改全部不为空的字段）
      */
     @SafeVarargs
-    public final <T> int updateByKey(T t, SFunction<T, ?>... updateColumns) throws Exception {
-        return jdbcAction.updateByKey(t, updateColumns);
+    public final <T> int updateByKey(T entity, SFunction<T, ?>... updateColumns) throws Exception {
+        return jdbcAction.updateByKey(entity, updateColumns);
     }
 
     /**
      * 根据主键修改一条记录
      */
-    public <T> int updateByKey(T t) throws Exception {
-        return jdbcAction.updateByKey(t);
+    public <T> int updateByKey(T entity) throws Exception {
+        return jdbcAction.updateByKey(entity);
     }
 
     /**
      * 根据条件修改一条记录
      */
-    public <T> int updateByCondition(T t, ConditionWrapper<T> wrapper) throws Exception {
-        return jdbcAction.updateByCondition(t, wrapper);
+    public <T> int updateByCondition(T entity, ConditionWrapper<T> wrapper) throws Exception {
+        return jdbcAction.updateByCondition(entity, wrapper);
     }
 
     /**
      * 根据条件修改一条记录
      */
-    public <T> int updateByCondition(T t, String condition, Object... params) throws Exception {
-        return jdbcAction.updateByCondition(t, condition, params);
+    public <T> int updateByCondition(T entity, String condition, Object... params) throws Exception {
+        return jdbcAction.updateByCondition(entity, condition, params);
     }
 
     /* ----------------------------------------------------------------common---------------------------------------------------------------- */
@@ -211,8 +211,8 @@ public class JdbcDao {
     /**
      * 保存一条记录（根据主键添加或修改）
      */
-    public <T> long save(T t) throws Exception {
-        return jdbcAction.save(t);
+    public <T> long save(T entity) throws Exception {
+        return jdbcAction.save(entity);
     }
 
     /**

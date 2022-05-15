@@ -10,7 +10,7 @@ public class SqlConstants {
     /**
      * 单表sql查询模板
      */
-    public final static String SELECT_TEMPLATE = "select {columns} {columns} \nfrom {table} {alias}";
+    public final static String SELECT_TEMPLATE = "select {columns} \nfrom {table} {alias}";
 
     /**
      * 表关联
@@ -36,6 +36,16 @@ public class SqlConstants {
      * 插入sql模板
      */
     public final static String INSERT_TEMPLATE = "insert into {table}({columns}) values {addValues}";
+
+    /**
+     * 添加表字段(添加在xx字段之后)
+     */
+    public final static String ADD_TABLE_AFTER_COLUMN = "alter table {table} add {columnInfo} after {columnAfter}";
+
+    /**
+     * 添加表字段(加在首位)
+     */
+    public final static String ADD_TABLE_FIRST_COLUMN = "alter table {table} add {columnInfo} first";
 
 
 

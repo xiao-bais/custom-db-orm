@@ -13,7 +13,7 @@ import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
-import com.custom.jdbc.SqlExecuteAction;
+import com.custom.jdbc.ExecuteSqlHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.*;
@@ -38,10 +38,10 @@ public class InterfacesProxyExecutor implements InvocationHandler {
     }
 
     private String targetClassName;
-    private final SqlExecuteAction executeAction;
+    private final ExecuteSqlHandler executeAction;
 
     public InterfacesProxyExecutor(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
-        executeAction = new SqlExecuteAction(dbDataSource, dbCustomStrategy);
+        executeAction = new ExecuteSqlHandler(dbDataSource, dbCustomStrategy);
     }
 
 
@@ -112,7 +112,7 @@ public class InterfacesProxyExecutor implements InvocationHandler {
         String methodName = String.format(" %s.%s() ", method.getDeclaringClass().getName(), method.getName());
         checkIllegalParam(methodName, order, sql);
 
-        if(sql.contains(SymbolConstant.PREPARE_BEGIN_REX_1) && order) {
+        if(sql.contains(SymbolConstant.PREPARE_BEGIN_SHARP) && order) {
             ExThrowsUtil.toCustom(methodName + "方法注解上建议使用 isOrder = false");
         }
         if(sql.contains(SymbolConstant.QUEST) && !order) {

@@ -15,11 +15,33 @@ import java.lang.reflect.Field;
  **/
 public class DbJoinTableParserModel<T> extends AbstractTableModel<T> {
 
+    /**
+     * 关联字段属性
+     */
     private Field field;
 
+    /**
+     * 关联表字段
+     */
     private String joinName;
 
+    /**
+     * 关联字段属性名称
+     */
     private String fieldName;
+
+    /**
+     * 查询时，指定查询字段的包装
+     * 例：concat('user-', a.name) columnName
+     */
+    private String wrapperColumn;
+
+    /**
+     * 查询时若当前字段为字符串类型，是否null转为空字符串
+     */
+    private Boolean nullToEmpty = false;
+
+
 
     public DbJoinTableParserModel(Field field) {
         initJoinName(field);
@@ -33,6 +55,8 @@ public class DbJoinTableParserModel<T> extends AbstractTableModel<T> {
     private void initJoinName(Field field) {
         DbMapper dbMap = field.getAnnotation(DbMapper.class);
         this.joinName = JudgeUtilsAx.isEmpty(dbMap.value()) ? field.getName() : dbMap.value();
+        this.wrapperColumn = dbMap.wrapperColumn();
+        this.nullToEmpty = dbMap.nullToEmpty();
         if(!joinName.contains(SymbolConstant.POINT)) {
             return;
         }
@@ -94,8 +118,7 @@ public class DbJoinTableParserModel<T> extends AbstractTableModel<T> {
         return String.format("%s %s", joinName, fieldName);
     }
 
-    @Override
-    protected String getSelectFieldSql(String column) {
-        return String.format("%s %s", column, fieldName);
+    public Boolean getNullToEmpty() {
+        return nullToEmpty;
     }
 }

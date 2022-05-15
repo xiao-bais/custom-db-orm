@@ -14,7 +14,7 @@ import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.page.DbPageRows;
 import com.custom.configuration.DbCustomStrategy;
-import com.custom.jdbc.SqlExecuteAction;
+import com.custom.jdbc.ExecuteSqlHandler;
 
 import java.io.Serializable;
 import java.sql.SQLException;
@@ -33,12 +33,15 @@ public abstract class AbstractSqlExecutor {
 
     /*--------------------------------------- select ---------------------------------------*/
     public abstract <T> List<T> selectList(Class<T> t, String condition, String orderBy, Object... params) throws Exception;
-    public abstract <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, String orderBy, int pageIndex, int pageSize, Object... params) throws Exception;
-    public abstract <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, String orderBy, DbPageRows<T> dbPageRows, Object... params) throws Exception;
+    public abstract <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, int pageIndex, int pageSize, Object... params) throws Exception;
+    public abstract <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, DbPageRows<T> dbPageRows, Object... params) throws Exception;
     public abstract <T> T selectOneByKey(Class<T> t, Object key) throws Exception;
     public abstract <T> List<T> selectBatchByKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception;
     public abstract <T> T selectOneByCondition(Class<T> t, String condition, Object... params) throws Exception;
 
+    /**
+     * ConditionWrapper(条件构造器)
+     */
     public abstract <T> DbPageRows<T> selectPageRows(ConditionWrapper<T> wrapper) throws Exception;
     public abstract <T> List<T> selectList(ConditionWrapper<T> wrapper) throws Exception;
     public abstract <T> T selectOneByCondition(ConditionWrapper<T> wrapper) throws Exception;
@@ -54,8 +57,8 @@ public abstract class AbstractSqlExecutor {
     public abstract <T> int deleteByCondition(ConditionWrapper<T> wrapper) throws Exception;
 
     /*--------------------------------------- insert ---------------------------------------*/
-    public abstract <T> int insert(T t, boolean isGeneratedKey) throws Exception;
-    public abstract <T> int insert(List<T> tList, boolean isGeneratedKey) throws Exception;
+    public abstract <T> int insert(T t) throws Exception;
+    public abstract <T> int insert(List<T> tList) throws Exception;
 
     /*--------------------------------------- update ---------------------------------------*/
     public abstract <T> int updateByKey(T t) throws Exception;
@@ -69,7 +72,7 @@ public abstract class AbstractSqlExecutor {
     public abstract void dropTables(Class<?>... arr) throws Exception;
 
 
-    private SqlExecuteAction sqlExecuteAction;
+    private ExecuteSqlHandler executeSqlHandler;
     private DbCustomStrategy dbCustomStrategy;
     private String logicField = SymbolConstant.EMPTY;
     private String logicDeleteUpdateSql = SymbolConstant.EMPTY;
@@ -112,7 +115,7 @@ public abstract class AbstractSqlExecutor {
              return existsLogic;
         }
         String existSql = String.format("select count(*) count from information_schema.columns where table_name = '%s' and column_name = '%s'", tableName, logicField);
-        long count = sqlExecuteAction.executeExist(existSql);
+        long count = executeSqlHandler.executeExist(existSql);
         TableInfoCache.setTableLogic(tableName, count > 0);
         return count > 0;
     }
@@ -141,14 +144,14 @@ public abstract class AbstractSqlExecutor {
     * 纯sql查询集合
     */
     public <T> List<T> selectBySql(Class<T> t, String sql, Object... params) throws Exception {
-        return sqlExecuteAction.query(t, true, sql, params);
+        return executeSqlHandler.query(t, true, sql, params);
     }
 
     /**
     * 纯sql查询单条记录
     */
     public <T> T selectOneBySql(Class<T> t, String sql, Object... params) throws Exception {
-        List<T> queryList = sqlExecuteAction.query(t, true, sql, params);
+        List<T> queryList = executeSqlHandler.query(t, true, sql, params);
         int size = queryList.size();
         if (size == 0) {
             return null;
@@ -165,7 +168,7 @@ public abstract class AbstractSqlExecutor {
         if (JudgeUtilsAx.isEmpty(sql)) {
             ExThrowsUtil.toCustom("The Sql to be Not Empty");
         }
-        return sqlExecuteAction.selectObjSql(sql, params);
+        return executeSqlHandler.selectObjSql(sql, params);
     }
 
     /**
@@ -175,7 +178,7 @@ public abstract class AbstractSqlExecutor {
         if (JudgeUtilsAx.isEmpty(sql)) {
             ExThrowsUtil.toNull("The Sql to be Not Empty");
         }
-        return sqlExecuteAction.selectObjsSql(sql, params);
+        return executeSqlHandler.selectObjsSql(sql, params);
     }
 
     /**
@@ -185,7 +188,7 @@ public abstract class AbstractSqlExecutor {
         if (JudgeUtilsAx.isEmpty(sql)) {
             ExThrowsUtil.toNull("The Sql to be Not Empty");
         }
-        return sqlExecuteAction.executeUpdate(sql, params);
+        return executeSqlHandler.executeUpdate(sql, params);
     }
 
     /**
@@ -195,21 +198,21 @@ public abstract class AbstractSqlExecutor {
         if (JudgeUtilsAx.isEmpty(sql)) {
             ExThrowsUtil.toNull("The Sql to be Not Empty");
         }
-        return sqlExecuteAction.query(t, false, sql, params);
+        return executeSqlHandler.query(t, false, sql, params);
     }
 
     /**
     * 创建/删除表
     */
     public void execTable(String sql) throws SQLException {
-        sqlExecuteAction.executeTableSql(sql);
+        executeSqlHandler.executeTableSql(sql);
     }
 
     /**
      * 查询该表是否存在
      */
     public boolean hasTableInfo(String sql) throws Exception {
-        return sqlExecuteAction.executeExist(sql) > 0L;
+        return executeSqlHandler.executeExist(sql) > 0L;
     }
 
     /**
@@ -219,7 +222,7 @@ public abstract class AbstractSqlExecutor {
         if (JudgeUtilsAx.isEmpty(sql)) {
             ExThrowsUtil.toNull("The Sql to be Not Empty");
         }
-        return isGeneratedKey ? sqlExecuteAction.executeInsert(obj, sql, key, keyType, params) : sqlExecuteAction.executeUpdate(sql, params);
+        return isGeneratedKey ? executeSqlHandler.executeInsert(obj, sql, key, keyType, params) : executeSqlHandler.executeUpdate(sql, params);
     }
 
 
@@ -228,7 +231,7 @@ public abstract class AbstractSqlExecutor {
      */
     protected <T> TableSqlBuilder<T> getEntityModelCache(Class<T> t) {
         TableSqlBuilder<T> tableModel = TableInfoCache.getTableModel(t);
-        tableModel.setSqlExecuteAction(sqlExecuteAction);
+        tableModel.setSqlExecuteAction(executeSqlHandler);
         return tableModel;
     }
 
@@ -240,7 +243,7 @@ public abstract class AbstractSqlExecutor {
         TableSqlBuilder<T> tableModel = tableModelCache.clone();
         tableModel.setEntity(tList.get(0));
         tableModel.setList(tList);
-        tableModel.setSqlExecuteAction(sqlExecuteAction);
+        tableModel.setSqlExecuteAction(executeSqlHandler);
         return tableModel;
     }
 
@@ -323,12 +326,12 @@ public abstract class AbstractSqlExecutor {
 
 
 
-    public SqlExecuteAction getSqlExecuteAction() {
-        return sqlExecuteAction;
+    public ExecuteSqlHandler getSqlExecuteAction() {
+        return executeSqlHandler;
     }
 
-    public void setSqlExecuteAction(SqlExecuteAction sqlExecuteAction) {
-        this.sqlExecuteAction = sqlExecuteAction;
+    public void setSqlExecuteAction(ExecuteSqlHandler executeSqlHandler) {
+        this.executeSqlHandler = executeSqlHandler;
     }
 
     public DbCustomStrategy getDbCustomStrategy() {

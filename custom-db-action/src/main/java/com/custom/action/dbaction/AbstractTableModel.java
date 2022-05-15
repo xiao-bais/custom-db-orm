@@ -1,5 +1,6 @@
 package com.custom.action.dbaction;
 
+import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.comm.RexUtil;
 import com.custom.comm.SymbolConstant;
@@ -47,30 +48,7 @@ public abstract class AbstractTableModel<T> {
      * fieldName: 字段名称
      */
     protected Object getFieldValue(T x, String fieldName) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-        JudgeUtilsAx.checkObjNotNull(x, fieldName);
-        Object value;
-        String firstLetter;
-        String getter;
-        try {
-            if(RexUtil.hasRegex(fieldName, RexUtil.back_quotes)) {
-                fieldName = RexUtil.regexStr(fieldName, RexUtil.back_quotes);
-            }
-            if (Objects.isNull(fieldName)) return null;
-            firstLetter = fieldName.substring(0, 1).toUpperCase();
-            getter = SymbolConstant.GETTER + firstLetter + fieldName.substring(1);
-            Method method = x.getClass().getMethod(getter);
-            value = method.invoke(x);
-        }catch (NoSuchMethodException e){
-            try {
-                firstLetter = fieldName.substring(0, 1).toUpperCase();
-                Method method = x.getClass().getMethod(SymbolConstant.IS + firstLetter + fieldName.substring(1));
-                value = method.invoke(x);
-            }catch (NoSuchMethodException v) {
-                Method method = x.getClass().getMethod(fieldName);
-                value = method.invoke(x);
-            }
-        }
-        return value;
+       return CustomUtil.getFieldValue(x, fieldName);
     }
 
     /**
@@ -93,6 +71,5 @@ public abstract class AbstractTableModel<T> {
     protected abstract void setValue(Object value);
     public abstract String getFieldSql();
     protected abstract String getSelectFieldSql();
-    protected abstract String getSelectFieldSql(String column);
 
 }

@@ -1,10 +1,8 @@
 package com.custom.action.sqlparser;
 
+import com.custom.action.SqlUtil;
 import com.custom.action.dbaction.AbstractTableModel;
-import com.custom.comm.CustomUtil;
-import com.custom.comm.GlobalDataHandler;
-import com.custom.comm.JudgeUtilsAx;
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.*;
 import com.custom.comm.annotations.DbField;
 import com.custom.comm.enums.DbType;
 import org.slf4j.Logger;
@@ -33,6 +31,17 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     * sql列名
     */
     private String column;
+
+    /**
+     * 查询时，指定查询字段的包装
+     * 例：concat('user-', a.name) columnName
+     */
+    private String wrapperColumn;
+
+    /**
+     * 查询时若当前字段为字符串类型，是否null转为空字符串
+     */
+    private Boolean nullToEmpty = false;
 
     /**
     * sql字段类型
@@ -109,6 +118,8 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
         if(GlobalDataHandler.hasSqlKeyword(column)) {
             this.column = String.format("`%s`", column);
         }
+        this.wrapperColumn = annotation.wrapperColumn();
+        this.nullToEmpty = annotation.nullToEmpty();
         this.isNull = annotation.isNull();
         this.desc = annotation.desc();
         this.dbType = annotation.dataType() == DbType.DbVarchar ? DbType.getDbMediaType(field.getType()) : annotation.dataType();
@@ -159,11 +170,15 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
 
     @Override
     public String getSelectFieldSql() {
-        return String.format("%s.%s %s", this.getAlias(), this.column, this.fieldName);
-    }
-
-    @Override
-    protected String getSelectFieldSql(String column) {
+        boolean hasIfNull = RexUtil.hasRegex(this.wrapperColumn, RexUtil.sql_if_null);
+        if (JudgeUtilsAx.isNotEmpty(this.wrapperColumn)) {
+            if (this.nullToEmpty && !hasIfNull) {
+                return SqlUtil.ifNull(this.wrapperColumn, this.fieldName);
+            }
+            return String.format("%s %s", this.wrapperColumn, this.fieldName);
+        }
+        String selectColumn = String.format("%s.%s", this.getAlias(), this.column);
+        String column = this.nullToEmpty ? SqlUtil.ifNull(selectColumn) : selectColumn;
         return String.format("%s %s", column, this.fieldName);
     }
 
@@ -191,5 +206,13 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
 
     public void setType(Class<?> type) {
         this.type = type;
+    }
+
+    public String getWrapperColumn() {
+        return wrapperColumn;
+    }
+
+    public Boolean getNullToEmpty() {
+        return nullToEmpty;
     }
 }

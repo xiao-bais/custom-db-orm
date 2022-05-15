@@ -8,7 +8,7 @@ import com.custom.comm.annotations.*;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.configuration.DbConnection;
-import com.custom.jdbc.SqlExecuteAction;
+import com.custom.jdbc.ExecuteSqlHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,7 +105,7 @@ public class TableSqlBuilder<T> implements Cloneable {
     /**
      * sql执行对象（jdbc）
      */
-    private SqlExecuteAction sqlExecuteAction;
+    private ExecuteSqlHandler executeSqlHandler;
 
 
     /**
@@ -443,7 +443,7 @@ public class TableSqlBuilder<T> implements Cloneable {
             // 初始化
             initializeSqlBuilder(sqlBuilder);
             // 注入sql执行对象
-            sqlBuilder.setSqlExecuteAction(sqlExecuteAction);
+            sqlBuilder.setSqlExecuteAction(executeSqlHandler);
         }
     }
 
@@ -454,6 +454,16 @@ public class TableSqlBuilder<T> implements Cloneable {
         sqlBuilder.setLogicColumn(logicColumn);
         sqlBuilder.setLogicDeleteValue(logicDeleteValue);
         sqlBuilder.setLogicNotDeleteValue(logicNotDeleteValue);
+    }
+
+    /**
+     * 获取主键的值
+     */
+    public Object getDbKeyVal() {
+        if (Objects.nonNull(this.keyParserModel)) {
+            return this.keyParserModel.getValue();
+        }
+        return null;
     }
 
 
@@ -569,8 +579,8 @@ public class TableSqlBuilder<T> implements Cloneable {
         return columnMapper;
     }
 
-    public void setSqlExecuteAction(SqlExecuteAction sqlExecuteAction) {
-        this.sqlExecuteAction = sqlExecuteAction;
+    public void setSqlExecuteAction(ExecuteSqlHandler executeSqlHandler) {
+        this.executeSqlHandler = executeSqlHandler;
     }
 
     public AbstractSqlBuilder<T> getSqlBuilder() {
