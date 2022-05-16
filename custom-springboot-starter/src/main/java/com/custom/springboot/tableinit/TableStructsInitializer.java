@@ -3,9 +3,7 @@ package com.custom.springboot.tableinit;
 import com.custom.action.sqlparser.DbFieldParserModel;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableSqlBuilder;
-import com.custom.comm.ConvertUtil;
-import com.custom.comm.JudgeUtilsAx;
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.*;
 import com.custom.jdbc.ExecuteSqlHandler;
 import com.custom.springboot.scanner.CustomBeanScanner;
 import org.slf4j.Logger;
@@ -29,11 +27,13 @@ public class TableStructsInitializer {
     private final String[] packageScans;
     private final ExecuteSqlHandler sqlHandler;
     private final String dataBaseName;
+    private final List<String> addColumnSqlList;
+    private final List<String> addTableSqlList;
+
     private final static String SELECT_COLUMN_SQL = "SELECT COLUMN_NAME FROM `information_schema`.`COLUMNS` WHERE TABLE_NAME = '%s' AND TABLE_SCHEMA = '%s'";
     private final static String CREATE_COLUMN_AFTER_SQL = "ALTER TABLE `%s` add %s AFTER `%s`";
     private final static String CREATE_COLUMN_FIRST_SQL = "ALTER TABLE `%s` add %s FIRST";
-    private final List<String> addColumnSqlList;
-    private final List<String> addTableSqlList;
+
 
 
     public TableStructsInitializer(String[] packageScans, ExecuteSqlHandler sqlHandler) {
@@ -101,6 +101,9 @@ public class TableStructsInitializer {
 
         for (int i = 0; i < truthColumnList.size(); i++) {
             String currColumn = truthColumnList.get(i);
+            if (RexUtil.hasRegex(currColumn, RexUtil.back_quotes)) {
+                currColumn = RexUtil.regexStr(currColumn, RexUtil.back_quotes);
+            }
             if (columnList.contains(currColumn)) {
                 continue;
             }

@@ -30,8 +30,6 @@ public class CustomBeanInitializer implements InitializingBean, ApplicationConte
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        System.out.println("aaaaaaa");
-
         DbCustomStrategy strategy = applicationContext.getBean(DbCustomStrategy.class);
         DbDataSource dataSource = applicationContext.getBean(DbDataSource.class);
         if (Objects.isNull(strategy.getEntityPackageScans())) {
@@ -50,6 +48,5 @@ public class CustomBeanInitializer implements InitializingBean, ApplicationConte
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
-        System.out.println("111");
     }
 }

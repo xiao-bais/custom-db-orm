@@ -79,29 +79,6 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     private boolean isNull;
 
 
-    /**
-    * 构建创建表的sql语句
-    */
-    @Override
-    public String buildTableSql(){
-        String newColumn = this.column;
-        if (!RexUtil.hasRegex(this.column, RexUtil.back_quotes)) {
-            newColumn = String.format("`%s` ", this.column);
-        }
-        StringBuilder fieldSql = new StringBuilder(newColumn);
-        if(dbType == DbType.DbDate || dbType == DbType.DbDateTime)
-            fieldSql.append(dbType.getType()).append(" ");
-        else
-            fieldSql.append(dbType.getType())
-                    .append(SymbolConstant.BRACKETS_LEFT)
-                    .append(this.length)
-                    .append(SymbolConstant.BRACKETS_RIGHT).append(" ");
-
-        fieldSql.append(this.isNull ? "NULL" : "NOT NULL").append(" ");
-        fieldSql.append(String.format(" COMMENT '%s'", this.desc));
-        return fieldSql.toString();
-    }
-
     public DbFieldParserModel(){}
 
     public DbFieldParserModel(T t, Field field, String table, String alias, boolean underlineToCamel) {
@@ -154,6 +131,29 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
 
     public void setEntity(T entity) {
         this.entity = entity;
+    }
+
+    /**
+     * 构建创建表的sql语句
+     */
+    @Override
+    public String buildTableSql(){
+        String newColumn = this.column;
+        if (!RexUtil.hasRegex(this.column, RexUtil.back_quotes)) {
+            newColumn = String.format("`%s` ", this.column);
+        }
+        StringBuilder fieldSql = new StringBuilder(newColumn).append(" ");
+        if(dbType == DbType.DbDate || dbType == DbType.DbDateTime)
+            fieldSql.append(dbType.getType()).append(" ");
+        else
+            fieldSql.append(dbType.getType())
+                    .append(SymbolConstant.BRACKETS_LEFT)
+                    .append(this.length)
+                    .append(SymbolConstant.BRACKETS_RIGHT).append(" ");
+
+        fieldSql.append(this.isNull ? "NULL" : "NOT NULL").append(" ");
+        fieldSql.append(String.format(" COMMENT '%s'", this.desc));
+        return fieldSql.toString();
     }
 
     @Override

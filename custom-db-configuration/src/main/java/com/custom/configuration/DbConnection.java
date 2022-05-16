@@ -49,7 +49,7 @@ public class DbConnection {
         connection = (Connection) currMap.get(getConnKey(dbDataSource));
         if (null == connection) {
             initConnection(dbDataSource);
-            logger.info("dataSource Connection Successfully !");
+            logger.info("DataSource Connection Successfully !");
         }
         if (JudgeUtilsAx.isEmpty(dbDataSource.getDatabase())) {
             dbDataSource.setDatabase(CustomUtil.getDataBase(dbDataSource.getUrl()));
