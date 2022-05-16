@@ -54,6 +54,11 @@ public class DbCustomStrategy {
     */
     private boolean mapperScanEnable = false;
 
+    /**
+     * 扫描的实体类包
+     */
+    private String[] entityPackageScans;
+
 
     public boolean isMapperScanEnable() {
         return mapperScanEnable;
@@ -119,4 +124,11 @@ public class DbCustomStrategy {
         this.sqlOutPrintExecute = sqlOutPrintExecute;
     }
 
+    public String[] getEntityPackageScans() {
+        return entityPackageScans;
+    }
+
+    public void setEntityPackageScans(String[] entityPackageScans) {
+        this.entityPackageScans = entityPackageScans;
+    }
 }

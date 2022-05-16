@@ -1,6 +1,7 @@
 package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractTableModel;
+import com.custom.action.util.DbUtil;
 import com.custom.comm.GlobalDataHandler;
 import com.custom.comm.JudgeUtilsAx;
 import com.custom.comm.SymbolConstant;
@@ -21,7 +22,7 @@ public class DbJoinTableParserModel<T> extends AbstractTableModel<T> {
     private Field field;
 
     /**
-     * 关联表字段
+     * 关联表的查询字段
      */
     private String joinName;
 
@@ -39,7 +40,7 @@ public class DbJoinTableParserModel<T> extends AbstractTableModel<T> {
     /**
      * 查询时若当前字段为字符串类型，是否null转为空字符串
      */
-    private Boolean nullToEmpty = false;
+    private Boolean isNullToEmpty = false;
 
 
 
@@ -56,7 +57,7 @@ public class DbJoinTableParserModel<T> extends AbstractTableModel<T> {
         DbMapper dbMap = field.getAnnotation(DbMapper.class);
         this.joinName = JudgeUtilsAx.isEmpty(dbMap.value()) ? field.getName() : dbMap.value();
         this.wrapperColumn = dbMap.wrapperColumn();
-        this.nullToEmpty = dbMap.nullToEmpty();
+        this.isNullToEmpty = dbMap.isNullToEmpty();
         if(!joinName.contains(SymbolConstant.POINT)) {
             return;
         }
@@ -94,7 +95,7 @@ public class DbJoinTableParserModel<T> extends AbstractTableModel<T> {
     }
 
     @Override
-    protected String buildTableSql() {
+    public String buildTableSql() {
         throw new UnsupportedOperationException();
     }
 
@@ -115,10 +116,9 @@ public class DbJoinTableParserModel<T> extends AbstractTableModel<T> {
 
     @Override
     protected String getSelectFieldSql() {
+        if (JudgeUtilsAx.isNotEmpty(this.wrapperColumn)) {
+            return DbUtil.wrapperSqlColumn(this.wrapperColumn, this.fieldName, this.isNullToEmpty);
+        }
         return String.format("%s %s", joinName, fieldName);
-    }
-
-    public Boolean getNullToEmpty() {
-        return nullToEmpty;
     }
 }

@@ -1,6 +1,8 @@
 package com.custom.action.util;
 
 import com.custom.comm.CustomUtil;
+import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.RexUtil;
 import com.custom.comm.annotations.DbKey;
 import com.custom.comm.annotations.DbRelated;
 import com.custom.comm.enums.DbType;
@@ -44,6 +46,26 @@ public class DbUtil {
             if (field.isAnnotationPresent(DbKey.class)) return true;
         }
         return false;
+    }
+
+    /**
+     * 返回自定义包装的查询字段
+     */
+    public static String wrapperSqlColumn(String wrapperColumn, String fieldName, boolean isNullToEmpty) {
+        boolean hasIfNull = RexUtil.hasRegex(wrapperColumn, RexUtil.sql_if_null);
+        if (isNullToEmpty && !hasIfNull) {
+            return DbUtil.ifNull(wrapperColumn, fieldName);
+        }
+        return String.format("%s %s", wrapperColumn, fieldName);
+    }
+
+
+    public static String ifNull(String column) {
+        return String.format("ifnull(%s, '')", column);
+    }
+
+    public static String ifNull(String column, String fieldName) {
+        return String.format("ifnull(%s, '') %s", column, fieldName);
     }
 
 }

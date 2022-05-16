@@ -42,7 +42,6 @@ public abstract class ConditionWrapper<T> implements Serializable {
      */
     private Boolean primaryTable = false;
 
-
     /**
      * 最终的sql条件语句
      */
@@ -77,7 +76,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
      */
     private Integer pageIndex;
     private Integer pageSize;
-    private boolean hasPageParams = false;
+    private Boolean hasPageParams = false;
 
     protected TableSqlBuilder<T> getTableSqlBuilder() {
         return tableSqlBuilder;
@@ -164,7 +163,9 @@ public abstract class ConditionWrapper<T> implements Serializable {
 
     /**
      * 参数注入后的sql条件（只针对where后面的查询条件，不带有group by, order by, having, limit 等特殊聚合条件）
+     * <p>
      * 原sql(a.name = ?, params = 20)
+     * </p>
      * 返回sql(a.name = 20)
      */
     public String getInjectorParamsFinalConditional() {
@@ -175,8 +176,10 @@ public abstract class ConditionWrapper<T> implements Serializable {
         return hasPageParams;
     }
 
-    protected void setHasPageParams(boolean hasPageParams) {
-        this.hasPageParams = hasPageParams;
+    protected void setPageParams(Integer pageIndex, Integer pageSize) {
+        this.pageIndex = pageIndex;
+        this.pageSize = pageSize;
+        this.hasPageParams = true;
     }
 
     public abstract T getEntity();

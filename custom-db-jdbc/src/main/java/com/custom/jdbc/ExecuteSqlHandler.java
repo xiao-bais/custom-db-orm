@@ -7,6 +7,8 @@ import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.configuration.DbConnection;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Array;
@@ -22,9 +24,12 @@ import java.util.*;
  */
 public class ExecuteSqlHandler extends DbConnection {
 
+    private static final Logger logger = LoggerFactory.getLogger(ExecuteSqlHandler.class);
+
     private final Connection conn;
     private PreparedStatement statement = null;
     private ResultSet resultSet = null;
+    private boolean autoCommit = true;
     private final DbCustomStrategy dbCustomStrategy;
 
     public ExecuteSqlHandler(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
@@ -288,11 +293,20 @@ public class ExecuteSqlHandler extends DbConnection {
     }
 
     /**
-     * 执行表结构创建或删除
+     * 执行表(字段)结构创建或删除
      */
     public void executeTableSql(String sql) throws SQLException {
-        statement = conn.prepareStatement(sql);
-        statement.execute();
+        try {
+            conn.setAutoCommit(autoCommit);
+            statement = conn.prepareStatement(sql);
+            statement.execute();
+            conn.commit();
+        }catch (Exception e) {
+            conn.rollback();
+            SqlOutPrintBuilder.build(sql, new String[]{}, dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
+            logger.error(e.toString(), e);
+        }
+
     }
 
     /**
@@ -316,5 +330,7 @@ public class ExecuteSqlHandler extends DbConnection {
         return count;
     }
 
-
+    public void setAutoCommit(boolean autoCommit) {
+        this.autoCommit = autoCommit;
+    }
 }

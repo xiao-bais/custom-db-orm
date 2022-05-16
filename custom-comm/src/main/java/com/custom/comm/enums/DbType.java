@@ -4,6 +4,7 @@ import com.custom.comm.exceptions.CustomCheckException;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * @Author Xiao-Bai
@@ -13,45 +14,48 @@ import java.util.Date;
  */
 public enum DbType {
 
-    DbInt("int", Integer.class, "11"),
+    DbInt("int", Integer.class, Integer.TYPE, "11"),
 
-    DbVarchar("varchar", String.class, "50"),
+    DbVarchar("varchar", String.class, null, "50"),
 
-    DbFloat("float", Float.class, "11"),
+    DbFloat("float", Float.class, Float.TYPE,  "11"),
 
-    DbDecimal("decimal", BigDecimal.class, "16,2"),
+    DbDecimal("decimal", BigDecimal.class, null, "16,2"),
 
-    DbDouble("double", Double.class, "12,2"),
+    DbDouble("double", Double.class, Double.TYPE, "12,2"),
 
-    DbTinyint("tinyint", Integer.class,  "1"),
+    DbTinyint("tinyint", Integer.class, Integer.TYPE, "1"),
 
-    DbBit("bit", Boolean.class, "1"),
+    DbBit("bit", Boolean.class, Boolean.TYPE, "1"),
 
-    DbText("text", String.class,  "255"),
+    DbText("text", String.class, null,  "255"),
 
-    DbBigint("bigint", Long.class,  "11"),
+    DbBigint("bigint", Long.class, Long.TYPE,  "11"),
 
-    DbDate("date", Date.class,  "0"),
+    DbDate("date", Date.class,  null, "0"),
 
-    DbDateTime("datetime", Date.class, "0");
+    DbDateTime("datetime", Date.class, null, "0");
 
     private final String type;
     private final Class<?> fieldType;
+    private final Class<?> baseType;
     private final String length;
 
-    DbType(String type, Class<?> fieldType, String length) {
+    DbType(String type, Class<?> fieldType, Class<?> baseType, String length) {
         this.type = type;
         this.fieldType = fieldType;
+        this.baseType = baseType;
         this.length = length;
     }
 
     public static DbType getDbMediaType(Class<?> type) {
         for (DbType value : values()) {
-            if(value.fieldType.equals(type)) {
+            if(value.fieldType.equals(type)
+                    || (Objects.nonNull(value.baseType) && value.baseType.equals(type))) {
                 return value;
             }
         }
-        throw new CustomCheckException("找不到匹配的类型");
+        throw new CustomCheckException(type.getName() + " 找不到匹配的类型");
     }
 
     public static DbType getDbType(String type) {

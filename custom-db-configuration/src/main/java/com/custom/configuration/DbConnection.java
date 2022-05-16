@@ -100,4 +100,8 @@ public class DbConnection {
         return CONN_LOCAL.get();
     }
 
+    public String getDataBase() {
+        return currMap.get(DATA_BASE).toString();
+    }
+
 }

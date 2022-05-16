@@ -25,7 +25,7 @@ public class CustomApplicationUtil implements ApplicationContextAware {
         CustomApplicationUtil.applicationContext = applicationContext;
     }
 
-    public static ApplicationContext getApplicationContext() {
+    public ApplicationContext getApplicationContext() {
         return applicationContext;
     }
 

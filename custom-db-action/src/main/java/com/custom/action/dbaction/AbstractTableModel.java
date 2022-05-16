@@ -66,7 +66,7 @@ public abstract class AbstractTableModel<T> {
     }
 
 
-    protected abstract String buildTableSql();
+    public abstract String buildTableSql();
     protected abstract Object getValue(T x);
     protected abstract void setValue(Object value);
     public abstract String getFieldSql();

@@ -42,13 +42,19 @@ public @interface DbField {
 
     /**
      * 查询时若当前字段为字符类型，是否null转为空字符
-     * @return nullToEmpty
+     * <p>
+     * 若使用了条件构造器的Select方法，则isNullToEmpty不会生效
+     * </p>
+     * @return isNullToEmpty
      */
-    boolean nullToEmpty() default false;
+    boolean isNullToEmpty() default false;
 
     /**
      * 查询时，指定查询字段的包装
-     * 例：concat('user-', a.name) columnName
+     * 例：concat('user-', tp.name) columnName
+     * <p>
+     * 若使用了条件构造器的Select方法，则wrapperColumn不会生效
+     * </p>
      * @return wrapperColumn
      */
     String wrapperColumn() default SymbolConstant.EMPTY;

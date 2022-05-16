@@ -49,9 +49,9 @@ public interface QueryFunction<Children, T, Param> {
      * @param pageSize 每页的记录数量
      * @return
      */
-    Children limit(boolean condition, Integer pageIndex, Integer pageSize);
-    default Children limit(Integer pageIndex, Integer pageSize) {
-        return limit(true, pageIndex, pageSize);
+    Children pageParams(boolean condition, Integer pageIndex, Integer pageSize);
+    default Children pageParams(Integer pageIndex, Integer pageSize) {
+        return pageParams(true, pageIndex, pageSize);
     }
 
 

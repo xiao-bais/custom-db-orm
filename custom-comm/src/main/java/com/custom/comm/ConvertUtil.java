@@ -88,6 +88,16 @@ public class ConvertUtil {
         return null;
     }
 
+
+    public static boolean conBool(Integer i) {
+        return i != null && i > 0;
+    }
+
+    public static boolean conBool(Long i) {
+        return i != null && i > 0L;
+    }
+
+
     public static void main(String[] args) {
         System.out.println("Integer.TYPE = " + Integer.TYPE);
     }

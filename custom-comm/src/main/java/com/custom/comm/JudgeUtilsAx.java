@@ -86,9 +86,9 @@ public class JudgeUtilsAx {
     }
 
     public static void checkObjNotNull(Object... vals) throws NullPointerException {
-        Arrays.stream(vals).filter(Objects::isNull).forEach(val -> {
+        if (Arrays.stream(vals).anyMatch(Objects::isNull)){
             throw new NullPointerException();
-        });
+        }
     }
 
 

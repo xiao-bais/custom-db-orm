@@ -111,7 +111,7 @@ public class TableSqlBuilder<T> implements Cloneable {
     /**
      * 创建表结构
      */
-    protected String geCreateTableSql() {
+    public String geCreateTableSql() {
         StringBuilder createTableSql = new StringBuilder();
         StringJoiner fieldSql = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_1);
         if (Objects.nonNull(keyParserModel)) {
@@ -140,7 +140,7 @@ public class TableSqlBuilder<T> implements Cloneable {
     /**
      * 表是否存在
      */
-    protected String getExitsTableSql(Class<?> cls) {
+    public String getExitsTableSql(Class<?> cls) {
         DbTable annotation = cls.getAnnotation(DbTable.class);
         String table = annotation.table();
         return String.format("SELECT COUNT(1) COUNT FROM " +

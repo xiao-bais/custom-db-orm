@@ -159,7 +159,7 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
 
 
     @Override
-    protected String buildTableSql() {
+    public String buildTableSql() {
         StringBuilder keyFieldSql = new StringBuilder(String.format("`%s` ", this.dbKey));
         keyFieldSql.append(this.dbType.getType())
                 .append(SymbolConstant.BRACKETS_LEFT)
