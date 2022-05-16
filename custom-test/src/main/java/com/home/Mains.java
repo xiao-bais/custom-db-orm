@@ -19,7 +19,7 @@ public class Mains {
         student.setAge(22);
 
         String jsonString = JSONObject.toJSONString(student, SerializerFeature.WriteNullStringAsEmpty);
-        System.out.println("jsonString = " + jsonString);
+        System.out.println("jsonStraaaing = " + jsonString);
 
     }
 
