@@ -56,7 +56,7 @@ public class TableStructsInitializer {
             StringJoiner createNewColumnSql = new StringJoiner(";");
             addColumnSqlList.forEach(x -> {
                 createNewColumnSql.add(x);
-                logger.info("Added new column as '{}'", x);
+                logger.info("\nAdded new column as '{}'", x);
             });
             sqlHandler.executeTableSql(createNewColumnSql.toString());
         }
@@ -66,7 +66,7 @@ public class TableStructsInitializer {
             StringJoiner createNewTableSql = new StringJoiner(";");
             addTableSqlList.forEach(x -> {
                 createNewTableSql.add(x);
-                logger.info("Created new tableInfo as '{}'", x);
+                logger.info("\nCreated new tableInfo as '\n{}'", x);
             });
             sqlHandler.executeTableSql(createNewTableSql.toString());
         }
@@ -84,6 +84,7 @@ public class TableStructsInitializer {
             // 若存在，则进行下一步判断表字段是否存在
             if (ConvertUtil.conBool(sqlHandler.executeExist(exitsTableSql))) {
                 buildTableColumnInfo(sqlBuilder, table);
+                continue;
             }
             addTableSqlList.add(sqlBuilder.geCreateTableSql());
         }

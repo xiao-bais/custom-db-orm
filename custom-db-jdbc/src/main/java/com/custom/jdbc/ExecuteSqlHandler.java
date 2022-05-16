@@ -94,7 +94,7 @@ public class ExecuteSqlHandler extends DbConnection {
             ResultSetMetaData metaData = resultSet.getMetaData();
             while (resultSet.next()) {
                 T t;
-                if(CustomUtil.isBasicType(clazz)) {
+                if(CustomUtil.isBasicClass(clazz)) {
                    t = (T) resultSet.getObject(SymbolConstant.DEFAULT_ONE);
                 }else {
                     map = new HashMap<>();

@@ -1,9 +1,10 @@
-package com.home.customtest.entity;
+package com.home.customtest.temp;
 
 import com.custom.comm.annotations.DbField;
 import com.custom.comm.annotations.DbJoinTable;
 import com.custom.comm.annotations.DbJoinTables;
 import com.custom.comm.annotations.DbTable;
+import com.home.customtest.entity.Student;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -21,6 +22,7 @@ import lombok.ToString;
 )
 @DbTable(table = "student")
 public class ChildStudent extends Student {
+
 
     @DbField
     private Boolean sex;

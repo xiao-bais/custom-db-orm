@@ -3,7 +3,7 @@ package com.home.customtest.config;
 import com.custom.action.fieldfill.AutoFillColumnHandler;
 import com.custom.action.fieldfill.TableFillObject;
 import com.custom.comm.enums.FillStrategy;
-import com.home.customtest.entity.Aklis;
+import com.home.customtest.temp.Aklis;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

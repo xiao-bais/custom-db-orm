@@ -84,7 +84,11 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     */
     @Override
     public String buildTableSql(){
-        StringBuilder fieldSql = new StringBuilder(String.format("`%s` ", this.column));
+        String newColumn = this.column;
+        if (!RexUtil.hasRegex(this.column, RexUtil.back_quotes)) {
+            newColumn = String.format("`%s` ", this.column);
+        }
+        StringBuilder fieldSql = new StringBuilder(newColumn);
         if(dbType == DbType.DbDate || dbType == DbType.DbDateTime)
             fieldSql.append(dbType.getType()).append(" ");
         else

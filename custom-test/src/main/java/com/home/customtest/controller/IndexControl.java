@@ -2,10 +2,9 @@ package com.home.customtest.controller;
 
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.wrapper.Conditions;
-import com.custom.action.wrapper.LambdaConditionEntity;
 import com.custom.comm.BackResult;
-import com.home.customtest.entity.Aklis;
-import com.home.customtest.entity.ChildStudent;
+import com.home.customtest.temp.Aklis;
+import com.home.customtest.temp.ChildStudent;
 import com.home.customtest.entity.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

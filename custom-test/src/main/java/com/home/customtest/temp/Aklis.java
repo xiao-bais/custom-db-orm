@@ -1,4 +1,4 @@
-package com.home.customtest.entity;
+package com.home.customtest.temp;
 
 import com.custom.comm.annotations.DbField;
 import com.custom.comm.annotations.DbKey;
