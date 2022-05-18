@@ -98,8 +98,8 @@ public class TableStructsInitializer {
                 sqlBuilder.getTable(), dataBaseName);
         List<String> columnList = sqlHandler.query(String.class, false, selectColumnSql);
         List<String> truthColumnList = sqlBuilder.getFieldParserModels().stream().map(DbFieldParserModel::getColumn).collect(Collectors.toList());
-
-        for (int i = 0; i < truthColumnList.size(); i++) {
+        int size = truthColumnList.size();
+        for (int i = 0; i < size; i++) {
             String currColumn = truthColumnList.get(i);
             if (RexUtil.hasRegex(currColumn, RexUtil.back_quotes)) {
                 currColumn = RexUtil.regexStr(currColumn, RexUtil.back_quotes);

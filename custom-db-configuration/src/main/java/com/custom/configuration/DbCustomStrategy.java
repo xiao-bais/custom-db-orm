@@ -50,7 +50,7 @@ public class DbCustomStrategy {
     private String[] mapperPackageScans;
 
     /**
-    * 开启dao层的扫描包（mapperScanEnable = true后，才会开始扫描 `packageScans` 中指定的路径）
+    * 开启dao层的扫描包（mapperScanEnable = true后，才会开始扫描 `mapperPackageScans` 中指定的路径）
     */
     private boolean mapperScanEnable = false;
 
@@ -58,6 +58,11 @@ public class DbCustomStrategy {
      * 扫描的实体类包
      */
     private String[] entityPackageScans;
+
+    /**
+     * 开启dao层的扫描包（entityScanEnable = true后，才会开始扫描 `entityPackageScans` 中指定的路径）
+     */
+    private boolean entityScanEnable = false;
 
 
     public boolean isMapperScanEnable() {
@@ -130,5 +135,13 @@ public class DbCustomStrategy {
 
     public void setEntityPackageScans(String[] entityPackageScans) {
         this.entityPackageScans = entityPackageScans;
+    }
+
+    public boolean isEntityScanEnable() {
+        return entityScanEnable;
+    }
+
+    public void setEntityScanEnable(boolean entityScanEnable) {
+        this.entityScanEnable = entityScanEnable;
     }
 }
