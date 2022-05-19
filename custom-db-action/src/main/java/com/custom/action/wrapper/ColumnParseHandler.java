@@ -32,7 +32,7 @@ public class ColumnParseHandler<T> {
     public ColumnParseHandler(Class<T> cls) {
         this.cls = cls;
         this.tableModel = TableInfoCache.getTableModel(cls);
-        fields = tableModel.getFields();
+        this.fields = tableModel.getFields();
         this.fieldMapper = tableModel.getFieldMapper();
     }
 

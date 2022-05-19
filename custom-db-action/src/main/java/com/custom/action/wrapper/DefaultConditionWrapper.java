@@ -17,154 +17,154 @@ import java.util.stream.Collectors;
  * @Date 2022/2/16 14:11
  * @Desc：条件构造实例对象
  **/
-public class ConditionEntity<T> extends ConditionAssembly<T, String, ConditionEntity<T>>
-        implements Wrapper<String, ConditionEntity<T>> {
+public class DefaultConditionWrapper<T> extends ConditionAssembly<T, String, DefaultConditionWrapper<T>>
+        implements Wrapper<String, DefaultConditionWrapper<T>> {
 
 
     @Override
-    public ConditionEntity<T> eq(boolean condition, String column, Object val) {
+    public DefaultConditionWrapper<T> eq(boolean condition, String column, Object val) {
         return adapter(DbSymbol.EQUALS, condition, column, val);
     }
 
     @Override
-    public ConditionEntity<T> ge(boolean condition, String column, Object val) {
+    public DefaultConditionWrapper<T> ge(boolean condition, String column, Object val) {
         return adapter(DbSymbol.GREATER_THAN_EQUALS, condition, column, val);
     }
 
     @Override
-    public ConditionEntity<T> le(boolean condition, String column, Object val) {
+    public DefaultConditionWrapper<T> le(boolean condition, String column, Object val) {
         return adapter(DbSymbol.LESS_THAN_EQUALS, condition, column, val);
     }
 
     @Override
-    public ConditionEntity<T> lt(boolean condition, String column, Object val) {
+    public DefaultConditionWrapper<T> lt(boolean condition, String column, Object val) {
         return adapter(DbSymbol.LESS_THAN, condition, column, val);
     }
 
     @Override
-    public ConditionEntity<T> gt(boolean condition, String column, Object val) {
+    public DefaultConditionWrapper<T> gt(boolean condition, String column, Object val) {
         return adapter(DbSymbol.GREATER_THAN, condition, column, val);
     }
 
     @Override
-    public ConditionEntity<T> in(boolean condition, String column, Collection<?> val) {
+    public DefaultConditionWrapper<T> in(boolean condition, String column, Collection<?> val) {
         return adapter(DbSymbol.IN, condition, column, val);
     }
 
     @Override
-    public ConditionEntity<T> notIn(boolean condition, String column, Collection<?> val) {
+    public DefaultConditionWrapper<T> notIn(boolean condition, String column, Collection<?> val) {
         return adapter(DbSymbol.NOT_IN, condition, column, val);
     }
 
     @Override
-    public ConditionEntity<T> exists(boolean condition, String existsSql) {
+    public DefaultConditionWrapper<T> exists(boolean condition, String existsSql) {
         return adapter(DbSymbol.EXISTS, condition, null,  existsSql);
     }
 
     @Override
-    public ConditionEntity<T> notExists(boolean condition, String notExistsSql) {
+    public DefaultConditionWrapper<T> notExists(boolean condition, String notExistsSql) {
         return adapter(DbSymbol.NOT_EXISTS, condition, null, null, notExistsSql);
     }
 
     @Override
-    public ConditionEntity<T> like(boolean condition, String column, Object val) {
+    public DefaultConditionWrapper<T> like(boolean condition, String column, Object val) {
         return adapter(DbSymbol.LIKE, condition, column, sqlConcat(SqlLike.LIKE, val));
     }
 
     @Override
-    public ConditionEntity<T> notLike(boolean condition, String column, Object val) {
+    public DefaultConditionWrapper<T> notLike(boolean condition, String column, Object val) {
         return adapter(DbSymbol.NOT_LIKE, condition, column, sqlConcat(SqlLike.LIKE, val));
     }
 
     @Override
-    public ConditionEntity<T> likeLeft(boolean condition, String column, Object val) {
+    public DefaultConditionWrapper<T> likeLeft(boolean condition, String column, Object val) {
         return adapter(DbSymbol.LIKE, condition, column, sqlConcat(SqlLike.LEFT, val));
     }
 
     @Override
-    public ConditionEntity<T> likeRight(boolean condition, String column, Object val) {
+    public DefaultConditionWrapper<T> likeRight(boolean condition, String column, Object val) {
         return adapter(DbSymbol.LIKE, condition, column, sqlConcat(SqlLike.RIGHT, val));
     }
 
     @Override
-    public ConditionEntity<T> between(boolean condition, String column, Object val1, Object val2) {
+    public DefaultConditionWrapper<T> between(boolean condition, String column, Object val1, Object val2) {
         return adapter(DbSymbol.BETWEEN, condition, column, val1, val2);
     }
 
     @Override
-    public ConditionEntity<T> notBetween(boolean condition, String column, Object val1, Object val2) {
+    public DefaultConditionWrapper<T> notBetween(boolean condition, String column, Object val1, Object val2) {
         return adapter(DbSymbol.NOT_BETWEEN, condition, column, val1, val2);
     }
 
     @Override
-    public ConditionEntity<T> isNull(boolean condition, String column) {
+    public DefaultConditionWrapper<T> isNull(boolean condition, String column) {
         return adapter(DbSymbol.IS_NULL, condition, column, null, null);
     }
 
     @Override
-    public ConditionEntity<T> isNotNull(boolean condition, String column) {
+    public DefaultConditionWrapper<T> isNotNull(boolean condition, String column) {
         return adapter(DbSymbol.IS_NOT_NULL, condition, column, null, null);
     }
 
     @Override
-    public ConditionEntity<T> orderByAsc(boolean condition, String... columns) {
+    public DefaultConditionWrapper<T> orderByAsc(boolean condition, String... columns) {
         String orderBy = Arrays.stream(columns).map(column -> orderByField(column, SqlOrderBy.ASC)).collect(Collectors.joining("", SymbolConstant.EMPTY, ""));
         return adapter(DbSymbol.ORDER_BY, condition, orderBy);
     }
 
     @Override
-    public ConditionEntity<T> orderByDesc(boolean condition, String... columns) {
+    public DefaultConditionWrapper<T> orderByDesc(boolean condition, String... columns) {
         String orderBy = Arrays.stream(columns).map(column -> orderByField(column, SqlOrderBy.DESC)).collect(Collectors.joining("", SymbolConstant.EMPTY, ""));
         return adapter(DbSymbol.ORDER_BY, condition, orderBy);
     }
 
 
-    public ConditionEntity(Class<T> entityClass) {
+    public DefaultConditionWrapper(Class<T> entityClass) {
         setEntityClass(entityClass);
         setTableSqlBuilder(new TableSqlBuilder<>(entityClass, ExecuteMethod.NONE, false));
     }
 
     @Override
-    protected ConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, String column) {
+    protected DefaultConditionWrapper<T> adapter(DbSymbol dbSymbol, boolean condition, String column) {
         appendCondition(dbSymbol, condition, column, null, null, null);
         return childrenClass;
     }
 
     @Override
-    protected ConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, String column, Object val) {
+    protected DefaultConditionWrapper<T> adapter(DbSymbol dbSymbol, boolean condition, String column, Object val) {
         appendCondition(dbSymbol, condition, column, val, null, null);
         return childrenClass;
     }
 
     @Override
-    protected ConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, String column, Object val1, Object val2) {
+    protected DefaultConditionWrapper<T> adapter(DbSymbol dbSymbol, boolean condition, String column, Object val1, Object val2) {
         appendCondition(dbSymbol, condition, column, val1, val2, null);
         return childrenClass;
     }
 
     @Override
-    protected ConditionEntity<T> adapter(DbSymbol dbSymbol, boolean condition, String column, String express) {
+    protected DefaultConditionWrapper<T> adapter(DbSymbol dbSymbol, boolean condition, String column, String express) {
         appendCondition(dbSymbol, condition, column, null, null, express);
         return childrenClass;
     }
 
     @Override
-    protected ConditionEntity<T> getInstance() {
-        return new ConditionEntity<>(getEntityClass());
+    protected DefaultConditionWrapper<T> getInstance() {
+        return new DefaultConditionWrapper<>(getEntityClass());
     }
 
     @Override
-    public ConditionEntity<T> or(boolean condition, ConditionEntity<T> wrapper) {
+    public DefaultConditionWrapper<T> or(boolean condition, DefaultConditionWrapper<T> wrapper) {
         return spliceCondition(condition, false, wrapper);
     }
 
     @Override
-    public ConditionEntity<T> or(boolean condition, Consumer<ConditionEntity<T>> consumer) {
+    public DefaultConditionWrapper<T> or(boolean condition, Consumer<DefaultConditionWrapper<T>> consumer) {
         return mergeConsmerCondition(condition, false, consumer);
     }
 
     @Override
-    public ConditionEntity<T> or(boolean condition) {
+    public DefaultConditionWrapper<T> or(boolean condition) {
         appendState = condition;
         if(condition) {
             appendSybmol = SymbolConstant.OR;
@@ -173,12 +173,12 @@ public class ConditionEntity<T> extends ConditionAssembly<T, String, ConditionEn
     }
 
     @Override
-    public ConditionEntity<T> and(boolean condition, ConditionEntity<T> wrapper) {
+    public DefaultConditionWrapper<T> and(boolean condition, DefaultConditionWrapper<T> wrapper) {
         return spliceCondition(condition, true, wrapper);
     }
 
     @Override
-    public ConditionEntity<T> and(boolean condition, Consumer<ConditionEntity<T>> consumer) {
+    public DefaultConditionWrapper<T> and(boolean condition, Consumer<DefaultConditionWrapper<T>> consumer) {
         return mergeConsmerCondition(condition, true, consumer);
     }
 
@@ -187,7 +187,7 @@ public class ConditionEntity<T> extends ConditionAssembly<T, String, ConditionEn
      * 若是查询关联表字段，则需附带关联表别名，例如：tp.name,tp.age
      */
     @Override
-    public ConditionEntity<T> select(String... columns) {
+    public DefaultConditionWrapper<T> select(String... columns) {
         setSelectColumns(columns);
         return childrenClass;
     }
@@ -200,23 +200,23 @@ public class ConditionEntity<T> extends ConditionAssembly<T, String, ConditionEn
 
 
     @Override
-    public ConditionEntity<T> select(Consumer<SelectFunc<T>> consumer) {
+    public DefaultConditionWrapper<T> select(Consumer<SelectFunc<T>> consumer) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public ConditionEntity<T> groupBy(String... columns) {
+    public DefaultConditionWrapper<T> groupBy(String... columns) {
         Arrays.stream(columns).forEach(x -> adapter(DbSymbol.GROUP_BY, true, x));
         return childrenClass;
     }
 
     @Override
-    public ConditionEntity<T> orderByAsc(boolean condition, Consumer<OrderByFunc<T>> consumer) {
+    public DefaultConditionWrapper<T> orderByAsc(boolean condition, Consumer<OrderByFunc<T>> consumer) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public ConditionEntity<T> orderByDesc(boolean condition, Consumer<OrderByFunc<T>> consumer) {
+    public DefaultConditionWrapper<T> orderByDesc(boolean condition, Consumer<OrderByFunc<T>> consumer) {
         throw new UnsupportedOperationException();
     }
 

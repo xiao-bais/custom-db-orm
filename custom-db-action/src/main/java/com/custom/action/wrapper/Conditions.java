@@ -3,22 +3,30 @@ package com.custom.action.wrapper;
 /**
  * @Author Xiao-Bai
  * @Date 2022/3/15 14:41
- * @Desc：
+ * @Desc：静态条件构造器
  **/
 public class Conditions {
 
     /**
      * 以lambda表达式的方式去进行sql的条件构造
      */
-    public static <T> LambdaConditionEntity<T> lambdaQuery(Class<T> entityClass) {
-        return new LambdaConditionEntity<>(entityClass);
+    public static <T> LambdaConditionWrapper<T> lambdaQuery(Class<T> entityClass) {
+        return new LambdaConditionWrapper<>(entityClass);
     }
 
     /**
-     * 以键值对的方式去进行sql的条件构造
+     * 默认以键值对的方式去进行sql的条件构造
      */
-    public static <T> ConditionEntity<T> query(Class<T> entityClass) {
-        return new ConditionEntity<>(entityClass);
+    public static <T> DefaultConditionWrapper<T> query(Class<T> entityClass) {
+        return new DefaultConditionWrapper<>(entityClass);
+    }
+
+    /**
+     * 构造一个空的条件构造器，适合用于没有查询条件的查询
+     * 仅可使用分页(pageParams)、排序(orderBy)、分组(groupBy)、分组后过滤(having)以及查询字段的筛选(select)
+     */
+    public static <T> EmptyConditionWrapper<T> emptyQuery(Class<T> entityClass) {
+        return new EmptyConditionWrapper<>(entityClass);
     }
     
 }

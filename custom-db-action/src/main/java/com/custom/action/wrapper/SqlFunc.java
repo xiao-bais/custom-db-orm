@@ -1,6 +1,7 @@
 package com.custom.action.wrapper;
 
 import com.custom.action.sqlparser.TableInfoCache;
+import com.custom.action.sqlparser.TableSqlBuilder;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.enums.SqlAggregate;
 
@@ -94,9 +95,10 @@ public abstract class SqlFunc<T, Child> {
     // 初始化
     protected void init(Class<T> cls) {
         columnParseHandler = new ColumnParseHandler<>(cls);
-        fieldMapper = TableInfoCache.getFieldMap(cls);
-        columnMapper = TableInfoCache.getColumnMap(cls);
-        alias = TableInfoCache.getTableModel(cls).getAlias();
+        TableSqlBuilder<T> tableModel = TableInfoCache.getTableModel(cls);
+        fieldMapper = tableModel.getFieldMapper();
+        columnMapper = tableModel.getColumnMapper();
+        alias = tableModel.getAlias();
         sqlFragment = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
     }
 

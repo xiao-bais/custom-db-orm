@@ -2,9 +2,14 @@ package com.home;
 
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.TableInfoCache;
+import com.custom.action.wrapper.Conditions;
+import com.custom.comm.page.DbPageRows;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
+import com.home.customtest.entity.ChildStudent;
 import com.home.customtest.entity.Student;
+
+import java.util.List;
 
 /**
  * @Author Xiao-Bai
@@ -51,11 +56,15 @@ public class DoMain {
         JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
         TableInfoCache.setUnderlineToCamel(true);
 
-        Student student = jdbcDao.selectOneByKey(Student.class, 1);
+        ChildStudent student = jdbcDao.selectOneByKey(ChildStudent.class, 1);
         System.out.println("student = " + student);
+
+        DbPageRows<Student> studentDbPageRows = jdbcDao.selectPageRows(Conditions.emptyQuery(Student.class).select(Student::getName).pageParams(2, 4));
+        System.out.println("studentDbPageRows = " + studentDbPageRows);
 
 
     }
+
 
 
 }

@@ -78,6 +78,11 @@ public abstract class ConditionWrapper<T> implements Serializable {
     private Integer pageSize;
     private Boolean hasPageParams = false;
 
+    /**
+     * 函数式接口序列化解析对象
+     */
+    private ColumnParseHandler<T> columnParseHandler;
+
     protected TableSqlBuilder<T> getTableSqlBuilder() {
         return tableSqlBuilder;
     }
@@ -145,16 +150,8 @@ public abstract class ConditionWrapper<T> implements Serializable {
         return pageIndex;
     }
 
-    protected void setPageIndex(Integer pageIndex) {
-        this.pageIndex = pageIndex;
-    }
-
     public Integer getPageSize() {
         return pageSize;
-    }
-
-    protected void setPageSize(Integer pageSize) {
-        this.pageSize = pageSize;
     }
 
     protected TableSqlBuilder<T> getTableParserModelCache(Class<T> key) {
@@ -176,10 +173,31 @@ public abstract class ConditionWrapper<T> implements Serializable {
         return hasPageParams;
     }
 
+    protected void wrapperInitialize(Class<T> entityClass) {
+        this.entityClass = entityClass;
+        TableSqlBuilder<T> tableSqlBuilder = getTableParserModelCache(entityClass);
+        setTableSqlBuilder(tableSqlBuilder);
+    }
+
     protected void setPageParams(Integer pageIndex, Integer pageSize) {
         this.pageIndex = pageIndex;
         this.pageSize = pageSize;
         this.hasPageParams = true;
+    }
+
+    /**
+     * 解析函数后，得到java属性字段对应的表字段名称
+     */
+    @SafeVarargs
+    protected final String[] parseColumn(SFunction<T, ?>... func) {
+        return getColumnParseHandler().getColumn(func);
+    }
+
+    /**
+     * 解析函数后，得到java属性字段对应的表字段名称
+     */
+    protected String parseColumn(SFunction<T, ?> func) {
+        return getColumnParseHandler().getColumn(func);
     }
 
     public abstract T getEntity();
@@ -190,5 +208,36 @@ public abstract class ConditionWrapper<T> implements Serializable {
 
     protected void setPrimaryTable() {
         this.primaryTable = true;
+    }
+
+    protected ColumnParseHandler<T> getColumnParseHandler() {
+        if (Objects.isNull(columnParseHandler)) {
+            this.columnParseHandler = new ColumnParseHandler<>(entityClass);
+        }
+        return columnParseHandler;
+    }
+
+    /**
+     * 合并查询列(数组合并)
+     */
+    protected void mergeSelect(String[] selectColumns) {
+        if(Objects.isNull(selectColumns)) {
+            return;
+        }
+        if(Objects.isNull(getSelectColumns())) {
+            setSelectColumns(selectColumns);
+            return;
+        }
+        int thisLen = getSelectColumns().length;
+        int addLen = selectColumns.length;
+        String[] newSelectColumns = new String[thisLen + addLen];
+        for (int i = 0; i < newSelectColumns.length; i++) {
+            if(i <= thisLen - 1) {
+                newSelectColumns[i] = getSelectColumns()[i];
+            }else {
+                newSelectColumns[i] = selectColumns[i - thisLen];
+            }
+        }
+        setSelectColumns(newSelectColumns);
     }
 }

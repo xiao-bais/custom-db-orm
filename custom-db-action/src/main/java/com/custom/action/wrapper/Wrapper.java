@@ -111,15 +111,5 @@ public interface Wrapper<Param, Result>  {
         return isNotNull(true, column);
     }
 
-    Result orderByAsc(boolean condition, Param... columns);
-    default Result orderByAsc(Param... columns) {
-        return orderByAsc(true, columns);
-    }
-
-    Result orderByDesc(boolean condition, Param... columns);
-    default Result orderByDesc(Param... columns) {
-        return orderByDesc(true, columns);
-    }
-
 
 }

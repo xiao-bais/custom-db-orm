@@ -77,4 +77,14 @@ public interface QueryFunction<Children, T, Param> {
         return orderByDesc(true, consumer);
     }
 
+    Children orderByAsc(boolean condition, Param... columns);
+    default Children orderByAsc(Param... columns) {
+        return orderByAsc(true, columns);
+    }
+
+    Children orderByDesc(boolean condition, Param... columns);
+    default Children orderByDesc(Param... columns) {
+        return orderByDesc(true, columns);
+    }
+
 }

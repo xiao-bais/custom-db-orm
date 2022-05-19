@@ -204,6 +204,16 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
         return childrenClass;
     }
 
+    /**
+     * sql查询函数执行方法
+     */
+    protected Children doSelectSqlFunc(Consumer<SelectFunc<T>> consumer) {
+        SelectFunc<T> sqlFunc = new SelectFunc<>(getEntityClass());
+        consumer.accept(sqlFunc);
+        mergeSelect(sqlFunc.getColumns().split(SymbolConstant.SEPARATOR_COMMA_2));
+        return childrenClass;
+    }
+
 
     /**
      * 添加新的条件，并合并同类项
@@ -223,30 +233,6 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
         if (JudgeUtilsAx.isNotEmpty(conditionEntity.getOrderBy())) {
             mergeOrderBy(conditionEntity);
         }
-    }
-
-    /**
-     * 合并查询列(数组合并)
-     */
-    protected void mergeSelect(String[] selectColumns) {
-        if(Objects.isNull(selectColumns)) {
-            return;
-        }
-        if(Objects.isNull(getSelectColumns())) {
-            setSelectColumns(selectColumns);
-            return;
-        }
-        int thisLen = getSelectColumns().length;
-        int addLen = selectColumns.length;
-        String[] newSelectColumns = new String[thisLen + addLen];
-        for (int i = 0; i < newSelectColumns.length; i++) {
-            if(i <= thisLen - 1) {
-                newSelectColumns[i] = getSelectColumns()[i];
-            }else {
-                newSelectColumns[i] = selectColumns[i - thisLen];
-            }
-        }
-        setSelectColumns(newSelectColumns);
     }
 
     /**
