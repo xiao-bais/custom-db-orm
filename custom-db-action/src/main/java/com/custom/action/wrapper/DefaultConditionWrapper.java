@@ -205,6 +205,11 @@ public class DefaultConditionWrapper<T> extends ConditionAssembly<T, String, Def
     }
 
     @Override
+    public DefaultConditionWrapper<T> select(SelectFunc<T> selectFunc) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public DefaultConditionWrapper<T> groupBy(String... columns) {
         Arrays.stream(columns).forEach(x -> adapter(DbSymbol.GROUP_BY, true, x));
         return childrenClass;
@@ -216,7 +221,17 @@ public class DefaultConditionWrapper<T> extends ConditionAssembly<T, String, Def
     }
 
     @Override
+    public DefaultConditionWrapper<T> orderByAsc(boolean condition, OrderByFunc<T> orderByFunc) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public DefaultConditionWrapper<T> orderByDesc(boolean condition, Consumer<OrderByFunc<T>> consumer) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public DefaultConditionWrapper<T> orderByDesc(boolean condition, OrderByFunc<T> orderByFunc) {
         throw new UnsupportedOperationException();
     }
 

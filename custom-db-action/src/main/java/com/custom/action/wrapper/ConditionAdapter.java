@@ -96,6 +96,12 @@ public class ConditionAdapter<T, Children> extends ConditionAssembly<T, SFunctio
         return doSelectSqlFunc(consumer);
     }
 
+    @Override
+    public Children select(SelectFunc<T> selectFunc) {
+        mergeSelect(selectFunc.getColumns().split(SymbolConstant.SEPARATOR_COMMA_2));
+        return childrenClass;
+    }
+
     @SafeVarargs
     @Override
     public final Children groupBy(SFunction<T, ?>... columns) {
@@ -109,8 +115,18 @@ public class ConditionAdapter<T, Children> extends ConditionAssembly<T, SFunctio
     }
 
     @Override
+    public Children orderByAsc(boolean condition, OrderByFunc<T> orderByFunc) {
+        return null;
+    }
+
+    @Override
     public Children orderByDesc(boolean condition, Consumer<OrderByFunc<T>> consumer) {
         return doOrderBySqlFunc(SymbolConstant.DESC, consumer);
+    }
+
+    @Override
+    public Children orderByDesc(boolean condition, OrderByFunc<T> orderByFunc) {
+        return null;
     }
 
     @SafeVarargs

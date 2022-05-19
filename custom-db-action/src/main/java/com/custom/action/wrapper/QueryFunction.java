@@ -23,6 +23,7 @@ public interface QueryFunction<Children, T, Param> {
      * @return Children
      */
     Children select(Consumer<SelectFunc<T>> consumer);
+    Children select(SelectFunc<T> selectFunc);
 
     /**
      * group by分组
@@ -66,6 +67,11 @@ public interface QueryFunction<Children, T, Param> {
         return orderByAsc(true, consumer);
     }
 
+    Children orderByAsc(boolean condition, OrderByFunc<T> orderByFunc);
+    default Children orderByAsc(OrderByFunc<T> orderByFunc) {
+        return orderByAsc(true, orderByFunc);
+    }
+
     /**
      * order by排序（降序）
      * @param condition 是否满足排序的条件
@@ -76,6 +82,13 @@ public interface QueryFunction<Children, T, Param> {
     default Children orderByDesc(Consumer<OrderByFunc<T>> consumer) {
         return orderByDesc(true, consumer);
     }
+
+    Children orderByDesc(boolean condition, OrderByFunc<T> orderByFunc);
+    default Children orderByDesc(OrderByFunc<T> orderByFunc) {
+        return orderByDesc(true, orderByFunc);
+    }
+
+
 
     Children orderByAsc(boolean condition, Param... columns);
     default Children orderByAsc(Param... columns) {

@@ -5,8 +5,11 @@ import com.custom.action.sqlparser.TableSqlBuilder;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.enums.SqlAggregate;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 /**
  * @Author Xiao-Bai
@@ -88,7 +91,7 @@ public abstract class SqlFunc<T, Child> {
     /**
      * sql片段
      */
-    private StringJoiner sqlFragment;
+    private List<String> sqlFragments;
 
     /**
      * 主表的别名
@@ -103,7 +106,7 @@ public abstract class SqlFunc<T, Child> {
         fieldMapper = tableModel.getFieldMapper();
         columnMapper = tableModel.getColumnMapper();
         alias = tableModel.getAlias();
-        sqlFragment = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
+        sqlFragments = new ArrayList<>();
     }
 
 
@@ -141,16 +144,16 @@ public abstract class SqlFunc<T, Child> {
      * @return SqlFunc
      */
     protected Child doFunc(String format, Object... params) {
-        sqlFragment.add(String.format(format, params));
+        sqlFragments.add(String.format(format, params));
         return childClass;
     }
 
-    protected StringJoiner getSqlFragment() {
-        return sqlFragment;
+    public List<String> getSqlFragments() {
+        return sqlFragments;
     }
 
     protected String getColumns() {
-        return sqlFragment.toString();
+        return sqlFragments.stream().collect(Collectors.joining(SymbolConstant.SEPARATOR_COMMA_2));
     }
 
     protected ColumnParseHandler<T> getColumnParseHandler() {
