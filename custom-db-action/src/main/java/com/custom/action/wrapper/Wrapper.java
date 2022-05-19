@@ -56,6 +56,11 @@ public interface Wrapper<Param, Result>  {
         return in(true, column, values);
     }
 
+    Result inSql(boolean condition, String inSql, Object... params);
+    default Result inSql(String inSql, Object... params) {
+       return inSql(true, inSql, params);
+    }
+
     Result notIn(boolean condition, Param column, Collection<?> val);
     default Result notIn(Param column, Collection<?> val) {
         return notIn(true, column, val);
