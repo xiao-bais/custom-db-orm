@@ -56,7 +56,7 @@ public class TableStructsInitializer {
             StringJoiner createNewColumnSql = new StringJoiner(";");
             addColumnSqlList.forEach(x -> {
                 createNewColumnSql.add(x);
-                logger.info("\nAdded new column as '{}'", x);
+                logger.info("Added new column as '{}'", x);
             });
             sqlHandler.executeTableSql(createNewColumnSql.toString());
         }

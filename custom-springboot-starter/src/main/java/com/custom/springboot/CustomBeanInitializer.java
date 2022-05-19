@@ -32,6 +32,9 @@ public class CustomBeanInitializer implements InitializingBean, ApplicationConte
     public void afterPropertiesSet() throws Exception {
         DbCustomStrategy strategy = applicationContext.getBean(DbCustomStrategy.class);
         DbDataSource dataSource = applicationContext.getBean(DbDataSource.class);
+        if (!strategy.isEntityScanEnable()) {
+            return;
+        }
         if (Objects.isNull(strategy.getEntityPackageScans())) {
             return;
         }
