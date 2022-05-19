@@ -30,6 +30,12 @@ public class SelectFunc<T> extends SqlFunc<T, SelectFunc<T>> {
         return doFunc(formatRex(SqlAggregate.SUM, null), SqlAggregate.SUM, getFieldMapper().get(field), field);
     }
 
+    @Override
+    public SelectFunc<T> sum(boolean isNullToZero, SFunction<T, ?> func) {
+        String field = getColumnParseHandler().getField(func);
+        return doFunc(formatRex(SqlAggregate.SUM, isNullToZero, null), SqlAggregate.SUM, getFieldMapper().get(field), field);
+    }
+
     /**
      * sql sum函数
      * 例：x -> x.sum(Student::getAge, Student::getSumAge)
@@ -53,6 +59,12 @@ public class SelectFunc<T> extends SqlFunc<T, SelectFunc<T>> {
     public final SelectFunc<T> avg(SFunction<T, ?> func) {
         String field = getColumnParseHandler().getField(func);
         return doFunc(formatRex(SqlAggregate.AVG,  null), SqlAggregate.AVG, getFieldMapper().get(field), field);
+    }
+
+    @Override
+    public SelectFunc<T> avg(boolean isNullToZero, SFunction<T, ?> func) {
+        String field = getColumnParseHandler().getField(func);
+        return doFunc(formatRex(SqlAggregate.AVG, isNullToZero, null), SqlAggregate.AVG, getFieldMapper().get(field), field);
     }
 
     /**
@@ -150,6 +162,12 @@ public class SelectFunc<T> extends SqlFunc<T, SelectFunc<T>> {
         return doFunc(formatRex(SqlAggregate.MAX, null), SqlAggregate.MAX, column, getColumnMapper().get(column));
     }
 
+    @Override
+    public SelectFunc<T> max(boolean isNullToZero, SFunction<T, ?> func) {
+        String column = getColumnParseHandler().getColumn(func);
+        return doFunc(formatRex(SqlAggregate.MAX, isNullToZero, null), SqlAggregate.MAX, column, getColumnMapper().get(column));
+    }
+
     /**
      * sql max函数
      * 例：x -> x.max(Student::getAge, Student::getMaxAge)
@@ -174,6 +192,12 @@ public class SelectFunc<T> extends SqlFunc<T, SelectFunc<T>> {
     public final SelectFunc<T> min(SFunction<T, ?> func) {
         String column = getColumnParseHandler().getColumn(func);
        return doFunc(formatRex(SqlAggregate.MIN,null), SqlAggregate.MIN, column, getColumnMapper().get(column));
+    }
+
+    @Override
+    public SelectFunc<T> min(boolean isNullToZero, SFunction<T, ?> func) {
+        String column = getColumnParseHandler().getColumn(func);
+        return doFunc(formatRex(SqlAggregate.MIN, isNullToZero, null), SqlAggregate.MIN, column, getColumnMapper().get(column));
     }
 
     /**

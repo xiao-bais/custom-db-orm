@@ -16,9 +16,21 @@ public class OrderByFunc<T> extends SqlFunc<T, OrderByFunc<T>>{
     }
 
     @Override
+    public OrderByFunc<T> sum(boolean isNullToZero, SFunction<T, ?> func) {
+        String column = getColumnParseHandler().getColumn(func);
+        return doFunc(formatRex(SqlAggregate.SUM, isNullToZero, null), SqlAggregate.SUM, column, orderByStyle);
+    }
+
+    @Override
     public OrderByFunc<T> avg(SFunction<T, ?> func) {
         String column = getColumnParseHandler().getColumn(func);
         return doFunc(formatRex(SqlAggregate.AVG, null), SqlAggregate.AVG, column, orderByStyle);
+    }
+
+    @Override
+    public OrderByFunc<T> avg(boolean isNullToZero, SFunction<T, ?> func) {
+        String column = getColumnParseHandler().getColumn(func);
+        return doFunc(formatRex(SqlAggregate.AVG, isNullToZero, null), SqlAggregate.AVG, column, orderByStyle);
     }
 
     @Override
@@ -40,9 +52,21 @@ public class OrderByFunc<T> extends SqlFunc<T, OrderByFunc<T>>{
     }
 
     @Override
+    public OrderByFunc<T> max(boolean isNullToZero, SFunction<T, ?> func) {
+        String column = getColumnParseHandler().getColumn(func);
+        return doFunc(formatRex(SqlAggregate.MAX, isNullToZero, null), SqlAggregate.MAX, column, orderByStyle);
+    }
+
+    @Override
     public OrderByFunc<T> min(SFunction<T, ?> func) {
         String column = getColumnParseHandler().getColumn(func);
         return doFunc(formatRex(SqlAggregate.MIN, null), SqlAggregate.MIN, column, orderByStyle);
+    }
+
+    @Override
+    public OrderByFunc<T> min(boolean isNullToZero, SFunction<T, ?> func) {
+        String column = getColumnParseHandler().getColumn(func);
+        return doFunc(formatRex(SqlAggregate.MIN, isNullToZero, null), SqlAggregate.MIN, column, orderByStyle);
     }
 
     private final String orderByStyle;

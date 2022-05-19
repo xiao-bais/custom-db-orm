@@ -23,6 +23,7 @@ public abstract class SqlFunc<T, Child> {
      * @return SqlFunc
      */
     public abstract Child sum(SFunction<T, ?> func);
+    public abstract Child sum(boolean isNullToZero, SFunction<T, ?> func);
 
     /**
      * sql sum函数
@@ -31,6 +32,7 @@ public abstract class SqlFunc<T, Child> {
      * @return SqlFunc
      */
     public abstract Child avg(SFunction<T, ?> func);
+    public abstract Child avg(boolean isNullToZero, SFunction<T, ?> func);
 
     /**
      * sql count函数
@@ -60,6 +62,7 @@ public abstract class SqlFunc<T, Child> {
      * @return SqlFunc
      */
     public abstract Child max(SFunction<T, ?> func);
+    public abstract Child max(boolean isNullToZero, SFunction<T, ?> func);
 
     /**
      * sql min函数
@@ -68,6 +71,7 @@ public abstract class SqlFunc<T, Child> {
      * @return SqlFunc
      */
     public abstract Child min(SFunction<T, ?> func);
+    public abstract Child min(boolean isNullToZero, SFunction<T, ?> func);
 
     /**
      * SFunction接口实体字段解析对象
@@ -107,13 +111,17 @@ public abstract class SqlFunc<T, Child> {
      * 获取格式化的sql函数模板
      */
     protected String formatRex(SqlAggregate aggregate, Boolean distinct) {
+        return formatRex(aggregate, false, distinct);
+    }
+
+    protected String formatRex(SqlAggregate aggregate, boolean isNullToZero,  Boolean distinct) {
         String template = SymbolConstant.EMPTY;
         switch (aggregate) {
             case SUM:
             case MAX:
             case MIN:
             case AVG:
-                template = "%s(%s) %s";
+                template = isNullToZero ? "ifnull(%s(%s), 0) %s" : "%s(%s) %s";
                 break;
             case COUNT:
                 template = distinct ? "%s(distinct %s) %s" : "%s(%s) %s";

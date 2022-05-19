@@ -59,7 +59,9 @@ public class DoMain {
         ChildStudent student = jdbcDao.selectOneByKey(ChildStudent.class, 1);
         System.out.println("student = " + student);
 
-        DbPageRows<Student> studentDbPageRows = jdbcDao.selectPageRows(Conditions.emptyQuery(Student.class).select(Student::getName).pageParams(2, 4));
+        DbPageRows<Student> studentDbPageRows = jdbcDao.selectPageRows(Conditions.emptyQuery(Student.class)
+                .select(Student::getName).pageParams(2, 4)
+        );
         System.out.println("studentDbPageRows = " + studentDbPageRows);
 
 
