@@ -54,13 +54,20 @@ public class LambdaConditionWrapper<T> extends ConditionAdapter<T, LambdaConditi
     }
 
     @Override
-    public LambdaConditionWrapper<T> inSql(boolean condition, String inSql, Object... params) {
-        return null;
+    public LambdaConditionWrapper<T> inSql(boolean condition, SFunction<T, ?> column, String inSql, Object... params) {
+        appendInSql(parseColumn(column), DbSymbol.IN, inSql, params);
+        return childrenClass;
     }
 
     @Override
     public LambdaConditionWrapper<T> notIn(boolean condition, SFunction<T, ?> column, Collection<?> val) {
         return adapter(DbSymbol.NOT_IN, condition, column, val);
+    }
+
+    @Override
+    public LambdaConditionWrapper<T> notInSql(boolean condition, SFunction<T, ?> column, String inSql, Object... params) {
+        appendInSql(parseColumn(column), DbSymbol.NOT_IN, inSql, params);
+        return childrenClass;
     }
 
     @Override

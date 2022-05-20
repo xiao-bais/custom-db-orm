@@ -59,9 +59,9 @@ public class ExecuteSqlHandler extends DbConnection {
     /**
      * 预编译-查询1
      */
-    private void statementQuery(String sql, boolean outFlag, Object... params) throws Exception {
+    private void statementQuery(String sql, boolean sqlPrintSupport, Object... params) throws Exception {
         statement = conn.prepareStatement(sql);
-        if (dbCustomStrategy.isSqlOutPrinting() && outFlag) {
+        if (dbCustomStrategy.isSqlOutPrinting() && sqlPrintSupport) {
             SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlInfoQueryPrint();
         }
         if (params.length <= 0) return;
@@ -83,13 +83,17 @@ public class ExecuteSqlHandler extends DbConnection {
 
     /**
      * 通用查询（Collection）
+     * @param clazz class对象
+     * @param sqlPrintSupport 支持sql打印
+     * @param sql 查询的sql
+     * @param params sql参数
      */
     @SuppressWarnings("unchecked")
-    public <T> List<T> query(Class<T> clazz, boolean sqlOutPrint, String sql, Object... params) throws Exception {
+    public <T> List<T> query(Class<T> clazz, boolean sqlPrintSupport, String sql, Object... params) throws Exception {
         Map<String, Object> map;
         List<T> list = new ArrayList<>();
         try {
-            statementQuery(sql, sqlOutPrint, params);
+            statementQuery(sql, sqlPrintSupport, params);
             resultSet = statement.executeQuery();
             ResultSetMetaData metaData = resultSet.getMetaData();
             while (resultSet.next()) {
@@ -99,7 +103,6 @@ public class ExecuteSqlHandler extends DbConnection {
                 }else {
                     map = new HashMap<>();
                     getResultMap(map, metaData);
-
                     t = JSONObject.parseObject(JSONObject.toJSONString(map), clazz);
                 }
                 list.add(t);
@@ -243,6 +246,37 @@ public class ExecuteSqlHandler extends DbConnection {
             throw e;
         }
         return JSONObject.parseObject(JSONObject.toJSONString(map), t);
+    }
+
+    /**
+     * 通用查询单个对象sql（映射到Map）
+     */
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> selectMapsSql(String sql, boolean isSupportMoreResult, Object... params) throws Exception {
+        Map<String, Object> map;
+        List<Map<String, Object>> mapList = new ArrayList<>();
+        try {
+            statementQuery(sql, true, params);
+            resultSet = statement.executeQuery();
+            if (!isSupportMoreResult) {
+                resultSet.last();
+                final int rowsCount = resultSet.getRow();
+                if (rowsCount > 1) {
+                    ExThrowsUtil.toCustom(String.format("One was queried, but more were found:(%s) ", rowsCount));
+                }
+                resultSet.beforeFirst();
+            }
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            while (resultSet.next()) {
+                map = new HashMap<>();
+                getResultMap(map, metaData);
+                mapList.add(map);
+            }
+        } catch (SQLException e) {
+            SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
+            throw e;
+        }
+        return mapList;
     }
 
 

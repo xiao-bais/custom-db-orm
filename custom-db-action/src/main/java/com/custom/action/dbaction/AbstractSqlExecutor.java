@@ -18,10 +18,7 @@ import com.custom.jdbc.ExecuteSqlHandler;
 
 import java.io.Serializable;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @Author Xiao-Bai
@@ -48,6 +45,9 @@ public abstract class AbstractSqlExecutor {
     public abstract <T> long selectCount(ConditionWrapper<T> wrapper) throws Exception;
     public abstract <T> Object selectObj(ConditionWrapper<T> wrapper) throws Exception;
     public abstract <T> List<Object> selectObjs(ConditionWrapper<T> wrapper) throws Exception;
+    public abstract <T> Map<String, Object> selectMap(ConditionWrapper<T> wrapper) throws Exception;
+    public abstract <T> List<Map<String, Object>> selectMaps(ConditionWrapper<T> wrapper) throws Exception;
+    public abstract <T> DbPageRows<Map<String, Object>> selectPageMaps(ConditionWrapper<T> wrapper) throws Exception;
 
 
     /*--------------------------------------- delete ---------------------------------------*/
@@ -159,6 +159,21 @@ public abstract class AbstractSqlExecutor {
             throw new CustomCheckException(String.format("One was queried, but more were found:(%s) ", size));
         }
         return queryList.get(SymbolConstant.DEFAULT_ZERO);
+    }
+
+    /**
+     * 纯sql查询单条记录(映射到Map)
+     */
+    public Map<String, Object> selectMapBySql(String sql, Object... params) throws Exception {
+        List<Map<String, Object>> mapList = executeSqlHandler.selectMapsSql(sql, true, params);
+        return mapList.get(0);
+    }
+
+    /**
+     * 纯sql查询多条记录(映射到Map)
+     */
+    public List<Map<String, Object>> selectMapsBySql(String sql, Object... params) throws Exception {
+        return executeSqlHandler.selectMapsSql(sql, true, params);
     }
 
     /**
@@ -293,9 +308,6 @@ public abstract class AbstractSqlExecutor {
      * 公共获取完整查询sql
      */
     protected <T> String getFullSelectSql(ConditionWrapper<T> wrapper) throws Exception {
-        return getFullSelectSql(wrapper, null);
-    }
-    protected <T> String getFullSelectSql(ConditionWrapper<T> wrapper, DbPageRows<T> dbPageRows) throws Exception {
         HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(wrapper.getEntityClass());
         sqlBuilder.setPrimaryTable(wrapper.getPrimaryTable());
         StringBuilder selectSql = new StringBuilder();
@@ -305,9 +317,6 @@ public abstract class AbstractSqlExecutor {
             selectSql.append(sqlBuilder.buildSql());
         }
         String condition = checkConditionAndLogicDeleteSql(sqlBuilder.getAlias(), wrapper.getFinalConditional(), getLogicDeleteQuerySql(), sqlBuilder.getTable());
-        if(dbPageRows != null) {
-            dbPageRows.setCondition(condition);
-        }
         selectSql.append(condition);
         if(JudgeUtilsAx.isNotEmpty(wrapper.getGroupBy())) {
             selectSql.append(SymbolConstant.GROUP_BY).append(wrapper.getGroupBy());

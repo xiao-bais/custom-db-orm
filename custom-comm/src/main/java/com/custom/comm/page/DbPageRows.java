@@ -29,11 +29,6 @@ public class DbPageRows<T> {
      */
     private List<T> data;
 
-    /**
-     * 查询条件
-     */
-    private String condition;
-
     public DbPageRows(int pageIndex, int pageSize, long total) {
         this.pageIndex = pageIndex;
         this.pageSize = pageSize;
@@ -103,14 +98,5 @@ public class DbPageRows<T> {
                 ", total=" + total +
                 ", data=" + data +
                 '}';
-    }
-
-    public String getCondition() {
-        return condition;
-    }
-
-    public DbPageRows<T> setCondition(String condition) {
-        this.condition = condition;
-        return this;
     }
 }

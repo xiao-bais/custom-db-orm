@@ -9,11 +9,9 @@ import com.custom.comm.enums.SqlOrderBy;
 import com.custom.comm.exceptions.ExThrowsUtil;
 
 import java.lang.reflect.Array;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * @Author Xiao-Bai
@@ -166,6 +164,16 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
     }
 
     /**
+     * 拼接insql条件
+     */
+    protected void appendInSql(String column, DbSymbol dbSymbol, String condition, Object... params) {
+        getFinalCondition().append(String.format(" %s %s %s (%s)", appendSybmol, column, dbSymbol.getSymbol(), condition));
+        if (params.length > 0) {
+            getParamValues().addAll(Arrays.stream(params).collect(Collectors.toList()));
+        }
+    }
+
+    /**
      * sql模糊查询条件拼接
      */
     protected String sqlConcat(SqlLike sqlLike, Object val) {
@@ -292,6 +300,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
     protected static String appendSybmol = SymbolConstant.AND;
     /**
      * 拼接and or 方法时，对于后面方法的调用
+     * 默认为true即and
      */
     protected static boolean appendState = true;
 

@@ -52,13 +52,19 @@ public class DefaultConditionWrapper<T> extends ConditionAssembly<T, String, Def
     }
 
     @Override
-    public DefaultConditionWrapper<T> inSql(boolean condition, String inSql, Object... params) {
+    public DefaultConditionWrapper<T> inSql(boolean condition, String column, String inSql, Object... params) {
         return adapter(DbSymbol.IN, condition, inSql, params);
     }
 
     @Override
     public DefaultConditionWrapper<T> notIn(boolean condition, String column, Collection<?> val) {
         return adapter(DbSymbol.NOT_IN, condition, column, val);
+    }
+
+    @Override
+    public DefaultConditionWrapper<T> notInSql(boolean condition, String column, String inSql, Object... params) {
+        appendInSql(column, DbSymbol.NOT_IN, inSql, params);
+        return childrenClass;
     }
 
     @Override

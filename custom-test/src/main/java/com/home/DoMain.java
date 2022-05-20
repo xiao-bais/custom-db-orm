@@ -8,11 +8,14 @@ import com.custom.comm.page.DbPageRows;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
 import com.home.customtest.entity.ChildStudent;
+import com.home.customtest.entity.Employee;
+import com.home.customtest.entity.Street;
 import com.home.customtest.entity.Student;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import java.util.List;
@@ -72,11 +75,7 @@ public class DoMain {
                 .orderByDesc(x -> x.max(Student::getAge).avg(Student::getMoney))
                 .onlyPrimary()
         );
-        System.out.println("objects = " + objects);
-
 
     }
-
-
 
 }

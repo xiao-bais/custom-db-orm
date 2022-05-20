@@ -1,5 +1,7 @@
 package com.custom.action.sqlparser;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.custom.action.dbaction.AbstractSqlExecutor;
 import com.custom.action.wrapper.ConditionWrapper;
 import com.custom.action.wrapper.SFunction;
@@ -16,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -80,9 +83,6 @@ public class JdbcAction extends AbstractSqlExecutor {
             dataList = selectBySql(t, selectSql, params);
         }
         dbPageRows.setTotal(count);
-        if(condition != null) {
-            dbPageRows.setCondition(condition);
-        }
         dbPageRows.setData(dataList);
     }
 
@@ -121,7 +121,7 @@ public class JdbcAction extends AbstractSqlExecutor {
             ExThrowsUtil.toCustom("缺少分页参数：pageIndex：" + wrapper.getPageIndex() + ", pageSize：" + wrapper.getPageSize());
         }
         DbPageRows<T> dbPageRows = new DbPageRows<>(wrapper.getPageIndex(), wrapper.getPageSize());
-        String selectSql = getFullSelectSql(wrapper, dbPageRows);
+        String selectSql = getFullSelectSql(wrapper);
         buildPageResult(wrapper.getEntityClass(), selectSql, null, dbPageRows, wrapper.getParamValues().toArray());
         return dbPageRows;
     }
@@ -159,6 +159,39 @@ public class JdbcAction extends AbstractSqlExecutor {
     public <T> List<Object> selectObjs(ConditionWrapper<T> wrapper) throws Exception {
         String selectSql = getFullSelectSql(wrapper);
         return selectObjsBySql(selectSql, wrapper.getParamValues().toArray());
+    }
+
+    @Override
+    @CheckExecute(target = ExecuteMethod.SELECT)
+    public <T> Map<String, Object> selectMap(ConditionWrapper<T> wrapper) throws Exception {
+        String selectSql = getFullSelectSql(wrapper);
+        return selectMapBySql(selectSql, wrapper.getParamValues().toArray());
+    }
+
+    @Override
+    @CheckExecute(target = ExecuteMethod.SELECT)
+    public <T> List<Map<String, Object>> selectMaps(ConditionWrapper<T> wrapper) throws Exception {
+        String selectSql = getFullSelectSql(wrapper);
+        return selectMapsBySql(selectSql, wrapper.getParamValues().toArray());
+    }
+
+    @Override
+    public <T> DbPageRows<Map<String, Object>> selectPageMaps(ConditionWrapper<T> wrapper) throws Exception {
+        if(!wrapper.isHasPageParams()) {
+            ExThrowsUtil.toCustom("缺少分页参数：pageIndex：" + wrapper.getPageIndex() + ", pageSize：" + wrapper.getPageSize());
+        }
+        DbPageRows<Map<String, Object>> dbPageRows = new DbPageRows<>(wrapper.getPageIndex(), wrapper.getPageSize());
+        String selectSql = getFullSelectSql(wrapper);
+        List<Map<String, Object>> dataList = new ArrayList<>();
+        Object[] params = wrapper.getParamValues().toArray();
+        long count = (long) selectObjBySql(String.format("select count(0) from (%s) xxx ", selectSql), params);
+        if (count > 0) {
+            selectSql = String.format("%s \nlimit %s, %s", selectSql, (dbPageRows.getPageIndex() - 1) * dbPageRows.getPageSize(), dbPageRows.getPageSize());
+            dataList = selectMapsBySql(selectSql, params);
+        }
+        dbPageRows.setTotal(count);
+        dbPageRows.setData(dataList);
+        return dbPageRows;
     }
 
 

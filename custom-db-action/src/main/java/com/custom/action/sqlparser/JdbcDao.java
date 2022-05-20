@@ -12,6 +12,7 @@ import com.custom.configuration.DbDataSource;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Xiao-Bai
@@ -126,6 +127,27 @@ public class JdbcDao {
      */
     public <T> List<Object> selectObjs(ConditionWrapper<T> wrapper) throws Exception {
         return jdbcAction.selectObjs(wrapper);
+    }
+
+    /**
+     * 查询单条记录映射到Map
+     */
+    public <T> Map<String, Object> selectMap(ConditionWrapper<T> wrapper) throws Exception {
+        return jdbcAction.selectMap(wrapper);
+    }
+
+    /**
+     * 查询多条记录映射到Map
+     */
+    public <T> List<Map<String, Object>> selectMaps(ConditionWrapper<T> wrapper) throws Exception {
+        return jdbcAction.selectMaps(wrapper);
+    }
+
+    /**
+     * 查询多条记录映射到Map
+     */
+    public <T> DbPageRows<Map<String, Object>> selectPageMaps(ConditionWrapper<T> wrapper) throws Exception {
+        return jdbcAction.selectPageMaps(wrapper);
     }
 
     /* ----------------------------------------------------------------delete---------------------------------------------------------------- */
