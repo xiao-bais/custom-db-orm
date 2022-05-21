@@ -3,6 +3,8 @@ package com.home;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.wrapper.Conditions;
+import com.custom.action.wrapper.EmptyConditionWrapper;
+import com.custom.action.wrapper.LambdaConditionWrapper;
 import com.custom.action.wrapper.SelectFunc;
 import com.custom.comm.page.DbPageRows;
 import com.custom.configuration.DbCustomStrategy;
@@ -64,17 +66,6 @@ public class DoMain {
 
         JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
         TableInfoCache.setUnderlineToCamel(true);
-
-//        ChildStudent student = jdbcDao.selectOneByKey(ChildStudent.class, 1);
-//        System.out.println("student = " + student);
-
-        List<Object> objects = jdbcDao.selectObjs(Conditions.emptyQuery(Student.class)
-                .select(Student::getCityId)
-                .select(new SelectFunc<>(Student.class).max(Student::getAge))
-                .groupBy(Student::getCityId)
-                .orderByDesc(x -> x.max(Student::getAge).avg(Student::getMoney))
-                .onlyPrimary()
-        );
 
     }
 

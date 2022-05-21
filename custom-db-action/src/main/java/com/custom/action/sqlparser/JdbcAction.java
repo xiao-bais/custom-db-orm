@@ -1,7 +1,5 @@
 package com.custom.action.sqlparser;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
 import com.custom.action.dbaction.AbstractSqlExecutor;
 import com.custom.action.wrapper.ConditionWrapper;
 import com.custom.action.wrapper.SFunction;
@@ -18,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -117,7 +114,7 @@ public class JdbcAction extends AbstractSqlExecutor {
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> DbPageRows<T> selectPageRows(ConditionWrapper<T> wrapper) throws Exception {
-        if(!wrapper.isHasPageParams()) {
+        if(!wrapper.hasPageParams()) {
             ExThrowsUtil.toCustom("缺少分页参数：pageIndex：" + wrapper.getPageIndex() + ", pageSize：" + wrapper.getPageSize());
         }
         DbPageRows<T> dbPageRows = new DbPageRows<>(wrapper.getPageIndex(), wrapper.getPageSize());
@@ -177,7 +174,7 @@ public class JdbcAction extends AbstractSqlExecutor {
 
     @Override
     public <T> DbPageRows<Map<String, Object>> selectPageMaps(ConditionWrapper<T> wrapper) throws Exception {
-        if(!wrapper.isHasPageParams()) {
+        if(!wrapper.hasPageParams()) {
             ExThrowsUtil.toCustom("缺少分页参数：pageIndex：" + wrapper.getPageIndex() + ", pageSize：" + wrapper.getPageSize());
         }
         DbPageRows<Map<String, Object>> dbPageRows = new DbPageRows<>(wrapper.getPageIndex(), wrapper.getPageSize());

@@ -110,7 +110,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
         return finalConditional.toString();
     }
 
-    public StringBuilder getFinalCondition() {
+    protected StringBuilder getFinalCondition() {
         return finalConditional;
     }
 
@@ -165,11 +165,11 @@ public abstract class ConditionWrapper<T> implements Serializable {
      * </p>
      * 返回sql(a.name = 20)
      */
-    public String getInjectorParamsFinalConditional() {
+    public String injectParamsConditional() {
         return CustomUtil.handleExecuteSql(this.finalConditional.toString(), this.paramValues.toArray());
     }
 
-    public boolean isHasPageParams() {
+    public boolean hasPageParams() {
         return hasPageParams;
     }
 

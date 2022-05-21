@@ -19,8 +19,9 @@ import java.util.Date;
 @DbJoinTables({
         @DbJoinTable("left join dept dept on dept.id = a.dept_id"),
 })
-public class Employee {
+public class Employee<T> {
 
+    private T aaa;
 
     @DbKey
     private Integer id;

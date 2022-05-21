@@ -105,7 +105,8 @@ public class ConditionAdapter<T, Children> extends ConditionAssembly<T, SFunctio
     @SafeVarargs
     @Override
     public final Children groupBy(SFunction<T, ?>... columns) {
-        Arrays.stream(parseColumn(columns)).forEach(x -> adapter(DbSymbol.GROUP_BY, true, x));
+        Arrays.stream(parseColumn(columns))
+                .forEach(x -> adapter(DbSymbol.GROUP_BY, true, x));
         return childrenClass;
     }
 
@@ -132,14 +133,18 @@ public class ConditionAdapter<T, Children> extends ConditionAssembly<T, SFunctio
     @SafeVarargs
     @Override
     public final Children orderByAsc(boolean condition, SFunction<T, ?>... columns) {
-        Arrays.stream(parseColumn(columns)).map(column -> orderByField(column, SqlOrderBy.ASC)).forEach(orderByField -> adapter(DbSymbol.ORDER_BY, condition, orderByField));
+        Arrays.stream(parseColumn(columns))
+                .map(column -> orderByField(column, SqlOrderBy.ASC))
+                .forEach(orderByField -> adapter(DbSymbol.ORDER_BY, condition, orderByField));
         return childrenClass;
     }
 
     @SafeVarargs
     @Override
     public final Children orderByDesc(boolean condition, SFunction<T, ?>... columns) {
-        Arrays.stream(parseColumn(columns)).map(column -> orderByField(column, SqlOrderBy.DESC)).forEach(orderByField -> adapter(DbSymbol.ORDER_BY, condition, orderByField));
+        Arrays.stream(parseColumn(columns))
+                .map(column -> orderByField(column, SqlOrderBy.DESC))
+                .forEach(orderByField -> adapter(DbSymbol.ORDER_BY, condition, orderByField));
         return childrenClass;
     }
 
