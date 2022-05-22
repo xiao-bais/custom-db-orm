@@ -38,6 +38,7 @@ public class CustomBeanInitializer implements InitializingBean, ApplicationConte
         if (Objects.isNull(strategy.getEntityPackageScans())) {
             return;
         }
+        logger.info("Table info init process started!");
         // 表结构初始化
         TableStructsInitializer tableStructsInitializer = new TableStructsInitializer(
                 strategy.getEntityPackageScans(),

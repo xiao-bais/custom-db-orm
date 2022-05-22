@@ -329,18 +329,14 @@ public class ExecuteSqlHandler extends DbConnection {
     /**
      * 执行表(字段)结构创建或删除
      */
-    public void executeTableSql(String sql) throws SQLException {
+    public void executeTableSql(String sql) {
         try {
-            conn.setAutoCommit(autoCommit);
             statement = conn.prepareStatement(sql);
             statement.execute();
-            conn.commit();
         }catch (Exception e) {
-            conn.rollback();
             SqlOutPrintBuilder.build(sql, new String[]{}, dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
             logger.error(e.toString(), e);
         }
-
     }
 
     /**

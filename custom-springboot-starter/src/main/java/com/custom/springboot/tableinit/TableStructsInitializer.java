@@ -4,6 +4,7 @@ import com.custom.action.sqlparser.DbFieldParserModel;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableSqlBuilder;
 import com.custom.comm.*;
+import com.custom.comm.annotations.DbTable;
 import com.custom.jdbc.ExecuteSqlHandler;
 import com.custom.springboot.scanner.CustomBeanScanner;
 import org.slf4j.Logger;
@@ -52,21 +53,19 @@ public class TableStructsInitializer {
 
         // 执行更新
         if(!addColumnSqlList.isEmpty()) {
-            sqlHandler.setAutoCommit(false);
             StringJoiner createNewColumnSql = new StringJoiner(";");
             addColumnSqlList.forEach(x -> {
                 createNewColumnSql.add(x);
-                logger.info("Added new column as '{}'", x);
+                logger.info("Added new column as '{}'\n", x);
             });
             sqlHandler.executeTableSql(createNewColumnSql.toString());
         }
 
         if (!addTableSqlList.isEmpty()) {
-            sqlHandler.setAutoCommit(false);
             StringJoiner createNewTableSql = new StringJoiner(";");
             addTableSqlList.forEach(x -> {
                 createNewTableSql.add(x);
-                logger.info("\nCreated new tableInfo as '\n{}'", x);
+                logger.info("\nCreated new tableInfo as \n{}", x);
             });
             sqlHandler.executeTableSql(createNewTableSql.toString());
         }
@@ -77,6 +76,9 @@ public class TableStructsInitializer {
      */
     public void buildTableInfo(Set<Class<?>> beanRegisterList) throws Exception {
         for (Class<?> entityClass : beanRegisterList) {
+            if (!entityClass.isAnnotationPresent(DbTable.class)) {
+                continue;
+            }
             TableSqlBuilder<?> sqlBuilder = TableInfoCache.getTableModel(entityClass);
             String exitsTableSql = sqlBuilder.getExitsTableSql(entityClass);
             String table = sqlBuilder.getTable();

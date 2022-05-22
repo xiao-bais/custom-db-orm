@@ -33,7 +33,7 @@ public class DbConnection {
      */
     public DbConnection(DbDataSource dbDataSource) {
         try {
-            isExistClass(dbDataSource.getDriver());
+            loaderDriver(dbDataSource);
             datasourceInitialize(dbDataSource);
         }catch (Exception e) {
             logger.error("不存在mysql驱动：" + CUSTOM_DRIVER);
@@ -78,11 +78,11 @@ public class DbConnection {
     }
 
 
-    private void isExistClass(String driverClassName) throws ClassNotFoundException {
-        if(JudgeUtilsAx.isEmpty(driverClassName)) {
-            driverClassName = CUSTOM_DRIVER;
+    private void loaderDriver(DbDataSource dbDataSource) throws ClassNotFoundException {
+        if(JudgeUtilsAx.isEmpty(dbDataSource.getDriver())) {
+            dbDataSource.setDriver(CUSTOM_DRIVER);
         }
-        Class.forName(driverClassName);
+        Class.forName(dbDataSource.getDriver());
     }
 
     //线程隔离
