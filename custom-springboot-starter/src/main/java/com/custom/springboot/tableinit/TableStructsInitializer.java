@@ -48,8 +48,8 @@ public class TableStructsInitializer {
 
     public void initStart() throws Exception {
         CustomBeanScanner scanner = new CustomBeanScanner(packageScans);
-        Set<Class<?>> beanRegisterList = scanner.getBeanRegisterList();
-        buildTableInfo(beanRegisterList);
+        Set<Class<?>> tableInfoList = scanner.getBeanRegisterList();
+        buildTableInfo(tableInfoList);
 
         // 执行更新
         if(!addColumnSqlList.isEmpty()) {
@@ -74,8 +74,8 @@ public class TableStructsInitializer {
     /**
      * 更新表结构
      */
-    public void buildTableInfo(Set<Class<?>> beanRegisterList) throws Exception {
-        for (Class<?> entityClass : beanRegisterList) {
+    public void buildTableInfo(Set<Class<?>> tableInfoList) throws Exception {
+        for (Class<?> entityClass : tableInfoList) {
             if (!entityClass.isAnnotationPresent(DbTable.class)) {
                 continue;
             }
