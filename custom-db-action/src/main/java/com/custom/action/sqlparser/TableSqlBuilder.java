@@ -65,25 +65,9 @@ public class TableSqlBuilder<T> implements Cloneable {
      */
     private List<String> joinTableParserModels = new ArrayList<>();
     /**
-     * @Desc:查询的sql语句
-     */
-    private StringBuilder selectSql;
-    /**
-     * @Desc:插入的sql语句
-     */
-    private StringJoiner insertSql;
-    /**
-     * @Desc:插入的`?`
-     */
-    private StringJoiner insetSymbol;
-    /**
      * @Desc:对象的所有值
      */
     private List<Object> objValues;
-    /**
-     * @desc:修改的sql语句
-     */
-    private StringBuilder updateSql;
     /**
      * @desc:对于java属性字段到表字段的映射关系
      */
@@ -111,7 +95,7 @@ public class TableSqlBuilder<T> implements Cloneable {
     /**
      * 创建表结构
      */
-    public String geCreateTableSql() {
+    public String getCreateTableSql() {
         StringBuilder createTableSql = new StringBuilder();
         StringJoiner fieldSql = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_1);
         if (Objects.nonNull(keyParserModel)) {
@@ -145,86 +129,6 @@ public class TableSqlBuilder<T> implements Cloneable {
         String table = annotation.table();
         return String.format("SELECT COUNT(1) COUNT FROM " +
                 "`information_schema`.`TABLES` WHERE TABLE_NAME = '%s' AND TABLE_SCHEMA = '%s';", table, DbConnection.currMap.get(SymbolConstant.DATA_BASE));
-    }
-
-    /**
-     * 生成表查询sql语句
-     */
-    private void getSelectBaseTableSql() {
-        StringJoiner baseFieldSql = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
-
-        // 第一步 拼接主键
-        if (Objects.nonNull(keyParserModel)) {
-            baseFieldSql.add(keyParserModel.getSelectFieldSql());
-        }
-
-        // 第二步 拼接此表的其他字段
-        if (!fieldParserModels.isEmpty()) {
-            fieldParserModels.stream().map(DbFieldParserModel::getSelectFieldSql).forEach(baseFieldSql::add);
-        }
-
-        // 第三步 拼接主表
-        selectSql.append(String.format("select %s\n from %s %s", baseFieldSql, this.table, this.alias));
-    }
-
-
-    /**
-     * 关联的sql分为两部分
-     * 一是 @DbJoinTables注解，二是@DbRelated注解
-     * 默认按注解放置顺序载入，优先加载DbJoinTables注解(顺带优先@DbMap的查询字段)
-     */
-    private void getSelectRelationSql() {
-
-        StringJoiner baseFieldSql = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
-
-        // 第一步 拼接主键
-        if (Objects.nonNull(keyParserModel)) {
-            baseFieldSql.add(keyParserModel.getSelectFieldSql());
-        }
-
-        // 第二步 拼接此表的其他字段
-        if (!fieldParserModels.isEmpty()) {
-            fieldParserModels.stream().map(DbFieldParserModel::getSelectFieldSql).forEach(baseFieldSql::add);
-        }
-
-        // 第三步 拼接以joinTables的方式关联的查询字段
-        if (!joinDbMappers.isEmpty()) {
-            joinDbMappers.forEach(x -> baseFieldSql.add(x.getSelectFieldSql()));
-        }
-
-        // 第三步 拼接以related方式关联的查询字段
-        if (!relatedParserModels.isEmpty()) {
-            relatedParserModels.stream().map(DbRelationParserModel::getSelectFieldSql).forEach(baseFieldSql::add);
-        }
-
-        // 第四步 拼接主表
-        selectSql.append(String.format("select %s\n from %s %s", baseFieldSql, this.table, this.alias));
-
-        // 第五步 拼接以joinTables方式的关联条件
-        if (!joinTableParserModels.isEmpty()) {
-            joinTableParserModels.stream().map(model -> String.format("\n %s", model)).forEach(selectSql::append);
-        }
-
-        // 第六步 拼接以related方式的关联条件
-        if (!relatedParserModels.isEmpty()) {
-            selectSql.append(getRelatedTableSql(relatedParserModels));
-        }
-    }
-
-    /**
-     * 拼接related的表关联
-     */
-    private String getRelatedTableSql(List<DbRelationParserModel<T>> relatedParserModels) {
-        StringBuilder joinTableSql = new StringBuilder();
-        List<String> conditions = new ArrayList<>();
-        for (DbRelationParserModel<T> model : relatedParserModels) {
-            String condition = String.format("%s@%s@%s", model.getJoinTable(), model.getJoinAlias(), model.getCondition());
-            if (!conditions.contains(condition)) {
-                joinTableSql.append("\n").append(String.format("%s %s %s on %s", model.getJoinStyle().getStyle(), model.getJoinTable(), model.getJoinAlias(), model.getCondition()));
-                conditions.add(condition);
-            }
-        }
-        return joinTableSql.toString();
     }
 
 
@@ -297,9 +201,6 @@ public class TableSqlBuilder<T> implements Cloneable {
         }
         // 构建字段映射缓存
         buildMapper();
-
-        // 初始化数据结构
-        initDataStructure(this);
     }
 
     /**
@@ -409,17 +310,6 @@ public class TableSqlBuilder<T> implements Cloneable {
     }
 
     /**
-     * 初始化数据结构
-     */
-    private void initDataStructure(TableSqlBuilder<T> tableSqlBuilder) {
-        tableSqlBuilder.selectSql = new StringBuilder();
-        tableSqlBuilder.updateSql = new StringBuilder();
-        tableSqlBuilder.insertSql = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
-        tableSqlBuilder.insetSymbol = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_1);
-        tableSqlBuilder.objValues = new ArrayList<>();
-    }
-
-    /**
      * 实例化sql构造模板
      */
     public void buildSqlConstructorModel(ExecuteMethod method) {
@@ -487,14 +377,6 @@ public class TableSqlBuilder<T> implements Cloneable {
 
     public List<DbRelationParserModel<T>> getRelatedParserModels() {
         return relatedParserModels;
-    }
-
-    public List<Object> getObjValues() {
-        return objValues;
-    }
-
-    public StringBuilder getUpdateSql() {
-        return updateSql;
     }
 
     public List<String> getJoinTableParserModels() {
@@ -567,6 +449,10 @@ public class TableSqlBuilder<T> implements Cloneable {
         this.joinDbMappers = joinDbMappers;
     }
 
+    public String getDesc() {
+        return desc;
+    }
+
     public List<DbJoinTableParserModel<T>> getJoinDbMappers() {
         return joinDbMappers;
     }
@@ -614,13 +500,11 @@ public class TableSqlBuilder<T> implements Cloneable {
             builder.setAlias(this.alias);
             builder.setTable(this.table);
             builder.setCls(this.cls);
-            builder.setEntity(this.entity);
             builder.setKeyParserModel(this.keyParserModel);
             builder.setFieldParserModels(this.fieldParserModels);
             builder.setRelatedParserModels(this.relatedParserModels);
             builder.setJoinTableParserModels(this.joinTableParserModels);
             builder.setJoinDbMappers(this.joinDbMappers);
-            initDataStructure(builder);
         } catch (CloneNotSupportedException e) {
             logger.error(e.toString(), e);
         }
