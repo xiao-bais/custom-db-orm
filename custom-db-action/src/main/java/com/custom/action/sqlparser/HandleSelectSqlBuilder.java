@@ -22,14 +22,18 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final StringBuilder selectSql;
+    private final boolean findUpDbJoinTables;
     private final List<DbRelationParserModel<T>> relatedParserModels;
     private final List<DbJoinTableParserModel<T>> joinDbMappers;
     private final List<String> joinTableParserModels;
 
-    public HandleSelectSqlBuilder(List<DbRelationParserModel<T>> relatedParserModels,
+    public HandleSelectSqlBuilder(
+                                boolean findUpDbJoinTables,
+                                List<DbRelationParserModel<T>> relatedParserModels,
                                   List<DbJoinTableParserModel<T>> joinDbMappers,
                                   List<String> joinTableParserModels) {
         this.selectSql = new StringBuilder();
+        this.findUpDbJoinTables = findUpDbJoinTables;
         this.relatedParserModels = relatedParserModels;
         this.joinDbMappers = joinDbMappers;
         this.joinTableParserModels = joinTableParserModels;
@@ -166,4 +170,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
         return selectSql;
     }
 
+    public boolean isMergeSuperDbJoinTable() {
+        return this.findUpDbJoinTables;
+    }
 }

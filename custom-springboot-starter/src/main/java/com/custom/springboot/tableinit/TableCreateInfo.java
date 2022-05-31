@@ -1,6 +1,7 @@
 package com.custom.springboot.tableinit;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Xiao-Bai
@@ -19,39 +20,49 @@ public class TableCreateInfo {
      */
     private String comment;
 
+    /**
+     * 表主键的创建sql
+     */
     private String primaryKeyCreateSql;
 
-    private List<ColumnCreateInfo> columnCreateInfos;
+    /**
+     * 表其他字段的创建sql
+     */
+    private Set<ColumnCreateInfo> columnCreateInfos;
 
-    public String getTable() {
+    protected String getTable() {
         return table;
     }
 
-    public void setTable(String table) {
+    protected void setTable(String table) {
         this.table = table;
     }
 
-    public String getComment() {
+    protected String getComment() {
         return comment;
     }
 
-    public void setComment(String comment) {
+    protected void setComment(String comment) {
         this.comment = comment;
     }
 
-    public String getPrimaryKeyCreateSql() {
+    protected String getPrimaryKeyCreateSql() {
         return primaryKeyCreateSql;
     }
 
-    public void setPrimaryKeyCreateSql(String primaryKeyCreateSql) {
+    protected void setPrimaryKeyCreateSql(String primaryKeyCreateSql) {
         this.primaryKeyCreateSql = primaryKeyCreateSql;
     }
 
-    public List<ColumnCreateInfo> getColumnCreateInfos() {
+    protected void mergeColumnCreateInfos(Set<ColumnCreateInfo> columnCreateInfos) {
+        this.columnCreateInfos.addAll(columnCreateInfos);
+    }
+
+    protected Set<ColumnCreateInfo> getColumnCreateInfos() {
         return columnCreateInfos;
     }
 
-    public void setColumnCreateInfos(List<ColumnCreateInfo> columnCreateInfos) {
+    protected void setColumnCreateInfos(Set<ColumnCreateInfo> columnCreateInfos) {
         this.columnCreateInfos = columnCreateInfos;
     }
 }

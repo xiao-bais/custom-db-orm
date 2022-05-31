@@ -22,7 +22,7 @@ public enum DbType {
 
     DbDecimal("decimal", BigDecimal.class, null, "16,2"),
 
-    DbDouble("double", Double.class, Double.TYPE, "12,2"),
+    DbDouble("double", Double.class, Double.TYPE, "5,2"),
 
     DbTinyint("tinyint", Integer.class, Integer.TYPE, "1"),
 

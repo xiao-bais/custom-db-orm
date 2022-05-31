@@ -315,7 +315,7 @@ public class TableSqlBuilder<T> implements Cloneable {
     public void buildSqlConstructorModel(ExecuteMethod method) {
         switch (method) {
             case SELECT:
-                sqlBuilder = new HandleSelectSqlBuilder<>(relatedParserModels, joinDbMappers, joinTableParserModels);
+                sqlBuilder = new HandleSelectSqlBuilder<>(findUpDbJoinTables, relatedParserModels, joinDbMappers, joinTableParserModels);
                 break;
             case UPDATE:
                 sqlBuilder = new HandleUpdateSqlBuilder<>();
@@ -333,7 +333,7 @@ public class TableSqlBuilder<T> implements Cloneable {
             // 初始化
             initializeSqlBuilder(sqlBuilder);
             // 注入sql执行对象
-            sqlBuilder.setSqlExecuteAction(executeSqlHandler);
+            sqlBuilder.setExecuteSqlHandler(executeSqlHandler);
         }
     }
 

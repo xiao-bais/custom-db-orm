@@ -87,6 +87,17 @@ public class JdbcAction extends AbstractSqlExecutor {
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> T selectOneByKey(Class<T> t, Object key) throws Exception {
         HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
+        if (JudgeUtil.isEmpty(sqlBuilder.getKeyParserModel())) {
+            if (!sqlBuilder.isMergeSuperDbJoinTable()) {
+                ExThrowsUtil.toCustom(String.format( "%s 中未找到 @DbKey注解, " +
+                        "可能是因为该类或父类在@DbTable中使用了mergeSuperDbJoinTables = false的原因，" +
+                        "当mergeSuperDbJoinTables = false时，解析注解时只会解析本类的属性字段，不会合并父类的属性字段，" +
+                        "该属性请按需要自行判定使用！！！", t));
+            }else {
+                ExThrowsUtil.toCustom(String.format("%s 中未找到 @DbKey注解, " +
+                        "猜测该类或父类不存在主键字段，或没有标注@DbKey注解来表示主键，", t));
+            }
+        }
         String condition = String.format("and %s = ?", sqlBuilder.getKeyParserModel().getFieldSql());
         condition = checkConditionAndLogicDeleteSql(sqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
         return selectOneBySql(t, sqlBuilder.buildSql() + condition, key);

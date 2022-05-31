@@ -67,6 +67,8 @@ public class DoMain {
         JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
         TableInfoCache.setUnderlineToCamel(true);
 
+        jdbcDao.selectOneByKey(ChildStudent.class, 8);
+
     }
 
 }

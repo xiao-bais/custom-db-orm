@@ -46,7 +46,7 @@ public class TableStructsInitializer {
     /**
      * 待创建的表合集
      */
-    private final Map<String, ColumnCreateInfo> waitCreateMapper;
+    private final Map<String, TableCreateInfo> waitCreateMapper;
 
     private final static String SELECT_COLUMN_SQL = "SELECT COLUMN_NAME FROM `information_schema`.`COLUMNS` WHERE TABLE_NAME = '%s' AND TABLE_SCHEMA = '%s'";
     private final static String CREATE_COLUMN_AFTER_SQL = "ALTER TABLE `%s` add %s AFTER `%s`";
@@ -78,14 +78,15 @@ public class TableStructsInitializer {
             sqlHandler.executeTableSql(createNewColumnSql.toString());
         }
 
-//        if (!addTableSqlList.isEmpty()) {
-//            StringJoiner createNewTableSql = new StringJoiner(";");
-//            addTableSqlList.forEach(x -> {
-//                createNewTableSql.add(x);
-//                logger.info("\nCreated new tableInfo as \n{}", x);
-//            });
-//            sqlHandler.executeTableSql(createNewTableSql.toString());
-//        }
+        if (!waitCreateMapper.isEmpty()) {
+            StringJoiner createNewTableSql = new StringJoiner(";");
+            waitCreateMapper.forEach((table, tableInfo) -> {
+                String createTableSql = buildCreateTableSql(tableInfo);
+                createNewTableSql.add(createTableSql);
+                logger.info("\nCreated new table for '{}' as ===================>\n\n{}\n", table, createTableSql);
+            });
+            sqlHandler.executeTableSql(createNewTableSql.toString());
+        }
     }
 
     /**
@@ -100,26 +101,59 @@ public class TableStructsInitializer {
             TableSqlBuilder<?> waitUpdateSqlBuilder = sqlBuilder.clone();
             String exitsTableSql = waitUpdateSqlBuilder.getExitsTableSql(entityClass);
             String table = waitUpdateSqlBuilder.getTable();
-
+            System.out.println("table = " + table);
             // 若存在，则进行下一步判断表字段是否存在
             if (ConvertUtil.conBool(sqlHandler.executeExist(exitsTableSql))) {
-                buildTableColumnInfo(waitUpdateSqlBuilder, table);
+                buildColumnInfo(waitUpdateSqlBuilder, table);
                 continue;
             }
-
-            if (waitCreateMapper.containsKey(table)) {
-                ColumnCreateInfo columnInfo = waitCreateMapper.get(table);
-
-
-            }
-            waitCreateMapper.put(table, waitUpdateSqlBuilder);
+            saveWaitCreateTableInfo(waitUpdateSqlBuilder, table);
         }
+    }
+
+    /**
+     * 保存待创建的表
+     */
+    private void saveWaitCreateTableInfo(TableSqlBuilder<?> waitUpdateSqlBuilder, String table) {
+        TableCreateInfo tableCreateInfo;
+        // 若不存在，则加入创建表的对象中
+        if (waitCreateMapper.containsKey(table)) {
+            tableCreateInfo = waitCreateMapper.get(table);
+            Set<ColumnCreateInfo> buildAddColumnSqls = addColumnInfos(waitUpdateSqlBuilder);
+            tableCreateInfo.mergeColumnCreateInfos(buildAddColumnSqls);
+        }else {
+            tableCreateInfo = new TableCreateInfo();
+            tableCreateInfo.setTable(table);
+            tableCreateInfo.setComment(waitUpdateSqlBuilder.getDesc());
+            Set<ColumnCreateInfo> buildAddColumnSqls = addColumnInfos(waitUpdateSqlBuilder);
+            tableCreateInfo.setColumnCreateInfos(buildAddColumnSqls);
+            waitCreateMapper.put(table, tableCreateInfo);
+        }
+        // 若主键为空，则加入主键的创建sql
+        if (JudgeUtil.isEmpty(tableCreateInfo.getPrimaryKeyCreateSql())) {
+            DbKeyParserModel<?> keyParserModel = waitUpdateSqlBuilder.getKeyParserModel();
+            if (JudgeUtil.isNotEmpty(keyParserModel)) {
+                tableCreateInfo.setPrimaryKeyCreateSql(keyParserModel.buildTableSql());
+            }
+        }
+    }
+
+
+    private Set<ColumnCreateInfo> addColumnInfos(TableSqlBuilder<?> waitUpdateSqlBuilder) {
+        Set<ColumnCreateInfo> buildColumnSqls = new LinkedHashSet<>();
+        for (DbFieldParserModel<?> fieldParserModel : waitUpdateSqlBuilder.getFieldParserModels()) {
+            ColumnCreateInfo columnCreateInfo = new ColumnCreateInfo();
+            columnCreateInfo.setColumn(fieldParserModel.getColumn());
+            columnCreateInfo.setCreateColumnSql(fieldParserModel.buildTableSql());
+            buildColumnSqls.add(columnCreateInfo);
+        }
+        return buildColumnSqls;
     }
 
     /**
      * 更新表新增字段
      */
-    private void buildTableColumnInfo(TableSqlBuilder<?> sqlBuilder, String table) throws Exception {
+    private void buildColumnInfo(TableSqlBuilder<?> sqlBuilder, String table) throws Exception {
         String selectColumnSql = String.format(SELECT_COLUMN_SQL,
                 sqlBuilder.getTable(), dataBaseName);
         List<String> columnList = sqlHandler.query(String.class, false, selectColumnSql);
@@ -137,7 +171,7 @@ public class TableStructsInitializer {
             String addColumnSql;
             if (i == 0) {
                 addColumnSql = String.format(CREATE_COLUMN_FIRST_SQL, table, fieldParserModel.buildTableSql());
-            }else {
+            } else {
                 String beforeColumn = truthColumnList.get(i - 1);
                 addColumnSql = String.format(CREATE_COLUMN_AFTER_SQL, table, fieldParserModel.buildTableSql(), beforeColumn);
             }
@@ -148,19 +182,18 @@ public class TableStructsInitializer {
     /**
      * 构建创建表的sql语句
      */
-    private String buildCreateTableSql(TableSqlBuilder<?> sqlBuilder) {
+    private String buildCreateTableSql(TableCreateInfo tableCreateInfo) {
         StringBuilder createTableSql = new StringBuilder();
         StringJoiner fieldSql = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_1);
-        if (Objects.nonNull(sqlBuilder.getKeyParserModel())) {
-            DbKeyParserModel<?> keyParserModel = sqlBuilder.getKeyParserModel();
-            fieldSql.add(keyParserModel.buildTableSql() + "\n");
+        if (Objects.nonNull(tableCreateInfo.getPrimaryKeyCreateSql())) {
+            fieldSql.add(tableCreateInfo.getPrimaryKeyCreateSql() + "\n");
         }
-        List<? extends DbFieldParserModel<?>> fieldParserModels = sqlBuilder.getFieldParserModels();
-        fieldParserModels.stream().map(dbFieldParserModel -> dbFieldParserModel.buildTableSql() + "\n").forEach(fieldSql::add);
+        Set<ColumnCreateInfo> columnCreateInfos = tableCreateInfo.getColumnCreateInfos();
+        columnCreateInfos.stream().map(column -> column.getCreateColumnSql() + "\n").forEach(fieldSql::add);
 
-        createTableSql.append(String.format("create table `%s` (\n%s)", sqlBuilder.getTable(), fieldSql));
-        if (JudgeUtil.isNotEmpty(sqlBuilder.getDesc())) {
-            createTableSql.append(String.format(" COMMENT = '%s'", sqlBuilder.getDesc()));
+        createTableSql.append(String.format("create table `%s` (\n%s)", tableCreateInfo.getTable(), fieldSql));
+        if (JudgeUtil.isNotEmpty(tableCreateInfo.getComment())) {
+            createTableSql.append(String.format(" COMMENT = '%s'", tableCreateInfo.getComment()));
         }
         return createTableSql.toString();
     }
