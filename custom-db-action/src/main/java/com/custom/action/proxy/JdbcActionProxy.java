@@ -2,7 +2,7 @@ package com.custom.action.proxy;
 
 import com.custom.action.util.DbUtil;
 import com.custom.action.wrapper.ConditionWrapper;
-import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.JudgeUtil;
 import com.custom.comm.annotations.DbTable;
 import com.custom.comm.annotations.check.CheckExecute;
 import com.custom.comm.enums.ExecuteMethod;
@@ -53,7 +53,7 @@ public class JdbcActionProxy<T> implements MethodInterceptor {
         if(Objects.isNull(annotation)) {
             return methodProxy.invokeSuper(o, objects);
         }
-        if(JudgeUtilsAx.isEmpty(objects[0])) {
+        if(JudgeUtil.isEmpty(objects[0])) {
             ExThrowsUtil.toNull("执行参数不能为空");
         }
 
@@ -100,7 +100,7 @@ public class JdbcActionProxy<T> implements MethodInterceptor {
             if(Objects.isNull(objects[0])) {
                 ExThrowsUtil.toCustom("delete condition cannot be empty");
             }
-            if(objects[0] instanceof ConditionWrapper && JudgeUtilsAx.isEmpty(((ConditionWrapper<?>) objects[0]).getFinalConditional())) {
+            if(objects[0] instanceof ConditionWrapper && JudgeUtil.isEmpty(((ConditionWrapper<?>) objects[0]).getFinalConditional())) {
                 ExThrowsUtil.toCustom("delete condition cannot be empty");
             }
             return;
@@ -109,7 +109,7 @@ public class JdbcActionProxy<T> implements MethodInterceptor {
         if(!((Class<?>)objects[0]).isAnnotationPresent(DbTable.class)) {
             ExThrowsUtil.toCustom("@DbTable not found in class "+ objects[0].getClass());
         }
-        if(JudgeUtilsAx.isEmpty(deleteParam)) {
+        if(JudgeUtil.isEmpty(deleteParam)) {
             ExThrowsUtil.toCustom("delete condition cannot be empty");
         }
     }
@@ -127,7 +127,7 @@ public class JdbcActionProxy<T> implements MethodInterceptor {
         if(!DbUtil.isKeyTag(objects[0].getClass()) && method.getName().equals("updateByKey")) {
             ExThrowsUtil.toCustom("@DbKey was not found in class " + objects[0].getClass());
         }
-        if(method.getName().equals("updateByCondition") && (JudgeUtilsAx.isEmpty(objects[1]) || JudgeUtilsAx.isEmpty(((ConditionWrapper<?>) objects[1]).getFinalConditional()))) {
+        if(method.getName().equals("updateByCondition") && (JudgeUtil.isEmpty(objects[1]) || JudgeUtil.isEmpty(((ConditionWrapper<?>) objects[1]).getFinalConditional()))) {
             ExThrowsUtil.toCustom("update condition cannot be empty");
         }
     }
@@ -147,7 +147,7 @@ public class JdbcActionProxy<T> implements MethodInterceptor {
             ExThrowsUtil.toCustom("@DbTable not found in class " + objects[0].getClass());
         }
         String methodName = method.getName();
-        if(JudgeUtilsAx.isEmpty(objects[1])) {
+        if(JudgeUtil.isEmpty(objects[1])) {
             switch (methodName) {
                 case "selectOneByKey":
                 case "selectBatchByKeys":

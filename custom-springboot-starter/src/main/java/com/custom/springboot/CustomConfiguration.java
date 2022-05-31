@@ -2,7 +2,7 @@ package com.custom.springboot;
 
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.TableInfoCache;
-import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.JudgeUtil;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
 import com.custom.proxy.InterfacesProxyExecutor;
@@ -61,7 +61,7 @@ public class CustomConfiguration {
     }
 
     private boolean isDataSourceEmpty(DbDataSource dbDataSource) {
-        return JudgeUtilsAx.isEmpty(dbDataSource.getUrl()) || JudgeUtilsAx.isEmpty(dbDataSource.getUsername()) || JudgeUtilsAx.isEmpty(dbDataSource.getPassword());
+        return JudgeUtil.isEmpty(dbDataSource.getUrl()) || JudgeUtil.isEmpty(dbDataSource.getUsername()) || JudgeUtil.isEmpty(dbDataSource.getPassword());
     }
 
 

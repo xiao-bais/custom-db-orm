@@ -7,7 +7,7 @@ import com.custom.action.sqlparser.TableSqlBuilder;
 import com.custom.action.wrapper.ConditionWrapper;
 import com.custom.action.wrapper.SFunction;
 import com.custom.comm.CustomUtil;
-import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.CustomCheckException;
@@ -83,7 +83,7 @@ public abstract class AbstractSqlExecutor {
      */
     public void initLogic() {
         if(isLogicDeleteOpen(dbCustomStrategy)) {
-            if(JudgeUtilsAx.isEmpty(dbCustomStrategy.getNotDeleteLogicValue()) || JudgeUtilsAx.isEmpty(dbCustomStrategy.getDeleteLogicValue())) {
+            if(JudgeUtil.isEmpty(dbCustomStrategy.getNotDeleteLogicValue()) || JudgeUtil.isEmpty(dbCustomStrategy.getDeleteLogicValue())) {
                 ExThrowsUtil.toCustom("The corresponding value of the logical deletion field is not configured");
             }
             this.logicField = dbCustomStrategy.getDbFieldDeleteLogic();
@@ -101,7 +101,7 @@ public abstract class AbstractSqlExecutor {
         if(dbCustomStrategy == null) {
             dbCustomStrategy = new DbCustomStrategy();
         }
-        return JudgeUtilsAx.isNotEmpty(dbCustomStrategy.getDbFieldDeleteLogic());
+        return JudgeUtil.isNotEmpty(dbCustomStrategy.getDbFieldDeleteLogic());
     }
 
 
@@ -128,11 +128,11 @@ public abstract class AbstractSqlExecutor {
         }
         final String finalLogicSql = logicSql;
         LogicDeleteFieldSqlHandler handler = () -> {
-            if (JudgeUtilsAx.isNotEmpty(condition)) {
-                return JudgeUtilsAx.isNotEmpty(finalLogicSql) ? String.format("\nwhere %s.%s %s ", alias, finalLogicSql, condition.trim())
+            if (JudgeUtil.isNotEmpty(condition)) {
+                return JudgeUtil.isNotEmpty(finalLogicSql) ? String.format("\nwhere %s.%s %s ", alias, finalLogicSql, condition.trim())
                         : String.format("\nwhere %s ", CustomUtil.trimAppendSqlCondition(condition));
             } else {
-                return JudgeUtilsAx.isNotEmpty(finalLogicSql) ? String.format("\nwhere %s.%s ", alias, finalLogicSql)
+                return JudgeUtil.isNotEmpty(finalLogicSql) ? String.format("\nwhere %s.%s ", alias, finalLogicSql)
                         : condition == null ? SymbolConstant.EMPTY : condition.trim();
             }
         };
@@ -180,7 +180,7 @@ public abstract class AbstractSqlExecutor {
     * 纯sql查询单个字段
     */
     public Object selectObjBySql(String sql, Object... params) throws Exception {
-        if (JudgeUtilsAx.isEmpty(sql)) {
+        if (JudgeUtil.isEmpty(sql)) {
             ExThrowsUtil.toCustom("The Sql to be Not Empty");
         }
         return executeSqlHandler.selectObjSql(sql, params);
@@ -190,7 +190,7 @@ public abstract class AbstractSqlExecutor {
      * 纯sql查询单个字段集合
      */
     public List<Object> selectObjsBySql(String sql, Object... params) throws Exception {
-        if (JudgeUtilsAx.isEmpty(sql)) {
+        if (JudgeUtil.isEmpty(sql)) {
             ExThrowsUtil.toNull("The Sql to be Not Empty");
         }
         return executeSqlHandler.selectObjsSql(sql, params);
@@ -200,7 +200,7 @@ public abstract class AbstractSqlExecutor {
     * 纯sql增删改
     */
     public int executeSql(String sql, Object... params) throws Exception {
-        if (JudgeUtilsAx.isEmpty(sql)) {
+        if (JudgeUtil.isEmpty(sql)) {
             ExThrowsUtil.toNull("The Sql to be Not Empty");
         }
         return executeSqlHandler.executeUpdate(sql, params);
@@ -210,7 +210,7 @@ public abstract class AbstractSqlExecutor {
      * 直接执行查询，属于内部执行
      */
     public <T> List<T> executeQueryNotPrintSql(Class<T> t, String sql, Object... params) throws Exception {
-        if (JudgeUtilsAx.isEmpty(sql)) {
+        if (JudgeUtil.isEmpty(sql)) {
             ExThrowsUtil.toNull("The Sql to be Not Empty");
         }
         return executeSqlHandler.query(t, false, sql, params);
@@ -234,7 +234,7 @@ public abstract class AbstractSqlExecutor {
     * 添加
     */
     public <T> int executeInsert(String sql, List<T> obj, boolean isGeneratedKey, String key, Class<?> keyType,  Object... params) throws Exception {
-        if (JudgeUtilsAx.isEmpty(sql)) {
+        if (JudgeUtil.isEmpty(sql)) {
             ExThrowsUtil.toNull("The Sql to be Not Empty");
         }
         return isGeneratedKey ? executeSqlHandler.executeInsert(obj, sql, key, keyType, params) : executeSqlHandler.executeUpdate(sql, params);
@@ -318,10 +318,10 @@ public abstract class AbstractSqlExecutor {
         }
         String condition = checkConditionAndLogicDeleteSql(sqlBuilder.getAlias(), wrapper.getFinalConditional(), getLogicDeleteQuerySql(), sqlBuilder.getTable());
         selectSql.append(condition);
-        if(JudgeUtilsAx.isNotEmpty(wrapper.getGroupBy())) {
+        if(JudgeUtil.isNotEmpty(wrapper.getGroupBy())) {
             selectSql.append(SymbolConstant.GROUP_BY).append(wrapper.getGroupBy());
         }
-        if(JudgeUtilsAx.isNotEmpty(wrapper.getHaving())) {
+        if(JudgeUtil.isNotEmpty(wrapper.getHaving())) {
             selectSql.append(SymbolConstant.HAVING).append(wrapper.getHaving());
         }
         if(CustomUtil.isNotBlank(wrapper.getOrderBy().toString())) {

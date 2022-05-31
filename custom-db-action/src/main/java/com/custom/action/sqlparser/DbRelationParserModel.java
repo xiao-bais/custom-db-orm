@@ -2,7 +2,7 @@ package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractTableModel;
 import com.custom.comm.CustomUtil;
-import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.JudgeUtil;
 import com.custom.comm.annotations.DbRelated;
 import com.custom.comm.annotations.DbTable;
 import com.custom.comm.enums.DbJoinStyle;
@@ -40,7 +40,7 @@ public class DbRelationParserModel<T> extends AbstractTableModel<T> {
         DbRelated annotation = field.getAnnotation(DbRelated.class);
         this.joinTable = annotation.joinTable();
         this.fieldName = field.getName();
-        if (JudgeUtilsAx.isEmpty(annotation.field())) {
+        if (JudgeUtil.isEmpty(annotation.field())) {
             this.column = underlineToCamel ? CustomUtil.camelToUnderline(this.fieldName) : this.fieldName;
         }else {
             this.column = annotation.field();

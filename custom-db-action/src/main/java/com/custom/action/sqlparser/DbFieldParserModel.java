@@ -91,7 +91,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
         this.type = field.getType();
         DbField annotation = field.getAnnotation(DbField.class);
         this.field = field;
-        if (JudgeUtilsAx.isEmpty(annotation.value())) {
+        if (JudgeUtil.isEmpty(annotation.value())) {
             this.column = underlineToCamel ? CustomUtil.camelToUnderline(this.fieldName) : this.fieldName;
         }else {
             this.column = annotation.value();
@@ -174,7 +174,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
 
     @Override
     public String getSelectFieldSql() {
-        if (JudgeUtilsAx.isNotEmpty(this.wrapperColumn)) {
+        if (JudgeUtil.isNotEmpty(this.wrapperColumn)) {
             return DbUtil.wrapperSqlColumn(this.wrapperColumn, this.fieldName, this.isNullToEmpty);
         }
         String selectColumn = String.format("%s.%s", this.getAlias(), this.column);

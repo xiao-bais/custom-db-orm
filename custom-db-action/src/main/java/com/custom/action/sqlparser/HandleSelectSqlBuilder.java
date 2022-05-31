@@ -2,7 +2,7 @@ package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.comm.GlobalDataHandler;
-import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +43,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
     @Override
     public String buildSql() {
         try {
-            if (JudgeUtilsAx.isNotEmpty(selectSql)) {
+            if (JudgeUtil.isNotEmpty(selectSql)) {
                 return selectSql.toString();
             }
             buildSelect(!getPrimaryTable());

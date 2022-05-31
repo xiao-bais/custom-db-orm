@@ -1,7 +1,7 @@
 package com.custom.proxy;
 
 import com.custom.comm.CustomUtil;
-import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.exceptions.CustomCheckException;
 import lombok.extern.slf4j.Slf4j;
@@ -59,7 +59,7 @@ public class ParameterParserExecutor {
      */
     private void prepareAfterSqlParamsSymbol() {
         basicParamsMap.forEach((String k, Object v) ->{
-            if(JudgeUtilsAx.isEmpty(v))
+            if(JudgeUtil.isEmpty(v))
                 throw new CustomCheckException("Parameter '" + k + "' cannot be empty");
             try {
                 JudgeTypeAndSetterSymbolParams(k, v);
@@ -148,10 +148,10 @@ public class ParameterParserExecutor {
             if (indexes == null) break;
 
             String prepareName = prepareSql.substring(indexes[0] + 2, indexes[1]);
-            if (JudgeUtilsAx.isBlank(prepareName))
+            if (JudgeUtil.isBlank(prepareName))
                 throw new CustomCheckException(String.format("empty column, The value corresponding to parameter '%s' in SQL cannot be found \n Sql Error =====> \n%s \n==========\n", prepareName, sql));
 
-            if (JudgeUtilsAx.isEmpty(paramsMap.get(String.format(sign, prepareName)))) {
+            if (JudgeUtil.isEmpty(paramsMap.get(String.format(sign, prepareName)))) {
                 throw new CustomCheckException(String.format("empty column, The value corresponding to parameter '%s' in SQL cannot be found \n Sql Error =====> \n%s \n==========\n", prepareName, sql));
             }
 
@@ -173,7 +173,7 @@ public class ParameterParserExecutor {
     */
     private void handleParamMaps(String paramName, Object paramValue) throws Exception {
 
-        if(JudgeUtilsAx.isEmpty(paramValue)) throw new CustomCheckException(String.format("Parameter '%s' cannot be empty", paramName));
+        if(JudgeUtil.isEmpty(paramValue)) throw new CustomCheckException(String.format("Parameter '%s' cannot be empty", paramName));
         if(CustomUtil.isBasicType(paramValue.getClass())
             || paramValue instanceof List || paramValue instanceof Set || paramValue.getClass().isArray()) {
             paramsMap.put(String.format(sign, paramName), paramValue);
@@ -215,7 +215,7 @@ public class ParameterParserExecutor {
             if (indexes == null) break;
             String name = prepareSql.substring(indexes[0] + 2, indexes[1]);
             Object paramName = paramsMap.get(String.format(sign, name));
-            if(JudgeUtilsAx.isEmpty(paramName)) {
+            if(JudgeUtil.isEmpty(paramName)) {
                 throw new CustomCheckException(String.format("empty column, The value corresponding to parameter '%s' in SQL cannot be found \n" +
                         " Sql Error =====> \n" +
                         "%s \n" +

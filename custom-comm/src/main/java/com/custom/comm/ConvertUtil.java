@@ -25,7 +25,7 @@ public class ConvertUtil {
      * 类型转换
      */
     public static <T> T transToObject(Class<T> transType, Object value) {
-        if (Objects.nonNull(value) && JudgeUtilsAx.isNotEmpty(value)) {
+        if (Objects.nonNull(value) && JudgeUtil.isNotEmpty(value)) {
             if (transType.equals(Integer.class) || transType.equals(Integer.TYPE)) {
                 return (T) Integer.valueOf(value.toString());
             }
@@ -97,8 +97,34 @@ public class ConvertUtil {
         return i != null && i > 0L;
     }
 
+    public static boolean conBool(Double i) {
+        return i != null && i > 0.0;
+    }
+
+    public static boolean conBool(Object i) {
+        if (i == null) {
+            return false;
+        }
+        if (i instanceof Boolean) {
+            return (Boolean) i;
+        }
+        if (i instanceof Integer) {
+            return conBool((Integer) i);
+        }
+        if (i instanceof Long) {
+            return conBool((Long) i);
+        }
+        if (i instanceof Double) {
+            return conBool((Double) i);
+        }
+        return false;
+    }
+
 
     public static void main(String[] args) {
-        System.out.println("Integer.TYPE = " + Integer.TYPE);
+
+        boolean conBool = conBool(.2);
+        System.out.println("conBool = " + conBool);
+
     }
 }

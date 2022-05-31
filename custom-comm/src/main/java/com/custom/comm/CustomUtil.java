@@ -6,10 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
@@ -104,7 +100,7 @@ public class CustomUtil {
      * 获取字java属性值
      */
     public static <T> Object getFieldValue(T x, String fieldName) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-        JudgeUtilsAx.checkObjNotNull(x, fieldName);
+        JudgeUtil.checkObjNotNull(x, fieldName);
         Object value;
         String firstLetter;
         String getter;
@@ -143,7 +139,7 @@ public class CustomUtil {
     */
     public static String toIndexLower(String text) {
         String res = SymbolConstant.EMPTY;
-        if(JudgeUtilsAx.isEmpty(text)) {
+        if(JudgeUtil.isEmpty(text)) {
             return res;
         }
         String first = text.substring(0, 1).toLowerCase();
@@ -287,7 +283,7 @@ public class CustomUtil {
     */
     public static String loadFiles(String filePath){
         String res = "";
-        if(JudgeUtilsAx.isEmpty(filePath)){
+        if(JudgeUtil.isEmpty(filePath)){
             log.error("找不到文件或不存在该路径");
             return res;
         }

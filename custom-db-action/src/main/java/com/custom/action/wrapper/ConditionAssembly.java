@@ -1,7 +1,7 @@
 package com.custom.action.wrapper;
 
 import com.custom.comm.CustomUtil;
-import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.enums.DbSymbol;
 import com.custom.comm.enums.SqlLike;
@@ -63,7 +63,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
         if(CustomUtil.isBlank(column) && DbSymbol.EXISTS != dbSymbol && DbSymbol.NOT_EXISTS != dbSymbol) {
             ExThrowsUtil.toCustom("column cannot be empty");
         }
-        if(JudgeUtilsAx.isNotEmpty(column) && !column.contains(SymbolConstant.POINT)) {
+        if(JudgeUtil.isNotEmpty(column) && !column.contains(SymbolConstant.POINT)) {
             column = String.format("%s.%s", getTableSqlBuilder().getAlias(), column);
         }
 
@@ -125,7 +125,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
         if(!CustomUtil.isBasicType(val1) || !CustomUtil.isBasicType(val2)) {
             throw new IllegalArgumentException("val1 or val2 can only be basic types");
         }
-        if(JudgeUtilsAx.isEmpty(val1) || JudgeUtilsAx.isEmpty(val2)) {
+        if(JudgeUtil.isEmpty(val1) || JudgeUtil.isEmpty(val2)) {
             throw new NullPointerException("At least one null value exists between val1 and val2");
         }
         setLastCondition(String.format(" %s %s %s", appendSybmol, column, dbSymbol.getSymbol()));
@@ -233,12 +233,12 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
             mergeSelect(conditionEntity.getSelectColumns());
         }
         // 2. 合并添加条件-condition
-        if (JudgeUtilsAx.isNotEmpty(conditionEntity.getFinalConditional())) {
+        if (JudgeUtil.isNotEmpty(conditionEntity.getFinalConditional())) {
             mergeCondition(spliceType, conditionEntity);
         }
 
         // 3. 合并排序字段-orderBy
-        if (JudgeUtilsAx.isNotEmpty(conditionEntity.getOrderBy())) {
+        if (JudgeUtil.isNotEmpty(conditionEntity.getOrderBy())) {
             mergeOrderBy(conditionEntity);
         }
     }

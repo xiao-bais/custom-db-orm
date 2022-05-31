@@ -77,7 +77,7 @@ public class RexUtil {
         StringBuffer sb = new StringBuffer();
         while (matcher.find()) {
             if (oldStr.equals(matcher.group(1))) {
-                matcher.appendReplacement(sb, JudgeUtilsAx.isEmpty(replaceStr) ? SymbolConstant.EMPTY : replaceStr);
+                matcher.appendReplacement(sb, JudgeUtil.isEmpty(replaceStr) ? SymbolConstant.EMPTY : replaceStr);
                  return matcher.appendTail(sb).toString();
             }
         }
@@ -108,7 +108,7 @@ public class RexUtil {
         while (matcher.find()) {
             String key = matcher.group(1);
             if (key.equals(oldStr)) {
-                matcher.appendReplacement(sb, JudgeUtilsAx.isEmpty(replaceStr) ? SymbolConstant.EMPTY : replaceStr);
+                matcher.appendReplacement(sb, JudgeUtil.isEmpty(replaceStr) ? SymbolConstant.EMPTY : replaceStr);
             }
         }
         matcher.appendTail(sb);

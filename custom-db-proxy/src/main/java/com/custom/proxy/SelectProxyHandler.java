@@ -1,6 +1,6 @@
 package com.custom.proxy;
 
-import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.JudgeUtil;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.jdbc.ExecuteSqlHandler;
 
@@ -28,7 +28,7 @@ public class SelectProxyHandler extends AbstractProxyHandler {
     @Override
     protected void prepareAndParamsParsing() {
         Parameter[] parameters = getMethod().getParameters();
-        if (JudgeUtilsAx.isEmpty(parameters)) {
+        if (JudgeUtil.isEmpty(parameters)) {
             return;
         }
         for (int i = 0; i < parameters.length; i++) {

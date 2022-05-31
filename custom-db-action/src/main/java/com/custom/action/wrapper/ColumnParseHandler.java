@@ -3,7 +3,7 @@ package com.custom.action.wrapper;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableSqlBuilder;
 import com.custom.comm.GlobalDataHandler;
-import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;
@@ -86,7 +86,7 @@ public class ColumnParseHandler<T> {
      * 获取java属性字段
      */
     public String getField(SFunction<T, ?> fun) {
-        JudgeUtilsAx.checkObjNotNull(fun);
+        JudgeUtil.checkObjNotNull(fun);
         SerializedLambda serializedLambda = getSerializedLambda(fun);
         String implMethodName = serializedLambda.getImplMethodName();
         String fieldName = implMethodName.substring(SymbolConstant.GETTER.length());

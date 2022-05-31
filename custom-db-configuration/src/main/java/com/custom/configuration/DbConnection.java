@@ -2,7 +2,7 @@ package com.custom.configuration;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.custom.comm.CustomUtil;
-import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.JudgeUtil;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +51,7 @@ public class DbConnection {
             initConnection(dbDataSource);
             logger.info("DataSource Connection Successfully !");
         }
-        if (JudgeUtilsAx.isEmpty(dbDataSource.getDatabase())) {
+        if (JudgeUtil.isEmpty(dbDataSource.getDatabase())) {
             dbDataSource.setDatabase(CustomUtil.getDataBase(dbDataSource.getUrl()));
         }
         currMap.put(DATA_BASE, dbDataSource.getDatabase());
@@ -79,7 +79,7 @@ public class DbConnection {
 
 
     private void loaderDriver(DbDataSource dbDataSource) throws ClassNotFoundException {
-        if(JudgeUtilsAx.isEmpty(dbDataSource.getDriver())) {
+        if(JudgeUtil.isEmpty(dbDataSource.getDriver())) {
             dbDataSource.setDriver(CUSTOM_DRIVER);
         }
         Class.forName(dbDataSource.getDriver());

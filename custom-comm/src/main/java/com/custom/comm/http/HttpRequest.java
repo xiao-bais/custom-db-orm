@@ -1,7 +1,7 @@
 package com.custom.comm.http;
 
 import com.alibaba.fastjson.JSON;
-import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,7 +110,7 @@ public class HttpRequest {
             os = connection.getOutputStream();
 
             //设置请求参数
-            if(JudgeUtilsAx.isNotEmpty(paramStr)) {
+            if(JudgeUtil.isNotEmpty(paramStr)) {
                 os.write(paramStr.getBytes(StandardCharsets.UTF_8));
                 os.close();
             }

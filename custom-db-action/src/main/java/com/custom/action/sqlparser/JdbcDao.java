@@ -4,7 +4,7 @@ import com.custom.action.dbaction.AbstractSqlExecutor;
 import com.custom.action.proxy.JdbcActionProxy;
 import com.custom.action.wrapper.ConditionWrapper;
 import com.custom.action.wrapper.SFunction;
-import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.JudgeUtil;
 import com.custom.comm.page.DbPageRows;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
@@ -177,7 +177,7 @@ public class JdbcDao {
      * 根据条件删除记录
      */
     public <T> int deleteByCondition(ConditionWrapper<T> wrapper) throws Exception {
-        JudgeUtilsAx.checkObjNotNull(wrapper);
+        JudgeUtil.checkObjNotNull(wrapper);
         return jdbcAction.deleteByCondition(wrapper);
     }
 

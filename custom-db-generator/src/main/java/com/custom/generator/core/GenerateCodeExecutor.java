@@ -10,7 +10,7 @@ import com.custom.generator.model.ServiceStructModel;
 import com.custom.generator.model.TableStructModel;
 import com.custom.action.sqlparser.JdbcAction;
 import com.custom.comm.CustomUtil;
-import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.enums.DbType;
 import com.custom.comm.exceptions.ExThrowsUtil;
@@ -50,7 +50,7 @@ public class GenerateCodeExecutor {
 
     public void start() {
 
-        if(JudgeUtilsAx.isEmpty(tables)) {
+        if(JudgeUtil.isEmpty(tables)) {
             ExThrowsUtil.toCustom("未指定表名");
         }
 
@@ -82,7 +82,7 @@ public class GenerateCodeExecutor {
                 "import org.springframework.beans.factory.annotation.Autowired;"
         ).collect(Collectors.toList());
         StringJoiner serviceImportPackage = new StringJoiner(SymbolConstant.POINT);
-        if (JudgeUtilsAx.isNotEmpty(packageConfig.getParentPackage())) {
+        if (JudgeUtil.isNotEmpty(packageConfig.getParentPackage())) {
             serviceImportPackage.add(packageConfig.getParentPackage());
         }
         serviceImportPackage.add(packageConfig.getService()).add(serviceInfo.getServiceName());
@@ -158,7 +158,7 @@ public class GenerateCodeExecutor {
         tableInfo.setCreateDate(DateTimeUtils.getThisDay(DateTimeUtils.yyyyMMddHHmm_));
         String tableName = tableInfo.getTable();
         // 若配置了忽略前缀，则去除指定的前缀
-        if(JudgeUtilsAx.isNotEmpty(tableConfig.getTablePrefix())) {
+        if(JudgeUtil.isNotEmpty(tableConfig.getTablePrefix())) {
             tableName = tableName.replaceFirst(tableConfig.getTablePrefix(), SymbolConstant.EMPTY);
         }
         // 下划线转驼峰
@@ -170,7 +170,7 @@ public class GenerateCodeExecutor {
         tableInfo.setEntityTruthName(tableName);
         // 若配置了后缀，则拼接后缀
         String entityName = "";
-        if (JudgeUtilsAx.isNotEmpty(tableConfig.getEntitySuffix())) {
+        if (JudgeUtil.isNotEmpty(tableConfig.getEntitySuffix())) {
             entityName = tableName + tableConfig.getEntitySuffix();
         }
         tableInfo.setEntityName(entityName);
@@ -181,13 +181,13 @@ public class GenerateCodeExecutor {
      */
     private void setTableEntityPath(TableStructModel tableInfo) {
         String entityClassPath = "";
-        if(JudgeUtilsAx.isNotEmpty(globalConfig.getOutputDir())) {
+        if(JudgeUtil.isNotEmpty(globalConfig.getOutputDir())) {
             entityClassPath = globalConfig.getOutputDir();
         }
-        if(JudgeUtilsAx.isNotEmpty(packageConfig.getParentPackage())) {
+        if(JudgeUtil.isNotEmpty(packageConfig.getParentPackage())) {
             String packageName = packageConfig.getParentPackage();
             String packagePath = "";
-            if(JudgeUtilsAx.isNotEmpty(packageConfig.getEntity())) {
+            if(JudgeUtil.isNotEmpty(packageConfig.getEntity())) {
                 packagePath = packageName.replace(SymbolConstant.POINT, SymbolConstant.FILE_SEPARATOR) + SymbolConstant.FILE_SEPARATOR + packageConfig.getEntity();
                 tableInfo.setSourcePackage(packageName + SymbolConstant.POINT + tableInfo.getEntityPackage());
             }

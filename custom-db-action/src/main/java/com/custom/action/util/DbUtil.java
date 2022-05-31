@@ -1,7 +1,6 @@
 package com.custom.action.util;
 
 import com.custom.comm.CustomUtil;
-import com.custom.comm.JudgeUtilsAx;
 import com.custom.comm.RexUtil;
 import com.custom.comm.annotations.DbKey;
 import com.custom.comm.annotations.DbRelated;

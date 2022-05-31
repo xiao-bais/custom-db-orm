@@ -7,7 +7,7 @@ import com.custom.action.sqlparser.TableSqlBuilder;
 import com.custom.comm.*;
 import com.custom.comm.annotations.DbTable;
 import com.custom.jdbc.ExecuteSqlHandler;
-import com.custom.springboot.scanner.CustomBeanScanner;
+import com.custom.springboot.scanner.PackageScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +46,7 @@ public class TableStructsInitializer {
     /**
      * 待创建的表合集
      */
-    private final Map<String, TableSqlBuilder<?>> waitCreateMapper;
+    private final Map<String, ColumnCreateInfo> waitCreateMapper;
 
     private final static String SELECT_COLUMN_SQL = "SELECT COLUMN_NAME FROM `information_schema`.`COLUMNS` WHERE TABLE_NAME = '%s' AND TABLE_SCHEMA = '%s'";
     private final static String CREATE_COLUMN_AFTER_SQL = "ALTER TABLE `%s` add %s AFTER `%s`";
@@ -64,7 +64,7 @@ public class TableStructsInitializer {
 
 
     public void initStart() throws Exception {
-        CustomBeanScanner scanner = new CustomBeanScanner(packageScans);
+        PackageScanner scanner = new PackageScanner(packageScans);
         Set<Class<?>> tableInfoList = scanner.getBeanRegisterList();
         buildTableInfo(tableInfoList);
 
@@ -108,14 +108,9 @@ public class TableStructsInitializer {
             }
 
             if (waitCreateMapper.containsKey(table)) {
-                TableSqlBuilder<?> tableSqlBuilder = waitCreateMapper.get(table);
-                // 已同步待更新的字段列表
-                List<? extends DbFieldParserModel<?>> waitUpdateFieldParserModels = tableSqlBuilder.getFieldParserModels();
-                // 本次待同步的字段列表
-                List<? extends DbFieldParserModel<?>> waitSyncFieldParserModels = waitUpdateSqlBuilder.getFieldParserModels();
-//                if (waitSyncFieldParserModels.containsAll(waitUpdateFieldParserModels)) {
-//                    waitUpdateSqlBuilder.setFieldParserModels(waitSyncFieldParserModels);
-//                }
+                ColumnCreateInfo columnInfo = waitCreateMapper.get(table);
+
+
             }
             waitCreateMapper.put(table, waitUpdateSqlBuilder);
         }
@@ -164,7 +159,7 @@ public class TableStructsInitializer {
         fieldParserModels.stream().map(dbFieldParserModel -> dbFieldParserModel.buildTableSql() + "\n").forEach(fieldSql::add);
 
         createTableSql.append(String.format("create table `%s` (\n%s)", sqlBuilder.getTable(), fieldSql));
-        if (JudgeUtilsAx.isNotEmpty(sqlBuilder.getDesc())) {
+        if (JudgeUtil.isNotEmpty(sqlBuilder.getDesc())) {
             createTableSql.append(String.format(" COMMENT = '%s'", sqlBuilder.getDesc()));
         }
         return createTableSql.toString();

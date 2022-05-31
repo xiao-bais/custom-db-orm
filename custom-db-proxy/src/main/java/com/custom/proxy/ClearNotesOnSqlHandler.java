@@ -1,6 +1,6 @@
 package com.custom.proxy;
 
-import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -8,10 +8,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 
 /**
  * @author Xiao-Bai
@@ -46,7 +44,7 @@ public class ClearNotesOnSqlHandler {
      */
     public String loadSql() {
         String res = SymbolConstant.EMPTY;
-        if(JudgeUtilsAx.isEmpty(filePath)){
+        if(JudgeUtil.isEmpty(filePath)){
             ExThrowsUtil.toNull("filepath is null");
         }
         try {
@@ -68,7 +66,7 @@ public class ClearNotesOnSqlHandler {
                     continue;
                 }
                 if(isAppend) {
-                    if(JudgeUtilsAx.isNotBlank(str)) {
+                    if(JudgeUtil.isNotBlank(str)) {
                         sb.append(" ");
                     }
                     sb.append(str);

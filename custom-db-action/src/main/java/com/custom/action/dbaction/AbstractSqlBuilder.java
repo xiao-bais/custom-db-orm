@@ -5,7 +5,7 @@ import com.custom.action.wrapper.ColumnParseHandler;
 import com.custom.action.sqlparser.DbFieldParserModel;
 import com.custom.action.sqlparser.DbKeyParserModel;
 import com.custom.comm.CustomUtil;
-import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.JudgeUtil;
 import com.custom.jdbc.ExecuteSqlHandler;
 
 import java.util.ArrayList;
@@ -174,7 +174,7 @@ public abstract class AbstractSqlBuilder<T> {
         return this.logicDeleteUpdateSql;
     }
 
-    public void setSqlExecuteAction(ExecuteSqlHandler executeSqlHandler) {
+    public void setExecuteSqlHandler(ExecuteSqlHandler executeSqlHandler) {
         this.executeSqlHandler = executeSqlHandler;
     }
 
@@ -194,7 +194,7 @@ public abstract class AbstractSqlBuilder<T> {
      * 直接执行，属于内部执行
      */
     public void executeUpdateNotPrintSql(String sql) throws Exception {
-        if (JudgeUtilsAx.isEmpty(sql)) {
+        if (JudgeUtil.isEmpty(sql)) {
             throw new NullPointerException();
         }
         executeSqlHandler.executeUpdateNotPrintSql(sql);

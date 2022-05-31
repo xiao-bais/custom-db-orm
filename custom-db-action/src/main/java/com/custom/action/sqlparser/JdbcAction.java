@@ -3,7 +3,7 @@ package com.custom.action.sqlparser;
 import com.custom.action.dbaction.AbstractSqlExecutor;
 import com.custom.action.wrapper.ConditionWrapper;
 import com.custom.action.wrapper.SFunction;
-import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.check.CheckExecute;
 import com.custom.comm.enums.ExecuteMethod;
@@ -44,7 +44,7 @@ public class JdbcAction extends AbstractSqlExecutor {
     public <T> List<T> selectList(Class<T> t, String condition, String orderBy, Object... params) throws Exception {
         HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
         condition = checkConditionAndLogicDeleteSql(sqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
-        if(JudgeUtilsAx.isNotEmpty(orderBy)) {
+        if(JudgeUtil.isNotEmpty(orderBy)) {
             condition += SymbolConstant.ORDER_BY + orderBy;
         }
         return selectBySql(t, sqlBuilder.buildSql() + condition, params);
@@ -289,7 +289,7 @@ public class JdbcAction extends AbstractSqlExecutor {
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
     public <T> int updateByCondition(T t, String condition, Object... params) throws Exception {
-        if (JudgeUtilsAx.isEmpty(condition)) {
+        if (JudgeUtil.isEmpty(condition)) {
             ExThrowsUtil.toNull("修改条件不能为空");
         }
         HandleUpdateSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.UPDATE);

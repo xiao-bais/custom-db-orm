@@ -3,7 +3,7 @@ package com.custom.action.sqlparser;
 import com.custom.action.dbaction.AbstractTableModel;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.GlobalDataHandler;
-import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.DbKey;
 import com.custom.comm.enums.DbType;
@@ -185,7 +185,7 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
     public DbKeyParserModel(Field field, String table, String alias, boolean underlineToCamel){
         this.key = GlobalDataHandler.hasSqlKeyword(field.getName()) ? String.format("`%s`", field.getName()) : field.getName();
         DbKey annotation = field.getAnnotation(DbKey.class);
-        if (JudgeUtilsAx.isEmpty(annotation.value())) {
+        if (JudgeUtil.isEmpty(annotation.value())) {
             this.dbKey = underlineToCamel ? CustomUtil.camelToUnderline(this.key) : this.key;
         }else {
             this.dbKey = annotation.value();

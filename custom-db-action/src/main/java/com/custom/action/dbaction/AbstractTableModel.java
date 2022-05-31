@@ -1,17 +1,12 @@
 package com.custom.action.dbaction;
 
 import com.custom.comm.CustomUtil;
-import com.custom.comm.JudgeUtilsAx;
-import com.custom.comm.RexUtil;
-import com.custom.comm.SymbolConstant;
-import com.custom.comm.enums.DbType;
+import com.custom.comm.JudgeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Objects;
 
 /**
  * @author Xiao-Bai
@@ -55,7 +50,7 @@ public abstract class AbstractTableModel<T> {
      * 将值设置进实体的指定属性中
      */
     protected void setFieldValue(T entity, Field field, Object value) {
-        JudgeUtilsAx.checkObjNotNull(entity);
+        JudgeUtil.checkObjNotNull(entity);
         try {
             field.setAccessible(true);
             field.set(entity, value);

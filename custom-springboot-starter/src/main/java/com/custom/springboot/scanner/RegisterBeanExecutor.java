@@ -1,6 +1,6 @@
 package com.custom.springboot.scanner;
 
-import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.JudgeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -39,12 +39,12 @@ public class RegisterBeanExecutor implements BeanDefinitionRegistryPostProcessor
             return;
         }
         String[] packageScans = environment.getProperty("custom.db.strategy.package-scans", String[].class);
-        if(JudgeUtilsAx.isEmpty(packageScans)) {
+        if(JudgeUtil.isEmpty(packageScans)) {
             return;
         }
 
-        CustomBeanScanner customBeanScanner = new CustomBeanScanner(packageScans);
-        Set<Class<?>> beanRegisterList = customBeanScanner.getBeanRegisterList();
+        PackageScanner packageScanner = new PackageScanner(packageScans);
+        Set<Class<?>> beanRegisterList = packageScanner.getBeanRegisterList();
 
         for (Class<?> beanClass : beanRegisterList) {
             BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(beanClass);

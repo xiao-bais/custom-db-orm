@@ -1,7 +1,7 @@
 package com.custom.springboot.scanner;
 
 import com.custom.comm.BasicDao;
-import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.DbTable;
 import com.custom.comm.annotations.mapper.SqlMapper;
@@ -26,7 +26,7 @@ import java.util.jar.JarFile;
  * @Desc：将指定路径下的类扫描出来
  **/
 @Slf4j
-public class CustomBeanScanner {
+public class PackageScanner {
 
     /**
      * 所有需要注册的bean集合
@@ -36,7 +36,7 @@ public class CustomBeanScanner {
     /**
      * 类加载器
      */
-    private final ClassLoader classLoader = CustomBeanScanner.class.getClassLoader();
+    private final ClassLoader classLoader = PackageScanner.class.getClassLoader();
 
     /**
      * 扫描的包
@@ -48,10 +48,10 @@ public class CustomBeanScanner {
      */
     private URL url;
 
-    public CustomBeanScanner(String... packageScans) {
+    public PackageScanner(String... packageScans) {
         for (String scan : packageScans) {
             packageScan = scan;
-            if (JudgeUtilsAx.isEmpty(packageScan)) {
+            if (JudgeUtil.isEmpty(packageScan)) {
                 continue;
             }
             this.scannerPackage();
@@ -134,7 +134,7 @@ public class CustomBeanScanner {
      */
     @SuppressWarnings("unchecked")
     private void addJarClass(final String packageName) throws IOException {
-        if (JudgeUtilsAx.isEmpty(packageName)) return;
+        if (JudgeUtil.isEmpty(packageName)) return;
         String pathName = packageName.replace(SymbolConstant.POINT, SymbolConstant.FILE_SEPARATOR);
         JarFile jarFile = null;
 

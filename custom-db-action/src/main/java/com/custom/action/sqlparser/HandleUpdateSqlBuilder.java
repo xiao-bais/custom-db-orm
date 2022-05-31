@@ -4,7 +4,7 @@ import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.fieldfill.FieldAutoFillHandleUtils;
 import com.custom.action.wrapper.SFunction;
 import com.custom.comm.CustomUtil;
-import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import org.slf4j.Logger;
@@ -45,7 +45,7 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
         // 修改字段构建
         updateSqlField();
         String conditions;
-        if (JudgeUtilsAx.isEmpty(condition)) {
+        if (JudgeUtil.isEmpty(condition)) {
             conditions = updateKeyCondition();
         }else {
             conditions = updateCustomCondition();

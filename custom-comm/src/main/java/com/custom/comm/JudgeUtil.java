@@ -12,7 +12,7 @@ import java.util.Objects;
  * @Version 1.0
  * @Description JudgeUtilsAx
  */
-public class JudgeUtilsAx {
+public class JudgeUtil {
 
     public static boolean isEmpty(String el) {
         return null == el

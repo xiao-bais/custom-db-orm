@@ -2,7 +2,7 @@ package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.comm.CustomUtil;
-import com.custom.comm.JudgeUtilsAx;
+import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.*;
 import com.custom.comm.enums.ExecuteMethod;
@@ -108,7 +108,7 @@ public class TableSqlBuilder<T> implements Cloneable {
 
         createTableSql.append(String.format("create table `%s` (\n%s)", this.table, fieldSql));
 
-        if (JudgeUtilsAx.isNotEmpty(this.desc)) {
+        if (JudgeUtil.isNotEmpty(this.desc)) {
             createTableSql.append(String.format(" COMMENT = '%s'", this.desc));
         }
         return createTableSql.toString();
@@ -212,7 +212,7 @@ public class TableSqlBuilder<T> implements Cloneable {
         if (Objects.isNull(annotation)) {
             ExThrowsUtil.toCustom(cls.getName() + "未标注@DbTable注解");
         }
-        if (JudgeUtilsAx.isEmpty(annotation.table())) {
+        if (JudgeUtil.isEmpty(annotation.table())) {
             ExThrowsUtil.toCustom(cls.getName() + "未指定@DbTable注解上实体映射的表名");
         }
         this.alias = annotation.alias();
@@ -227,7 +227,7 @@ public class TableSqlBuilder<T> implements Cloneable {
      */
     private void buildSelectModels() {
         // 解析@DbJoinTables注解
-        searchDbJoinTables();
+        mergeDbJoinTables();
 
         Field[] fields = Objects.isNull(this.fields) ? CustomUtil.getFields(this.cls) : this.fields;
         for (Field field : fields) {
@@ -254,7 +254,7 @@ public class TableSqlBuilder<T> implements Cloneable {
     /**
      * 向上查找@DbjoinTables注解
      */
-    private void searchDbJoinTables() {
+    private void mergeDbJoinTables() {
         Class<?> entityClass = this.cls;
         if (findUpDbJoinTables) {
             while (!entityClass.getName().equalsIgnoreCase("java.lang.object")) {
