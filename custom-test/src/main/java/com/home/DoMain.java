@@ -15,9 +15,7 @@ import com.home.customtest.entity.Street;
 import com.home.customtest.entity.Student;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import java.util.List;
@@ -67,7 +65,8 @@ public class DoMain {
         JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
         TableInfoCache.setUnderlineToCamel(true);
 
-        jdbcDao.selectOneByKey(ChildStudent.class, 8);
+        Integer[] strings = jdbcDao.selectArr(Integer.class, "select age from student where age > ?", 20);
+        System.out.println("strings = " + Arrays.toString(strings));
 
     }
 

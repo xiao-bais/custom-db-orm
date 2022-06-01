@@ -102,11 +102,12 @@ public class TableStructsInitializer {
             String exitsTableSql = waitUpdateSqlBuilder.getExitsTableSql(entityClass);
             String table = waitUpdateSqlBuilder.getTable();
             System.out.println("table = " + table);
-            // 若存在，则进行下一步判断表字段是否存在
+            // 若表已存在，则进行下一步判断表字段是否存在
             if (ConvertUtil.conBool(sqlHandler.executeExist(exitsTableSql))) {
                 buildColumnInfo(waitUpdateSqlBuilder, table);
                 continue;
             }
+            // // 若不存在，则加入创建表的对象中，保存待创建的表信息
             saveWaitCreateTableInfo(waitUpdateSqlBuilder, table);
         }
     }
@@ -116,7 +117,6 @@ public class TableStructsInitializer {
      */
     private void saveWaitCreateTableInfo(TableSqlBuilder<?> waitUpdateSqlBuilder, String table) {
         TableCreateInfo tableCreateInfo;
-        // 若不存在，则加入创建表的对象中
         if (waitCreateMapper.containsKey(table)) {
             tableCreateInfo = waitCreateMapper.get(table);
             Set<ColumnCreateInfo> buildAddColumnSqls = addColumnInfos(waitUpdateSqlBuilder);

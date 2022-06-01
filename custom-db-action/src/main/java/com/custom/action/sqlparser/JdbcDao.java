@@ -150,6 +150,10 @@ public class JdbcDao {
         return jdbcAction.selectPageMaps(wrapper);
     }
 
+    public <T> T[] selectArr(Class<T> t, String sql, Object... params) throws Exception {
+        return jdbcAction.selectArr(t, sql, params);
+    }
+
     /* ----------------------------------------------------------------delete---------------------------------------------------------------- */
 
     /**

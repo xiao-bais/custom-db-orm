@@ -74,8 +74,11 @@ public class ExecuteSqlHandler extends DbConnection {
     * 预编译-查询2（可预先获取结果集行数）
     */
     private void statementQueryReturnRows(String sql, Object... params) throws Exception {
-        String execSql = CustomUtil.prepareSql(sql, params);
-        statement = conn.prepareStatement(execSql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+//        String execSql = CustomUtil.prepareSql(sql, params);
+        statement = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        for (int i = 0; i < params.length; i++) {
+            statement.setObject((i + 1), params[i]);
+        }
         if (dbCustomStrategy.isSqlOutPrinting()) {
             SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlInfoQueryPrint();
         }
@@ -163,7 +166,6 @@ public class ExecuteSqlHandler extends DbConnection {
                 Array.set(res, len, val);
                 len++;
             }
-            //todo... 泛型数组无法实例化后返回 办法1-> 测试 GenericArray工具实例化
             return (T[])res;
         } catch (SQLException e) {
             SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
