@@ -47,6 +47,9 @@ public class DoMain {
         dbCustomStrategy.setDeleteLogicValue(1);
         dbCustomStrategy.setNotDeleteLogicValue(0);
 
+        JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
+        TableInfoCache.setUnderlineToCamel(true);
+
 //        InterfacesProxyExecutor proxyExecutor = new InterfacesProxyExecutor(dbDataSource, dbCustomStrategy);
 //        CustomTestDao customTestDao = proxyExecutor.createProxy(CustomTestDao.class);
 
@@ -61,9 +64,6 @@ public class DoMain {
 //        List<Employee> employees = customTestDao.getConditr(emp);
 //
 //        System.out.println("employees = " + employees);
-
-        JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
-        TableInfoCache.setUnderlineToCamel(true);
 
         Integer[] strings = jdbcDao.selectArr(Integer.class, "select age from student where age > ?", 20);
         System.out.println("strings = " + Arrays.toString(strings));
