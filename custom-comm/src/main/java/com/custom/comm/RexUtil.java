@@ -28,7 +28,8 @@ public class RexUtil {
     /**
      * 匹配mybatis参数格式
      */
-    public final static String sql_param = "\\#\\{(.+?)\\}";
+    public final static String sql_set_param = "\\#\\{(.+?)\\}";
+    public final static String sql_rep_param = "\\$\\{(.+?)\\}";
 
     /**
      * 匹配sql-ifnull函数

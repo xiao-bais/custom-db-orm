@@ -142,10 +142,37 @@ public class ExecuteSqlHandler extends DbConnection {
     }
 
     /**
+     * 查询单个Map
+     * @param t
+     * @param sql
+     * @param params
+     * @param <T>
+     * @return
+     * @throws Exception
+     */
+    public <T> Map<String, T> queryMap(Class<T> t, String sql, Object... params) throws Exception {
+        Map<String, T> resMap = new HashMap<>();
+        try {
+            statementQuery(sql, true, params);
+            resultSet = statement.executeQuery();
+            if (resultSet.getMetaData().getColumnCount() > 1) {
+                ExThrowsUtil.toCustom(String.format("The 'Set<%s>' does not support returning multiple column results", t.getTypeName()));
+            }
+            if (resultSet.next()) {
+                getResultMap(resMap, resultSet.getMetaData());
+            }
+        } catch (SQLException e) {
+            SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
+            throw e;
+        }
+        return resMap;
+    }
+
+    /**
      * 查询单个字段的多结果集（Array）
      */
     @SuppressWarnings("unchecked")
-    public  <T> T[] queryArray(Class<T> t, String sql, String className, String methodName, Object... params) throws Exception {
+    public  <T> T[] queryArray(Class<T> t, String sql, Object... params) throws Exception {
         try {
             statementQueryReturnRows(sql, params);
             resultSet = statement.executeQuery();
@@ -170,21 +197,17 @@ public class ExecuteSqlHandler extends DbConnection {
         } catch (SQLException e) {
             SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
             throw e;
-        }catch (RuntimeException e) {
-            if(e instanceof ClassCastException && t.isPrimitive()) {
-                ExThrowsUtil.toCustom(String.format("It is recommended to use the wrapper type to receive the return value of the method ： %s.%s()", className, methodName));
-            }
-            throw e;
         }
     }
 
     /**
      * 获取结果集对象
      */
-    private void getResultMap(Map<String, Object> map, ResultSetMetaData metaData) throws SQLException {
+    @SuppressWarnings("unchecked")
+    private <T> void getResultMap(Map<String, T> map, ResultSetMetaData metaData) throws SQLException {
         for (int i = 0; i < metaData.getColumnCount(); i++) {
             String columnName = metaData.getColumnLabel(i + 1);
-            Object object = resultSet.getObject(i + 1);
+            T object = (T) resultSet.getObject(i + 1);
             map.put(columnName, object);
         }
     }

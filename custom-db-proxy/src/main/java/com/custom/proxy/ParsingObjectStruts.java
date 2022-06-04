@@ -2,18 +2,13 @@ package com.custom.proxy;
 
 import com.custom.comm.CustomUtil;
 import com.custom.comm.exceptions.ExThrowsUtil;
-import com.sun.xml.internal.ws.server.UnsupportedMediaException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.activation.UnsupportedDataTypeException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 /**
  * @author Xiao-Bai
@@ -21,12 +16,11 @@ import java.util.stream.Stream;
  * @desc:sql参数结构解析
  */
 @SuppressWarnings("unchecked")
-public class ParsingObjectStructs {
+public class ParsingObjectStruts {
 
-    private final static Logger logger = LoggerFactory.getLogger(ParsingObjectStructs.class);
+    private final static Logger logger = LoggerFactory.getLogger(ParsingObjectStruts.class);
 
     private final Map<String, Object> paramsMap = new HashMap<>();
-
 
     protected void parser(String name, Object value) {
         if (Objects.isNull(value)) {
@@ -35,23 +29,23 @@ public class ParsingObjectStructs {
         }
         if (CustomUtil.isBasicType(value)) {
             paramsMap.put(name, value);
-            return;
         }
-        if (value.getClass().isArray()) {
+        else if (value.getClass().isArray()) {
             parseArray(name, value);
         }
-        if (value instanceof Collection) {
+        else if (value instanceof Collection) {
             if (value instanceof List) {
                 parseList(name, value);
             } else if (value instanceof Set) {
                 parseSet(name, value);
             }else {
-                ExThrowsUtil.toCustom("不支持的数据类型: " + value.getClass());
+                ExThrowsUtil.toCustom("暂不支持的数据类型: " + value.getClass());
             }
         }else if (value instanceof Map) {
             parseMap(name, value);
+        }else {
+            parseObject(name, value);
         }
-        parseObject(name, value);
     }
 
 
@@ -60,7 +54,7 @@ public class ParsingObjectStructs {
             paramsMap.put(name, null);
             return;
         }
-        Field[] fields = CustomUtil.getFields(value.getClass());
+        Field[] fields = CustomUtil.getFields(value.getClass(), false);
         for (Field field : fields) {
             String fieldName = String.format("%s.%s", name, field.getName());
             Object fieldValue = null;

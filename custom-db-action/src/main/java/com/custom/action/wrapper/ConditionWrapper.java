@@ -95,11 +95,12 @@ public abstract class ConditionWrapper<T> implements Serializable {
         return entityClass;
     }
 
-    protected void setEntityClass(Class<T> entityClass) {
+    public ConditionWrapper<T> setEntityClass(Class<T> entityClass) {
         if(Objects.isNull(entityClass)) {
             ExThrowsUtil.toNull("映射实体Class对象缺失");
         }
         this.entityClass = entityClass;
+        return this;
     }
 
     public List<Object> getParamValues() {

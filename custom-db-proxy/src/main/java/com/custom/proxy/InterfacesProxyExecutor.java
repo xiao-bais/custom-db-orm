@@ -79,8 +79,10 @@ public class InterfacesProxyExecutor implements InvocationHandler {
             Query query = method.getAnnotation(Query.class);
             proxyHandler = new SelectProxyHandler(executeAction, args, query.value(), method);
             proxyHandler.prepareAndParamsParsing();
+
+            return proxyHandler.execute();
+
 //            return doPrepareExecuteQuery(method, args, query.value(), query.order());
-            return null;
 
         }
         if (method.isAnnotationPresent(Update.class)) {
@@ -168,7 +170,7 @@ public class InterfacesProxyExecutor implements InvocationHandler {
 
         } else if (((Class<?>) returnType).isArray()) {
             Class<?> type = ((Class<?>) returnType).getComponentType();
-            return executeAction.queryArray(type, sql, method.getDeclaringClass().getName(), method.getName(), params);
+            return executeAction.queryArray(type, sql, params);
         }else {
             String typeName = returnType.getTypeName();
             Class<?> cls = Class.forName(typeName);
@@ -190,12 +192,12 @@ public class InterfacesProxyExecutor implements InvocationHandler {
      */
     private void checkIllegalParam(String methodName, boolean order, String sql) {
 
-        if(RexUtil.hasRegex(sql, RexUtil.sql_param) && sql.contains(SymbolConstant.QUEST)) {
+        if(RexUtil.hasRegex(sql, RexUtil.sql_set_param) && sql.contains(SymbolConstant.QUEST)) {
             log.error("如果order为true，仅支持使用 \"?\"  如果order为false 仅支持使用 \"#{ }\" 来设置参数");
             log.error("Error Method ==> {}", methodName);
             ExThrowsUtil.toCustom(String.format("The SQL cannot be resolved '%s'", sql));
         }
-        if(order && RexUtil.hasRegex(sql, RexUtil.sql_param)) {
+        if(order && RexUtil.hasRegex(sql, RexUtil.sql_set_param)) {
             log.error("Error Method ==> {}", methodName);
             ExThrowsUtil.toCustom("方法注解上建议使用 order = false");
 

@@ -18,6 +18,8 @@ public class WorkEmp {
 
     private int age;
 
+    private String  id;
+
     private Map<String, Object> map = new HashMap<>();
 
     public Map<String, Object> getMap() {
@@ -50,5 +52,13 @@ public class WorkEmp {
 
     public void setEmpName(String empName) {
         this.empName = empName;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

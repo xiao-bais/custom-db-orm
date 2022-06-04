@@ -217,15 +217,19 @@ public class CustomUtil {
     /**
     * 获取一个类的所有属性（包括父类）
     */
-    public static <T> Field[] getFields(Class<T> t){
+    public static <T> Field[] getFields(Class<T> t, boolean checkDbField){
         Class<?> clz = t;
         List<Field> fieldList = new ArrayList<>();
         while (clz != null && !clz.getName().equalsIgnoreCase("java.lang.object")){
             fieldList.addAll(Arrays.asList(clz.getDeclaredFields()));
             clz = clz.getSuperclass();
         }
-        if(fieldList.size() == 0) ExThrowsUtil.toCustom("@DbField not found in class "+ t);
+        if(fieldList.size() == 0 && checkDbField) ExThrowsUtil.toCustom("@DbField not found in class "+ t);
         return fieldList.toArray(new Field[0]);
+    }
+
+    public static <T> Field[] getFields(Class<T> t){
+        return getFields(t, true);
     }
 
     /**
