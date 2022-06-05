@@ -79,7 +79,6 @@ public class InterfacesProxyExecutor implements InvocationHandler {
             Query query = method.getAnnotation(Query.class);
             proxyHandler = new SelectProxyHandler(executeAction, args, query.value(), method);
             proxyHandler.prepareAndParamsParsing();
-
             return proxyHandler.execute();
 
 //            return doPrepareExecuteQuery(method, args, query.value(), query.order());

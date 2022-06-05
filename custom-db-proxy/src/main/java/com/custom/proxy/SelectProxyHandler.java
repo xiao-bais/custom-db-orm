@@ -69,9 +69,10 @@ public class SelectProxyHandler extends AbstractProxyHandler {
         Object[] sqlParams = getExecuteSqlParams().toArray();
 
         Type returnType = getMethod().getGenericReturnType();
+        Class<?> truthResType;
         if (returnType instanceof ParameterizedType) {
             ParameterizedType pt = (ParameterizedType) returnType;
-            Class<?> truthResType = ((ParameterizedTypeImpl) pt).getRawType();
+            truthResType = ((ParameterizedTypeImpl) pt).getRawType();
             // do Collection
             if (Collection.class.isAssignableFrom(truthResType)) {
                 Class<?> genericType = (Class<?>) pt.getActualTypeArguments()[0];
@@ -91,14 +92,19 @@ public class SelectProxyHandler extends AbstractProxyHandler {
             }
             else return null;
         }
+        truthResType = getMethod().getReturnType();
         // do Array
-        Class<?> reArrType = getMethod().getReturnType();
-        if (reArrType.isArray()) {
-            return executeSqlHandler.queryArray(reArrType.getComponentType(), readyExecuteSql, sqlParams);
+        if (truthResType.isArray()) {
+            return executeSqlHandler.queryArray(truthResType.getComponentType(), readyExecuteSql, sqlParams);
         }
 
+        // do Basic type
+        else if (CustomUtil.isBasicClass(truthResType)) {
+            return executeSqlHandler.selectOneBasicBySql(readyExecuteSql, sqlParams);
+        }
 
-        return null;
+        // do custom Object
+        return executeSqlHandler.selectObjSql(truthResType, readyExecuteSql, sqlParams);
     }
 
 

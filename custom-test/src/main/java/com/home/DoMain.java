@@ -53,17 +53,17 @@ public class DoMain {
 //        String allRex = RexUtil.replaceAllRex(sql, RexUtil.sql_rep_param, "emp.id", "aaa");
 //        System.out.println("allRex = " + allRex);
 
-//        WorkEmp emp = new WorkEmp();
-//        emp.setAge(23);
-//        emp.setAgeList(Stream.of(21,22,26).collect(Collectors.toList()));
-//        emp.setEmpName("9jsa");
-//        emp.setId("minid");
-//        emp.getMap().put("admin", "admin123");
-//        emp.getMap().put("ads", 259);
+        WorkEmp emp = new WorkEmp();
+        emp.setAge(23);
+        emp.setAgeList(Stream.of(21,22,26).collect(Collectors.toList()));
+        emp.setEmpName("9jsa");
+        emp.setId("minid");
+        emp.getMap().put("admin", "admin123");
+        emp.getMap().put("ads", 259);
         int[] arr = {21,22,23,24};
-        Integer[] empInfoByArray = customTestDao.getEmpInfoByArray(arr);
+        List<Employee> employees = customTestDao.getConditr(emp);
 //
-        System.out.println("empInfoByArray = " + Arrays.toString(empInfoByArray));
+        System.out.println("employees = " + employees);
 //        List<Student> students = jdbcDao.selectList(Conditions.query(Student.class).gt("money", 3000.0).gt("age", 20));
 
     }

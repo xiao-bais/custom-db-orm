@@ -232,7 +232,26 @@ public class ExecuteSqlHandler extends DbConnection {
     }
 
     /**
-     * 查询单个值SQL
+     * 查询指定类型的单个值
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T selectOneBasicBySql(String sql, Object... params) throws Exception {
+        T result = null;
+        try {
+            statementQuery(sql, true, params);
+            resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                result = (T) resultSet.getObject(SymbolConstant.DEFAULT_ONE);
+            }
+        } catch (SQLException e) {
+            SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
+            throw e;
+        }
+        return result;
+    }
+
+    /**
+     * 查询多个值SQL
      */
     public List<Object> selectObjsSql(String sql, Object... params) throws Exception {
         List<Object> result = new ArrayList<>();

@@ -25,10 +25,10 @@ public class SqlOutPrintBuilder implements Serializable {
     protected void sqlErrPrint() {
         if(sqlExecute) {
             handleExecuteSql();
-            logger.error("sql error ====>\n \n{}\n===================\n", sql);
+            logger.error("Sql Error ====>\n \n{}\n===================\n", sql);
         }else {
             logger.error(
-                    "\nsql error\n===================\nERROR SQL ====>\n {}\n===================\nparams = {}\n===================\n"
+                    "\nSql Error\n===================\nERROR SQL ====>\n {}\n===================\nParameters = {}\n===================\n"
                     , sql, getFormatterParams());
         }
 
@@ -40,12 +40,11 @@ public class SqlOutPrintBuilder implements Serializable {
     protected void sqlInfoQueryPrint() {
         if(sqlExecute) {
             handleExecuteSql();
-            System.out.printf("QUERY-SQL ====>\n \n%s\n===================\n", sql);
+            logger.info("QUERY-SQL ====>\n \n{}\n===================\n", sql);
         }else {
-            System.out.printf("QUERY-SQL ====>\n \n%s\n===================\nparams = %s\n===================\n"
+            logger.info("QUERY-SQL ====>\n \n{}\n===================\nParameters = {}\n===================\n"
                     , sql, getFormatterParams());
         }
-
     }
 
     /**
@@ -54,9 +53,9 @@ public class SqlOutPrintBuilder implements Serializable {
     protected void sqlInfoUpdatePrint() {
         if(sqlExecute) {
             handleExecuteSql();
-            System.out.printf("UPDATE-SQL ====>\n \n%s\n===================\n", sql);
+            logger.info("UPDATE-SQL ====>\n \n{}\n===================\n", sql);
         }else {
-            System.out.printf("UPDATE-SQL ====>\n \n%s\n===================\nparams = %s\n===================\n"
+            logger.info("UPDATE-SQL ====>\n \n{}\n===================\nParameters = {}\n===================\n"
                     , sql, getFormatterParams());
         }
     }
@@ -106,7 +105,7 @@ public class SqlOutPrintBuilder implements Serializable {
         int symbolSize = CustomUtil.countStr(sql, SymbolConstant.QUEST);
         if(symbolSize != params.length) {
             logger.error(
-                    "\nsql error\n===================\nSQL ====>\n {}\n===================\nparams = {}\n===================\n"
+                    "\nSql Error\n===================\nSQL ====>\n {}\n===================\nParameters = {}\n===================\n"
                     , sql, getFormatterParams());
             ExThrowsUtil.toCustom(String.format("参数数量与需要设置的参数数量不对等，需设置参数数量：%s, 实际参数数量：%s", symbolSize, params.length));
         }
