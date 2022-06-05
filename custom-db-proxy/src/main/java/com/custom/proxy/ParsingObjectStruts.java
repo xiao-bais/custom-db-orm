@@ -22,7 +22,7 @@ public class ParsingObjectStruts {
 
     private final Map<String, Object> paramsMap = new HashMap<>();
 
-    protected void parser(String name, Object value) {
+    public void parser(String name, Object value) {
         if (Objects.isNull(value)) {
             paramsMap.put(name, null);
             return;

@@ -17,11 +17,13 @@ import java.util.regex.Pattern;
 /**
  * @author Xiao-Bai
  * @date 2022/5/8 19:30
- * @desc:
+ * @desc 抽象的sql代理执行层，提供两个抽象方法
+ * 1.prepareParamsParsing：参与sql语句的参数解析以及部分sql的替换操作
+ * 2.execute：负责执行解析后的sql，以及解析参数的返回类型
  */
 public abstract class AbstractProxyHandler {
 
-    private static Logger logger = LoggerFactory.getLogger(AbstractProxyHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(AbstractProxyHandler.class);
 
     /**
      * jdbc执行对象
@@ -57,7 +59,7 @@ public abstract class AbstractProxyHandler {
     /**
      * 参数解析+sql预编译
      */
-    protected abstract void prepareAndParamsParsing();
+    protected abstract void prepareParamsParsing();
     /**
      * 执行
      */
@@ -144,26 +146,30 @@ public abstract class AbstractProxyHandler {
             Optional<Map.Entry<String, Object>> findSqlParam = this.parseAfterParams.entrySet().stream()
                     .filter(x -> x.getKey().equals(setExParam))
                     .findFirst();
-            findSqlParam.ifPresent(o -> {
-                Object value = o.getValue();
-                if (Objects.isNull(value)) {
-                    ExThrowsUtil.toNull(String.format("%s is null", o.getKey()));
-                }
+            if (!findSqlParam.isPresent()) {
+                logger.error("\nSQL ERROR ==>\n{}\n", prepareSql);
+                ExThrowsUtil.toCustom(String.format("Parameter '%s' not found", setExParam));
+            }
+            Map.Entry<String, Object> entryParam = findSqlParam.get();
+            Object value = entryParam.getValue();
+            if (Objects.isNull(value)) {
+                logger.error("\nSQL ERROR ==>\n{}\n", prepareSql);
+                ExThrowsUtil.toNull(String.format("Parameter %s is null", entryParam.getKey()));
+            }
 
-                if (CustomUtil.isBasicType(value)) {
-                    matcher.appendReplacement(exBuffer, SymbolConstant.QUEST);
-                    this.executeSqlParams.add(value);
-                }else if (value instanceof Collection) {
-                    StringJoiner symbolQuest = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
-                    Collection<?> paramCollection = (Collection<?>) value;
-                    for (Object item : paramCollection) {
-                        this.executeSqlParams.add(item);
-                        symbolQuest.add(SymbolConstant.QUEST);
-                    }
-                    matcher.appendReplacement(exBuffer, symbolQuest.toString());
+            if (CustomUtil.isBasicType(value)) {
+                matcher.appendReplacement(exBuffer, SymbolConstant.QUEST);
+                this.executeSqlParams.add(value);
+            }else if (value instanceof Collection) {
+                StringJoiner symbolQuest = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
+                Collection<?> paramCollection = (Collection<?>) value;
+                for (Object item : paramCollection) {
+                    this.executeSqlParams.add(item);
+                    symbolQuest.add(SymbolConstant.QUEST);
                 }
-                // else ignore...
-            });
+                matcher.appendReplacement(exBuffer, symbolQuest.toString());
+            }
+            // else ignore...
         }
         matcher.appendTail(exBuffer);
         return exBuffer;

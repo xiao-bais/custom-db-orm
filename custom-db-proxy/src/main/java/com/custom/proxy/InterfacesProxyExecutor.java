@@ -24,7 +24,7 @@ import java.util.Set;
 /**
  * @Author Xiao-Bai
  * @Date 2021/11/19 16:45
- * @Desc：用于读取接口上的注解，并生成代理类去执行路径中（文件中）的内容
+ * @Desc 用于读取接口上的注解，并生成代理类去执行路径中（文件中）的内容
  **/
 @SuppressWarnings("unchecked")
 @Slf4j
@@ -75,30 +75,34 @@ public class InterfacesProxyExecutor implements InvocationHandler {
             ExThrowsUtil.toCustom(String.format("Execution error, possibly because '%s' does not inherit com.custom.comm.BasicDao or this interface is not annotated with @SqlMapper", targetClassName));
         }
 
+        // do Query
         if (method.isAnnotationPresent(Query.class)) {
             Query query = method.getAnnotation(Query.class);
             proxyHandler = new SelectProxyHandler(executeAction, args, query.value(), method);
-            proxyHandler.prepareAndParamsParsing();
+            proxyHandler.prepareParamsParsing();
             return proxyHandler.execute();
-
-//            return doPrepareExecuteQuery(method, args, query.value(), query.order());
-
         }
+
+        // do Update
         if (method.isAnnotationPresent(Update.class)) {
             Update update = method.getAnnotation(Update.class);
             return doPrepareExecuteUpdate(method, args, update.value(), update.order());
-
         }
-        if (method.isAnnotationPresent(SqlPath.class)) {
+
+        // do sqlPath(select or update)
+        else if (method.isAnnotationPresent(SqlPath.class)) {
             SqlPath sqlPath = method.getAnnotation(SqlPath.class);
             ExecuteMethod execType = sqlPath.method();
             String sql = new ClearNotesOnSqlHandler(sqlPath.value()).loadSql();
 
             if (execType == ExecuteMethod.SELECT) {
-                return doPrepareExecuteQuery(method, args, sql, sqlPath.order());
+                proxyHandler = new SelectProxyHandler(executeAction, args, sql, method);
+                proxyHandler.prepareParamsParsing();
+                return proxyHandler.execute();
             }
             if (execType == ExecuteMethod.UPDATE || execType == ExecuteMethod.DELETE || execType == ExecuteMethod.INSERT) {
-                return doPrepareExecuteUpdate(method, args, sql, sqlPath.order());
+//                return doPrepareExecuteUpdate(method, args, sql, sqlPath.order());
+                // todo 等待优化
             }
             return null;
         }

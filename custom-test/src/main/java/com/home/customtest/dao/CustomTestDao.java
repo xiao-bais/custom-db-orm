@@ -1,9 +1,6 @@
 package com.home.customtest.dao;
 
-import com.custom.comm.annotations.mapper.Query;
-import com.custom.comm.annotations.mapper.SqlMapper;
-import com.custom.comm.annotations.mapper.SqlPath;
-import com.custom.comm.annotations.mapper.Update;
+import com.custom.comm.annotations.mapper.*;
 import com.home.customtest.entity.Employee;
 import com.home.customtest.entity.Student;
 import com.home.customtest.entity.WorkEmp;
@@ -30,8 +27,8 @@ public interface CustomTestDao {
     @Query(value = "select age from employee where age in (#{ages}) and emp_name = #{empName}", order = true)
     List<Integer> getAges(int[] ages, String empName);
 
-    @Query("select * from employee a where a.id in (#{emp.ageList})")
-    List<Employee> getConditr(WorkEmp emp);
+    @Query("select * from employee a where a.id in (#{empParam.ageList})")
+    List<Employee> getConditr(@DbParam("empParam") WorkEmp emp);
 
     @Query("select * from employee where 1=1 and address like concat('%', #{searchMap.name}, '%')")
     Employee getEmpInfoByMap(Map<String, String> searchMap);

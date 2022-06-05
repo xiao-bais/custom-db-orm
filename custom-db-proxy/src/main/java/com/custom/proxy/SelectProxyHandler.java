@@ -3,8 +3,11 @@ package com.custom.proxy;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.RexUtil;
+import com.custom.comm.annotations.mapper.DbParam;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.jdbc.ExecuteSqlHandler;
+import com.custom.proxy.AbstractProxyHandler;
+import com.custom.proxy.ParsingObjectStruts;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.lang.reflect.Method;
@@ -19,7 +22,7 @@ import java.util.Objects;
 /**
  * @author Xiao-Bai
  * @date 2022/5/8 19:22
- * @desc:查询sql执行处理
+ * @desc: 代理：查询sql执行处理
  */
 public class SelectProxyHandler extends AbstractProxyHandler {
 
@@ -34,7 +37,7 @@ public class SelectProxyHandler extends AbstractProxyHandler {
 
 
     @Override
-    protected void prepareAndParamsParsing() {
+    protected void prepareParamsParsing() {
         Parameter[] parameters = getMethod().getParameters();
         if (JudgeUtil.isEmpty(parameters)) {
             return;
@@ -43,13 +46,20 @@ public class SelectProxyHandler extends AbstractProxyHandler {
             Object prepareParam = getMethodParams()[i];
             Parameter parameter = parameters[i];
             String parameterName = parameter.getName();
+
+            if (parameter.isAnnotationPresent(DbParam.class)) {
+                DbParam dbParam = parameter.getAnnotation(DbParam.class);
+                if (JudgeUtil.isNotEmpty(dbParam.value())) {
+                    parameterName = dbParam.value();
+                }
+            }
+
             if (Objects.isNull(prepareParam)) {
                 ExThrowsUtil.toNull(parameterName + " is null");
             }
             ParsingObjectStruts parsingObject = new ParsingObjectStruts();
             parsingObject.parser(parameterName, prepareParam);
             mergeParams(parsingObject.getParamsMap());
-
         }
     }
 
@@ -59,17 +69,21 @@ public class SelectProxyHandler extends AbstractProxyHandler {
         StringBuffer executeSql = new StringBuffer();
         ExecuteSqlHandler executeSqlHandler = getExecuteAction();
 
+        // step 1
         if (RexUtil.hasRegex(prepareSql, RexUtil.sql_rep_param)) {
             handleRepSqlFormatParams(executeSql, prepareSql);
         }
+        // step 2
         if (RexUtil.hasRegex(prepareSql, RexUtil.sql_set_param)) {
             executeSql = handleSetSqlFormatParams(JudgeUtil.isBlank(executeSql) ? prepareSql : executeSql.toString());
         }
         String readyExecuteSql = executeSql.toString();
         Object[] sqlParams = getExecuteSqlParams().toArray();
 
+        // step 3
         Type returnType = getMethod().getGenericReturnType();
         Class<?> truthResType;
+        // 若返回值是带有泛型的类型
         if (returnType instanceof ParameterizedType) {
             ParameterizedType pt = (ParameterizedType) returnType;
             truthResType = ((ParameterizedTypeImpl) pt).getRawType();

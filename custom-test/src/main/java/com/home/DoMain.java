@@ -8,6 +8,7 @@ import com.custom.configuration.DbDataSource;
 import com.custom.proxy.InterfacesProxyExecutor;
 import com.home.customtest.dao.CustomTestDao;
 import com.home.customtest.entity.Employee;
+import com.home.customtest.entity.Student;
 import com.home.customtest.entity.WorkEmp;
 
 import java.util.Arrays;
@@ -61,9 +62,11 @@ public class DoMain {
         emp.getMap().put("admin", "admin123");
         emp.getMap().put("ads", 259);
         int[] arr = {21,22,23,24};
-        List<Employee> employees = customTestDao.getConditr(emp);
-//
-        System.out.println("employees = " + employees);
+//        List<Employee> employees = customTestDao.getConditr(emp);
+//        System.out.println("employees = " + employees);
+
+        Student student = customTestDao.selectByOne("江云");
+        System.out.println("student = " + student);
 //        List<Student> students = jdbcDao.selectList(Conditions.query(Student.class).gt("money", 3000.0).gt("age", 20));
 
     }
