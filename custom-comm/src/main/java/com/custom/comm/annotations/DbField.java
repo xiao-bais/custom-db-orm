@@ -41,7 +41,7 @@ public @interface DbField {
     boolean isNull() default true;
 
     /**
-     * 查询时若当前字段为字符类型，是否null转为空字符
+     * 查询时若当前sql字段为字符类型，是否null转为空字符
      * <p>
      * 若使用了条件构造器的Select方法，则isNullToEmpty不会生效
      * </p>
@@ -50,7 +50,7 @@ public @interface DbField {
     boolean isNullToEmpty() default false;
 
     /**
-     * 查询时，指定查询字段的包装
+     * 查询时，指定查询sql字段的包装
      * 例：concat('user-', tp.name) columnName
      * <p>
      * 若使用了条件构造器的Select方法，则wrapperColumn不会生效
