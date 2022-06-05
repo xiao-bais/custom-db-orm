@@ -175,6 +175,7 @@ public class TableStructsInitializer {
                 String beforeColumn = truthColumnList.get(i - 1);
                 addColumnSql = String.format(CREATE_COLUMN_AFTER_SQL, table, fieldParserModel.buildTableSql(), beforeColumn);
             }
+
             addColumnSqlList.add(addColumnSql);
         }
     }
