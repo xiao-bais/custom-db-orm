@@ -4,12 +4,14 @@ import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.RexUtil;
 import com.custom.comm.SymbolConstant;
+import com.custom.comm.annotations.mapper.DbParam;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.jdbc.ExecuteSqlHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -56,10 +58,6 @@ public abstract class AbstractProxyHandler {
      */
     protected final static String nullStr = "null";
 
-    /**
-     * 参数解析+sql预编译
-     */
-    protected abstract void prepareParamsParsing();
     /**
      * 执行
      */
@@ -173,5 +171,51 @@ public abstract class AbstractProxyHandler {
         }
         matcher.appendTail(exBuffer);
         return exBuffer;
+    }
+
+    /**
+     * sql执行参数解析
+     */
+    protected String sqlExecuteParamParser() {
+        StringBuffer executeSql = new StringBuffer();
+
+        // step 1
+        if (RexUtil.hasRegex(prepareSql, RexUtil.sql_rep_param)) {
+            handleRepSqlFormatParams(executeSql, prepareSql);
+        }
+        // step 2
+        if (RexUtil.hasRegex(prepareSql, RexUtil.sql_set_param)) {
+            executeSql = handleSetSqlFormatParams(JudgeUtil.isBlank(executeSql) ? prepareSql : executeSql.toString());
+        }
+        return executeSql.toString();
+    }
+
+    /**
+     * 参数解析+sql预编译
+     */
+    protected void prepareParamsParsing() {
+        Parameter[] parameters = getMethod().getParameters();
+        if (JudgeUtil.isEmpty(parameters)) {
+            return;
+        }
+        for (int i = 0; i < parameters.length; i++) {
+            Object prepareParam = getMethodParams()[i];
+            Parameter parameter = parameters[i];
+            String parameterName = parameter.getName();
+
+            if (parameter.isAnnotationPresent(DbParam.class)) {
+                DbParam dbParam = parameter.getAnnotation(DbParam.class);
+                if (JudgeUtil.isNotEmpty(dbParam.value())) {
+                    parameterName = dbParam.value();
+                }
+            }
+
+            if (Objects.isNull(prepareParam)) {
+                ExThrowsUtil.toNull(parameterName + " is null");
+            }
+            ParsingObjectStruts parsingObject = new ParsingObjectStruts();
+            parsingObject.parser(parameterName, prepareParam);
+            mergeParams(parsingObject.getParamsMap());
+        }
     }
 }

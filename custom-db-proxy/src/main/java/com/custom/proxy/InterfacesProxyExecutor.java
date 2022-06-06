@@ -69,7 +69,7 @@ public class InterfacesProxyExecutor implements InvocationHandler {
     */
     private Object doInvoke(Method method, Object[] args) throws Exception {
 
-        AbstractProxyHandler proxyHandler;
+        AbstractProxyHandler proxyHandler = null;
         Class<?> execClass = method.getDeclaringClass();
         if (!BasicDao.class.isAssignableFrom(execClass) && !execClass.isAnnotationPresent(SqlMapper.class)) {
             ExThrowsUtil.toCustom(String.format("Execution error, possibly because '%s' does not inherit com.custom.comm.BasicDao or this interface is not annotated with @SqlMapper", targetClassName));
@@ -78,6 +78,7 @@ public class InterfacesProxyExecutor implements InvocationHandler {
         // do Query
         if (method.isAnnotationPresent(Query.class)) {
             Query query = method.getAnnotation(Query.class);
+            checkIllegalParam(method.getName(), query.order(), query.value());
             proxyHandler = new SelectProxyHandler(executeAction, args, query.value(), method);
             proxyHandler.prepareParamsParsing();
             return proxyHandler.execute();
@@ -86,7 +87,10 @@ public class InterfacesProxyExecutor implements InvocationHandler {
         // do Update
         if (method.isAnnotationPresent(Update.class)) {
             Update update = method.getAnnotation(Update.class);
-            return doPrepareExecuteUpdate(method, args, update.value(), update.order());
+            checkIllegalParam(method.getName(), update.order(), update.value());
+            proxyHandler = new UpdateProxyHandler(executeAction, args, update.value(), method);
+            proxyHandler.prepareParamsParsing();
+            return proxyHandler.execute();
         }
 
         // do sqlPath(select or update)
@@ -94,100 +98,20 @@ public class InterfacesProxyExecutor implements InvocationHandler {
             SqlPath sqlPath = method.getAnnotation(SqlPath.class);
             ExecuteMethod execType = sqlPath.method();
             String sql = new ClearNotesOnSqlHandler(sqlPath.value()).loadSql();
-
+            checkIllegalParam(method.getName(), sqlPath.order(), sql);
             if (execType == ExecuteMethod.SELECT) {
                 proxyHandler = new SelectProxyHandler(executeAction, args, sql, method);
-                proxyHandler.prepareParamsParsing();
-                return proxyHandler.execute();
             }
-            if (execType == ExecuteMethod.UPDATE || execType == ExecuteMethod.DELETE || execType == ExecuteMethod.INSERT) {
-//                return doPrepareExecuteUpdate(method, args, sql, sqlPath.order());
-                // todo 等待优化
+            else if (execType == ExecuteMethod.UPDATE || execType == ExecuteMethod.DELETE || execType == ExecuteMethod.INSERT) {
+                proxyHandler = new UpdateProxyHandler(executeAction, args, sqlPath.value(), method);
             }
-            return null;
+            if (proxyHandler == null) {
+                ExThrowsUtil.toCustom("未知的执行类型");
+            }
+            proxyHandler.prepareParamsParsing();
+            return proxyHandler.execute();
         }
         throw new CustomCheckException(String.format("The '@Update' or '@Query' annotation was not found on the method : %s.%s()", targetClassName, method.getName()));
-    }
-
-
-    /**
-    * 执行更新代理
-    */
-    private Object doPrepareExecuteUpdate(Method method, Object[] args, String sql, boolean order) throws Exception {
-        String methodName = String.format(" %s.%s() ", method.getDeclaringClass().getName(), method.getName());
-        checkIllegalParam(methodName, order, sql);
-
-        if(sql.contains(SymbolConstant.PREPARE_BEGIN_SHARP) && order) {
-            ExThrowsUtil.toCustom(methodName + "方法注解上建议使用 isOrder = false");
-        }
-        if(sql.contains(SymbolConstant.QUEST) && !order) {
-            ExThrowsUtil.toCustom(methodName + "方法注解上建议使用 isOrder = true");
-        }
-        // 自定义-参数预编译
-        ParameterParserExecutor parameterParserExecutor = new ParameterParserExecutor(sql, method, args);
-        if(order) {
-            parameterParserExecutor.prepareOrderParams();
-        }else {
-            parameterParserExecutor.prepareDisorderParams();
-        }
-        List<Object> paramValues = parameterParserExecutor.getParamResList();
-        return executeAction.executeUpdate(parameterParserExecutor.getPrepareSql(), paramValues.toArray());
-    }
-
-
-    /**
-    * 执行查询代理
-    */
-    private Object doPrepareExecuteQuery(Method method, Object[] args, String sql, boolean order) throws Exception {
-        String methodName = String.format(" %s.%s() ", method.getDeclaringClass().getName(), method.getName());
-        checkIllegalParam(methodName, order, sql);
-        Type returnType = method.getGenericReturnType();
-        // 自定义-参数预编译
-        ParameterParserExecutor parameterParserExecutor = new ParameterParserExecutor(sql, method, args);
-        if(order) {
-            parameterParserExecutor.prepareOrderParams();
-        }else {
-            parameterParserExecutor.prepareDisorderParams();
-        }
-
-        List<Object> paramValues = parameterParserExecutor.getParamResList();
-        sql = parameterParserExecutor.getPrepareSql();
-        Object[] params = paramValues.toArray();
-
-        // 判断查询后的返回类型
-        if (returnType instanceof ParameterizedType) {
-            ParameterizedType pt = (ParameterizedType) returnType;
-            Class<?> typeArgument = (Class<?>) pt.getActualTypeArguments()[0];
-            Type type = ((ParameterizedType) returnType).getRawType();
-            if (type.equals(List.class)) {
-                return executeAction.query(typeArgument, executeAction.getDbCustomStrategy().isSqlOutPrinting(),  sql, params);
-
-            } else if (type.equals(Map.class)) {
-                return executeAction.selectObjSql(Map.class, sql, params);
-
-            } else if (type.equals(Set.class)) {
-                return executeAction.querySet(typeArgument, sql, params);
-            }
-        } else if (CustomUtil.isBasicType(returnType)) {
-            return executeAction.selectObjSql(sql, params);
-
-        } else if (((Class<?>) returnType).isArray()) {
-            Class<?> type = ((Class<?>) returnType).getComponentType();
-            return executeAction.queryArray(type, sql, params);
-        }else {
-            String typeName = returnType.getTypeName();
-            Class<?> cls = Class.forName(typeName);
-            List<?> resultList = executeAction.query(cls, executeAction.getDbCustomStrategy().isSqlOutPrinting(), sql, params);
-            int size = resultList.size();
-            if(size == 0) {
-                return null;
-            }else if(size > SymbolConstant.DEFAULT_ONE) {
-                throw new CustomCheckException(String.format("One was queried, but more were found:(%s) ", size));
-            }else {
-                return resultList.get(SymbolConstant.DEFAULT_ZERO);
-            }
-        }
-        return null;
     }
 
     /**

@@ -37,50 +37,12 @@ public class SelectProxyHandler extends AbstractProxyHandler {
 
 
     @Override
-    protected void prepareParamsParsing() {
-        Parameter[] parameters = getMethod().getParameters();
-        if (JudgeUtil.isEmpty(parameters)) {
-            return;
-        }
-        for (int i = 0; i < parameters.length; i++) {
-            Object prepareParam = getMethodParams()[i];
-            Parameter parameter = parameters[i];
-            String parameterName = parameter.getName();
-
-            if (parameter.isAnnotationPresent(DbParam.class)) {
-                DbParam dbParam = parameter.getAnnotation(DbParam.class);
-                if (JudgeUtil.isNotEmpty(dbParam.value())) {
-                    parameterName = dbParam.value();
-                }
-            }
-
-            if (Objects.isNull(prepareParam)) {
-                ExThrowsUtil.toNull(parameterName + " is null");
-            }
-            ParsingObjectStruts parsingObject = new ParsingObjectStruts();
-            parsingObject.parser(parameterName, prepareParam);
-            mergeParams(parsingObject.getParamsMap());
-        }
-    }
-
-    @Override
     protected Object execute() throws Exception {
-        String prepareSql = getPrepareSql();
-        StringBuffer executeSql = new StringBuffer();
         ExecuteSqlHandler executeSqlHandler = getExecuteAction();
 
-        // step 1
-        if (RexUtil.hasRegex(prepareSql, RexUtil.sql_rep_param)) {
-            handleRepSqlFormatParams(executeSql, prepareSql);
-        }
-        // step 2
-        if (RexUtil.hasRegex(prepareSql, RexUtil.sql_set_param)) {
-            executeSql = handleSetSqlFormatParams(JudgeUtil.isBlank(executeSql) ? prepareSql : executeSql.toString());
-        }
-        String readyExecuteSql = executeSql.toString();
+        String readyExecuteSql = sqlExecuteParamParser();
         Object[] sqlParams = getExecuteSqlParams().toArray();
 
-        // step 3
         Type returnType = getMethod().getGenericReturnType();
         Class<?> truthResType;
         // 若返回值是带有泛型的类型

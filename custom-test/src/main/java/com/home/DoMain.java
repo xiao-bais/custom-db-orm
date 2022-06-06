@@ -49,25 +49,9 @@ public class DoMain {
         InterfacesProxyExecutor proxyExecutor = new InterfacesProxyExecutor(dbDataSource, dbCustomStrategy);
         CustomTestDao customTestDao = proxyExecutor.createProxy(CustomTestDao.class);
 
-        String sql = "select emp_name empName from employee where age in (#{emp.ageList}) and emp_name = #{emp.empName} and ${emp.id} = 0";
+        int emp = customTestDao.updateEmp(88, "员工-1", "就仨女的", 3);
+        System.out.println("emp = " + emp);
 
-//        String allRex = RexUtil.replaceAllRex(sql, RexUtil.sql_rep_param, "emp.id", "aaa");
-//        System.out.println("allRex = " + allRex);
-
-        WorkEmp emp = new WorkEmp();
-        emp.setAge(23);
-        emp.setAgeList(Stream.of(21,22,26).collect(Collectors.toList()));
-        emp.setEmpName("9jsa");
-        emp.setId("minid");
-        emp.getMap().put("admin", "admin123");
-        emp.getMap().put("ads", 259);
-        int[] arr = {21,22,23,24};
-//        List<Employee> employees = customTestDao.getConditr(emp);
-//        System.out.println("employees = " + employees);
-
-        Student student = customTestDao.selectByOne("江云");
-        System.out.println("student = " + student);
-//        List<Student> students = jdbcDao.selectList(Conditions.query(Student.class).gt("money", 3000.0).gt("age", 20));
 
     }
 
