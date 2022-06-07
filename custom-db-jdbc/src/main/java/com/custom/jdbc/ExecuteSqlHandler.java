@@ -189,7 +189,7 @@ public class ExecuteSqlHandler extends DbConnection {
             Object res = Array.newInstance(t, rowsCount);
             int len = 0;
             while (this.resultSet.next()) {
-                T val = (T) this.resultSet.getObject(1);
+                T val = (T) this.resultSet.getObject(SymbolConstant.DEFAULT_ONE);
                 Array.set(res, len, val);
                 len++;
             }

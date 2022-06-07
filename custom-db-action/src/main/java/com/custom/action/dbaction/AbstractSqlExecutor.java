@@ -139,8 +139,11 @@ public abstract class AbstractSqlExecutor {
         return handler.handleLogic();
     }
 
-    public <T> T[] selectArr(Class<T> t, String sql, Object... params) throws Exception {
-        return executeSqlHandler.queryArray(t, sql, t.getName(), "aaa", params);
+    /**
+     * 查询数组
+     */
+    public <T> T[] selectArrays(Class<T> t, String sql, Object... params) throws Exception {
+        return executeSqlHandler.queryArray(t, sql, params);
     }
 
 

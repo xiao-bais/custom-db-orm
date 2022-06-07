@@ -117,13 +117,13 @@ public class JdbcDao {
     }
 
     /**
-     * 条件构造器查询单个字段值（若有多个值满足条件，默认返回第一条记录的第一个值）
+     * 条件构造器查询单个属性值（若有多个值满足条件，默认返回第一条记录的第一个值）
      */
     public <T> Object selectObj(ConditionWrapper<T> wrapper) throws Exception {
         return jdbcAction.selectObj(wrapper);
     }
     /**
-     * 条件构造器查询单个值（若有多条记录满足条件，默认返回所有记录的第一个字段）
+     * 条件构造器查询多个单值（若有多条记录满足条件，默认返回所有记录的第一个字段）
      */
     public <T> List<Object> selectObjs(ConditionWrapper<T> wrapper) throws Exception {
         return jdbcAction.selectObjs(wrapper);
@@ -150,8 +150,14 @@ public class JdbcDao {
         return jdbcAction.selectPageMaps(wrapper);
     }
 
-    public <T> T[] selectArr(Class<T> t, String sql, Object... params) throws Exception {
-        return jdbcAction.selectArr(t, sql, params);
+    /**
+     * 查询数组（t只支持基础类型对应的引用类型）
+     * <p>
+     *  额外支持： {@link java.lang.String}, {@link java.math.BigDecimal}, {@link java.util.Date}
+     * </p>
+     */
+    public <T> T[] selectArrays(Class<T> t, String sql, Object... params) throws Exception {
+        return jdbcAction.selectArrays(t, sql, params);
     }
 
     /* ----------------------------------------------------------------delete---------------------------------------------------------------- */
