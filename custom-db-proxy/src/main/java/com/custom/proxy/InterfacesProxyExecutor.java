@@ -80,17 +80,13 @@ public class InterfacesProxyExecutor implements InvocationHandler {
             Query query = method.getAnnotation(Query.class);
             checkIllegalParam(method.getName(), query.order(), query.value());
             proxyHandler = new SelectProxyHandler(executeAction, args, query.value(), method);
-            proxyHandler.prepareParamsParsing();
-            return proxyHandler.execute();
         }
 
         // do Update
-        if (method.isAnnotationPresent(Update.class)) {
+        else if (method.isAnnotationPresent(Update.class)) {
             Update update = method.getAnnotation(Update.class);
             checkIllegalParam(method.getName(), update.order(), update.value());
             proxyHandler = new UpdateProxyHandler(executeAction, args, update.value(), method);
-            proxyHandler.prepareParamsParsing();
-            return proxyHandler.execute();
         }
 
         // do sqlPath(select or update)
@@ -103,15 +99,15 @@ public class InterfacesProxyExecutor implements InvocationHandler {
                 proxyHandler = new SelectProxyHandler(executeAction, args, sql, method);
             }
             else if (execType == ExecuteMethod.UPDATE || execType == ExecuteMethod.DELETE || execType == ExecuteMethod.INSERT) {
-                proxyHandler = new UpdateProxyHandler(executeAction, args, sqlPath.value(), method);
+                proxyHandler = new UpdateProxyHandler(executeAction, args, sql, method);
             }
-            if (proxyHandler == null) {
-                ExThrowsUtil.toCustom("未知的执行类型");
-            }
-            proxyHandler.prepareParamsParsing();
-            return proxyHandler.execute();
+        }else throw new CustomCheckException(String.format("The '@Update' or '@Query' or '@SqlPath' annotation was not found on the method : %s.%s()", targetClassName, method.getName()));
+
+        if (proxyHandler == null) {
+            ExThrowsUtil.toCustom("未知的执行类型");
         }
-        throw new CustomCheckException(String.format("The '@Update' or '@Query' annotation was not found on the method : %s.%s()", targetClassName, method.getName()));
+        proxyHandler.prepareParamsParsing();
+        return proxyHandler.execute();
     }
 
     /**

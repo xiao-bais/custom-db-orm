@@ -4,7 +4,10 @@ import com.custom.action.sqlparser.DbFieldParserModel;
 import com.custom.action.sqlparser.DbKeyParserModel;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableSqlBuilder;
-import com.custom.comm.*;
+import com.custom.comm.ConvertUtil;
+import com.custom.comm.JudgeUtil;
+import com.custom.comm.RexUtil;
+import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.DbTable;
 import com.custom.jdbc.ExecuteSqlHandler;
 import com.custom.springboot.scanner.PackageScanner;
@@ -101,7 +104,6 @@ public class TableStructsInitializer {
             TableSqlBuilder<?> waitUpdateSqlBuilder = sqlBuilder.clone();
             String exitsTableSql = waitUpdateSqlBuilder.getExitsTableSql(entityClass);
             String table = waitUpdateSqlBuilder.getTable();
-            System.out.println("table = " + table);
             // 若表已存在，则进行下一步判断表字段是否存在
             if (ConvertUtil.conBool(sqlHandler.executeExist(exitsTableSql))) {
                 buildColumnInfo(waitUpdateSqlBuilder, table);
@@ -167,7 +169,8 @@ public class TableStructsInitializer {
             if (columnList.contains(currColumn)) {
                 continue;
             }
-            DbFieldParserModel<?> fieldParserModel = sqlBuilder.getFieldParserModels().get(i);
+            List<? extends DbFieldParserModel<?>> fieldParserModels = sqlBuilder.getFieldParserModels();
+            DbFieldParserModel<?> fieldParserModel = fieldParserModels.get(i);
             String addColumnSql;
             if (i == 0) {
                 addColumnSql = String.format(CREATE_COLUMN_FIRST_SQL, table, fieldParserModel.buildTableSql());
@@ -175,7 +178,6 @@ public class TableStructsInitializer {
                 String beforeColumn = truthColumnList.get(i - 1);
                 addColumnSql = String.format(CREATE_COLUMN_AFTER_SQL, table, fieldParserModel.buildTableSql(), beforeColumn);
             }
-
             addColumnSqlList.add(addColumnSql);
         }
     }
@@ -192,7 +194,7 @@ public class TableStructsInitializer {
         Set<ColumnCreateInfo> columnCreateInfos = tableCreateInfo.getColumnCreateInfos();
         columnCreateInfos.stream().map(column -> column.getCreateColumnSql() + "\n").forEach(fieldSql::add);
 
-        createTableSql.append(String.format("create table `%s` (\n%s)", tableCreateInfo.getTable(), fieldSql));
+        createTableSql.append(String.format("CREATE TABLE `%s` (\n%s)", tableCreateInfo.getTable(), fieldSql));
         if (JudgeUtil.isNotEmpty(tableCreateInfo.getComment())) {
             createTableSql.append(String.format(" COMMENT = '%s'", tableCreateInfo.getComment()));
         }

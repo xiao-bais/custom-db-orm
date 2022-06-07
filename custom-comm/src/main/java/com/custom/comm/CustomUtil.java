@@ -1,6 +1,7 @@
 
 package com.custom.comm;
 
+import com.custom.comm.annotations.DbTable;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
@@ -219,10 +220,14 @@ public class CustomUtil {
     */
     public static <T> Field[] getFields(Class<T> t, boolean checkDbField){
         Class<?> clz = t;
+        DbTable thisDbTable = t.getAnnotation(DbTable.class);
         List<Field> fieldList = new ArrayList<>();
         while (clz != null && !clz.getName().equalsIgnoreCase("java.lang.object")){
             fieldList.addAll(Arrays.asList(clz.getDeclaredFields()));
-            clz = clz.getSuperclass();
+            DbTable parentDbTable = clz.getAnnotation(DbTable.class);
+            if (parentDbTable != null && parentDbTable.table().equals(thisDbTable.table())) {
+                clz = clz.getSuperclass();
+            }
         }
         if(fieldList.size() == 0 && checkDbField) ExThrowsUtil.toCustom("@DbField not found in class "+ t);
         return fieldList.toArray(new Field[0]);
@@ -232,24 +237,6 @@ public class CustomUtil {
         return getFields(t, true);
     }
 
-    /**
-    * sql#{name} 替换为 #{name} 返回起始的下标位置
-    */
-    public static int[] replaceSqlRex(String sql, String beginRex, String endRex, int index) {
-
-        int[] indexes = new int[3];
-        int start = sql.indexOf(beginRex, index);
-        int end = sql.indexOf(endRex, start);
-        if(start == -1 || end == -1)
-            return null;
-        else if(start > 0 && end > 0){
-            indexes[0] = start;
-            indexes[1] = end;
-            indexes[2] = end + 1;
-            return indexes;
-        }
-        return null;
-    }
 
     /**
     * 查找字符串出现次数
@@ -261,24 +248,6 @@ public class CustomUtil {
             num ++;
         }
         return num;
-    }
-
-    /**
-    * 手动处理预编译的sql
-    */
-    public static String prepareSql(String sql, Object... params) {
-        StringBuilder sqlBuilder = new StringBuilder(sql);
-        if(params.length > 0) {
-            int index = 0;
-            int symbolNums = countStr(sql, SymbolConstant.QUEST);
-            for (int i = 0; i < symbolNums; i++) {
-                index = sqlBuilder.indexOf(SymbolConstant.QUEST, index);
-                String rexStr = params[i] instanceof String ? String.format("'%s'", params[i]) : params[i].toString();
-                sqlBuilder.replace(index, index + 1, rexStr);
-                index += rexStr.length() - 1;
-            }
-        }
-        return sqlBuilder.toString();
     }
 
 

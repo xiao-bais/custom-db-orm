@@ -32,21 +32,19 @@ public class CustomBeanInitializer implements InitializingBean, ApplicationConte
     public void afterPropertiesSet() throws Exception {
         DbCustomStrategy strategy = applicationContext.getBean(DbCustomStrategy.class);
         DbDataSource dataSource = applicationContext.getBean(DbDataSource.class);
-        if (!strategy.isEntityScanEnable()) {
+        if (!strategy.isSyncEntityEnable()) {
             return;
         }
         if (Objects.isNull(strategy.getEntityPackageScans())) {
             return;
         }
-        logger.info("Table info init process started!");
+        logger.info("Table info sync process started !!!");
         // 表结构初始化
         TableStructsInitializer tableStructsInitializer = new TableStructsInitializer(
                 strategy.getEntityPackageScans(),
                 new ExecuteSqlHandler(dataSource, strategy)
         );
         tableStructsInitializer.initStart();
-
-
     }
 
     @Override

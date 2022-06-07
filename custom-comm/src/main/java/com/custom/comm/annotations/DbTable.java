@@ -17,6 +17,9 @@ public @interface DbTable {
 
     /**
      * 表名称
+     * <p>
+     *     若当前类跟父类同时标注了DbTable注解，且对应的table值不一致时，则不会合并父类的属性字段
+     * </p>
      * @return
      */
     String table();

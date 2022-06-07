@@ -1,5 +1,6 @@
 package com.custom.action.util;
 
+import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.RexUtil;
 import com.custom.comm.annotations.DbKey;
@@ -15,32 +16,11 @@ import java.lang.reflect.Field;
  */
 public class DbUtil {
 
-
-    /**
-     * 检查主键是否自增
-     */
-    public static boolean checkPrimaryKeyIsAutoIncrement(DbType dbType){
-        return "int".equals(dbType.getType())
-                || "float".equals(dbType.getType())
-                || "bigint".equals(dbType.getType());
-    }
-
-    /**
-     * 该类是否有@DbRelation注解
-     */
-    public static <T> boolean isDbRelationTag(Class<T> t) {
-        Field[] fields = CustomUtil.getFields(t);
-        for (Field field : fields) {
-            if(field.isAnnotationPresent(DbRelated.class)) return true;
-        }
-        return false;
-    }
-
     /**
      * 该类是否存在主键
      */
     public static <T> boolean isKeyTag(Class<T> clazz){
-        Field[] fields = CustomUtil.getFields(clazz);
+        Field[] fields = TableInfoCache.getTableModel(clazz).getFields();
         for (Field field : fields) {
             if (field.isAnnotationPresent(DbKey.class)) return true;
         }

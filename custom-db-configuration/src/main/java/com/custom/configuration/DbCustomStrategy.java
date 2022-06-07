@@ -55,14 +55,15 @@ public class DbCustomStrategy {
     private boolean mapperScanEnable = false;
 
     /**
-     * 扫描的实体类包（暂时用作项目启动后的表（字段）自动创建（更新））
+     * 扫描的实体类包
      */
     private String[] entityPackageScans;
 
     /**
-     * 开启表实体的扫描包（entityScanEnable = true后，才会开始扫描 `entityPackageScans` 中指定的路径）
+     * 开启同步实体与表结构（当syncEntityEnable = true后，则开始扫描 `entityPackageScans` 中指定的路径）
+     * 当syncEntityEnable = true时，在容器启动后，自动同步更新表结构
      */
-    private boolean entityScanEnable = false;
+    private boolean syncEntityEnable = false;
 
 
     public boolean isMapperScanEnable() {
@@ -137,11 +138,11 @@ public class DbCustomStrategy {
         this.entityPackageScans = entityPackageScans;
     }
 
-    public boolean isEntityScanEnable() {
-        return entityScanEnable;
+    public boolean isSyncEntityEnable() {
+        return syncEntityEnable;
     }
 
-    public void setEntityScanEnable(boolean entityScanEnable) {
-        this.entityScanEnable = entityScanEnable;
+    public void setSyncEntityEnable(boolean syncEntityEnable) {
+        this.syncEntityEnable = syncEntityEnable;
     }
 }
