@@ -50,7 +50,7 @@ public class TableInfoCache {
     /**
      * 表的逻辑删除字段缓存
      * key-实体全路径名称
-     * value-true or false
+     * value(是否存在逻辑删除字段)-true or false
      */
     private final static Map<String, Object> tableLogic = new CustomLocalCache();
 

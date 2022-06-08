@@ -237,10 +237,21 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
             mergeCondition(spliceType, conditionEntity);
         }
 
-        // 3. 合并排序字段-orderBy
+        // 3. 合并分组-group by
+        if (JudgeUtil.isNotEmpty(conditionEntity.getGroupBy())) {
+            mergeGroupBy(conditionEntity);
+        }
+
+        // 4. 合并-having
+        if (JudgeUtil.isNotEmpty(conditionEntity.getHaving())) {
+            mergeHaving(conditionEntity);
+        }
+
+        // 5. 合并排序字段-orderBy
         if (JudgeUtil.isNotEmpty(conditionEntity.getOrderBy())) {
             mergeOrderBy(conditionEntity);
         }
+
     }
 
     /**
@@ -255,6 +266,18 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
 
     private void mergeOrderBy(ConditionWrapper<T> conditionEntity) {
         getOrderBy().merge(conditionEntity.getOrderBy());
+    }
+
+    private void mergeGroupBy(ConditionWrapper<T> conditionEntity) {
+        getGroupBy().merge(conditionEntity.getOrderBy());
+    }
+
+    private void mergeHaving(ConditionWrapper<T> conditionEntity) {
+        if (JudgeUtil.isEmpty(getHaving()) && JudgeUtil.isNotEmpty(conditionEntity.getHaving())) {
+            getHaving().append(conditionEntity.getHaving());
+        }else if (JudgeUtil.isNotEmpty(getHaving()) && JudgeUtil.isNotEmpty(conditionEntity.getHaving())) {
+            getHaving().append(String.format(" and %s ", conditionEntity.getHaving()));
+        }
     }
 
 
@@ -299,7 +322,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
     protected final Children childrenClass = (Children) this;
     protected static String appendSybmol = SymbolConstant.AND;
     /**
-     * 拼接and or 方法时，对于后面方法的调用
+     * 拼接and or 方法时，对于后面sql条件的拼接做处理
      * 默认为true即and
      */
     protected static boolean appendState = true;

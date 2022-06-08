@@ -65,10 +65,6 @@ public class TableSqlBuilder<T> implements Cloneable {
      */
     private List<String> joinTableParserModels = new ArrayList<>();
     /**
-     * @Desc:对象的所有值
-     */
-    private List<Object> objValues;
-    /**
      * @desc:对于java属性字段到表字段的映射关系
      */
     private final Map<String, String> fieldMapper = new HashMap<>();
@@ -106,7 +102,7 @@ public class TableSqlBuilder<T> implements Cloneable {
             fieldParserModels.stream().map(dbFieldParserModel -> dbFieldParserModel.buildTableSql() + "\n").forEach(fieldSql::add);
         }
 
-        createTableSql.append(String.format("create table `%s` (\n%s)", this.table, fieldSql));
+        createTableSql.append(String.format("CREATE TABLE `%s` (\n%s)", this.table, fieldSql));
 
         if (JudgeUtil.isNotEmpty(this.desc)) {
             createTableSql.append(String.format(" COMMENT = '%s'", this.desc));
@@ -375,18 +371,6 @@ public class TableSqlBuilder<T> implements Cloneable {
         return fieldParserModels;
     }
 
-    public List<DbRelationParserModel<T>> getRelatedParserModels() {
-        return relatedParserModels;
-    }
-
-    public List<String> getJoinTableParserModels() {
-        return joinTableParserModels;
-    }
-
-    public Class<T> getCls() {
-        return cls;
-    }
-
     public T getEntity() {
         return entity;
     }
@@ -425,10 +409,6 @@ public class TableSqlBuilder<T> implements Cloneable {
         this.alias = alias;
     }
 
-    public void setFields(Field[] fields) {
-        this.fields = fields;
-    }
-
     public void setKeyParserModel(DbKeyParserModel<T> keyParserModel) {
         this.keyParserModel = keyParserModel;
     }
@@ -451,10 +431,6 @@ public class TableSqlBuilder<T> implements Cloneable {
 
     public String getDesc() {
         return desc;
-    }
-
-    public List<DbJoinTableParserModel<T>> getJoinDbMappers() {
-        return joinDbMappers;
     }
 
     public Map<String, String> getFieldMapper() {
