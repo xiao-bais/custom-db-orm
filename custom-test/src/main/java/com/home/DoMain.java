@@ -2,6 +2,7 @@ package com.home;
 
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.TableInfoCache;
+import com.custom.action.wrapper.LambdaConditionWrapper;
 import com.custom.comm.RexUtil;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
@@ -48,6 +49,8 @@ public class DoMain {
 
         InterfacesProxyExecutor proxyExecutor = new InterfacesProxyExecutor(dbDataSource, dbCustomStrategy);
         CustomTestDao customTestDao = proxyExecutor.createProxy(CustomTestDao.class);
+
+        jdbcDao.selectObjs(new LambdaConditionWrapper<>(Student.class).orderByDesc(Student::getAge, Student::getMoney));
 
         int emp = customTestDao.updateEmp(88, "员工-1", "就仨女的", 3);
         System.out.println("emp = " + emp);

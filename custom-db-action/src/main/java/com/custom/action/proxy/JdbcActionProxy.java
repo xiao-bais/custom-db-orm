@@ -127,7 +127,8 @@ public class JdbcActionProxy<T> implements MethodInterceptor {
         if(!DbUtil.isKeyTag(objects[0].getClass()) && method.getName().equals("updateByKey")) {
             ExThrowsUtil.toCustom("@DbKey was not found in class " + objects[0].getClass());
         }
-        if(method.getName().equals("updateByCondition") && (JudgeUtil.isEmpty(objects[1]) || JudgeUtil.isEmpty(((ConditionWrapper<?>) objects[1]).getFinalConditional()))) {
+        if(method.getName().equals("updateByCondition") && (JudgeUtil.isEmpty(objects[1])
+                || JudgeUtil.isEmpty(((ConditionWrapper<?>) objects[1]).getFinalConditional()))) {
             ExThrowsUtil.toCustom("update condition cannot be empty");
         }
     }
