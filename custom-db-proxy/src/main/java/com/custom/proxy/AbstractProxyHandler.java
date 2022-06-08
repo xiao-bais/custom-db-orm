@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 /**
  * @author Xiao-Bai
  * @date 2022/5/8 19:30
- * @desc 抽象的sql代理执行层，提供两个抽象方法
+ * @desc 抽象的sql代理执行层
  * 1.prepareParamsParsing：参与sql语句的参数解析以及部分sql的替换操作
  * 2.execute：负责执行解析后的sql，以及解析参数的返回类型
  */
@@ -79,10 +79,6 @@ public abstract class AbstractProxyHandler {
         this.methodParams = methodParams;
     }
 
-    public Map<String, Object> getParseAfterParams() {
-        return parseAfterParams;
-    }
-
     public void mergeParams(Map<String, Object> parseAfterParams) {
         if (this.parseAfterParams == null) {
             this.parseAfterParams = new HashMap<>();
@@ -90,10 +86,6 @@ public abstract class AbstractProxyHandler {
         if (parseAfterParams != null) {
             this.parseAfterParams.putAll(parseAfterParams);
         }
-    }
-
-    protected String getPrepareSql() {
-        return prepareSql;
     }
 
     protected void setPrepareSql(String prepareSql) {

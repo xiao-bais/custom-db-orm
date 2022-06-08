@@ -15,6 +15,13 @@ public class ExThrowsUtil {
     }
 
     /**
+     * 抛出自定义异常
+     */
+    public static void toCustom(String msgFt, Object... params) {
+        throw new CustomCheckException(String.format(msgFt, params));
+    }
+
+    /**
      * 抛出空指针异常
      */
     public static void toNull(String msg) {
