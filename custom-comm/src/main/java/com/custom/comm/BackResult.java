@@ -1,5 +1,6 @@
 package com.custom.comm;
 
+import com.custom.comm.enums.ResultStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
