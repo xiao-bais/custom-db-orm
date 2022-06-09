@@ -100,8 +100,8 @@ public class ParsingObjectStruts {
             paramsMap.put(name, null);
             return;
         }
+        // 筛选出只有基础类型(包括包装类型)的值
         List<Object> list = ((List<Object>) value).stream().filter(CustomUtil::isBasicType).collect(Collectors.toList());
-        // 筛选出只有基础类型的值
         paramsMap.put(name, list);
     }
 
