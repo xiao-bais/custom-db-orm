@@ -83,7 +83,7 @@ public class CustomUtil {
     */
     public static boolean isKeyAllowType(Class<?> type, Object val) {
         if(!isBasicType(val.getClass())) {
-            ExThrowsUtil.toCustom("不允许的主键类型：" + val+ "(" + val.getClass() + ")");
+            ExThrowsUtil.toCustom("不允许的主键类型：" + val.getClass());
         }
         if(CharSequence.class.isAssignableFrom(type)) {
             return true;

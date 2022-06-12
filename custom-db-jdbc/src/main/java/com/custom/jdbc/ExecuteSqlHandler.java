@@ -29,8 +29,10 @@ public class ExecuteSqlHandler extends DbConnection {
     private final Connection conn;
     private PreparedStatement statement = null;
     private ResultSet resultSet = null;
-    private boolean autoCommit = true;
     private final DbCustomStrategy dbCustomStrategy;
+
+//    private static ThreadLocal<Boolean> AUTO_COMMENT = new ThreadLocal<>();
+
 
     public ExecuteSqlHandler(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         super(dbDataSource);
@@ -74,7 +76,6 @@ public class ExecuteSqlHandler extends DbConnection {
     * 预编译-查询2（可预先获取结果集行数）
     */
     private void statementQueryReturnRows(String sql, Object... params) throws Exception {
-//        String execSql = CustomUtil.prepareSql(sql, params);
         statement = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         for (int i = 0; i < params.length; i++) {
             statement.setObject((i + 1), params[i]);
@@ -162,7 +163,9 @@ public class ExecuteSqlHandler extends DbConnection {
                 getResultMap(resMap, resultSet.getMetaData());
             }
         } catch (SQLException e) {
-            SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
+            SqlOutPrintBuilder
+                    .build(sql, params, dbCustomStrategy.isSqlOutPrintExecute())
+                    .sqlErrPrint();
             throw e;
         }
         return resMap;
@@ -195,7 +198,9 @@ public class ExecuteSqlHandler extends DbConnection {
             }
             return (T[])res;
         } catch (SQLException e) {
-            SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
+            SqlOutPrintBuilder
+                    .build(sql, params, dbCustomStrategy.isSqlOutPrintExecute())
+                    .sqlErrPrint();
             throw e;
         }
     }
@@ -225,7 +230,9 @@ public class ExecuteSqlHandler extends DbConnection {
                 result = resultSet.getObject(SymbolConstant.DEFAULT_ONE);
             }
         } catch (SQLException e) {
-            SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
+            SqlOutPrintBuilder
+                    .build(sql, params, dbCustomStrategy.isSqlOutPrintExecute())
+                    .sqlErrPrint();
             throw e;
         }
         return result;
@@ -244,7 +251,9 @@ public class ExecuteSqlHandler extends DbConnection {
                 result = (T) resultSet.getObject(SymbolConstant.DEFAULT_ONE);
             }
         } catch (SQLException e) {
-            SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
+            SqlOutPrintBuilder
+                    .build(sql, params, dbCustomStrategy.isSqlOutPrintExecute())
+                    .sqlErrPrint();
             throw e;
         }
         return result;
@@ -262,7 +271,9 @@ public class ExecuteSqlHandler extends DbConnection {
                 result.add(resultSet.getObject(SymbolConstant.DEFAULT_ONE));
             }
         } catch (SQLException e) {
-            SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
+            SqlOutPrintBuilder
+                    .build(sql, params, dbCustomStrategy.isSqlOutPrintExecute())
+                    .sqlErrPrint();
             throw e;
         }
         return result;
@@ -286,7 +297,9 @@ public class ExecuteSqlHandler extends DbConnection {
                 return (T) map;
             }
         } catch (SQLException e) {
-            SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
+            SqlOutPrintBuilder
+                    .build(sql, params, dbCustomStrategy.isSqlOutPrintExecute())
+                    .sqlErrPrint();
             throw e;
         }
         return JSONObject.parseObject(JSONObject.toJSONString(map), t);
@@ -317,7 +330,9 @@ public class ExecuteSqlHandler extends DbConnection {
                 mapList.add(map);
             }
         } catch (SQLException e) {
-            SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
+            SqlOutPrintBuilder
+                    .build(sql, params, dbCustomStrategy.isSqlOutPrintExecute())
+                    .sqlErrPrint();
             throw e;
         }
         return mapList;
@@ -343,7 +358,7 @@ public class ExecuteSqlHandler extends DbConnection {
      * 插入
      */
     @SuppressWarnings("Unchecked")
-    public <T> int executeInsert(List<T> obj, String sql, String keyField, Class<?> type, Object... params) throws Exception {
+    public <T> int executeInsert(List<T> objs, String sql, String keyField, Class<?> type, Object... params) throws Exception {
         int res;
         try {
             statementUpdate(true, sql, params);
@@ -355,16 +370,16 @@ public class ExecuteSqlHandler extends DbConnection {
         resultSet = statement.getGeneratedKeys();
         int count = 0;
         while (resultSet.next()) {
-            T t = obj.get(count);
+            T t = objs.get(count);
             PropertyDescriptor pd = new PropertyDescriptor(keyField, t.getClass());
             Method writeMethod = pd.getWriteMethod();
-            if (type.equals(Long.class) || type.equals(long.class)) {
-                long key = Long.parseLong(resultSet.getObject(1).toString());
-                writeMethod.invoke(t, key);
-            } else if (type.equals(Integer.class) || type.equals(int.class)) {
-                int key = Integer.parseInt(resultSet.getObject(1).toString());
-                writeMethod.invoke(t, key);
+            String val = String.valueOf(resultSet.getObject(1));
+            if (Long.class.isAssignableFrom(type) || type.equals(Long.TYPE)) {
+                writeMethod.invoke(t, Long.parseLong(val));
+            } else if (Integer.class.isAssignableFrom(type) || type.equals(Integer.TYPE)) {
+                writeMethod.invoke(t, Integer.parseInt(val));
             }
+            // else ignore...
             count++;
         }
         return res;
@@ -378,7 +393,9 @@ public class ExecuteSqlHandler extends DbConnection {
             statement = conn.prepareStatement(sql);
             statement.execute();
         }catch (Exception e) {
-            SqlOutPrintBuilder.build(sql, new String[]{}, dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
+            SqlOutPrintBuilder
+                    .build(sql, new String[]{}, dbCustomStrategy.isSqlOutPrintExecute())
+                    .sqlErrPrint();
             logger.error(e.toString(), e);
         }
     }
@@ -404,7 +421,4 @@ public class ExecuteSqlHandler extends DbConnection {
         return count;
     }
 
-    public void setAutoCommit(boolean autoCommit) {
-        this.autoCommit = autoCommit;
-    }
 }

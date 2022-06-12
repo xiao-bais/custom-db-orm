@@ -38,7 +38,7 @@ public class ParsingObjectStruts {
                 parseList(name, value);
             } else if (value instanceof Set) {
                 parseSet(name, value);
-            }else {
+            } else {
                 ExThrowsUtil.toCustom("暂不支持的数据类型: " + value.getClass());
             }
         }else if (value instanceof Map) {
@@ -79,7 +79,7 @@ public class ParsingObjectStruts {
                 }else {
                     ExThrowsUtil.toCustom("不支持的数据类型: " + fieldValue.getClass());
                 }
-            }else if (Map.class.isAssignableFrom(fieldType)) {
+            } else if (Map.class.isAssignableFrom(fieldType)) {
                 parseMap(fieldName, fieldValue);
             }
         }

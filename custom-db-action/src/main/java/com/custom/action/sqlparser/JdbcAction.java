@@ -89,13 +89,13 @@ public class JdbcAction extends AbstractSqlExecutor {
         HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
         if (JudgeUtil.isEmpty(sqlBuilder.getKeyParserModel())) {
             if (!sqlBuilder.isMergeSuperDbJoinTable()) {
-                ExThrowsUtil.toCustom(String.format( "%s 中未找到 @DbKey注解, " +
+                ExThrowsUtil.toCustom("%s 中未找到 @DbKey注解, " +
                         "可能是因为该类或父类在@DbTable中使用了mergeSuperDbJoinTables = false的原因，" +
                         "当mergeSuperDbJoinTables = false时，解析注解时只会解析本类的属性字段，不会合并父类的属性字段，" +
-                        "该属性请按需要自行判定使用！！！", t));
+                        "该属性请按需要自行判定使用！！！", t);
             }else {
-                ExThrowsUtil.toCustom(String.format("%s 中未找到 @DbKey注解, " +
-                        "猜测该类或父类不存在主键字段，或没有标注@DbKey注解来表示主键，", t));
+                ExThrowsUtil.toCustom("%s 中未找到 @DbKey注解, " +
+                        "猜测该类或父类不存在主键字段，或没有标注@DbKey注解来表示主键，", t);
             }
         }
         String condition = String.format("and %s = ?", sqlBuilder.getKeyParserModel().getFieldSql());
@@ -186,7 +186,7 @@ public class JdbcAction extends AbstractSqlExecutor {
     @Override
     public <T> DbPageRows<Map<String, Object>> selectPageMaps(ConditionWrapper<T> wrapper) throws Exception {
         if(!wrapper.hasPageParams()) {
-            ExThrowsUtil.toCustom("缺少分页参数：pageIndex：" + wrapper.getPageIndex() + ", pageSize：" + wrapper.getPageSize());
+            ExThrowsUtil.toCustom("缺少分页参数：pageIndex：%s, pageSize：%s", wrapper.getPageIndex(), wrapper.getPageSize());
         }
         DbPageRows<Map<String, Object>> dbPageRows = new DbPageRows<>(wrapper.getPageIndex(), wrapper.getPageSize());
         String selectSql = getFullSelectSql(wrapper);
@@ -255,16 +255,29 @@ public class JdbcAction extends AbstractSqlExecutor {
         HandleInsertSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.INSERT);
         String insertSql = sqlBuilder.buildSql();
         DbKeyParserModel<T> keyParserModel = sqlBuilder.getKeyParserModel();
-        return executeInsert(insertSql, Collections.singletonList(t), true, keyParserModel.getKey(), keyParserModel.getType(), sqlBuilder.getSqlParams().toArray());
+        return executeInsert(insertSql, Collections.singletonList(t),  keyParserModel.getKey(), keyParserModel.getType(), sqlBuilder.getSqlParams().toArray());
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.INSERT)
     public <T> int insert(List<T> ts) throws Exception {
         HandleInsertSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(ts, ExecuteMethod.INSERT);
-        String insertSql = sqlBuilder.buildSql();
         DbKeyParserModel<T> keyParserModel = sqlBuilder.getKeyParserModel();
-        return executeInsert(insertSql, ts, true, keyParserModel.getKey(), keyParserModel.getType(), sqlBuilder.getSqlParams().toArray());
+        int res = 0;
+        String insertSql;
+        String keyField = keyParserModel.getKey();
+        Class<?> keyType = keyParserModel.getType();
+        sqlBuilder.dataInitialize();
+        if (sqlBuilder.isHasSubSelect()) {
+            for (int i = 0; i < sqlBuilder.getSubCount(); i++) {
+                insertSql = sqlBuilder.buildSql();
+                res += executeInsert(insertSql, sqlBuilder.getSubList(), keyField, keyType, sqlBuilder.getSqlParams().toArray());
+            }
+        }else {
+             insertSql = sqlBuilder.buildSql();
+            res = executeInsert(insertSql, ts, keyField, keyType, sqlBuilder.getSqlParams().toArray());
+        }
+        return res;
     }
 
     @Override

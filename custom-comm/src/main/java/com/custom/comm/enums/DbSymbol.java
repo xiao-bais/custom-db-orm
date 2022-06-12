@@ -27,6 +27,8 @@ public enum DbSymbol {
     IS_NULL("is null"),
     NOT_IN("not in"),
     ORDER_BY("order by"),
+    ORDER_BY_ASC(SymbolConstant.ASC),
+    ORDER_BY_DESC(SymbolConstant.ASC),
     IN("in"),
     SELECT("select"),
     GROUP_BY("group by"),

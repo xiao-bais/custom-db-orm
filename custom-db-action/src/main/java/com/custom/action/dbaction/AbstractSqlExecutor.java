@@ -240,11 +240,11 @@ public abstract class AbstractSqlExecutor {
     /**
     * 添加
     */
-    public <T> int executeInsert(String sql, List<T> obj, boolean isGeneratedKey, String key, Class<?> keyType,  Object... params) throws Exception {
+    public <T> int executeInsert(String sql, List<T> obj, String key, Class<?> keyType,  Object... params) throws Exception {
         if (JudgeUtil.isEmpty(sql)) {
             ExThrowsUtil.toNull("The Sql to be Not Empty");
         }
-        return isGeneratedKey ? executeSqlHandler.executeInsert(obj, sql, key, keyType, params) : executeSqlHandler.executeUpdate(sql, params);
+        return executeSqlHandler.executeInsert(obj, sql, key, keyType, params);
     }
 
 

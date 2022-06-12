@@ -1,6 +1,7 @@
 package com.custom.configuration;
 
 import com.custom.comm.SymbolConstant;
+import com.custom.comm.enums.Rollback;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -64,6 +65,16 @@ public class DbCustomStrategy {
      * 当syncEntityEnable = true时，在容器启动后，自动同步更新表结构
      */
     private boolean syncEntityEnable = false;
+
+    /**
+     * 是否开启事务
+     */
+    private boolean enableTransaction = false;
+
+    /**
+     * 事务回滚类型
+     */
+    private Rollback rollback = Rollback.CURRENT;
 
 
     public boolean isMapperScanEnable() {
@@ -144,5 +155,21 @@ public class DbCustomStrategy {
 
     public void setSyncEntityEnable(boolean syncEntityEnable) {
         this.syncEntityEnable = syncEntityEnable;
+    }
+
+    public boolean isEnableTransaction() {
+        return enableTransaction;
+    }
+
+    public void setEnableTransaction(boolean enableTransaction) {
+        this.enableTransaction = enableTransaction;
+    }
+
+    public Rollback getRollbackType() {
+        return rollback;
+    }
+
+    public void setRollbackType(Rollback rollback) {
+        this.rollback = rollback;
     }
 }

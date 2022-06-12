@@ -77,7 +77,7 @@ public class LambdaConditionWrapper<T> extends ConditionAdapter<T, LambdaConditi
 
     @Override
     public LambdaConditionWrapper<T> notExists(boolean condition, String notExistsSql) {
-        return adapter(DbSymbol.EXISTS, condition, notExistsSql);
+        return adapter(DbSymbol.NOT_EXISTS, condition, notExistsSql);
     }
 
     @Override

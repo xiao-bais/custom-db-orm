@@ -3,6 +3,7 @@ package com.custom.action.wrapper;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.enums.DbSymbol;
 import com.custom.comm.enums.SqlOrderBy;
+import com.custom.comm.exceptions.ExThrowsUtil;
 
 import java.util.Arrays;
 import java.util.function.Consumer;
@@ -112,22 +113,30 @@ public class ConditionAdapter<T, Children> extends ConditionAssembly<T, SFunctio
 
     @Override
     public Children orderByAsc(boolean condition, Consumer<OrderByFunc<T>> consumer) {
-        return doOrderBySqlFunc(SymbolConstant.ASC, consumer);
+        return doOrderBySqlFunc(SqlOrderBy.ASC, consumer);
     }
 
     @Override
     public Children orderByAsc(boolean condition, OrderByFunc<T> orderByFunc) {
-        return null;
+        if (!orderByFunc.getOrderBy().equals(SymbolConstant.ASC)) {
+            ExThrowsUtil.toCustom("order by type is mismatch, should be entered '%s', current entered '%s'"
+                    , SymbolConstant.ASC, SymbolConstant.DESC);
+        }
+        return adapter(DbSymbol.ORDER_BY_ASC, condition, orderByFunc.getColumns());
     }
 
     @Override
     public Children orderByDesc(boolean condition, Consumer<OrderByFunc<T>> consumer) {
-        return doOrderBySqlFunc(SymbolConstant.DESC, consumer);
+        return doOrderBySqlFunc(SqlOrderBy.DESC, consumer);
     }
 
     @Override
     public Children orderByDesc(boolean condition, OrderByFunc<T> orderByFunc) {
-        return null;
+        if (!orderByFunc.getOrderBy().equals(SymbolConstant.DESC)) {
+            ExThrowsUtil.toCustom("order by type is mismatch, should be entered '%s', current entered '%s'"
+                    , SymbolConstant.DESC, SymbolConstant.ASC);
+        }
+        return adapter(DbSymbol.ORDER_BY_DESC, condition, orderByFunc.getColumns());
     }
 
     @SafeVarargs
@@ -151,8 +160,8 @@ public class ConditionAdapter<T, Children> extends ConditionAssembly<T, SFunctio
     /**
      * sql排序函数执行方法
      */
-    private Children doOrderBySqlFunc(String orderByStyle, Consumer<OrderByFunc<T>> consumer) {
-        OrderByFunc<T> sqlFunc = new OrderByFunc<>(getEntityClass(), orderByStyle);
+    private Children doOrderBySqlFunc(SqlOrderBy orderBy, Consumer<OrderByFunc<T>> consumer) {
+        OrderByFunc<T> sqlFunc = new OrderByFunc<>(getEntityClass(), orderBy);
         consumer.accept(sqlFunc);
         return adapter(DbSymbol.ORDER_BY, true, sqlFunc.getColumns());
     }

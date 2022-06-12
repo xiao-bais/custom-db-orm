@@ -99,6 +99,8 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
                 setLastCondition(String.format(" %s %s %s", appendSybmol, column, dbSymbol.getSymbol()));
                 break;
             case ORDER_BY:
+            case ORDER_BY_ASC:
+            case ORDER_BY_DESC:
                 getOrderBy().add(column);
                 break;
             case GROUP_BY:

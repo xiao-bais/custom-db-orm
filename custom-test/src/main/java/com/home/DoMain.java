@@ -2,8 +2,11 @@ package com.home;
 
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.TableInfoCache;
+import com.custom.action.wrapper.Conditions;
 import com.custom.action.wrapper.LambdaConditionWrapper;
+import com.custom.action.wrapper.OrderByFunc;
 import com.custom.comm.RexUtil;
+import com.custom.comm.enums.SqlOrderBy;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
 import com.custom.proxy.InterfacesProxyExecutor;
@@ -50,10 +53,15 @@ public class DoMain {
         InterfacesProxyExecutor proxyExecutor = new InterfacesProxyExecutor(dbDataSource, dbCustomStrategy);
         CustomTestDao customTestDao = proxyExecutor.createProxy(CustomTestDao.class);
 
-        jdbcDao.selectObjs(new LambdaConditionWrapper<>(Student.class).orderByDesc(Student::getAge, Student::getMoney));
-
-        int emp = customTestDao.updateEmp(88, "员工-1", "就仨女的", 3);
-        System.out.println("emp = " + emp);
+        jdbcDao.selectObjs(Conditions.lambdaQuery((Student.class))
+                .orderByDesc(new OrderByFunc<>(Student.class, SqlOrderBy.ASC))
+                .gt(Student::getAge, 23)
+                .gt(Student::getMoney, 4000.0)
+                .or()
+                .notExists(" select 1 from employee emp where emp.id = a.id and emp.id > 10")
+                .or()
+                .like(Student::getNickName, "李长青")
+        );
 
 
     }
