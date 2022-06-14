@@ -62,7 +62,7 @@ public class DbJoinTableParserModel<T> extends AbstractTableModel<T> {
 
     private void initJoinName(Field field) {
         DbMapper dbMap = field.getAnnotation(DbMapper.class);
-        this.joinName = JudgeUtil.isEmpty(dbMap.value()) ? field.getName() : dbMap.value();
+        this.joinName = JudgeUtil.isEmpty(dbMap.value()) ? this.fieldName : dbMap.value();
         this.wrapperColumn = dbMap.wrapperColumn();
         this.isNullToEmpty = dbMap.isNullToEmpty();
         if(!joinName.contains(SymbolConstant.POINT)) {

@@ -87,7 +87,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     }
 
     public DbFieldParserModel(Field field, String table, String alias, boolean underlineToCamel) {
-        this.fieldName = GlobalDataHandler.hasSqlKeyword(field.getName()) ? GlobalDataHandler.wrapperSqlKeyword(column) : field.getName();
+        this.fieldName = GlobalDataHandler.hasSqlKeyword(field.getName()) ? GlobalDataHandler.wrapperSqlKeyword(field.getName()) : field.getName();
         this.type = field.getType();
         DbField annotation = field.getAnnotation(DbField.class);
         this.field = field;
@@ -137,10 +137,10 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
      * 构建创建表的sql语句
      */
     @Override
-    public String buildTableSql(){
+    public String buildTableSql() {
         String newColumn = this.column;
         if (!RexUtil.hasRegex(this.column, RexUtil.back_quotes)) {
-            newColumn = String.format("`%s` ", this.column);
+            newColumn = GlobalDataHandler.wrapperSqlKeyword(this.column);
         }
         StringBuilder fieldSql = new StringBuilder(newColumn).append(" ");
         if(dbType == DbType.DbDate || dbType == DbType.DbDateTime)
