@@ -46,9 +46,9 @@ public class SelectProxyHandler extends AbstractProxyHandler {
             if (Collection.class.isAssignableFrom(truthResType)) {
                 Class<?> genericType = (Class<?>) pt.getActualTypeArguments()[0];
                 if (List.class.isAssignableFrom(truthResType)) {
-                    return executeSqlHandler.query(genericType, true, readyExecuteSql, sqlParams);
+                    return executeSqlHandler.selectList(genericType, true, readyExecuteSql, sqlParams);
                 }else if (List.class.isAssignableFrom(truthResType)) {
-                    return executeSqlHandler.querySet(genericType, readyExecuteSql, sqlParams);
+                    return executeSqlHandler.selectSet(genericType, readyExecuteSql, sqlParams);
                 }
                 // if not list or set, then throws error...
                 ExThrowsUtil.toCustom("返回的列表类型暂时只支持List以及Set");
@@ -57,23 +57,23 @@ public class SelectProxyHandler extends AbstractProxyHandler {
             // do Map
             else if (Map.class.isAssignableFrom(truthResType)) {
                 Class<?> genericType = (Class<?>) pt.getActualTypeArguments()[1];
-                return executeSqlHandler.queryMap(genericType, readyExecuteSql, sqlParams);
+                return executeSqlHandler.selectMap(genericType, readyExecuteSql, sqlParams);
             }
             else return null;
         }
         truthResType = getMethod().getReturnType();
         // do Array
         if (truthResType.isArray()) {
-            return executeSqlHandler.queryArray(truthResType.getComponentType(), readyExecuteSql, sqlParams);
+            return executeSqlHandler.selectArray(truthResType.getComponentType(), readyExecuteSql, sqlParams);
         }
 
         // do Basic type
         else if (CustomUtil.isBasicClass(truthResType)) {
-            return executeSqlHandler.selectOneBasicBySql(readyExecuteSql, sqlParams);
+            return executeSqlHandler.selectBasicObjBySql(readyExecuteSql, sqlParams);
         }
 
         // do custom Object
-        return executeSqlHandler.selectObjSql(truthResType, readyExecuteSql, sqlParams);
+        return executeSqlHandler.selectGenericObjSql(truthResType, readyExecuteSql, sqlParams);
     }
 
 

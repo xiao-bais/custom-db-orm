@@ -8,7 +8,7 @@ import com.custom.comm.annotations.*;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.configuration.DbConnection;
-import com.custom.jdbc.ExecuteSqlHandler;
+import com.custom.jdbc.CustomJdbcExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,7 +85,7 @@ public class TableSqlBuilder<T> implements Cloneable {
     /**
      * sql执行对象（jdbc）
      */
-    private ExecuteSqlHandler executeSqlHandler;
+    private CustomJdbcExecutor jdbcExecutor;
 
 
     /**
@@ -329,7 +329,7 @@ public class TableSqlBuilder<T> implements Cloneable {
             // 初始化
             initializeSqlBuilder(sqlBuilder);
             // 注入sql执行对象
-            sqlBuilder.setExecuteSqlHandler(executeSqlHandler);
+            sqlBuilder.setJdbcExecutor(jdbcExecutor);
         }
     }
 
@@ -441,8 +441,8 @@ public class TableSqlBuilder<T> implements Cloneable {
         return columnMapper;
     }
 
-    public void setSqlExecuteAction(ExecuteSqlHandler executeSqlHandler) {
-        this.executeSqlHandler = executeSqlHandler;
+    public void setJdbcExecutor(CustomJdbcExecutor jdbcExecutor) {
+        this.jdbcExecutor = jdbcExecutor;
     }
 
     public AbstractSqlBuilder<T> getSqlBuilder() {

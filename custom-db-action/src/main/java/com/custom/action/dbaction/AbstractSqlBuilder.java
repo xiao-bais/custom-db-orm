@@ -1,12 +1,12 @@
 package com.custom.action.dbaction;
 
-import com.custom.action.sqlparser.TableInfoCache;
-import com.custom.action.wrapper.ColumnParseHandler;
 import com.custom.action.sqlparser.DbFieldParserModel;
 import com.custom.action.sqlparser.DbKeyParserModel;
+import com.custom.action.sqlparser.TableInfoCache;
+import com.custom.action.wrapper.ColumnParseHandler;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
-import com.custom.jdbc.ExecuteSqlHandler;
+import com.custom.jdbc.CustomJdbcExecutor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ public abstract class AbstractSqlBuilder<T> {
     private List<DbFieldParserModel<T>> fieldParserModels;
     private Map<String, String> fieldMapper;
     private Map<String, String> columnMapper;
-    private ExecuteSqlHandler executeSqlHandler;
+    private CustomJdbcExecutor jdbcExecutor;
     private ColumnParseHandler<T> columnParseHandler;
     private Boolean primaryTable = false;
     private String logicColumn;
@@ -174,8 +174,8 @@ public abstract class AbstractSqlBuilder<T> {
         return this.logicDeleteUpdateSql;
     }
 
-    public void setExecuteSqlHandler(ExecuteSqlHandler executeSqlHandler) {
-        this.executeSqlHandler = executeSqlHandler;
+    public void setJdbcExecutor(CustomJdbcExecutor jdbcExecutor) {
+        this.jdbcExecutor = jdbcExecutor;
     }
 
     public ColumnParseHandler<T> getColumnParseHandler() {
@@ -197,7 +197,7 @@ public abstract class AbstractSqlBuilder<T> {
         if (JudgeUtil.isEmpty(sql)) {
             throw new NullPointerException();
         }
-        executeSqlHandler.executeUpdateNotPrintSql(sql);
+        jdbcExecutor.executeUpdateNotPrintSql(sql);
     }
 
     /**
@@ -212,7 +212,7 @@ public abstract class AbstractSqlBuilder<T> {
             return existsLogic;
         }
         String existSql = String.format("select count(*) count from information_schema.columns where table_name = '%s' and column_name = '%s'", table, logicColumn);
-        long count = executeSqlHandler.executeExist(existSql);
+        long count = jdbcExecutor.executeExist(existSql);
         TableInfoCache.setTableLogic(table, count > 0);
         return count > 0;
     }

@@ -29,7 +29,7 @@ public class JdbcAction extends AbstractSqlExecutor {
 
     public JdbcAction(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         // 配置sql执行器
-        this.setSqlExecuteAction(new ExecuteSqlHandler(dbDataSource, dbCustomStrategy));
+        this.setJdbcExecutor(new ExecuteSqlHandler(dbDataSource, dbCustomStrategy));
         // 配置sql执行策略
         this.setDbCustomStrategy(dbCustomStrategy);
         // 初始化逻辑删除策略

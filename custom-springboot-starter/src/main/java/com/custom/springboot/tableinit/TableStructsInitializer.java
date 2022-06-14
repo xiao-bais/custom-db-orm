@@ -158,7 +158,7 @@ public class TableStructsInitializer {
     private void buildColumnInfo(TableSqlBuilder<?> sqlBuilder, String table) throws Exception {
         String selectColumnSql = String.format(SELECT_COLUMN_SQL,
                 sqlBuilder.getTable(), dataBaseName);
-        List<String> columnList = sqlHandler.query(String.class, false, selectColumnSql);
+        List<String> columnList = sqlHandler.selectList(String.class, false, selectColumnSql);
         List<String> truthColumnList = sqlBuilder.getFieldParserModels().stream().map(DbFieldParserModel::getColumn).collect(Collectors.toList());
         int size = truthColumnList.size();
         for (int i = 0; i < size; i++) {

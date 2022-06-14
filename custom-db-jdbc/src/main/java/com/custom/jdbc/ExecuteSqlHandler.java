@@ -22,7 +22,8 @@ import java.util.*;
  * @Version 1.0
  * @Description SqlExecuteHandler
  */
-public class ExecuteSqlHandler extends DbConnection {
+@SuppressWarnings("unchecked")
+public class ExecuteSqlHandler extends DbConnection implements CustomJdbcExecutor {
 
     private static final Logger logger = LoggerFactory.getLogger(ExecuteSqlHandler.class);
 
@@ -92,8 +93,9 @@ public class ExecuteSqlHandler extends DbConnection {
      * @param sql 查询的sql
      * @param params sql参数
      */
-    @SuppressWarnings("unchecked")
-    public <T> List<T> query(Class<T> clazz, boolean sqlPrintSupport, String sql, Object... params) throws Exception {
+
+    @Override
+    public <T> List<T> selectList(Class<T> clazz, boolean sqlPrintSupport, String sql, Object... params) throws Exception {
         Map<String, Object> map;
         List<T> list = new ArrayList<>();
         try {
@@ -122,8 +124,8 @@ public class ExecuteSqlHandler extends DbConnection {
     /**
      * 查询单个字段的多结果集（Set）
      */
-    @SuppressWarnings("unchecked")
-    public <T> Set<T> querySet(Class<T> t, String sql, Object... params) throws Exception {
+    @Override
+    public <T> Set<T> selectSet(Class<T> t, String sql, Object... params) throws Exception {
         Set<T> resSet = new HashSet<>();
         try {
             statementQuery(sql, true, params);
@@ -151,7 +153,8 @@ public class ExecuteSqlHandler extends DbConnection {
      * @return
      * @throws Exception
      */
-    public <T> Map<String, T> queryMap(Class<T> t, String sql, Object... params) throws Exception {
+    @Override
+    public <T> Map<String, T> selectMap(Class<T> t, String sql, Object... params) throws Exception {
         Map<String, T> resMap = new HashMap<>();
         try {
             statementQuery(sql, true, params);
@@ -174,8 +177,8 @@ public class ExecuteSqlHandler extends DbConnection {
     /**
      * 查询单个字段的多结果集（Array）
      */
-    @SuppressWarnings("unchecked")
-    public  <T> T[] queryArray(Class<T> t, String sql, Object... params) throws Exception {
+    @Override
+    public  <T> T[] selectArray(Class<T> t, String sql, Object... params) throws Exception {
         try {
             statementQueryReturnRows(sql, params);
             resultSet = statement.executeQuery();
@@ -208,7 +211,6 @@ public class ExecuteSqlHandler extends DbConnection {
     /**
      * 获取结果集对象
      */
-    @SuppressWarnings("unchecked")
     private <T> void getResultMap(Map<String, T> map, ResultSetMetaData metaData) throws SQLException {
         for (int i = 0; i < metaData.getColumnCount(); i++) {
             String columnName = metaData.getColumnLabel(i + 1);
@@ -221,7 +223,8 @@ public class ExecuteSqlHandler extends DbConnection {
     /**
      * 查询单个值SQL
      */
-    public Object selectObjSql(String sql, Object... params) throws Exception {
+    @Override
+    public Object selectObjBySql(String sql, Object... params) throws Exception {
         Object result = null;
         try {
             statementQuery(sql, true, params);
@@ -241,8 +244,8 @@ public class ExecuteSqlHandler extends DbConnection {
     /**
      * 查询指定类型的单个值
      */
-    @SuppressWarnings("unchecked")
-    public <T> T selectOneBasicBySql(String sql, Object... params) throws Exception {
+    @Override
+    public <T> T selectBasicObjBySql(String sql, Object... params) throws Exception {
         T result = null;
         try {
             statementQuery(sql, true, params);
@@ -262,6 +265,7 @@ public class ExecuteSqlHandler extends DbConnection {
     /**
      * 查询多个值SQL
      */
+    @Override
     public List<Object> selectObjsSql(String sql, Object... params) throws Exception {
         List<Object> result = new ArrayList<>();
         try {
@@ -282,8 +286,8 @@ public class ExecuteSqlHandler extends DbConnection {
     /**
      * 通用查询单个对象sql
      */
-    @SuppressWarnings("unchecked")
-    public <T> T selectObjSql(Class<T> t, String sql, Object... params) throws Exception {
+    @Override
+    public <T> T selectGenericObjSql(Class<T> t, String sql, Object... params) throws Exception {
         Map<String, Object> map = new HashMap<>();
         try {
             statementQuery(sql, true, params);
@@ -308,8 +312,8 @@ public class ExecuteSqlHandler extends DbConnection {
     /**
      * 通用查询单个对象sql（映射到Map）
      */
-    @SuppressWarnings("unchecked")
-    public List<Map<String, Object>> selectMapsSql(String sql, boolean isSupportMoreResult, Object... params) throws Exception {
+    @Override
+    public List<Map<String, Object>> selectMapsBySql(String sql, boolean isSupportMoreResult, Object... params) throws Exception {
         Map<String, Object> map;
         List<Map<String, Object>> mapList = new ArrayList<>();
         try {
