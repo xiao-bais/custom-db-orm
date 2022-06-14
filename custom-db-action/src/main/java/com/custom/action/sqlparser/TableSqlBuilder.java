@@ -235,7 +235,7 @@ public class TableSqlBuilder<T> implements Cloneable {
                 fieldParserModels.add(fieldParserModel);
 
             } else if (field.isAnnotationPresent(DbMapper.class)) {
-                DbJoinTableParserModel<T> joinTableParserModel = new DbJoinTableParserModel<>(field);
+                DbJoinTableParserModel<T> joinTableParserModel = new DbJoinTableParserModel<>(this.cls, field);
                 joinDbMappers.add(joinTableParserModel);
 
             } else if (field.isAnnotationPresent(DbRelated.class)) {

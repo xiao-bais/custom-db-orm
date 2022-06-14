@@ -19,9 +19,7 @@ import java.util.Date;
 @DbJoinTables({
         @DbJoinTable("left join dept dept on dept.id = a.dept_id"),
 })
-public class Employee<T> {
-
-    private T aaa;
+public class Employee {
 
     @DbKey
     private Integer id;
@@ -48,9 +46,12 @@ public class Employee<T> {
     private Integer areaId;
 
     @DbField
+    private String explain;
+
+    @DbField
     private int state;
 
-    @DbMapper(value = "dept.name")
+    @DbMapper(value = "name")
     private String deptName;
 
 

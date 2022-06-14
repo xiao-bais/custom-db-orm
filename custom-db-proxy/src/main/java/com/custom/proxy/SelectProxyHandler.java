@@ -1,23 +1,16 @@
 package com.custom.proxy;
 
 import com.custom.comm.CustomUtil;
-import com.custom.comm.JudgeUtil;
-import com.custom.comm.RexUtil;
-import com.custom.comm.annotations.mapper.DbParam;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.jdbc.ExecuteSqlHandler;
-import com.custom.proxy.AbstractProxyHandler;
-import com.custom.proxy.ParsingObjectStruts;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author Xiao-Bai

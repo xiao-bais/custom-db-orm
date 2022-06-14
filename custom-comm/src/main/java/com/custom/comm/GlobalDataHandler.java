@@ -53,6 +53,13 @@ public class GlobalDataHandler {
        return SQL_KEYWORDS.contains(column.toUpperCase(Locale.ROOT));
     }
 
+    /**
+     * 转换成包装的sql字段
+     */
+    public static String wrapperSqlKeyword(String column) {
+        return "`" + column + "`";
+    }
+
 
 
 

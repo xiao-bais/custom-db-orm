@@ -72,7 +72,7 @@ public class ColumnParseHandler<T> {
     public final String getColumn(SFunction<T, ?> func) {
         String field = getField(func);
         if(GlobalDataHandler.hasSqlKeyword(field)) {
-            field = String.format("`%s`", field);
+            field = GlobalDataHandler.wrapperSqlKeyword(field);
         }
         String column = fieldMapper.get(field);
         if(Objects.isNull(column)) {

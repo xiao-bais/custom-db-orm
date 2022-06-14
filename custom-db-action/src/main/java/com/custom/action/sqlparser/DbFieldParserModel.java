@@ -87,7 +87,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     }
 
     public DbFieldParserModel(Field field, String table, String alias, boolean underlineToCamel) {
-        this.fieldName = GlobalDataHandler.hasSqlKeyword(field.getName()) ? String.format("`%s`", field.getName()) : field.getName();
+        this.fieldName = GlobalDataHandler.hasSqlKeyword(field.getName()) ? GlobalDataHandler.wrapperSqlKeyword(column) : field.getName();
         this.type = field.getType();
         DbField annotation = field.getAnnotation(DbField.class);
         this.field = field;
@@ -97,7 +97,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
             this.column = annotation.value();
         }
         if(GlobalDataHandler.hasSqlKeyword(column)) {
-            this.column = String.format("`%s`", column);
+            this.column = GlobalDataHandler.wrapperSqlKeyword(column);
         }
         this.wrapperColumn = annotation.wrapperColumn();
         this.isNullToEmpty = annotation.isNullToEmpty();

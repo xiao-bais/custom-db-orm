@@ -6,6 +6,7 @@ import com.custom.comm.GlobalDataHandler;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.DbMapper;
+import com.custom.comm.exceptions.ExThrowsUtil;
 
 import java.lang.reflect.Field;
 
@@ -42,14 +43,20 @@ public class DbJoinTableParserModel<T> extends AbstractTableModel<T> {
      */
     private Boolean isNullToEmpty = false;
 
+    /**
+     * 当初查询实体的Class对象
+     */
+    private final Class<T> entityClass;
 
 
-    public DbJoinTableParserModel(Field field) {
-        initJoinName(field);
+
+    public DbJoinTableParserModel(Class<T> entityClass, Field field) {
+        this.entityClass = entityClass;
         this.fieldName = field.getName();
         if(GlobalDataHandler.hasSqlKeyword(fieldName)) {
-            this.fieldName = String.format("`%s`", this.fieldName);
+            this.fieldName = GlobalDataHandler.wrapperSqlKeyword(fieldName);
         }
+        initJoinName(field);
         this.field = field;
     }
 
@@ -59,13 +66,13 @@ public class DbJoinTableParserModel<T> extends AbstractTableModel<T> {
         this.wrapperColumn = dbMap.wrapperColumn();
         this.isNullToEmpty = dbMap.isNullToEmpty();
         if(!joinName.contains(SymbolConstant.POINT)) {
-            return;
+            ExThrowsUtil.toCustom("%s.[%s] 在DBMapper注解上未指定关联表的别名", this.entityClass, this.fieldName);
         }
         int pointIndex = joinName.indexOf(SymbolConstant.POINT);
         String fieldPrefix = joinName.substring(0, pointIndex);
         String fieldSuffix = joinName.substring(pointIndex + 1);
         if(GlobalDataHandler.hasSqlKeyword(fieldSuffix)) {
-            fieldSuffix = String.format("`%s`", fieldSuffix);
+            fieldSuffix = GlobalDataHandler.wrapperSqlKeyword(fieldSuffix);
         }
         this.joinName = fieldPrefix + SymbolConstant.POINT + fieldSuffix;
     }

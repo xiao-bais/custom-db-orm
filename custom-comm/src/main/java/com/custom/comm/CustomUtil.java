@@ -100,8 +100,8 @@ public class CustomUtil {
     /**
      * 获取字java属性值
      */
-    public static <T> Object getFieldValue(T x, String fieldName) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-        JudgeUtil.checkObjNotNull(x, fieldName);
+    public static <T> Object getFieldValue(T entity, String fieldName) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+        JudgeUtil.checkObjNotNull(entity, fieldName);
         Object value;
         String firstLetter;
         String getter;
@@ -112,16 +112,16 @@ public class CustomUtil {
             if (Objects.isNull(fieldName)) return null;
             firstLetter = fieldName.substring(0, 1).toUpperCase();
             getter = SymbolConstant.GETTER + firstLetter + fieldName.substring(1);
-            Method method = x.getClass().getMethod(getter);
-            value = method.invoke(x);
+            Method method = entity.getClass().getMethod(getter);
+            value = method.invoke(entity);
         }catch (NoSuchMethodException e){
             try {
                 firstLetter = fieldName.substring(0, 1).toUpperCase();
-                Method method = x.getClass().getMethod(SymbolConstant.IS + firstLetter + fieldName.substring(1));
-                value = method.invoke(x);
+                Method method = entity.getClass().getMethod(SymbolConstant.IS + firstLetter + fieldName.substring(1));
+                value = method.invoke(entity);
             }catch (NoSuchMethodException v) {
-                Method method = x.getClass().getMethod(fieldName);
-                value = method.invoke(x);
+                Method method = entity.getClass().getMethod(fieldName);
+                value = method.invoke(entity);
             }
         }
         return value;

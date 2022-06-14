@@ -50,18 +50,10 @@ public class DoMain {
         JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
         TableInfoCache.setUnderlineToCamel(true);
 
-        InterfacesProxyExecutor proxyExecutor = new InterfacesProxyExecutor(dbDataSource, dbCustomStrategy);
-        CustomTestDao customTestDao = proxyExecutor.createProxy(CustomTestDao.class);
+//        InterfacesProxyExecutor proxyExecutor = new InterfacesProxyExecutor(dbDataSource, dbCustomStrategy);
+//        CustomTestDao customTestDao = proxyExecutor.createProxy(CustomTestDao.class);
 
-        jdbcDao.selectObjs(Conditions.lambdaQuery((Student.class))
-                .orderByDesc(new OrderByFunc<>(Student.class, SqlOrderBy.ASC))
-                .gt(Student::getAge, 23)
-                .gt(Student::getMoney, 4000.0)
-                .or()
-                .notExists(" select 1 from employee emp where emp.id = a.id and emp.id > 10")
-                .or()
-                .like(Student::getNickName, "李长青")
-        );
+        List<Employee> employees = jdbcDao.selectList(Conditions.lambdaQuery(Employee.class).isNotNull(Employee::getExplain));
 
 
     }
