@@ -3,6 +3,7 @@ package com.custom.action.sqlparser;
 import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.fieldfill.AutoFillColumnHandler;
 import com.custom.action.fieldfill.TableFillObject;
+import com.custom.action.util.DbUtil;
 import com.custom.comm.CustomApplicationUtil;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.SymbolConstant;
@@ -83,7 +84,8 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
     private void handleByCondition() {
         try {
-            deleteCondition = checkLogicFieldIsExist() ? CustomUtil.replaceOrWithAndOnSqlCondition(deleteCondition) : CustomUtil.trimSqlCondition(deleteCondition);
+            deleteCondition = checkLogicFieldIsExist()
+                    ? DbUtil.replaceOrWithAndOnSqlCondition(deleteCondition) : DbUtil.trimSqlCondition(deleteCondition);
         } catch (Exception e) {
             logger.error(e.toString(), e);
         }

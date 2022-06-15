@@ -169,7 +169,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
 
     @Override
     public String getFieldSql() {
-        return String.format("%s.%s", this.getAlias(), this.column);
+        return DbUtil.fullSqlColumn(this.getAlias(), this.column);
     }
 
     @Override
@@ -177,9 +177,9 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
         if (JudgeUtil.isNotEmpty(this.wrapperColumn)) {
             return DbUtil.wrapperSqlColumn(this.wrapperColumn, this.fieldName, this.isNullToEmpty);
         }
-        String selectColumn = String.format("%s.%s", this.getAlias(), this.column);
+        String selectColumn = DbUtil.fullSqlColumn( this.getAlias(), this.column);
         String column = this.isNullToEmpty ? DbUtil.ifNull(selectColumn) : selectColumn;
-        return String.format("%s %s", column, this.fieldName);
+        return DbUtil.sqlSelectWrapper(column, this.fieldName);
     }
 
     public Object getValue() {

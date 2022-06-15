@@ -4,6 +4,7 @@ import com.custom.action.interfaces.FullSqlExecutorHandler;
 import com.custom.action.sqlparser.HandleSelectSqlBuilder;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableSqlBuilder;
+import com.custom.action.util.DbUtil;
 import com.custom.action.wrapper.ConditionWrapper;
 import com.custom.action.wrapper.SFunction;
 import com.custom.comm.CustomUtil;
@@ -145,7 +146,7 @@ public abstract class AbstractSqlExecutor {
             if (JudgeUtil.isNotEmpty(condition)) {
                 return JudgeUtil.isNotEmpty(finalLogicSql) ?
                         String.format("\nwhere %s.%s \n%s ", alias, finalLogicSql, condition.trim())
-                        : String.format("\nwhere %s ", CustomUtil.trimAppendSqlCondition(condition));
+                        : String.format("\nwhere %s ", DbUtil.trimAppendSqlCondition(condition));
             } else {
                 return JudgeUtil.isNotEmpty(finalLogicSql) ?
                         String.format("\nwhere %s.%s ", alias, finalLogicSql)

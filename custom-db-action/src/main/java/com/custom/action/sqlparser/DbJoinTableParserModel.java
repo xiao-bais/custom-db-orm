@@ -126,6 +126,6 @@ public class DbJoinTableParserModel<T> extends AbstractTableModel<T> {
         if (JudgeUtil.isNotEmpty(this.wrapperColumn)) {
             return DbUtil.wrapperSqlColumn(this.wrapperColumn, this.fieldName, this.isNullToEmpty);
         }
-        return String.format("%s %s", joinName, fieldName);
+        return DbUtil.sqlSelectWrapper(joinName, fieldName);
     }
 }

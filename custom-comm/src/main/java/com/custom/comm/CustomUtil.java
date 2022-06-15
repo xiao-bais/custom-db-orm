@@ -277,47 +277,12 @@ public class CustomUtil {
     }
 
     /**
-     * 消除sql条件中的第一个and/or
-     */
-    public static String trimSqlCondition(String condition) {
-        String finalCondition = condition;
-        if(condition.trim().startsWith(SymbolConstant.AND)) {
-            finalCondition = condition.replaceFirst(SymbolConstant.AND, SymbolConstant.EMPTY);
-        }else if(condition.trim().startsWith(SymbolConstant.OR)) {
-            finalCondition = condition.replaceFirst(SymbolConstant.OR, SymbolConstant.EMPTY);
-        }
-        return finalCondition.trim();
-    }
-
-    /**
-     * 消除sql条件中的第一个and
-     */
-    public static String trimAppendSqlCondition(String condition) {
-        String finalCondition = condition;
-        if(condition.trim().startsWith(SymbolConstant.AND)) {
-            finalCondition = condition.replaceFirst(SymbolConstant.AND, SymbolConstant.EMPTY);
-        }
-        return finalCondition.trim();
-    }
-
-    /**
-     * sql中若以OR开头，则替换成AND
-     */
-    public static String replaceOrWithAndOnSqlCondition(String condition) {
-        String finalCondition = condition;
-        if(condition.trim().startsWith(SymbolConstant.OR)) {
-            finalCondition = condition.replaceFirst(SymbolConstant.OR, SymbolConstant.AND);
-        }
-        return finalCondition.trim();
-    }
-
-    /**
      * 可执行的sql条件
      */
     public static String handleExecuteSql(String sql, Object[] params) {
-        int symbolSize = countStr(sql, SymbolConstant.QUEST);
+        int symbolCount = countStr(sql, SymbolConstant.QUEST);
         int index = 0;
-        while (index < symbolSize) {
+        while (index < symbolCount) {
             Object param = params[index];
             if(Objects.isNull(param)) {
                 param = "null";

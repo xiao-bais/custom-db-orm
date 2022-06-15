@@ -2,21 +2,21 @@ package com.custom.action.wrapper;
 
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableSqlBuilder;
+import com.custom.action.util.DbUtil;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.exceptions.ExThrowsUtil;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.StringJoiner;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Xiao-Bai
  * @date 2022/3/5 23:07
  * @desc:查询条件储存
  */
+@SuppressWarnings("unchecked")
 public abstract class ConditionWrapper<T> implements Serializable {
 
 
@@ -107,12 +107,40 @@ public abstract class ConditionWrapper<T> implements Serializable {
         return paramValues;
     }
 
+    protected void addParams(Object param) {
+        if (param instanceof List) {
+            addParams((List<Object>) param);
+            return;
+        }else if (param instanceof Set) {
+            addParams((Set<Object>) param);
+            return;
+        }
+        this.paramValues.add(param);
+    }
+
+    protected void addParams(Object... params) {
+        this.paramValues.addAll(Arrays.stream(params).collect(Collectors.toList()));
+    }
+
+    protected void addParams(List<Object> params) {
+        this.paramValues.addAll(params);
+    }
+
+    protected void addParams(Set<Object> params) {
+        this.paramValues.addAll(params);
+    }
+
     public String getFinalConditional() {
         return finalConditional.toString();
     }
 
     protected StringBuilder getFinalCondition() {
         return finalConditional;
+    }
+
+    protected StringBuilder addCondition(String condition) {
+        this.finalConditional.append(condition);
+        return this.finalConditional;
     }
 
     protected String getLastCondition() {

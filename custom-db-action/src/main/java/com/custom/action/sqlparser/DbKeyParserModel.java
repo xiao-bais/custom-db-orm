@@ -1,6 +1,7 @@
 package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractTableModel;
+import com.custom.action.util.DbUtil;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.GlobalDataHandler;
 import com.custom.comm.JudgeUtil;
@@ -69,22 +70,6 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
         this.entity = entity;
     }
 
-    public DbType getDbMediaType() {
-        return dbType;
-    }
-
-    public void setDbMediaType(DbType dbType) {
-        this.dbType = dbType;
-    }
-
-    public KeyStrategy getStrategy() {
-        return strategy;
-    }
-
-    public void setStrategy(KeyStrategy strategy) {
-        this.strategy = strategy;
-    }
-
     public Class<?> getType() {
         return type;
     }
@@ -145,12 +130,12 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
 
     @Override
     public String getFieldSql() {
-        return String.format("%s.%s", this.getAlias(), this.dbKey);
+        return DbUtil.fullSqlColumn(this.getAlias(), this.dbKey);
     }
 
     @Override
     public String getSelectFieldSql() {
-        return String.format("%s.%s %s", this.getAlias(), this.dbKey, this.key);
+        return DbUtil.sqlSelectWrapper(DbUtil.fullSqlColumn(this.getAlias(), this.dbKey), this.key);
     }
 
     protected void setValue(Object value) {

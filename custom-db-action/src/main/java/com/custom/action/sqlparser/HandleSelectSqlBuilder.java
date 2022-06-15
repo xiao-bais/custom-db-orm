@@ -1,6 +1,7 @@
 package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractSqlBuilder;
+import com.custom.action.util.DbUtil;
 import com.custom.comm.GlobalDataHandler;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
@@ -163,7 +164,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
                 column = getAlias() + SymbolConstant.POINT + column;
             }
             String field = getColumnMapper().get(column);
-            columnStr.add(field == null ? column : String.format("%s %s", column, field));
+            columnStr.add(Objects.isNull(field) ? column : DbUtil.sqlSelectWrapper(column, field));
         }
         String selectSql = buildSql();
         selectSql = String.format("select %s\n %s", columnStr, selectSql.substring(selectSql.indexOf("from")));

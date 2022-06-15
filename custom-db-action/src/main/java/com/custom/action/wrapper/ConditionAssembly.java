@@ -1,5 +1,6 @@
 package com.custom.action.wrapper;
 
+import com.custom.action.util.DbUtil;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
@@ -11,7 +12,6 @@ import com.custom.comm.exceptions.ExThrowsUtil;
 import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 /**
  * @Author Xiao-Bai
@@ -65,9 +65,24 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
             ExThrowsUtil.toCustom("column cannot be empty");
         }
         if(JudgeUtil.isNotEmpty(column) && !column.contains(SymbolConstant.POINT)) {
-            column = String.format("%s.%s", getTableSqlBuilder().getAlias(), column);
+            column = DbUtil.fullSqlColumn(getTableSqlBuilder().getAlias(), column);
         }
+        // sql最终条件组装
+        hanleCondition(dbSymbol, column, val1, val2, express);
 
+        if(CustomUtil.isNotBlank(getLastCondition())) {
+            addCondition(getLastCondition());
+            setLastCondition(SymbolConstant.EMPTY);
+        }
+        if(appendSybmol.equals(SymbolConstant.OR)) {
+            appendSybmol = SymbolConstant.AND;
+        }
+    }
+
+    /**
+     * sql最终条件组装
+     */
+    private void hanleCondition(DbSymbol dbSymbol, String column, Object val1, Object val2, String express) {
         switch (dbSymbol) {
             case EQUALS:
             case NOT_EQUALS:
@@ -75,13 +90,14 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
             case GREATER_THAN:
             case LESS_THAN_EQUALS:
             case GREATER_THAN_EQUALS:
-                setLastCondition(String.format(" %s %s %s ?", appendSybmol, column, dbSymbol.getSymbol()));
-                getParamValues().add(val1);
+                setLastCondition(DbUtil.applyCondition(appendSybmol, column, dbSymbol.getSymbol()));
+                addParams(val1);
                 break;
             case LIKE:
             case NOT_LIKE:
-                setLastCondition(String.format(" %s %s %s %s", appendSybmol, column, dbSymbol.getSymbol(), sqlConcat((SqlLike) val2)));
-                getParamValues().add(val1);
+                setLastCondition(DbUtil.applyCondition(appendSybmol,
+                        column, dbSymbol.getSymbol(), DbUtil.sqlConcat((SqlLike) val2)));
+                addParams(val1);
                 break;
             case IN:
             case NOT_IN:
@@ -89,7 +105,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
                 break;
             case EXISTS:
             case NOT_EXISTS:
-                setLastCondition(String.format(" %s %s (%s)", appendSybmol, dbSymbol.getSymbol(), express));
+                setLastCondition(DbUtil.applyExistsCondition(appendSybmol, dbSymbol.getSymbol(), express));
                 break;
             case BETWEEN:
             case NOT_BETWEEN:
@@ -97,7 +113,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
                 break;
             case IS_NULL:
             case IS_NOT_NULL:
-                setLastCondition(String.format(" %s %s %s", appendSybmol, column, dbSymbol.getSymbol()));
+                setLastCondition(DbUtil.applyIsNullCondition(appendSybmol, column, dbSymbol.getSymbol()));
                 break;
             case ORDER_BY:
             case ORDER_BY_ASC:
@@ -109,15 +125,8 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
                 break;
             case HAVING:
                 getHaving().append(column);
-                getHavingParams().addAll((List<Object>)val1);
+                getHavingParams().addAll((List<Object>) val1);
                 break;
-        }
-        if(CustomUtil.isNotBlank(getLastCondition())) {
-            getFinalCondition().append(getLastCondition());
-            setLastCondition(SymbolConstant.EMPTY);
-        }
-        if(appendSybmol.equals(SymbolConstant.OR)) {
-            appendSybmol = SymbolConstant.AND;
         }
     }
 
@@ -132,8 +141,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
             throw new NullPointerException("At least one null value exists between val1 and val2");
         }
         setLastCondition(String.format(" %s %s %s", appendSybmol, column, dbSymbol.getSymbol()));
-        getParamValues().add(val1);
-        getParamValues().add(val2);
+        addParams(val1, val2);
     }
 
     /**
@@ -142,37 +150,37 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
     private void ConditionOnInsqlAssembly(DbSymbol dbSymbol, String column, Object val1) {
         StringJoiner symbol = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
         if(CustomUtil.isBasicType(val1)) {
-            getParamValues().add(val1);
+            addParams(val1);
 
         }else if(val1.getClass().isArray()) {
             int len = Array.getLength(val1);
             for (int i = 0; i < len; i++) {
                 symbol.add(SymbolConstant.QUEST);
-                getParamValues().add(Array.get(val1, i));
+                addParams(Array.get(val1, i));
             }
 
         }else if(val1 instanceof Collection) {
             Collection<?> objects = (Collection<?>) val1;
-            getParamValues().addAll(objects);
+            addParams(objects);
             objects.forEach(x -> symbol.add(SymbolConstant.QUEST));
         }
-        setLastCondition(String.format(" %s %s %s (%s)", appendSybmol, column, dbSymbol.getSymbol(), symbol));
+        setLastCondition(DbUtil.applyInCondition(appendSybmol, column, dbSymbol.getSymbol(), symbol.toString()));
     }
 
     /**
      * 拼接下一段大条件
      */
     protected void append(DbSymbol prefix, String condition) {
-        getFinalCondition().append(String.format(" %s (%s)", prefix.getSymbol(), CustomUtil.trimSqlCondition(condition)));
+        addCondition(String.format(" %s (%s)", prefix.getSymbol(), DbUtil.trimSqlCondition(condition)));
     }
 
     /**
      * 拼接insql条件
      */
     protected void appendInSql(String column, DbSymbol dbSymbol, String condition, Object... params) {
-        getFinalCondition().append(String.format(" %s %s %s (%s)", appendSybmol, column, dbSymbol.getSymbol(), condition));
+        addCondition(DbUtil.applyInCondition(appendSybmol, column, dbSymbol.getSymbol(), condition));
         if (params.length > 0) {
-            getParamValues().addAll(Arrays.stream(params).collect(Collectors.toList()));
+            addParams(params);
         }
     }
 
@@ -195,27 +203,13 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
         return sql;
     }
 
-    protected String sqlConcat(SqlLike sqlLike) {
-        String sql = SymbolConstant.EMPTY;
-        switch (sqlLike) {
-            case LEFT:
-                sql = "concat('%', ?)";
-                break;
-            case RIGHT:
-                sql = "concat(?, '%')";
-                break;
-            case LIKE:
-                sql = "concat('%', ?, '%')";
-                break;
-        }
-        return sql;
-    }
-
     /**
     * 排序字段整合
     */
     protected String orderByField(String column, SqlOrderBy orderBy) {
-        return String.format("%s %s", column, (orderBy == SqlOrderBy.ASC ? SqlOrderBy.ASC.getName() : SqlOrderBy.DESC.getName()));
+        return DbUtil.sqlSelectWrapper(column,
+                orderBy == SqlOrderBy.ASC ?
+                        SqlOrderBy.ASC.getName() : SqlOrderBy.DESC.getName());
     }
 
 
@@ -225,7 +219,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
      */
     protected Children spliceCondition(boolean condition, boolean spliceType, ConditionWrapper<T> wrapper) {
         if(condition && Objects.nonNull(wrapper)) {
-            handleNewCondition(spliceType, wrapper);
+            mergeConditionWrapper(spliceType, wrapper);
         }
         appendState = true;
         return childrenClass;
@@ -243,9 +237,9 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
 
 
     /**
-     * 添加新的条件，并合并同类项
+     * 合并新的条件构造器
      */
-    protected void handleNewCondition(boolean spliceType, ConditionWrapper<T> conditionEntity) {
+    protected void mergeConditionWrapper(boolean spliceType, ConditionWrapper<T> conditionEntity) {
 
         // 1. 合并查询列-select
         if (Objects.nonNull(conditionEntity.getSelectColumns())) {
@@ -280,7 +274,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
      */
     private void mergeCondition(boolean spliceType, ConditionWrapper<T> conditionEntity) {
         append(spliceType ? DbSymbol.AND : DbSymbol.OR, conditionEntity.getFinalConditional());
-        getParamValues().addAll(conditionEntity.getParamValues());
+        addParams(conditionEntity.getParamValues());
     }
 
     private void mergeOrderBy(ConditionWrapper<T> conditionEntity) {
@@ -321,7 +315,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
     @Override
     public Children pageParams(boolean condition, Integer pageIndex, Integer pageSize) {
         if((Objects.isNull(pageIndex) || Objects.isNull(pageSize))) {
-            ExThrowsUtil.toCustom("缺少分页参数：pageIndex：" + pageIndex + ", pageSize：" + pageSize);
+            ExThrowsUtil.toCustom("缺少分页参数：pageIndex：%s, pageSize：%s", pageIndex, pageSize);
         }
         setPageParams(pageIndex, pageSize);
         return childrenClass;

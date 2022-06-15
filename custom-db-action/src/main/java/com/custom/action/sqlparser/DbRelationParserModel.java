@@ -1,6 +1,7 @@
 package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractTableModel;
+import com.custom.action.util.DbUtil;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.annotations.DbRelated;
@@ -77,12 +78,12 @@ public class DbRelationParserModel<T> extends AbstractTableModel<T> {
 
     @Override
     public String getFieldSql() {
-        return String.format("%s.%s", this.joinAlias, this.column);
+        return DbUtil.fullSqlColumn(this.joinAlias, this.column);
     }
 
     @Override
     protected String getSelectFieldSql() {
-        return String.format("%s.%s %s", this.joinAlias, this.column, this.fieldName);
+        return DbUtil.sqlSelectWrapper(DbUtil.fullSqlColumn(this.joinAlias, this.column), this.fieldName);
     }
 
 
@@ -90,16 +91,8 @@ public class DbRelationParserModel<T> extends AbstractTableModel<T> {
         return joinTable;
     }
 
-    public void setJoinTable(String joinTable) {
-        this.joinTable = joinTable;
-    }
-
     public String getJoinAlias() {
         return joinAlias;
-    }
-
-    public void setJoinAlias(String joinAlias) {
-        this.joinAlias = joinAlias;
     }
 
     public String getCondition() {

@@ -2,6 +2,7 @@ package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.fieldfill.FieldAutoFillHandleUtils;
+import com.custom.action.util.DbUtil;
 import com.custom.action.wrapper.SFunction;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
@@ -86,7 +87,7 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
     private String updateCustomCondition() {
         String condition = null;
         try {
-            condition = checkLogicFieldIsExist() ? (getLogicDeleteQuerySql() + " " + this.condition) : CustomUtil.trimSqlCondition(this.condition);
+            condition = checkLogicFieldIsExist() ? (getLogicDeleteQuerySql() + " " + this.condition) : DbUtil.trimSqlCondition(this.condition);
             getSqlParams().addAll(this.conditionVals);
         } catch (Exception e) {
             ExThrowsUtil.toCustom(e.toString());
