@@ -197,7 +197,7 @@ public class CustomUtil {
      */
     public static String underlineToCamel(String param) {
         if (isBlank(param)) {
-            return "";
+            return SymbolConstant.EMPTY;
         }
         int len = param.length();
         StringBuilder sb = new StringBuilder(len);
