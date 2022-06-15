@@ -1,13 +1,9 @@
 package com.custom.action.wrapper;
 
-import com.custom.comm.SymbolConstant;
 import com.custom.comm.enums.DbSymbol;
 import com.custom.comm.enums.SqlLike;
-import com.custom.comm.enums.SqlOrderBy;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.function.Consumer;
 
 /**
  * @Author Xiao-Bai
@@ -72,32 +68,32 @@ public class LambdaConditionWrapper<T> extends ConditionAdapter<T, LambdaConditi
 
     @Override
     public LambdaConditionWrapper<T> exists(boolean condition, String existsSql) {
-        return adapter(DbSymbol.EXISTS, condition, existsSql);
+        return adapter(DbSymbol.EXISTS, condition, null, existsSql);
     }
 
     @Override
     public LambdaConditionWrapper<T> notExists(boolean condition, String notExistsSql) {
-        return adapter(DbSymbol.NOT_EXISTS, condition, notExistsSql);
+        return adapter(DbSymbol.NOT_EXISTS, condition, null, notExistsSql);
     }
 
     @Override
     public LambdaConditionWrapper<T> like(boolean condition, SFunction<T, ?> column, Object val) {
-        return adapter(DbSymbol.LIKE, condition, column, sqlConcat(SqlLike.LIKE, val));
+        return adapter(DbSymbol.LIKE, condition, column, val, SqlLike.LIKE);
     }
 
     @Override
     public LambdaConditionWrapper<T> notLike(boolean condition, SFunction<T, ?> column, Object val) {
-        return adapter(DbSymbol.NOT_LIKE, condition, column, sqlConcat(SqlLike.LIKE, val));
+        return adapter(DbSymbol.NOT_LIKE, condition, column, val, SqlLike.LIKE);
     }
 
     @Override
     public LambdaConditionWrapper<T> likeLeft(boolean condition, SFunction<T, ?> column, Object val) {
-        return adapter(DbSymbol.LIKE, condition, column, sqlConcat(SqlLike.LEFT, val));
+        return adapter(DbSymbol.LIKE, condition, column, val, SqlLike.LEFT);
     }
 
     @Override
     public LambdaConditionWrapper<T> likeRight(boolean condition, SFunction<T, ?> column, Object val) {
-        return adapter(DbSymbol.LIKE, condition, column, sqlConcat(SqlLike.RIGHT, val));
+        return adapter(DbSymbol.LIKE, condition, column, val, SqlLike.RIGHT);
     }
 
     @Override

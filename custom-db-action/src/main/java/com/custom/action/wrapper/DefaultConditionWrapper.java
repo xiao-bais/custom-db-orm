@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 /**
  * @Author Xiao-Bai
  * @Date 2022/2/16 14:11
- * @Desc：条件构造实例对象
+ * @Desc：默认条件构造实例对象
  **/
 public class DefaultConditionWrapper<T> extends ConditionAssembly<T, String, DefaultConditionWrapper<T>>
         implements Wrapper<String, DefaultConditionWrapper<T>> {
@@ -74,27 +74,27 @@ public class DefaultConditionWrapper<T> extends ConditionAssembly<T, String, Def
 
     @Override
     public DefaultConditionWrapper<T> notExists(boolean condition, String notExistsSql) {
-        return adapter(DbSymbol.NOT_EXISTS, condition, null, null, notExistsSql);
+        return adapter(DbSymbol.NOT_EXISTS, condition, null, notExistsSql);
     }
 
     @Override
     public DefaultConditionWrapper<T> like(boolean condition, String column, Object val) {
-        return adapter(DbSymbol.LIKE, condition, column, sqlConcat(SqlLike.LIKE, val));
+        return adapter(DbSymbol.LIKE, condition, column, val, SqlLike.LIKE);
     }
 
     @Override
     public DefaultConditionWrapper<T> notLike(boolean condition, String column, Object val) {
-        return adapter(DbSymbol.NOT_LIKE, condition, column, sqlConcat(SqlLike.LIKE, val));
+        return adapter(DbSymbol.NOT_LIKE, condition, column, val, SqlLike.LIKE);
     }
 
     @Override
     public DefaultConditionWrapper<T> likeLeft(boolean condition, String column, Object val) {
-        return adapter(DbSymbol.LIKE, condition, column, sqlConcat(SqlLike.LEFT, val));
+        return adapter(DbSymbol.LIKE, condition, column, val, SqlLike.LEFT);
     }
 
     @Override
     public DefaultConditionWrapper<T> likeRight(boolean condition, String column, Object val) {
-        return adapter(DbSymbol.LIKE, condition, column, sqlConcat(SqlLike.RIGHT, val));
+        return adapter(DbSymbol.LIKE, condition, column, val, SqlLike.RIGHT);
     }
 
     @Override

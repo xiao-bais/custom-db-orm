@@ -31,7 +31,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
      */
     protected abstract Children adapter(DbSymbol dbSymbol, boolean condition, R column);
     /**
-     * 适用（like，exists, not exists）
+     * 适用（exists, not exists）
      */
     protected abstract Children adapter(DbSymbol dbSymbol, boolean condition, String sqlColumn);
     /**
@@ -39,11 +39,12 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
      */
     protected abstract Children adapter(DbSymbol dbSymbol, boolean condition, R column, Object val);
     /**
-     * 适用（between，not between）
+     * 适用（between，not between, like, not like）
      */
     protected abstract Children adapter(DbSymbol dbSymbol, boolean condition, R column, Object val1, Object val2);
+
     /**
-     * 适用（like, not like）
+     * 适用（exists, not exists）
      */
     protected abstract Children adapter(DbSymbol dbSymbol, boolean condition, R column, String express);
 
@@ -79,8 +80,8 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
                 break;
             case LIKE:
             case NOT_LIKE:
-                setLastCondition(String.format(" %s %s %s ?", appendSybmol, column, dbSymbol.getSymbol()));
-                getParamValues().add(express);
+                setLastCondition(String.format(" %s %s %s %s", appendSybmol, column, dbSymbol.getSymbol(), sqlConcat((SqlLike) val2)));
+                getParamValues().add(val1);
                 break;
             case IN:
             case NOT_IN:
@@ -189,6 +190,22 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
                 break;
             case LIKE:
                 sql = SymbolConstant.PERCENT + val + SymbolConstant.PERCENT;
+                break;
+        }
+        return sql;
+    }
+
+    protected String sqlConcat(SqlLike sqlLike) {
+        String sql = SymbolConstant.EMPTY;
+        switch (sqlLike) {
+            case LEFT:
+                sql = "concat('%', ?)";
+                break;
+            case RIGHT:
+                sql = "concat(?, '%')";
+                break;
+            case LIKE:
+                sql = "concat('%', ?, '%')";
                 break;
         }
         return sql;

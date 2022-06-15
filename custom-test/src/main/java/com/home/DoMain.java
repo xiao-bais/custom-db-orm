@@ -53,8 +53,17 @@ public class DoMain {
 //        InterfacesProxyExecutor proxyExecutor = new InterfacesProxyExecutor(dbDataSource, dbCustomStrategy);
 //        CustomTestDao customTestDao = proxyExecutor.createProxy(CustomTestDao.class);
 
-        List<Employee> employees = jdbcDao.selectList(Conditions.lambdaQuery(Employee.class).isNotNull(Employee::getExplain));
+//        List<Employee> employees = jdbcDao.selectList(Conditions.lambdaQuery(Employee.class)
+//            .likeLeft(Employee::getEmpName, "张三")
+//        );
 
+        String sql  ="select a.id id, a.emp_name empName, a.sex sex, a.age age, a.address address, a.birthday birthday, a.dept_id deptId, a.area_id areaId, a.`explain` `explain`, a.state state, dept.name deptName\n" +
+                " from employee a\n" +
+                " left join dept dept on dept.id = a.dept_id\n" +
+                "where a.state = 0 ";
+        List<Employee> employees = jdbcDao.selectListBySql(Employee.class, sql + "and a.emp_name like ?", "%张三%");
+
+        System.out.println("employees = " + employees);
 
     }
 
