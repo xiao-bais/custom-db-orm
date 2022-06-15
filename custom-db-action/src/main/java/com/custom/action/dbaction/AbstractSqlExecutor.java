@@ -1,6 +1,6 @@
 package com.custom.action.dbaction;
 
-import com.custom.action.interfaces.LogicDeleteFieldSqlHandler;
+import com.custom.action.interfaces.FullSqlExecutorHandler;
 import com.custom.action.sqlparser.HandleSelectSqlBuilder;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableSqlBuilder;
@@ -29,8 +29,7 @@ import java.util.*;
 public abstract class AbstractSqlExecutor {
 
     /*--------------------------------------- select ---------------------------------------*/
-    public abstract <T> List<T> selectList(Class<T> t, String condition, String orderBy, Object... params) throws Exception;
-    public abstract <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, int pageIndex, int pageSize, Object... params) throws Exception;
+    public abstract <T> List<T> selectList(Class<T> t, String condition, Object... params) throws Exception;
     public abstract <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, DbPageRows<T> dbPageRows, Object... params) throws Exception;
     public abstract <T> T selectOneByKey(Class<T> t, Object key) throws Exception;
     public abstract <T> List<T> selectBatchByKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception;
@@ -104,6 +103,20 @@ public abstract class AbstractSqlExecutor {
         return JudgeUtil.isNotEmpty(dbCustomStrategy.getDbFieldDeleteLogic());
     }
 
+    /**
+     * 分页数据整合
+     */
+    protected  <T> void buildPageResult(Class<T> t, String selectSql, DbPageRows<T> dbPageRows, Object... params) throws Exception {
+        List<T> dataList = new ArrayList<>();
+        long count = (long) selectObjBySql(String.format("select count(0) from (%s) xxx ", selectSql), params);
+        if (count > 0) {
+            selectSql = String.format("%s \nlimit %s, %s", selectSql, (dbPageRows.getPageIndex() - 1) * dbPageRows.getPageSize(), dbPageRows.getPageSize());
+            dataList = selectBySql(t, selectSql, params);
+        }
+        dbPageRows.setTotal(count);
+        dbPageRows.setData(dataList);
+    }
+
 
 
     /**
@@ -119,24 +132,26 @@ public abstract class AbstractSqlExecutor {
         TableInfoCache.setTableLogic(tableName, count > 0);
         return count > 0;
     }
+
     /**
      * 添加逻辑删除的部分sql
      */
-    public String checkConditionAndLogicDeleteSql(String alias, final String condition, String logicSql, String tableName) throws Exception {
+    public FullSqlExecutorHandler handleLogicWithCondition(String alias, final String condition, String logicSql, String tableName) throws Exception {
         if(!checkLogicFieldIsExist(tableName)) {
             logicSql = SymbolConstant.EMPTY;
         }
         final String finalLogicSql = logicSql;
-        LogicDeleteFieldSqlHandler handler = () -> {
+        return () -> {
             if (JudgeUtil.isNotEmpty(condition)) {
-                return JudgeUtil.isNotEmpty(finalLogicSql) ? String.format("\nwhere %s.%s %s ", alias, finalLogicSql, condition.trim())
+                return JudgeUtil.isNotEmpty(finalLogicSql) ?
+                        String.format("\nwhere %s.%s \n%s ", alias, finalLogicSql, condition.trim())
                         : String.format("\nwhere %s ", CustomUtil.trimAppendSqlCondition(condition));
             } else {
-                return JudgeUtil.isNotEmpty(finalLogicSql) ? String.format("\nwhere %s.%s ", alias, finalLogicSql)
+                return JudgeUtil.isNotEmpty(finalLogicSql) ?
+                        String.format("\nwhere %s.%s ", alias, finalLogicSql)
                         : condition == null ? SymbolConstant.EMPTY : condition.trim();
             }
         };
-        return handler.handleLogic();
     }
 
     /**
@@ -323,8 +338,9 @@ public abstract class AbstractSqlExecutor {
         }else {
             selectSql.append(sqlBuilder.buildSql());
         }
-        String condition = checkConditionAndLogicDeleteSql(sqlBuilder.getAlias(), wrapper.getFinalConditional(), getLogicDeleteQuerySql(), sqlBuilder.getTable());
-        selectSql.append(condition);
+        FullSqlExecutorHandler fullSqlExecutorHandler = handleLogicWithCondition(sqlBuilder.getAlias(),
+                wrapper.getFinalConditional(), getLogicDeleteQuerySql(), sqlBuilder.getTable());
+        selectSql.append(fullSqlExecutorHandler.execute());
         if(JudgeUtil.isNotEmpty(wrapper.getGroupBy())) {
             selectSql.append(SymbolConstant.GROUP_BY).append(wrapper.getGroupBy());
         }

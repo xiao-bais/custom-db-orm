@@ -1,6 +1,7 @@
 package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractSqlExecutor;
+import com.custom.action.interfaces.FullSqlExecutorHandler;
 import com.custom.action.wrapper.ConditionWrapper;
 import com.custom.action.wrapper.SFunction;
 import com.custom.comm.JudgeUtil;
@@ -41,20 +42,11 @@ public class JdbcAction extends AbstractSqlExecutor {
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> List<T> selectList(Class<T> t, String condition, String orderBy, Object... params) throws Exception {
+    public <T> List<T> selectList(Class<T> t, String condition, Object... params) throws Exception {
         HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
-        condition = checkConditionAndLogicDeleteSql(sqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
-        if(JudgeUtil.isNotEmpty(orderBy)) {
-            condition += SymbolConstant.ORDER_BY + orderBy;
-        }
-        return selectBySql(t, sqlBuilder.buildSql() + condition, params);
-    }
-
-    @Override
-    @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, int pageIndex, int pageSize, Object... params) throws Exception {
-        DbPageRows<T> dbPageRows = new DbPageRows<>(pageIndex, pageSize);
-        return selectPageRows(t, condition, dbPageRows, params);
+        FullSqlExecutorHandler fullSqlExecutorHandler = handleLogicWithCondition(sqlBuilder.getAlias(),
+                condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
+        return selectBySql(t, sqlBuilder.buildSql() + fullSqlExecutorHandler.execute(), params);
     }
 
     @Override
@@ -64,23 +56,9 @@ public class JdbcAction extends AbstractSqlExecutor {
             dbPageRows = new DbPageRows<>();
         }
         HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
-        String finalCondition = checkConditionAndLogicDeleteSql(sqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
-        buildPageResult(t, sqlBuilder.buildSql() + finalCondition, condition, dbPageRows, params);
+        FullSqlExecutorHandler fullSqlExecutorHandler = handleLogicWithCondition(sqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
+        buildPageResult(t, sqlBuilder.buildSql() + fullSqlExecutorHandler.execute(), dbPageRows, params);
         return dbPageRows;
-    }
-
-    /**
-     * 分页数据整合
-     */
-    private <T> void buildPageResult(Class<T> t, String selectSql, String condition, DbPageRows<T> dbPageRows, Object... params) throws Exception {
-        List<T> dataList = new ArrayList<>();
-        long count = (long) selectObjBySql(String.format("select count(0) from (%s) xxx ", selectSql), params);
-        if (count > 0) {
-            selectSql = String.format("%s \nlimit %s, %s", selectSql, (dbPageRows.getPageIndex() - 1) * dbPageRows.getPageSize(), dbPageRows.getPageSize());
-            dataList = selectBySql(t, selectSql, params);
-        }
-        dbPageRows.setTotal(count);
-        dbPageRows.setData(dataList);
     }
 
     @Override
@@ -99,8 +77,8 @@ public class JdbcAction extends AbstractSqlExecutor {
             }
         }
         String condition = String.format("and %s = ?", sqlBuilder.getKeyParserModel().getFieldSql());
-        condition = checkConditionAndLogicDeleteSql(sqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
-        return selectOneBySql(t, sqlBuilder.buildSql() + condition, key);
+        FullSqlExecutorHandler fullSqlExecutorHandler = handleLogicWithCondition(sqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
+        return selectOneBySql(t, sqlBuilder.buildSql() + fullSqlExecutorHandler.execute(), key);
     }
 
     @Override
@@ -110,27 +88,27 @@ public class JdbcAction extends AbstractSqlExecutor {
         StringJoiner symbol = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
         keys.forEach(x -> symbol.add(SymbolConstant.QUEST));
         String condition = String.format("and %s in (%s)", sqlBuilder.getKeyParserModel().getFieldSql(), symbol);
-        condition = checkConditionAndLogicDeleteSql(sqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
-        return selectBySql(t, sqlBuilder.buildSql() + condition, keys.toArray());
+        FullSqlExecutorHandler fullSqlExecutorHandler = handleLogicWithCondition(sqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
+        return selectBySql(t, sqlBuilder.buildSql() + fullSqlExecutorHandler.execute(), keys.toArray());
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> T selectOneByCondition(Class<T> t, String condition, Object... params) throws Exception {
         HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
-        condition = checkConditionAndLogicDeleteSql(sqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
-        return selectOneBySql(t, sqlBuilder.buildSql() + condition, params);
+        FullSqlExecutorHandler fullSqlExecutorHandler = handleLogicWithCondition(sqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
+        return selectOneBySql(t, sqlBuilder.buildSql() + fullSqlExecutorHandler.execute(), params);
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> DbPageRows<T> selectPageRows(ConditionWrapper<T> wrapper) throws Exception {
         if(!wrapper.hasPageParams()) {
-            ExThrowsUtil.toCustom("缺少分页参数：pageIndex：" + wrapper.getPageIndex() + ", pageSize：" + wrapper.getPageSize());
+            ExThrowsUtil.toCustom("缺少分页参数：pageIndex：%s, pageSize：%s", wrapper.getPageIndex(), wrapper.getPageSize());
         }
         DbPageRows<T> dbPageRows = new DbPageRows<>(wrapper.getPageIndex(), wrapper.getPageSize());
         String selectSql = getFullSelectSql(wrapper);
-        buildPageResult(wrapper.getEntityClass(), selectSql, null, dbPageRows, wrapper.getParamValues().toArray());
+        buildPageResult(wrapper.getEntityClass(), selectSql, dbPageRows, wrapper.getParamValues().toArray());
         return dbPageRows;
     }
 

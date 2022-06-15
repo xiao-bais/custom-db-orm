@@ -27,7 +27,7 @@ public class JdbcDao {
      * 根据条件查询多条记录: 例（and a.name = ?）
      */
     public <T> List<T> selectList(Class<T> t, String condition, Object... params) throws Exception {
-        return jdbcAction.selectList(t, condition, null, params);
+        return jdbcAction.selectList(t, condition, params);
     }
 
     /**
