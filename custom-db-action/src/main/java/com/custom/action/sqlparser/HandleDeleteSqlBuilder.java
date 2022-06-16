@@ -82,6 +82,9 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
         getSqlParams().addAll(keys);
     }
 
+    /**
+     * 在where后面 若是存在逻辑删除字段，并且第一个条件以or开头，则转成and，防止出现意外结果
+     */
     private void handleByCondition() {
         try {
             deleteCondition = checkLogicFieldIsExist()
@@ -100,7 +103,8 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
         if(Objects.isNull(fillColumnHandler)) {
             return;
         }
-        Optional<TableFillObject> first = fillColumnHandler.fillStrategy().stream().filter(x -> x.getEntityClass().equals(t)).findFirst();
+        Optional<TableFillObject> first = fillColumnHandler.fillStrategy().stream()
+                .filter(x -> x.getEntityClass().equals(t)).findFirst();
         first.ifPresent(op -> {
             String autoUpdateWhereSqlCondition = deleteSql.substring(deleteSql.indexOf(SymbolConstant.WHERE)).replace(getLogicDeleteQuerySql(), getLogicDeleteUpdateSql());
             FillStrategy strategy = op.getStrategy();
@@ -120,7 +124,7 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
     }
 
     /**
-     * 自动填充的sql构造（采用逻辑后进行Update操作的方式进行自动填充）
+     * 自动填充的sql构造（采用逻辑删除后进行Update操作的方式进行自动填充）
      */
     private String buildLogicDelAfterAutoUpdateSql(FillStrategy strategy, String whereKeySql, Object... params) {
         StringBuilder autoUpdateSql = new StringBuilder();
