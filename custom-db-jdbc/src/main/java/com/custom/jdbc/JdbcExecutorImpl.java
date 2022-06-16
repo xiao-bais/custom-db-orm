@@ -23,9 +23,9 @@ import java.util.*;
  * @Description SqlExecuteHandler
  */
 @SuppressWarnings("unchecked")
-public class ExecuteSqlHandler extends DbConnection implements CustomJdbcExecutor {
+public class JdbcExecutorImpl extends DbConnection implements CustomJdbcExecutor {
 
-    private static final Logger logger = LoggerFactory.getLogger(ExecuteSqlHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(JdbcExecutorImpl.class);
 
     private final Connection conn;
     private PreparedStatement statement = null;
@@ -35,7 +35,7 @@ public class ExecuteSqlHandler extends DbConnection implements CustomJdbcExecuto
 //    private static ThreadLocal<Boolean> AUTO_COMMENT = new ThreadLocal<>();
 
 
-    public ExecuteSqlHandler(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
+    public JdbcExecutorImpl(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         super(dbDataSource);
         this.conn = super.getConnection();
         this.dbCustomStrategy = dbCustomStrategy;

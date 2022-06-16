@@ -9,7 +9,7 @@ import com.custom.comm.JudgeUtil;
 import com.custom.comm.RexUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.DbTable;
-import com.custom.jdbc.ExecuteSqlHandler;
+import com.custom.jdbc.JdbcExecutorImpl;
 import com.custom.springboot.scanner.PackageScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +34,7 @@ public class TableStructsInitializer {
     /**
      * jdbc执行对象
      */
-    private final ExecuteSqlHandler sqlHandler;
+    private final JdbcExecutorImpl sqlHandler;
 
     /**
      * 连接的数据库
@@ -57,7 +57,7 @@ public class TableStructsInitializer {
 
 
 
-    public TableStructsInitializer(String[] packageScans, ExecuteSqlHandler sqlHandler) {
+    public TableStructsInitializer(String[] packageScans, JdbcExecutorImpl sqlHandler) {
         this.packageScans = packageScans;
         this.sqlHandler = sqlHandler;
         this.addColumnSqlList = new ArrayList<>();

@@ -1,8 +1,6 @@
 package com.custom.proxy;
 
-import com.custom.comm.JudgeUtil;
-import com.custom.comm.RexUtil;
-import com.custom.jdbc.ExecuteSqlHandler;
+import com.custom.jdbc.JdbcExecutorImpl;
 
 import java.lang.reflect.Method;
 
@@ -20,10 +18,10 @@ public class UpdateProxyHandler extends AbstractProxyHandler {
         return getExecuteAction().executeUpdate(readyExecuteSql, sqlParams);
     }
 
-    protected UpdateProxyHandler(ExecuteSqlHandler executeSqlHandler, Object[] methodParams,
+    protected UpdateProxyHandler(JdbcExecutorImpl jdbcExecutor, Object[] methodParams,
                                  String prepareSql, Method method) {
 
-        super.setExecuteAction(executeSqlHandler);
+        super.setExecuteAction(jdbcExecutor);
         super.setMethodParams(methodParams);
         super.setPrepareSql(prepareSql);
         super.setMethod(method);

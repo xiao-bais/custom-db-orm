@@ -34,7 +34,6 @@ public abstract class AbstractSqlBuilder<T> {
     private ColumnParseHandler<T> columnParseHandler;
     private Boolean primaryTable = false;
     private String logicColumn;
-    private Object logicDeleteValue;
     private Object logicNotDeleteValue;
     private String logicDeleteQuerySql;
     private String logicDeleteUpdateSql;
@@ -143,15 +142,10 @@ public abstract class AbstractSqlBuilder<T> {
         this.logicColumn = logicColumn;
     }
 
-    public Object getLogicDeleteValue() {
-        return logicDeleteValue;
-    }
-
     public void setLogicDeleteValue(Object logicDeleteValue) {
         if (logicDeleteValue instanceof CharSequence) {
             logicDeleteValue = String.format("'%s'", logicDeleteValue);
         }
-        this.logicDeleteValue = logicDeleteValue;
         this.logicDeleteUpdateSql = String.format("%s.%s = %s", alias, logicColumn, logicDeleteValue);
     }
 

@@ -6,7 +6,7 @@ import com.custom.comm.RexUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.mapper.DbParam;
 import com.custom.comm.exceptions.ExThrowsUtil;
-import com.custom.jdbc.ExecuteSqlHandler;
+import com.custom.jdbc.JdbcExecutorImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +30,7 @@ public abstract class AbstractProxyHandler {
     /**
      * jdbc执行对象
      */
-    private ExecuteSqlHandler executeAction;
+    private JdbcExecutorImpl executeAction;
     /**
      * 方法参数
      */
@@ -63,11 +63,11 @@ public abstract class AbstractProxyHandler {
      */
     protected abstract Object execute() throws Exception;
 
-    protected ExecuteSqlHandler getExecuteAction() {
+    protected JdbcExecutorImpl getExecuteAction() {
         return executeAction;
     }
 
-    protected void setExecuteAction(ExecuteSqlHandler executeAction) {
+    protected void setExecuteAction(JdbcExecutorImpl executeAction) {
         this.executeAction = executeAction;
     }
 

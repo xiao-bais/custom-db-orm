@@ -2,7 +2,7 @@ package com.custom.proxy;
 
 import com.custom.comm.CustomUtil;
 import com.custom.comm.exceptions.ExThrowsUtil;
-import com.custom.jdbc.ExecuteSqlHandler;
+import com.custom.jdbc.JdbcExecutorImpl;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.lang.reflect.Method;
@@ -19,10 +19,10 @@ import java.util.Map;
  */
 public class SelectProxyHandler extends AbstractProxyHandler {
 
-    protected SelectProxyHandler(ExecuteSqlHandler executeSqlHandler, Object[] methodParams,
+    protected SelectProxyHandler(JdbcExecutorImpl jdbcExecutor, Object[] methodParams,
                                  String prepareSql, Method method) {
 
-        super.setExecuteAction(executeSqlHandler);
+        super.setExecuteAction(jdbcExecutor);
         super.setMethodParams(methodParams);
         super.setPrepareSql(prepareSql);
         super.setMethod(method);
@@ -31,7 +31,7 @@ public class SelectProxyHandler extends AbstractProxyHandler {
 
     @Override
     protected Object execute() throws Exception {
-        ExecuteSqlHandler executeSqlHandler = getExecuteAction();
+        JdbcExecutorImpl jdbcExecutor = getExecuteAction();
 
         String readyExecuteSql = sqlExecuteParamParser();
         Object[] sqlParams = getExecuteSqlParams().toArray();
@@ -46,9 +46,9 @@ public class SelectProxyHandler extends AbstractProxyHandler {
             if (Collection.class.isAssignableFrom(truthResType)) {
                 Class<?> genericType = (Class<?>) pt.getActualTypeArguments()[0];
                 if (List.class.isAssignableFrom(truthResType)) {
-                    return executeSqlHandler.selectList(genericType, true, readyExecuteSql, sqlParams);
+                    return jdbcExecutor.selectList(genericType, true, readyExecuteSql, sqlParams);
                 }else if (List.class.isAssignableFrom(truthResType)) {
-                    return executeSqlHandler.selectSet(genericType, readyExecuteSql, sqlParams);
+                    return jdbcExecutor.selectSet(genericType, readyExecuteSql, sqlParams);
                 }
                 // if not list or set, then throws error...
                 ExThrowsUtil.toCustom("返回的列表类型暂时只支持List以及Set");
@@ -57,23 +57,23 @@ public class SelectProxyHandler extends AbstractProxyHandler {
             // do Map
             else if (Map.class.isAssignableFrom(truthResType)) {
                 Class<?> genericType = (Class<?>) pt.getActualTypeArguments()[1];
-                return executeSqlHandler.selectMap(genericType, readyExecuteSql, sqlParams);
+                return jdbcExecutor.selectMap(genericType, readyExecuteSql, sqlParams);
             }
             else return null;
         }
         truthResType = getMethod().getReturnType();
         // do Array
         if (truthResType.isArray()) {
-            return executeSqlHandler.selectArray(truthResType.getComponentType(), readyExecuteSql, sqlParams);
+            return jdbcExecutor.selectArray(truthResType.getComponentType(), readyExecuteSql, sqlParams);
         }
 
         // do Basic type
         else if (CustomUtil.isBasicClass(truthResType)) {
-            return executeSqlHandler.selectBasicObjBySql(readyExecuteSql, sqlParams);
+            return jdbcExecutor.selectBasicObjBySql(readyExecuteSql, sqlParams);
         }
 
         // do custom Object
-        return executeSqlHandler.selectGenericObjSql(truthResType, readyExecuteSql, sqlParams);
+        return jdbcExecutor.selectGenericObjSql(truthResType, readyExecuteSql, sqlParams);
     }
 
 

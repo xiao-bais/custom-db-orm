@@ -2,7 +2,7 @@ package com.custom.springboot;
 
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
-import com.custom.jdbc.ExecuteSqlHandler;
+import com.custom.jdbc.JdbcExecutorImpl;
 import com.custom.springboot.tableinit.TableStructsInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +42,7 @@ public class CustomBeanInitializer implements InitializingBean, ApplicationConte
         // 表结构初始化
         TableStructsInitializer tableStructsInitializer = new TableStructsInitializer(
                 strategy.getEntityPackageScans(),
-                new ExecuteSqlHandler(dataSource, strategy)
+                new JdbcExecutorImpl(dataSource, strategy)
         );
         tableStructsInitializer.initStart();
     }

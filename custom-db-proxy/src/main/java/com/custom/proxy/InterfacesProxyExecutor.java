@@ -1,7 +1,6 @@
 package com.custom.proxy;
 
 import com.custom.comm.BasicDao;
-import com.custom.comm.CustomUtil;
 import com.custom.comm.RexUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.mapper.Query;
@@ -13,13 +12,10 @@ import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
-import com.custom.jdbc.ExecuteSqlHandler;
+import com.custom.jdbc.JdbcExecutorImpl;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.*;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @Author Xiao-Bai
@@ -38,10 +34,10 @@ public class InterfacesProxyExecutor implements InvocationHandler {
     }
 
     private String targetClassName;
-    private final ExecuteSqlHandler executeAction;
+    private final JdbcExecutorImpl executeAction;
 
     public InterfacesProxyExecutor(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
-        executeAction = new ExecuteSqlHandler(dbDataSource, dbCustomStrategy);
+        executeAction = new JdbcExecutorImpl(dbDataSource, dbCustomStrategy);
     }
 
 

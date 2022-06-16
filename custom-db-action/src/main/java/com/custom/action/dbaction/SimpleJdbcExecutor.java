@@ -66,7 +66,7 @@ public class SimpleJdbcExecutor {
      * 纯sql查询单条记录(映射到Map)
      */
     public Map<String, Object> selectMapBySql(String sql, Object... params) throws Exception {
-        List<Map<String, Object>> mapList = jdbcExecutor.selectMapsBySql(sql, true, params);
+        List<Map<String, Object>> mapList = jdbcExecutor.selectMapsBySql(sql, false, params);
         return mapList.get(0);
     }
 

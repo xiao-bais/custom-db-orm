@@ -12,7 +12,7 @@ import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.page.DbPageRows;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
-import com.custom.jdbc.ExecuteSqlHandler;
+import com.custom.jdbc.JdbcExecutorImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +30,7 @@ public class JdbcAction extends AbstractSqlExecutor {
 
     public JdbcAction(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         // 配置sql执行器
-        this.setJdbcExecutor(new ExecuteSqlHandler(dbDataSource, dbCustomStrategy));
+        this.setJdbcExecutor(new JdbcExecutorImpl(dbDataSource, dbCustomStrategy));
         // 配置sql执行策略
         this.setDbCustomStrategy(dbCustomStrategy);
         // 初始化逻辑删除策略
