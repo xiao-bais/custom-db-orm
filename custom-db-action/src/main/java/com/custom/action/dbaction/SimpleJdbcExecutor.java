@@ -1,5 +1,9 @@
 package com.custom.action.dbaction;
 
+import com.custom.action.interfaces.FullSqlExecutorHandler;
+import com.custom.action.sqlparser.TableInfoCache;
+import com.custom.action.sqlparser.TableSqlBuilder;
+import com.custom.action.util.DbUtil;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.exceptions.CustomCheckException;
@@ -16,6 +20,7 @@ import java.util.Map;
  * @Date 2022/6/16 13:18
  * @Desc 简单的jdbc执行器
  */
+@SuppressWarnings("unchecked")
 public class SimpleJdbcExecutor {
 
     private CustomJdbcExecutor jdbcExecutor;
@@ -152,4 +157,45 @@ public class SimpleJdbcExecutor {
         dbPageRows.setData(dataList);
     }
 
+    /**
+     * 添加逻辑删除的部分sql
+     */
+    public FullSqlExecutorHandler handleLogicWithCondition(String alias, final String condition, String logicColumn, String logicSql, String tableName) throws Exception {
+        if(!DbUtil.checkLogicFieldIsExist(tableName, logicColumn, getJdbcExecutor())) {
+            logicSql = SymbolConstant.EMPTY;
+        }
+        final String finalLogicSql = logicSql;
+        return () -> {
+            if (JudgeUtil.isNotEmpty(condition)) {
+                return JudgeUtil.isNotEmpty(finalLogicSql) ?
+                        String.format("\nwhere %s.%s \n%s ", alias, finalLogicSql, condition.trim())
+                        : String.format("\nwhere %s ", DbUtil.trimAppendSqlCondition(condition));
+            } else {
+                return JudgeUtil.isNotEmpty(finalLogicSql) ?
+                        String.format("\nwhere %s.%s ", alias, finalLogicSql)
+                        : condition == null ? SymbolConstant.EMPTY : condition.trim();
+            }
+        };
+    }
+
+    /**
+     * 从缓存中获取实体解析模板，若缓存中没有，就重新构造模板（查询、删除、创建删除表）
+     */
+    protected <T> TableSqlBuilder<T> getEntityModelCache(Class<T> t) {
+        TableSqlBuilder<T> tableModel = TableInfoCache.getTableModel(t);
+        tableModel.setJdbcExecutor(getJdbcExecutor());
+        return tableModel;
+    }
+
+    /**
+     * 从缓存中获取实体解析模板，若缓存中没有，就重新构造模板（批量增加记录）
+     */
+    protected <T> TableSqlBuilder<T> getUpdateEntityModelCache(List<T> tList) {
+        TableSqlBuilder<T> tableModelCache = (TableSqlBuilder<T>) TableInfoCache.getTableModel(tList.get(0).getClass());
+        TableSqlBuilder<T> tableModel = tableModelCache.clone();
+        tableModel.setEntity(tList.get(0));
+        tableModel.setList(tList);
+        tableModel.setJdbcExecutor(getJdbcExecutor());
+        return tableModel;
+    }
 }

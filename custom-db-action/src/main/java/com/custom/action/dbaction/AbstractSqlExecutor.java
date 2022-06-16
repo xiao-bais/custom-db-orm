@@ -87,6 +87,13 @@ public abstract class AbstractSqlExecutor extends SimpleJdbcExecutor {
     }
 
     /**
+     * 添加逻辑删除的部分sql
+     */
+    public FullSqlExecutorHandler handleLogicWithCondition(String alias, final String condition, String logicSql, String tableName) throws Exception {
+        return handleLogicWithCondition(alias, condition, logicColumn, logicSql, tableName);
+    }
+
+    /**
      * 是否开启了逻辑删除字段
      */
     public static boolean isLogicDeleteOpen(DbCustomStrategy dbCustomStrategy) {
@@ -94,51 +101,6 @@ public abstract class AbstractSqlExecutor extends SimpleJdbcExecutor {
             dbCustomStrategy = new DbCustomStrategy();
         }
         return JudgeUtil.isNotEmpty(dbCustomStrategy.getDbFieldDeleteLogic());
-    }
-
-    /**
-     * 添加逻辑删除的部分sql
-     */
-    public FullSqlExecutorHandler handleLogicWithCondition(String alias, final String condition, String logicSql, String tableName) throws Exception {
-        if(!DbUtil.checkLogicFieldIsExist(tableName, logicColumn, getJdbcExecutor())) {
-            logicSql = SymbolConstant.EMPTY;
-        }
-        final String finalLogicSql = logicSql;
-        return () -> {
-            if (JudgeUtil.isNotEmpty(condition)) {
-                return JudgeUtil.isNotEmpty(finalLogicSql) ?
-                        String.format("\nwhere %s.%s \n%s ", alias, finalLogicSql, condition.trim())
-                        : String.format("\nwhere %s ", DbUtil.trimAppendSqlCondition(condition));
-            } else {
-                return JudgeUtil.isNotEmpty(finalLogicSql) ?
-                        String.format("\nwhere %s.%s ", alias, finalLogicSql)
-                        : condition == null ? SymbolConstant.EMPTY : condition.trim();
-            }
-        };
-    }
-
-
-
-
-    /**
-     * 从缓存中获取实体解析模板，若缓存中没有，就重新构造模板（查询、删除、创建删除表）
-     */
-    protected <T> TableSqlBuilder<T> getEntityModelCache(Class<T> t) {
-        TableSqlBuilder<T> tableModel = TableInfoCache.getTableModel(t);
-        tableModel.setJdbcExecutor(getJdbcExecutor());
-        return tableModel;
-    }
-
-    /**
-     * 从缓存中获取实体解析模板，若缓存中没有，就重新构造模板（批量增加记录）
-     */
-    protected <T> TableSqlBuilder<T> getUpdateEntityModelCache(List<T> tList) {
-        TableSqlBuilder<T> tableModelCache = (TableSqlBuilder<T>) TableInfoCache.getTableModel(tList.get(0).getClass());
-        TableSqlBuilder<T> tableModel = tableModelCache.clone();
-        tableModel.setEntity(tList.get(0));
-        tableModel.setList(tList);
-        tableModel.setJdbcExecutor(getJdbcExecutor());
-        return tableModel;
     }
 
     /**
@@ -195,8 +157,8 @@ public abstract class AbstractSqlExecutor extends SimpleJdbcExecutor {
         }else {
             selectSql.append(sqlBuilder.buildSql());
         }
-        FullSqlExecutorHandler fullSqlExecutorHandler = handleLogicWithCondition(sqlBuilder.getAlias(),
-                wrapper.getFinalConditional(), getLogicDeleteQuerySql(), sqlBuilder.getTable());
+        FullSqlExecutorHandler fullSqlExecutorHandler = this.handleLogicWithCondition(sqlBuilder.getAlias(),
+                wrapper.getFinalConditional(), logicColumn, getLogicDeleteQuerySql(), sqlBuilder.getTable());
         selectSql.append(fullSqlExecutorHandler.execute());
         if(JudgeUtil.isNotEmpty(wrapper.getGroupBy())) {
             selectSql.append(SymbolConstant.GROUP_BY).append(wrapper.getGroupBy());
@@ -224,6 +186,4 @@ public abstract class AbstractSqlExecutor extends SimpleJdbcExecutor {
     public String getLogicDeleteQuerySql() {
         return logicDeleteQuerySql;
     }
-
-
 }
