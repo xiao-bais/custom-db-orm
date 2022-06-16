@@ -3,6 +3,7 @@ package com.custom.action.dbaction;
 import com.custom.action.sqlparser.DbFieldParserModel;
 import com.custom.action.sqlparser.DbKeyParserModel;
 import com.custom.action.sqlparser.TableInfoCache;
+import com.custom.action.util.DbUtil;
 import com.custom.action.wrapper.ColumnParseHandler;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
@@ -207,13 +208,6 @@ public abstract class AbstractSqlBuilder<T> {
         if (CustomUtil.isBlank(logicColumn)) {
             return false;
         }
-        Boolean existsLogic = TableInfoCache.isExistsLogic(table);
-        if (existsLogic != null) {
-            return existsLogic;
-        }
-        String existSql = String.format("select count(*) count from information_schema.columns where table_name = '%s' and column_name = '%s'", table, logicColumn);
-        long count = jdbcExecutor.executeExist(existSql);
-        TableInfoCache.setTableLogic(table, count > 0);
-        return count > 0;
+        return DbUtil.checkLogicFieldIsExist(table, logicColumn, jdbcExecutor);
     }
 }

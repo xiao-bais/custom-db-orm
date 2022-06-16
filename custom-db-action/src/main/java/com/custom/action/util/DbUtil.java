@@ -8,6 +8,7 @@ import com.custom.comm.annotations.DbKey;
 import com.custom.comm.annotations.DbRelated;
 import com.custom.comm.enums.DbType;
 import com.custom.comm.enums.SqlLike;
+import com.custom.jdbc.CustomJdbcExecutor;
 
 import java.lang.reflect.Field;
 import java.util.Objects;
@@ -48,6 +49,20 @@ public class DbUtil {
 
     public static String ifNull(String column, String fieldName) {
         return String.format("ifnull(%s, '') %s", column, fieldName);
+    }
+
+    /**
+     * 由于部分表可能没有逻辑删除字段，所以在每一次执行时，都需检查该表有没有逻辑删除的字段，以保证sql正常执行
+     */
+    public static boolean checkLogicFieldIsExist(String table, String logicField, CustomJdbcExecutor jdbcExecutor) throws Exception {
+        Boolean existsLogic = TableInfoCache.isExistsLogic(table);
+        if (existsLogic != null) {
+            return existsLogic;
+        }
+        String existSql = String.format("select count(*) count from information_schema.columns where table_name = '%s' and column_name = '%s'", table, logicField);
+        long count = jdbcExecutor.executeExist(existSql);
+        TableInfoCache.setTableLogic(table, count > 0);
+        return count > 0;
     }
 
     /**
