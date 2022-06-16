@@ -72,7 +72,7 @@ public class InterfacesProxyExecutor implements InvocationHandler {
         AbstractProxyHandler proxyHandler = null;
         Class<?> execClass = method.getDeclaringClass();
         if (!BasicDao.class.isAssignableFrom(execClass) && !execClass.isAnnotationPresent(SqlMapper.class)) {
-            ExThrowsUtil.toCustom(String.format("Execution error, possibly because '%s' does not inherit com.custom.comm.BasicDao or this interface is not annotated with @SqlMapper", targetClassName));
+            ExThrowsUtil.toCustom("Execution error, possibly because '%s' does not inherit com.custom.comm.BasicDao or this interface is not annotated with @SqlMapper", targetClassName);
         }
 
         // do Query
@@ -101,7 +101,7 @@ public class InterfacesProxyExecutor implements InvocationHandler {
             else if (execType == ExecuteMethod.UPDATE || execType == ExecuteMethod.DELETE || execType == ExecuteMethod.INSERT) {
                 proxyHandler = new UpdateProxyHandler(executeAction, args, sql, method);
             }
-        }else throw new CustomCheckException(String.format("The '@Update' or '@Query' or '@SqlPath' annotation was not found on the method : %s.%s()", targetClassName, method.getName()));
+        }else ExThrowsUtil.toCustom("The '@Update' or '@Query' or '@SqlPath' annotation was not found on the method : %s.%s()", targetClassName, method.getName());
 
         if (proxyHandler == null) {
             ExThrowsUtil.toCustom("未知的执行类型");
@@ -118,7 +118,7 @@ public class InterfacesProxyExecutor implements InvocationHandler {
         if(RexUtil.hasRegex(sql, RexUtil.sql_set_param) && sql.contains(SymbolConstant.QUEST)) {
             log.error("如果order为true，仅支持使用 \"?\"  如果order为false 仅支持使用 \"#{ }\" 来设置参数");
             log.error("Error Method ==> {}", methodName);
-            ExThrowsUtil.toCustom(String.format("The SQL cannot be resolved '%s'", sql));
+            ExThrowsUtil.toCustom("The SQL cannot be resolved '%s'", sql);
         }
         if(order && RexUtil.hasRegex(sql, RexUtil.sql_set_param)) {
             log.error("Error Method ==> {}", methodName);
