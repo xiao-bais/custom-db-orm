@@ -24,7 +24,7 @@ import java.util.*;
  * @Desc：方法执行处理抽象入口
  **/
 @SuppressWarnings("unchecked")
-public abstract class AbstractSqlExecutor extends SimpleJdbcExecutor{
+public abstract class AbstractSqlExecutor extends SimpleJdbcExecutor {
 
     /*--------------------------------------- select ---------------------------------------*/
     public abstract <T> List<T> selectList(Class<T> t, String condition, Object... params) throws Exception;
