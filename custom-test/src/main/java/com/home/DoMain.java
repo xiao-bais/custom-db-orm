@@ -55,6 +55,9 @@ public class DoMain {
 
         Student student = customTestDao.selectByOne("李佳琪");
 
+        String byCond = customTestDao.selectOneByCond(0, 23);
+        System.out.println("byCond = " + byCond);
+
         System.out.println("student = " + student);
 
 //        List<Employee> employees = jdbcDao.selectListByKeys(Employee.class, Arrays.asList(1,5,9,8));

@@ -117,7 +117,7 @@ public class CustomJdbcManagement extends DbConnection {
     protected void checkMoreResult() throws SQLException {
         int rowsCount = this.getRowsCount();
         if (rowsCount > SymbolConstant.DEFAULT_ONE) {
-            ExThrowsUtil.toCustom("只查一条，但查询到多条结果：(%s)", rowsCount);
+            ExThrowsUtil.toCustom("只查一条，但查询到%s条结果", rowsCount);
         }
     }
 

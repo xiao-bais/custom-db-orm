@@ -200,7 +200,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
     public Object selectObj(SelectSqlParamInfo<Object> params) throws Exception {
         Object result = null;
         try {
-            statementQuery(params.getPrepareSql(), params.isSqlPrintSupport(), params);
+            this.statementQueryReturnRows(params.getPrepareSql(), params.isSqlPrintSupport(), params.getSqlParams());
             ResultSet resultSet = handleQueryStatement();
             this.checkMoreResult();
             if (resultSet.next()) {

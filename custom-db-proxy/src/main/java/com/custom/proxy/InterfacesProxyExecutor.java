@@ -39,8 +39,8 @@ public class InterfacesProxyExecutor implements InvocationHandler {
     }
 
     private String targetClassName;
-    private CustomSelectJdbcBasic selectJdbc;
-    private CustomUpdateJdbcBasic updateJdbc;
+    private final CustomSelectJdbcBasic selectJdbc;
+    private final CustomUpdateJdbcBasic updateJdbc;
 
     public InterfacesProxyExecutor(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         selectJdbc = new CustomSelectJdbcBasicImpl(dbDataSource, dbCustomStrategy);
