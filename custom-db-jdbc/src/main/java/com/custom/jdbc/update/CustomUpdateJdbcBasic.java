@@ -25,4 +25,6 @@ public interface CustomUpdateJdbcBasic {
      */
     void execTableInfo(String sql);
 
+    String getDataBase();
+
 }

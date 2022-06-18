@@ -1,6 +1,7 @@
 package com.custom.proxy;
 
-import com.custom.jdbc.JdbcExecutorImpl;
+import com.custom.jdbc.condition.SaveSqlParamInfo;
+import com.custom.jdbc.update.CustomUpdateJdbcBasic;
 
 import java.lang.reflect.Method;
 
@@ -15,13 +16,14 @@ public class UpdateProxyHandler extends AbstractProxyHandler {
     protected Object execute() throws Exception {
         String readyExecuteSql = sqlExecuteParamParser();
         Object[] sqlParams = getExecuteSqlParams().toArray();
-        return getExecuteAction().executeUpdate(readyExecuteSql, sqlParams);
+        SaveSqlParamInfo<Object> sqlParamInfo = new SaveSqlParamInfo<>(readyExecuteSql, sqlParams);
+        return getUpdateJdbc().executeUpdate(sqlParamInfo);
     }
 
-    protected UpdateProxyHandler(JdbcExecutorImpl jdbcExecutor, Object[] methodParams,
+    protected UpdateProxyHandler(CustomUpdateJdbcBasic updateJdbc, Object[] methodParams,
                                  String prepareSql, Method method) {
 
-        super.setExecuteAction(jdbcExecutor);
+        super.setUpdateJdbc(updateJdbc);
         super.setMethodParams(methodParams);
         super.setPrepareSql(prepareSql);
         super.setMethod(method);

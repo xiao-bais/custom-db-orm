@@ -26,43 +26,43 @@ public class ConvertUtil {
      */
     public static <T> T transToObject(Class<T> transType, Object value) {
         if (Objects.nonNull(value) && JudgeUtil.isNotEmpty(value)) {
-            if (transType.equals(Integer.class) || transType.equals(Integer.TYPE)) {
+            if (Integer.class.isAssignableFrom(transType) || transType.equals(Integer.TYPE)) {
                 return (T) Integer.valueOf(value.toString());
             }
-            if (transType.equals(Long.class) || transType.equals(Long.TYPE)) {
+            if (Long.class.isAssignableFrom(transType) || transType.equals(Long.TYPE)) {
                 return (T) Long.valueOf(value.toString());
             }
-            if (transType.equals(Float.class) || transType.equals(Float.TYPE)) {
+            if (Float.class.isAssignableFrom(transType) || transType.equals(Float.TYPE)) {
                 return (T) Float.valueOf(value.toString());
             }
-            if (transType.equals(Short.class) || transType.equals(Short.TYPE)) {
+            if (Short.class.isAssignableFrom(transType) || transType.equals(Short.TYPE)) {
                 return (T) Short.valueOf(value.toString());
             }
-            if (transType.equals(Boolean.class) || transType.equals(Boolean.TYPE)) {
+            if (Boolean.class.isAssignableFrom(transType) || transType.equals(Boolean.TYPE)) {
                 return (T) Boolean.valueOf(value.toString());
             }
-            if (transType.equals(Byte.class) || transType.equals(Byte.TYPE)) {
+            if (Byte.class.isAssignableFrom(transType) || transType.equals(Byte.TYPE)) {
                 return (T) Byte.valueOf(value.toString());
             }
-            if (transType.equals(Character.class) || transType.equals(Character.TYPE)) {
+            if (Character.class.isAssignableFrom(transType) || transType.equals(Character.TYPE)) {
                 return (T) Character.valueOf(value.toString().charAt(0));
             }
-            if (transType.equals(Double.class) || transType.equals(Double.TYPE)) {
+            if (Double.class.isAssignableFrom(transType) || transType.equals(Double.TYPE)) {
                 return (T) Double.valueOf(value.toString());
             }
-            if (transType.equals(String.class)) {
-                return (T) value;
+            if (CharSequence.class.isAssignableFrom(transType)) {
+                return (T) String.valueOf(value);
             }
             if (transType.equals(BigDecimal.class)) {
-                return (T) new BigDecimal(value.toString());
+                return (T) new BigDecimal(String.valueOf(value));
             }
             if (transType.equals(LocalDateTime.class)) {
-                return (T) LocalDateTime.parse(value.toString());
+                return (T) LocalDateTime.parse(String.valueOf(value));
             }
             if (transType.equals(Date.class)) {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 try {
-                    return (T) sdf.parse(value.toString());
+                    return (T) sdf.parse(String.valueOf(value));
                 } catch (ParseException e) {
                     throw new RuntimeException(e.getMessage());
                 }

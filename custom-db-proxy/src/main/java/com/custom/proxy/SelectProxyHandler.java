@@ -2,7 +2,8 @@ package com.custom.proxy;
 
 import com.custom.comm.CustomUtil;
 import com.custom.comm.exceptions.ExThrowsUtil;
-import com.custom.jdbc.JdbcExecutorImpl;
+import com.custom.jdbc.condition.SelectSqlParamInfo;
+import com.custom.jdbc.select.CustomSelectJdbcBasic;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.lang.reflect.Method;
@@ -19,10 +20,10 @@ import java.util.Map;
  */
 public class SelectProxyHandler extends AbstractProxyHandler {
 
-    protected SelectProxyHandler(JdbcExecutorImpl jdbcExecutor, Object[] methodParams,
+    protected SelectProxyHandler(CustomSelectJdbcBasic selectJdbc, Object[] methodParams,
                                  String prepareSql, Method method) {
 
-        super.setExecuteAction(jdbcExecutor);
+        super.setSelectJdbc(selectJdbc);
         super.setMethodParams(methodParams);
         super.setPrepareSql(prepareSql);
         super.setMethod(method);
@@ -31,24 +32,30 @@ public class SelectProxyHandler extends AbstractProxyHandler {
 
     @Override
     protected Object execute() throws Exception {
-        JdbcExecutorImpl jdbcExecutor = getExecuteAction();
-
+        CustomSelectJdbcBasic selectJdbc = getSelectJdbc();
+        SelectSqlParamInfo<?> sqlParamInfo;
         String readyExecuteSql = sqlExecuteParamParser();
         Object[] sqlParams = getExecuteSqlParams().toArray();
 
         Type returnType = getMethod().getGenericReturnType();
+        // 真实返回类型
         Class<?> truthResType;
+        // 返回类型中的泛型类型
+        Class<?> genericType;
         // 若返回值是带有泛型的类型
         if (returnType instanceof ParameterizedType) {
             ParameterizedType pt = (ParameterizedType) returnType;
             truthResType = ((ParameterizedTypeImpl) pt).getRawType();
             // do Collection
             if (Collection.class.isAssignableFrom(truthResType)) {
-                Class<?> genericType = (Class<?>) pt.getActualTypeArguments()[0];
+                genericType = (Class<?>) pt.getActualTypeArguments()[0];
+                sqlParamInfo = new SelectSqlParamInfo<>(genericType, readyExecuteSql, sqlParams);
+
                 if (List.class.isAssignableFrom(truthResType)) {
-                    return jdbcExecutor.selectList(genericType, true, readyExecuteSql, sqlParams);
+                    return selectJdbc.selectList(sqlParamInfo);
+
                 }else if (List.class.isAssignableFrom(truthResType)) {
-                    return jdbcExecutor.selectSet(genericType, readyExecuteSql, sqlParams);
+                    return selectJdbc.selectSet(sqlParamInfo);
                 }
                 // if not list or set, then throws error...
                 ExThrowsUtil.toCustom("返回的列表类型暂时只支持List以及Set");
@@ -56,24 +63,29 @@ public class SelectProxyHandler extends AbstractProxyHandler {
 
             // do Map
             else if (Map.class.isAssignableFrom(truthResType)) {
-                Class<?> genericType = (Class<?>) pt.getActualTypeArguments()[1];
-                return jdbcExecutor.selectMap(genericType, readyExecuteSql, sqlParams);
+                genericType = (Class<?>) pt.getActualTypeArguments()[1];
+                sqlParamInfo = new SelectSqlParamInfo<>(genericType, readyExecuteSql, sqlParams);
+                return selectJdbc.selectMap(sqlParamInfo);
             }
             else return null;
         }
         truthResType = getMethod().getReturnType();
         // do Array
         if (truthResType.isArray()) {
-            return jdbcExecutor.selectArray(truthResType.getComponentType(), readyExecuteSql, sqlParams);
+            sqlParamInfo = new SelectSqlParamInfo<>(truthResType.getComponentType(), readyExecuteSql, sqlParams);
+            return selectJdbc.selectArrays(sqlParamInfo);
         }
 
         // do Basic type
         else if (CustomUtil.isBasicClass(truthResType)) {
-            return jdbcExecutor.selectBasicObjBySql(readyExecuteSql, sqlParams);
+            SelectSqlParamInfo<Object> objSqlParam = new SelectSqlParamInfo<>(Object.class, readyExecuteSql, sqlParams);
+            return selectJdbc.selectObj(objSqlParam);
         }
 
         // do custom Object
-        return jdbcExecutor.selectGenericObjSql(truthResType, readyExecuteSql, sqlParams);
+        sqlParamInfo = new SelectSqlParamInfo<>(truthResType, readyExecuteSql, sqlParams);
+        return selectJdbc.selectOne(sqlParamInfo);
+//        return jdbcExecutor.selectBasicObjBySql(readyExecuteSql, sqlParams);
     }
 
 

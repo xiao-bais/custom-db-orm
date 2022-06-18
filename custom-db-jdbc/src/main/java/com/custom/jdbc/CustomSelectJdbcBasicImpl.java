@@ -69,7 +69,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
     public <T> T selectOne(SelectSqlParamInfo<T> params) throws Exception {
         Map<String, Object> map = new HashMap<>();
         try {
-            statementQuery(params.getPrepareSql(), params.isSqlPrintSupport(), params.getSqlParams());
+            this.statementQueryReturnRows(params.getPrepareSql(), params.isSqlPrintSupport(), params.getSqlParams());
             ResultSet resultSet = handleQueryStatement();
             this.checkMoreResult();
             ResultSetMetaData metaData = resultSet.getMetaData();
@@ -166,11 +166,9 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
     @Override
     public <T> T[] selectArrays(SelectSqlParamInfo<T> params) throws Exception {
         try {
-            statementQueryReturnRows(params.getPrepareSql(), params.getSqlParams());
+            this.statementQueryReturnRows(params.getPrepareSql(), params.isSqlPrintSupport(), params.getSqlParams());
             ResultSet resultSet = handleQueryStatement();
-            resultSet.last();
-            final int rowsCount = resultSet.getRow();
-            resultSet.beforeFirst();
+            int rowsCount = this.getRowsCount();
             int count = resultSet.getMetaData().getColumnCount();
             if (count == 0) {
                 return null;
@@ -178,7 +176,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
                 ExThrowsUtil.toCustom("数组不支持返回多列结果");
             }
 
-            Object res = java.lang.reflect.Array.newInstance(params.getEntityClass(), rowsCount);
+            Object res = Array.newInstance(params.getEntityClass(), rowsCount);
             int len = 0;
             while (resultSet.next()) {
                 T val = (T) resultSet.getObject(SymbolConstant.DEFAULT_ONE);

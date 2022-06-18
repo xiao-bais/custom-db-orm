@@ -79,24 +79,23 @@ public class CustomJdbcManagement extends DbConnection {
      */
     protected void statementQuery(String sql, boolean sqlPrintSupport, Object... params) throws Exception {
         statement = conn.prepareStatement(sql);
-        if (dbCustomStrategy.isSqlOutPrinting() && sqlPrintSupport) {
-            SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlInfoQueryPrint();
-        }
-        if (params.length <= 0) return;
         for (int i = 0; i < params.length; i++) {
             statement.setObject((i + 1), params[i]);
+        }
+        if (dbCustomStrategy.isSqlOutPrinting() && sqlPrintSupport) {
+            SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlInfoQueryPrint();
         }
     }
 
     /**
      * 预编译-查询2（可预先获取结果集行数）
      */
-    protected void statementQueryReturnRows(String sql, Object... params) throws Exception {
+    protected void statementQueryReturnRows(String sql, boolean sqlPrintSupport, Object... params) throws Exception {
         statement = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         for (int i = 0; i < params.length; i++) {
             statement.setObject((i + 1), params[i]);
         }
-        if (dbCustomStrategy.isSqlOutPrinting()) {
+        if (dbCustomStrategy.isSqlOutPrinting() && sqlPrintSupport) {
             SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlInfoQueryPrint();
         }
     }
@@ -116,11 +115,19 @@ public class CustomJdbcManagement extends DbConnection {
      * 检查是否多结果
      */
     protected void checkMoreResult() throws SQLException {
-        resultSet.last();
-        final int rowsCount = resultSet.getRow();
-        resultSet.beforeFirst();
+        int rowsCount = this.getRowsCount();
         if (rowsCount > SymbolConstant.DEFAULT_ONE) {
             ExThrowsUtil.toCustom("只查一条，但查询到多条结果：(%s)", rowsCount);
         }
+    }
+
+    /**
+     * 获取结果集行数
+     */
+    protected int getRowsCount() throws SQLException {
+        resultSet.last();
+        final int rowsCount = resultSet.getRow();
+        resultSet.beforeFirst();
+        return rowsCount;
     }
 }

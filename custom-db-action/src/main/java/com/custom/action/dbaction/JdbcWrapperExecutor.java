@@ -27,6 +27,9 @@ import java.util.Map;
 @SuppressWarnings("unchecked")
 public class JdbcWrapperExecutor {
 
+    /**
+     * jdbc基础操作对象
+     */
     private CustomSelectJdbcBasic selectJdbc;
     private CustomUpdateJdbcBasic updateJdbc;
 

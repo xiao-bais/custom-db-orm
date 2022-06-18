@@ -9,7 +9,9 @@ import com.custom.comm.JudgeUtil;
 import com.custom.comm.RexUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.DbTable;
-import com.custom.jdbc.JdbcExecutorImpl;
+import com.custom.jdbc.condition.SelectSqlParamInfo;
+import com.custom.jdbc.select.CustomSelectJdbcBasic;
+import com.custom.jdbc.update.CustomUpdateJdbcBasic;
 import com.custom.springboot.scanner.PackageScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +36,8 @@ public class TableStructsInitializer {
     /**
      * jdbc执行对象
      */
-    private final JdbcExecutorImpl sqlHandler;
+    private final CustomSelectJdbcBasic selectJdbc;
+    private final CustomUpdateJdbcBasic updateJdbc;
 
     /**
      * 连接的数据库
@@ -57,12 +60,13 @@ public class TableStructsInitializer {
 
 
 
-    public TableStructsInitializer(String[] packageScans, JdbcExecutorImpl sqlHandler) {
+    public TableStructsInitializer(String[] packageScans, CustomSelectJdbcBasic selectJdbc, CustomUpdateJdbcBasic updateJdbc) {
         this.packageScans = packageScans;
-        this.sqlHandler = sqlHandler;
+        this.selectJdbc = selectJdbc;
+        this.updateJdbc = updateJdbc;
         this.addColumnSqlList = new ArrayList<>();
         this.waitCreateMapper = new HashMap<>();
-        this.dataBaseName = sqlHandler.getDataBase();
+        this.dataBaseName = updateJdbc.getDataBase();
     }
 
 
@@ -78,7 +82,7 @@ public class TableStructsInitializer {
                 createNewColumnSql.add(x);
                 logger.info("Added new column as '{}'\n", x);
             });
-            sqlHandler.executeTableSql(createNewColumnSql.toString());
+            updateJdbc.execTableInfo(createNewColumnSql.toString());
         }
 
         if (!waitCreateMapper.isEmpty()) {
@@ -88,7 +92,7 @@ public class TableStructsInitializer {
                 createNewTableSql.add(createTableSql);
                 logger.info("\nCreated new table for '{}' as ===================>\n\n{}\n", table, createTableSql);
             });
-            sqlHandler.executeTableSql(createNewTableSql.toString());
+            updateJdbc.execTableInfo(createNewTableSql.toString());
         }
     }
 
@@ -105,7 +109,8 @@ public class TableStructsInitializer {
             String exitsTableSql = waitUpdateSqlBuilder.getExitsTableSql(entityClass);
             String table = waitUpdateSqlBuilder.getTable();
             // 若表已存在，则进行下一步判断表字段是否存在
-            if (ConvertUtil.conBool(sqlHandler.executeExist(exitsTableSql))) {
+            Object exists = selectJdbc.selectObj(new SelectSqlParamInfo<>(Object.class, exitsTableSql));
+            if (ConvertUtil.conBool(exists)) {
                 buildColumnInfo(waitUpdateSqlBuilder, table);
                 continue;
             }
@@ -158,7 +163,8 @@ public class TableStructsInitializer {
     private void buildColumnInfo(TableSqlBuilder<?> sqlBuilder, String table) throws Exception {
         String selectColumnSql = String.format(SELECT_COLUMN_SQL,
                 sqlBuilder.getTable(), dataBaseName);
-        List<String> columnList = sqlHandler.selectList(String.class, false, selectColumnSql);
+        SelectSqlParamInfo<String> sqlParamInfo = new SelectSqlParamInfo<>(String.class, selectColumnSql, false);
+        List<String> columnList = selectJdbc.selectList(sqlParamInfo);
         List<String> truthColumnList = sqlBuilder.getFieldParserModels().stream().map(DbFieldParserModel::getColumn).collect(Collectors.toList());
         int size = truthColumnList.size();
         for (int i = 0; i < size; i++) {

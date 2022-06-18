@@ -198,7 +198,7 @@ public abstract class AbstractSqlBuilder<T> {
         if (JudgeUtil.isEmpty(sql)) {
             throw new NullPointerException();
         }
-        updateJdbc.executeUpdate(new SaveSqlParamInfo<>(sql, false));
+        updateJdbc.executeUpdate(new SaveSqlParamInfo<>(sql, false, null));
     }
 
     /**

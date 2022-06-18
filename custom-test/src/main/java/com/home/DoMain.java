@@ -50,13 +50,17 @@ public class DoMain {
         JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
         TableInfoCache.setUnderlineToCamel(true);
 
-//        InterfacesProxyExecutor proxyExecutor = new InterfacesProxyExecutor(dbDataSource, dbCustomStrategy);
-//        CustomTestDao customTestDao = proxyExecutor.createProxy(CustomTestDao.class);
+        InterfacesProxyExecutor proxyExecutor = new InterfacesProxyExecutor(dbDataSource, dbCustomStrategy);
+        CustomTestDao customTestDao = proxyExecutor.createProxy(CustomTestDao.class);
 
-        List<Employee> employees = jdbcDao.selectListByKeys(Employee.class, Arrays.asList(1,5,9,8));
-        List<Student> studentList = jdbcDao.selectList(Conditions.query(Student.class).lt("a.age", 23).onlyPrimary());
+        Student student = customTestDao.selectByOne("李佳琪");
 
-        System.out.println("employees = " + employees);
+        System.out.println("student = " + student);
+
+//        List<Employee> employees = jdbcDao.selectListByKeys(Employee.class, Arrays.asList(1,5,9,8));
+//        List<Student> studentList = jdbcDao.selectList(Conditions.query(Student.class).lt("a.age", 23).onlyPrimary());
+//
+//        System.out.println("employees = " + employees);
 
     }
 

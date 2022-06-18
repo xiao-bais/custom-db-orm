@@ -30,8 +30,8 @@ public class SaveSqlParamInfo<T> extends BaseSqlParamInfo{
         super(prepareSql, sqlPrintSupport, sqlParams);
     }
 
-    public SaveSqlParamInfo(String prepareSql, boolean sqlPrintSupport) {
-        super(prepareSql, sqlPrintSupport, new Object[]{});
+    public SaveSqlParamInfo(String prepareSql, Object[] sqlParams) {
+        super(prepareSql, true, sqlParams);
     }
 
     public List<T> getDataList() {
