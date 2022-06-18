@@ -88,6 +88,13 @@ public class DbUtil {
     }
 
     /**
+     * 逻辑删除字段组装
+     */
+    public static String formatLogicSql(String alias, String logicColumn, Object value) {
+        return String.format("%s.%s = %s", alias, logicColumn, value);
+    }
+
+    /**
      * 组装sql条件
      */
     public static String applyCondition(String v1, String v2, String v3) {

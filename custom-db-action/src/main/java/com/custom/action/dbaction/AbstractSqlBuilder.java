@@ -149,7 +149,7 @@ public abstract class AbstractSqlBuilder<T> {
         if (logicDeleteValue instanceof CharSequence) {
             logicDeleteValue = String.format("'%s'", logicDeleteValue);
         }
-        this.logicDeleteUpdateSql = String.format("%s.%s = %s", alias, logicColumn, logicDeleteValue);
+        this.logicDeleteUpdateSql = DbUtil.formatLogicSql(alias, logicColumn, logicDeleteValue);
     }
 
     public Object getLogicNotDeleteValue() {
@@ -161,7 +161,7 @@ public abstract class AbstractSqlBuilder<T> {
             logicNotDeleteValue = String.format("'%s'", logicNotDeleteValue);
         }
         this.logicNotDeleteValue = logicNotDeleteValue;
-        this.logicDeleteQuerySql = String.format("%s.%s = %s", alias, logicColumn, logicNotDeleteValue);
+        this.logicDeleteQuerySql = DbUtil.formatLogicSql(alias, logicColumn, logicNotDeleteValue);
     }
 
     public String getLogicDeleteQuerySql() {
