@@ -4,113 +4,30 @@ import com.alibaba.fastjson.JSONObject;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.exceptions.ExThrowsUtil;
-import com.custom.configuration.DbConnection;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
-import com.custom.jdbc.interfaces.CustomJdbcBasicSelect;
-import com.custom.jdbc.interfaces.CustomJdbcBasicUpdate;
-import com.custom.jdbc.param.SaveSqlParamInfo;
-import com.custom.jdbc.param.SelectSqlParamInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.custom.jdbc.condition.SelectSqlParamInfo;
+import com.custom.jdbc.select.CustomSelectJdbcBasic;
 
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.sql.*;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
  * @Author Xiao-Bai
  * @Date 2022/6/17 1:15
- * @Desc
+ * @Desc 基础查询
  */
 @SuppressWarnings("unchecked")
-public class CustomJdbcBasicImpl extends DbConnection
-        implements CustomJdbcBasicSelect, CustomJdbcBasicUpdate {
+public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements CustomSelectJdbcBasic {
 
-    private static final Logger logger = LoggerFactory.getLogger(JdbcExecutorImpl.class);
-
-    private final Connection conn;
-    private PreparedStatement statement = null;
-    private ResultSet resultSet = null;
     private final DbCustomStrategy dbCustomStrategy;
 
-//    private static ThreadLocal<Boolean> AUTO_COMMENT = new ThreadLocal<>();
-
-    public CustomJdbcBasicImpl(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
-        super(dbDataSource);
-        this.conn = super.getConnection();
-        this.dbCustomStrategy = dbCustomStrategy;
-    }
-
-    public DbCustomStrategy getDbCustomStrategy() {
-        return dbCustomStrategy;
-    }
-
-    /**
-     * 预编译-更新
-     */
-    private void statementUpdate(boolean isSave, String sql, Object... params) throws Exception {
-        statement = isSave ? conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS) : conn.prepareStatement(sql);
-        if (dbCustomStrategy.isSqlOutPrinting()) {
-            SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlInfoUpdatePrint();
-        }
-        if (params.length <= 0) return;
-        for (int i = 0; i < params.length; i++) {
-            statement.setObject((i + 1), params[i]);
-        }
-    }
-
-    /**
-     * 预编译-查询1
-     */
-    private void statementQuery(String sql, boolean sqlPrintSupport, Object... params) throws Exception {
-        statement = conn.prepareStatement(sql);
-        if (dbCustomStrategy.isSqlOutPrinting() && sqlPrintSupport) {
-            SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlInfoQueryPrint();
-        }
-        if (params.length <= 0) return;
-        for (int i = 0; i < params.length; i++) {
-            statement.setObject((i + 1), params[i]);
-        }
-    }
-
-    /**
-     * 预编译-查询2（可预先获取结果集行数）
-     */
-    private void statementQueryReturnRows(String sql, Object... params) throws Exception {
-        statement = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-        for (int i = 0; i < params.length; i++) {
-            statement.setObject((i + 1), params[i]);
-        }
-        if (dbCustomStrategy.isSqlOutPrinting()) {
-            SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlInfoQueryPrint();
-        }
-    }
-
-    /**
-     * 处理结果集对象
-     */
-    private <T> void handleResultMap(Map<String, T> map, ResultSetMetaData metaData) throws SQLException {
-        for (int i = 0; i < metaData.getColumnCount(); i++) {
-            String columnName = metaData.getColumnLabel(i + 1);
-            T object = (T) resultSet.getObject(i + 1);
-            map.put(columnName, object);
-        }
-    }
-
-    /**
-     * 检查是否多结果
-     */
-    private void checkMoreResult() throws SQLException {
-        resultSet.last();
-        final int rowsCount = resultSet.getRow();
-        resultSet.beforeFirst();
-        if (rowsCount > SymbolConstant.DEFAULT_ONE) {
-            ExThrowsUtil.toCustom("只查一条，但查询到多条结果：(%s)", rowsCount);
-        }
+    public CustomSelectJdbcBasicImpl(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
+        super(dbDataSource, dbCustomStrategy);
+        this.dbCustomStrategy = getDbCustomStrategy();
     }
 
     /**
@@ -122,7 +39,7 @@ public class CustomJdbcBasicImpl extends DbConnection
         List<T> list = new ArrayList<>();
         try {
             statementQuery(params.getPrepareSql(), params.isSqlPrintSupport(), params.getSqlParams());
-            resultSet = statement.executeQuery();
+            ResultSet resultSet = handleQueryStatement();
             ResultSetMetaData metaData = resultSet.getMetaData();
             while (resultSet.next()) {
                 T t;
@@ -136,7 +53,9 @@ public class CustomJdbcBasicImpl extends DbConnection
                 list.add(t);
             }
         } catch (SQLException e) {
-            SqlOutPrintBuilder.build(params.getPrepareSql(), params.getSqlParams(), dbCustomStrategy.isSqlOutPrintExecute()).sqlErrPrint();
+            SqlOutPrintBuilder
+                    .build(params.getPrepareSql(), params.getSqlParams(), dbCustomStrategy.isSqlOutPrintExecute())
+                    .sqlErrPrint();
             throw e;
         }
         return list;
@@ -151,7 +70,7 @@ public class CustomJdbcBasicImpl extends DbConnection
         Map<String, Object> map = new HashMap<>();
         try {
             statementQuery(params.getPrepareSql(), params.isSqlPrintSupport(), params.getSqlParams());
-            resultSet = statement.executeQuery();
+            ResultSet resultSet = handleQueryStatement();
             this.checkMoreResult();
             ResultSetMetaData metaData = resultSet.getMetaData();
             if (resultSet.next()) {
@@ -178,7 +97,7 @@ public class CustomJdbcBasicImpl extends DbConnection
         Set<T> resSet = new HashSet<>();
         try {
             statementQuery(params.getPrepareSql(), params.isSqlPrintSupport(), params.getSqlParams());
-            resultSet = statement.executeQuery();
+            ResultSet resultSet = handleQueryStatement();
             while (resultSet.next()) {
                 T object = (T) resultSet.getObject(SymbolConstant.DEFAULT_ONE);
                 resSet.add(object);
@@ -200,7 +119,7 @@ public class CustomJdbcBasicImpl extends DbConnection
         Map<String, T> resMap = new HashMap<>();
         try {
             statementQuery(params.getPrepareSql(), params.isSqlPrintSupport(), params.getSqlParams());
-            resultSet = statement.executeQuery();
+            ResultSet resultSet = handleQueryStatement();
             if (resultSet.next()) {
                 this.handleResultMap(resMap, resultSet.getMetaData());
             }
@@ -222,7 +141,7 @@ public class CustomJdbcBasicImpl extends DbConnection
         List<Map<String, T>> mapList = new ArrayList<>();
         try {
             statementQuery(params.getPrepareSql(), params.isSqlPrintSupport(), params.getSqlParams());
-            resultSet = statement.executeQuery();
+            ResultSet resultSet = handleQueryStatement();
             if (!params.isSupportMoreResult()) {
                 this.checkMoreResult();
             }
@@ -248,11 +167,11 @@ public class CustomJdbcBasicImpl extends DbConnection
     public <T> T[] selectArrays(SelectSqlParamInfo<T> params) throws Exception {
         try {
             statementQueryReturnRows(params.getPrepareSql(), params.getSqlParams());
-            resultSet = statement.executeQuery();
+            ResultSet resultSet = handleQueryStatement();
             resultSet.last();
             final int rowsCount = resultSet.getRow();
             resultSet.beforeFirst();
-            int count = this.resultSet.getMetaData().getColumnCount();
+            int count = resultSet.getMetaData().getColumnCount();
             if (count == 0) {
                 return null;
             } else if (count > 1) {
@@ -261,8 +180,8 @@ public class CustomJdbcBasicImpl extends DbConnection
 
             Object res = java.lang.reflect.Array.newInstance(params.getEntityClass(), rowsCount);
             int len = 0;
-            while (this.resultSet.next()) {
-                T val = (T) this.resultSet.getObject(SymbolConstant.DEFAULT_ONE);
+            while (resultSet.next()) {
+                T val = (T) resultSet.getObject(SymbolConstant.DEFAULT_ONE);
                 Array.set(res, len, val);
                 len++;
             }
@@ -284,7 +203,7 @@ public class CustomJdbcBasicImpl extends DbConnection
         Object result = null;
         try {
             statementQuery(params.getPrepareSql(), params.isSqlPrintSupport(), params);
-            resultSet = statement.executeQuery();
+            ResultSet resultSet = handleQueryStatement();
             this.checkMoreResult();
             if (resultSet.next()) {
                 result = resultSet.getObject(SymbolConstant.DEFAULT_ONE);
@@ -306,7 +225,7 @@ public class CustomJdbcBasicImpl extends DbConnection
         List<Object> result = new ArrayList<>();
         try {
             statementQuery(params.getPrepareSql(), params.isSqlPrintSupport(), params.getSqlParams());
-            resultSet = statement.executeQuery();
+            ResultSet resultSet = handleQueryStatement();
             while (resultSet.next()) {
                 result.add(resultSet.getObject(SymbolConstant.DEFAULT_ONE));
             }
@@ -317,73 +236,6 @@ public class CustomJdbcBasicImpl extends DbConnection
             throw e;
         }
         return result;
-    }
-
-
-    /**
-     * 通用添加、修改、删除
-     */
-    @Override
-    public int executeUpdate(SaveSqlParamInfo<Object> params) throws Exception {
-        int res;
-        try {
-            statementUpdate(false, params.getPrepareSql(), params.getSqlParams());
-            res = statement.executeUpdate();
-        } catch (SQLException e) {
-            SqlOutPrintBuilder
-                    .build(params.getPrepareSql(), params.getSqlParams(), dbCustomStrategy.isSqlOutPrintExecute())
-                    .sqlErrPrint();
-            throw e;
-        }
-        return res;
-    }
-
-    /**
-     * 插入
-     */
-    public <T> int executeSave(SaveSqlParamInfo<T> params) throws Exception {
-        int res;
-        try {
-            statementUpdate(true, params.getPrepareSql(), params.getSqlParams());
-            res = statement.executeUpdate();
-        } catch (SQLException e) {
-            SqlOutPrintBuilder
-                    .build(params.getPrepareSql(), params.getSqlParams(), dbCustomStrategy.isSqlOutPrintExecute())
-                    .sqlErrPrint();
-            throw e;
-        }
-        resultSet = statement.getGeneratedKeys();
-        int count = 0;
-        Field keyField = params.getKeyField();
-        while (resultSet.next()) {
-            T t = params.getDataList().get(count);
-            PropertyDescriptor pd = new PropertyDescriptor(keyField.getName(), t.getClass());
-            Method writeMethod = pd.getWriteMethod();
-            String val = String.valueOf(resultSet.getObject(1));
-            if (Long.class.isAssignableFrom(keyField.getType()) || keyField.getType().equals(Long.TYPE)) {
-                writeMethod.invoke(t, Long.parseLong(val));
-            } else if (Integer.class.isAssignableFrom(keyField.getType()) || keyField.getType().equals(Integer.TYPE)) {
-                writeMethod.invoke(t, Integer.parseInt(val));
-            }
-            // else ignore...
-            count++;
-        }
-        return res;
-    }
-
-    /**
-     * 执行表(字段)结构创建或删除
-     */
-    public void execTableInfo(String sql) {
-        try {
-            statement = conn.prepareStatement(sql);
-            statement.execute();
-        }catch (Exception e) {
-            SqlOutPrintBuilder
-                    .build(sql, new String[]{}, dbCustomStrategy.isSqlOutPrintExecute())
-                    .sqlErrPrint();
-            logger.error(e.toString(), e);
-        }
     }
 
 }

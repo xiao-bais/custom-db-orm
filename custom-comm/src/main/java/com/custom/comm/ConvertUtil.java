@@ -98,7 +98,7 @@ public class ConvertUtil {
     }
 
     public static boolean conBool(Double i) {
-        return i != null && i > 0.0;
+        return i != null && i > 0D;
     }
 
     public static boolean conBool(Object i) {
@@ -116,6 +116,9 @@ public class ConvertUtil {
         }
         if (i instanceof Double) {
             return conBool((Double) i);
+        }
+        if (i instanceof CharSequence) {
+            return JudgeUtil.isNotEmpty(i);
         }
         return false;
     }

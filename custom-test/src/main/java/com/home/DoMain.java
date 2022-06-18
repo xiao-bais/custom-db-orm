@@ -54,6 +54,7 @@ public class DoMain {
 //        CustomTestDao customTestDao = proxyExecutor.createProxy(CustomTestDao.class);
 
         List<Employee> employees = jdbcDao.selectListByKeys(Employee.class, Arrays.asList(1,5,9,8));
+        List<Student> studentList = jdbcDao.selectList(Conditions.query(Student.class).lt("a.age", 23).onlyPrimary());
 
         System.out.println("employees = " + employees);
 

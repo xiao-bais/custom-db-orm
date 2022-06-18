@@ -12,7 +12,8 @@ import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.page.DbPageRows;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
-import com.custom.jdbc.JdbcExecutorImpl;
+import com.custom.jdbc.CustomSelectJdbcBasicImpl;
+import com.custom.jdbc.CustomUpdateJdbcBasicImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,11 +27,14 @@ import java.util.stream.Collectors;
  * @desc:
  */
 public class JdbcAction extends AbstractSqlExecutor {
+
     private static final Logger logger = LoggerFactory.getLogger(JdbcAction.class);
 
     public JdbcAction(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         // 配置sql执行器
-        this.setJdbcExecutor(new JdbcExecutorImpl(dbDataSource, dbCustomStrategy));
+        this.setSelectJdbc(new CustomSelectJdbcBasicImpl(dbDataSource, dbCustomStrategy));
+        this.setUpdateJdbc(new CustomUpdateJdbcBasicImpl(dbDataSource, dbCustomStrategy));
+//        this.setJdbcExecutor(new JdbcExecutorImpl(dbDataSource, dbCustomStrategy));
         // 配置sql执行策略
         this.setDbCustomStrategy(dbCustomStrategy);
         // 初始化逻辑删除策略
@@ -233,7 +237,7 @@ public class JdbcAction extends AbstractSqlExecutor {
         HandleInsertSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.INSERT);
         String insertSql = sqlBuilder.buildSql();
         DbKeyParserModel<T> keyParserModel = sqlBuilder.getKeyParserModel();
-        return executeInsert(insertSql, Collections.singletonList(t),  keyParserModel.getKey(), keyParserModel.getType(), sqlBuilder.getSqlParams().toArray());
+        return executeInsert(insertSql, Collections.singletonList(t),  keyParserModel.getField(), sqlBuilder.getSqlParams().toArray());
     }
 
     @Override
@@ -243,17 +247,15 @@ public class JdbcAction extends AbstractSqlExecutor {
         DbKeyParserModel<T> keyParserModel = sqlBuilder.getKeyParserModel();
         int res = 0;
         String insertSql;
-        String keyField = keyParserModel.getKey();
-        Class<?> keyType = keyParserModel.getType();
         sqlBuilder.dataInitialize();
         if (sqlBuilder.isHasSubSelect()) {
             for (int i = 0; i < sqlBuilder.getSubCount(); i++) {
                 insertSql = sqlBuilder.buildSql();
-                res += executeInsert(insertSql, sqlBuilder.getSubList(), keyField, keyType, sqlBuilder.getSqlParams().toArray());
+                res += executeInsert(insertSql, sqlBuilder.getSubList(), keyParserModel.getField(), sqlBuilder.getSqlParams().toArray());
             }
         }else {
              insertSql = sqlBuilder.buildSql();
-            res = executeInsert(insertSql, ts, keyField, keyType, sqlBuilder.getSqlParams().toArray());
+            res = executeInsert(insertSql, ts, keyParserModel.getField(), sqlBuilder.getSqlParams().toArray());
         }
         return res;
     }

@@ -1,4 +1,4 @@
-package com.custom.jdbc.param;
+package com.custom.jdbc.condition;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -26,19 +26,20 @@ public class SaveSqlParamInfo<T> extends BaseSqlParamInfo{
         this.keyField = keyField;
     }
 
-    public List<T> getDataList() {
-        return dataList;
+    public SaveSqlParamInfo(String prepareSql, boolean sqlPrintSupport, Object[] sqlParams) {
+        super(prepareSql, sqlPrintSupport, sqlParams);
     }
 
-    public void setDataList(List<T> dataList) {
-        this.dataList = dataList;
+    public SaveSqlParamInfo(String prepareSql, boolean sqlPrintSupport) {
+        super(prepareSql, sqlPrintSupport, new Object[]{});
+    }
+
+    public List<T> getDataList() {
+        return dataList;
     }
 
     public Field getKeyField() {
         return keyField;
     }
 
-    public void setKeyField(Field keyField) {
-        this.keyField = keyField;
-    }
 }

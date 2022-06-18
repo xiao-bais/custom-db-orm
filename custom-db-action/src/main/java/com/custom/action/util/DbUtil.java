@@ -1,17 +1,16 @@
 package com.custom.action.util;
 
 import com.custom.action.sqlparser.TableInfoCache;
-import com.custom.comm.CustomUtil;
+import com.custom.comm.ConvertUtil;
+import com.custom.comm.JudgeUtil;
 import com.custom.comm.RexUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.DbKey;
-import com.custom.comm.annotations.DbRelated;
-import com.custom.comm.enums.DbType;
 import com.custom.comm.enums.SqlLike;
-import com.custom.jdbc.CustomJdbcExecutor;
+import com.custom.jdbc.select.CustomSelectJdbcBasic;
+import com.custom.jdbc.condition.SelectSqlParamInfo;
 
 import java.lang.reflect.Field;
-import java.util.Objects;
 
 /**
  * @author Xiao-Bai
@@ -54,15 +53,19 @@ public class DbUtil {
     /**
      * 由于部分表可能没有逻辑删除字段，所以在每一次执行时，都需检查该表有没有逻辑删除的字段，以保证sql正常执行
      */
-    public static boolean checkLogicFieldIsExist(String table, String logicField, CustomJdbcExecutor jdbcExecutor) throws Exception {
+    public static boolean checkLogicFieldIsExist(String table, String logicField, CustomSelectJdbcBasic select) throws Exception {
+        if (JudgeUtil.isEmpty(logicField)) {
+            return false;
+        }
         Boolean existsLogic = TableInfoCache.isExistsLogic(table);
         if (existsLogic != null) {
             return existsLogic;
         }
         String existSql = String.format("select count(*) count from information_schema.columns where table_name = '%s' and column_name = '%s'", table, logicField);
-        long count = jdbcExecutor.executeExist(existSql);
-        TableInfoCache.setTableLogic(table, count > 0);
-        return count > 0;
+        Object obj = select.selectObj(new SelectSqlParamInfo<>(Object.class, existSql, false));
+        boolean conBool = ConvertUtil.conBool(obj);
+        TableInfoCache.setTableLogic(table, conBool);
+        return conBool;
     }
 
     /**

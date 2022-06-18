@@ -2,12 +2,13 @@ package com.custom.action.dbaction;
 
 import com.custom.action.sqlparser.DbFieldParserModel;
 import com.custom.action.sqlparser.DbKeyParserModel;
-import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.util.DbUtil;
 import com.custom.action.wrapper.ColumnParseHandler;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
-import com.custom.jdbc.CustomJdbcExecutor;
+import com.custom.jdbc.select.CustomSelectJdbcBasic;
+import com.custom.jdbc.update.CustomUpdateJdbcBasic;
+import com.custom.jdbc.condition.SaveSqlParamInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,9 @@ public abstract class AbstractSqlBuilder<T> {
     private List<DbFieldParserModel<T>> fieldParserModels;
     private Map<String, String> fieldMapper;
     private Map<String, String> columnMapper;
-    private CustomJdbcExecutor jdbcExecutor;
+//    private CustomJdbcExecutor jdbcExecutor;
+    private CustomSelectJdbcBasic selectJdbc;
+    private CustomUpdateJdbcBasic updateJdbc;
     private ColumnParseHandler<T> columnParseHandler;
     private Boolean primaryTable = false;
     private String logicColumn;
@@ -169,8 +172,12 @@ public abstract class AbstractSqlBuilder<T> {
         return this.logicDeleteUpdateSql;
     }
 
-    public void setJdbcExecutor(CustomJdbcExecutor jdbcExecutor) {
-        this.jdbcExecutor = jdbcExecutor;
+    public void setSelectJdbc(CustomSelectJdbcBasic selectJdbc) {
+        this.selectJdbc = selectJdbc;
+    }
+
+    public void setUpdateJdbc(CustomUpdateJdbcBasic updateJdbc) {
+        this.updateJdbc = updateJdbc;
     }
 
     public ColumnParseHandler<T> getColumnParseHandler() {
@@ -192,7 +199,7 @@ public abstract class AbstractSqlBuilder<T> {
         if (JudgeUtil.isEmpty(sql)) {
             throw new NullPointerException();
         }
-        jdbcExecutor.executeUpdateNotPrintSql(sql);
+        updateJdbc.executeUpdate(new SaveSqlParamInfo<>(sql, false));
     }
 
     /**
@@ -202,6 +209,6 @@ public abstract class AbstractSqlBuilder<T> {
         if (CustomUtil.isBlank(logicColumn)) {
             return false;
         }
-        return DbUtil.checkLogicFieldIsExist(table, logicColumn, jdbcExecutor);
+        return DbUtil.checkLogicFieldIsExist(table, logicColumn, selectJdbc);
     }
 }

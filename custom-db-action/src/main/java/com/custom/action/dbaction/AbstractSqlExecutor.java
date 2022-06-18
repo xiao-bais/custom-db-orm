@@ -2,9 +2,7 @@ package com.custom.action.dbaction;
 
 import com.custom.action.interfaces.FullSqlExecutorHandler;
 import com.custom.action.sqlparser.HandleSelectSqlBuilder;
-import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableSqlBuilder;
-import com.custom.action.util.DbUtil;
 import com.custom.action.wrapper.ConditionWrapper;
 import com.custom.action.wrapper.SFunction;
 import com.custom.comm.CustomUtil;
@@ -24,7 +22,7 @@ import java.util.*;
  * @Desc：方法执行处理抽象入口
  **/
 @SuppressWarnings("unchecked")
-public abstract class AbstractSqlExecutor extends SimpleJdbcExecutor {
+public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
 
     /*--------------------------------------- select ---------------------------------------*/
     public abstract <T> List<T> selectList(Class<T> t, String condition, Object... params) throws Exception;

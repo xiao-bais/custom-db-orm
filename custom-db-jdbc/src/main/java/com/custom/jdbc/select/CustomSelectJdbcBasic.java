@@ -1,6 +1,6 @@
-package com.custom.jdbc.interfaces;
+package com.custom.jdbc.select;
 
-import com.custom.jdbc.param.SelectSqlParamInfo;
+import com.custom.jdbc.condition.SelectSqlParamInfo;
 
 import java.util.List;
 import java.util.Map;
@@ -11,7 +11,8 @@ import java.util.Set;
  * @Date 2022/6/17 1:06
  * @Desc 基础jdbc查询接口
  */
-public interface CustomJdbcBasicSelect {
+//
+public interface CustomSelectJdbcBasic {
 
     /**
      * 查询多条记录（通用型）

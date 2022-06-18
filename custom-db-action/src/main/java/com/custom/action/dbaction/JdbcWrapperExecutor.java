@@ -4,13 +4,17 @@ import com.custom.action.interfaces.FullSqlExecutorHandler;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableSqlBuilder;
 import com.custom.action.util.DbUtil;
+import com.custom.comm.ConvertUtil;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
-import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.page.DbPageRows;
-import com.custom.jdbc.CustomJdbcExecutor;
+import com.custom.jdbc.select.CustomSelectJdbcBasic;
+import com.custom.jdbc.update.CustomUpdateJdbcBasic;
+import com.custom.jdbc.condition.SaveSqlParamInfo;
+import com.custom.jdbc.condition.SelectSqlParamInfo;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,133 +22,138 @@ import java.util.Map;
 /**
  * @Author Xiao-Bai
  * @Date 2022/6/16 13:18
- * @Desc 简单的jdbc执行器
+ * @Desc jdbc条件封装执行
  */
 @SuppressWarnings("unchecked")
-public class SimpleJdbcExecutor {
+public class JdbcWrapperExecutor {
 
-    private CustomJdbcExecutor jdbcExecutor;
+    private CustomSelectJdbcBasic selectJdbc;
+    private CustomUpdateJdbcBasic updateJdbc;
 
-    public void setJdbcExecutor(CustomJdbcExecutor jdbcExecutor) {
-        this.jdbcExecutor = jdbcExecutor;
+    public void setSelectJdbc(CustomSelectJdbcBasic selectJdbc) {
+        this.selectJdbc = selectJdbc;
     }
 
-    public CustomJdbcExecutor getJdbcExecutor() {
-        return jdbcExecutor;
+    public void setUpdateJdbc(CustomUpdateJdbcBasic updateJdbc) {
+        this.updateJdbc = updateJdbc;
     }
 
     /**
      * 查询数组
      */
     public <T> T[] selectArrays(Class<T> t, String sql, Object... params) throws Exception {
-        return jdbcExecutor.selectArray(t, sql, params);
+        checkEmptySql(sql);
+        SelectSqlParamInfo<T> paramInfo = new SelectSqlParamInfo<>(t, sql, params);
+        return selectJdbc.selectArrays(paramInfo);
     }
-
 
     /**
      * 纯sql查询集合
      */
     public <T> List<T> selectBySql(Class<T> t, String sql, Object... params) throws Exception {
-        return jdbcExecutor.selectList(t, true, sql, params);
+        checkEmptySql(sql);
+        SelectSqlParamInfo<T> paramInfo = new SelectSqlParamInfo<>(t, sql, params);
+        return selectJdbc.selectList(paramInfo);
     }
 
     /**
      * 纯sql查询单条记录
      */
     public <T> T selectOneBySql(Class<T> t, String sql, Object... params) throws Exception {
-        List<T> queryList = jdbcExecutor.selectList(t, true, sql, params);
-        int size = queryList.size();
-        if (size == 0) {
-            return null;
-        } else if (size > 1) {
-            throw new CustomCheckException(String.format("One was queried, but more were found:(%s) ", size));
-        }
-        return queryList.get(SymbolConstant.DEFAULT_ZERO);
+        checkEmptySql(sql);
+        SelectSqlParamInfo<T> paramInfo = new SelectSqlParamInfo<>(t, sql, params);
+        return selectJdbc.selectOne(paramInfo);
     }
 
     /**
      * 纯sql查询单条记录(映射到Map)
      */
     public Map<String, Object> selectMapBySql(String sql, Object... params) throws Exception {
-        List<Map<String, Object>> mapList = jdbcExecutor.selectMapsBySql(sql, false, params);
-        return mapList.get(0);
+        checkEmptySql(sql);
+        SelectSqlParamInfo<Object> paramInfo = new SelectSqlParamInfo<>(Object.class, sql, params);
+        return selectJdbc.selectMap(paramInfo);
     }
 
     /**
      * 纯sql查询多条记录(映射到Map)
      */
     public List<Map<String, Object>> selectMapsBySql(String sql, Object... params) throws Exception {
-        return jdbcExecutor.selectMapsBySql(sql, true, params);
+        checkEmptySql(sql);
+        SelectSqlParamInfo<Object> paramInfo = new SelectSqlParamInfo<>(Object.class, sql, params);
+        return selectJdbc.selectMaps(paramInfo);
     }
 
     /**
      * 纯sql查询单个字段
      */
     public Object selectObjBySql(String sql, Object... params) throws Exception {
-        if (JudgeUtil.isEmpty(sql)) {
-            ExThrowsUtil.toCustom("The Sql to be Not Empty");
-        }
-        return jdbcExecutor.selectObjBySql(sql, params);
+        checkEmptySql(sql);
+        SelectSqlParamInfo<Object> paramInfo = new SelectSqlParamInfo<>(Object.class, sql, params);
+        return selectJdbc.selectObj(paramInfo);
     }
 
     /**
      * 纯sql查询单个字段集合
      */
     public List<Object> selectObjsBySql(String sql, Object... params) throws Exception {
-        if (JudgeUtil.isEmpty(sql)) {
-            ExThrowsUtil.toNull("The Sql to be Not Empty");
-        }
-        return jdbcExecutor.selectObjsSql(sql, params);
+        checkEmptySql(sql);
+        SelectSqlParamInfo<Object> paramInfo = new SelectSqlParamInfo<>(Object.class, sql, params);
+        return selectJdbc.selectObjs(paramInfo);
     }
 
     /**
      * 纯sql增删改
      */
     public int executeSql(String sql, Object... params) throws Exception {
-        if (JudgeUtil.isEmpty(sql)) {
-            ExThrowsUtil.toNull("The Sql to be Not Empty");
-        }
-        return jdbcExecutor.executeUpdate(sql, params);
+        checkEmptySql(sql);
+        SaveSqlParamInfo<Object> paramInfo = new SaveSqlParamInfo<>(sql, true, params);
+        return updateJdbc.executeUpdate(paramInfo);
     }
 
     /**
      * 直接执行查询，属于内部执行
      */
     public <T> List<T> executeQueryNotPrintSql(Class<T> t, String sql, Object... params) throws Exception {
-        if (JudgeUtil.isEmpty(sql)) {
-            ExThrowsUtil.toNull("The Sql to be Not Empty");
-        }
-        return jdbcExecutor.selectList(t, false, sql, params);
+        checkEmptySql(sql);
+        SelectSqlParamInfo<T> paramInfo = new SelectSqlParamInfo<>(t, sql, false, params);
+        return selectJdbc.selectList(paramInfo);
     }
 
     /**
      * 创建/删除表
      */
     public void execTable(String sql) {
-        jdbcExecutor.executeTableSql(sql);
+        updateJdbc.execTableInfo(sql);
     }
 
     /**
      * 查询该表是否存在
      */
     public boolean hasTableInfo(String sql) throws Exception {
-        return jdbcExecutor.executeExist(sql) > 0L;
+        Object obj = selectJdbc.selectObj(new SelectSqlParamInfo<>(Object.class, sql, false));
+        return ConvertUtil.conBool(obj);
     }
 
     /**
      * 添加
      */
-    public <T> int executeInsert(String sql, List<T> obj, String key, Class<?> keyType,  Object... params) throws Exception {
+    public <T> int executeInsert(String sql, List<T> obj, Field keyField, Object... params) throws Exception {
+        checkEmptySql(sql);
+        SaveSqlParamInfo<T> paramInfo = new SaveSqlParamInfo<>(obj, keyField, sql, true, params);
+        return updateJdbc.executeSave(paramInfo);
+    }
+
+
+    private void checkEmptySql(String sql) {
         if (JudgeUtil.isEmpty(sql)) {
             ExThrowsUtil.toNull("The Sql to be Not Empty");
         }
-        return jdbcExecutor.executeInsert(obj, sql, key, keyType, params);
     }
 
     /**
      * 分页数据整合
      */
-    protected  <T> void buildPageResult(Class<T> t, String selectSql, DbPageRows<T> dbPageRows, Object... params) throws Exception {
+    protected <T> void buildPageResult(Class<T> t, String selectSql, DbPageRows<T> dbPageRows, Object... params) throws Exception {
         List<T> dataList = new ArrayList<>();
         long count = (long) selectObjBySql(String.format("select count(0) from (%s) xxx ", selectSql), params);
         if (count > 0) {
@@ -160,8 +169,9 @@ public class SimpleJdbcExecutor {
     /**
      * 添加逻辑删除的部分sql
      */
-    public FullSqlExecutorHandler handleLogicWithCondition(String alias, final String condition, String logicColumn, String logicSql, String tableName) throws Exception {
-        if(!DbUtil.checkLogicFieldIsExist(tableName, logicColumn, getJdbcExecutor())) {
+    public FullSqlExecutorHandler handleLogicWithCondition(String alias, final String condition,
+                                  String logicColumn, String logicSql, String tableName) throws Exception {
+        if(!DbUtil.checkLogicFieldIsExist(tableName, logicColumn, this.selectJdbc)) {
             logicSql = SymbolConstant.EMPTY;
         }
         final String finalLogicSql = logicSql;
@@ -182,8 +192,10 @@ public class SimpleJdbcExecutor {
      * 从缓存中获取实体解析模板，若缓存中没有，就重新构造模板（查询、删除、创建删除表）
      */
     protected <T> TableSqlBuilder<T> getEntityModelCache(Class<T> t) {
-        TableSqlBuilder<T> tableModel = TableInfoCache.getTableModel(t);
-        tableModel.setJdbcExecutor(getJdbcExecutor());
+        TableSqlBuilder<T> tableModelCache = TableInfoCache.getTableModel(t);
+        TableSqlBuilder<T> tableModel = tableModelCache.clone();
+        tableModel.setSelectJdbc(this.selectJdbc);
+        tableModel.setUpdateJdbc(this.updateJdbc);
         return tableModel;
     }
 
@@ -195,7 +207,8 @@ public class SimpleJdbcExecutor {
         TableSqlBuilder<T> tableModel = tableModelCache.clone();
         tableModel.setEntity(tList.get(0));
         tableModel.setList(tList);
-        tableModel.setJdbcExecutor(getJdbcExecutor());
+        tableModel.setSelectJdbc(this.selectJdbc);
+        tableModel.setUpdateJdbc(this.updateJdbc);
         return tableModel;
     }
 }

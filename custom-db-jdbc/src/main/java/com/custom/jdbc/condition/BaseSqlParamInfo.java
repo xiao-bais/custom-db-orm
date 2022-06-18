@@ -1,4 +1,4 @@
-package com.custom.jdbc.param;
+package com.custom.jdbc.condition;
 
 import java.util.Objects;
 
@@ -12,16 +12,16 @@ public class BaseSqlParamInfo {
     /**
      * 待执行的sql
      */
-    private String prepareSql;
+    private final String prepareSql;
 
     /**
      * 是否支持sql打印
      */
-    private boolean sqlPrintSupport;
+    private final boolean sqlPrintSupport;
     /**
      * sql参数
      */
-    private Object[] sqlParams;
+    private final Object[] sqlParams;
 
     public BaseSqlParamInfo(String prepareSql, boolean sqlPrintSupport, Object[] sqlParams) {
         this.prepareSql = prepareSql;
@@ -33,26 +33,15 @@ public class BaseSqlParamInfo {
         return prepareSql;
     }
 
-    public void setPrepareSql(String prepareSql) {
-        this.prepareSql = prepareSql;
-    }
-
     public boolean isSqlPrintSupport() {
         return sqlPrintSupport;
     }
 
-    public void setSqlPrintSupport(boolean sqlPrintSupport) {
-        this.sqlPrintSupport = sqlPrintSupport;
-    }
-
     public Object[] getSqlParams() {
         if (Objects.isNull(this.sqlParams)) {
-            return new Object[0];
+            return new Object[]{};
         }
         return sqlParams;
     }
 
-    public void setSqlParams(Object[] sqlParams) {
-        this.sqlParams = sqlParams;
-    }
 }

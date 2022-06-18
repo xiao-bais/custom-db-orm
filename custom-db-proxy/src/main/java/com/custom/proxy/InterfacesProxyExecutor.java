@@ -13,6 +13,8 @@ import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
 import com.custom.jdbc.JdbcExecutorImpl;
+import com.custom.jdbc.select.CustomSelectJdbcBasic;
+import com.custom.jdbc.update.CustomUpdateJdbcBasic;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.*;
@@ -35,6 +37,8 @@ public class InterfacesProxyExecutor implements InvocationHandler {
 
     private String targetClassName;
     private final JdbcExecutorImpl executeAction;
+    private CustomSelectJdbcBasic selectJdbc;
+    private CustomUpdateJdbcBasic updateJdbc;
 
     public InterfacesProxyExecutor(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         executeAction = new JdbcExecutorImpl(dbDataSource, dbCustomStrategy);

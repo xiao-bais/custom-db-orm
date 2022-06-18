@@ -1,4 +1,4 @@
-package com.custom.jdbc.param;
+package com.custom.jdbc.condition;
 
 /**
  * @Author Xiao-Bai
@@ -19,6 +19,16 @@ public class SelectSqlParamInfo<T> extends BaseSqlParamInfo{
 
     public SelectSqlParamInfo(Class<T> entityClass, String selectSql, boolean sqlPrintSupport, Object[] sqlParams) {
         super(selectSql, sqlPrintSupport, sqlParams);
+        this.entityClass = entityClass;
+    }
+
+    public SelectSqlParamInfo(Class<T> entityClass, String selectSql, boolean sqlPrintSupport) {
+        super(selectSql, sqlPrintSupport, new Object[]{});
+        this.entityClass = entityClass;
+    }
+
+    public SelectSqlParamInfo(Class<T> entityClass, String selectSql) {
+        super(selectSql, true, new Object[]{});
         this.entityClass = entityClass;
     }
 

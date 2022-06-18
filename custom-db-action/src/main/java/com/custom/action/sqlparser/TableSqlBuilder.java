@@ -8,7 +8,8 @@ import com.custom.comm.annotations.*;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.configuration.DbConnection;
-import com.custom.jdbc.CustomJdbcExecutor;
+import com.custom.jdbc.select.CustomSelectJdbcBasic;
+import com.custom.jdbc.update.CustomUpdateJdbcBasic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,7 +86,8 @@ public class TableSqlBuilder<T> implements Cloneable {
     /**
      * sql执行对象（jdbc）
      */
-    private CustomJdbcExecutor jdbcExecutor;
+    private CustomSelectJdbcBasic selectJdbc;
+    private CustomUpdateJdbcBasic updateJdbc;
 
 
     /**
@@ -329,7 +331,8 @@ public class TableSqlBuilder<T> implements Cloneable {
             // 初始化
             initializeSqlBuilder(sqlBuilder);
             // 注入sql执行对象
-            sqlBuilder.setJdbcExecutor(jdbcExecutor);
+            sqlBuilder.setSelectJdbc(this.selectJdbc);
+            sqlBuilder.setUpdateJdbc(this.updateJdbc);
         }
     }
 
@@ -441,8 +444,12 @@ public class TableSqlBuilder<T> implements Cloneable {
         return columnMapper;
     }
 
-    public void setJdbcExecutor(CustomJdbcExecutor jdbcExecutor) {
-        this.jdbcExecutor = jdbcExecutor;
+    public void setSelectJdbc(CustomSelectJdbcBasic selectJdbc) {
+        this.selectJdbc = selectJdbc;
+    }
+
+    public void setUpdateJdbc(CustomUpdateJdbcBasic updateJdbc) {
+        this.updateJdbc = updateJdbc;
     }
 
     public AbstractSqlBuilder<T> getSqlBuilder() {

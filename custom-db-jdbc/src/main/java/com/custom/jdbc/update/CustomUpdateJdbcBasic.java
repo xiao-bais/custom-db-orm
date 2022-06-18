@@ -1,13 +1,13 @@
-package com.custom.jdbc.interfaces;
+package com.custom.jdbc.update;
 
-import com.custom.jdbc.param.SaveSqlParamInfo;
+import com.custom.jdbc.condition.SaveSqlParamInfo;
 
 /**
  * @Author Xiao-Bai
  * @Date 2022/6/18 0:03
  * @Desc 基础jdbc增删改接口
  */
-public interface CustomJdbcBasicUpdate {
+public interface CustomUpdateJdbcBasic {
 
     /**
      * 通用添加、修改、删除
