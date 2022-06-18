@@ -31,7 +31,6 @@ public abstract class AbstractSqlBuilder<T> {
     private List<DbFieldParserModel<T>> fieldParserModels;
     private Map<String, String> fieldMapper;
     private Map<String, String> columnMapper;
-//    private CustomJdbcExecutor jdbcExecutor;
     private CustomSelectJdbcBasic selectJdbc;
     private CustomUpdateJdbcBasic updateJdbc;
     private ColumnParseHandler<T> columnParseHandler;
