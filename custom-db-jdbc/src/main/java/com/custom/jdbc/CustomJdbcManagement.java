@@ -83,7 +83,9 @@ public class CustomJdbcManagement extends DbConnection {
             statement.setObject((i + 1), params[i]);
         }
         if (dbCustomStrategy.isSqlOutPrinting() && sqlPrintSupport) {
-            SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlInfoQueryPrint();
+            SqlOutPrintBuilder
+                    .build(sql, params, dbCustomStrategy.isSqlOutPrintExecute())
+                    .sqlInfoQueryPrint();
         }
     }
 
@@ -96,7 +98,9 @@ public class CustomJdbcManagement extends DbConnection {
             statement.setObject((i + 1), params[i]);
         }
         if (dbCustomStrategy.isSqlOutPrinting() && sqlPrintSupport) {
-            SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlInfoQueryPrint();
+            SqlOutPrintBuilder
+                    .build(sql, params, dbCustomStrategy.isSqlOutPrintExecute())
+                    .sqlInfoQueryPrint();
         }
     }
 

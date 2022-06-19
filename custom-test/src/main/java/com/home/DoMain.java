@@ -11,6 +11,7 @@ import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
 import com.custom.proxy.InterfacesProxyExecutor;
 import com.home.customtest.dao.CustomTestDao;
+import com.home.customtest.entity.ChildStudent;
 import com.home.customtest.entity.Employee;
 import com.home.customtest.entity.Student;
 import com.home.customtest.entity.WorkEmp;
@@ -28,9 +29,7 @@ import java.util.stream.Stream;
 @SuppressWarnings("all")
 public class DoMain {
 
-
     public static void main(String[] args) throws Exception {
-
 
         // 数据库连接配置
         DbDataSource dbDataSource = new DbDataSource();
@@ -53,17 +52,17 @@ public class DoMain {
         InterfacesProxyExecutor proxyExecutor = new InterfacesProxyExecutor(dbDataSource, dbCustomStrategy);
         CustomTestDao customTestDao = proxyExecutor.createProxy(CustomTestDao.class);
 
-        Student student = customTestDao.selectByOne("李佳琪");
 
-        String byCond = customTestDao.selectOneByCond(0, 23);
-        System.out.println("byCond = " + byCond);
+        jdbcDao.selectList(Conditions.lambdaQuery(ChildStudent.class)
+                .and(x -> x
+                                .gt(ChildStudent::getMoney, 4861.5)
+                                .or()
+                                .eq(ChildStudent::getAge, 24)
 
-        System.out.println("student = " + student);
+                ).like(ChildStudent::getName, "aaa")
+                .or(x -> x.ge(ChildStudent::getPhone, "18546763175").eq(ChildStudent::getSex, false))
+        );
 
-//        List<Employee> employees = jdbcDao.selectListByKeys(Employee.class, Arrays.asList(1,5,9,8));
-//        List<Student> studentList = jdbcDao.selectList(Conditions.query(Student.class).lt("a.age", 23).onlyPrimary());
-//
-//        System.out.println("employees = " + employees);
 
     }
 
