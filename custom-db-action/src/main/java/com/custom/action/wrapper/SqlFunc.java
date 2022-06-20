@@ -117,6 +117,10 @@ public abstract class SqlFunc<T, Child> {
         return formatRex(aggregate, false, distinct);
     }
 
+    protected String formatRex(SqlAggregate aggregate) {
+        return formatRex(aggregate, false, false);
+    }
+
     protected String formatRex(SqlAggregate aggregate, boolean isNullToZero,  Boolean distinct) {
         String template = SymbolConstant.EMPTY;
         switch (aggregate) {

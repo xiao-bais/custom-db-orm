@@ -53,15 +53,17 @@ public class DoMain {
         CustomTestDao customTestDao = proxyExecutor.createProxy(CustomTestDao.class);
 
 
-        jdbcDao.selectList(Conditions.lambdaQuery(ChildStudent.class)
-                .and(x -> x
-                                .gt(ChildStudent::getMoney, 4861.5)
-                                .or()
-                                .eq(ChildStudent::getAge, 24)
-
-                ).like(ChildStudent::getName, "aaa")
-                .or(x -> x.ge(ChildStudent::getPhone, "18546763175").eq(ChildStudent::getSex, false))
+        ChildStudent childStudent = jdbcDao.selectOne(Conditions.lambdaQuery(ChildStudent.class)
+                .select(x -> x.sum(ChildStudent::getAge, ChildStudent::getSumAge)
+                        .max(ChildStudent::getAge, ChildStudent::getMaxAge)
+                        .min(ChildStudent::getAge, ChildStudent::getMinAge)
+                        .avg(ChildStudent::getAge, ChildStudent::getAvgAge)
+                        .count(ChildStudent::getAge, ChildStudent::getCountAge)
+                )
+                .onlyPrimary()
         );
+
+        System.out.println("childStudent = " + childStudent);
 
 
     }

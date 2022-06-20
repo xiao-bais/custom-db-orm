@@ -27,13 +27,13 @@ public class SelectFunc<T> extends SqlFunc<T, SelectFunc<T>> {
     @Override
     public final SelectFunc<T> sum(SFunction<T, ?> func) {
         String field = getColumnParseHandler().getField(func);
-        return doFunc(formatRex(SqlAggregate.SUM, null), SqlAggregate.SUM, getFieldMapper().get(field), field);
+        return doFunc(formatRex(SqlAggregate.SUM), SqlAggregate.SUM, getFieldMapper().get(field), field);
     }
 
     @Override
     public SelectFunc<T> sum(boolean isNullToZero, SFunction<T, ?> func) {
         String field = getColumnParseHandler().getField(func);
-        return doFunc(formatRex(SqlAggregate.SUM, isNullToZero, null), SqlAggregate.SUM, getFieldMapper().get(field), field);
+        return doFunc(formatRex(SqlAggregate.SUM, isNullToZero), SqlAggregate.SUM, getFieldMapper().get(field), field);
     }
 
     /**
@@ -46,13 +46,13 @@ public class SelectFunc<T> extends SqlFunc<T, SelectFunc<T>> {
     public final SelectFunc<T> sum(SFunction<T, ?> func, SFunction<T, ?> alias) {
         String field = getColumnParseHandler().getField(func);
         String aliasField = getColumnParseHandler().getField(alias);
-        return doFunc(formatRex(SqlAggregate.SUM, null), SqlAggregate.SUM, getFieldMapper().get(field), aliasField);
+        return doFunc(formatRex(SqlAggregate.SUM), SqlAggregate.SUM, getFieldMapper().get(field), aliasField);
     }
 
     public final SelectFunc<T> sum(boolean isNullToZero, SFunction<T, ?> func, SFunction<T, ?> alias) {
         String field = getColumnParseHandler().getField(func);
         String aliasField = getColumnParseHandler().getField(alias);
-        return doFunc(formatRex(SqlAggregate.SUM, isNullToZero, null), SqlAggregate.SUM, getFieldMapper().get(field), aliasField);
+        return doFunc(formatRex(SqlAggregate.SUM, isNullToZero), SqlAggregate.SUM, getFieldMapper().get(field), aliasField);
     }
 
     /**
@@ -64,13 +64,13 @@ public class SelectFunc<T> extends SqlFunc<T, SelectFunc<T>> {
     @Override
     public final SelectFunc<T> avg(SFunction<T, ?> func) {
         String field = getColumnParseHandler().getField(func);
-        return doFunc(formatRex(SqlAggregate.AVG,  null), SqlAggregate.AVG, getFieldMapper().get(field), field);
+        return doFunc(formatRex(SqlAggregate.AVG), SqlAggregate.AVG, getFieldMapper().get(field), field);
     }
 
     @Override
     public SelectFunc<T> avg(boolean isNullToZero, SFunction<T, ?> func) {
         String field = getColumnParseHandler().getField(func);
-        return doFunc(formatRex(SqlAggregate.AVG, isNullToZero, null), SqlAggregate.AVG, getFieldMapper().get(field), field);
+        return doFunc(formatRex(SqlAggregate.AVG, isNullToZero), SqlAggregate.AVG, getFieldMapper().get(field), field);
     }
 
     /**
@@ -83,13 +83,13 @@ public class SelectFunc<T> extends SqlFunc<T, SelectFunc<T>> {
     public final SelectFunc<T> avg(SFunction<T, ?> func, SFunction<T, ?> alias) {
         String column = getColumnParseHandler().getColumn(func);
         String aliasField = getColumnParseHandler().getField(alias);
-        return doFunc(formatRex(SqlAggregate.AVG, null), SqlAggregate.AVG, column, aliasField);
+        return doFunc(formatRex(SqlAggregate.AVG), SqlAggregate.AVG, column, aliasField);
     }
 
     public final SelectFunc<T> avg(boolean isNullToZero, SFunction<T, ?> func, SFunction<T, ?> alias) {
         String column = getColumnParseHandler().getColumn(func);
         String aliasField = getColumnParseHandler().getField(alias);
-        return doFunc(formatRex(SqlAggregate.AVG, isNullToZero, null), SqlAggregate.AVG, column, aliasField);
+        return doFunc(formatRex(SqlAggregate.AVG, isNullToZero), SqlAggregate.AVG, column, aliasField);
     }
 
 
@@ -138,7 +138,7 @@ public class SelectFunc<T> extends SqlFunc<T, SelectFunc<T>> {
         if (elseVal instanceof CharSequence) {
             elseVal = new StringBuilder().append(SymbolConstant.SINGLE_QUOTES).append(elseVal).append(SymbolConstant.SINGLE_QUOTES);
         }
-        return doFunc(formatRex(SqlAggregate.IFNULL,null), SqlAggregate.IFNULL, column, elseVal, field);
+        return doFunc(formatRex(SqlAggregate.IFNULL), SqlAggregate.IFNULL, column, elseVal, field);
     }
 
     /**
@@ -159,7 +159,7 @@ public class SelectFunc<T> extends SqlFunc<T, SelectFunc<T>> {
         if (targetField.getType().equals(CharSequence.class)) {
             elseVal = new StringBuilder().append(SymbolConstant.SINGLE_QUOTES).append(elseVal).append(SymbolConstant.SINGLE_QUOTES);
         }
-        return doFunc(formatRex(SqlAggregate.IFNULL, null), SqlAggregate.IFNULL, column, elseVal, aliasField);
+        return doFunc(formatRex(SqlAggregate.IFNULL), SqlAggregate.IFNULL, column, elseVal, aliasField);
     }
 
     /**
@@ -171,13 +171,13 @@ public class SelectFunc<T> extends SqlFunc<T, SelectFunc<T>> {
     @Override
     public final SelectFunc<T> max(SFunction<T, ?> func) {
         String column = getColumnParseHandler().getColumn(func);
-        return doFunc(formatRex(SqlAggregate.MAX, null), SqlAggregate.MAX, column, getColumnMapper().get(column));
+        return doFunc(formatRex(SqlAggregate.MAX), SqlAggregate.MAX, column, getColumnMapper().get(column));
     }
 
     @Override
     public SelectFunc<T> max(boolean isNullToZero, SFunction<T, ?> func) {
         String column = getColumnParseHandler().getColumn(func);
-        return doFunc(formatRex(SqlAggregate.MAX, isNullToZero, null), SqlAggregate.MAX, column, getColumnMapper().get(column));
+        return doFunc(formatRex(SqlAggregate.MAX, isNullToZero), SqlAggregate.MAX, column, getColumnMapper().get(column));
     }
 
     /**
@@ -190,13 +190,13 @@ public class SelectFunc<T> extends SqlFunc<T, SelectFunc<T>> {
     public final SelectFunc<T> max(SFunction<T, ?> func, SFunction<T, ?> alias) {
         String column = getColumnParseHandler().getColumn(func);
         String aliasField = getColumnParseHandler().getField(alias);
-        return doFunc(formatRex(SqlAggregate.MAX, null), SqlAggregate.MAX, column, aliasField);
+        return doFunc(formatRex(SqlAggregate.MAX), SqlAggregate.MAX, column, aliasField);
     }
 
     public final SelectFunc<T> max(boolean isNullToZero, SFunction<T, ?> func, SFunction<T, ?> alias) {
         String column = getColumnParseHandler().getColumn(func);
         String aliasField = getColumnParseHandler().getField(alias);
-        return doFunc(formatRex(SqlAggregate.MAX, isNullToZero, null), SqlAggregate.MAX, column, aliasField);
+        return doFunc(formatRex(SqlAggregate.MAX, isNullToZero), SqlAggregate.MAX, column, aliasField);
     }
 
 
@@ -209,13 +209,13 @@ public class SelectFunc<T> extends SqlFunc<T, SelectFunc<T>> {
     @Override
     public final SelectFunc<T> min(SFunction<T, ?> func) {
         String column = getColumnParseHandler().getColumn(func);
-       return doFunc(formatRex(SqlAggregate.MIN,null), SqlAggregate.MIN, column, getColumnMapper().get(column));
+       return doFunc(formatRex(SqlAggregate.MIN), SqlAggregate.MIN, column, getColumnMapper().get(column));
     }
 
     @Override
     public SelectFunc<T> min(boolean isNullToZero, SFunction<T, ?> func) {
         String column = getColumnParseHandler().getColumn(func);
-        return doFunc(formatRex(SqlAggregate.MIN, isNullToZero, null), SqlAggregate.MIN, column, getColumnMapper().get(column));
+        return doFunc(formatRex(SqlAggregate.MIN, isNullToZero), SqlAggregate.MIN, column, getColumnMapper().get(column));
     }
 
     /**
@@ -226,15 +226,16 @@ public class SelectFunc<T> extends SqlFunc<T, SelectFunc<T>> {
      * @return SqlFunc
      */
     public final SelectFunc<T> min(SFunction<T, ?> func, SFunction<T, ?> alias) {
-        String field = getColumnParseHandler().getColumn(func);
+        String column = getColumnParseHandler().getColumn(func);
         String aliasField = getColumnParseHandler().getField(alias);
-       return doFunc(formatRex(SqlAggregate.MIN, null), SqlAggregate.MIN, getFieldMapper().get(field), aliasField);
+        String formatRex = formatRex(SqlAggregate.MIN);
+        return doFunc(formatRex, SqlAggregate.MIN, column, aliasField);
     }
 
     public final SelectFunc<T> min(boolean isNullToZero, SFunction<T, ?> func, SFunction<T, ?> alias) {
-        String field = getColumnParseHandler().getColumn(func);
+        String column = getColumnParseHandler().getColumn(func);
         String aliasField = getColumnParseHandler().getField(alias);
-        return doFunc(formatRex(SqlAggregate.MIN, isNullToZero, null), SqlAggregate.MIN, getFieldMapper().get(field), aliasField);
+        return doFunc(formatRex(SqlAggregate.MIN, isNullToZero), SqlAggregate.MIN, column, aliasField);
     }
 
 }
