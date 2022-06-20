@@ -65,12 +65,13 @@ public class CustomJdbcManagement extends DbConnection {
      */
     protected void statementUpdate(boolean isSave, String sql, Object... params) throws Exception {
         statement = isSave ? conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS) : conn.prepareStatement(sql);
-        if (dbCustomStrategy.isSqlOutPrinting()) {
-            SqlOutPrintBuilder.build(sql, params, dbCustomStrategy.isSqlOutPrintExecute()).sqlInfoUpdatePrint();
-        }
-        if (params.length <= 0) return;
         for (int i = 0; i < params.length; i++) {
             statement.setObject((i + 1), params[i]);
+        }
+        if (dbCustomStrategy.isSqlOutPrinting()) {
+            SqlOutPrintBuilder
+                    .build(sql, params, dbCustomStrategy.isSqlOutPrintExecute())
+                    .sqlInfoUpdatePrint();
         }
     }
 
