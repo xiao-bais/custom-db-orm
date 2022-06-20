@@ -54,7 +54,8 @@ public class DoMain {
 
 
         ChildStudent childStudent = jdbcDao.selectOne(Conditions.lambdaQuery(ChildStudent.class)
-                .select(x -> x.sum(ChildStudent::getAge, ChildStudent::getSumAge)
+                .select(x -> x
+                        .sum(ChildStudent::getAge, ChildStudent::getSumAge)
                         .max(ChildStudent::getAge, ChildStudent::getMaxAge)
                         .min(ChildStudent::getAge, ChildStudent::getMinAge)
                         .avg(ChildStudent::getAge, ChildStudent::getAvgAge)
