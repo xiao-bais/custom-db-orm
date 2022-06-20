@@ -27,7 +27,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
 
     public CustomSelectJdbcBasicImpl(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         super(dbDataSource, dbCustomStrategy);
-        this.dbCustomStrategy = getDbCustomStrategy();
+        this.dbCustomStrategy = dbCustomStrategy;
     }
 
     /**
