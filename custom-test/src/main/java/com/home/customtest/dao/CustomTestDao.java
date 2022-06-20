@@ -18,8 +18,8 @@ import java.util.Set;
 public interface CustomTestDao {
 
 
-    @Query("select emp_name from employee where sex = #{sex} and age = #{age}")
-    String selectOneByCond(int sex,  int age);
+    @Query("select name from student where sex = #{sex} and age = #{age}")
+    String selectOneByCond(boolean sex,  int age);
 
     @SqlPath(value = "/sql/selectOne.sql")
     Student selectByOne(String stuName);

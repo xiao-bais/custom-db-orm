@@ -1,8 +1,11 @@
 package com.custom.springboot.scanner;
 
 import com.custom.comm.JudgeUtil;
+import com.custom.configuration.DbCustomStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -10,9 +13,13 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProce
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.EnvironmentAware;
+import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.Set;
 
 /**
@@ -23,22 +30,14 @@ import java.util.Set;
 
 @Slf4j
 @Component
-public class RegisterBeanExecutor implements BeanDefinitionRegistryPostProcessor, ApplicationContextAware{
+public class RegisterBeanExecutor implements BeanDefinitionRegistryPostProcessor, EnvironmentAware {
 
-
-    private ApplicationContext applicationContext;
-
+    private Environment environment;
 
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry beanDefinitionRegistry) throws BeansException {
 
-        Environment environment = applicationContext.getEnvironment();
-        Boolean mapperScanEnable = environment.getProperty("custom.db.strategy.mapper-scan-enable", Boolean.class);
-
-        if(mapperScanEnable == null || !mapperScanEnable) {
-            return;
-        }
-        String[] packageScans = environment.getProperty("custom.db.strategy.package-scans", String[].class);
+        String[] packageScans = environment.getProperty("custom.db.strategy.mapper-package-scans", String[].class);
         if(JudgeUtil.isEmpty(packageScans)) {
             return;
         }
@@ -62,11 +61,10 @@ public class RegisterBeanExecutor implements BeanDefinitionRegistryPostProcessor
 
     }
 
+
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
     }
-
-
 
 }

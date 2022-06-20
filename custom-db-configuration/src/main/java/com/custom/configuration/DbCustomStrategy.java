@@ -51,11 +51,6 @@ public class DbCustomStrategy {
     private String[] mapperPackageScans;
 
     /**
-    * 开启dao层的扫描包（mapperScanEnable = true后，才会开始扫描 `mapperPackageScans` 中指定的路径）
-    */
-    private boolean mapperScanEnable = false;
-
-    /**
      * 扫描的实体类包
      */
     private String[] entityPackageScans;
@@ -77,14 +72,6 @@ public class DbCustomStrategy {
     private Rollback rollback = Rollback.CURRENT;
 
 
-    public boolean isMapperScanEnable() {
-        return mapperScanEnable;
-    }
-
-    public void setMapperScanEnable(boolean mapperScanEnable) {
-        this.mapperScanEnable = mapperScanEnable;
-    }
-
     public String[] getMapperPackageScans() {
         return mapperPackageScans;
     }
@@ -98,6 +85,7 @@ public class DbCustomStrategy {
     }
 
     public void setDbFieldDeleteLogic(String dbFieldDeleteLogic) {
+        System.out.println(1);
         this.dbFieldDeleteLogic = dbFieldDeleteLogic;
     }
 

@@ -1,5 +1,6 @@
 package com.custom.springboot;
 
+import com.custom.comm.JudgeUtil;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
 import com.custom.jdbc.CustomSelectJdbcBasicImpl;
@@ -21,7 +22,6 @@ import java.util.Objects;
  * @Date 2022/5/16 15:02
  * @Desc：自定义的bean初始化
  **/
-@Order(6)
 @Component
 public class CustomBeanInitializer implements InitializingBean, ApplicationContextAware {
 
@@ -36,7 +36,7 @@ public class CustomBeanInitializer implements InitializingBean, ApplicationConte
         if (!strategy.isSyncEntityEnable()) {
             return;
         }
-        if (Objects.isNull(strategy.getEntityPackageScans())) {
+        if (JudgeUtil.isEmpty(strategy.getEntityPackageScans())) {
             return;
         }
         logger.info("Table info sync process started !!!");

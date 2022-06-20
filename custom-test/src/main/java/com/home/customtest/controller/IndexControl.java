@@ -3,11 +3,13 @@ package com.home.customtest.controller;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.wrapper.Conditions;
 import com.custom.comm.BackResult;
+import com.home.customtest.dao.CustomTestDao;
 import com.home.customtest.entity.ChildStudent;
 import com.home.customtest.entity.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +27,9 @@ public class IndexControl {
     @Autowired
     private JdbcDao jdbcDao;
 
+    @Resource
+    private CustomTestDao customTestDao;
+
 
     @GetMapping("/getMain")
     public BackResult<List<ChildStudent>> getIndex(String key) throws Exception {
@@ -38,5 +43,14 @@ public class IndexControl {
                         .orderByDesc(ChildStudent::getAge)
                 ));
         return BackResult.bySuccess("success01", students);
+    }
+
+    @GetMapping("search")
+    public BackResult<Student> getKeyInfo(String key) throws Exception {
+        long l = System.currentTimeMillis();
+        Student student = customTestDao.selectByOne(key);
+        long l1 = System.currentTimeMillis();
+        System.out.println("l1 = " + (l1 - l));
+        return BackResult.bySuccess(student);
     }
 }
