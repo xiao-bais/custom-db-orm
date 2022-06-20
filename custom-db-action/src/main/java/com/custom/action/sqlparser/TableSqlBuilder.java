@@ -188,7 +188,7 @@ public class TableSqlBuilder<T> implements Cloneable {
         this(cls, ExecuteMethod.SELECT, underlineToCamel);
     }
 
-    public TableSqlBuilder(Class<T> cls, ExecuteMethod method, boolean underlineToCamel) {
+    TableSqlBuilder(Class<T> cls, ExecuteMethod method, boolean underlineToCamel) {
         // 初始化本对象属性
         initLocalProperty(cls, underlineToCamel);
 

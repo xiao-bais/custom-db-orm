@@ -26,12 +26,12 @@ public class Mains {
         ConditionWrapper<Student> wrapper = query;
         System.out.println("wrapper = " + wrapper);
 
-        String jsonString = JSONObject.toJSONString(query);
-        TypeReference<LambdaConditionWrapper<Student>> reference = new TypeReference<LambdaConditionWrapper<Student>>(Student.class){};
-        LambdaConditionWrapper<Student> lambda = JSONObject.parseObject(jsonString, reference);
+        String jsonString = JSONObject.toJSONString(wrapper);
+//        TypeReference<LambdaConditionWrapper<Student>> reference = new TypeReference<LambdaConditionWrapper<Student>>(Student.class){};
+        ConditionWrapper<Student> lambda = JSONObject.parseObject(jsonString, ConditionWrapper.class);
 
 
-        lambda.gt(Student::getMoney, 4500.5);
+//        lambda.gt(Student::getMoney, 4500.5);
 
         System.out.println("lambdaConditionWrapper = " + lambda);
 

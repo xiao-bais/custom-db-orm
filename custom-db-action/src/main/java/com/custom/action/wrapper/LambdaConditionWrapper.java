@@ -117,8 +117,26 @@ public class LambdaConditionWrapper<T> extends ConditionAdapter<T, LambdaConditi
         return adapter(DbSymbol.IS_NOT_NULL, condition, column);
     }
 
+    /**
+     * 转成默认格式的条件构造器
+     */
+    public DefaultConditionWrapper<T> toDefault() {
+        return new DefaultConditionWrapper<T>(this);
+    }
+
     public LambdaConditionWrapper(Class<T> entityClass) {
         wrapperInitialize(entityClass);
+    }
+
+
+    LambdaConditionWrapper(ConditionWrapper<T> wrapper) {
+        this.setEntityClass(wrapper.getEntityClass());
+        this.setColumnParseHandler(wrapper.getColumnParseHandler());
+        this.setLastCondition(wrapper.getLastCondition());
+        this.setSelectColumns(wrapper.getSelectColumns());
+        this.setPageParams(wrapper.getPageIndex(), wrapper.getPageSize());
+        this.setTableSqlBuilder(wrapper.getTableSqlBuilder());
+        this.setPrimaryTable(wrapper.getPrimaryTable());
     }
 
 

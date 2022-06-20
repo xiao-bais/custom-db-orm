@@ -1,5 +1,6 @@
 package com.custom.action.wrapper;
 
+import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableSqlBuilder;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.enums.DbSymbol;
@@ -135,8 +136,17 @@ public class DefaultConditionWrapper<T> extends ConditionAssembly<T, String, Def
 
 
     public DefaultConditionWrapper(Class<T> entityClass) {
-        setEntityClass(entityClass);
-        setTableSqlBuilder(new TableSqlBuilder<>(entityClass, ExecuteMethod.NONE, false));
+        this.wrapperInitialize(entityClass);
+    }
+
+    DefaultConditionWrapper(ConditionWrapper<T> wrapper) {
+        this.setEntityClass(wrapper.getEntityClass());
+        this.setColumnParseHandler(wrapper.getColumnParseHandler());
+        this.setLastCondition(wrapper.getLastCondition());
+        this.setSelectColumns(wrapper.getSelectColumns());
+        this.setPageParams(wrapper.getPageIndex(), wrapper.getPageSize());
+        this.setTableSqlBuilder(wrapper.getTableSqlBuilder());
+        this.setPrimaryTable(wrapper.getPrimaryTable());
     }
 
     @Override
@@ -248,6 +258,13 @@ public class DefaultConditionWrapper<T> extends ConditionAssembly<T, String, Def
     @Override
     public DefaultConditionWrapper<T> orderByDesc(boolean condition, OrderByFunc<T> orderByFunc) {
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * 转成lambda格式的构造器
+     */
+    public LambdaConditionWrapper<T> toLambda() {
+        return new LambdaConditionWrapper<T>(this);
     }
 
 }

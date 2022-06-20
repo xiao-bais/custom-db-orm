@@ -239,11 +239,19 @@ public abstract class ConditionWrapper<T> implements Serializable {
         this.primaryTable = true;
     }
 
+    protected void setPrimaryTable(boolean primaryTable) {
+        this.primaryTable = primaryTable;
+    }
+
     protected ColumnParseHandler<T> getColumnParseHandler() {
         if (Objects.isNull(columnParseHandler)) {
             this.columnParseHandler = new ColumnParseHandler<>(entityClass);
         }
         return columnParseHandler;
+    }
+
+    protected void setColumnParseHandler(ColumnParseHandler<T> columnParseHandler) {
+        this.columnParseHandler = columnParseHandler;
     }
 
     /**

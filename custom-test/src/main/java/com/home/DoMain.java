@@ -62,6 +62,7 @@ public class DoMain {
                         .count(ChildStudent::getAge, ChildStudent::getCountAge)
                 )
                 .onlyPrimary()
+                .toDefault()
         );
 
         System.out.println("childStudent = " + childStudent);
