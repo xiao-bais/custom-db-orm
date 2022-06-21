@@ -264,7 +264,7 @@ public class DefaultConditionWrapper<T> extends ConditionAssembly<T, String, Def
      * 转成lambda格式的构造器
      */
     public LambdaConditionWrapper<T> toLambda() {
-        return new LambdaConditionWrapper<T>(this);
+        return new LambdaConditionWrapper<>(this);
     }
 
 }

@@ -41,11 +41,12 @@ public class IndexControl {
                         .exists("select 1 from student stu2 where stu2.id = a.id and stu2.password = '12345678zcy'")
                         .orderByAsc(ChildStudent::getId)
                         .orderByDesc(ChildStudent::getAge)
+                        .toDefault().toLambda()
                 ));
         return BackResult.bySuccess("success01", students);
     }
 
-    @GetMapping("search")
+    @GetMapping("/search")
     public BackResult<Student> getKeyInfo(String key) throws Exception {
         long l = System.currentTimeMillis();
         Student student = customTestDao.selectByOne(key);

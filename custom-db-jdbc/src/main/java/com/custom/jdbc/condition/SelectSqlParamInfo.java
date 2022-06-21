@@ -17,6 +17,16 @@ public class SelectSqlParamInfo<T> extends BaseSqlParamInfo{
      */
     private boolean supportMoreResult;
 
+    private boolean isField;
+
+    public boolean isField() {
+        return isField;
+    }
+
+    public void setField(boolean field) {
+        isField = field;
+    }
+
     public SelectSqlParamInfo(Class<T> entityClass, String selectSql, boolean sqlPrintSupport, Object[] sqlParams) {
         super(selectSql, sqlPrintSupport, sqlParams);
         this.entityClass = entityClass;
