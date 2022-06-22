@@ -33,8 +33,8 @@ public class DbConnection {
      */
     public DbConnection(DbDataSource dbDataSource) {
         try {
-            loaderDriver(dbDataSource);
-            datasourceInitialize(dbDataSource);
+            this.loaderDriver(dbDataSource);
+            this.datasourceInitialize(dbDataSource);
         }catch (Exception e) {
             logger.error("不存在mysql驱动：" + CUSTOM_DRIVER);
             ExThrowsUtil.toCustom(e.getMessage());

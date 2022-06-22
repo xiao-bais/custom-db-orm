@@ -5,6 +5,7 @@ import com.custom.action.wrapper.Conditions;
 import com.custom.comm.BackResult;
 import com.home.customtest.dao.CustomTestDao;
 import com.home.customtest.entity.ChildStudent;
+import com.home.customtest.entity.Employee;
 import com.home.customtest.entity.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -31,20 +32,20 @@ public class IndexControl {
     private CustomTestDao customTestDao;
 
 
-    @GetMapping("/getMain")
-    public BackResult<List<ChildStudent>> getIndex(String key) throws Exception {
-        List<ChildStudent> students = jdbcDao.selectList(Conditions.lambdaQuery(ChildStudent.class)
-                .ge(ChildStudent::getAge, 22).like(Student::getAddress, "山东")
-                .between(ChildStudent::getAge, 21, 25)
-                .select(ChildStudent::getName, Student::getProvince, Student::getCity, Student::getArea)
-                .or(x -> x.select(ChildStudent::getAge)
-                        .exists("select 1 from student stu2 where stu2.id = a.id and stu2.password = '12345678zcy'")
-                        .orderByAsc(ChildStudent::getId)
-                        .orderByDesc(ChildStudent::getAge)
-                        .toDefault().toLambda()
-                ));
-        return BackResult.bySuccess("success01", students);
-    }
+//    @GetMapping("/getMain")
+//    public BackResult<List<ChildStudent>> getIndex(String key) throws Exception {
+//        List<ChildStudent> students = jdbcDao.selectList(Conditions.lambdaQuery(ChildStudent.class)
+//                .ge(ChildStudent::getAge, 22).like(Student::getAddress, "山东")
+//                .between(ChildStudent::getAge, 21, 25)
+//                .select(ChildStudent::getName, Student::getProvince, Student::getCity, Student::getArea)
+//                .or(x -> x.select(ChildStudent::getAge)
+//                        .exists("select 1 from student stu2 where stu2.id = a.id and stu2.password = '12345678zcy'")
+//                        .orderByAsc(ChildStudent::getId)
+//                        .orderByDesc(ChildStudent::getAge)
+//                        .toDefault().toLambda()
+//                ));
+//        return BackResult.bySuccess("success01", students);
+//    }
 
     @GetMapping("/search")
     public BackResult<Student> getKeyInfo(String key) throws Exception {

@@ -53,19 +53,19 @@ public class DoMain {
         CustomTestDao customTestDao = proxyExecutor.createProxy(CustomTestDao.class);
 
 
-        ChildStudent childStudent = jdbcDao.selectOne(Conditions.lambdaQuery(ChildStudent.class)
-                .select(x -> x
-                        .sum(ChildStudent::getAge, ChildStudent::getSumAge)
-                        .max(ChildStudent::getAge, ChildStudent::getMaxAge)
-                        .min(ChildStudent::getAge, ChildStudent::getMinAge)
-                        .avg(ChildStudent::getAge, ChildStudent::getAvgAge)
-                        .count(ChildStudent::getAge, ChildStudent::getCountAge)
-                )
-                .onlyPrimary()
-                .toDefault()
-        );
+//        ChildStudent childStudent = jdbcDao.selectOne(Conditions.lambdaQuery(ChildStudent.class)
+//                .select(x -> x
+//                        .sum(ChildStudent::getAge, ChildStudent::getSumAge)
+//                        .max(ChildStudent::getAge, ChildStudent::getMaxAge)
+//                        .min(ChildStudent::getAge, ChildStudent::getMinAge)
+//                        .avg(ChildStudent::getAge, ChildStudent::getAvgAge)
+//                        .count(ChildStudent::getAge, ChildStudent::getCountAge)
+//                )
+//                .onlyPrimary()
+//                .toDefault()
+//        );
 
-        System.out.println("childStudent = " + childStudent);
+//        System.out.println("childStudent = " + childStudent);
 
 
     }

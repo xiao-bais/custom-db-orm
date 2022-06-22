@@ -98,69 +98,61 @@ public class BackResult<T> {
     }
 
 
+    public static <T> BackResult<T> bySuccess(){
+        return new BackResult<>(ResultStatus.success.getCode(), ResultStatus.success.getDesc(), null);
+    }
+
     public static <T> BackResult<T> bySuccess(T data){
-        logger.info("request-status: ---------" + ResultStatus.success.getDesc());
         return new BackResult<>(ResultStatus.success.getCode(), ResultStatus.success.getDesc(), data);
     }
 
     public static <T> BackResult<T> bySuccess(T data, Map<String, Object> attr){
-        logger.info("request-status: ---------" + ResultStatus.success.getDesc());
         return new BackResult<>(ResultStatus.success.getCode(), ResultStatus.success.getDesc(), data, attr);
     }
 
     public static <T> BackResult<T> bySuccess(String msg, T data){
-        logger.info("request-status: ---------" + ResultStatus.success.getDesc());
         return new BackResult<>(ResultStatus.success.getCode(), msg, data);
     }
 
     public static <T> BackResult<T> bySuccess(String msg){
-        logger.info("request-status: ---------" + ResultStatus.success.getDesc());
         return new BackResult<>(ResultStatus.success.getCode(), msg);
     }
 
 
 
     public static <T> BackResult<T> byError(String msg, T data){
-        logger.info("request-status: ---------" + ResultStatus.error.getDesc());
         return new BackResult<>(ResultStatus.error.getCode(), msg, data);
     }
 
     public static <T> BackResult<T> byError(T data){
-        logger.info("request-status: ---------" + ResultStatus.error.getDesc());
         return new BackResult<>(ResultStatus.error.getCode(), ResultStatus.error.getDesc(), data);
     }
 
     public static <T> BackResult<T> byError(String msg){
-        logger.info("request-status: ---------" + ResultStatus.error.getDesc());
         return new BackResult<>(ResultStatus.error.getCode(), msg);
     }
 
 
 
     public static <T> BackResult<T> byEmpty(String msg, T data){
-        logger.info("request-status: ---------" + ResultStatus.empty.getDesc());
         return new BackResult<>(ResultStatus.empty.getCode(), msg, data);
     }
 
     public static <T> BackResult<T> byEmpty(T data){
-        logger.info("request-status: ---------" + ResultStatus.empty.getDesc());
         return new BackResult<>(ResultStatus.empty.getCode(), ResultStatus.empty.getDesc(), data);
     }
 
     public static <T> BackResult<T> byEmpty(String msg){
-        logger.info("request-status: ---------" + ResultStatus.empty.getDesc());
         return new BackResult<>(ResultStatus.empty.getCode(), msg);
     }
 
 
 
     public static <T> BackResult<T> byServerErr(String msg, T data){
-        logger.info("request-status: ---------" + ResultStatus.server_err.getDesc());
         return new BackResult<>(ResultStatus.server_err.getCode(), msg, data);
     }
 
     public static <T> BackResult<T> byServerErr(String msg){
-        logger.info("request-status: ---------" + ResultStatus.server_err.getDesc());
         return new BackResult<>(ResultStatus.server_err.getCode(), msg);
     }
 

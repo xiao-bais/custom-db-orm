@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 /**
  * @Author Xiao-Bai
  * @Date 2021/8/22
- * @Description
+ * @Description 策略配置
  */
 @Component
 @ConfigurationProperties(prefix = "custom.db.strategy")
@@ -20,7 +20,7 @@ public class DbCustomStrategy {
     private boolean underlineToCamel = false;
 
     /**
-     * 打印预编译的sql（默认只开启查询的sql）
+     * 打印预编译的sql（默认只开启参数为 '?' 的sql）
      */
     private boolean sqlOutPrinting = false;
 
@@ -69,7 +69,7 @@ public class DbCustomStrategy {
     /**
      * 事务回滚类型
      */
-    private Rollback rollback = Rollback.CURRENT;
+    private Rollback rollbackType = Rollback.CURRENT;
 
 
     public String[] getMapperPackageScans() {
@@ -85,7 +85,6 @@ public class DbCustomStrategy {
     }
 
     public void setDbFieldDeleteLogic(String dbFieldDeleteLogic) {
-        System.out.println(1);
         this.dbFieldDeleteLogic = dbFieldDeleteLogic;
     }
 
@@ -154,10 +153,10 @@ public class DbCustomStrategy {
     }
 
     public Rollback getRollbackType() {
-        return rollback;
+        return rollbackType;
     }
 
     public void setRollbackType(Rollback rollback) {
-        this.rollback = rollback;
+        this.rollbackType = rollback;
     }
 }
