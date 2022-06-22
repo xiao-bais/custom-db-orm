@@ -18,6 +18,7 @@ import com.home.customtest.entity.WorkEmp;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -52,10 +53,12 @@ public class DoMain {
         InterfacesProxyExecutor proxyExecutor = new InterfacesProxyExecutor(dbDataSource, dbCustomStrategy);
         CustomTestDao customTestDao = proxyExecutor.createProxy(CustomTestDao.class);
 
-        List<Student> studentList = jdbcDao.selectList(Conditions.lambdaQuery(Student.class)
-                .eq(Student::getAge, 23)
-                .addCutsomizeSql("and a.name = ?", "张三")
+        Map<String, Object> objectMap = jdbcDao.selectMap(Conditions.lambdaQuery(ChildStudent.class)
+                .eq(Student::getAge, 24)
+                .eq(ChildStudent::getSex, false)
         );
+
+        System.out.println("objectMap = " + objectMap);
 
 
 //        ChildStudent childStudent = jdbcDao.selectOne(Conditions.lambdaQuery(ChildStudent.class)

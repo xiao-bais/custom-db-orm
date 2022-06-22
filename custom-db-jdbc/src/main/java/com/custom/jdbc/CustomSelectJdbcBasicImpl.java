@@ -47,7 +47,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
                     t = (T) resultSet.getObject(SymbolConstant.DEFAULT_ONE);
                 }else {
                     map = new HashMap<>();
-                    this.handleResultMap(map, metaData);
+                    this.handleResultMapper(map, metaData);
                     t = JSONObject.parseObject(JSONObject.toJSONString(map), params.getEntityClass());
                 }
                 list.add(t);
@@ -74,7 +74,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
             this.checkMoreResult();
             ResultSetMetaData metaData = resultSet.getMetaData();
             if (resultSet.next()) {
-                this.handleResultMap(map, metaData);
+                this.handleResultMapper(map, metaData);
             }
             if (Map.class.isAssignableFrom(params.getEntityClass())) {
                 return (T) map;
@@ -121,7 +121,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
             statementQuery(params.getPrepareSql(), params.isSqlPrintSupport(), params.getSqlParams());
             ResultSet resultSet = handleQueryStatement();
             if (resultSet.next()) {
-                this.handleResultMap(resMap, resultSet.getMetaData());
+                this.handleResultMapper(resMap, resultSet.getMetaData());
             }
         } catch (SQLException e) {
             SqlOutPrintBuilder
@@ -137,7 +137,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
      */
     @Override
     public <T> List<Map<String, T>> selectMaps(SelectSqlParamInfo<T> params) throws Exception {
-        Map<String, T> map;
+        Map<String, T> resMap;
         List<Map<String, T>> mapList = new ArrayList<>();
         try {
             statementQuery(params.getPrepareSql(), params.isSqlPrintSupport(), params.getSqlParams());
@@ -147,9 +147,9 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
             }
             ResultSetMetaData metaData = resultSet.getMetaData();
             while (resultSet.next()) {
-                map = new HashMap<>();
-                this.handleResultMap(map, metaData);
-                mapList.add(map);
+                resMap = new HashMap<>();
+                this.handleResultMapper(resMap, metaData);
+                mapList.add(resMap);
             }
         } catch (SQLException e) {
             SqlOutPrintBuilder

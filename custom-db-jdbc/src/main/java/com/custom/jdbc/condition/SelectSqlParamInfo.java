@@ -5,7 +5,7 @@ package com.custom.jdbc.condition;
  * @Date 2022/6/17 0:57
  * @Desc sql参数对象
  */
-public class SelectSqlParamInfo<T> extends BaseSqlParamInfo{
+public class SelectSqlParamInfo<T> extends BaseSqlParamInfo {
 
     /**
      * 泛型实体Class对象
@@ -62,9 +62,5 @@ public class SelectSqlParamInfo<T> extends BaseSqlParamInfo{
 
     public boolean isSupportMoreResult() {
         return supportMoreResult;
-    }
-
-    public void setSupportMoreResult(boolean supportMoreResult) {
-        this.supportMoreResult = supportMoreResult;
     }
 }

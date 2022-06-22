@@ -106,9 +106,9 @@ public class CustomJdbcManagement extends DbConnection {
     }
 
     /**
-     * 处理结果集对象
+     * 处理结果集对象映射
      */
-    protected <T> void handleResultMap(Map<String, T> map, ResultSetMetaData metaData) throws SQLException {
+    protected <T> void handleResultMapper(Map<String, T> map, ResultSetMetaData metaData) throws SQLException {
         for (int i = 0; i < metaData.getColumnCount(); i++) {
             String columnName = metaData.getColumnLabel(i + 1);
             T object = (T) resultSet.getObject(i + 1);
