@@ -1,5 +1,0 @@
-1.添加ActiveRecord模式(待开发)
-2.添加全局接口的sql事务(待开发)
-3.条件构造器default与lambda可相互转换(完成)
-4.lambda条件构造器添加自定义sql条件(进行中)
-5.添加update方法的条件构造器(待开发)

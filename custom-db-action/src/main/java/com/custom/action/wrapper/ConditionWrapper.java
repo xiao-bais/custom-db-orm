@@ -4,6 +4,7 @@ import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableSqlBuilder;
 import com.custom.action.util.DbUtil;
 import com.custom.comm.CustomUtil;
+import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.exceptions.ExThrowsUtil;
 
@@ -83,6 +84,12 @@ public abstract class ConditionWrapper<T> implements Serializable {
      */
     private ColumnParseHandler<T> columnParseHandler;
 
+    /**
+     * 自定义sql条件，只会在条件构造器的条件拼接完成之后才会拼接该条件
+     */
+    private String customizeSql;
+
+
     protected TableSqlBuilder<T> getTableSqlBuilder() {
         return tableSqlBuilder;
     }
@@ -111,7 +118,8 @@ public abstract class ConditionWrapper<T> implements Serializable {
         if (param instanceof List) {
             addParams((List<Object>) param);
             return;
-        }else if (param instanceof Set) {
+        }
+        if (param instanceof Set) {
             addParams((Set<Object>) param);
             return;
         }
@@ -138,9 +146,8 @@ public abstract class ConditionWrapper<T> implements Serializable {
         return finalConditional;
     }
 
-    protected StringBuilder addCondition(String condition) {
+    protected void addCondition(String condition) {
         this.finalConditional.append(condition);
-        return this.finalConditional;
     }
 
     protected String getLastCondition() {
@@ -183,19 +190,42 @@ public abstract class ConditionWrapper<T> implements Serializable {
         return pageSize;
     }
 
+    public String getCustomizeSql() {
+        return customizeSql;
+    }
+
+    protected void setCustomizeSql(String customizeSql) {
+        this.customizeSql = customizeSql;
+    }
+
     protected TableSqlBuilder<T> getTableParserModelCache(Class<T> key) {
         return TableInfoCache.getTableModel(key);
     }
 
     /**
-     * 参数注入后的sql条件（只针对where后面的查询条件，不带有group by, order by, having, limit 等特殊聚合条件）
+     * 参数注入后的sql条件
      * <p>
      * 原sql(a.name = ?, params = 20)
      * </p>
      * 返回sql(a.name = 20)
      */
     public String injectParamsConditional() {
-        return CustomUtil.handleExecuteSql(this.finalConditional.toString(), this.paramValues.toArray());
+        StringBuilder handleSqlBuilder = new StringBuilder(this.finalConditional);
+
+        if (JudgeUtil.isNotEmpty(this.customizeSql)) {
+            handleSqlBuilder.append(this.customizeSql);
+        }
+        if (JudgeUtil.isNotEmpty(this.groupBy)) {
+            handleSqlBuilder.append(SymbolConstant.GROUP_BY).append(this.groupBy);
+        }
+        if (JudgeUtil.isEmpty(this.having)) {
+            handleSqlBuilder.append(SymbolConstant.HAVING).append(this.having);
+            this.paramValues.addAll(this.havingParams);
+        }
+        if (JudgeUtil.isNotEmpty(this.orderBy)) {
+            handleSqlBuilder.append(SymbolConstant.ORDER_BY).append(this.orderBy);
+        }
+        return CustomUtil.handleExecuteSql(handleSqlBuilder.toString(), this.paramValues.toArray());
     }
 
     public boolean hasPageParams() {
@@ -277,4 +307,6 @@ public abstract class ConditionWrapper<T> implements Serializable {
         }
         setSelectColumns(newSelectColumns);
     }
+
+
 }

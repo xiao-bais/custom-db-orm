@@ -12,6 +12,7 @@ import com.custom.comm.exceptions.ExThrowsUtil;
 import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * @Author Xiao-Bai
@@ -52,6 +53,18 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
      * 子类的实例化
      */
     protected abstract Children getInstance();
+
+    /**
+     * 拼接自定义的sql条件
+     */
+    public Children addCutsomizeSql(String customizeSql, Object... params) {
+        if (JudgeUtil.isEmpty(customizeSql)) {
+            return childrenClass;
+        }
+        setCustomizeSql(customizeSql);
+        addParams(Arrays.stream(params).collect(Collectors.toList()));
+        return childrenClass;
+    }
 
     /**
     * 适配各种sql条件的拼接
@@ -328,8 +341,6 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
         setPrimaryTable();
         return childrenClass;
     }
-
-
 
 
     protected final Children childrenClass = (Children) this;

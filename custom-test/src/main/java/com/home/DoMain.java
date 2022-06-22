@@ -40,9 +40,9 @@ public class DoMain {
         // 增删改查映射策略配置
         DbCustomStrategy dbCustomStrategy = new DbCustomStrategy();
         dbCustomStrategy.setSqlOutPrinting(true);
-//        dbCustomStrategy.setSqlOutPrintExecute(true);
+        dbCustomStrategy.setSqlOutPrintExecute(true);
         dbCustomStrategy.setUnderlineToCamel(true);
-//        dbCustomStrategy.setDbFieldDeleteLogic("state");
+        dbCustomStrategy.setDbFieldDeleteLogic("state");
         dbCustomStrategy.setDeleteLogicValue(1);
         dbCustomStrategy.setNotDeleteLogicValue(0);
 
@@ -51,6 +51,11 @@ public class DoMain {
 
         InterfacesProxyExecutor proxyExecutor = new InterfacesProxyExecutor(dbDataSource, dbCustomStrategy);
         CustomTestDao customTestDao = proxyExecutor.createProxy(CustomTestDao.class);
+
+        List<Student> studentList = jdbcDao.selectList(Conditions.lambdaQuery(Student.class)
+                .eq(Student::getAge, 23)
+                .addCutsomizeSql("and a.name = ?", "张三")
+        );
 
 
 //        ChildStudent childStudent = jdbcDao.selectOne(Conditions.lambdaQuery(ChildStudent.class)
@@ -64,7 +69,6 @@ public class DoMain {
 //                .onlyPrimary()
 //                .toDefault()
 //        );
-
 //        System.out.println("childStudent = " + childStudent);
 
 

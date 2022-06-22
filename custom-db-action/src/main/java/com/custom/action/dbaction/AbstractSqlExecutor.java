@@ -158,6 +158,9 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
         FullSqlExecutorHandler fullSqlExecutorHandler = this.handleLogicWithCondition(sqlBuilder.getAlias(),
                 wrapper.getFinalConditional(), logicColumn, getLogicDeleteQuerySql(), sqlBuilder.getTable());
         selectSql.append(fullSqlExecutorHandler.execute());
+        if (JudgeUtil.isNotEmpty(wrapper.getCustomizeSql())) {
+            selectSql.append(wrapper.getCustomizeSql());
+        }
         if(JudgeUtil.isNotEmpty(wrapper.getGroupBy())) {
             selectSql.append(SymbolConstant.GROUP_BY).append(wrapper.getGroupBy());
         }
