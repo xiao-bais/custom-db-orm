@@ -16,13 +16,21 @@ public class BackResult<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(BackResult.class);
 
-    //状态码
+    /**
+     * 状态码
+     */
     private Integer status = ResultStatus.success.getCode();
-    //返回的消息
+    /**
+     * 返回的消息
+     */
     private String msg = ResultStatus.success.getDesc();
-    //要返回的数据
+    /**
+     * 响应数据
+     */
     private T data;
-    //额外数据
+    /**
+     * 额外的响应数据
+     */
     private Map<String, Object> attr = new HashMap<>();
 
     public BackResult(Integer status, String msg, T data, Map<String, Object> attr) {
@@ -32,7 +40,7 @@ public class BackResult<T> {
         this.attr = attr;
     }
 
-    public BackResult(Integer code, String msg, T data) {
+    public BackResult(Integer status, String msg, T data) {
         this.status = status;
         this.msg = msg;
         this.data = data;
@@ -98,10 +106,6 @@ public class BackResult<T> {
     }
 
 
-    public static <T> BackResult<T> bySuccess(){
-        return new BackResult<>(ResultStatus.success.getCode(), ResultStatus.success.getDesc(), null);
-    }
-
     public static <T> BackResult<T> bySuccess(T data){
         return new BackResult<>(ResultStatus.success.getCode(), ResultStatus.success.getDesc(), data);
     }
@@ -118,10 +122,18 @@ public class BackResult<T> {
         return new BackResult<>(ResultStatus.success.getCode(), msg);
     }
 
+    public static <T> BackResult<T> bySuccess(){
+        return new BackResult<>();
+    }
+
 
 
     public static <T> BackResult<T> byError(String msg, T data){
         return new BackResult<>(ResultStatus.error.getCode(), msg, data);
+    }
+
+    public static <T> BackResult<T> byError(int status, String msg){
+        return new BackResult<>(status, msg);
     }
 
     public static <T> BackResult<T> byError(T data){
@@ -145,8 +157,6 @@ public class BackResult<T> {
     public static <T> BackResult<T> byEmpty(String msg){
         return new BackResult<>(ResultStatus.empty.getCode(), msg);
     }
-
-
 
     public static <T> BackResult<T> byServerErr(String msg, T data){
         return new BackResult<>(ResultStatus.server_err.getCode(), msg, data);
