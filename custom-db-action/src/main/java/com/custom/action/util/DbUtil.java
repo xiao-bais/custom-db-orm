@@ -100,15 +100,19 @@ public class DbUtil {
     public static String applyCondition(String v1, String v2, String v3) {
         return String.format(" %s %s %s ?", v1, v2, v3);
     }
+
     public static String applyCondition(String v1, String v2, String v3, String v4) {
         return String.format(" %s %s %s %s", v1, v2, v3, v4);
     }
+
     public static String applyInCondition(String v1, String v2, String v3, String v4) {
         return String.format(" %s %s %s (%s)", v1, v2, v3, v4);
     }
+
     public static String applyExistsCondition(String v1, String v2, String v3) {
         return String.format(" %s %s (%s)", v1, v2, v3);
     }
+
     public static String applyIsNullCondition(String v1, String v2, String v3) {
         return String.format(" %s %s %s", v1, v2, v3);
     }
@@ -164,4 +168,18 @@ public class DbUtil {
         return finalCondition.trim();
     }
 
+    /**
+     * 格式化where后面的sql条件
+     */
+    public static String whereSqlCondition(String alias, String logicSql, String condition) {
+        return String.format("\nwhere %s.%s \n%s ", alias, logicSql, condition);
+    }
+
+    public static String whereSqlCondition(String alias, String logicSql) {
+        return String.format("\nwhere %s.%s ", alias, logicSql);
+    }
+
+    public static String whereSqlCondition(String condition) {
+        return String.format("\nwhere %s ", DbUtil.trimAppendSqlCondition(condition));
+    }
 }

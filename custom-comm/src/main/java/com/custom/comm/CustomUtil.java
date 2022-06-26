@@ -85,16 +85,9 @@ public class CustomUtil {
         if(!isBasicType(val.getClass())) {
             ExThrowsUtil.toCustom("不允许的主键类型：" + val.getClass());
         }
-        if(CharSequence.class.isAssignableFrom(type)) {
-            return true;
-        }
-        if(Long.class.isAssignableFrom(type)) {
-            return (long) val > 0;
-        }
-        if(Integer.class.isAssignableFrom(type)) {
-            return (int) val > 0;
-        }
-        return false;
+        return CharSequence.class.isAssignableFrom(type)
+                || Long.class.isAssignableFrom(type)
+                || Integer.class.isAssignableFrom(type);
     }
 
     /**

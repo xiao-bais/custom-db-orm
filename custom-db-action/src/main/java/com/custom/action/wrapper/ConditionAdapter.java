@@ -119,8 +119,8 @@ public class ConditionAdapter<T, Children> extends ConditionAssembly<T, SFunctio
     @Override
     public Children orderByAsc(boolean condition, OrderByFunc<T> orderByFunc) {
         if (!orderByFunc.getOrderBy().equals(SymbolConstant.ASC)) {
-            ExThrowsUtil.toCustom("order by type is mismatch, should be entered '%s', current entered '%s'"
-                    , SymbolConstant.ASC, SymbolConstant.DESC);
+            ExThrowsUtil.toCustom("order by type is mismatch, should be entered '%s', current entered '%s'",
+                    SymbolConstant.ASC, SymbolConstant.DESC);
         }
         return adapter(DbSymbol.ORDER_BY_ASC, condition, orderByFunc.getColumns());
     }
@@ -133,8 +133,8 @@ public class ConditionAdapter<T, Children> extends ConditionAssembly<T, SFunctio
     @Override
     public Children orderByDesc(boolean condition, OrderByFunc<T> orderByFunc) {
         if (!orderByFunc.getOrderBy().equals(SymbolConstant.DESC)) {
-            ExThrowsUtil.toCustom("order by type is mismatch, should be entered '%s', current entered '%s'"
-                    , SymbolConstant.DESC, SymbolConstant.ASC);
+            ExThrowsUtil.toCustom("order by type is mismatch, should be entered '%s', current entered '%s'",
+                    SymbolConstant.DESC, SymbolConstant.ASC);
         }
         return adapter(DbSymbol.ORDER_BY_DESC, condition, orderByFunc.getColumns());
     }

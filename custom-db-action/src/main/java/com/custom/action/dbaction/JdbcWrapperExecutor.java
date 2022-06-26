@@ -173,19 +173,17 @@ public class JdbcWrapperExecutor {
      * 添加逻辑删除的部分sql
      */
     public FullSqlExecutorHandler handleLogicWithCondition(String alias, final String condition,
-                                  String logicColumn, String logicSql, String tableName) throws Exception {
-        if(!DbUtil.checkLogicFieldIsExist(tableName, logicColumn, this.selectJdbc)) {
+                                                           String logicColumn, String logicSql, String tableName) throws Exception {
+        if (!DbUtil.checkLogicFieldIsExist(tableName, logicColumn, this.selectJdbc)) {
             logicSql = SymbolConstant.EMPTY;
         }
         final String finalLogicSql = logicSql;
         return () -> {
             if (JudgeUtil.isNotEmpty(condition)) {
-                return JudgeUtil.isNotEmpty(finalLogicSql) ?
-                        String.format("\nwhere %s.%s \n%s ", alias, finalLogicSql, condition.trim())
-                        : String.format("\nwhere %s ", DbUtil.trimAppendSqlCondition(condition));
+                return JudgeUtil.isNotEmpty(finalLogicSql) ? DbUtil.whereSqlCondition(alias, finalLogicSql, condition.trim())
+                        : DbUtil.whereSqlCondition(condition);
             } else {
-                return JudgeUtil.isNotEmpty(finalLogicSql) ?
-                        String.format("\nwhere %s.%s ", alias, finalLogicSql)
+                return JudgeUtil.isNotEmpty(finalLogicSql) ? DbUtil.whereSqlCondition(alias, finalLogicSql)
                         : condition == null ? SymbolConstant.EMPTY : condition.trim();
             }
         };

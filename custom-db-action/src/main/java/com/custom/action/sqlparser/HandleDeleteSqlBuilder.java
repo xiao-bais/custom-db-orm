@@ -57,7 +57,7 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
             return;
         }
         if(!CustomUtil.isKeyAllowType(keyParserModel.getType(), key)) {
-            ExThrowsUtil.toCustom("不允许的主键参数: " + key);
+            ExThrowsUtil.toCustom("不允许的主键参数类型: " + key);
         }
         getSqlParams().add(key);
     }
@@ -98,21 +98,22 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
     /**
      * 在删除数据时，若是有逻辑删除，则在逻辑删除后，进行固定字段的自动填充
      */
-    protected void handleLogicDelAfter(Class<?> t, String deleteSql, Object... params) throws Exception {
+    protected void handleLogicDelAfter(Class<?> t, String deleteSql, Object... params) {
         AutoFillColumnHandler fillColumnHandler = CustomApplicationUtil.getBean(AutoFillColumnHandler.class);
-        if(Objects.isNull(fillColumnHandler)) {
+        if (Objects.isNull(fillColumnHandler)) {
             return;
         }
         Optional<TableFillObject> first = fillColumnHandler.fillStrategy().stream()
                 .filter(x -> x.getEntityClass().equals(t)).findFirst();
         first.ifPresent(op -> {
-            String autoUpdateWhereSqlCondition = deleteSql.substring(deleteSql.indexOf(SymbolConstant.WHERE)).replace(getLogicDeleteQuerySql(), getLogicDeleteUpdateSql());
+            String autoUpdateWhereSqlCondition = deleteSql.substring(deleteSql.indexOf(SymbolConstant.WHERE))
+                    .replace(getLogicDeleteQuerySql(), getLogicDeleteUpdateSql());
             FillStrategy strategy = op.getStrategy();
-            if(strategy.equals(FillStrategy.DEFAULT)) {
+            if (strategy.equals(FillStrategy.DEFAULT)) {
                 return;
             }
             String autoUpdateSql = buildLogicDelAfterAutoUpdateSql(strategy, autoUpdateWhereSqlCondition, params);
-            if(!ObjectUtils.isEmpty(autoUpdateSql)) {
+            if (!ObjectUtils.isEmpty(autoUpdateSql)) {
                 try {
                     executeUpdateNotPrintSql(autoUpdateSql);
                 } catch (Exception e) {
