@@ -46,6 +46,7 @@ public class DoMain {
         Map<String, Object> objectMap = jdbcDao.selectMap(Conditions.lambdaQuery(ChildStudent.class)
                 .eq(Student::getAge, 24)
                 .eq(ChildStudent::getSex, false)
+                .orderByDesc(Student::getAreaId)
         );
 
         System.out.println("objectMap = " + objectMap);

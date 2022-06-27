@@ -81,7 +81,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
             column = DbUtil.fullSqlColumn(getTableSqlBuilder().getAlias(), column);
         }
         // sql最终条件组装
-        hanleCondition(dbSymbol, column, val1, val2, express);
+        this.hanleFinalCondition(dbSymbol, column, val1, val2, express);
 
         if(CustomUtil.isNotBlank(getLastCondition())) {
             addCondition(getLastCondition());
@@ -95,7 +95,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
     /**
      * sql最终条件组装
      */
-    private void hanleCondition(DbSymbol dbSymbol, String column, Object val1, Object val2, String express) {
+    private void hanleFinalCondition(DbSymbol dbSymbol, String column, Object val1, Object val2, String express) {
         switch (dbSymbol) {
             case EQUALS:
             case NOT_EQUALS:
@@ -162,17 +162,17 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
      */
     private void ConditionOnInsqlAssembly(DbSymbol dbSymbol, String column, Object val1) {
         StringJoiner symbol = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
-        if(CustomUtil.isBasicType(val1)) {
+        if (CustomUtil.isBasicType(val1)) {
             addParams(val1);
 
-        }else if(val1.getClass().isArray()) {
+        } else if (val1.getClass().isArray()) {
             int len = Array.getLength(val1);
             for (int i = 0; i < len; i++) {
                 symbol.add(SymbolConstant.QUEST);
                 addParams(Array.get(val1, i));
             }
 
-        }else if(val1 instanceof Collection) {
+        } else if (val1 instanceof Collection) {
             Collection<?> objects = (Collection<?>) val1;
             addParams(objects);
             objects.forEach(x -> symbol.add(SymbolConstant.QUEST));
@@ -232,7 +232,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
      */
     protected Children spliceCondition(boolean condition, boolean spliceType, ConditionWrapper<T> wrapper) {
         if(condition && Objects.nonNull(wrapper)) {
-            mergeConditionWrapper(spliceType, wrapper);
+            this.mergeConditionWrapper(spliceType, wrapper);
         }
         appendState = true;
         return childrenClass;
@@ -244,7 +244,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
     protected Children doSelectSqlFunc(Consumer<SelectFunc<T>> consumer) {
         SelectFunc<T> sqlFunc = new SelectFunc<>(getEntityClass());
         consumer.accept(sqlFunc);
-        mergeSelect(sqlFunc.getColumns().split(SymbolConstant.SEPARATOR_COMMA_2));
+        this.mergeSelect(sqlFunc.getColumns().split(SymbolConstant.SEPARATOR_COMMA_2));
         return childrenClass;
     }
 
@@ -301,7 +301,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
     private void mergeHaving(ConditionWrapper<T> conditionEntity) {
         if (JudgeUtil.isEmpty(getHaving()) && JudgeUtil.isNotEmpty(conditionEntity.getHaving())) {
             getHaving().append(conditionEntity.getHaving());
-        }else if (JudgeUtil.isNotEmpty(getHaving()) && JudgeUtil.isNotEmpty(conditionEntity.getHaving())) {
+        } else if (JudgeUtil.isNotEmpty(getHaving()) && JudgeUtil.isNotEmpty(conditionEntity.getHaving())) {
             getHaving().append(String.format(" and %s ", conditionEntity.getHaving()));
         }
     }
