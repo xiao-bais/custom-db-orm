@@ -43,7 +43,7 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
     @Override
     public String buildSql() {
         // 修改字段构建
-        updateSqlField();
+        updateSqlFieldBuilder();
         String conditions;
         if (JudgeUtil.isEmpty(condition)) {
             conditions = updateKeyCondition();
@@ -101,26 +101,28 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
     /**
      * 修改字段构建（set之后 where之前）
      */
-    private void updateSqlField() {
+    private void updateSqlFieldBuilder() {
         if (Objects.nonNull(updateFuncColumns)) {
             chooseAppointFieldSql(true);
-        } else if(Objects.nonNull(updateStrColumns)) {
+            return;
+        }
+        if (Objects.nonNull(updateStrColumns)) {
             chooseAppointFieldSql(false);
-        } else {
-            for (DbFieldParserModel<T> field : getFieldParserModels()) {
-                Object value = field.getValue();
-                if (Objects.isNull(value)) {
-                    // 修改时必要的自动填充
-                    // 当修改时，用户没有为自动填充的字段额外设置业务值，则启用原本设定的默认值进行填充
-                    Object fillValue = FieldAutoFillHandleUtils.getFillValue(getEntityClass(), field.getFieldName());
-                    if (Objects.nonNull(fillValue)) {
-                        value = fillValue;
-                    }
+            return;
+        }
+        for (DbFieldParserModel<T> field : getFieldParserModels()) {
+            Object value = field.getValue();
+            if (Objects.isNull(value)) {
+                // 修改时必要的自动填充
+                // 当修改时，用户没有为自动填充的字段额外设置业务值，则启用原本设定的默认值进行填充
+                Object fillValue = FieldAutoFillHandleUtils.getFillValue(getEntityClass(), field.getFieldName());
+                if (Objects.nonNull(fillValue)) {
+                    value = fillValue;
                 }
-                if (Objects.nonNull(value)) {
-                    updateSqlColumns.add(DbUtil.formatSetSql(field.getFieldSql()));
-                    addParams(value);
-                }
+            }
+            if (Objects.nonNull(value)) {
+                updateSqlColumns.add(DbUtil.formatSetSql(field.getFieldSql()));
+                addParams(value);
             }
         }
     }
