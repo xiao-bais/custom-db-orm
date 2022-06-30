@@ -95,6 +95,16 @@ public class DbUtil {
     }
 
     /**
+     * update set sql格式化
+     */
+    public static String formatSetSql(String column) {
+        return String.format("%s = ?", column);
+    }
+    public static String formatSetConditionSql(String logicSql, String column) {
+        return String.format("%s and %s", logicSql, column);
+    }
+
+    /**
      * 组装sql条件
      */
     public static String applyCondition(String v1, String v2, String v3) {

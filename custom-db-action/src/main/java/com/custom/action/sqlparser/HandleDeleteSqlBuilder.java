@@ -59,7 +59,7 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
         if(!CustomUtil.isKeyAllowType(keyParserModel.getType(), key)) {
             ExThrowsUtil.toCustom("不允许的主键参数类型: " + key);
         }
-        getSqlParams().add(key);
+        this.addParams(key);
     }
 
     /**
@@ -79,7 +79,7 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
         if (Objects.nonNull(keys) && keys.stream().noneMatch(x -> CustomUtil.isKeyAllowType(keyParserModel.getType(), x))) {
             ExThrowsUtil.toCustom("不允许的主键参数: " + keys);
         }
-        getSqlParams().addAll(keys);
+        this.addParams(keys);
     }
 
     /**

@@ -10,6 +10,7 @@ import com.home.customtest.dao.CustomTestDao;
 import com.home.customtest.entity.ChildStudent;
 import com.home.customtest.entity.Student;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 /**
@@ -43,13 +44,13 @@ public class DoMain {
         InterfacesProxyExecutor proxyExecutor = new InterfacesProxyExecutor(dbDataSource, dbCustomStrategy);
         CustomTestDao customTestDao = proxyExecutor.createProxy(CustomTestDao.class);
 
-        Map<String, Object> objectMap = jdbcDao.selectMap(Conditions.lambdaQuery(ChildStudent.class)
-                .eq(Student::getAge, 24)
-                .eq(ChildStudent::getSex, false)
-                .orderByDesc(Student::getAreaId)
-        );
 
-        System.out.println("objectMap = " + objectMap);
+        Student student = jdbcDao.selectOne(Conditions.lambdaQuery(Student.class).eq(Student::getName, "张重阳"));
+
+        student.setMoney(BigDecimal.valueOf(8775.35));
+        student.setPassword("zcy15247777");
+
+        jdbcDao.updateByKey(student, Student::getMoney);
 
 
 //        ChildStudent childStudent = jdbcDao.selectOne(Conditions.lambdaQuery(ChildStudent.class)

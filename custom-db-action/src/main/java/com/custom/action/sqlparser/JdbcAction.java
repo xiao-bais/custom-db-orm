@@ -204,9 +204,9 @@ public class JdbcAction extends AbstractSqlExecutor {
         HandleDeleteSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.DELETE);
         sqlBuilder.setKeys(keys);
         String deleteSql = sqlBuilder.buildSql();
-        int i = executeSql(deleteSql, sqlBuilder.getSqlParams().toArray());
+        int i = executeSql(deleteSql, sqlBuilder.getSqlParams());
         if(i > 0 && sqlBuilder.checkLogicFieldIsExist()) {
-            sqlBuilder.handleLogicDelAfter(t, deleteSql, sqlBuilder.getSqlParams().toArray());
+            sqlBuilder.handleLogicDelAfter(t, deleteSql, sqlBuilder.getSqlParams());
         }
         return i;
     }
@@ -237,7 +237,7 @@ public class JdbcAction extends AbstractSqlExecutor {
         HandleInsertSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.INSERT);
         String insertSql = sqlBuilder.buildSql();
         DbKeyParserModel<T> keyParserModel = sqlBuilder.getKeyParserModel();
-        return executeInsert(insertSql, Collections.singletonList(t),  keyParserModel.getField(), sqlBuilder.getSqlParams().toArray());
+        return executeInsert(insertSql, Collections.singletonList(t),  keyParserModel.getField(), sqlBuilder.getSqlParams());
     }
 
     @Override
@@ -251,11 +251,11 @@ public class JdbcAction extends AbstractSqlExecutor {
         if (sqlBuilder.isHasSubSelect()) {
             for (int i = 0; i < sqlBuilder.getSubCount(); i++) {
                 insertSql = sqlBuilder.buildSql();
-                res += executeInsert(insertSql, sqlBuilder.getSubList(), keyParserModel.getField(), sqlBuilder.getSqlParams().toArray());
+                res += executeInsert(insertSql, sqlBuilder.getSubList(), keyParserModel.getField(), sqlBuilder.getSqlParams());
             }
         }else {
              insertSql = sqlBuilder.buildSql();
-            res = executeInsert(insertSql, ts, keyParserModel.getField(), sqlBuilder.getSqlParams().toArray());
+            res = executeInsert(insertSql, ts, keyParserModel.getField(), sqlBuilder.getSqlParams());
         }
         return res;
     }
@@ -265,7 +265,7 @@ public class JdbcAction extends AbstractSqlExecutor {
     public <T> int updateByKey(T t) throws Exception {
         HandleUpdateSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.UPDATE);
         String updateSql = sqlBuilder.buildSql();
-        return executeSql(updateSql, sqlBuilder.getSqlParams().toArray());
+        return executeSql(updateSql, sqlBuilder.getSqlParams());
     }
 
     @SafeVarargs
@@ -277,7 +277,7 @@ public class JdbcAction extends AbstractSqlExecutor {
             sqlBuilder.setUpdateFuncColumns(updateColumns);
         }
         String updateSql = sqlBuilder.buildSql();
-        return executeSql(updateSql, sqlBuilder.getSqlParams().toArray());
+        return executeSql(updateSql, sqlBuilder.getSqlParams());
     }
 
     @Override
@@ -287,7 +287,7 @@ public class JdbcAction extends AbstractSqlExecutor {
         sqlBuilder.setCondition(wrapper.getFinalConditional());
         sqlBuilder.setConditionVals(wrapper.getParamValues());
         String updateSql = sqlBuilder.buildSql();
-        return executeSql(updateSql, sqlBuilder.getSqlParams().toArray());
+        return executeSql(updateSql, sqlBuilder.getSqlParams());
     }
 
     @Override
@@ -300,7 +300,7 @@ public class JdbcAction extends AbstractSqlExecutor {
         sqlBuilder.setCondition(condition);
         sqlBuilder.setConditionVals(Arrays.stream(params).collect(Collectors.toList()));
         String updateSql = sqlBuilder.buildSql();
-        return executeSql(updateSql, sqlBuilder.getSqlParams().toArray());
+        return executeSql(updateSql, sqlBuilder.getSqlParams());
     }
 
     @Override

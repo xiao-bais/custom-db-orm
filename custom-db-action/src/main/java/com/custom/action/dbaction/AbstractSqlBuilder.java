@@ -20,6 +20,7 @@ import java.util.Objects;
  * @date 2022/4/3 17:33
  * @desc: sql操作模板父类
  */
+@SuppressWarnings("unchecked")
 public abstract class AbstractSqlBuilder<T> {
 
     private String table;
@@ -91,12 +92,6 @@ public abstract class AbstractSqlBuilder<T> {
         this.columnParseHandler = new ColumnParseHandler<>(entityClass);
     }
 
-    public List<Object> getSqlParams() {
-        if (Objects.isNull(sqlParams)) {
-            sqlParams = new ArrayList<>();
-        }
-        return sqlParams;
-    }
 
     public void setSqlParams(List<Object> sqlParams) {
         if (Objects.nonNull(sqlParams)) {
@@ -209,5 +204,29 @@ public abstract class AbstractSqlBuilder<T> {
             return false;
         }
         return DbUtil.checkLogicFieldIsExist(table, logicColumn, selectJdbc);
+    }
+
+
+    /**
+     * 获取sql参数值列表
+     */
+    public Object[] getSqlParams() {
+        if (Objects.isNull(sqlParams)) {
+            return new Object[]{};
+        }
+        return sqlParams.toArray();
+    }
+
+    /**
+     * 添加参数值
+     */
+    public void addParams(Object val) {
+        if (Objects.isNull(sqlParams)) {
+            sqlParams = new ArrayList<>();
+        }
+        if (val instanceof List) {
+            this.sqlParams.addAll((List<Object>)val);
+        }
+        this.sqlParams.add(val);
     }
 }

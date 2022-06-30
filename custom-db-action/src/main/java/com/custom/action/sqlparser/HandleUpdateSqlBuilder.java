@@ -4,7 +4,6 @@ import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.fieldfill.FieldAutoFillHandleUtils;
 import com.custom.action.util.DbUtil;
 import com.custom.action.wrapper.SFunction;
-import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.exceptions.ExThrowsUtil;
@@ -51,30 +50,31 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
         }else {
             conditions = updateCustomCondition();
         }
-        updateSql.append(SymbolConstant.UPDATE)
+        return updateSql
+                .append(SymbolConstant.UPDATE)
                 .append(getTable()).append(" ")
                 .append(getAlias())
                 .append(SymbolConstant.SET)
                 .append(updateSqlColumns)
                 .append(SymbolConstant.WHERE)
-                .append(conditions);
-
-        return updateSql.toString();
+                .append(conditions).toString();
     }
 
     /**
      * 获取修改的逻辑删除字段sql（以主键做条件去修改）
      */
     private String updateKeyCondition() {
-        String keySqlField = getKeyParserModel().getFieldSql();
+        DbKeyParserModel<T> keyParserModel = getKeyParserModel();
+        String keySqlField = keyParserModel.getFieldSql();
         String condition = null;
         try {
-            condition = checkLogicFieldIsExist() ? String.format("%s and %s = ?", getLogicDeleteQuerySql(), keySqlField) : String.format("%s = ?", keySqlField);
-            Object keyVal = getKeyParserModel().getValue();
+            String formatSetSql = DbUtil.formatSetSql(keySqlField);
+            condition = checkLogicFieldIsExist() ? DbUtil.formatSetConditionSql(getLogicDeleteQuerySql(), formatSetSql) : formatSetSql;
+            Object keyVal = keyParserModel.getValue();
             if (Objects.isNull(keyVal)) {
                 ExThrowsUtil.toNull("主键的值缺失");
             }
-            getSqlParams().add(keyVal);
+            addParams(keyVal);
         } catch (Exception e) {
             ExThrowsUtil.toCustom(e.toString());
         }
@@ -88,7 +88,7 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
         String condition = null;
         try {
             condition = checkLogicFieldIsExist() ? (getLogicDeleteQuerySql() + " " + this.condition) : DbUtil.trimSqlCondition(this.condition);
-            getSqlParams().addAll(this.conditionVals);
+            addParams(this.conditionVals);
         } catch (Exception e) {
             ExThrowsUtil.toCustom(e.toString());
         }
@@ -103,39 +103,40 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
      */
     private void updateSqlField() {
         if (Objects.nonNull(updateFuncColumns)) {
-            buildFixedFieldSql(true);
+            chooseAppointFieldSql(true);
         } else if(Objects.nonNull(updateStrColumns)) {
-            buildFixedFieldSql(false);
+            chooseAppointFieldSql(false);
         } else {
-            getFieldParserModels().forEach(x -> {
-                Object value = x.getValue();
+            for (DbFieldParserModel<T> field : getFieldParserModels()) {
+                Object value = field.getValue();
                 if (Objects.isNull(value)) {
-                    // 修改时的自动填充，只有在填充字段为null的前提下，才进行填充
-                    Object fillValue = FieldAutoFillHandleUtils.getFillValue(getEntityClass(), x.getFieldName());
+                    // 修改时必要的自动填充
+                    // 当修改时，用户没有为自动填充的字段额外设置业务值，则启用原本设定的默认值进行填充
+                    Object fillValue = FieldAutoFillHandleUtils.getFillValue(getEntityClass(), field.getFieldName());
                     if (Objects.nonNull(fillValue)) {
                         value = fillValue;
                     }
                 }
-                if(Objects.nonNull(value)) {
-                    updateSqlColumns.add(String.format("%s = ?", x.getFieldSql()));
-                    getSqlParams().add(value);
+                if (Objects.nonNull(value)) {
+                    updateSqlColumns.add(DbUtil.formatSetSql(field.getFieldSql()));
+                    addParams(value);
                 }
-            });
+            }
         }
     }
 
 
-
     /**
-     * 以指定修改的字段去构建修改的sql
+     * 选择以指定修改的字段去构建修改的sql
+     * @param isFunc 是否使用Function函数表达式
      */
-    private void buildFixedFieldSql(boolean isFunc) {
+    private void chooseAppointFieldSql(boolean isFunc) {
         String[] updateColumns = isFunc ? getColumnParseHandler().getColumn(this.updateFuncColumns) : this.updateStrColumns;
         for (String column : updateColumns) {
-            Optional<DbFieldParserModel<T>> updateFieldOP = getFieldParserModels().stream().filter(x -> x.getColumn().equals(column)).findFirst();
+            Optional<DbFieldParserModel<T>> updateFieldOP = getFieldParserModels().stream().filter(x -> x.getFieldSql().equals(column)).findFirst();
             updateFieldOP.ifPresent(op -> {
-                updateSqlColumns.add(String.format("%s = ?", op.getFieldSql()));
-                getSqlParams().add(op.getValue());
+                updateSqlColumns.add(DbUtil.formatSetSql(op.getFieldSql()));
+                addParams(op.getValue());
             });
         }
     }

@@ -107,7 +107,7 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
             StringJoiner brackets = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_1, SymbolConstant.BRACKETS_LEFT, SymbolConstant.BRACKETS_RIGHT);
             if (Objects.nonNull(getKeyParserModel())) {
                 brackets.add(SymbolConstant.QUEST);
-                this.getSqlParams().add(getKeyParserModel().getValue());
+                this.addParams(getKeyParserModel().getValue());
             }
             getFieldParserModels().forEach(x -> {
                 Object fieldValue = x.getValue();
@@ -129,7 +129,7 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
                         x.setValue(fieldValue);
                     }
                 }
-                this.getSqlParams().add(fieldValue);
+                this.addParams(fieldValue);
                 brackets.add(SymbolConstant.QUEST);
             });
             insertSymbol.add(brackets.toString());
