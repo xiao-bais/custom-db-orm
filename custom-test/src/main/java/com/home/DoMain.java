@@ -54,18 +54,18 @@ public class DoMain {
         jdbcDao.updateByKey(student, Student::getMoney, Student::getAddress, Student::getBirth);
 
 
-//        ChildStudent childStudent = jdbcDao.selectOne(Conditions.lambdaQuery(ChildStudent.class)
-//                .select(x -> x
-//                        .sum(ChildStudent::getAge, ChildStudent::getSumAge)
-//                        .max(ChildStudent::getAge, ChildStudent::getMaxAge)
-//                        .min(ChildStudent::getAge, ChildStudent::getMinAge)
-//                        .avg(ChildStudent::getAge, ChildStudent::getAvgAge)
-//                        .count(ChildStudent::getAge, ChildStudent::getCountAge)
-//                )
-//                .onlyPrimary()
-//                .toDefault()
-//        );
-//        System.out.println("childStudent = " + childStudent);
+        ChildStudent childStudent = jdbcDao.selectOne(Conditions.lambdaQuery(ChildStudent.class)
+                .select(x -> x
+                        .sum(ChildStudent::getAge, ChildStudent::getSumAge)
+                        .max(ChildStudent::getAge, ChildStudent::getMaxAge)
+                        .min(ChildStudent::getAge, ChildStudent::getMinAge)
+                        .avg(ChildStudent::getAge, ChildStudent::getAvgAge)
+                        .count(ChildStudent::getAge, ChildStudent::getCountAge)
+                )
+                .onlyPrimary()
+                .toDefault()
+        );
+        System.out.println("childStudent = " + childStudent);
 
 
     }
