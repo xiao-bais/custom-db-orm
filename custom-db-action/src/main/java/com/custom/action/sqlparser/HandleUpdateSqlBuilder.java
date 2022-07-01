@@ -24,11 +24,29 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(HandleUpdateSqlBuilder.class);
 
+    /**
+     * 修改的最终sql
+     */
     private final StringBuilder updateSql;
+    /**
+     * 修改的字段 set部分的sql
+     */
     private final StringJoiner updateSqlColumns;
+    /**
+     * 修改的条件
+     */
     private String condition;
+    /**
+     * sql参数值
+     */
     private List<Object> conditionVals;
+    /**
+     * 指定要修改的字段-函数表达式
+     */
     private SFunction<T, ?>[] updateFuncColumns;
+    /**
+     * 指定要修改的字段-字段字符串数组
+     */
     private String[] updateStrColumns;
 
     public HandleUpdateSqlBuilder() {
@@ -43,21 +61,16 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
     @Override
     public String buildSql() {
         // 修改字段构建
-        updateSqlFieldBuilder();
-        String conditions;
-        if (JudgeUtil.isEmpty(condition)) {
-            conditions = updateKeyCondition();
-        }else {
-            conditions = updateCustomCondition();
-        }
+        this.updateSqlFieldBuilder();
+        String updateCondition = JudgeUtil.isEmpty(condition) ? this.updateKeyCondition() : this.updateCustomCondition();
         return updateSql
                 .append(SymbolConstant.UPDATE)
                 .append(getTable()).append(" ")
                 .append(getAlias())
+                .append("\n")
                 .append(SymbolConstant.SET)
                 .append(updateSqlColumns)
-                .append(SymbolConstant.WHERE)
-                .append(conditions).toString();
+                .append(DbUtil.whereSqlCondition(updateCondition)).toString();
     }
 
     /**

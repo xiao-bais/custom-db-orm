@@ -11,6 +11,7 @@ import com.home.customtest.entity.ChildStudent;
 import com.home.customtest.entity.Student;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -32,7 +33,7 @@ public class DoMain {
         // 增删改查映射策略配置
         DbCustomStrategy dbCustomStrategy = new DbCustomStrategy();
         dbCustomStrategy.setSqlOutPrinting(true);
-        dbCustomStrategy.setSqlOutPrintExecute(true);
+//        dbCustomStrategy.setSqlOutPrintExecute(true);
         dbCustomStrategy.setUnderlineToCamel(true);
         dbCustomStrategy.setDbFieldDeleteLogic("state");
         dbCustomStrategy.setDeleteLogicValue(1);
@@ -44,13 +45,13 @@ public class DoMain {
         InterfacesProxyExecutor proxyExecutor = new InterfacesProxyExecutor(dbDataSource, dbCustomStrategy);
         CustomTestDao customTestDao = proxyExecutor.createProxy(CustomTestDao.class);
 
-
         Student student = jdbcDao.selectOne(Conditions.lambdaQuery(Student.class).eq(Student::getName, "张重阳"));
 
         student.setMoney(BigDecimal.valueOf(8775.35));
         student.setPassword("zcy15247777");
+        student.setBirth(new Date());
 
-        jdbcDao.updateByKey(student, Student::getMoney);
+        jdbcDao.updateByKey(student, Student::getMoney, Student::getAddress, Student::getBirth);
 
 
 //        ChildStudent childStudent = jdbcDao.selectOne(Conditions.lambdaQuery(ChildStudent.class)
