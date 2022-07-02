@@ -215,7 +215,7 @@ public class CustomUtil {
         Class<?> clz = t;
         DbTable thisDbTable = t.getAnnotation(DbTable.class);
         List<Field> fieldList = new ArrayList<>();
-        while (!clz.equals(Object.class)){
+        while (!clz.equals(Object.class)) {
             fieldList.addAll(Arrays.asList(clz.getDeclaredFields()));
             DbTable parentDbTable = clz.getSuperclass().getAnnotation(DbTable.class);
             if (Objects.isNull(parentDbTable) || thisDbTable.equals(parentDbTable)) {
@@ -225,7 +225,9 @@ public class CustomUtil {
                 }
             }
         }
-        if(fieldList.size() == 0 && checkDbField) ExThrowsUtil.toCustom("@DbField not found in class "+ t);
+        if(fieldList.size() == 0 && checkDbField) {
+            ExThrowsUtil.toCustom("@DbField not found in class "+ t);
+        }
         return fieldList.toArray(new Field[0]);
     }
 
