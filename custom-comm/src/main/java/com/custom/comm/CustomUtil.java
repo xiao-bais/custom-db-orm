@@ -215,11 +215,14 @@ public class CustomUtil {
         Class<?> clz = t;
         DbTable thisDbTable = t.getAnnotation(DbTable.class);
         List<Field> fieldList = new ArrayList<>();
-        while (clz != null && !clz.getName().equalsIgnoreCase("java.lang.object")){
+        while (!clz.equals(Object.class)){
             fieldList.addAll(Arrays.asList(clz.getDeclaredFields()));
-            DbTable parentDbTable = clz.getAnnotation(DbTable.class);
-            if (parentDbTable != null && parentDbTable.table().equals(thisDbTable.table())) {
+            DbTable parentDbTable = clz.getSuperclass().getAnnotation(DbTable.class);
+            if (Objects.isNull(parentDbTable) || thisDbTable.equals(parentDbTable)) {
                 clz = clz.getSuperclass();
+                if (clz.equals(Object.class)) {
+                    break;
+                }
             }
         }
         if(fieldList.size() == 0 && checkDbField) ExThrowsUtil.toCustom("@DbField not found in class "+ t);

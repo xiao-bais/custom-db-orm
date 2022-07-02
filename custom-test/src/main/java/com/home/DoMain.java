@@ -9,9 +9,11 @@ import com.custom.proxy.InterfacesProxyExecutor;
 import com.home.customtest.dao.CustomTestDao;
 import com.home.customtest.entity.ChildStudent;
 import com.home.customtest.entity.Student;
+import com.home.shop.entity.ShopCategoryPO;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,7 +28,7 @@ public class DoMain {
 
         // 数据库连接配置
         DbDataSource dbDataSource = new DbDataSource();
-        dbDataSource.setUrl("jdbc:mysql://39.108.225.176:3306/hos?characterEncoding=utf-8&allowMultiQueries=true&autoreconnect=true&serverTimezone=UTC");
+        dbDataSource.setUrl("jdbc:mysql://39.108.225.176:3306/shop?characterEncoding=utf-8&allowMultiQueries=true&autoreconnect=true&serverTimezone=UTC");
         dbDataSource.setUsername("root");
         dbDataSource.setPassword("xh@Mysql1524");
 
@@ -45,28 +47,9 @@ public class DoMain {
         InterfacesProxyExecutor proxyExecutor = new InterfacesProxyExecutor(dbDataSource, dbCustomStrategy);
         CustomTestDao customTestDao = proxyExecutor.createProxy(CustomTestDao.class);
 
-        Student student = jdbcDao.selectOne(Conditions.lambdaQuery(Student.class).eq(Student::getName, "张重阳"));
+        List<ShopCategoryPO> shopCategoryPOS = jdbcDao.selectList(ShopCategoryPO.class, null);
 
-        student.setMoney(BigDecimal.valueOf(8775.35));
-        student.setPassword("zcy15247777");
-        student.setBirth(new Date());
-
-        jdbcDao.updateByKey(student, Student::getMoney, Student::getAddress, Student::getBirth);
-
-
-        ChildStudent childStudent = jdbcDao.selectOne(Conditions.lambdaQuery(ChildStudent.class)
-                .select(x -> x
-                        .sum(ChildStudent::getAge, ChildStudent::getSumAge)
-                        .max(ChildStudent::getAge, ChildStudent::getMaxAge)
-                        .min(ChildStudent::getAge, ChildStudent::getMinAge)
-                        .avg(ChildStudent::getAge, ChildStudent::getAvgAge)
-                        .count(ChildStudent::getAge, ChildStudent::getCountAge)
-                )
-                .onlyPrimary()
-                .toDefault()
-        );
-        System.out.println("childStudent = " + childStudent);
-
+        System.out.println("shopCategoryPOS = " + shopCategoryPOS);
 
     }
 
