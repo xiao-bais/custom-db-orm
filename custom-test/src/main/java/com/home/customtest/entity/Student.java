@@ -19,7 +19,7 @@ import java.util.List;
         @DbJoinTable("left join province pro on pro.id = a.pro_id"),
         @DbJoinTable("left join city cy on cy.id = a.city_id"),
 })
-@DbTable(table = "student", desc = "学生信息表")
+@DbTable(table = "student3", desc = "学生信息表")
 public class Student {
 
     @DbKey(value = "id", strategy = KeyStrategy.AUTO, dbType = DbType.DbInt)

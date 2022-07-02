@@ -33,4 +33,27 @@ public class ColumnCreateInfo {
     public void setCreateColumnSql(String createColumnSql) {
         this.createColumnSql = createColumnSql;
     }
+
+    @Override
+    public int hashCode() {
+        int initCode = 17;
+        int result = 31 * initCode + (column == null ? 0 : column.hashCode());
+        result = 31 * result + (column == null ? 0 : column.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof ColumnCreateInfo) {
+            ColumnCreateInfo other = (ColumnCreateInfo) obj;
+            return this.column.equals(other.column) && this.createColumnSql.equals(other.createColumnSql);
+        }
+        return false;
+    }
 }

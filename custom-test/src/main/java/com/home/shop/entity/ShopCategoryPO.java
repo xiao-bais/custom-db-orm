@@ -24,10 +24,10 @@ public class ShopCategoryPO extends BaseEntity {
     @DbField(desc = "产品种类名称")
     private String name;
 
-    @DbField(value = "category_desc",desc = "种类说明")
+    @DbField(desc = "种类说明")
     private String categoryDesc;
 
-    @DbField(value = "parent_id", desc = "父级种类ID")
+    @DbField(desc = "父级种类ID")
     private int parentId;
 
     @DbField(desc = "种类样式图")

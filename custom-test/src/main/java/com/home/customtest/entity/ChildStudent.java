@@ -27,6 +27,9 @@ public class ChildStudent extends Student {
     @DbField
     private String phone;
 
+    @DbField
+    private String headImgUrl;
+
     private Integer sumAge;
     private Integer ifNullAge;
     private Integer countAge;

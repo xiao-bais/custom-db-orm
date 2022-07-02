@@ -109,7 +109,7 @@ public class TableStructsInitializer {
             String exitsTableSql = waitUpdateSqlBuilder.getExitsTableSql(entityClass);
             String table = waitUpdateSqlBuilder.getTable();
             // 若表已存在，则进行下一步判断表字段是否存在
-            Object exists = selectJdbc.selectObj(new SelectSqlParamInfo<>(Object.class, exitsTableSql));
+            Object exists = selectJdbc.selectObj(new SelectSqlParamInfo<>(Object.class, exitsTableSql, false));
             if (ConvertUtil.conBool(exists)) {
                 buildColumnInfo(waitUpdateSqlBuilder, table);
                 continue;
@@ -126,14 +126,14 @@ public class TableStructsInitializer {
         TableCreateInfo tableCreateInfo;
         if (waitCreateMapper.containsKey(table)) {
             tableCreateInfo = waitCreateMapper.get(table);
-            Set<ColumnCreateInfo> buildAddColumnSqls = addColumnInfos(waitUpdateSqlBuilder);
-            tableCreateInfo.mergeColumnCreateInfos(buildAddColumnSqls);
+            addColumnInfos(waitUpdateSqlBuilder, tableCreateInfo.getColumnCreateInfos());
         }else {
             tableCreateInfo = new TableCreateInfo();
             tableCreateInfo.setTable(table);
             tableCreateInfo.setComment(waitUpdateSqlBuilder.getDesc());
-            Set<ColumnCreateInfo> buildAddColumnSqls = addColumnInfos(waitUpdateSqlBuilder);
-            tableCreateInfo.setColumnCreateInfos(buildAddColumnSqls);
+            Set<ColumnCreateInfo> buildColumnSqls = new LinkedHashSet<>();
+            addColumnInfos(waitUpdateSqlBuilder, buildColumnSqls);
+            tableCreateInfo.setColumnCreateInfos(buildColumnSqls);
             waitCreateMapper.put(table, tableCreateInfo);
         }
         // 若主键为空，则加入主键的创建sql
@@ -146,15 +146,15 @@ public class TableStructsInitializer {
     }
 
 
-    private Set<ColumnCreateInfo> addColumnInfos(TableSqlBuilder<?> waitUpdateSqlBuilder) {
-        Set<ColumnCreateInfo> buildColumnSqls = new LinkedHashSet<>();
+    private void addColumnInfos(TableSqlBuilder<?> waitUpdateSqlBuilder, Set<ColumnCreateInfo> buildColumnSqls) {
         for (DbFieldParserModel<?> fieldParserModel : waitUpdateSqlBuilder.getFieldParserModels()) {
             ColumnCreateInfo columnCreateInfo = new ColumnCreateInfo();
             columnCreateInfo.setColumn(fieldParserModel.getColumn());
             columnCreateInfo.setCreateColumnSql(fieldParserModel.buildTableSql());
-            buildColumnSqls.add(columnCreateInfo);
+            if (buildColumnSqls.stream().noneMatch(x -> x.equals(columnCreateInfo))) {
+                buildColumnSqls.add(columnCreateInfo);
+            }
         }
-        return buildColumnSqls;
     }
 
     /**

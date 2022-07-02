@@ -1,5 +1,6 @@
 package com.custom.springboot;
 
+import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.comm.JudgeUtil;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
@@ -33,13 +34,14 @@ public class CustomBeanInitializer implements InitializingBean, ApplicationConte
     public void afterPropertiesSet() throws Exception {
         DbCustomStrategy strategy = applicationContext.getBean(DbCustomStrategy.class);
         DbDataSource dataSource = applicationContext.getBean(DbDataSource.class);
+        TableInfoCache.setUnderlineToCamel(strategy.isUnderlineToCamel());
         if (!strategy.isSyncEntityEnable()) {
             return;
         }
         if (JudgeUtil.isEmpty(strategy.getEntityPackageScans())) {
             return;
         }
-        logger.info("Table info sync process started !!!");
+        logger.info("Table info sync process started ... ...");
         // 表结构初始化
         TableStructsInitializer tableStructsInitializer = new TableStructsInitializer(
                 strategy.getEntityPackageScans(),
