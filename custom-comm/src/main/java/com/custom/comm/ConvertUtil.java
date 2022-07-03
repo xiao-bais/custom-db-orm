@@ -118,6 +118,12 @@ public class ConvertUtil {
             return conBool((Double) i);
         }
         if (i instanceof CharSequence) {
+            if (String.valueOf(i).equalsIgnoreCase(SymbolConstant.CONST_TRUE)) {
+                return true;
+            }
+            if (String.valueOf(i).equalsIgnoreCase(SymbolConstant.CONST_FALSE)) {
+                return false;
+            }
             return JudgeUtil.isNotEmpty(i);
         }
         return false;
@@ -126,7 +132,7 @@ public class ConvertUtil {
 
     public static void main(String[] args) {
 
-        boolean conBool = conBool(.2);
+        boolean conBool = conBool("false");
         System.out.println("conBool = " + conBool);
 
     }

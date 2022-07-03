@@ -21,6 +21,12 @@ public class SymbolConstant {
     public final static String SETTER = "set";
 
     /**
+     * true or false
+     */
+    public final static String CONST_TRUE = "true";
+    public final static String CONST_FALSE = "false";
+
+    /**
      * sql常量
      */
     public final static String DATA_BASE = "database";

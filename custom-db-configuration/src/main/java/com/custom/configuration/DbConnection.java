@@ -67,6 +67,7 @@ public class DbConnection {
         druidDataSource.setPassword(dbDataSource.getPassword());
 
         druidDataSource.setInitialSize(dbDataSource.getInitialSize());
+        druidDataSource.setKeepAlive(true);
         druidDataSource.setMinIdle(dbDataSource.getMinIdle());
         druidDataSource.setMaxWait(dbDataSource.getMaxWait());
         druidDataSource.setMaxActive(dbDataSource.getMaxActive());
