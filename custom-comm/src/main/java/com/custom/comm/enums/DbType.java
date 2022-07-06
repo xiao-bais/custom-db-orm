@@ -39,6 +39,7 @@ public enum DbType {
     private final String type;
     private final Class<?> fieldType;
     private final Class<?> baseType;
+    private
     private final String length;
 
     DbType(String type, Class<?> fieldType, Class<?> baseType, String length) {

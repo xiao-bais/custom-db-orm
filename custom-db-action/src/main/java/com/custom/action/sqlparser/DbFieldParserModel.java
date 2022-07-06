@@ -78,6 +78,11 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     */
     private boolean isNull;
 
+    /**
+     * 默认值
+     */
+    private Object defaultValue;
+
 
     public DbFieldParserModel(){}
 
@@ -132,6 +137,15 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     public void setEntity(T entity) {
         this.entity = entity;
     }
+
+
+    /**
+     * 在装配之前，检查属性类型、参数等的不合法性
+     */
+    private void checkIllegalPropertyBuildBefore() {
+        
+    }
+
 
     /**
      * 构建创建表的sql语句

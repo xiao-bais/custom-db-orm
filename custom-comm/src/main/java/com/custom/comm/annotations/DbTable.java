@@ -20,26 +20,33 @@ public @interface DbTable {
      * <p>
      *     若当前类跟父类同时标注了DbTable注解，且对应的table值不一致时，则不会合并父类的属性字段
      * </p>
-     * @return
+     * @return table
      */
     String table();
 
     /**
      * 指定表的别名
-     * @return
+     * @return alias
      */
     String alias() default "a";
 
     /**
      * 指定表的说明
-     * @return
+     * @return desc
      */
     String desc() default SymbolConstant.EMPTY;
 
     /**
      * 当子类跟父类同时标注了@DbJoinTable(s)注解时，是否在查询时向上查找父类的@DbJoinTable(s)注解，且合并关联条件
-     * @return
+     * @return mergeSuperDbJoinTables
      */
     boolean mergeSuperDbJoinTables() default true;
+
+    /**
+     * 是否开启默认值(在创建表或者插入新记录时会附带自定义的默认值)
+     * 注意: 若{@link DbField}上也给定了设定的默认值，则以{@link DbField}的默认值优先
+     * @return enabledDefaultValue
+     */
+    boolean enabledDefaultValue() default false;
 
 }
