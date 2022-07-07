@@ -42,6 +42,13 @@ public class RexUtil {
      */
     public final static String custom_format = "\\{(.+?)\\}";
 
+    /**
+     * 匹配是否是数字，小数，负数
+     */
+    public final static String check_number = "-?[0-9]+.?[0-9]*";
+
+
+
 
     /**
      * 返回第一个满足正则条件的字符串

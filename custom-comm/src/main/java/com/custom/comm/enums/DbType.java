@@ -1,5 +1,6 @@
 package com.custom.comm.enums;
 
+import com.custom.comm.SymbolConstant;
 import com.custom.comm.exceptions.CustomCheckException;
 
 import java.math.BigDecimal;
@@ -14,39 +15,40 @@ import java.util.Objects;
  */
 public enum DbType {
 
-    DbInt("int", Integer.class, Integer.TYPE, "11"),
+    DbInt("int", Integer.class, Integer.TYPE, "11", 0),
 
-    DbVarchar("varchar", String.class, null, "50"),
+    DbVarchar("varchar", String.class, null, "50", SymbolConstant.EMPTY),
 
-    DbFloat("float", Float.class, Float.TYPE,  "11"),
+    DbFloat("float", Float.class, Float.TYPE,  "11", 0.0F),
 
-    DbDecimal("decimal", BigDecimal.class, null, "16,2"),
+    DbDecimal("decimal", BigDecimal.class, null, "16,2", BigDecimal.ZERO),
 
-    DbDouble("double", Double.class, Double.TYPE, "5,2"),
+    DbDouble("double", Double.class, Double.TYPE, "5,2", 0.0D),
 
-    DbTinyint("tinyint", Integer.class, Integer.TYPE, "1"),
+    DbTinyint("tinyint", Integer.class, Integer.TYPE, "1", 0),
 
-    DbBit("bit", Boolean.class, Boolean.TYPE, "1"),
+    DbBit("bit", Boolean.class, Boolean.TYPE, "1", false),
 
-    DbText("text", String.class, null,  "255"),
+    DbText("text", String.class, null,  "255", SymbolConstant.EMPTY),
 
-    DbBigint("bigint", Long.class, Long.TYPE,  "11"),
+    DbBigint("bigint", Long.class, Long.TYPE,  "11", 0L),
 
-    DbDate("date", Date.class,  null, "0"),
+    DbDate("date", Date.class,  null, "0", null),
 
-    DbDateTime("datetime", Date.class, null, "0");
+    DbDateTime("datetime", Date.class, null, "0", null);
 
     private final String type;
     private final Class<?> fieldType;
     private final Class<?> baseType;
-    private
     private final String length;
+    private final Object value;
 
-    DbType(String type, Class<?> fieldType, Class<?> baseType, String length) {
+    DbType(String type, Class<?> fieldType, Class<?> baseType, String length, Object value) {
         this.type = type;
         this.fieldType = fieldType;
         this.baseType = baseType;
         this.length = length;
+        this.value = value;
     }
 
     public static DbType getDbMediaType(Class<?> type) {
@@ -78,5 +80,9 @@ public enum DbType {
 
     public Class<?> getFieldType() {
         return fieldType;
+    }
+
+    public Object getValue() {
+        return value;
     }
 }

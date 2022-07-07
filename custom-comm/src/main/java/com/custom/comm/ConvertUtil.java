@@ -117,16 +117,8 @@ public class ConvertUtil {
         if (i instanceof Double) {
             return conBool((Double) i);
         }
-        if (i instanceof CharSequence) {
-            if (String.valueOf(i).equalsIgnoreCase(SymbolConstant.CONST_TRUE)) {
-                return true;
-            }
-            if (String.valueOf(i).equalsIgnoreCase(SymbolConstant.CONST_FALSE)) {
-                return false;
-            }
-            return JudgeUtil.isNotEmpty(i);
-        }
-        return false;
+        return i instanceof CharSequence
+                && (String.valueOf(i).equalsIgnoreCase(SymbolConstant.CONST_TRUE) || "1".equals(i));
     }
 
 

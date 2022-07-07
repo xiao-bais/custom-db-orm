@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 
 /**
  * @author Xiao-Bai
@@ -36,17 +37,17 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
      * 查询时，指定查询字段的包装
      * 例：concat('user-', a.name) columnName
      */
-    private String wrapperColumn;
+    private final String wrapperColumn;
 
     /**
      * 查询时若当前字段为字符串类型，是否null转为空字符串
      */
-    private Boolean isNullToEmpty = false;
+    private final Boolean isNullToEmpty;
 
     /**
     * sql字段类型
     */
-    private DbType dbType;
+    private final DbType dbType;
 
     /**
     * java字段类型
@@ -56,7 +57,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     /**
      * 字段属性
      */
-    private Field field;
+    private final Field field;
 
     /**
     * 字段值
@@ -66,32 +67,36 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     /**
     * sql字段长度
     */
-    private String length;
+    private final String length;
 
     /**
     * sql字段说明
     */
-    private String desc;
+    private final String desc;
 
     /**
     * 是否为空
     */
-    private boolean isNull;
+    private final boolean isNull;
+
+    /**
+     * 是否开启了表的默认值
+     * 开启以后，在新增时会若java属性值为null，则自动添加给定的默认值
+     * 若字段跟表同时设置了默认值，则以字段设置的默认值优先
+     */
+    private final boolean enabledDefaultValue;
 
     /**
      * 默认值
      */
     private Object defaultValue;
 
-
-    public DbFieldParserModel(){}
-
-    public DbFieldParserModel(T t, Field field, String table, String alias, boolean underlineToCamel) {
-        this(field, table, alias, underlineToCamel);
+    public DbFieldParserModel(T t, Field field, String table, String alias, boolean underlineToCamel, boolean enabledDefaultValue) {
+        this(field, table, alias, underlineToCamel, enabledDefaultValue);
         this.entity = t;
     }
 
-    public DbFieldParserModel(Field field, String table, String alias, boolean underlineToCamel) {
+    public DbFieldParserModel(Field field, String table, String alias, boolean underlineToCamel, boolean enabledDefaultValue) {
         this.fieldName = GlobalDataHandler.hasSqlKeyword(field.getName()) ? GlobalDataHandler.wrapperSqlKeyword(field.getName()) : field.getName();
         this.type = field.getType();
         DbField annotation = field.getAnnotation(DbField.class);
@@ -110,8 +115,11 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
         this.desc = annotation.desc();
         this.dbType = annotation.dataType() == DbType.DbVarchar ? DbType.getDbMediaType(field.getType()) : annotation.dataType();
         this.length = this.dbType.getLength();
+        this.defaultValue = annotation.defaultValue();
+        this.enabledDefaultValue = enabledDefaultValue;
         super.setTable(table);
         super.setAlias(alias);
+        checkIllegalPropertyBuildBefore();
     }
 
     public String getFieldName() {
@@ -143,7 +151,40 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
      * 在装配之前，检查属性类型、参数等的不合法性
      */
     private void checkIllegalPropertyBuildBefore() {
-        
+
+        // 若本身未设置默认值，则给定表的默认值
+        if (JudgeUtil.isEmpty(this.defaultValue)) {
+            if (this.enabledDefaultValue) {
+                this.defaultValue = this.dbType.getValue();
+            }
+            return;
+        }
+
+        Object value = null;
+        String tmpValue = String.valueOf(this.defaultValue);
+        if (String.valueOf(this.defaultValue).matches(RexUtil.check_number)) {
+            try {
+                if (Integer.class.isAssignableFrom(this.type)) {
+                    value = Integer.parseInt(tmpValue);
+                } else if (Long.class.isAssignableFrom(this.type)) {
+                    value = Long.parseLong(tmpValue);
+                    // 如果java类型是Boolean 而默认值需要一致，true可写"true" 或 "1"，否则判定为false
+                } else if (Boolean.class.isAssignableFrom(this.type)) {
+                    value = ConvertUtil.conBool(tmpValue);
+                }
+            } catch (NumberFormatException e) {
+                if (Double.class.isAssignableFrom(this.type)) {
+                    value = Double.parseDouble(tmpValue);
+                } else if (Float.class.isAssignableFrom(this.type)) {
+                    value = Float.parseFloat(tmpValue);
+                } else if (BigDecimal.class.isAssignableFrom(this.type)) {
+                    value = new BigDecimal(tmpValue);
+                }
+            }
+        }else if (Boolean.class.isAssignableFrom(this.type)) {
+            value = Boolean.parseBoolean(tmpValue);
+        }
+        this.defaultValue = value;
     }
 
 

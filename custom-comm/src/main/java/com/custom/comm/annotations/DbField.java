@@ -39,10 +39,10 @@ public @interface DbField {
      * <br/> (若不想逐个设定，可由{@link DbTable#enabledDefaultValue()}开启给定的默认值)
      * <p>
      *     若默认值是int、long、double、decimal, float 等之类的数字类型，则自定义即可
-     *     若默认值是 boolean类型，则直接以字符串的true、false即可 (不区分大小写)
+     *     若默认值是 boolean类型，则直接以字符串的true/false或者1,0即可 (不区分大小写)
      * </p>
      * <p>
-     *     注意：若给定的默认值是abc这样的字符串，而java属性或sql字段类型为int类型之类的，则会无法解析的，并抛出异常
+     *     注意：若给定的默认值是abc这样的字符串，而java属性或sql字段类型为int类型之类的，则会无法解析的，可能会抛出异常
      * </p>
      * @return defaultValue
      */

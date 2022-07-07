@@ -40,6 +40,8 @@ public class TableSqlBuilder<T> implements Cloneable {
     private Field[] fields;
 
     private boolean underlineToCamel;
+
+    private boolean enabledDefaultValue;
     
     /**
      * 当子类跟父类同时标注了@DbJoinTable(s)注解时，是否在查询时向上查找父类的@DbJoinTable(s)注解，且合并关联条件
@@ -217,6 +219,7 @@ public class TableSqlBuilder<T> implements Cloneable {
         this.table = annotation.table();
         this.desc = annotation.desc();
         this.findUpDbJoinTables = annotation.mergeSuperDbJoinTables();
+        this.enabledDefaultValue = annotation.enabledDefaultValue();
         this.underlineToCamel = underlineToCamel;
     }
 
@@ -233,7 +236,7 @@ public class TableSqlBuilder<T> implements Cloneable {
                 keyParserModel = new DbKeyParserModel<>(field, this.table, this.alias, this.underlineToCamel);
 
             } else if (field.isAnnotationPresent(DbField.class)) {
-                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias, this.underlineToCamel);
+                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias, this.underlineToCamel, this.enabledDefaultValue);
                 fieldParserModels.add(fieldParserModel);
 
             } else if (field.isAnnotationPresent(DbMapper.class)) {
@@ -255,13 +258,13 @@ public class TableSqlBuilder<T> implements Cloneable {
     private void mergeDbJoinTables() {
         Class<?> entityClass = this.cls;
         if (findUpDbJoinTables) {
-            while (!entityClass.getName().equalsIgnoreCase("java.lang.object")) {
+            while (!entityClass.equals(Object.class)) {
                 buildDbJoinTables(entityClass);
                 entityClass = entityClass.getSuperclass();
             }
-        }else {
-            buildDbJoinTables(entityClass);
+            return;
         }
+        this.buildDbJoinTables(entityClass);
     }
 
     /**
@@ -289,11 +292,11 @@ public class TableSqlBuilder<T> implements Cloneable {
                 keyParserModel = new DbKeyParserModel<>(entity, field, this.table, this.alias, this.underlineToCamel);
 
             } else if (field.isAnnotationPresent(DbField.class) && isBuildUpdateModels) {
-                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(entity, field, this.table, this.alias, this.underlineToCamel);
+                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(entity, field, this.table, this.alias, this.underlineToCamel, this.enabledDefaultValue);
                 fieldParserModels.add(fieldParserModel);
 
             } else if (field.isAnnotationPresent(DbField.class)) {
-                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias, this.underlineToCamel);
+                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias, this.underlineToCamel, this.enabledDefaultValue);
                 fieldParserModels.add(fieldParserModel);
             }
         }
@@ -398,6 +401,10 @@ public class TableSqlBuilder<T> implements Cloneable {
         if (!fieldParserModels.isEmpty()) {
             fieldParserModels.forEach(x -> x.setEntity(entity));
         }
+    }
+
+    public boolean isEnabledDefaultValue() {
+        return enabledDefaultValue;
     }
 
     public void setList(List<T> list) {
