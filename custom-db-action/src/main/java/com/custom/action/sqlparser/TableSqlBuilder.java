@@ -106,10 +106,10 @@ public class TableSqlBuilder<T> implements Cloneable {
             fieldParserModels.stream().map(dbFieldParserModel -> dbFieldParserModel.buildTableSql() + "\n").forEach(fieldSql::add);
         }
 
-        createTableSql.append(String.format("CREATE TABLE `%s` (\n%s)", this.table, fieldSql));
+        createTableSql.append(String.format("create table `%s` (\n%s)", this.table, fieldSql));
 
         if (JudgeUtil.isNotEmpty(this.desc)) {
-            createTableSql.append(String.format(" COMMENT = '%s'", this.desc));
+            createTableSql.append(String.format(" comment = '%s'", this.desc));
         }
         return createTableSql.toString();
     }

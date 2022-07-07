@@ -47,9 +47,12 @@ public class DoMain {
         InterfacesProxyExecutor proxyExecutor = new InterfacesProxyExecutor(dbDataSource, dbCustomStrategy);
         CustomTestDao customTestDao = proxyExecutor.createProxy(CustomTestDao.class);
 
-        List<ShopCategoryPO> shopCategoryPOS = jdbcDao.selectList(ShopCategoryPO.class, null);
+        jdbcDao.createTables(Student.class);
+        System.out.println("aaa");
 
-        System.out.println("shopCategoryPOS = " + shopCategoryPOS);
+//        List<ShopCategoryPO> shopCategoryPOS = jdbcDao.selectList(ShopCategoryPO.class, null);
+//
+//        System.out.println("shopCategoryPOS = " + shopCategoryPOS);
 
     }
 

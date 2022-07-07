@@ -49,7 +49,7 @@ public @interface DbField {
     String defaultValue() default SymbolConstant.EMPTY;
 
     /**
-     * 是否为空
+     * 是否为空，只在创建表的时候用到
      * @return isNull
      */
     boolean isNull() default true;

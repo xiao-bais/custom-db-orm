@@ -119,7 +119,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
         this.enabledDefaultValue = enabledDefaultValue;
         super.setTable(table);
         super.setAlias(alias);
-        checkIllegalPropertyBuildBefore();
+        this.defaultValueInjector();
     }
 
     public String getFieldName() {
@@ -148,10 +148,9 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
 
 
     /**
-     * 在装配之前，检查属性类型、参数等的不合法性
+     * 默认值注入
      */
-    private void checkIllegalPropertyBuildBefore() {
-
+    private void defaultValueInjector() {
         // 若本身未设置默认值，则给定表的默认值
         if (JudgeUtil.isEmpty(this.defaultValue)) {
             if (this.enabledDefaultValue) {
@@ -183,6 +182,8 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
             }
         }else if (Boolean.class.isAssignableFrom(this.type)) {
             value = Boolean.parseBoolean(tmpValue);
+        }else if (CharSequence.class.isAssignableFrom(this.type)) {
+            value = JudgeUtil.isEmpty(tmpValue) ? "''" : String.format("'%s'", tmpValue);
         }
         this.defaultValue = value;
     }
@@ -205,10 +206,9 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
                     .append(SymbolConstant.BRACKETS_LEFT)
                     .append(this.length)
                     .append(SymbolConstant.BRACKETS_RIGHT).append(" ");
-
-        fieldSql.append(this.isNull ? "NULL" : "NOT NULL").append(" ");
-        fieldSql.append(String.format(" COMMENT '%s'", this.desc));
-        return fieldSql.toString();
+        return fieldSql.append("default ").append(this.defaultValue).append(" ")
+                .append(this.isNull ? "null" : "not null").append(" ")
+                .append(String.format(" comment '%s'", this.desc)).toString();
     }
 
     @Override

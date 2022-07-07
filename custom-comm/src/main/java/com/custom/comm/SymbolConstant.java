@@ -51,6 +51,7 @@ public class SymbolConstant {
     public final static char UNDERLINE = '_'; //下划线
     public final static char CENTER_LINE = '-'; //中划线
     public final static String EMPTY = "";//空字符串
+    public final static String EMPTY_SQL_STR = "''";//空sql字符串
     public final static String EQUALS = " = ";//等于
     public final static String QUEST = "?";//占位符
     public final static String PERCENT = "%";//百分号

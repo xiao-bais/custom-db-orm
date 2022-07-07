@@ -316,7 +316,7 @@ public class JdbcAction extends AbstractSqlExecutor {
         for (int i = arr.length - 1; i >= 0; i--) {
             tableSqlBuilder = getEntityModelCache(arr[i]);
             String exitsTableSql = tableSqlBuilder.getExitsTableSql(arr[i]);
-            if(hasTableInfo(exitsTableSql)) {
+            if(!hasTableInfo(exitsTableSql)) {
                 String createTableSql = tableSqlBuilder.getCreateTableSql();
                 execTable(createTableSql);
                 logger.info("createTableSql ->\n " + createTableSql);

@@ -17,7 +17,7 @@ public enum DbType {
 
     DbInt("int", Integer.class, Integer.TYPE, "11", 0),
 
-    DbVarchar("varchar", String.class, null, "50", SymbolConstant.EMPTY),
+    DbVarchar("varchar", String.class, null, "50", SymbolConstant.EMPTY_SQL_STR),
 
     DbFloat("float", Float.class, Float.TYPE,  "11", 0.0F),
 
@@ -29,7 +29,7 @@ public enum DbType {
 
     DbBit("bit", Boolean.class, Boolean.TYPE, "1", false),
 
-    DbText("text", String.class, null,  "255", SymbolConstant.EMPTY),
+    DbText("text", String.class, null,  "255", SymbolConstant.EMPTY_SQL_STR),
 
     DbBigint("bigint", Long.class, Long.TYPE,  "11", 0L),
 

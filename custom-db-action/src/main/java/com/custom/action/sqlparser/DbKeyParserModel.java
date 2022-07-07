@@ -150,16 +150,14 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
                 .append(SymbolConstant.BRACKETS_LEFT)
                 .append(this.length)
                 .append(SymbolConstant.BRACKETS_RIGHT)
-                .append(" PRIMARY KEY ");
+                .append(" primary key ");
 
         if(this.strategy == KeyStrategy.AUTO) {
-            keyFieldSql.append(" AUTO_INCREMENT ");
+            keyFieldSql.append(" auto_increment ");
         }
-        keyFieldSql.append(" NOT NULL ").append(String.format(" COMMENT '%s'", this.desc));
+        keyFieldSql.append(" not null ").append(String.format(" comment '%s'", this.desc));
         return keyFieldSql.toString();
     }
-
-    public DbKeyParserModel(){}
 
 
     public DbKeyParserModel(T t, Field field, String table, String alias, boolean underlineToCamel){
