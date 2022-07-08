@@ -262,4 +262,8 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     public void setType(Class<?> type) {
         this.type = type;
     }
+
+    public Object getDefaultValue() {
+        return defaultValue;
+    }
 }

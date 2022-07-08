@@ -118,16 +118,19 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
                     x.setValue(fieldValue);
                 }else {
                     try {
-                        if(checkLogicFieldIsExist() && x.getColumn().equals(getLogicColumn())) {
+                        if (checkLogicFieldIsExist() && x.getColumn().equals(getLogicColumn())) {
                             fieldValue = ConvertUtil.transToObject(x.getType(), getLogicNotDeleteValue());
                             x.setValue(fieldValue);
                         }
                     } catch (Exception e) {
                         fieldValue = ConvertUtil.transToObject(x.getType(),
-                                RexUtil.regexStr(RexUtil.single_quotes, getLogicNotDeleteValue().toString())
+                                RexUtil.regexStr(RexUtil.single_quotes, String.valueOf(getLogicNotDeleteValue()))
                         );
                         x.setValue(fieldValue);
                     }
+                }
+                if (JudgeUtil.isEmpty(fieldValue) && JudgeUtil.isNotEmpty(x.getDefaultValue())) {
+                    fieldValue = x.getDefaultValue();
                 }
                 this.addParams(fieldValue);
                 brackets.add(SymbolConstant.QUEST);
