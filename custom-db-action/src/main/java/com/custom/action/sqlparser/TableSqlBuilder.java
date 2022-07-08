@@ -95,7 +95,7 @@ public class TableSqlBuilder<T> implements Cloneable {
     /**
      * 创建表结构
      */
-    public String getCreateTableSql() {
+    public String createTableSql() {
         StringBuilder createTableSql = new StringBuilder();
         StringJoiner fieldSql = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_1);
         if (Objects.nonNull(keyParserModel)) {
@@ -117,14 +117,14 @@ public class TableSqlBuilder<T> implements Cloneable {
     /**
      * 删除表结构
      */
-    protected String getDropTableSql() {
+    protected String dropTableSql() {
         return String.format("DROP TABLE IF EXISTS `%s`", this.table);
     }
 
     /**
      * 表是否存在
      */
-    public String getExitsTableSql(Class<?> cls) {
+    public String exitsTableSql(Class<?> cls) {
         DbTable annotation = cls.getAnnotation(DbTable.class);
         String table = annotation.table();
         return String.format("SELECT COUNT(1) COUNT FROM " +
@@ -228,7 +228,7 @@ public class TableSqlBuilder<T> implements Cloneable {
      */
     private void buildSelectModels() {
         // 解析@DbJoinTables注解
-        mergeDbJoinTables();
+        this.mergeDbJoinTables();
 
         Field[] fields = Objects.isNull(this.fields) ? CustomUtil.getFields(this.cls) : this.fields;
         for (Field field : fields) {
@@ -352,12 +352,11 @@ public class TableSqlBuilder<T> implements Cloneable {
      * 获取主键的值
      */
     public Object getDbKeyVal() {
-        if (Objects.nonNull(this.keyParserModel)) {
-            return this.keyParserModel.getValue();
+        if (Objects.isNull(this.keyParserModel)) {
+            return null;
         }
-        return null;
+        return this.keyParserModel.getValue();
     }
-
 
 
 
@@ -401,10 +400,6 @@ public class TableSqlBuilder<T> implements Cloneable {
         if (!fieldParserModels.isEmpty()) {
             fieldParserModels.forEach(x -> x.setEntity(entity));
         }
-    }
-
-    public boolean isEnabledDefaultValue() {
-        return enabledDefaultValue;
     }
 
     public void setList(List<T> list) {

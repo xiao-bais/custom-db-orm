@@ -244,6 +244,7 @@ public class JdbcAction extends AbstractSqlExecutor {
     @CheckExecute(target = ExecuteMethod.INSERT)
     public <T> int insert(List<T> ts) throws Exception {
         HandleInsertSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(ts, ExecuteMethod.INSERT);
+        sqlBuilder.setSaveSubSelection(getDbCustomStrategy().getSaveSubSelect());
         DbKeyParserModel<T> keyParserModel = sqlBuilder.getKeyParserModel();
         int res = 0;
         String insertSql;
@@ -315,9 +316,9 @@ public class JdbcAction extends AbstractSqlExecutor {
         TableSqlBuilder<?> tableSqlBuilder;
         for (int i = arr.length - 1; i >= 0; i--) {
             tableSqlBuilder = getEntityModelCache(arr[i]);
-            String exitsTableSql = tableSqlBuilder.getExitsTableSql(arr[i]);
+            String exitsTableSql = tableSqlBuilder.exitsTableSql(arr[i]);
             if(!hasTableInfo(exitsTableSql)) {
-                String createTableSql = tableSqlBuilder.getCreateTableSql();
+                String createTableSql = tableSqlBuilder.createTableSql();
                 execTable(createTableSql);
                 logger.info("createTableSql ->\n " + createTableSql);
             }
@@ -325,10 +326,10 @@ public class JdbcAction extends AbstractSqlExecutor {
     }
 
     @Override
-    public void dropTables(Class<?>... arr) throws Exception {
+    public void dropTables(Class<?>... arr) {
         for (int i = arr.length - 1; i >= 0; i--) {
             TableSqlBuilder<?> tableSqlBuilder = getEntityModelCache(arr[i]);
-            String dropTableSql = tableSqlBuilder.getDropTableSql();
+            String dropTableSql = tableSqlBuilder.dropTableSql();
             execTable(dropTableSql);
             logger.warn("drop table '{}' completed\n", tableSqlBuilder.getTable());
         }

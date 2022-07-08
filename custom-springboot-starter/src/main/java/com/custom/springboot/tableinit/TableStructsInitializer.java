@@ -106,7 +106,7 @@ public class TableStructsInitializer {
             }
             TableSqlBuilder<?> sqlBuilder = TableInfoCache.getTableModel(entityClass);
             TableSqlBuilder<?> waitUpdateSqlBuilder = sqlBuilder.clone();
-            String exitsTableSql = waitUpdateSqlBuilder.getExitsTableSql(entityClass);
+            String exitsTableSql = waitUpdateSqlBuilder.exitsTableSql(entityClass);
             String table = waitUpdateSqlBuilder.getTable();
             // 若表已存在，则进行下一步判断表字段是否存在
             Object exists = selectJdbc.selectObj(new SelectSqlParamInfo<>(Object.class, exitsTableSql, false));

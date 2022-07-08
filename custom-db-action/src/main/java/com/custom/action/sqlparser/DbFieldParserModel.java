@@ -183,7 +183,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
         }else if (Boolean.class.isAssignableFrom(this.type)) {
             value = Boolean.parseBoolean(tmpValue);
         }else if (CharSequence.class.isAssignableFrom(this.type)) {
-            value = JudgeUtil.isEmpty(tmpValue) ? "''" : String.format("'%s'", tmpValue);
+            value = tmpValue;
         }
         this.defaultValue = value;
     }
@@ -199,14 +199,15 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
             newColumn = GlobalDataHandler.wrapperSqlKeyword(this.column);
         }
         StringBuilder fieldSql = new StringBuilder(newColumn).append(" ");
-        if(dbType == DbType.DbDate || dbType == DbType.DbDateTime)
+        if (dbType == DbType.DbDate || dbType == DbType.DbDateTime)
             fieldSql.append(dbType.getType()).append(" ");
         else
             fieldSql.append(dbType.getType())
                     .append(SymbolConstant.BRACKETS_LEFT)
                     .append(this.length)
                     .append(SymbolConstant.BRACKETS_RIGHT).append(" ");
-        return fieldSql.append("default ").append(this.defaultValue).append(" ")
+        return fieldSql.append("default ").append(CharSequence.class.isAssignableFrom(this.type) ?
+                    String.format("'%s'", this.defaultValue) : this.defaultValue).append(" ")
                 .append(this.isNull ? "null" : "not null").append(" ")
                 .append(String.format(" comment '%s'", this.desc)).toString();
     }
@@ -261,5 +262,9 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
 
     public void setType(Class<?> type) {
         this.type = type;
+    }
+
+    public Object getDefaultValue() {
+        return defaultValue;
     }
 }

@@ -1,6 +1,7 @@
 package com.home.customtest.entity;
 
 import com.custom.comm.annotations.*;
+import com.custom.comm.enums.KeyStrategy;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import java.util.Date;
  * @Date 2021/11/27 15:37
  * @Desc：
  **/
-@DbTable(table = "employee")
+@DbTable(table = "employee", enabledDefaultValue = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,16 +22,16 @@ import java.util.Date;
 })
 public class Employee {
 
-    @DbKey
-    private Integer id;
+    @DbKey(strategy = KeyStrategy.UUID)
+    private String id;
 
-    @DbField
+    @DbField(defaultValue = "员工")
     private String empName;
 
     @DbField
     private boolean sex;
 
-    @DbField
+    @DbField(defaultValue = "20")
     private Integer age;
 
     @DbField
@@ -45,7 +46,7 @@ public class Employee {
     @DbField
     private Integer areaId;
 
-    @DbField
+    @DbField(defaultValue = "他很懒，什么都没写")
     private String explain;
 
     @DbField

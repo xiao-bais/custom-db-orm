@@ -71,6 +71,11 @@ public class DbCustomStrategy {
      */
     private Rollback rollbackType = Rollback.CURRENT;
 
+    /**
+     * 一次插入记录最大条数，默认1000条，大于该条数则分批插入
+     */
+    private int saveSubSelect = 1000;
+
 
     public String[] getMapperPackageScans() {
         return mapperPackageScans;
@@ -158,5 +163,13 @@ public class DbCustomStrategy {
 
     public void setRollbackType(Rollback rollback) {
         this.rollbackType = rollback;
+    }
+
+    public int getSaveSubSelect() {
+        return saveSubSelect;
+    }
+
+    public void setSaveSubSelect(int saveSubSelect) {
+        this.saveSubSelect = saveSubSelect;
     }
 }
