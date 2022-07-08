@@ -31,7 +31,7 @@ public class JdbcTestBuilder {
         // 增删改查映射策略配置
         dbCustomStrategy = new DbCustomStrategy();
         dbCustomStrategy.setSqlOutPrinting(true);
-//        dbCustomStrategy.setSqlOutPrintExecute(true);
+        dbCustomStrategy.setSqlOutPrintExecute(true);
         dbCustomStrategy.setUnderlineToCamel(true);
         dbCustomStrategy.setDbFieldDeleteLogic("state");
         dbCustomStrategy.setDeleteLogicValue(1);

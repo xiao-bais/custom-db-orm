@@ -107,9 +107,10 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
             StringJoiner brackets = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_1, SymbolConstant.BRACKETS_LEFT, SymbolConstant.BRACKETS_RIGHT);
             if (Objects.nonNull(getKeyParserModel())) {
                 brackets.add(SymbolConstant.QUEST);
-                this.addParams(getKeyParserModel().getValue());
+                this.addParams(getKeyParserModel().generateKey());
             }
-            getFieldParserModels().forEach(x -> {
+            List<DbFieldParserModel<T>> fieldParserModels = getFieldParserModels();
+            fieldParserModels.forEach(x -> {
                 Object fieldValue = x.getValue();
                 // 若存在自动填充的字段，则在添加的时候，进行字段值的自动填充
                 if (FieldAutoFillHandleUtils.exists(getEntityClass(), x.getFieldName())

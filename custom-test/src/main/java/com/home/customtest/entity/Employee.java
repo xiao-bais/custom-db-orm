@@ -1,6 +1,7 @@
 package com.home.customtest.entity;
 
 import com.custom.comm.annotations.*;
+import com.custom.comm.enums.KeyStrategy;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,8 +22,8 @@ import java.util.Date;
 })
 public class Employee {
 
-    @DbKey
-    private Integer id;
+    @DbKey(strategy = KeyStrategy.UUID)
+    private String id;
 
     @DbField(defaultValue = "员工")
     private String empName;
