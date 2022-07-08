@@ -81,8 +81,8 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
 
     /**
      * 是否开启了表的默认值
-     * 开启以后，在新增时会若java属性值为null，则自动添加给定的默认值
-     * 若字段跟表同时设置了默认值，则以字段设置的默认值优先
+     * 开启以后，在新增时若java属性值为null，则自动添加给定的默认值
+     * 若字段跟表同时开启了默认值配置，则以字段设置的默认值优先
      */
     private final boolean enabledDefaultValue;
 
