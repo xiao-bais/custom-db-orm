@@ -17,8 +17,14 @@ public abstract class AbstractTableModel<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractTableModel.class);
 
+    /**
+     * 表名
+     */
     private String table;
 
+    /**
+     * 表的别名
+     */
     private String alias;
 
     public String getTable() {

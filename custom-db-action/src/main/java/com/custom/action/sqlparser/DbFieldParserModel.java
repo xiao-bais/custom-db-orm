@@ -207,7 +207,8 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
                     .append(this.length)
                     .append(SymbolConstant.BRACKETS_RIGHT).append(" ");
         return fieldSql.append("default ").append(CharSequence.class.isAssignableFrom(this.type) ?
-                    String.format("'%s'", this.defaultValue) : this.defaultValue).append(" ")
+                    String.valueOf(this.defaultValue).equals("''") ? "''"
+                            : String.format("'%s'", this.defaultValue) : this.defaultValue).append(" ")
                 .append(this.isNull ? "null" : "not null").append(" ")
                 .append(String.format(" comment '%s'", this.desc)).toString();
     }

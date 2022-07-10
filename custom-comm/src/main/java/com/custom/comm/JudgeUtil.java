@@ -1,6 +1,7 @@
 package com.custom.comm;
 
 import java.lang.reflect.Array;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
@@ -89,6 +90,38 @@ public class JudgeUtil {
         if (Arrays.stream(vals).anyMatch(Objects::isNull)){
             throw new NullPointerException();
         }
+    }
+
+    public static boolean isValid(Integer val) {
+        return val != null && val != 0;
+    }
+
+    public static boolean isInValid(Integer val) {
+        return !isValid(val);
+    }
+
+    public static boolean isValid(Long val) {
+        return val != null && val != 0;
+    }
+
+    public static boolean isInValid(Long val) {
+        return !isValid(val);
+    }
+
+    public static boolean isValid(BigDecimal val) {
+        return val != null && !val.equals(BigDecimal.ZERO);
+    }
+
+    public static boolean isInValid(BigDecimal val) {
+        return !isValid(val);
+    }
+
+    public static boolean isValid(Boolean val) {
+        return val != null && val;
+    }
+
+    public static boolean isInValid(Boolean val) {
+        return !isValid(val);
     }
 
 

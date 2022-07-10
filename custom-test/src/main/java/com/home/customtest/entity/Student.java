@@ -5,6 +5,7 @@ import com.custom.comm.enums.DbType;
 import com.custom.comm.enums.KeyStrategy;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -20,7 +21,9 @@ import java.util.List;
         @DbJoinTable("left join city cy on cy.id = a.city_id"),
 })
 @DbTable(table = "student_info", desc = "学生信息表", enabledDefaultValue = true)
-public class Student {
+public class Student implements Serializable {
+
+
 
     @DbKey(value = "id", strategy = KeyStrategy.AUTO, dbType = DbType.DbInt)
     private Integer id;

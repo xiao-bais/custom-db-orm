@@ -67,6 +67,7 @@ public class DateTimeUtils {
     }
 
     public static String getFormatByTimeStamp(int times) {
+        if (times == 0) return null;
         return getFormatByTimeStamp(times, yyyyMMdd_);
     }
 
