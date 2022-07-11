@@ -44,10 +44,10 @@ public class TaskRecordService {
                 .like(JudgeUtil.isNotEmpty(request.getKeyword()), TaskRecordModel::getTaskTitle, request.getKeyword())
 
                 // 若为1， 则查询开始时间
-                .between(request.getTimeType() == 1, TaskRecordModel::getStartTime, request.getStartTime(), request.getEndTime())
+                .between(JudgeUtil.isValid(request.getTimeType()) && request.getTimeType() == 1, TaskRecordModel::getStartTime, request.getStartTime(), request.getEndTime())
 
                 // 若为2， 则查询结束时间
-                .between(request.getTimeType() == 2, TaskRecordModel::getEndTime, request.getStartTime(), request.getEndTime())
+                .between(JudgeUtil.isValid(request.getTimeType()) && request.getTimeType() == 2, TaskRecordModel::getEndTime, request.getStartTime(), request.getEndTime())
 
                 // 查询当前进度
                 .in(JudgeUtil.isNotEmpty(request.getCurrentProgress()), TaskRecord::getCurrentProgress, request.getCurrentProgress())

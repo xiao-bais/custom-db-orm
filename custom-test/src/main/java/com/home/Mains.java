@@ -24,10 +24,17 @@ public class Mains {
 
     public static void main(String[] args) {
 
-        String str = "1";
+        for (int i = 0; i < 500; i++) {
+            for (int j=0; j < 500; j ++) {
+                if (j > 110 && i > 110) {
+                    if (15 * i - 110 == 8 * j - 110) {
+                        System.out.println("i = " + i);
+                        System.out.println("j = " + j);
+                    }
+                }
 
-        boolean b = Boolean.parseBoolean(str);
-        System.out.println("i = " + b);
+            }
+        }
 
 
     }

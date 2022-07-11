@@ -40,6 +40,10 @@ public class TaskRecord extends BaseEntity {
     @ApiModelProperty("测验结果")
     private String testResult;
 
+    @DbField(desc = "未完成的原因")
+    @ApiModelProperty("未完成的原因")
+    private String reason;
+
     @DbField(desc = "优先级: 1-低，2-中，3-高")
     @ApiModelProperty("优先级: 1-低，2-中，3-高")
     private Integer priority;
