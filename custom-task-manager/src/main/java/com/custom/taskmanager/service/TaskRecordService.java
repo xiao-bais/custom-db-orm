@@ -59,7 +59,7 @@ public class TaskRecordService {
                 .in(JudgeUtil.isNotEmpty(request.getPriority()), TaskRecordModel::getPriority, request.getPriority())
 
                 // 查询任务是否过期
-                .eq(JudgeUtil.isValid(request.getExpireStatus()), TaskRecordModel::getExpireStatus, request.getExpireStatus())
+                .eq(TaskRecordModel::getExpireStatus, false)
 
         );
 

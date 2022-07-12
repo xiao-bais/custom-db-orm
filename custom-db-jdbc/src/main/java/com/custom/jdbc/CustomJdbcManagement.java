@@ -119,8 +119,8 @@ public class CustomJdbcManagement extends DbConnection {
     /**
      * 检查是否多结果
      */
-    protected void checkMoreResult() throws SQLException {
-        int rowsCount = this.getRowsCount();
+    protected void checkMoreResult(ResultSet resultSet) throws SQLException {
+        int rowsCount = this.getRowsCount(resultSet);
         if (rowsCount > SymbolConstant.DEFAULT_ONE) {
             ExThrowsUtil.toCustom("只查一条，但查询到%s条结果", rowsCount);
         }
@@ -129,10 +129,26 @@ public class CustomJdbcManagement extends DbConnection {
     /**
      * 获取结果集行数
      */
-    protected int getRowsCount() throws SQLException {
+    protected int getRowsCount(ResultSet resultSet) throws SQLException {
         resultSet.last();
         final int rowsCount = resultSet.getRow();
         resultSet.beforeFirst();
         return rowsCount;
+    }
+
+    /**
+     * 关闭资源
+     */
+    protected void closeAll() {
+        try {
+            if (this.resultSet != null) {
+                this.resultSet.close();
+            }
+            if (this.statement != null) {
+                this.statement.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

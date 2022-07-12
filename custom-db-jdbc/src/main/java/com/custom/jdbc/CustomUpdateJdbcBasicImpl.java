@@ -42,6 +42,8 @@ public class CustomUpdateJdbcBasicImpl extends CustomJdbcManagement implements C
                     .build(params.getPrepareSql(), params.getSqlParams(), dbCustomStrategy.isSqlOutPrintExecute())
                     .sqlErrPrint();
             throw e;
+        }finally {
+            closeAll();
         }
         return res;
     }
@@ -54,27 +56,29 @@ public class CustomUpdateJdbcBasicImpl extends CustomJdbcManagement implements C
         try {
             statementUpdate(true, params.getPrepareSql(), params.getSqlParams());
             res = handleUpdateStatement();
+            ResultSet resultSet = handleGenerateKeysStatement();
+            int count = 0;
+            Field keyField = params.getKeyField();
+            while (resultSet.next()) {
+                T t = params.getDataList().get(count);
+                PropertyDescriptor pd = new PropertyDescriptor(keyField.getName(), t.getClass());
+                Method writeMethod = pd.getWriteMethod();
+                String val = String.valueOf(resultSet.getObject(1));
+                if (Long.class.isAssignableFrom(keyField.getType()) || keyField.getType().equals(Long.TYPE)) {
+                    writeMethod.invoke(t, Long.parseLong(val));
+                } else if (Integer.class.isAssignableFrom(keyField.getType()) || keyField.getType().equals(Integer.TYPE)) {
+                    writeMethod.invoke(t, Integer.parseInt(val));
+                }
+                // else ignore...
+                count++;
+            }
         } catch (SQLException e) {
             SqlOutPrintBuilder
                     .build(params.getPrepareSql(), params.getSqlParams(), dbCustomStrategy.isSqlOutPrintExecute())
                     .sqlErrPrint();
             throw e;
-        }
-        ResultSet resultSet = handleGenerateKeysStatement();
-        int count = 0;
-        Field keyField = params.getKeyField();
-        while (resultSet.next()) {
-            T t = params.getDataList().get(count);
-            PropertyDescriptor pd = new PropertyDescriptor(keyField.getName(), t.getClass());
-            Method writeMethod = pd.getWriteMethod();
-            String val = String.valueOf(resultSet.getObject(1));
-            if (Long.class.isAssignableFrom(keyField.getType()) || keyField.getType().equals(Long.TYPE)) {
-                writeMethod.invoke(t, Long.parseLong(val));
-            } else if (Integer.class.isAssignableFrom(keyField.getType()) || keyField.getType().equals(Integer.TYPE)) {
-                writeMethod.invoke(t, Integer.parseInt(val));
-            }
-            // else ignore...
-            count++;
+        }finally {
+            closeAll();
         }
         return res;
     }
@@ -90,6 +94,8 @@ public class CustomUpdateJdbcBasicImpl extends CustomJdbcManagement implements C
                     .build(sql, new String[]{}, dbCustomStrategy.isSqlOutPrintExecute())
                     .sqlErrPrint();
             logger.error(e.toString(), e);
+        }finally {
+            closeAll();
         }
     }
 }

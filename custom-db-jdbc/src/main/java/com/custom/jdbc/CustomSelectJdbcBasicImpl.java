@@ -57,6 +57,8 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
                     .build(params.getPrepareSql(), params.getSqlParams(), dbCustomStrategy.isSqlOutPrintExecute())
                     .sqlErrPrint();
             throw e;
+        }finally {
+            closeAll();
         }
         return list;
 
@@ -71,7 +73,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
         try {
             this.statementQueryReturnRows(params.getPrepareSql(), params.isSqlPrintSupport(), params.getSqlParams());
             ResultSet resultSet = handleQueryStatement();
-            this.checkMoreResult();
+            this.checkMoreResult(resultSet);
             ResultSetMetaData metaData = resultSet.getMetaData();
             if (resultSet.next()) {
                 this.handleResultMapper(map, metaData);
@@ -85,6 +87,8 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
                     .build(params.getPrepareSql(), params.getSqlParams(), dbCustomStrategy.isSqlOutPrintExecute())
                     .sqlErrPrint();
             throw e;
+        }finally {
+            closeAll();
         }
         return JSONObject.parseObject(JSONObject.toJSONString(map), params.getEntityClass());
     }
@@ -107,6 +111,8 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
                     .build(params.getPrepareSql(), params.getSqlParams(), dbCustomStrategy.isSqlOutPrintExecute())
                     .sqlErrPrint();
             throw e;
+        }finally {
+            closeAll();
         }
         return resSet;
     }
@@ -128,6 +134,8 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
                     .build(params.getPrepareSql(), params.getSqlParams(), dbCustomStrategy.isSqlOutPrintExecute())
                     .sqlErrPrint();
             throw e;
+        }finally {
+            closeAll();
         }
         return resMap;
     }
@@ -143,7 +151,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
             statementQuery(params.getPrepareSql(), params.isSqlPrintSupport(), params.getSqlParams());
             ResultSet resultSet = handleQueryStatement();
             if (!params.isSupportMoreResult()) {
-                this.checkMoreResult();
+                this.checkMoreResult(resultSet);
             }
             ResultSetMetaData metaData = resultSet.getMetaData();
             while (resultSet.next()) {
@@ -156,6 +164,8 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
                     .build(params.getPrepareSql(), params.getSqlParams(), dbCustomStrategy.isSqlOutPrintExecute())
                     .sqlErrPrint();
             throw e;
+        }finally {
+            closeAll();
         }
         return mapList;
     }
@@ -168,7 +178,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
         try {
             this.statementQueryReturnRows(params.getPrepareSql(), params.isSqlPrintSupport(), params.getSqlParams());
             ResultSet resultSet = handleQueryStatement();
-            int rowsCount = this.getRowsCount();
+            int rowsCount = this.getRowsCount(resultSet);
             int count = resultSet.getMetaData().getColumnCount();
             if (count == 0) {
                 return null;
@@ -189,6 +199,8 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
                     .build(params.getPrepareSql(), params.getSqlParams(), dbCustomStrategy.isSqlOutPrintExecute())
                     .sqlErrPrint();
             throw e;
+        }finally {
+            closeAll();
         }
     }
 
@@ -202,7 +214,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
         try {
             this.statementQueryReturnRows(params.getPrepareSql(), params.isSqlPrintSupport(), params.getSqlParams());
             ResultSet resultSet = handleQueryStatement();
-            this.checkMoreResult();
+            this.checkMoreResult(resultSet);
             if (resultSet.next()) {
                 result = resultSet.getObject(SymbolConstant.DEFAULT_ONE);
             }
@@ -211,6 +223,8 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
                     .build(params.getPrepareSql(), params.getSqlParams(), dbCustomStrategy.isSqlOutPrintExecute())
                     .sqlErrPrint();
             throw e;
+        }finally {
+            closeAll();
         }
         return result;
     }
@@ -232,6 +246,8 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
                     .build(params.getPrepareSql(), params.getSqlParams(), dbCustomStrategy.isSqlOutPrintExecute())
                     .sqlErrPrint();
             throw e;
+        }finally {
+            closeAll();
         }
         return result;
     }
