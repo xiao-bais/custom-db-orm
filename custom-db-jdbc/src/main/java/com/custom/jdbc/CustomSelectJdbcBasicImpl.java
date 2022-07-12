@@ -38,8 +38,8 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
         Map<String, Object> map;
         List<T> list = new ArrayList<>();
         try {
-            statementQuery(params.getPrepareSql(), params.isSqlPrintSupport(), params.getSqlParams());
-            ResultSet resultSet = handleQueryStatement();
+            this.statementQuery(params.getPrepareSql(), params.isSqlPrintSupport(), params.getSqlParams());
+            ResultSet resultSet = this.handleQueryStatement();
             ResultSetMetaData metaData = resultSet.getMetaData();
             while (resultSet.next()) {
                 T t;
