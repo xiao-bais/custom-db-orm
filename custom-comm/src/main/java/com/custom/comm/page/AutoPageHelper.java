@@ -12,10 +12,6 @@ import java.util.List;
 public class AutoPageHelper<T> extends DbPageRows<T> {
 
     /**
-     * 总页数
-     */
-    private int pages;
-    /**
      * 第一页
      */
     private int firstPage;
@@ -58,26 +54,15 @@ public class AutoPageHelper<T> extends DbPageRows<T> {
 
     public AutoPageHelper(int pageIndex, int pageSize, List<T> dataRows) {
         super(pageIndex, pageSize, dataRows);
-        int size = dataRows.size();
-        this.pages = size % pageSize > SymbolConstant.DEFAULT_ZERO ? size / pageSize + SymbolConstant.DEFAULT_ONE : size / pageSize;
+        int pages = super.getPages();
         this.firstPage = SymbolConstant.DEFAULT_ONE;
-        this.lastPage = this.pages;
+        this.lastPage = pages;
         this.prePage = Math.max(pageIndex - SymbolConstant.DEFAULT_ONE, SymbolConstant.DEFAULT_ONE);
-        this.nextPage = Math.min(pageIndex + SymbolConstant.DEFAULT_ONE, this.pages);
+        this.nextPage = Math.min(pageIndex + SymbolConstant.DEFAULT_ONE, pages);
         this.isFirstPage = pageIndex == this.firstPage;
-        this.isLastPage = pageIndex == this.pages;
+        this.isLastPage = pageIndex == pages;
         this.hasPreviousPage = pageIndex - SymbolConstant.DEFAULT_ONE > SymbolConstant.DEFAULT_ZERO;
-        this.hasNextPage = pageIndex + SymbolConstant.DEFAULT_ONE < this.pages;
-    }
-
-
-
-    public int getPages() {
-        return pages;
-    }
-
-    public void setPages(int pages) {
-        this.pages = pages;
+        this.hasNextPage = pageIndex + SymbolConstant.DEFAULT_ONE < pages;
     }
 
     public int getFirstPage() {
@@ -147,7 +132,7 @@ public class AutoPageHelper<T> extends DbPageRows<T> {
     @Override
     public String toString() {
         return "AutoPageUtil{" +
-                "pages=" + pages +
+                "pages=" + super.getPages() +
                 ", total=" + super.getTotal() +
                 ", data=" + super.getData() +
                 ", pageIndex=" + super.getPageIndex() +

@@ -165,8 +165,7 @@ public class JdbcWrapperExecutor {
                     : String.format("%s \nlimit %s, %s", selectSql, (dbPageRows.getPageIndex() - 1) * dbPageRows.getPageSize(), dbPageRows.getPageSize());
             dataList = selectBySql(t, selectSql, params);
         }
-        dbPageRows.setTotal(count);
-        dbPageRows.setData(dataList);
+        dbPageRows.setTotal(count).setData(dataList);
     }
 
     /**

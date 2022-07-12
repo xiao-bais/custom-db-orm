@@ -25,15 +25,13 @@ public class DbPageRows<T> {
      */
     private long total;
     /**
+     * 总页数
+     */
+    private int pages;
+    /**
      * 当前页的数据
      */
     private List<T> data;
-
-    public DbPageRows(int pageIndex, int pageSize, long total) {
-        this.pageIndex = pageIndex;
-        this.pageSize = pageSize;
-        this.total = total;
-    }
 
     public DbPageRows(int pageIndex, int pageSize) {
         this.pageIndex = pageIndex;
@@ -49,8 +47,9 @@ public class DbPageRows<T> {
         this.total = list.size();
         this.pageIndex = pageIndex;
         this.pageSize = pageSize;
+        this.pages = (int) (this.total / this.pageSize == 0 ? this.total / this.pageSize : this.total / this.pageSize + 1);
         int subIndex = (pageIndex - SymbolConstant.DEFAULT_ONE) * pageSize;
-        this.data = list.subList(Math.min(subIndex, list.size()), (int) Math.min(total, pageIndex * pageSize));
+        this.data = list.subList(Math.min(subIndex, list.size()), (int) Math.min(total, (long) pageIndex * pageSize));
     }
 
     public int getPageIndex() {
@@ -77,7 +76,12 @@ public class DbPageRows<T> {
 
     public DbPageRows<T> setTotal(long total) {
         this.total = total;
+        this.pages = (int) (this.total / this.pageSize == 0 ? this.total / this.pageSize : this.total / this.pageSize + 1);
         return this;
+    }
+
+    public int getPages() {
+        return pages;
     }
 
     public List<T> getData() {

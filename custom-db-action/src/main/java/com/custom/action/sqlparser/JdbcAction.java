@@ -179,9 +179,7 @@ public class JdbcAction extends AbstractSqlExecutor {
             selectSql = String.format("%s \nlimit %s, %s", selectSql, (dbPageRows.getPageIndex() - 1) * dbPageRows.getPageSize(), dbPageRows.getPageSize());
             dataList = selectMapsBySql(selectSql, params);
         }
-        dbPageRows.setTotal(count);
-        dbPageRows.setData(dataList);
-        return dbPageRows;
+        return dbPageRows.setTotal(count).setData(dataList);
     }
 
 
