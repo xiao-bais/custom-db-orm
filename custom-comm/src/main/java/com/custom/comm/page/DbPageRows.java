@@ -100,6 +100,7 @@ public class DbPageRows<T> {
                 "pageIndex=" + pageIndex +
                 ", pageSize=" + pageSize +
                 ", total=" + total +
+                ", pages=" + pages +
                 ", data=" + data +
                 '}';
     }
