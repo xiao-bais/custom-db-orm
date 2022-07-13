@@ -29,18 +29,11 @@ public class CustomApplicationUtil implements ApplicationContextAware {
         return applicationContext;
     }
 
-    public static <T> T getBean(Class<T> t) {
-        T bean;
-        try {
-            if(Objects.isNull(applicationContext)) {
-                return null;
-            }
-            bean = applicationContext.getBean(t);
-        }catch (NoSuchBeanDefinitionException e) {
-            log.error(e.getMessage(), e);
+    public static <T> T getBean(Class<T> t) throws NoSuchBeanDefinitionException {
+        if(Objects.isNull(applicationContext)) {
             return null;
         }
-        return bean;
+        return applicationContext.getBean(t);
     }
 
     @SuppressWarnings("unchecked")

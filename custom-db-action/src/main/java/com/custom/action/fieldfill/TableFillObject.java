@@ -64,6 +64,15 @@ public class TableFillObject {
         return tableFillMapper;
     }
 
+    public TableFillObject addField(String javaField, Object val) {
+        if(tableFillMapper == null) {
+            tableFillMapper = new HashMap<>();
+        }
+        tableFillMapper.put(javaField, val);
+        return this;
+    }
+
+
     public void setTableFillMapper(Map<String, Object> tableFillMapper) {
         this.tableFillMapper = tableFillMapper;
     }

@@ -5,6 +5,7 @@ import com.custom.comm.RexUtil;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
@@ -38,9 +39,13 @@ public class FieldAutoFillHandleUtils {
         if(ObjectUtils.isEmpty(tableFillObjects)) {
             return null;
         }
+        // 若无法找到该类的指定填充字段，可尝试去父类中查找
         TableFillObject fillObject = tableFillObjects.stream().filter(x -> x.getEntityClass().equals(t)).findFirst().orElse(null);
         if (Objects.isNull(fillObject)) {
-            return null;
+            fillObject = tableFillObjects.stream().filter(x -> x.getEntityClass().isAssignableFrom(t)).findFirst().orElse(null);
+            if (Objects.isNull(fillObject)) {
+                return null;
+            }
         }
         Object propertyValue = fillObject.getTableFillMapper().get(proName);
         if(Objects.isNull(propertyValue)) {
@@ -65,7 +70,7 @@ public class FieldAutoFillHandleUtils {
         if(ObjectUtils.isEmpty(tableFillObjects)) {
             return false;
         }
-        return tableFillObjects.stream().anyMatch(x -> x.getEntityClass().equals(t));
+        return tableFillObjects.stream().anyMatch(x -> x.getEntityClass().isAssignableFrom(t));
     }
 
 
@@ -73,18 +78,26 @@ public class FieldAutoFillHandleUtils {
      * 判断是否存在该实体中指定配置字段的填充值
      */
     public static <T> boolean exists(Class<T> t, String proName) {
-        AutoFillColumnHandler columnHandler = CustomApplicationUtil.getBean(AutoFillColumnHandler.class);
-        if(ObjectUtils.isEmpty(columnHandler)) {
+        try {
+            AutoFillColumnHandler columnHandler = CustomApplicationUtil.getBean(AutoFillColumnHandler.class);
+            if(ObjectUtils.isEmpty(columnHandler)) {
+                return false;
+            }
+            List<TableFillObject> tableFillObjects = columnHandler.fillStrategy();
+            if(ObjectUtils.isEmpty(tableFillObjects)) {
+                return false;
+            }
+            // 若无法找到该类的指定填充字段，可尝试去父类中查找
+            Optional<TableFillObject> tableFillObject = tableFillObjects.stream().filter(x -> x.getEntityClass().equals(t)).findFirst();
+            if (!tableFillObject.isPresent()) {
+                tableFillObject = tableFillObjects.stream().filter(x -> x.getEntityClass().isAssignableFrom(t)).findFirst();
+            }
+            if (tableFillObject.isPresent()) {
+                Object value = tableFillObject.get().getTableFillMapper().get(proName);
+                return Objects.nonNull(value);
+            }
+        }catch (NoSuchBeanDefinitionException e) {
             return false;
-        }
-        List<TableFillObject> tableFillObjects = columnHandler.fillStrategy();
-        if(ObjectUtils.isEmpty(tableFillObjects)) {
-            return false;
-        }
-        Optional<TableFillObject> tableFillObject = tableFillObjects.stream().filter(x -> x.getEntityClass().equals(t)).findFirst();
-        if (tableFillObject.isPresent()) {
-            Object value = tableFillObject.get().getTableFillMapper().get(proName);
-            return Objects.nonNull(value);
         }
         return false;
     }

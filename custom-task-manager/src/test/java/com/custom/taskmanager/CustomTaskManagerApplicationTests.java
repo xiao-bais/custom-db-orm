@@ -23,7 +23,7 @@ public class CustomTaskManagerApplicationTests {
     @Test
     public void test01  () throws Exception {
 
-        for (int i = 1; i < 50; i++) {
+        for (int i = 0; i < 1; i++) {
             TaskRecord taskRecord = new TaskRecord();
             taskRecord.setTaskCode(CustomUtil.getUUID());
             String content = CustomUtil.getUUID().substring(5, 20);

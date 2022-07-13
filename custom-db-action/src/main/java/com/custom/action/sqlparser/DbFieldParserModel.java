@@ -182,7 +182,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
             }
         }else if (Boolean.class.isAssignableFrom(this.type)) {
             value = Boolean.parseBoolean(tmpValue);
-        }else if (CharSequence.class.isAssignableFrom(this.type)) {
+        }else if (CharSequence.class.isAssignableFrom(this.type) && !tmpValue.equals("null")) {
             value = tmpValue;
         }
         this.defaultValue = value;
@@ -207,7 +207,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
                     .append(this.length)
                     .append(SymbolConstant.BRACKETS_RIGHT).append(" ");
         return fieldSql.append("default ").append(CharSequence.class.isAssignableFrom(this.type) ?
-                    String.valueOf(this.defaultValue).equals("''") ? "''"
+                    String.valueOf(this.defaultValue).equals(SymbolConstant.EMPTY) ? "''"
                             : String.format("'%s'", this.defaultValue) : this.defaultValue).append(" ")
                 .append(this.isNull ? "null" : "not null").append(" ")
                 .append(String.format(" comment '%s'", this.desc)).toString();

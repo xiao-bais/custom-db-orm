@@ -112,27 +112,23 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
             List<DbFieldParserModel<T>> fieldParserModels = getFieldParserModels();
             fieldParserModels.forEach(x -> {
                 Object fieldValue = x.getValue();
-                // 若存在自动填充的字段，则在添加的时候，进行字段值的自动填充
-                if (FieldAutoFillHandleUtils.exists(getEntityClass(), x.getFieldName())
-                        && Objects.isNull(fieldValue) ) {
-                    fieldValue = FieldAutoFillHandleUtils.getFillValue(getEntityClass(), x.getFieldName());
-                    x.setValue(fieldValue);
-                }else {
-                    try {
-                        if (checkLogicFieldIsExist() && x.getColumn().equals(getLogicColumn())) {
-                            fieldValue = ConvertUtil.transToObject(x.getType(), getLogicNotDeleteValue());
-                            x.setValue(fieldValue);
-                        }
-                    } catch (Exception e) {
-                        fieldValue = ConvertUtil.transToObject(x.getType(),
-                                RexUtil.regexStr(RexUtil.single_quotes, String.valueOf(getLogicNotDeleteValue()))
-                        );
-                        x.setValue(fieldValue);
+                try {
+                    // 若存在自动填充的字段，则在添加的时候，进行字段值的自动填充
+                    if (FieldAutoFillHandleUtils.exists(getEntityClass(), x.getFieldName())
+                            && Objects.isNull(fieldValue) ) {
+                        fieldValue = FieldAutoFillHandleUtils.getFillValue(getEntityClass(), x.getFieldName());
+                    }else if (checkLogicFieldIsExist() && x.getColumn().equals(getLogicColumn())) {
+                        fieldValue = ConvertUtil.transToObject(x.getType(), getLogicNotDeleteValue());
                     }
+                } catch (Exception e) {
+                    fieldValue = ConvertUtil.transToObject(x.getType(),
+                            RexUtil.regexStr(RexUtil.single_quotes, String.valueOf(getLogicNotDeleteValue()))
+                    );
                 }
                 if (JudgeUtil.isEmpty(fieldValue) && JudgeUtil.isNotEmpty(x.getDefaultValue())) {
                     fieldValue = x.getDefaultValue();
                 }
+                x.setValue(fieldValue);
                 this.addParams(fieldValue);
                 brackets.add(SymbolConstant.QUEST);
             });
