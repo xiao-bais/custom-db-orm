@@ -14,7 +14,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@DbTable(table = "task_record", desc = "任务记录表", enabledDefaultValue = true)
+@DbTable(table = "task_record", desc = "任务记录表")
 public class TaskRecord extends BaseEntity {
 
     @DbKey

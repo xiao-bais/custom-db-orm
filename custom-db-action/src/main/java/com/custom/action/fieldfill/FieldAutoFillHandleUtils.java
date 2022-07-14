@@ -31,8 +31,9 @@ public class FieldAutoFillHandleUtils {
         if(RexUtil.hasRegex(proName, RexUtil.back_quotes)) {
             proName = RexUtil.regexStr(proName, RexUtil.back_quotes);
         }
-        AutoFillColumnHandler columnHandler = CustomApplicationUtil.getBean(AutoFillColumnHandler.class);
+        ColumnFillAutoHandler columnHandler = CustomApplicationUtil.getBean(ColumnFillAutoHandler.class);
         if(ObjectUtils.isEmpty(columnHandler)) {
+
             return null;
         }
         List<TableFillObject> tableFillObjects = columnHandler.fillStrategy();
@@ -62,7 +63,7 @@ public class FieldAutoFillHandleUtils {
      * 判断是否存在该实体的填充对象配置
      */
     public static <T> boolean exists(Class<T> t) {
-        AutoFillColumnHandler columnHandler = CustomApplicationUtil.getBean(AutoFillColumnHandler.class);
+        ColumnFillAutoHandler columnHandler = CustomApplicationUtil.getBean(ColumnFillAutoHandler.class);
         if(ObjectUtils.isEmpty(columnHandler)) {
             return false;
         }
@@ -79,7 +80,7 @@ public class FieldAutoFillHandleUtils {
      */
     public static <T> boolean exists(Class<T> t, String proName) {
         try {
-            AutoFillColumnHandler columnHandler = CustomApplicationUtil.getBean(AutoFillColumnHandler.class);
+            ColumnFillAutoHandler columnHandler = CustomApplicationUtil.getBean(ColumnFillAutoHandler.class);
             if(ObjectUtils.isEmpty(columnHandler)) {
                 return false;
             }

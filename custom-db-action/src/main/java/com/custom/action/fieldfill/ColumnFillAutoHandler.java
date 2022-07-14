@@ -7,7 +7,7 @@ import java.util.List;
  * @Date 2022/3/21 14:18
  * @Desc：
  **/
-public interface AutoFillColumnHandler {
+public interface ColumnFillAutoHandler {
 
     /**
      * 自动填充

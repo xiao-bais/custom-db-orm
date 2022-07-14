@@ -1,7 +1,7 @@
 package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractSqlBuilder;
-import com.custom.action.fieldfill.AutoFillColumnHandler;
+import com.custom.action.fieldfill.ColumnFillAutoHandler;
 import com.custom.action.fieldfill.TableFillObject;
 import com.custom.action.util.DbUtil;
 import com.custom.comm.CustomApplicationUtil;
@@ -99,7 +99,7 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
      * 在删除数据时，若是有逻辑删除，则在逻辑删除后，进行固定字段的自动填充
      */
     protected void handleLogicDelAfter(Class<?> t, String deleteSql, Object... params) {
-        AutoFillColumnHandler fillColumnHandler = CustomApplicationUtil.getBean(AutoFillColumnHandler.class);
+        ColumnFillAutoHandler fillColumnHandler = CustomApplicationUtil.getBean(ColumnFillAutoHandler.class);
         if (Objects.isNull(fillColumnHandler)) {
             return;
         }
@@ -129,7 +129,7 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
      */
     private String buildLogicDelAfterAutoUpdateSql(FillStrategy strategy, String whereKeySql, Object... params) {
         StringBuilder autoUpdateSql = new StringBuilder();
-        Optional<TableFillObject> first = Objects.requireNonNull(CustomApplicationUtil.getBean(AutoFillColumnHandler.class))
+        Optional<TableFillObject> first = Objects.requireNonNull(CustomApplicationUtil.getBean(ColumnFillAutoHandler.class))
                 .fillStrategy().stream().filter(x -> x.getEntityClass().equals(getEntityClass())).findFirst();
         first.ifPresent(op -> {
             autoUpdateSql.append(SymbolConstant.UPDATE)

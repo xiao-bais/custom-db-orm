@@ -38,13 +38,13 @@ public class CustomTaskManagerApplicationTests {
                 taskRecord.setReason("计划赶不上变化");
             }
             else if (taskRecord.getCurrentProgress().equals(TaskProgressEnum.FINISH_TO_CHECK.getCode())) {
-                taskRecord.setTestResult("完成测验，暂无bug");
+                taskRecord.setTestResult("完成测验，暂无bug才怪");
             }
             int thisTime = DateTimeUtils.getThisTime();
             taskRecord.setStartTime(thisTime);
             taskRecord.setEndTime(thisTime + 96400 * 7);
-            taskRecord.setCreateTime(thisTime);
-            taskRecord.setOperatorTime(thisTime);
+//            taskRecord.setCreateTime(thisTime);
+//            taskRecord.setOperatorTime(thisTime);
             jdbcDao.insert(taskRecord);
         }
 

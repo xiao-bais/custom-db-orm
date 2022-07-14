@@ -234,9 +234,8 @@ public class JdbcAction extends AbstractSqlExecutor {
     public <T> int insert(T t) throws Exception {
         HandleInsertSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.INSERT);
         String insertSql = sqlBuilder.buildSql();
-        return 0;
-//        DbKeyParserModel<T> keyParserModel = sqlBuilder.getKeyParserModel();
-//        return executeInsert(insertSql, Collections.singletonList(t),  keyParserModel.getField(), sqlBuilder.getSqlParams());
+        DbKeyParserModel<T> keyParserModel = sqlBuilder.getKeyParserModel();
+        return executeInsert(insertSql, Collections.singletonList(t),  keyParserModel.getField(), sqlBuilder.getSqlParams());
     }
 
     @Override

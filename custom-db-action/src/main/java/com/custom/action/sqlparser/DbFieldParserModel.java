@@ -153,7 +153,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     private void defaultValueInjector() {
         // 若本身未设置默认值，则给定表的默认值
         if (JudgeUtil.isEmpty(this.defaultValue)) {
-            if (this.enabledDefaultValue) {
+            if (!this.enabledDefaultValue) {
                 this.defaultValue = this.dbType.getValue();
             }
             return;

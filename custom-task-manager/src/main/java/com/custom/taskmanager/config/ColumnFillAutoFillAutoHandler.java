@@ -1,6 +1,5 @@
 package com.custom.taskmanager.config;
 
-import com.custom.action.fieldfill.AutoFillColumnHandler;
 import com.custom.action.fieldfill.TableFillObject;
 import com.custom.comm.date.DateTimeUtils;
 import com.custom.comm.enums.FillStrategy;
@@ -16,7 +15,9 @@ import java.util.List;
  * @Desc
  */
 @Component
-public class FieldAutoHandler implements AutoFillColumnHandler {
+public class ColumnFillAutoFillAutoHandler implements com.custom.action.fieldfill.ColumnFillAutoHandler {
+
+
     @Override
     public List<TableFillObject> fillStrategy() {
         List<TableFillObject> list = new ArrayList<>();
@@ -27,6 +28,7 @@ public class FieldAutoHandler implements AutoFillColumnHandler {
         fillObject.addField("createTime", DateTimeUtils.getThisTime())
                 .addField("operatorTime", DateTimeUtils.getThisTime())
                 .setNotFoundFieldThrowException(true);
+        list.add(fillObject);
 
         return list;
     }

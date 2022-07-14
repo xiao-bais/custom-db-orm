@@ -100,6 +100,9 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
         return appendSymbol(getEntityList());
     }
 
+    /**
+     * 动态拼接插入的？
+     */
     private String appendSymbol(List<T> saveDataList) {
         StringJoiner insertSymbol = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_1);
         for (T currEntity : saveDataList) {
@@ -111,23 +114,7 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
             }
             List<DbFieldParserModel<T>> fieldParserModels = getFieldParserModels();
             fieldParserModels.forEach(x -> {
-                Object fieldValue = x.getValue();
-                try {
-                    // 若存在自动填充的字段，则在添加的时候，进行字段值的自动填充
-                    if (FieldAutoFillHandleUtils.exists(getEntityClass(), x.getFieldName())
-                            && Objects.isNull(fieldValue) ) {
-                        fieldValue = FieldAutoFillHandleUtils.getFillValue(getEntityClass(), x.getFieldName());
-                    }else if (checkLogicFieldIsExist() && x.getColumn().equals(getLogicColumn())) {
-                        fieldValue = ConvertUtil.transToObject(x.getType(), getLogicNotDeleteValue());
-                    }
-                } catch (Exception e) {
-                    fieldValue = ConvertUtil.transToObject(x.getType(),
-                            RexUtil.regexStr(RexUtil.single_quotes, String.valueOf(getLogicNotDeleteValue()))
-                    );
-                }
-                if (JudgeUtil.isEmpty(fieldValue) && JudgeUtil.isNotEmpty(x.getDefaultValue())) {
-                    fieldValue = x.getDefaultValue();
-                }
+                Object fieldValue = getFieldValue(x);
                 x.setValue(fieldValue);
                 this.addParams(fieldValue);
                 brackets.add(SymbolConstant.QUEST);
@@ -135,6 +122,31 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
             insertSymbol.add(brackets.toString());
         }
         return insertSymbol.toString();
+    }
+
+    /**
+     * 获取字段的值
+     */
+    private Object getFieldValue(DbFieldParserModel<T> x) {
+        Object fieldValue = x.getValue();
+        try {
+            // 若存在自动填充的字段，则在添加的时候，进行字段值的自动填充
+            if (FieldAutoFillHandleUtils.exists(getEntityClass(), x.getFieldName())
+                    && Objects.isNull(fieldValue) ) {
+                fieldValue = FieldAutoFillHandleUtils.getFillValue(getEntityClass(), x.getFieldName());
+            }else if (checkLogicFieldIsExist() && x.getColumn().equals(getLogicColumn())) {
+                fieldValue = ConvertUtil.transToObject(x.getType(), getLogicNotDeleteValue());
+            }
+        } catch (Exception e) {
+            fieldValue = ConvertUtil.transToObject(x.getType(),
+                    RexUtil.regexStr(RexUtil.single_quotes, String.valueOf(getLogicNotDeleteValue()))
+            );
+        }
+        // 当设定了默认值时，若字段值为null，则可从用户自定义或给定的默认值中设入
+        if (JudgeUtil.isEmpty(fieldValue) && Objects.nonNull(x.getDefaultValue())) {
+            fieldValue = x.getDefaultValue();
+        }
+        return fieldValue;
     }
 
     public void setSaveSubSelection(int saveSubSelection) {

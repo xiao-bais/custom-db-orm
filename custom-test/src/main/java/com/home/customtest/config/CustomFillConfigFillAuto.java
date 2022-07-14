@@ -1,10 +1,7 @@
 package com.home.customtest.config;
 
-import com.custom.action.fieldfill.AutoFillColumnHandler;
+import com.custom.action.fieldfill.ColumnFillAutoHandler;
 import com.custom.action.fieldfill.TableFillObject;
-import com.custom.comm.enums.FillStrategy;
-import com.home.customtest.entity.Student;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +12,7 @@ import java.util.List;
  * @Desc：
  **/
 //@Component
-public class CustomFillConfig implements AutoFillColumnHandler {
+public class CustomFillConfigFillAuto implements ColumnFillAutoHandler {
     @Override
     public List<TableFillObject> fillStrategy() {
 
