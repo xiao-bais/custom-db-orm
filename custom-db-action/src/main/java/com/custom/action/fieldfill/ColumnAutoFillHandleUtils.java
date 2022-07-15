@@ -17,9 +17,9 @@ import java.util.Optional;
  * @Date 2022/3/29 15:29
  * @Desc：对于字段自动填充的工具处理
  **/
-public class FieldAutoFillHandleUtils {
+public class ColumnAutoFillHandleUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(FieldAutoFillHandleUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(ColumnAutoFillHandleUtils.class);
 
     /**
      * 通过java属性获取需要填充的字段值

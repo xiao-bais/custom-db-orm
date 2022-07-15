@@ -1,7 +1,7 @@
 package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractSqlBuilder;
-import com.custom.action.fieldfill.FieldAutoFillHandleUtils;
+import com.custom.action.fieldfill.ColumnAutoFillHandleUtils;
 import com.custom.action.util.DbUtil;
 import com.custom.action.wrapper.SFunction;
 import com.custom.comm.JudgeUtil;
@@ -128,7 +128,7 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
             if (Objects.isNull(value)) {
                 // 修改时必要的自动填充
                 // 当修改时，用户没有为自动填充的字段额外设置业务值，则启用原本设定的默认值进行填充
-                Object fillValue = FieldAutoFillHandleUtils.getFillValue(getEntityClass(), field.getFieldName());
+                Object fillValue = ColumnAutoFillHandleUtils.getFillValue(getEntityClass(), field.getFieldName());
                 if (Objects.nonNull(fillValue)) {
                     value = fillValue;
                 }

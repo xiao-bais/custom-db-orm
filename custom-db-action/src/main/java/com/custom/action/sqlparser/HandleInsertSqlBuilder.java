@@ -1,7 +1,7 @@
 package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractSqlBuilder;
-import com.custom.action.fieldfill.FieldAutoFillHandleUtils;
+import com.custom.action.fieldfill.ColumnAutoFillHandleUtils;
 import com.custom.comm.ConvertUtil;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.RexUtil;
@@ -131,9 +131,9 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
         Object fieldValue = x.getValue();
         try {
             // 若存在自动填充的字段，则在添加的时候，进行字段值的自动填充
-            if (FieldAutoFillHandleUtils.exists(getEntityClass(), x.getFieldName())
+            if (ColumnAutoFillHandleUtils.exists(getEntityClass(), x.getFieldName())
                     && Objects.isNull(fieldValue) ) {
-                fieldValue = FieldAutoFillHandleUtils.getFillValue(getEntityClass(), x.getFieldName());
+                fieldValue = ColumnAutoFillHandleUtils.getFillValue(getEntityClass(), x.getFieldName());
             }else if (checkLogicFieldIsExist() && x.getColumn().equals(getLogicColumn())) {
                 fieldValue = ConvertUtil.transToObject(x.getType(), getLogicNotDeleteValue());
             }
