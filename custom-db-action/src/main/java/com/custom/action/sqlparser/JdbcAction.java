@@ -198,7 +198,7 @@ public class JdbcAction extends AbstractSqlExecutor {
 
     @Override
     @CheckExecute(target = ExecuteMethod.DELETE)
-    public <T> int deleteBatchKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception {
+    public <T> int deleteBatchKeys(Class<T> t, Collection<?> keys) throws Exception {
         HandleDeleteSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.DELETE);
         sqlBuilder.setKeys(keys);
         String deleteSql = sqlBuilder.buildSql();

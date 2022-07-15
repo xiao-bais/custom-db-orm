@@ -27,7 +27,7 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
     private static final Logger logger = LoggerFactory.getLogger(HandleDeleteSqlBuilder.class);
 
     private Object key;
-    private Collection<? extends Serializable> keys;
+    private Collection<?> keys;
     private String deleteCondition;
 
     @Override
@@ -179,7 +179,7 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
         handleByKey();
     }
 
-    public void setKeys(Collection<? extends Serializable> keys) {
+    public void setKeys(Collection<?> keys) {
         this.keys = keys;
         handleByKeys();
     }

@@ -47,7 +47,7 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
 
     /*--------------------------------------- delete ---------------------------------------*/
     public abstract <T> int deleteByKey(Class<T> t, Object key) throws Exception;
-    public abstract <T> int deleteBatchKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception;
+    public abstract <T> int deleteBatchKeys(Class<T> t, Collection<?> keys) throws Exception;
     public abstract <T> int deleteByCondition(Class<T> t, String condition, Object... params) throws Exception;
     public abstract <T> int deleteByCondition(ConditionWrapper<T> wrapper) throws Exception;
 
