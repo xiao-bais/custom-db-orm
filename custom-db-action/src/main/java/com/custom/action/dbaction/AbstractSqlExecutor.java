@@ -65,6 +65,9 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
     public abstract <T> long save(T t) throws Exception;
     public abstract void createTables(Class<?>... arr) throws Exception;
     public abstract void dropTables(Class<?>... arr) throws Exception;
+    public abstract <T> TableSqlBuilder<T> defaultSqlBuilder(Class<T> t);
+    public abstract <T> TableSqlBuilder<T> updateSqlBuilder(List<T> tList);
+
 
     private DbCustomStrategy dbCustomStrategy;
     private String logicColumn = SymbolConstant.EMPTY;
@@ -122,7 +125,7 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
      * 获取实体解析模板中的操作对象
      */
     protected <T, R extends AbstractSqlBuilder<T>> R buildSqlOperationTemplate(List<T> entityList, ExecuteMethod method) {
-        TableSqlBuilder<T> tableModelCache = getUpdateEntityModelCache(entityList);
+        TableSqlBuilder<T> tableModelCache = updateTableSqlBuilder(entityList);
         TableSqlBuilder<T> tableModel = tableModelCache.clone();
         tableModel.setEntity(entityList.get(0));
         tableModel.setList(entityList);
@@ -135,7 +138,7 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
      * 获取实体解析模板中的操作对象
      */
     protected <T, R extends AbstractSqlBuilder<T>> R buildSqlOperationTemplate(Class<T> entityClass, ExecuteMethod method) {
-        TableSqlBuilder<T> tableSqlBuilder = getEntityModelCache(entityClass);
+        TableSqlBuilder<T> tableSqlBuilder = defaultTableSqlBuilder(entityClass);
         tableSqlBuilder.buildSqlConstructorModel(method);
         tableSqlBuilder.setLogicFieldInfo(logicColumn, dbCustomStrategy.getDeleteLogicValue(), dbCustomStrategy.getNotDeleteLogicValue());
         return (R) tableSqlBuilder.getSqlBuilder();

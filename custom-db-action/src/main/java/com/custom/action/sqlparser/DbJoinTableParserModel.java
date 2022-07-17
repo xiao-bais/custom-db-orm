@@ -2,7 +2,7 @@ package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractTableModel;
 import com.custom.action.util.DbUtil;
-import com.custom.comm.GlobalDataHandler;
+import com.custom.jdbc.GlobalDataHandler;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.DbMapper;

@@ -1,5 +1,7 @@
-package com.custom.comm;
+package com.custom.jdbc;
 
+import com.custom.comm.RexUtil;
+import com.custom.comm.SymbolConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
@@ -58,6 +60,24 @@ public class GlobalDataHandler {
      */
     public static String wrapperSqlKeyword(String column) {
         return "`" + column + "`";
+    }
+
+    /**
+     * 全局配置对象暂存
+     */
+   private static final ThreadLocal<CustomConfigHelper> CONFIG_HELPER = new ThreadLocal<>();
+
+   protected static void setConfigHelper(CustomConfigHelper configHelper) {
+       if (CONFIG_HELPER.get() == null) {
+           CONFIG_HELPER.set(configHelper);
+       }
+   }
+
+    public static CustomConfigHelper getConfigHelper() {
+       if (CONFIG_HELPER.get() == null) {
+           return null;
+       }
+        return CONFIG_HELPER.get();
     }
 
 

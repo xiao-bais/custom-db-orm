@@ -34,11 +34,10 @@ public class JdbcAction extends AbstractSqlExecutor {
         // 配置sql执行器
         this.setSelectJdbc(new CustomSelectJdbcBasicImpl(dbDataSource, dbCustomStrategy));
         this.setUpdateJdbc(new CustomUpdateJdbcBasicImpl(dbDataSource, dbCustomStrategy));
-//        this.setJdbcExecutor(new JdbcExecutorImpl(dbDataSource, dbCustomStrategy));
         // 配置sql执行策略
         this.setDbCustomStrategy(dbCustomStrategy);
         // 初始化逻辑删除策略
-        initLogic();
+        this.initLogic();
     }
 
     public JdbcAction(){}
@@ -305,7 +304,7 @@ public class JdbcAction extends AbstractSqlExecutor {
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
     public <T> long save(T entity) throws Exception {
-        TableSqlBuilder<T> sqlBuilder = getUpdateEntityModelCache(Collections.singletonList(entity));
+        TableSqlBuilder<T> sqlBuilder = updateTableSqlBuilder(Collections.singletonList(entity));
         return Objects.nonNull(sqlBuilder.getDbKeyVal()) ? updateByKey(entity) : insert(entity);
     }
 
@@ -313,7 +312,7 @@ public class JdbcAction extends AbstractSqlExecutor {
     public void createTables(Class<?>... arr) throws Exception {
         TableSqlBuilder<?> tableSqlBuilder;
         for (int i = arr.length - 1; i >= 0; i--) {
-            tableSqlBuilder = getEntityModelCache(arr[i]);
+            tableSqlBuilder = defaultTableSqlBuilder(arr[i]);
             String exitsTableSql = tableSqlBuilder.exitsTableSql(arr[i]);
             if(!hasTableInfo(exitsTableSql)) {
                 String createTableSql = tableSqlBuilder.createTableSql();
@@ -326,10 +325,20 @@ public class JdbcAction extends AbstractSqlExecutor {
     @Override
     public void dropTables(Class<?>... arr) {
         for (int i = arr.length - 1; i >= 0; i--) {
-            TableSqlBuilder<?> tableSqlBuilder = getEntityModelCache(arr[i]);
+            TableSqlBuilder<?> tableSqlBuilder = defaultTableSqlBuilder(arr[i]);
             String dropTableSql = tableSqlBuilder.dropTableSql();
             execTable(dropTableSql);
             logger.warn("drop table '{}' completed\n", tableSqlBuilder.getTable());
         }
+    }
+
+    @Override
+    public <T> TableSqlBuilder<T> defaultSqlBuilder(Class<T> t) {
+        return this.defaultTableSqlBuilder(t);
+    }
+
+    @Override
+    public <T> TableSqlBuilder<T> updateSqlBuilder(List<T> tList) {
+        return this.updateTableSqlBuilder(tList);
     }
 }

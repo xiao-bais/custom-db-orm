@@ -5,13 +5,17 @@ import com.custom.action.dbaction.JdbcActiveWrapper;
 import com.custom.action.proxy.JdbcActionProxy;
 import com.custom.action.wrapper.ConditionWrapper;
 import com.custom.action.wrapper.SFunction;
+import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.page.DbPageRows;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
+import com.custom.jdbc.select.CustomSelectJdbcBasic;
+import com.custom.jdbc.update.CustomUpdateJdbcBasic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -22,15 +26,20 @@ import java.util.Map;
  */
 public class JdbcSingleAction<T, P> implements JdbcActiveWrapper<T, P> {
 
-
     private static final Logger logger = LoggerFactory.getLogger(JdbcSingleAction.class);
 
     private final AbstractSqlExecutor jdbcAction;
     private final Class<T> entityClass;
+    private final TableSqlBuilder<T> defaultSqlBuilder;
 
     public JdbcSingleAction(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy, Class<T> entityClass) {
         this.entityClass = entityClass;
-        jdbcAction = new JdbcActionProxy<>(new JdbcAction(), dbDataSource, dbCustomStrategy).createProxy();
+        this.jdbcAction = new JdbcActionProxy<>(new JdbcAction(), dbDataSource, dbCustomStrategy).createProxy();
+        this.defaultSqlBuilder = this.jdbcAction.defaultSqlBuilder(entityClass);
+    }
+
+    private TableSqlBuilder<T> updateSqlBuilder(List<T> tList) {
+        return this.jdbcAction.updateSqlBuilder(tList);
     }
 
     @Override
@@ -122,6 +131,15 @@ public class JdbcSingleAction<T, P> implements JdbcActiveWrapper<T, P> {
     @Override
     public long save(T t) throws Exception {
         return jdbcAction.save(t);
+    }
+
+    @Override
+    public Object primaryKeyValue(T entity) {
+        TableSqlBuilder<T> tableSqlBuilder = updateSqlBuilder(Collections.singletonList(entity));
+        if (tableSqlBuilder.getKeyParserModel() == null) {
+            ExThrowsUtil.toCustom("未指定主键字段");
+        }
+        return tableSqlBuilder.getKeyParserModel().getValue();
     }
 
 

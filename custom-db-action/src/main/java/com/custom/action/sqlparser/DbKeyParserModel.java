@@ -3,7 +3,7 @@ package com.custom.action.sqlparser;
 import com.custom.action.dbaction.AbstractTableModel;
 import com.custom.action.util.DbUtil;
 import com.custom.comm.CustomUtil;
-import com.custom.comm.GlobalDataHandler;
+import com.custom.jdbc.GlobalDataHandler;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.DbKey;
@@ -31,17 +31,17 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
 
     private String key;
 
-    private Field field;
+    private final Field field;
 
-    private DbType dbType;
+    private final DbType dbType;
 
-    private KeyStrategy strategy;
+    private final KeyStrategy strategy;
 
-    private Class<?> type;
+    private final Class<?> type;
 
-    private String length;
+    private final String length;
 
-    private String desc;
+    private final String desc;
 
     private Object value;
 

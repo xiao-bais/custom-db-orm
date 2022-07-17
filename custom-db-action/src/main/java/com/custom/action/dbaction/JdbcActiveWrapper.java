@@ -1,5 +1,6 @@
 package com.custom.action.dbaction;
 
+import com.custom.action.sqlparser.TableSqlBuilder;
 import com.custom.action.wrapper.ConditionWrapper;
 import com.custom.action.wrapper.SFunction;
 import com.custom.comm.page.DbPageRows;
@@ -43,6 +44,7 @@ public interface JdbcActiveWrapper<T, P> {
 
     /*------------------------------------ comm ---------------------------------------*/
     long save(T t) throws Exception;
+    Object primaryKeyValue(T entity);
 
 
 }

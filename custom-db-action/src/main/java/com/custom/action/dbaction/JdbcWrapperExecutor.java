@@ -41,6 +41,14 @@ public class JdbcWrapperExecutor {
         this.updateJdbc = updateJdbc;
     }
 
+    public CustomSelectJdbcBasic selectJdbc() {
+        return selectJdbc;
+    }
+
+    public CustomUpdateJdbcBasic updateJdbc() {
+        return updateJdbc;
+    }
+
     /**
      * 查询数组
      */
@@ -191,7 +199,7 @@ public class JdbcWrapperExecutor {
     /**
      * 从缓存中获取实体解析模板，若缓存中没有，就重新构造模板（查询、删除、创建删除表）
      */
-    protected <T> TableSqlBuilder<T> getEntityModelCache(Class<T> t) {
+    protected <T> TableSqlBuilder<T> defaultTableSqlBuilder(Class<T> t) {
         TableSqlBuilder<T> tableModelCache = TableInfoCache.getTableModel(t);
         TableSqlBuilder<T> tableModel = tableModelCache.clone();
         tableModel.setSelectJdbc(this.selectJdbc);
@@ -202,13 +210,10 @@ public class JdbcWrapperExecutor {
     /**
      * 从缓存中获取实体解析模板，若缓存中没有，就重新构造模板（批量增加记录）
      */
-    protected <T> TableSqlBuilder<T> getUpdateEntityModelCache(List<T> tList) {
-        TableSqlBuilder<T> tableModelCache = (TableSqlBuilder<T>) TableInfoCache.getTableModel(tList.get(0).getClass());
-        TableSqlBuilder<T> tableModel = tableModelCache.clone();
+    protected <T> TableSqlBuilder<T> updateTableSqlBuilder(List<T> tList) {
+        TableSqlBuilder<T> tableModel = (TableSqlBuilder<T>) defaultTableSqlBuilder(tList.get(0).getClass());
         tableModel.setEntity(tList.get(0));
         tableModel.setList(tList);
-        tableModel.setSelectJdbc(this.selectJdbc);
-        tableModel.setUpdateJdbc(this.updateJdbc);
         return tableModel;
     }
 }

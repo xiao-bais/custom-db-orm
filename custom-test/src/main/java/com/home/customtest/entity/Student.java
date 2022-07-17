@@ -1,9 +1,11 @@
 package com.home.customtest.entity;
 
+import com.custom.action.activerecord.ActiveModel;
 import com.custom.comm.annotations.*;
 import com.custom.comm.enums.DbType;
 import com.custom.comm.enums.KeyStrategy;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -15,13 +17,14 @@ import java.util.List;
  * @Date 2022/3/10 10:00
  * @Desc：
  **/
-@Data
+@EqualsAndHashCode(callSuper = true)
+//@Data
 @DbJoinTables({
         @DbJoinTable("left join province pro on pro.id = a.pro_id"),
         @DbJoinTable("left join city cy on cy.id = a.city_id"),
 })
-@DbTable(table = "student_info", desc = "学生信息表", enabledDefaultValue = true)
-public class Student implements Serializable {
+@DbTable(table = "student", desc = "学生信息表", enabledDefaultValue = true)
+public class Student extends ActiveModel<Student, Integer> implements Serializable {
 
 
 
@@ -73,6 +76,8 @@ public class Student implements Serializable {
     private String area;
 
     private List<Street> modelList;
+
+
 
 
 

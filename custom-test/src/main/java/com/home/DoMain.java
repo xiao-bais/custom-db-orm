@@ -2,9 +2,12 @@ package com.home;
 
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.wrapper.Conditions;
+import com.custom.action.wrapper.LambdaConditionWrapper;
+import com.home.customtest.entity.ChildStudent;
 import com.home.customtest.entity.Employee;
 import com.home.customtest.entity.Student;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,9 +23,9 @@ public class DoMain {
 
         JdbcDao jdbcDao = JdbcTestBuilder.builder().getJdbcDao();
 
-        List<Student> studentList = jdbcDao.selectList(Conditions.lambdaQuery(Student.class));
 
-        studentList = studentList.stream().filter(x -> x != null).collect(Collectors.toList());
+
+        Student student = new Student();
 
 
     }
