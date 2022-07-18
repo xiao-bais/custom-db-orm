@@ -138,7 +138,7 @@ public class JdbcSingleAction<T, P> implements JdbcActiveWrapper<T, P> {
         if (tableSqlBuilder.getKeyParserModel() == null) {
             ExThrowsUtil.toCustom("未指定主键字段");
         }
-        return (P) tableSqlBuilder.getDbKeyVal();
+        return (P) tableSqlBuilder.primaryKeyVal();
     }
 
 

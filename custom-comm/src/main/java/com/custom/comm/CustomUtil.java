@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -211,12 +212,18 @@ public class CustomUtil {
     /**
     * 获取一个类的所有属性（包括父类）
     */
-    public static <T> Field[] getFields(Class<T> t, boolean checkDbField){
+    public static <T> Field[] loadFields(Class<T> t, boolean checkDbField) {
         Class<?> clz = t;
         DbTable thisDbTable = t.getAnnotation(DbTable.class);
         List<Field> fieldList = new ArrayList<>();
         while (!clz.equals(Object.class)) {
-            fieldList.addAll(Arrays.asList(clz.getDeclaredFields()));
+            Arrays.stream(clz.getDeclaredFields()).forEach(field -> {
+                int modifiers = field.getModifiers();
+                if (Modifier.isPrivate(modifiers)
+                        && !Modifier.isStatic(modifiers) && !Modifier.isFinal(modifiers)) {
+                    fieldList.add(field);
+                }
+            });
             DbTable parentDbTable = clz.getSuperclass().getAnnotation(DbTable.class);
             if (Objects.isNull(parentDbTable) || thisDbTable.equals(parentDbTable)) {
                 clz = clz.getSuperclass();
@@ -225,14 +232,14 @@ public class CustomUtil {
                 }
             }
         }
-        if(fieldList.size() == 0 && checkDbField) {
-            ExThrowsUtil.toCustom("@DbField not found in class "+ t);
+        if (fieldList.size() == 0 && checkDbField) {
+            ExThrowsUtil.toCustom("@DbField not found in class " + t);
         }
         return fieldList.toArray(new Field[0]);
     }
 
-    public static <T> Field[] getFields(Class<T> t){
-        return getFields(t, true);
+    public static <T> Field[] loadFields(Class<T> t){
+        return loadFields(t, true);
     }
 
 

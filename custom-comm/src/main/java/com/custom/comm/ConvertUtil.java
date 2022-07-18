@@ -69,14 +69,14 @@ public class ConvertUtil {
             }
             return null;
         }
-        return getDefaultVal(transType);
+        return allTypeDefaultVal(transType);
     }
 
 
     /**
      * 获取默认值
      */
-    public static <T> T getDefaultVal(Class<T> type) {
+    public static <T> T allTypeDefaultVal(Class<T> type) {
         if (type.equals(Integer.class) || type.equals(Integer.TYPE)) return (T) new Integer(0);
         if (type.equals(Long.class) || type.equals(Long.TYPE)) return (T) new Long(0L);
         if (type.equals(Short.class) || type.equals(Short.TYPE)) return (T) new Short("0");
@@ -91,6 +91,10 @@ public class ConvertUtil {
 
     public static boolean conBool(Integer i) {
         return i != null && i > 0;
+    }
+
+    public static boolean conBool(BigDecimal i) {
+        return i != null && i.doubleValue() > 0;
     }
 
     public static boolean conBool(Long i) {
@@ -117,9 +121,59 @@ public class ConvertUtil {
         if (i instanceof Double) {
             return conBool((Double) i);
         }
+        if (i instanceof BigDecimal) {
+            return conBool((BigDecimal) i);
+        }
         return i instanceof CharSequence
                 && (String.valueOf(i).equalsIgnoreCase(SymbolConstant.CONST_TRUE) || "1".equals(i));
     }
+
+
+    public static int conInt(Long i) {
+        if (i == null) return 0;
+        return i.intValue();
+    }
+
+    public static int conInt(Double i) {
+        if (i == null) return 0;
+        return i.intValue();
+    }
+
+    public static int conInt(BigDecimal i) {
+        if (i == null) return 0;
+        return i.intValue();
+    }
+
+    public static int conInt(Boolean i) {
+        if (i == null) return 0;
+        return i ? 1 : 0;
+    }
+
+    public static int conInt(String i) {
+        if (i == null) return 0;
+        return Integer.parseInt(i);
+    }
+
+    public static int conInt(Object i) {
+        if (i == null) return 0;
+        if (i instanceof Integer) {
+            return (Integer) i;
+        }
+        if (i instanceof Boolean) {
+            return conInt((Boolean) i);
+        }
+        if (i instanceof Long) {
+            return conInt((Long) i);
+        }
+        if (i instanceof Double) {
+            return conInt((Double) i);
+        }
+        if (i instanceof BigDecimal) {
+            return conInt((BigDecimal) i);
+        }
+        return i instanceof CharSequence ? conInt(String.valueOf(i)) : 0;
+    }
+
 
 
     public static void main(String[] args) {

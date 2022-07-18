@@ -54,7 +54,7 @@ public class ParsingObjectStruts {
             paramsMap.put(name, null);
             return;
         }
-        Field[] fields = CustomUtil.getFields(value.getClass(), false);
+        Field[] fields = CustomUtil.loadFields(value.getClass(), false);
         if (fields.length == 0) ExThrowsUtil.toCustom("In %s, no available attributes were resolved", value.getClass());
         for (Field field : fields) {
             String fieldName = String.format("%s.%s", name, field.getName());

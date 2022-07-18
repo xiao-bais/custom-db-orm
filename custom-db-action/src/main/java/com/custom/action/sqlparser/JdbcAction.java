@@ -8,7 +8,6 @@ import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.check.CheckExecute;
 import com.custom.comm.enums.ExecuteMethod;
-import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.page.DbPageRows;
 import com.custom.configuration.DbCustomStrategy;
@@ -420,7 +419,7 @@ public class JdbcAction extends AbstractSqlExecutor {
     @CheckExecute(target = ExecuteMethod.UPDATE)
     public <T> long save(T entity) {
         TableSqlBuilder<T> sqlBuilder = updateTableSqlBuilder(Collections.singletonList(entity));
-        return Objects.nonNull(sqlBuilder.getDbKeyVal()) ? updateByKey(entity) : insert(entity);
+        return Objects.nonNull(sqlBuilder.primaryKeyVal()) ? updateByKey(entity) : insert(entity);
     }
 
     @Override

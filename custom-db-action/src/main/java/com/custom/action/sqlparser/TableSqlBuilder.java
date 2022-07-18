@@ -195,7 +195,7 @@ public class TableSqlBuilder<T> implements Cloneable {
         initLocalProperty(cls, underlineToCamel);
 
         if (method != ExecuteMethod.NONE) {
-            this.fields = findUpDbJoinTables ? CustomUtil.getFields(this.cls) : this.cls.getDeclaredFields();
+            this.fields = findUpDbJoinTables ? CustomUtil.loadFields(this.cls) : this.cls.getDeclaredFields();
             // 构建字段解析模板
             initTableBuild(method);
         }
@@ -230,7 +230,7 @@ public class TableSqlBuilder<T> implements Cloneable {
         // 解析@DbJoinTables注解
         this.mergeDbJoinTables();
 
-        Field[] fields = Objects.isNull(this.fields) ? CustomUtil.getFields(this.cls) : this.fields;
+        Field[] fields = Objects.isNull(this.fields) ? CustomUtil.loadFields(this.cls) : this.fields;
         for (Field field : fields) {
             if (field.isAnnotationPresent(DbKey.class) && Objects.isNull(keyParserModel)) {
                 keyParserModel = new DbKeyParserModel<>(field, this.table, this.alias, this.underlineToCamel);
@@ -351,7 +351,7 @@ public class TableSqlBuilder<T> implements Cloneable {
     /**
      * 获取主键的值
      */
-    public Object getDbKeyVal() {
+    public Object primaryKeyVal() {
         if (Objects.isNull(this.keyParserModel)) {
             return null;
         }
