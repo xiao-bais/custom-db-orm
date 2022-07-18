@@ -9,6 +9,7 @@ import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.enums.ExecuteMethod;
+import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.page.DbPageRows;
 import com.custom.configuration.DbCustomStrategy;
@@ -25,46 +26,46 @@ import java.util.*;
 public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
 
     /*--------------------------------------- select ---------------------------------------*/
-    public abstract <T> List<T> selectList(Class<T> t, String condition, Object... params) throws Exception;
-    public abstract <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, DbPageRows<T> dbPageRows, Object... params) throws Exception;
-    public abstract <T> T selectOneByKey(Class<T> t, Object key) throws Exception;
-    public abstract <T> List<T> selectBatchByKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception;
-    public abstract <T> T selectOneByCondition(Class<T> t, String condition, Object... params) throws Exception;
+    public abstract <T> List<T> selectList(Class<T> t, String condition, Object... params);
+    public abstract <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, DbPageRows<T> dbPageRows, Object... params);
+    public abstract <T> T selectOneByKey(Class<T> t, Object key);
+    public abstract <T> List<T> selectBatchByKeys(Class<T> t, Collection<? extends Serializable> keys);
+    public abstract <T> T selectOneByCondition(Class<T> t, String condition, Object... params);
 
     /**
      * ConditionWrapper(条件构造器)
      */
-    public abstract <T> DbPageRows<T> selectPageRows(ConditionWrapper<T> wrapper) throws Exception;
-    public abstract <T> List<T> selectList(ConditionWrapper<T> wrapper) throws Exception;
-    public abstract <T> T selectOneByCondition(ConditionWrapper<T> wrapper) throws Exception;
-    public abstract <T> long selectCount(ConditionWrapper<T> wrapper) throws Exception;
-    public abstract <T> Object selectObj(ConditionWrapper<T> wrapper) throws Exception;
-    public abstract <T> List<Object> selectObjs(ConditionWrapper<T> wrapper) throws Exception;
-    public abstract <T> Map<String, Object> selectMap(ConditionWrapper<T> wrapper) throws Exception;
-    public abstract <T> List<Map<String, Object>> selectMaps(ConditionWrapper<T> wrapper) throws Exception;
-    public abstract <T> DbPageRows<Map<String, Object>> selectPageMaps(ConditionWrapper<T> wrapper) throws Exception;
+    public abstract <T> DbPageRows<T> selectPageRows(ConditionWrapper<T> wrapper);
+    public abstract <T> List<T> selectList(ConditionWrapper<T> wrapper);
+    public abstract <T> T selectOneByCondition(ConditionWrapper<T> wrapper);
+    public abstract <T> long selectCount(ConditionWrapper<T> wrapper);
+    public abstract <T> Object selectObj(ConditionWrapper<T> wrapper);
+    public abstract <T> List<Object> selectObjs(ConditionWrapper<T> wrapper);
+    public abstract <T> Map<String, Object> selectMap(ConditionWrapper<T> wrapper);
+    public abstract <T> List<Map<String, Object>> selectMaps(ConditionWrapper<T> wrapper);
+    public abstract <T> DbPageRows<Map<String, Object>> selectPageMaps(ConditionWrapper<T> wrapper);
 
 
     /*--------------------------------------- delete ---------------------------------------*/
-    public abstract <T> int deleteByKey(Class<T> t, Object key) throws Exception;
-    public abstract <T> int deleteBatchKeys(Class<T> t, Collection<?> keys) throws Exception;
-    public abstract <T> int deleteByCondition(Class<T> t, String condition, Object... params) throws Exception;
-    public abstract <T> int deleteByCondition(ConditionWrapper<T> wrapper) throws Exception;
+    public abstract <T> int deleteByKey(Class<T> t, Object key);
+    public abstract <T> int deleteBatchKeys(Class<T> t, Collection<?> keys);
+    public abstract <T> int deleteByCondition(Class<T> t, String condition, Object... params);
+    public abstract <T> int deleteByCondition(ConditionWrapper<T> wrapper);
 
     /*--------------------------------------- insert ---------------------------------------*/
-    public abstract <T> int insert(T t) throws Exception;
-    public abstract <T> int insert(List<T> tList) throws Exception;
+    public abstract <T> int insert(T t);
+    public abstract <T> int insert(List<T> tList);
 
     /*--------------------------------------- update ---------------------------------------*/
-    public abstract <T> int updateByKey(T t) throws Exception;
-    public abstract <T> int updateByKey(T t, SFunction<T, ?>... updateColumns) throws Exception;
-    public abstract <T> int updateByCondition(T t, ConditionWrapper<T> wrapper) throws Exception;
-    public abstract <T> int updateByCondition(T t, String condition, Object... params) throws Exception;
+    public abstract <T> int updateByKey(T t);
+    public abstract <T> int updateByKey(T t, SFunction<T, ?>... updateColumns);
+    public abstract <T> int updateByCondition(T t, ConditionWrapper<T> wrapper);
+    public abstract <T> int updateByCondition(T t, String condition, Object... params);
 
     /*--------------------------------------- comm ---------------------------------------*/
-    public abstract <T> long save(T t) throws Exception;
-    public abstract void createTables(Class<?>... arr) throws Exception;
-    public abstract void dropTables(Class<?>... arr) throws Exception;
+    public abstract <T> long save(T t);
+    public abstract void createTables(Class<?>... arr);
+    public abstract void dropTables(Class<?>... arr);
     public abstract <T> TableSqlBuilder<T> defaultSqlBuilder(Class<T> t);
     public abstract <T> TableSqlBuilder<T> updateSqlBuilder(List<T> tList);
 
@@ -189,5 +190,15 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
 
     public String getLogicDeleteQuerySql() {
         return logicDeleteQuerySql;
+    }
+
+    public void throwsException(Exception e) {
+        if (e instanceof CustomCheckException) {
+            throw new CustomCheckException(e);
+        }else if (e instanceof NullPointerException) {
+            throw new NullPointerException(e.getMessage());
+        }else {
+            throw new RuntimeException(e);
+        }
     }
 }

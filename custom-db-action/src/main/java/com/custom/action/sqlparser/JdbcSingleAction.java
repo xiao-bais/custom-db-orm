@@ -9,8 +9,6 @@ import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.page.DbPageRows;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
-import com.custom.jdbc.select.CustomSelectJdbcBasic;
-import com.custom.jdbc.update.CustomUpdateJdbcBasic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,103 +41,104 @@ public class JdbcSingleAction<T, P> implements JdbcActiveWrapper<T, P> {
     }
 
     @Override
-    public DbPageRows<T> selectPageRows(ConditionWrapper<T> wrapper) throws Exception {
+    public DbPageRows<T> selectPageRows(ConditionWrapper<T> wrapper) {
         return jdbcAction.selectPageRows(wrapper);
     }
 
     @Override
-    public List<T> selectList(ConditionWrapper<T> wrapper) throws Exception {
+    public List<T> selectList(ConditionWrapper<T> wrapper) {
         return jdbcAction.selectList(wrapper);
     }
 
     @Override
-    public T selectOneByCondition(ConditionWrapper<T> wrapper) throws Exception {
+    public T selectOneByCondition(ConditionWrapper<T> wrapper) {
         return jdbcAction.selectOneByCondition(wrapper);
     }
 
     @Override
-    public long selectCount(ConditionWrapper<T> wrapper) throws Exception {
+    public long selectCount(ConditionWrapper<T> wrapper) {
         return jdbcAction.selectCount(wrapper);
     }
 
     @Override
-    public Object selectObj(ConditionWrapper<T> wrapper) throws Exception {
+    public Object selectObj(ConditionWrapper<T> wrapper) {
         return jdbcAction.selectObj(wrapper);
     }
 
     @Override
-    public List<Object> selectObjs(ConditionWrapper<T> wrapper) throws Exception {
+    public List<Object> selectObjs(ConditionWrapper<T> wrapper) {
         return jdbcAction.selectObjs(wrapper);
     }
 
     @Override
-    public Map<String, Object> selectMap(ConditionWrapper<T> wrapper) throws Exception {
+    public Map<String, Object> selectMap(ConditionWrapper<T> wrapper) {
         return jdbcAction.selectMap(wrapper);
     }
 
     @Override
-    public List<Map<String, Object>> selectMaps(ConditionWrapper<T> wrapper) throws Exception {
+    public List<Map<String, Object>> selectMaps(ConditionWrapper<T> wrapper) {
         return jdbcAction.selectMaps(wrapper);
     }
 
     @Override
-    public DbPageRows<Map<String, Object>> selectPageMaps(ConditionWrapper<T> wrapper) throws Exception {
+    public DbPageRows<Map<String, Object>> selectPageMaps(ConditionWrapper<T> wrapper) {
         return jdbcAction.selectPageMaps(wrapper);
     }
 
     @Override
-    public int deleteByKey(P key) throws Exception {
+    public int deleteByKey(P key) {
         return jdbcAction.deleteByKey(entityClass, key);
     }
 
     @Override
-    public int deleteBatchKeys(Collection<P> keys) throws Exception {
+    public int deleteBatchKeys(Collection<P> keys) {
         return jdbcAction.deleteBatchKeys(entityClass, keys);
     }
 
     @Override
-    public int deleteByCondition(ConditionWrapper<T> wrapper) throws Exception {
+    public int deleteByCondition(ConditionWrapper<T> wrapper) {
         return jdbcAction.deleteByCondition(wrapper);
     }
 
     @Override
-    public int insert(T t) throws Exception {
+    public int insert(T t) {
         return jdbcAction.insert(t);
     }
 
     @Override
-    public int insert(List<T> ts) throws Exception {
+    public int insert(List<T> ts) {
         return jdbcAction.insert(ts);
     }
 
     @Override
-    public int updateByKey(T t) throws Exception {
+    public int updateByKey(T t) {
         return jdbcAction.updateByKey(t);
     }
 
     @SafeVarargs
     @Override
-    public final int updateByKey(T t, SFunction<T, ?>... updateColumns) throws Exception {
+    public final int updateByKey(T t, SFunction<T, ?>... updateColumns) {
         return jdbcAction.updateByKey(t, updateColumns);
     }
 
     @Override
-    public int updateByCondition(T t, ConditionWrapper<T> wrapper) throws Exception {
+    public int updateByCondition(T t, ConditionWrapper<T> wrapper) {
         return jdbcAction.updateByCondition(t, wrapper);
     }
 
     @Override
-    public long save(T t) throws Exception {
+    public long save(T t) {
         return jdbcAction.save(t);
     }
 
     @Override
-    public Object primaryKeyValue(T entity) {
+    @SuppressWarnings("unchecked")
+    public P primaryKeyValue(T entity) {
         TableSqlBuilder<T> tableSqlBuilder = updateSqlBuilder(Collections.singletonList(entity));
         if (tableSqlBuilder.getKeyParserModel() == null) {
             ExThrowsUtil.toCustom("未指定主键字段");
         }
-        return tableSqlBuilder.getKeyParserModel().getValue();
+        return (P) tableSqlBuilder.getDbKeyVal();
     }
 
 

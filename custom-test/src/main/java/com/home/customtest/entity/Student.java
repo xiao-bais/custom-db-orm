@@ -18,7 +18,7 @@ import java.util.List;
  * @Desc：
  **/
 @EqualsAndHashCode(callSuper = true)
-//@Data
+@Data
 @DbJoinTables({
         @DbJoinTable("left join province pro on pro.id = a.pro_id"),
         @DbJoinTable("left join city cy on cy.id = a.city_id"),

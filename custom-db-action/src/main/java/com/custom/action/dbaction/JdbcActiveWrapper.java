@@ -18,33 +18,33 @@ import java.util.Map;
 public interface JdbcActiveWrapper<T, P> {
 
     /*--------------------------------------- select ---------------------------------------*/
-    DbPageRows<T> selectPageRows(ConditionWrapper<T> wrapper) throws Exception;
-    List<T> selectList(ConditionWrapper<T> wrapper) throws Exception;
-    T selectOneByCondition(ConditionWrapper<T> wrapper) throws Exception;
-    long selectCount(ConditionWrapper<T> wrapper) throws Exception;
-    Object selectObj(ConditionWrapper<T> wrapper) throws Exception;
-    List<Object> selectObjs(ConditionWrapper<T> wrapper) throws Exception;
-    Map<String, Object> selectMap(ConditionWrapper<T> wrapper) throws Exception;
-    List<Map<String, Object>> selectMaps(ConditionWrapper<T> wrapper) throws Exception;
-    DbPageRows<Map<String, Object>> selectPageMaps(ConditionWrapper<T> wrapper) throws Exception;
+    DbPageRows<T> selectPageRows(ConditionWrapper<T> wrapper);
+    List<T> selectList(ConditionWrapper<T> wrapper);
+    T selectOneByCondition(ConditionWrapper<T> wrapper);
+    long selectCount(ConditionWrapper<T> wrapper);
+    Object selectObj(ConditionWrapper<T> wrapper);
+    List<Object> selectObjs(ConditionWrapper<T> wrapper);
+    Map<String, Object> selectMap(ConditionWrapper<T> wrapper);
+    List<Map<String, Object>> selectMaps(ConditionWrapper<T> wrapper);
+    DbPageRows<Map<String, Object>> selectPageMaps(ConditionWrapper<T> wrapper);
 
     /*------------------------------------ delete ---------------------------------------*/
-    int deleteByKey(P key) throws Exception;
-    int deleteBatchKeys(Collection<P> keys) throws Exception;
-    int deleteByCondition(ConditionWrapper<T> wrapper) throws Exception;
+    int deleteByKey(P key);
+    int deleteBatchKeys(Collection<P> keys);
+    int deleteByCondition(ConditionWrapper<T> wrapper);
 
     /*------------------------------------ insert ---------------------------------------*/
-    int insert(T t) throws Exception;
-    int insert(List<T> tList) throws Exception;
+    int insert(T t);
+    int insert(List<T> tList);
 
     /*------------------------------------ update ---------------------------------------*/
-    int updateByKey(T t) throws Exception;
-    int updateByKey(T t, SFunction<T, ?>... updateColumns) throws Exception;
-    int updateByCondition(T t, ConditionWrapper<T> wrapper) throws Exception;
+    int updateByKey(T t);
+    int updateByKey(T t, SFunction<T, ?>... updateColumns);
+    int updateByCondition(T t, ConditionWrapper<T> wrapper);
 
     /*------------------------------------ comm ---------------------------------------*/
-    long save(T t) throws Exception;
-    Object primaryKeyValue(T entity);
+    long save(T t);
+    P primaryKeyValue(T entity);
 
 
 }

@@ -23,9 +23,13 @@ public class DoMain {
 
         JdbcDao jdbcDao = JdbcTestBuilder.builder().getJdbcDao();
 
+//        List<Student> studentList = jdbcDao.selectList(Conditions.lambdaQuery(Student.class));
 
 
-        Student student = new Student();
+       Student childStudent = new Student();
+       childStudent.setNickName("15875412659");
+       childStudent.selectOneByKey()
+        System.out.println("childStudent.getId() = " + childStudent.getId());
 
 
     }

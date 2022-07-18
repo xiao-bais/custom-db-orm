@@ -8,6 +8,7 @@ import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.check.CheckExecute;
 import com.custom.comm.enums.ExecuteMethod;
+import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.page.DbPageRows;
 import com.custom.configuration.DbCustomStrategy;
@@ -45,28 +46,37 @@ public class JdbcAction extends AbstractSqlExecutor {
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> List<T> selectList(Class<T> t, String condition, Object... params) throws Exception {
-        HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
-        FullSqlExecutorHandler fullSqlExecutorHandler = handleLogicWithCondition(sqlBuilder.getAlias(),
-                condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
-        return selectBySql(t, sqlBuilder.buildSql() + fullSqlExecutorHandler.execute(), params);
+    public <T> List<T> selectList(Class<T> t, String condition, Object... params) {
+        try {
+            HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
+            FullSqlExecutorHandler fullSqlExecutorHandler = this.handleLogicWithCondition(sqlBuilder.getAlias(),
+                    condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
+            return selectBySql(t, sqlBuilder.buildSql() + fullSqlExecutorHandler.execute(), params);
+        } catch (Exception e) {
+            throwsException(e);
+            return new ArrayList<>();
+        }
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, DbPageRows<T> dbPageRows, Object... params) throws Exception {
+    public <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, DbPageRows<T> dbPageRows, Object... params) {
         if(dbPageRows == null) {
             dbPageRows = new DbPageRows<>();
         }
-        HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
-        FullSqlExecutorHandler fullSqlExecutorHandler = handleLogicWithCondition(sqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
-        buildPageResult(t, sqlBuilder.buildSql() + fullSqlExecutorHandler.execute(), dbPageRows, params);
+        try {
+            HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
+            FullSqlExecutorHandler fullSqlExecutorHandler = this.handleLogicWithCondition(sqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
+            buildPageResult(t, sqlBuilder.buildSql() + fullSqlExecutorHandler.execute(), dbPageRows, params);
+        }catch (Exception e) {
+            throwsException(e);
+        }
         return dbPageRows;
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> T selectOneByKey(Class<T> t, Object key) throws Exception {
+    public <T> T selectOneByKey(Class<T> t, Object key) {
         HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
         if (JudgeUtil.isEmpty(sqlBuilder.getKeyParserModel())) {
             if (!sqlBuilder.isMergeSuperDbJoinTable()) {
@@ -80,103 +90,163 @@ public class JdbcAction extends AbstractSqlExecutor {
             }
         }
         String condition = String.format("and %s = ?", sqlBuilder.getKeyParserModel().getFieldSql());
-        FullSqlExecutorHandler fullSqlExecutorHandler = handleLogicWithCondition(sqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
-        return selectOneBySql(t, sqlBuilder.buildSql() + fullSqlExecutorHandler.execute(), key);
+        try {
+            FullSqlExecutorHandler fullSqlExecutorHandler = this.handleLogicWithCondition(sqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
+            return selectOneBySql(t, sqlBuilder.buildSql() + fullSqlExecutorHandler.execute(), key);
+        }catch (Exception e) {
+            throwsException(e);
+            return null;
+        }
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> List<T> selectBatchByKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception {
+    public <T> List<T> selectBatchByKeys(Class<T> t, Collection<? extends Serializable> keys) {
         HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
         StringJoiner symbol = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
         keys.forEach(x -> symbol.add(SymbolConstant.QUEST));
         String condition = String.format("and %s in (%s)", sqlBuilder.getKeyParserModel().getFieldSql(), symbol);
-        FullSqlExecutorHandler fullSqlExecutorHandler = handleLogicWithCondition(sqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
-        return selectBySql(t, sqlBuilder.buildSql() + fullSqlExecutorHandler.execute(), keys.toArray());
+        try {
+            FullSqlExecutorHandler fullSqlExecutorHandler = this.handleLogicWithCondition(sqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
+            return selectBySql(t, sqlBuilder.buildSql() + fullSqlExecutorHandler.execute(), keys.toArray());
+        }catch (Exception e) {
+            throwsException(e);
+            return new ArrayList<>();
+        }
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> T selectOneByCondition(Class<T> t, String condition, Object... params) throws Exception {
+    public <T> T selectOneByCondition(Class<T> t, String condition, Object... params) {
         HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
-        FullSqlExecutorHandler fullSqlExecutorHandler = handleLogicWithCondition(sqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
-        return selectOneBySql(t, sqlBuilder.buildSql() + fullSqlExecutorHandler.execute(), params);
+        try {
+            FullSqlExecutorHandler fullSqlExecutorHandler = this.handleLogicWithCondition(sqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
+            return selectOneBySql(t, sqlBuilder.buildSql() + fullSqlExecutorHandler.execute(), params);
+        }catch (Exception e) {
+            throwsException(e);
+            return null;
+        }
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> DbPageRows<T> selectPageRows(ConditionWrapper<T> wrapper) throws Exception {
+    public <T> DbPageRows<T> selectPageRows(ConditionWrapper<T> wrapper) {
         if(!wrapper.hasPageParams()) {
             ExThrowsUtil.toCustom("缺少分页参数：pageIndex：%s, pageSize：%s", wrapper.getPageIndex(), wrapper.getPageSize());
         }
         DbPageRows<T> dbPageRows = new DbPageRows<>(wrapper.getPageIndex(), wrapper.getPageSize());
-        String selectSql = getFullSelectSql(wrapper);
-        buildPageResult(wrapper.getEntityClass(), selectSql, dbPageRows, wrapper.getParamValues().toArray());
+        try {
+            String selectSql = getFullSelectSql(wrapper);
+            buildPageResult(wrapper.getEntityClass(), selectSql, dbPageRows, wrapper.getParamValues().toArray());
+        }catch (Exception e){
+            throwsException(e);
+        }
         return dbPageRows;
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> List<T> selectList(ConditionWrapper<T> wrapper) throws Exception {
-        String selectSql = getFullSelectSql(wrapper);
-        return selectBySql(wrapper.getEntityClass(), selectSql, wrapper.getParamValues().toArray());
+    public <T> List<T> selectList(ConditionWrapper<T> wrapper) {
+        try {
+            String selectSql = getFullSelectSql(wrapper);
+            return selectBySql(wrapper.getEntityClass(), selectSql, wrapper.getParamValues().toArray());
+        }catch (Exception e) {
+            throwsException(e);
+            return new ArrayList<>();
+        }
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> T selectOneByCondition(ConditionWrapper<T> wrapper) throws Exception {
-        String selectSql = getFullSelectSql(wrapper);
-        return selectOneBySql(wrapper.getEntityClass(), selectSql, wrapper.getParamValues().toArray());
+    public <T> T selectOneByCondition(ConditionWrapper<T> wrapper) {
+        try {
+            String selectSql = getFullSelectSql(wrapper);
+            return selectOneBySql(wrapper.getEntityClass(), selectSql, wrapper.getParamValues().toArray());
+        }catch (Exception e) {
+            throwsException(e);
+            return null;
+        }
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> long selectCount(ConditionWrapper<T> wrapper) throws Exception {
-        String selectSql = getFullSelectSql(wrapper);
-        return (long) selectObjBySql(String.format("select count(0) from (%s) xxx ", selectSql), wrapper.getParamValues().toArray());
+    public <T> long selectCount(ConditionWrapper<T> wrapper) {
+        try {
+            String selectSql = getFullSelectSql(wrapper);
+            return (long) selectObjBySql(String.format("select count(0) from (%s) xxx ", selectSql), wrapper.getParamValues().toArray());
+        }catch (Exception e){
+            throwsException(e);
+            return 0L;
+        }
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> Object selectObj(ConditionWrapper<T> wrapper) throws Exception {
-        String selectSql = getFullSelectSql(wrapper);
-        return selectObjBySql(selectSql, wrapper.getParamValues().toArray());
+    public <T> Object selectObj(ConditionWrapper<T> wrapper) {
+        try {
+            String selectSql = getFullSelectSql(wrapper);
+            return selectObjBySql(selectSql, wrapper.getParamValues().toArray());
+        }catch (Exception e) {
+            throwsException(e);
+            return null;
+        }
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> List<Object> selectObjs(ConditionWrapper<T> wrapper) throws Exception {
-        String selectSql = getFullSelectSql(wrapper);
-        return selectObjsBySql(selectSql, wrapper.getParamValues().toArray());
+    public <T> List<Object> selectObjs(ConditionWrapper<T> wrapper) {
+        try {
+            String selectSql = getFullSelectSql(wrapper);
+            return selectObjsBySql(selectSql, wrapper.getParamValues().toArray());
+        }catch (Exception e) {
+            throwsException(e);
+            return new ArrayList<>();
+        }
+
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> Map<String, Object> selectMap(ConditionWrapper<T> wrapper) throws Exception {
-        String selectSql = getFullSelectSql(wrapper);
-        return selectMapBySql(selectSql, wrapper.getParamValues().toArray());
+    public <T> Map<String, Object> selectMap(ConditionWrapper<T> wrapper) {
+        try {
+            String selectSql = getFullSelectSql(wrapper);
+            return selectMapBySql(selectSql, wrapper.getParamValues().toArray());
+        }catch (Exception e) {
+            throwsException(e);
+            return new HashMap<>();
+        }
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> List<Map<String, Object>> selectMaps(ConditionWrapper<T> wrapper) throws Exception {
-        String selectSql = getFullSelectSql(wrapper);
-        return selectMapsBySql(selectSql, wrapper.getParamValues().toArray());
+    public <T> List<Map<String, Object>> selectMaps(ConditionWrapper<T> wrapper) {
+        try {
+            String selectSql = getFullSelectSql(wrapper);
+            return selectMapsBySql(selectSql, wrapper.getParamValues().toArray());
+        }catch (Exception e) {
+            throwsException(e);
+            return new ArrayList<>();
+        }
     }
 
     @Override
-    public <T> DbPageRows<Map<String, Object>> selectPageMaps(ConditionWrapper<T> wrapper) throws Exception {
+    public <T> DbPageRows<Map<String, Object>> selectPageMaps(ConditionWrapper<T> wrapper) {
         if(!wrapper.hasPageParams()) {
             ExThrowsUtil.toCustom("缺少分页参数：pageIndex：%s, pageSize：%s", wrapper.getPageIndex(), wrapper.getPageSize());
         }
         DbPageRows<Map<String, Object>> dbPageRows = new DbPageRows<>(wrapper.getPageIndex(), wrapper.getPageSize());
-        String selectSql = getFullSelectSql(wrapper);
         List<Map<String, Object>> dataList = new ArrayList<>();
-        Object[] params = wrapper.getParamValues().toArray();
-        long count = (long) selectObjBySql(String.format("select count(0) from (%s) xxx ", selectSql), params);
-        if (count > 0) {
-            selectSql = String.format("%s \nlimit %s, %s", selectSql, (dbPageRows.getPageIndex() - 1) * dbPageRows.getPageSize(), dbPageRows.getPageSize());
-            dataList = selectMapsBySql(selectSql, params);
+        long count = 0;
+        try {
+            String selectSql = getFullSelectSql(wrapper);
+            Object[] params = wrapper.getParamValues().toArray();
+            count = (long) selectObjBySql(String.format("select count(0) from (%s) xxx ", selectSql), params);
+            if (count > 0) {
+                selectSql = String.format("%s \nlimit %s, %s", selectSql, (dbPageRows.getPageIndex() - 1) * dbPageRows.getPageSize(), dbPageRows.getPageSize());
+                dataList = selectMapsBySql(selectSql, params);
+            }
+        }catch (Exception e) {
+            throwsException(e);
         }
         return dbPageRows.setTotal(count).setData(dataList);
     }
@@ -184,113 +254,153 @@ public class JdbcAction extends AbstractSqlExecutor {
 
     @Override
     @CheckExecute(target = ExecuteMethod.DELETE)
-    public <T> int deleteByKey(Class<T> t, Object key) throws Exception {
+    public <T> int deleteByKey(Class<T> t, Object key) {
         HandleDeleteSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.DELETE);
         sqlBuilder.setKey(key);
         String deleteSql = sqlBuilder.buildSql();
-        int i = executeSql(deleteSql, key);
-        if(i > 0 && sqlBuilder.checkLogicFieldIsExist()) {
-            sqlBuilder.handleLogicDelAfter(t, deleteSql, sqlBuilder, key);
+        int i = 0;
+        try {
+            i = executeSql(deleteSql, key);
+            if (i > 0 && sqlBuilder.checkLogicFieldIsExist()) {
+                sqlBuilder.handleLogicDelAfter(t, deleteSql, sqlBuilder, key);
+            }
+        } catch (Exception e) {
+            throwsException(e);
         }
         return i;
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.DELETE)
-    public <T> int deleteBatchKeys(Class<T> t, Collection<?> keys) throws Exception {
+    public <T> int deleteBatchKeys(Class<T> t, Collection<?> keys) {
         HandleDeleteSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.DELETE);
         sqlBuilder.setKeys(keys);
         String deleteSql = sqlBuilder.buildSql();
-        int i = executeSql(deleteSql, sqlBuilder.getSqlParams());
-        if(i > 0 && sqlBuilder.checkLogicFieldIsExist()) {
-            sqlBuilder.handleLogicDelAfter(t, deleteSql, sqlBuilder.getSqlParams());
+        int i = 0;
+        try {
+            i = executeSql(deleteSql, sqlBuilder.getSqlParams());
+            if (i > 0 && sqlBuilder.checkLogicFieldIsExist()) {
+                sqlBuilder.handleLogicDelAfter(t, deleteSql, sqlBuilder.getSqlParams());
+            }
+        } catch (Exception e) {
+            throwsException(e);
         }
         return i;
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.DELETE)
-    public <T> int deleteByCondition(Class<T> t, String condition, Object... params) throws Exception {
+    public <T> int deleteByCondition(Class<T> t, String condition, Object... params) {
         HandleDeleteSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.DELETE);
         sqlBuilder.setSqlParams(Arrays.asList(params));
         sqlBuilder.setDeleteCondition(condition);
         String deleteSql = sqlBuilder.buildSql();
-        int i = executeSql(deleteSql, params);
-        if(i > 0 && sqlBuilder.checkLogicFieldIsExist()) {
-            sqlBuilder.handleLogicDelAfter(t, deleteSql, params);
+        int i = 0;
+        try {
+            i = executeSql(deleteSql, params);
+            if (i > 0 && sqlBuilder.checkLogicFieldIsExist()) {
+                sqlBuilder.handleLogicDelAfter(t, deleteSql, params);
+            }
+        } catch (Exception e) {
+            throwsException(e);
         }
         return i;
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.DELETE)
-    public <T> int deleteByCondition(ConditionWrapper<T> wrapper) throws Exception {
+    public <T> int deleteByCondition(ConditionWrapper<T> wrapper) {
         return deleteByCondition(wrapper.getEntityClass(), wrapper.getFinalConditional(), wrapper.getParamValues().toArray());
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.INSERT)
-    public <T> int insert(T t) throws Exception {
+    public <T> int insert(T t)  {
+        int i = 0;
         HandleInsertSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.INSERT);
         String insertSql = sqlBuilder.buildSql();
         DbKeyParserModel<T> keyParserModel = sqlBuilder.getKeyParserModel();
-        return executeInsert(insertSql, Collections.singletonList(t),  keyParserModel.getField(), sqlBuilder.getSqlParams());
+        try {
+            i = executeInsert(insertSql, Collections.singletonList(t), keyParserModel.getField(), sqlBuilder.getSqlParams());
+        } catch (Exception e) {
+            throwsException(e);
+        }
+        return i;
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.INSERT)
-    public <T> int insert(List<T> ts) throws Exception {
+    public <T> int insert(List<T> ts) {
         HandleInsertSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(ts, ExecuteMethod.INSERT);
         sqlBuilder.setSaveSubSelection(getDbCustomStrategy().getSaveSubSelect());
         DbKeyParserModel<T> keyParserModel = sqlBuilder.getKeyParserModel();
         int res = 0;
         String insertSql;
         sqlBuilder.dataInitialize();
-        if (sqlBuilder.isHasSubSelect()) {
-            for (int i = 0; i < sqlBuilder.getSubCount(); i++) {
+        try {
+            if (sqlBuilder.isHasSubSelect()) {
+                for (int i = 0; i < sqlBuilder.getSubCount(); i++) {
+                    insertSql = sqlBuilder.buildSql();
+                    res += executeInsert(insertSql, sqlBuilder.getSubList(), keyParserModel.getField(), sqlBuilder.getSqlParams());
+                }
+            } else {
                 insertSql = sqlBuilder.buildSql();
-                res += executeInsert(insertSql, sqlBuilder.getSubList(), keyParserModel.getField(), sqlBuilder.getSqlParams());
+                res = executeInsert(insertSql, ts, keyParserModel.getField(), sqlBuilder.getSqlParams());
             }
-        }else {
-             insertSql = sqlBuilder.buildSql();
-            res = executeInsert(insertSql, ts, keyParserModel.getField(), sqlBuilder.getSqlParams());
+        } catch (Exception e) {
+            throwsException(e);
         }
         return res;
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
-    public <T> int updateByKey(T t) throws Exception {
+    public <T> int updateByKey(T t) {
         HandleUpdateSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.UPDATE);
         String updateSql = sqlBuilder.buildSql();
-        return executeSql(updateSql, sqlBuilder.getSqlParams());
+        try {
+            return executeSql(updateSql, sqlBuilder.getSqlParams());
+        }catch (Exception e) {
+            throwsException(e);
+            return 0;
+        }
     }
 
     @SafeVarargs
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
-    public final <T> int updateByKey(T t, SFunction<T, ?>... updateColumns) throws Exception {
+    public final <T> int updateByKey(T t, SFunction<T, ?>... updateColumns) {
         HandleUpdateSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.UPDATE);
         if(updateColumns.length > 0) {
             sqlBuilder.setUpdateFuncColumns(updateColumns);
         }
         String updateSql = sqlBuilder.buildSql();
-        return executeSql(updateSql, sqlBuilder.getSqlParams());
+        try {
+            return executeSql(updateSql, sqlBuilder.getSqlParams());
+        } catch (Exception e) {
+            throwsException(e);
+            return 0;
+        }
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
-    public <T> int updateByCondition(T t, ConditionWrapper<T> wrapper) throws Exception {
+    public <T> int updateByCondition(T t, ConditionWrapper<T> wrapper) {
         HandleUpdateSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.UPDATE);
         sqlBuilder.setCondition(wrapper.getFinalConditional());
         sqlBuilder.setConditionVals(wrapper.getParamValues());
         String updateSql = sqlBuilder.buildSql();
-        return executeSql(updateSql, sqlBuilder.getSqlParams());
+        try {
+            return executeSql(updateSql, sqlBuilder.getSqlParams());
+        }catch (Exception e) {
+            throwsException(e);
+            return 0;
+        }
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
-    public <T> int updateByCondition(T t, String condition, Object... params) throws Exception {
+    public <T> int updateByCondition(T t, String condition, Object... params) {
         if (JudgeUtil.isEmpty(condition)) {
             ExThrowsUtil.toNull("修改条件不能为空");
         }
@@ -298,26 +408,35 @@ public class JdbcAction extends AbstractSqlExecutor {
         sqlBuilder.setCondition(condition);
         sqlBuilder.setConditionVals(Arrays.stream(params).collect(Collectors.toList()));
         String updateSql = sqlBuilder.buildSql();
-        return executeSql(updateSql, sqlBuilder.getSqlParams());
+        try {
+            return executeSql(updateSql, sqlBuilder.getSqlParams());
+        }catch (Exception e) {
+            throwsException(e);
+            return 0;
+        }
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
-    public <T> long save(T entity) throws Exception {
+    public <T> long save(T entity) {
         TableSqlBuilder<T> sqlBuilder = updateTableSqlBuilder(Collections.singletonList(entity));
         return Objects.nonNull(sqlBuilder.getDbKeyVal()) ? updateByKey(entity) : insert(entity);
     }
 
     @Override
-    public void createTables(Class<?>... arr) throws Exception {
+    public void createTables(Class<?>... arr) {
         TableSqlBuilder<?> tableSqlBuilder;
         for (int i = arr.length - 1; i >= 0; i--) {
             tableSqlBuilder = defaultTableSqlBuilder(arr[i]);
             String exitsTableSql = tableSqlBuilder.exitsTableSql(arr[i]);
-            if(!hasTableInfo(exitsTableSql)) {
-                String createTableSql = tableSqlBuilder.createTableSql();
-                execTable(createTableSql);
-                logger.info("createTableSql ->\n " + createTableSql);
+            try {
+                if(!hasTableInfo(exitsTableSql)) {
+                    String createTableSql = tableSqlBuilder.createTableSql();
+                    execTable(createTableSql);
+                    logger.info("createTableSql ->\n " + createTableSql);
+                }
+            }catch (Exception e) {
+                throwsException(e);
             }
         }
     }
