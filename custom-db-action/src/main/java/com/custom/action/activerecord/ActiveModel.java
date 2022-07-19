@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * @Author Xiao-Bai
  * @Date 2022/7/15 0015 14:47
- * @Desc ActiveRecord装配模式的父类，继承该类即可获得crud功能
+ * @Desc ActiveRecord装配模式的父类，继承该类即可获得crud功能（对象需要直接继承该类，否则子类的子类调用会报错）
  * T 实体对象类型
  * P 主键类型
  */
