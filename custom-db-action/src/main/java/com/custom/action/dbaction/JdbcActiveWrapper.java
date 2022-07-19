@@ -43,7 +43,7 @@ public interface JdbcActiveWrapper<T, P> {
     int updateByCondition(T t, ConditionWrapper<T> wrapper);
 
     /*------------------------------------ comm ---------------------------------------*/
-    long save(T t);
+    int save(T t);
     P primaryKeyValue(T entity);
 
 

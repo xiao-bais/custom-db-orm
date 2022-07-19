@@ -52,7 +52,7 @@ public class JdbcSingleAction<T, P> implements JdbcActiveWrapper<T, P> {
 
     @Override
     public T selectOneByCondition(ConditionWrapper<T> wrapper) {
-        return jdbcAction.selectOneByCondition(wrapper);
+        return jdbcAction.selectOne(wrapper);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class JdbcSingleAction<T, P> implements JdbcActiveWrapper<T, P> {
 
     @Override
     public int deleteByCondition(ConditionWrapper<T> wrapper) {
-        return jdbcAction.deleteByWrapper(wrapper);
+        return jdbcAction.deleteByCondition(wrapper);
     }
 
     @Override
@@ -127,7 +127,7 @@ public class JdbcSingleAction<T, P> implements JdbcActiveWrapper<T, P> {
     }
 
     @Override
-    public long save(T t) {
+    public int save(T t) {
         return jdbcAction.save(t);
     }
 

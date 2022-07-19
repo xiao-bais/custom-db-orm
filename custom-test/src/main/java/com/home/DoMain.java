@@ -28,7 +28,6 @@ public class DoMain {
 
        Student childStudent = new Student();
        childStudent.setNickName("15875412659");
-       childStudent.selectOneByKey()
         System.out.println("childStudent.getId() = " + childStudent.getId());
 
 

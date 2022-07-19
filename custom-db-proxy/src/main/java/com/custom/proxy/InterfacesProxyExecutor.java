@@ -51,12 +51,12 @@ public class InterfacesProxyExecutor implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Exception {
 
-        if(method.getName().equals("toString")) {
-            return this.toString();
+        if (Object.class.equals(method.getDeclaringClass())) {
+            return method.invoke(this, args);
         }
         Object result;
         try {
-            result = doInvoke(method, args);
+            result = this.doInvokeOperation(method, args);
         }catch (IllegalArgumentException e) {
             log.error("illegal parameter: {}", e.getMessage());
             throw e;
@@ -70,7 +70,7 @@ public class InterfacesProxyExecutor implements InvocationHandler {
     /**
     * 执行具体代理方法
     */
-    private Object doInvoke(Method method, Object[] args) throws Exception {
+    private Object doInvokeOperation(Method method, Object[] args) throws Exception {
 
         AbstractProxyHandler proxyHandler = null;
         Class<?> execClass = method.getDeclaringClass();
@@ -89,7 +89,7 @@ public class InterfacesProxyExecutor implements InvocationHandler {
         else if (method.isAnnotationPresent(Update.class)) {
             Update update = method.getAnnotation(Update.class);
             checkIllegalParam(method.getName(), update.order(), update.value());
-            proxyHandler = new UpdateProxyHandler(updateJdbc,  args, update.value(), method);
+            proxyHandler = new UpdateProxyHandler(updateJdbc, args, update.value(), method);
         }
 
         // do sqlPath(select or update)
@@ -100,14 +100,14 @@ public class InterfacesProxyExecutor implements InvocationHandler {
             checkIllegalParam(method.getName(), sqlPath.order(), sql);
             if (execType == ExecuteMethod.SELECT) {
                 proxyHandler = new SelectProxyHandler(selectJdbc, args, sql, method);
-            }
-            else if (execType == ExecuteMethod.UPDATE
+            } else if (execType == ExecuteMethod.UPDATE
                     || execType == ExecuteMethod.DELETE
                     || execType == ExecuteMethod.INSERT) {
 
                 proxyHandler = new UpdateProxyHandler(updateJdbc, args, sql, method);
             }
-        }else ExThrowsUtil.toCustom("The '@Update' or '@Query' or '@SqlPath' annotation was not found on the method : %s.%s()", targetClassName, method.getName());
+        } else
+            ExThrowsUtil.toCustom("The '@Update' or '@Query' or '@SqlPath' annotation was not found on the method : %s.%s()", targetClassName, method.getName());
 
         if (proxyHandler == null) {
             ExThrowsUtil.toCustom("未知的执行类型");
@@ -120,20 +120,20 @@ public class InterfacesProxyExecutor implements InvocationHandler {
      * 检验参数合法性
      */
     private void checkIllegalParam(String methodName, boolean order, String sql) {
-
-        if(RexUtil.hasRegex(sql, RexUtil.sql_set_param) && sql.contains(SymbolConstant.QUEST)) {
+        if (RexUtil.hasRegex(sql, RexUtil.sql_set_param) && sql.contains(SymbolConstant.QUEST)) {
             log.error("如果order为true，仅支持使用 \"?\"  如果order为false 仅支持使用 \"#{ }\" 来设置参数");
             log.error("Error Method ==> {}", methodName);
             ExThrowsUtil.toCustom("The SQL cannot be resolved '%s'", sql);
         }
-        if(order && RexUtil.hasRegex(sql, RexUtil.sql_set_param)) {
+        if (order && RexUtil.hasRegex(sql, RexUtil.sql_set_param)) {
             log.error("Error Method ==> {}", methodName);
             ExThrowsUtil.toCustom("方法注解上建议使用 order = false");
 
-        }else if(!order && sql.contains(SymbolConstant.QUEST)) {
-                log.error("Error Method ==> {}", methodName);
-                ExThrowsUtil.toCustom("方法注解上建议使用 order = true");
-            }
+        }
+        if (!order && sql.contains(SymbolConstant.QUEST)) {
+            log.error("Error Method ==> {}", methodName);
+            ExThrowsUtil.toCustom("方法注解上建议使用 order = true");
+        }
     }
 
 

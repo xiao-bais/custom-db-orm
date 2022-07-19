@@ -1,7 +1,7 @@
 package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractSqlExecutor;
-import com.custom.action.interfaces.FullSqlExecutorHandler;
+import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.action.wrapper.ConditionWrapper;
 import com.custom.action.wrapper.SFunction;
 import com.custom.comm.JudgeUtil;
@@ -48,10 +48,20 @@ public class JdbcAction extends AbstractSqlExecutor {
     public <T> List<T> selectList(Class<T> t, String condition, Object... params) {
         try {
             HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
-            FullSqlExecutorHandler fullSqlExecutorHandler = this.handleLogicWithCondition(sqlBuilder.getAlias(),
-                    condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
-            return selectBySql(t, sqlBuilder.buildSql() + fullSqlExecutorHandler.execute(), params);
+            FullSqlConditionExecutor executorHandler = this.handleLogicWithCondition(sqlBuilder.getAlias(), condition,
+                    getLogicDeleteQuerySql(), sqlBuilder.getTable());
+            return selectBySql(t, sqlBuilder.buildSql() + executorHandler.execute(), params);
         } catch (Exception e) {
+            throwsException(e);
+            return new ArrayList<>();
+        }
+    }
+
+    @Override
+    public <T> List<T> selectListBySql(Class<T> t, String sql, Object... params) {
+        try {
+            return this.selectBySql(t, sql, params);
+        }catch (Exception e) {
             throwsException(e);
             return new ArrayList<>();
         }
@@ -65,8 +75,9 @@ public class JdbcAction extends AbstractSqlExecutor {
         }
         try {
             HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
-            FullSqlExecutorHandler fullSqlExecutorHandler = this.handleLogicWithCondition(sqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
-            buildPageResult(t, sqlBuilder.buildSql() + fullSqlExecutorHandler.execute(), dbPageRows, params);
+            FullSqlConditionExecutor conditionExecutor = this.handleLogicWithCondition(sqlBuilder.getAlias(),
+                    condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
+            this.buildPageResult(t, sqlBuilder.buildSql() + conditionExecutor.execute(), dbPageRows, params);
         }catch (Exception e) {
             throwsException(e);
         }
@@ -75,7 +86,7 @@ public class JdbcAction extends AbstractSqlExecutor {
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> T selectOneByKey(Class<T> t, Object key) {
+    public <T> T selectByKey(Class<T> t, Object key) {
         HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
         if (JudgeUtil.isEmpty(sqlBuilder.getKeyParserModel())) {
             if (!sqlBuilder.isMergeSuperDbJoinTable()) {
@@ -83,16 +94,17 @@ public class JdbcAction extends AbstractSqlExecutor {
                         "可能是因为该类或父类在@DbTable中使用了mergeSuperDbJoinTables = false的原因，" +
                         "当mergeSuperDbJoinTables = false时，解析注解时只会解析本类的属性字段，不会合并父类的属性字段，" +
                         "该属性请按需要自行判定使用！！！", t);
-            }else {
+            } else {
                 ExThrowsUtil.toCustom("%s 中未找到 @DbKey注解, " +
                         "猜测该类或父类不存在主键字段，或没有标注@DbKey注解来表示主键，", t);
             }
         }
         String condition = String.format("and %s = ?", sqlBuilder.getKeyParserModel().getFieldSql());
         try {
-            FullSqlExecutorHandler fullSqlExecutorHandler = this.handleLogicWithCondition(sqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
-            return selectOneBySql(t, sqlBuilder.buildSql() + fullSqlExecutorHandler.execute(), key);
-        }catch (Exception e) {
+            FullSqlConditionExecutor conditionExecutor = this.handleLogicWithCondition(sqlBuilder.getAlias(),
+                    condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
+            return selectOneBySql(t, sqlBuilder.buildSql() + conditionExecutor.execute(), key);
+        } catch (Exception e) {
             throwsException(e);
             return null;
         }
@@ -100,14 +112,15 @@ public class JdbcAction extends AbstractSqlExecutor {
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> List<T> selectBatchByKeys(Class<T> t, Collection<? extends Serializable> keys) {
+    public <T> List<T> selectBatchKeys(Class<T> t, Collection<? extends Serializable> keys) {
         HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
         StringJoiner symbol = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
         keys.forEach(x -> symbol.add(SymbolConstant.QUEST));
         String condition = String.format("and %s in (%s)", sqlBuilder.getKeyParserModel().getFieldSql(), symbol);
         try {
-            FullSqlExecutorHandler fullSqlExecutorHandler = this.handleLogicWithCondition(sqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
-            return selectBySql(t, sqlBuilder.buildSql() + fullSqlExecutorHandler.execute(), keys.toArray());
+            FullSqlConditionExecutor conditionExecutor = this.handleLogicWithCondition(sqlBuilder.getAlias()
+                    , condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
+            return selectBySql(t, sqlBuilder.buildSql() + conditionExecutor.execute(), keys.toArray());
         }catch (Exception e) {
             throwsException(e);
             return new ArrayList<>();
@@ -116,11 +129,22 @@ public class JdbcAction extends AbstractSqlExecutor {
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> T selectOneByCondition(Class<T> t, String condition, Object... params) {
+    public <T> T selectOne(Class<T> t, String condition, Object... params) {
         HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t);
         try {
-            FullSqlExecutorHandler fullSqlExecutorHandler = this.handleLogicWithCondition(sqlBuilder.getAlias(), condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
-            return selectOneBySql(t, sqlBuilder.buildSql() + fullSqlExecutorHandler.execute(), params);
+            FullSqlConditionExecutor conditionExecutor = this.handleLogicWithCondition(sqlBuilder.getAlias()
+                    , condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
+            return selectOneBySql(t, sqlBuilder.buildSql() + conditionExecutor.execute(), params);
+        }catch (Exception e) {
+            throwsException(e);
+            return null;
+        }
+    }
+
+    @Override
+    public <T> T selectOneBySql(Class<T> t, String sql, Object... params) {
+        try {
+            return this.selectOneSql(t, sql, params);
         }catch (Exception e) {
             throwsException(e);
             return null;
@@ -157,7 +181,7 @@ public class JdbcAction extends AbstractSqlExecutor {
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> T selectOneByCondition(ConditionWrapper<T> wrapper) {
+    public <T> T selectOne(ConditionWrapper<T> wrapper) {
         try {
             String selectSql = getFullSelectSql(wrapper);
             return selectOneBySql(wrapper.getEntityClass(), selectSql, wrapper.getParamValues().toArray());
@@ -308,7 +332,7 @@ public class JdbcAction extends AbstractSqlExecutor {
 
     @Override
     @CheckExecute(target = ExecuteMethod.DELETE)
-    public <T> int deleteByWrapper(ConditionWrapper<T> wrapper) {
+    public <T> int deleteByCondition(ConditionWrapper<T> wrapper) {
         return deleteByCondition(wrapper.getEntityClass(), wrapper.getFinalConditional(), wrapper.getParamValues().toArray());
     }
 
@@ -399,7 +423,7 @@ public class JdbcAction extends AbstractSqlExecutor {
 
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
-    public <T> int updateByWrapper(T t, String condition, Object... params) {
+    public <T> int updateByCondition(T t, String condition, Object... params) {
         if (JudgeUtil.isEmpty(condition)) {
             ExThrowsUtil.toNull("修改条件不能为空");
         }
@@ -417,7 +441,7 @@ public class JdbcAction extends AbstractSqlExecutor {
 
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
-    public <T> long save(T entity) {
+    public <T> int save(T entity) {
         TableSqlBuilder<T> sqlBuilder = updateTableSqlBuilder(Collections.singletonList(entity));
         return Objects.nonNull(sqlBuilder.primaryKeyVal()) ? updateByKey(entity) : insert(entity);
     }

@@ -1,6 +1,6 @@
 package com.custom.action.dbaction;
 
-import com.custom.action.interfaces.FullSqlExecutorHandler;
+import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableSqlBuilder;
 import com.custom.action.util.DbUtil;
@@ -9,10 +9,10 @@ import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.page.DbPageRows;
-import com.custom.jdbc.select.CustomSelectJdbcBasic;
-import com.custom.jdbc.update.CustomUpdateJdbcBasic;
 import com.custom.jdbc.condition.SaveSqlParamInfo;
 import com.custom.jdbc.condition.SelectSqlParamInfo;
+import com.custom.jdbc.select.CustomSelectJdbcBasic;
+import com.custom.jdbc.update.CustomUpdateJdbcBasic;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -41,14 +41,6 @@ public class JdbcWrapperExecutor {
         this.updateJdbc = updateJdbc;
     }
 
-    public CustomSelectJdbcBasic selectJdbc() {
-        return selectJdbc;
-    }
-
-    public CustomUpdateJdbcBasic updateJdbc() {
-        return updateJdbc;
-    }
-
     /**
      * 查询数组
      */
@@ -70,7 +62,7 @@ public class JdbcWrapperExecutor {
     /**
      * 纯sql查询单条记录
      */
-    public <T> T selectOneBySql(Class<T> t, String sql, Object... params) throws Exception {
+    public <T> T selectOneSql(Class<T> t, String sql, Object... params) throws Exception {
         checkEmptySql(sql);
         SelectSqlParamInfo<T> paramInfo = new SelectSqlParamInfo<>(t, sql, params);
         return selectJdbc.selectOne(paramInfo);
@@ -179,8 +171,8 @@ public class JdbcWrapperExecutor {
     /**
      * 添加逻辑删除的部分sql
      */
-    public FullSqlExecutorHandler handleLogicWithCondition(String alias, final String condition,
-                                                           String logicColumn, String logicSql, String tableName) throws Exception {
+    public FullSqlConditionExecutor handleLogicWithCondition(String alias, final String condition,
+                                                             String logicColumn, String logicSql, String tableName) throws Exception {
         if (!DbUtil.checkLogicFieldIsExist(tableName, logicColumn, this.selectJdbc)) {
             logicSql = SymbolConstant.EMPTY;
         }

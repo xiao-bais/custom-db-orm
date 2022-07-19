@@ -17,7 +17,7 @@ import java.util.Map;
 /**
  * @author Xiao-Bai
  * @date 2022/4/17 21:31
- * @desc:
+ * @desc: 最终对外的JDBC基础操作对象
  */
 public class JdbcDao {
 
@@ -26,49 +26,42 @@ public class JdbcDao {
     /**
      * 根据条件查询多条记录: 例（and a.name = ?）
      */
-    public <T> List<T> selectList(Class<T> t, String condition, Object... params) throws Exception {
+    public <T> List<T> selectList(Class<T> t, String condition, Object... params) {
         return jdbcAction.selectList(t, condition, params);
     }
 
     /**
      * 根据多个主键查询多条记录
      */
-    public <T> List<T> selectListByKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception {
-        return jdbcAction.selectBatchByKeys(t, keys);
+    public <T> List<T> selectBatchKeys(Class<T> t, Collection<? extends Serializable> keys) {
+        return jdbcAction.selectBatchKeys(t, keys);
     }
 
     /**
      * 根据sql查询多条记录: 例（select * from table ）
      */
-    public <T> List<T> selectListBySql(Class<T> t, String sql, Object... params) throws Exception {
-        return jdbcAction.selectBySql(t, sql, params);
+    public <T> List<T> selectListBySql(Class<T> t, String sql, Object... params) {
+        return jdbcAction.selectListBySql(t, sql, params);
     }
 
     /**
      * 根据条件进行分页查询: 例（and a.name = ?）
      */
-    public <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, int pageIndex, int pageSize, Object... params) throws Exception {
-        return jdbcAction.selectPageRows(t, condition, null, pageIndex, pageSize, params);
-    }
-
-    /**
-     * 根据条件进行分页查询: 例（and a.name = ?）
-     */
-    public <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, DbPageRows<T> dbPageRows, Object... params) throws Exception {
+    public <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, DbPageRows<T> dbPageRows, Object... params) {
         return jdbcAction.selectPageRows(t, condition, null, dbPageRows, params);
     }
 
     /**
      * 根据主键查询一条记录
      */
-    public <T> T selectOneByKey(Class<T> t, Object key) throws Exception {
-        return jdbcAction.selectOneByKey(t, key);
+    public <T> T selectByKey(Class<T> t, Object key) {
+        return jdbcAction.selectByKey(t, key);
     }
 
     /**
      * 纯sql查询一条记录
      */
-    public <T> T selectOneBySql(Class<T> t, String sql, Object... params) throws Exception {
+    public <T> T selectOneBySql(Class<T> t, String sql, Object... params) {
         return jdbcAction.selectOneBySql(t, sql, params);
     }
 
@@ -84,14 +77,14 @@ public class JdbcDao {
      * @param condition and a.name = ?
      * @param params "zhangsan"
      */
-    public <T> T selectOne(Class<T> t, String condition, Object... params) throws Exception {
-        return jdbcAction.selectOneByCondition(t, condition, params);
+    public <T> T selectOne(Class<T> t, String condition, Object... params) {
+        return jdbcAction.selectOne(t, condition, params);
     }
 
     /**
      * 条件构造器查询-分页查询
      */
-    public <T> DbPageRows<T> selectPageRows(ConditionWrapper<T> wrapper) throws Exception {
+    public <T> DbPageRows<T> selectPageRows(ConditionWrapper<T> wrapper) {
         return jdbcAction.selectPageRows(wrapper);
     }
 
@@ -105,55 +98,58 @@ public class JdbcDao {
     /**
      * 条件构造器查询-查询单个对象
      */
-    public <T> T selectOne(ConditionWrapper<T> wrapper) throws Exception {
-        return jdbcAction.selectOneByCondition(wrapper);
+    public <T> T selectOne(ConditionWrapper<T> wrapper) {
+        return jdbcAction.selectOne(wrapper);
     }
 
     /**
      * 条件构造器查询-查询数量
      */
-    public <T> long selectCount(ConditionWrapper<T> wrapper) throws Exception {
+    public <T> long selectCount(ConditionWrapper<T> wrapper) {
         return jdbcAction.selectCount(wrapper);
     }
 
     /**
      * 条件构造器查询单个属性值（若有多个值满足条件，默认返回第一条记录的第一个值）
      */
-    public <T> Object selectObj(ConditionWrapper<T> wrapper) throws Exception {
+    public <T> Object selectObj(ConditionWrapper<T> wrapper) {
         return jdbcAction.selectObj(wrapper);
     }
     /**
      * 条件构造器查询多个单值（若有多条记录满足条件，默认返回所有记录的第一个字段）
      */
-    public <T> List<Object> selectObjs(ConditionWrapper<T> wrapper) throws Exception {
+    public <T> List<Object> selectObjs(ConditionWrapper<T> wrapper) {
         return jdbcAction.selectObjs(wrapper);
     }
 
     /**
      * 查询单条记录映射到Map
      */
-    public <T> Map<String, Object> selectMap(ConditionWrapper<T> wrapper) throws Exception {
+    public <T> Map<String, Object> selectMap(ConditionWrapper<T> wrapper) {
         return jdbcAction.selectMap(wrapper);
     }
 
     /**
      * 查询多条记录映射到Map
      */
-    public <T> List<Map<String, Object>> selectMaps(ConditionWrapper<T> wrapper) throws Exception {
+    public <T> List<Map<String, Object>> selectMaps(ConditionWrapper<T> wrapper) {
         return jdbcAction.selectMaps(wrapper);
     }
 
     /**
      * 查询多条记录映射到Map
      */
-    public <T> DbPageRows<Map<String, Object>> selectPageMaps(ConditionWrapper<T> wrapper) throws Exception {
+    public <T> DbPageRows<Map<String, Object>> selectPageMaps(ConditionWrapper<T> wrapper) {
         return jdbcAction.selectPageMaps(wrapper);
     }
 
     /**
      * 查询数组（t只支持基础类型对应的引用类型）
      * <p>
-     *  额外支持： {@link java.lang.String}, {@link java.math.BigDecimal}, {@link java.util.Date}
+     *  额外支持
+     *  {@link java.lang.String}
+     *  {@link java.math.BigDecimal}
+     *  {@link java.util.Date}
      * </p>
      */
     public <T> T[] selectArrays(Class<T> t, String sql, Object... params) throws Exception {
@@ -165,7 +161,7 @@ public class JdbcDao {
     /**
      * 根据主键删除一条记录
      */
-    public <T> int deleteByKey(Class<T> t, Object key) throws Exception {
+    public <T> int deleteByKey(Class<T> t, Object key) {
         return jdbcAction.deleteByKey(t, key);
     }
 
@@ -188,7 +184,7 @@ public class JdbcDao {
      */
     public <T> int deleteByCondition(ConditionWrapper<T> wrapper) throws Exception {
         JudgeUtil.checkObjNotNull(wrapper);
-        return jdbcAction.deleteByWrapper(wrapper);
+        return jdbcAction.deleteByCondition(wrapper);
     }
 
     /* ----------------------------------------------------------------insert---------------------------------------------------------------- */
@@ -235,7 +231,7 @@ public class JdbcDao {
      * 根据条件修改一条记录
      */
     public <T> int updateByCondition(T entity, String condition, Object... params) throws Exception {
-        return jdbcAction.updateByWrapper(entity, condition, params);
+        return jdbcAction.updateByCondition(entity, condition, params);
     }
 
     /* ----------------------------------------------------------------common---------------------------------------------------------------- */
