@@ -50,17 +50,17 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
     public abstract <T> int deleteByKey(Class<T> t, Object key);
     public abstract <T> int deleteBatchKeys(Class<T> t, Collection<?> keys);
     public abstract <T> int deleteByCondition(Class<T> t, String condition, Object... params);
-    public abstract <T> int deleteByCondition(ConditionWrapper<T> wrapper);
+    public abstract <T> int deleteByWrapper(ConditionWrapper<T> wrapper);
 
     /*--------------------------------------- insert ---------------------------------------*/
     public abstract <T> int insert(T t);
-    public abstract <T> int insert(List<T> tList);
+    public abstract <T> int insertBatch(List<T> tList);
 
     /*--------------------------------------- update ---------------------------------------*/
     public abstract <T> int updateByKey(T t);
-    public abstract <T> int updateByKey(T t, SFunction<T, ?>... updateColumns);
+    public abstract <T> int updateColumnByKey(T t, SFunction<T, ?>... updateColumns);
     public abstract <T> int updateByCondition(T t, ConditionWrapper<T> wrapper);
-    public abstract <T> int updateByCondition(T t, String condition, Object... params);
+    public abstract <T> int updateByWrapper(T t, String condition, Object... params);
 
     /*--------------------------------------- comm ---------------------------------------*/
     public abstract <T> long save(T t);

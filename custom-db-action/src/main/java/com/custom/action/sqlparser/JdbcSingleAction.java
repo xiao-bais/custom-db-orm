@@ -97,7 +97,7 @@ public class JdbcSingleAction<T, P> implements JdbcActiveWrapper<T, P> {
 
     @Override
     public int deleteByCondition(ConditionWrapper<T> wrapper) {
-        return jdbcAction.deleteByCondition(wrapper);
+        return jdbcAction.deleteByWrapper(wrapper);
     }
 
     @Override
@@ -107,7 +107,7 @@ public class JdbcSingleAction<T, P> implements JdbcActiveWrapper<T, P> {
 
     @Override
     public int insert(List<T> ts) {
-        return jdbcAction.insert(ts);
+        return jdbcAction.insertBatch(ts);
     }
 
     @Override
@@ -118,7 +118,7 @@ public class JdbcSingleAction<T, P> implements JdbcActiveWrapper<T, P> {
     @SafeVarargs
     @Override
     public final int updateByKey(T t, SFunction<T, ?>... updateColumns) {
-        return jdbcAction.updateByKey(t, updateColumns);
+        return jdbcAction.updateColumnByKey(t, updateColumns);
     }
 
     @Override

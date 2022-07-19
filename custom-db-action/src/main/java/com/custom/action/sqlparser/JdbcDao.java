@@ -188,7 +188,7 @@ public class JdbcDao {
      */
     public <T> int deleteByCondition(ConditionWrapper<T> wrapper) throws Exception {
         JudgeUtil.checkObjNotNull(wrapper);
-        return jdbcAction.deleteByCondition(wrapper);
+        return jdbcAction.deleteByWrapper(wrapper);
     }
 
     /* ----------------------------------------------------------------insert---------------------------------------------------------------- */
@@ -204,7 +204,7 @@ public class JdbcDao {
      * 插入多条记录(默认在实体中set新的主键)
      */
     public <T> int insertBatch(List<T> entityList) throws Exception {
-        return jdbcAction.insert(entityList);
+        return jdbcAction.insertBatch(entityList);
     }
 
     /* ----------------------------------------------------------------update---------------------------------------------------------------- */
@@ -214,7 +214,7 @@ public class JdbcDao {
      */
     @SafeVarargs
     public final <T> int updateByKey(T entity, SFunction<T, ?>... updateColumns) throws Exception {
-        return jdbcAction.updateByKey(entity, updateColumns);
+        return jdbcAction.updateColumnByKey(entity, updateColumns);
     }
 
     /**
@@ -235,7 +235,7 @@ public class JdbcDao {
      * 根据条件修改一条记录
      */
     public <T> int updateByCondition(T entity, String condition, Object... params) throws Exception {
-        return jdbcAction.updateByCondition(entity, condition, params);
+        return jdbcAction.updateByWrapper(entity, condition, params);
     }
 
     /* ----------------------------------------------------------------common---------------------------------------------------------------- */

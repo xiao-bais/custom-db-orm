@@ -308,7 +308,7 @@ public class JdbcAction extends AbstractSqlExecutor {
 
     @Override
     @CheckExecute(target = ExecuteMethod.DELETE)
-    public <T> int deleteByCondition(ConditionWrapper<T> wrapper) {
+    public <T> int deleteByWrapper(ConditionWrapper<T> wrapper) {
         return deleteByCondition(wrapper.getEntityClass(), wrapper.getFinalConditional(), wrapper.getParamValues().toArray());
     }
 
@@ -329,7 +329,7 @@ public class JdbcAction extends AbstractSqlExecutor {
 
     @Override
     @CheckExecute(target = ExecuteMethod.INSERT)
-    public <T> int insert(List<T> ts) {
+    public <T> int insertBatch(List<T> ts) {
         HandleInsertSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(ts, ExecuteMethod.INSERT);
         sqlBuilder.setSaveSubSelection(getDbCustomStrategy().getSaveSubSelect());
         DbKeyParserModel<T> keyParserModel = sqlBuilder.getKeyParserModel();
@@ -368,7 +368,7 @@ public class JdbcAction extends AbstractSqlExecutor {
     @SafeVarargs
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
-    public final <T> int updateByKey(T t, SFunction<T, ?>... updateColumns) {
+    public final <T> int updateColumnByKey(T t, SFunction<T, ?>... updateColumns) {
         HandleUpdateSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.UPDATE);
         if(updateColumns.length > 0) {
             sqlBuilder.setUpdateFuncColumns(updateColumns);
@@ -399,7 +399,7 @@ public class JdbcAction extends AbstractSqlExecutor {
 
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
-    public <T> int updateByCondition(T t, String condition, Object... params) {
+    public <T> int updateByWrapper(T t, String condition, Object... params) {
         if (JudgeUtil.isEmpty(condition)) {
             ExThrowsUtil.toNull("修改条件不能为空");
         }
