@@ -16,7 +16,9 @@ import org.slf4j.LoggerFactory;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Author Xiao-Bai
@@ -75,7 +77,8 @@ public class ActiveModel<T extends ActiveModel<T, P>, P> implements Serializable
             return this.update();
         }
         JdbcActiveWrapper<T, P> activeWrapper = activeWrapper();
-        return ConvertUtil.conBool(activeWrapper.updateByKey((T) this, updateColumns));
+        return ConvertUtil.conBool(activeWrapper.updateByKey((T) this,
+                op -> op.addAll(Arrays.stream(updateColumns).collect(Collectors.toList()))));
     }
 
     /**

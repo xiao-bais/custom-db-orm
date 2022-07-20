@@ -18,7 +18,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -389,13 +391,20 @@ public class JdbcAction extends AbstractSqlExecutor {
         }
     }
 
-    @SafeVarargs
     @Override
+    @SuppressWarnings("unchecked")
     @CheckExecute(target = ExecuteMethod.UPDATE)
-    public final <T> int updateColumnByKey(T t, SFunction<T, ?>... updateColumns) {
+    public <T> int updateColumnByKey(T t, Consumer<List<SFunction<T, ?>>> updateColumns) {
         HandleUpdateSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.UPDATE);
-        if(updateColumns.length > 0) {
-            sqlBuilder.setUpdateFuncColumns(updateColumns);
+        List<SFunction<T, ?>> updateColumnList = new ArrayList<>();
+        updateColumns.accept(updateColumnList);
+        if(!updateColumnList.isEmpty()) {
+            int columns = updateColumnList.size();
+            SFunction<T, ?>[] updateColumnArrays = (SFunction<T, ?>[]) Array.newInstance(SFunction.class, columns);
+            for (int i = 0; i < columns; i++) {
+                updateColumnArrays[i] = updateColumnList.get(i);
+            }
+            sqlBuilder.setUpdateFuncColumns(updateColumnArrays);
         }
         String updateSql = sqlBuilder.buildSql();
         try {
@@ -444,6 +453,16 @@ public class JdbcAction extends AbstractSqlExecutor {
     public <T> int save(T entity) {
         TableSqlBuilder<T> sqlBuilder = updateTableSqlBuilder(Collections.singletonList(entity));
         return Objects.nonNull(sqlBuilder.primaryKeyVal()) ? updateByKey(entity) : insert(entity);
+    }
+
+    @Override
+    public int executeSql(String sql, Object... params) {
+        try {
+            return this.executeAnySql(sql, params);
+        }catch (Exception e) {
+            throwsException(e);
+            return 0;
+        }
     }
 
     @Override

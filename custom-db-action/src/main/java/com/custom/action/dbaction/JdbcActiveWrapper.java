@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * @Author Xiao-Bai
@@ -39,7 +40,7 @@ public interface JdbcActiveWrapper<T, P> {
 
     /*------------------------------------ update ---------------------------------------*/
     int updateByKey(T t);
-    int updateByKey(T t, SFunction<T, ?>... updateColumns);
+    int updateByKey(T t, Consumer<List<SFunction<T, ?>>> updateColumns);
     int updateByCondition(T t, ConditionWrapper<T> wrapper);
 
     /*------------------------------------ comm ---------------------------------------*/

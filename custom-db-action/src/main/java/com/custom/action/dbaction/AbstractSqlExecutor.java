@@ -16,6 +16,7 @@ import com.custom.configuration.DbCustomStrategy;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * @Author Xiao-Bai
@@ -60,12 +61,13 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
 
     /*--------------------------------------- update ---------------------------------------*/
     public abstract <T> int updateByKey(T t);
-    public abstract <T> int updateColumnByKey(T t, SFunction<T, ?>... updateColumns);
+    public abstract <T> int updateColumnByKey(T t, Consumer<List<SFunction<T, ?>>> updateColumns);
     public abstract <T> int updateByCondition(T t, ConditionWrapper<T> wrapper);
     public abstract <T> int updateByCondition(T t, String condition, Object... params);
 
     /*--------------------------------------- comm ---------------------------------------*/
     public abstract <T> int save(T t);
+    public abstract int executeSql(String sql, Object... params);
     public abstract void createTables(Class<?>... arr);
     public abstract void dropTables(Class<?>... arr);
     public abstract <T> TableSqlBuilder<T> defaultSqlBuilder(Class<T> t);

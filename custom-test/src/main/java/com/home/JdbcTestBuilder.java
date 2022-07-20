@@ -1,5 +1,7 @@
 package com.home;
 
+import com.custom.action.proxy.JdbcDaoProxy;
+import com.custom.action.sqlparser.JdbcOpDao;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.configuration.DbCustomStrategy;
@@ -31,7 +33,7 @@ public class JdbcTestBuilder {
         // 增删改查映射策略配置
         dbCustomStrategy = new DbCustomStrategy();
         dbCustomStrategy.setSqlOutPrinting(true);
-        dbCustomStrategy.setSqlOutPrintExecute(true);
+//        dbCustomStrategy.setSqlOutPrintExecute(true);
         dbCustomStrategy.setUnderlineToCamel(true);
         dbCustomStrategy.setDbFieldDeleteLogic("state");
         dbCustomStrategy.setDeleteLogicValue(1);
@@ -40,8 +42,14 @@ public class JdbcTestBuilder {
 
     }
 
-    public JdbcDao getJdbcDao() {
-        JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
+    public JdbcOpDao getJdbcDao() {
+        JdbcOpDao jdbcDao = new JdbcOpDao(dbDataSource, dbCustomStrategy);
+        TableInfoCache.setUnderlineToCamel(true);
+        return jdbcDao;
+    }
+
+    public JdbcDao getJdbcDao2() {
+        JdbcDao jdbcDao = new JdbcDaoProxy(dbDataSource, dbCustomStrategy).createProxy();
         TableInfoCache.setUnderlineToCamel(true);
         return jdbcDao;
     }

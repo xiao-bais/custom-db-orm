@@ -8,6 +8,7 @@ import com.custom.comm.exceptions.ExThrowsUtil;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -50,11 +51,15 @@ public class CustomTypeAction {
     /**
      * 分析具体执行的方法，并返回
      */
-    public Method action() {
+    public Object action() {
 
         ActionMethod actionMethod = actionMethods.stream().filter(op -> execMethodName.equals(op.getMethodName()) && parameters.length == op.getParamNumber())
                 .findFirst().orElseThrow(() -> new CustomCheckException("Unknown execution method : " + execMethodName));
 
+        Optional<Method> first = JdbcActionMethods.stream().filter(op -> op.getName().equals(actionMethod.getMethodName()) && parameters.length == op.getParameterCount()).findFirst();
+//        if (first.isPresent()) {
+//            return first.get().invoke()
+//        }
 
 
         return null;

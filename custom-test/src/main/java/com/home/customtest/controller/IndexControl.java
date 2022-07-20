@@ -1,19 +1,13 @@
 package com.home.customtest.controller;
 
-import com.custom.action.sqlparser.JdbcDao;
-import com.custom.action.wrapper.Conditions;
+import com.custom.action.sqlparser.JdbcOpDao;
 import com.custom.comm.BackResult;
 import com.home.customtest.dao.CustomTestDao;
-import com.home.customtest.entity.ChildStudent;
-import com.home.customtest.entity.Employee;
 import com.home.customtest.entity.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @Author Xiao-Bai
@@ -26,7 +20,7 @@ import java.util.Map;
 public class IndexControl {
 
     @Autowired
-    private JdbcDao jdbcDao;
+    private JdbcOpDao jdbcDao;
 
     @Resource
     private CustomTestDao customTestDao;

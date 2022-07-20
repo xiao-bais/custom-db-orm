@@ -1,6 +1,6 @@
 package com.custom.taskmanager.service;
 
-import com.custom.action.sqlparser.JdbcDao;
+import com.custom.action.sqlparser.JdbcOpDao;
 import com.custom.action.wrapper.Conditions;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.date.DateTimeUtils;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class TaskRecordService {
 
     @Resource
-    private JdbcDao jdbcDao;
+    private JdbcOpDao jdbcDao;
 
 
     /**

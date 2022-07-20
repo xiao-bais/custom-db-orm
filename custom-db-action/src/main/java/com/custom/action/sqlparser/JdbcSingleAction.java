@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * @Author Xiao-Bai
@@ -115,9 +116,8 @@ public class JdbcSingleAction<T, P> implements JdbcActiveWrapper<T, P> {
         return jdbcAction.updateByKey(t);
     }
 
-    @SafeVarargs
     @Override
-    public final int updateByKey(T t, SFunction<T, ?>... updateColumns) {
+    public final int updateByKey(T t, Consumer<List<SFunction<T, ?>>> updateColumns) {
         return jdbcAction.updateColumnByKey(t, updateColumns);
     }
 

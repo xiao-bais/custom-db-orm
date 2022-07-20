@@ -1,6 +1,6 @@
 package com.custom.taskmanager;
 
-import com.custom.action.sqlparser.JdbcDao;
+import com.custom.action.sqlparser.JdbcOpDao;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.date.DateTimeUtils;
 import com.custom.taskmanager.entity.TaskRecord;
@@ -18,7 +18,7 @@ import java.util.Random;
 public class CustomTaskManagerApplicationTests {
 
     @Resource
-    JdbcDao jdbcDao;
+    JdbcOpDao jdbcDao;
 
     @Test
     public void test01  () throws Exception {

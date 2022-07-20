@@ -29,7 +29,7 @@ public class SqlOutPrintBuilder implements Serializable {
         }else {
             logger.error(
                     "\nSql Error\n===================\nERROR SQL ====>\n {}\n===================\nParameters = {}\n===================\n"
-                    , sql, getFormatterParams());
+                    , sql, formatterParams());
         }
 
     }
@@ -43,7 +43,7 @@ public class SqlOutPrintBuilder implements Serializable {
             logger.info("QUERY-SQL ====>\n \n{}\n===================\n", sql);
         }else {
             logger.info("QUERY-SQL ====>\n \n{}\n===================\nParameters = {}\n===================\n"
-                    , sql, getFormatterParams());
+                    , sql, formatterParams());
         }
     }
 
@@ -56,7 +56,7 @@ public class SqlOutPrintBuilder implements Serializable {
             logger.info("UPDATE-SQL ====>\n \n{}\n===================\n", sql);
         }else {
             logger.info("UPDATE-SQL ====>\n \n{}\n===================\nParameters = {}\n===================\n"
-                    , sql, getFormatterParams());
+                    , sql, formatterParams());
         }
     }
 
@@ -89,7 +89,7 @@ public class SqlOutPrintBuilder implements Serializable {
     /**
      * 格式化参数打印
      */
-    private String getFormatterParams() {
+    private String formatterParams() {
         StringJoiner sqlParams = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
         for (Object param : params) {
             StringBuilder paramVal = new StringBuilder();
@@ -99,7 +99,8 @@ public class SqlOutPrintBuilder implements Serializable {
                 paramVal.append(SymbolConstant.EMPTY_SQL_STR).append(SymbolConstant.BRACKETS_LEFT)
                         .append(param.getClass().getSimpleName()).append(SymbolConstant.BRACKETS_RIGHT);
             }else {
-                paramVal.append(param);
+                paramVal.append(param).append(SymbolConstant.BRACKETS_LEFT)
+                        .append(param.getClass().getSimpleName()).append(SymbolConstant.BRACKETS_RIGHT);
             }
             sqlParams.add(paramVal);
         }
@@ -115,7 +116,7 @@ public class SqlOutPrintBuilder implements Serializable {
         if(symbolSize != params.length) {
             logger.error(
                     "\nSql Error\n===================\nSQL ====>\n {}\n===================\nParameters = {}\n===================\n"
-                    , sql, getFormatterParams());
+                    , sql, formatterParams());
             ExThrowsUtil.toCustom(String.format("参数数量与需要设置的参数数量不对等，需设置参数数量：%s, 实际参数数量：%s", symbolSize, params.length));
         }
         sql = CustomUtil.handleExecuteSql(sql, params);

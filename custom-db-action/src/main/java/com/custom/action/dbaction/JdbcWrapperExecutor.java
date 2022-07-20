@@ -107,7 +107,7 @@ public class JdbcWrapperExecutor {
     /**
      * 纯sql增删改
      */
-    public int executeSql(String sql, Object... params) throws Exception {
+    public int executeAnySql(String sql, Object... params) throws Exception {
         checkEmptySql(sql);
         SaveSqlParamInfo<Object> paramInfo = new SaveSqlParamInfo<>(sql, true, params);
         return updateJdbc.executeUpdate(paramInfo);

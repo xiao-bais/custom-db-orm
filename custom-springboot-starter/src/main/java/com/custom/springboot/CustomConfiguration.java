@@ -1,6 +1,8 @@
 package com.custom.springboot;
 
+import com.custom.action.proxy.JdbcDaoProxy;
 import com.custom.action.sqlparser.JdbcDao;
+import com.custom.action.sqlparser.JdbcOpDao;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.comm.JudgeUtil;
 import com.custom.configuration.DbCustomStrategy;
@@ -11,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.*;
-import org.springframework.core.annotation.Order;
 
 
 /**
@@ -48,12 +49,25 @@ public class CustomConfiguration {
     @Bean
     @Primary
     @ConditionalOnBean(DbDataSource.class)
+    public JdbcOpDao jdbcOpDao(){
+        if(isDataSourceEmpty(dbDataSource)) {
+            return null;
+        }
+        TableInfoCache.setUnderlineToCamel(dbCustomStrategy.isUnderlineToCamel());
+        JdbcOpDao jdbcDao = new JdbcOpDao(dbDataSource, dbCustomStrategy);
+        logger.info("JdbcOpDao Initialized Successfully !");
+        return jdbcDao;
+    }
+
+    @Bean
+    @Primary
+    @ConditionalOnBean(DbDataSource.class)
     public JdbcDao jdbcDao(){
         if(isDataSourceEmpty(dbDataSource)) {
             return null;
         }
         TableInfoCache.setUnderlineToCamel(dbCustomStrategy.isUnderlineToCamel());
-        JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
+        JdbcDao jdbcDao = new JdbcDaoProxy(dbDataSource, dbCustomStrategy).createProxy();
         logger.info("JdbcDao Initialized Successfully !");
         return jdbcDao;
     }
