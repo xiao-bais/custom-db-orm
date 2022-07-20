@@ -186,7 +186,7 @@ public class TableSqlBuilder<T> implements Cloneable {
     /**
      * 默认构造方法为查询
      */
-    public TableSqlBuilder(Class<T> cls, boolean underlineToCamel) {
+    TableSqlBuilder(Class<T> cls, boolean underlineToCamel) {
         this(cls, ExecuteMethod.SELECT, underlineToCamel);
     }
 
@@ -196,6 +196,7 @@ public class TableSqlBuilder<T> implements Cloneable {
 
         if (method != ExecuteMethod.NONE) {
             this.fields = findUpDbJoinTables ? CustomUtil.loadFields(this.cls) : this.cls.getDeclaredFields();
+
             // 构建字段解析模板
             initTableBuild(method);
         }
@@ -288,7 +289,9 @@ public class TableSqlBuilder<T> implements Cloneable {
      */
     private void buildUpdateModels(boolean isBuildUpdateModels) {
         for (Field field : fields) {
-            if (field.isAnnotationPresent(DbKey.class) && Objects.isNull(keyParserModel)) {
+            if (field.isAnnotationPresent(DbKey.class)
+                    && !field.isAnnotationPresent(DbField.class)
+                    && Objects.isNull(keyParserModel)) {
                 keyParserModel = new DbKeyParserModel<>(entity, field, this.table, this.alias, this.underlineToCamel);
 
             } else if (field.isAnnotationPresent(DbField.class) && isBuildUpdateModels) {
@@ -306,7 +309,7 @@ public class TableSqlBuilder<T> implements Cloneable {
      * 构造删除模板
      */
     private void buildDeleteModels() {
-        Optional<Field> fieldOptional = Arrays.stream(fields).filter(x -> x.isAnnotationPresent(DbKey.class)).findFirst();
+        Optional<Field> fieldOptional = Arrays.stream(fields).filter(x -> x.isAnnotationPresent(DbKey.class) && !x.isAnnotationPresent(DbField.class)).findFirst();
         fieldOptional.ifPresent(field -> keyParserModel = new DbKeyParserModel<>(field, this.table, this.alias, this.underlineToCamel));
     }
 
