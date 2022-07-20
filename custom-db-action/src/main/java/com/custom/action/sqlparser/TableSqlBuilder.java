@@ -49,31 +49,31 @@ public class TableSqlBuilder<T> implements Cloneable {
      */
     private boolean findUpDbJoinTables;
     /**
-     * @Desc：对于@DbKey注解的解析
+     * 对于@DbKey注解的解析
      */
     private DbKeyParserModel<T> keyParserModel = null;
     /**
-     * @desc:对于@DbField注解的解析
+     * 对于@DbField注解的解析
      */
     private List<DbFieldParserModel<T>> fieldParserModels = new ArrayList<>();
     /**
-     * @Desc：对于@DbRelated注解的解析
+     * 对于@DbRelated注解的解析
      */
     private List<DbRelationParserModel<T>> relatedParserModels = new ArrayList<>();
     /**
-     * @Desc:对于@DbJoinTables注解的解析
+     * 对于@DbJoinTables注解的解析
      */
     private List<DbJoinTableParserModel<T>> joinDbMappers = new ArrayList<>();
     /**
-     * @Desc:对于@DbJoinTables注解的解析
+     * 对于@DbJoinTables注解的解析
      */
     private List<String> joinTableParserModels = new ArrayList<>();
     /**
-     * @desc:对于java属性字段到表字段的映射关系
+     * 对于java属性字段到表字段的映射关系
      */
     private final Map<String, String> fieldMapper = new HashMap<>();
     /**
-     * @desc:对于表字段到java属性字段的映射关系
+     * 对于表字段到java属性字段的映射关系
      */
     private final Map<String, String> columnMapper = new HashMap<>();
 
