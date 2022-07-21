@@ -1,7 +1,7 @@
 package com.custom.action.proxy;
 
 import com.custom.action.util.DbUtil;
-import com.custom.action.wrapper.ConditionWrapper;
+import com.custom.action.condition.ConditionWrapper;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.annotations.DbTable;
 import com.custom.comm.annotations.check.CheckExecute;

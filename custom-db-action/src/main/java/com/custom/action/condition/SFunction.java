@@ -1,4 +1,4 @@
-package com.custom.action.wrapper;
+package com.custom.action.condition;
 
 import java.io.Serializable;
 import java.util.function.Function;

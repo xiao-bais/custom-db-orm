@@ -2,8 +2,8 @@ package com.custom.action.activerecord;
 
 import com.custom.action.dbaction.JdbcActiveWrapper;
 import com.custom.action.sqlparser.JdbcSingleAction;
-import com.custom.action.wrapper.ConditionWrapper;
-import com.custom.action.wrapper.SFunction;
+import com.custom.action.condition.ConditionWrapper;
+import com.custom.action.condition.SFunction;
 import com.custom.comm.ConvertUtil;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;

@@ -1,4 +1,4 @@
-package com.custom.action.wrapper;
+package com.custom.action.condition;
 
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableSqlBuilder;
@@ -8,7 +8,6 @@ import com.custom.comm.enums.SqlAggregate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 /**

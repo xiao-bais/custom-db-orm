@@ -1,8 +1,7 @@
-package com.custom.action.wrapper;
+package com.custom.action.condition;
 
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableSqlBuilder;
-import com.custom.action.util.DbUtil;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
@@ -10,7 +9,6 @@ import com.custom.comm.exceptions.ExThrowsUtil;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Xiao-Bai

@@ -2,8 +2,8 @@ package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractSqlExecutor;
 import com.custom.action.proxy.JdbcActionProxy;
-import com.custom.action.wrapper.ConditionWrapper;
-import com.custom.action.wrapper.SFunction;
+import com.custom.action.condition.ConditionWrapper;
+import com.custom.action.condition.SFunction;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.page.DbPageRows;
 import com.custom.configuration.DbCustomStrategy;

@@ -1,7 +1,7 @@
 package com.custom.action.sqlparser;
 
-import com.custom.action.wrapper.ConditionWrapper;
-import com.custom.action.wrapper.SFunction;
+import com.custom.action.condition.ConditionWrapper;
+import com.custom.action.condition.SFunction;
 import com.custom.comm.page.DbPageRows;
 
 import java.io.Serializable;

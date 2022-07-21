@@ -1,11 +1,9 @@
 package com.custom.action.dbaction;
 
-import com.custom.action.sqlparser.TableSqlBuilder;
-import com.custom.action.wrapper.ConditionWrapper;
-import com.custom.action.wrapper.SFunction;
+import com.custom.action.condition.ConditionWrapper;
+import com.custom.action.condition.SFunction;
 import com.custom.comm.page.DbPageRows;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;

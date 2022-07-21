@@ -1,8 +1,6 @@
-package com.custom.action.wrapper;
+package com.custom.action.condition;
 
-import com.custom.action.sqlparser.TableSqlBuilder;
 import com.custom.comm.CustomUtil;
-import com.custom.comm.JudgeUtil;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

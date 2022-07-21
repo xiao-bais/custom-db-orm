@@ -3,7 +3,7 @@ package com.custom.action.sqlparser;
 import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.fieldfill.ColumnAutoFillHandleUtils;
 import com.custom.action.util.DbUtil;
-import com.custom.action.wrapper.SFunction;
+import com.custom.action.condition.SFunction;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.exceptions.ExThrowsUtil;

@@ -1,8 +1,5 @@
-package com.custom.action.wrapper;
+package com.custom.action.condition;
 
-import com.custom.comm.enums.DbSymbol;
-
-import java.util.Arrays;
 import java.util.function.Consumer;
 
 /**

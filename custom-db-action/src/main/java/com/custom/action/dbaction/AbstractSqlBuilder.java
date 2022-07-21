@@ -3,7 +3,7 @@ package com.custom.action.dbaction;
 import com.custom.action.sqlparser.DbFieldParserModel;
 import com.custom.action.sqlparser.DbKeyParserModel;
 import com.custom.action.util.DbUtil;
-import com.custom.action.wrapper.ColumnParseHandler;
+import com.custom.action.condition.ColumnParseHandler;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
 import com.custom.jdbc.select.CustomSelectJdbcBasic;

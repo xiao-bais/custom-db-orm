@@ -1,10 +1,7 @@
-package com.custom.action.wrapper;
+package com.custom.action.condition;
 
-import com.custom.action.sqlparser.TableInfoCache;
-import com.custom.action.sqlparser.TableSqlBuilder;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.enums.DbSymbol;
-import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.enums.SqlLike;
 import com.custom.comm.enums.SqlOrderBy;
 

@@ -1,7 +1,7 @@
 package com.custom.taskmanager.service;
 
 import com.custom.action.sqlparser.JdbcOpDao;
-import com.custom.action.wrapper.Conditions;
+import com.custom.action.condition.Conditions;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.date.DateTimeUtils;
 import com.custom.comm.page.DbPageRows;

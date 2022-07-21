@@ -1,4 +1,4 @@
-package com.custom.action.wrapper;
+package com.custom.action.condition;
 
 import com.custom.comm.enums.DbSymbol;
 import com.custom.comm.enums.SqlLike;
