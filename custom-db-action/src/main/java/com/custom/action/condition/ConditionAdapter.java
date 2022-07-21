@@ -46,8 +46,8 @@ public class ConditionAdapter<T, Children> extends ConditionAssembly<T, SFunctio
 
 
     @Override
-    protected Children adapter(DbSymbol dbSymbol, boolean condition, SFunction<T, ?> column, String express) {
-        appendCondition(dbSymbol, condition, parseColumn(column), null, null, express);
+    protected Children adapter(DbSymbol dbSymbol, boolean condition, SFunction<T, ?> column, String expression) {
+        appendCondition(dbSymbol, condition, parseColumn(column), null, null, expression);
         return childrenClass;
     }
 

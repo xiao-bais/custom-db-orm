@@ -126,6 +126,50 @@ public class CustomUtil {
     }
 
     /**
+     * 将值写入指定对象的属性
+     */
+    public static <T> boolean writeFieldValue(T entity, String fieldName, Object value) throws NoSuchFieldException {
+        Asserts.notNull(entity, "The entity bean cannot be empty");
+        Asserts.notNull(fieldName, "The fieldName bean cannot be empty");
+        Class<?> entityClass = entity.getClass();
+        try {
+            PropertyDescriptor descriptor = new PropertyDescriptor(fieldName, entityClass);
+            Method writeMethod = descriptor.getWriteMethod();
+            writeMethod.invoke(entity, value);
+            return true;
+        } catch (InvocationTargetException | IllegalAccessException e) {
+            log.error(e.toString(), e);
+            return false;
+        }catch (IntrospectionException e) {
+            log.error(e.toString(), e);
+            throw new NoSuchFieldException(" Field: '" + fieldName + "' not found in object " + entity.getClass());
+        }
+    }
+
+    /**
+     * 读取对象的属性值
+     */
+    public static <T> Object readFieldValue(T entity, String fieldName) throws NoSuchFieldException {
+        Asserts.notNull(entity, "The entity bean cannot be empty");
+        Asserts.notNull(fieldName, "The fieldName bean cannot be empty");
+        Map<String, Object> objectMap;
+        try {
+            if (entity instanceof Map) {
+                objectMap = (Map<String, Object>) entity;
+            } else {
+                objectMap = beanToMap(entity);
+            }
+            if (objectMap.containsKey(fieldName)) {
+                return objectMap.get(fieldName);
+            }
+        }catch (IntrospectionException e) {
+            log.error(e.toString(), e);
+        }
+        throw new NoSuchFieldException(" Field: '" + fieldName + "' not found in object " + entity.getClass());
+    }
+
+
+    /**
      * 是否不为空
      */
     public static boolean isNotBlank(final  CharSequence cs) {
@@ -229,7 +273,8 @@ public class CustomUtil {
                 }
             });
             DbTable parentDbTable = clz.getSuperclass().getAnnotation(DbTable.class);
-            if (Objects.isNull(parentDbTable) || thisDbTable.equals(parentDbTable)) {
+            if (Objects.isNull(parentDbTable)
+                    || thisDbTable.equals(parentDbTable)) {
                 clz = clz.getSuperclass();
                 if (clz.equals(Object.class)) {
                     break;
@@ -266,7 +311,7 @@ public class CustomUtil {
     public static String loadFiles(String filePath){
         String res = "";
         if(JudgeUtil.isEmpty(filePath)){
-            log.error("找不到文件或不存在该路径");
+            log.error("The file cannot be found or the path does not exist");
             return res;
         }
         try {
@@ -307,7 +352,6 @@ public class CustomUtil {
     public static Map<String, Object> beanToMap(Object bean) throws IntrospectionException {
         Class<?> thisClass = bean.getClass();
         Map<String, Object> resMap = new HashMap<>();
-
         BeanInfo beanInfo = Introspector.getBeanInfo(thisClass);
         PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
         for (PropertyDescriptor property : propertyDescriptors) {

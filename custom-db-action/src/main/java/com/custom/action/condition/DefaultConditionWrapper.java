@@ -168,8 +168,8 @@ public class DefaultConditionWrapper<T> extends ConditionAssembly<T, String, Def
     }
 
     @Override
-    protected DefaultConditionWrapper<T> adapter(DbSymbol dbSymbol, boolean condition, String column, String express) {
-        appendCondition(dbSymbol, condition, column, null, null, express);
+    protected DefaultConditionWrapper<T> adapter(DbSymbol dbSymbol, boolean condition, String column, String expression) {
+        appendCondition(dbSymbol, condition, column, null, null, expression);
         return childrenClass;
     }
 

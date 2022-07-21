@@ -47,7 +47,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
     /**
      * 适用（exists, not exists）
      */
-    protected abstract Children adapter(DbSymbol dbSymbol, boolean condition, R column, String express);
+    protected abstract Children adapter(DbSymbol dbSymbol, boolean condition, R column, String expression);
 
     /**
      * 子类的实例化
@@ -69,7 +69,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
     /**
     * 适配各种sql条件的拼接
     */
-    protected void appendCondition(DbSymbol dbSymbol, boolean condition, String column, Object val1, Object val2, String express) {
+    protected void appendCondition(DbSymbol dbSymbol, boolean condition, String column, Object val1, Object val2, String expression) {
 
         if(!condition || !appendState) {
             return;
@@ -81,7 +81,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
             column = DbUtil.fullSqlColumn(getTableSqlBuilder().getAlias(), column);
         }
         // sql最终条件组装
-        this.handleFinalCondition(dbSymbol, column, val1, val2, express);
+        this.handleFinalCondition(dbSymbol, column, val1, val2, expression);
 
         if(CustomUtil.isNotBlank(getLastCondition())) {
             addCondition(getLastCondition());
@@ -95,7 +95,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
     /**
      * sql最终条件组装
      */
-    private void handleFinalCondition(DbSymbol dbSymbol, String column, Object val1, Object val2, String express) {
+    private void handleFinalCondition(DbSymbol dbSymbol, String column, Object val1, Object val2, String expression) {
         switch (dbSymbol) {
             case EQUALS:
             case NOT_EQUALS:
@@ -121,7 +121,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
 
             case EXISTS:
             case NOT_EXISTS:
-                setLastCondition(DbUtil.applyExistsCondition(appendSybmol, dbSymbol.getSymbol(), express));
+                setLastCondition(DbUtil.applyExistsCondition(appendSybmol, dbSymbol.getSymbol(), expression));
                 break;
 
             case BETWEEN:

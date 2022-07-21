@@ -2,6 +2,7 @@ package com.home;
 
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.condition.Conditions;
+import com.custom.comm.CustomUtil;
 import com.home.customtest.entity.ChildStudent;
 import com.home.customtest.entity.Student;
 
@@ -28,11 +29,16 @@ public class DoMain {
 
         ChildStudent student = jdbcDao.selectByKey(ChildStudent.class, 1);
 
-        Student stu = new Student();
-        stu.setSex(false);
-        stu.setAge(22);
-        List<Student> studentList = jdbcDao.selectList(Conditions.allEqQuery(Student.class, stu).toLambda().gt(Student::getMoney, 5000));
+//        Student stu = new Student();
+//        stu.setSex(false);
+//        stu.setAge(22);
+//        List<Student> studentList = jdbcDao.selectList(Conditions.allEqQuery(Student.class, stu).toLambda().gt(Student::getMoney, 5000));
 
+        Object name = CustomUtil.readFieldValue(student, "name");
+        System.out.println("name = " + name);
+
+        CustomUtil.writeFieldValue(student, "password", "123456");
+        System.out.println("student = " + student);
 
     }
 

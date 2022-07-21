@@ -245,7 +245,8 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     protected Object getValue(T x) {
         try {
             value = getFieldValue(x, fieldName);
-        }catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
+        }catch (InvocationTargetException | IllegalAccessException
+                | NoSuchMethodException | NoSuchFieldException e) {
             logger.error(e.getMessage(), e);
             return null;
         }
@@ -270,7 +271,8 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     public Object getValue() {
         try {
             value = getFieldValue(entity, fieldName);
-        }catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
+        }catch (InvocationTargetException | IllegalAccessException
+                | NoSuchMethodException | NoSuchFieldException e) {
             logger.error(e.getMessage(), e);
             return null;
         }

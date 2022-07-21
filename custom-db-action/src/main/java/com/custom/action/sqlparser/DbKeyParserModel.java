@@ -82,10 +82,9 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
         if(entity == null) throw new NullPointerException();
         try {
             this.value = getFieldValue(entity, key);
-        }catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
+        }catch (InvocationTargetException | IllegalAccessException
+                | NoSuchMethodException | NoSuchFieldException e) {
             logger.error(e.getMessage(), e);
-            return null;
-        }catch (NullPointerException npe) {
             return null;
         }
         return value;
@@ -95,7 +94,8 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
     protected Object getValue(T t) {
         try {
             this.value = getFieldValue(t, key);
-        }catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
+        }catch (InvocationTargetException | IllegalAccessException
+                | NoSuchMethodException | NoSuchFieldException e) {
             logger.error(e.getMessage(), e);
             return null;
         }

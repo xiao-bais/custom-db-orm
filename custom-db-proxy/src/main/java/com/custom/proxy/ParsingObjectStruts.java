@@ -54,6 +54,7 @@ public class ParsingObjectStruts {
             paramsMap.put(name, null);
             return;
         }
+        // todo... 可考虑优化成beanToMap的方式，提升反射的效率
         Field[] fields = CustomUtil.loadFields(value.getClass(), false);
         if (fields.length == 0) ExThrowsUtil.toCustom("In %s, no available attributes were resolved", value.getClass());
         for (Field field : fields) {
