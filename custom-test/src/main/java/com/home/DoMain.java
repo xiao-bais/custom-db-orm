@@ -31,8 +31,7 @@ public class DoMain {
         Student stu = new Student();
         stu.setSex(false);
         stu.setAge(22);
-        stu.setName("");
-        List<Student> studentList = jdbcDao.selectList(Conditions.allEqQuery(Student.class, stu));
+        List<Student> studentList = jdbcDao.selectList(Conditions.allEqQuery(Student.class, stu).toLambda().gt(Student::getMoney, 5000));
 
 
     }

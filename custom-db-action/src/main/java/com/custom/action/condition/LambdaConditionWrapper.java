@@ -130,9 +130,12 @@ public class LambdaConditionWrapper<T> extends ConditionAdapter<T, LambdaConditi
 
 
     LambdaConditionWrapper(ConditionWrapper<T> wrapper) {
+        this.dataStructureInit();
         this.setEntityClass(wrapper.getEntityClass());
         this.setColumnParseHandler(wrapper.getColumnParseHandler());
         this.setLastCondition(wrapper.getLastCondition());
+        this.addCondition(wrapper.getFinalConditional());
+        this.addParams(wrapper.getParamValues());
         this.setSelectColumns(wrapper.getSelectColumns());
         this.setPageParams(wrapper.getPageIndex(), wrapper.getPageSize());
         this.setTableSqlBuilder(wrapper.getTableSqlBuilder());

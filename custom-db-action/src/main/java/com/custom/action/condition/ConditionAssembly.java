@@ -81,7 +81,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
             column = DbUtil.fullSqlColumn(getTableSqlBuilder().getAlias(), column);
         }
         // sql最终条件组装
-        this.hanleFinalCondition(dbSymbol, column, val1, val2, express);
+        this.handleFinalCondition(dbSymbol, column, val1, val2, express);
 
         if(CustomUtil.isNotBlank(getLastCondition())) {
             addCondition(getLastCondition());
@@ -95,7 +95,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
     /**
      * sql最终条件组装
      */
-    private void hanleFinalCondition(DbSymbol dbSymbol, String column, Object val1, Object val2, String express) {
+    private void handleFinalCondition(DbSymbol dbSymbol, String column, Object val1, Object val2, String express) {
         switch (dbSymbol) {
             case EQUALS:
             case NOT_EQUALS:

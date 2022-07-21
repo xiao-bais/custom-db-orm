@@ -234,6 +234,14 @@ public abstract class ConditionWrapper<T> implements Serializable {
         this.entityClass = entityClass;
         TableSqlBuilder<T> tableSqlBuilder = getTableParserModelCache(entityClass);
         setTableSqlBuilder(tableSqlBuilder);
+        this.dataStructureInit();
+
+    }
+
+    /**
+     * 结构初始化
+     */
+    protected void dataStructureInit() {
         this.finalConditional = new StringBuilder();
         this.lastCondition = SymbolConstant.EMPTY;
         this.paramValues = new ArrayList<>();
@@ -241,7 +249,6 @@ public abstract class ConditionWrapper<T> implements Serializable {
         this.groupBy = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
         this.having = new StringBuilder();
         this.havingParams = new ArrayList<>();
-
     }
 
     protected void setPageParams(Integer pageIndex, Integer pageSize) {

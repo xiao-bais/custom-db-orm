@@ -137,9 +137,12 @@ public class DefaultConditionWrapper<T> extends ConditionAssembly<T, String, Def
     }
 
     DefaultConditionWrapper(ConditionWrapper<T> wrapper) {
+        this.dataStructureInit();
         this.setEntityClass(wrapper.getEntityClass());
         this.setColumnParseHandler(wrapper.getColumnParseHandler());
         this.setLastCondition(wrapper.getLastCondition());
+        this.addCondition(wrapper.getFinalConditional());
+        this.addParams(wrapper.getParamValues());
         this.setSelectColumns(wrapper.getSelectColumns());
         this.setPageParams(wrapper.getPageIndex(), wrapper.getPageSize());
         this.setTableSqlBuilder(wrapper.getTableSqlBuilder());
