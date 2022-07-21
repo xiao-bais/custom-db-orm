@@ -1,9 +1,6 @@
 package com.home.customtest.entity;
 
-import com.custom.comm.annotations.DbField;
-import com.custom.comm.annotations.DbJoinTable;
-import com.custom.comm.annotations.DbJoinTables;
-import com.custom.comm.annotations.DbTable;
+import com.custom.comm.annotations.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -27,14 +24,17 @@ public class ChildStudent extends Student {
     @DbField
     private String phone;
 
-    @DbField
-    private String headImgUrl;
-
+    @DbIgnore
     private Integer sumAge;
+    @DbIgnore
     private Integer ifNullAge;
+    @DbIgnore
     private Integer countAge;
+    @DbIgnore
     private Integer minAge;
+    @DbIgnore
     private Integer maxAge;
+    @DbIgnore
     private Integer avgAge;
 
 }

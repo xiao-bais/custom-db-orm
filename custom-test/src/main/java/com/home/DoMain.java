@@ -4,9 +4,13 @@ import com.custom.action.sqlparser.JdbcOpDao;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.wrapper.Conditions;
 import com.custom.action.wrapper.LambdaUpdateWrapper;
+import com.custom.comm.CustomUtil;
+import com.custom.comm.JudgeUtil;
+import com.home.customtest.entity.ChildStudent;
 import com.home.customtest.entity.Student;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author Xiao-Bai
@@ -27,9 +31,13 @@ public class DoMain {
 //        List<Object> objects = jdbcDao.selectObjs(Conditions.lambdaQuery(Student.class).onlyPrimary().between(Student::getMoney, 4000, 6000).select(Student::getName));
 //        System.out.println("objects = " + objects);
 
-        Student student = jdbcDao.selectByKey(Student.class, 1);
+        ChildStudent student = jdbcDao.selectByKey(ChildStudent.class, 1);
 
-        LambdaUpdateWrapper<Student> updateWrapper = new LambdaUpdateWrapper<>(Student.class);
+        Student stu = new Student();
+        stu.setSex(false);
+        stu.setAge(22);
+        stu.setName("");
+        List<Student> studentList = jdbcDao.selectList(Conditions.allEqQuery(Student.class, stu));
 
 
     }

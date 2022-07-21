@@ -28,5 +28,20 @@ public class Conditions {
     public static <T> EmptyConditionWrapper<T> emptyQuery(Class<T> entityClass) {
         return new EmptyConditionWrapper<>(entityClass);
     }
+
+    /**
+     * 给定一个条件为全等的条件构造器
+     * @param entityClass 查询的实体Class对象
+     * @param entity 全等条件的任意实体bean对象
+     * @param <T>
+     * @return
+     */
+    public static <T> DefaultConditionWrapper<T> allEqQuery(Class<T> entityClass, Object entity) {
+        DefaultConditionWrapper<T> conditionWrapper = new DefaultConditionWrapper<>(entityClass);
+        AllEqualConditionHandler<T> equalConditionHandler = new AllEqualConditionHandler<>(entity,
+                conditionWrapper.getTableSqlBuilder().getFieldMapper(), conditionWrapper);
+        equalConditionHandler.allEqCondition();
+        return conditionWrapper;
+    }
     
 }

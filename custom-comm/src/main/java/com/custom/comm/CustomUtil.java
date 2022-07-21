@@ -7,6 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
@@ -298,6 +302,28 @@ public class CustomUtil {
             index ++;
         }
         return sql;
+    }
+
+    public static Map<String, Object> beanToMap(Object bean) throws IntrospectionException {
+        Class<?> thisClass = bean.getClass();
+        Map<String, Object> resMap = new HashMap<>();
+
+        BeanInfo beanInfo = Introspector.getBeanInfo(thisClass);
+        PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+        for (PropertyDescriptor property : propertyDescriptors) {
+            String propertyName = property.getName();
+            if (propertyName.equals("class")) {
+                continue;
+            }
+            Method readMethod = property.getReadMethod();
+            try {
+                Object proValue = readMethod.invoke(bean);
+                resMap.put(propertyName, proValue);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
+        return resMap;
     }
 
 
