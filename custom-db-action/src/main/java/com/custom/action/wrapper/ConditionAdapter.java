@@ -167,7 +167,7 @@ public class ConditionAdapter<T, Children> extends ConditionAssembly<T, SFunctio
     }
 
     @Override
-    public T getEntity() {
+    public T getThisEntity() {
         return null;
     }
 }

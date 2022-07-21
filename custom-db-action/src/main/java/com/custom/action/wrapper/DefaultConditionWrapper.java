@@ -219,8 +219,8 @@ public class DefaultConditionWrapper<T> extends ConditionAssembly<T, String, Def
 
 
     @Override
-    public T getEntity() {
-        return null;
+    public T getThisEntity() {
+        throw new UnsupportedOperationException();
     }
 
 

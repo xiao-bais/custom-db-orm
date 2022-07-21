@@ -38,7 +38,7 @@ public class Student extends ActiveModel<Student, Integer> implements Serializab
     @DbField("nick_code")
     private String nickName;
 
-    @DbIgnore
+//    @DbIgnore
     private String password;
 
 

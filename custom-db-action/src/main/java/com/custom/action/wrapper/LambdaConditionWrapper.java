@@ -141,7 +141,7 @@ public class LambdaConditionWrapper<T> extends ConditionAdapter<T, LambdaConditi
 
 
     @Override
-    public T getEntity() {
-        return null;
+    public T getThisEntity() {
+        throw new UnsupportedOperationException();
     }
 }

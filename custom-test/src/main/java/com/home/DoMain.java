@@ -5,6 +5,8 @@ import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.wrapper.Conditions;
 import com.home.customtest.entity.Student;
 
+import java.util.List;
+
 /**
  * @Author Xiao-Bai
  * @Date 2021/11/29 12:54
@@ -17,7 +19,12 @@ public class DoMain {
 
         JdbcDao jdbcDao = JdbcTestBuilder.builder().getJdbcDao();
 
-        jdbcDao.selectList(Conditions.lambdaQuery(Student.class).eq(Student::getPassword, "11111"));
+//        jdbcDao.selectList(Conditions.lambdaQuery(Student.class).eq(Student::getPassword, ""));
+
+//        jdbcDao.selectList(Student.class, "and a.name = ? ", "张三");
+
+        List<Object> objects = jdbcDao.selectObjs(Conditions.lambdaQuery(Student.class).onlyPrimary().between(Student::getMoney, 4000, 6000).select(Student::getName));
+        System.out.println("objects = " + objects);
 
     }
 

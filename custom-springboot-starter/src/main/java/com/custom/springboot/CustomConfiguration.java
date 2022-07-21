@@ -54,15 +54,15 @@ public class CustomConfiguration {
             return null;
         }
         TableInfoCache.setUnderlineToCamel(dbCustomStrategy.isUnderlineToCamel());
-        JdbcOpDao jdbcDao = new JdbcOpDao(dbDataSource, dbCustomStrategy);
+        JdbcOpDao jdbcOpDao = new JdbcOpDao(dbDataSource, dbCustomStrategy);
         logger.info("JdbcOpDao Initialized Successfully !");
-        return jdbcDao;
+        return jdbcOpDao;
     }
 
     @Bean
     @Primary
     @ConditionalOnBean(DbDataSource.class)
-    public JdbcDao jdbcDao(){
+    public JdbcDao jdbcDao() {
         if(isDataSourceEmpty(dbDataSource)) {
             return null;
         }

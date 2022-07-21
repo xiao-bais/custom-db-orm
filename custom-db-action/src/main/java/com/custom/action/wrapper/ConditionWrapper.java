@@ -46,31 +46,31 @@ public abstract class ConditionWrapper<T> implements Serializable {
     /**
      * 最终的sql条件语句
      */
-    private final StringBuilder finalConditional = new StringBuilder();
+    private StringBuilder finalConditional;
 
     /**
      * 上一次的拼接条件
      */
-    private String lastCondition = SymbolConstant.EMPTY;
+    private String lastCondition;
 
     /**
      * sql中的所有参数值
      */
-    private final List<Object> paramValues = new ArrayList<>();
+    private List<Object> paramValues;
 
     /**
      * 排序
      */
-    private final StringJoiner orderBy = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
+    private StringJoiner orderBy;
     /**
      * 分组
      */
-    private final StringJoiner groupBy = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
+    private StringJoiner groupBy;
     /**
      * 筛选
      */
-    private final StringBuilder having = new StringBuilder();
-    private final List<Object> havingParams = new ArrayList<>();
+    private StringBuilder having;
+    private List<Object> havingParams;
 
     /**
      * 分页
@@ -236,6 +236,14 @@ public abstract class ConditionWrapper<T> implements Serializable {
         this.entityClass = entityClass;
         TableSqlBuilder<T> tableSqlBuilder = getTableParserModelCache(entityClass);
         setTableSqlBuilder(tableSqlBuilder);
+        this.finalConditional = new StringBuilder();
+        this.lastCondition = SymbolConstant.EMPTY;
+        this.paramValues = new ArrayList<>();
+        this.orderBy = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
+        this.groupBy = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
+        this.having = new StringBuilder();
+        this.havingParams = new ArrayList<>();
+
     }
 
     protected void setPageParams(Integer pageIndex, Integer pageSize) {
@@ -259,7 +267,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
         return getColumnParseHandler().getColumn(func);
     }
 
-    public abstract T getEntity();
+    public abstract T getThisEntity();
 
     public Boolean getPrimaryTable() {
         return primaryTable;

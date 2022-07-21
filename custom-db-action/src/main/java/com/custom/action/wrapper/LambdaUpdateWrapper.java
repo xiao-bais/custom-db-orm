@@ -141,8 +141,8 @@ public class LambdaUpdateWrapper<T> extends ConditionAdapter<T, LambdaUpdateWrap
 
 
     @Override
-    public T getEntity() {
-        return getEntity();
+    public T getThisEntity() {
+        return this.get();
     }
 
     @Override
