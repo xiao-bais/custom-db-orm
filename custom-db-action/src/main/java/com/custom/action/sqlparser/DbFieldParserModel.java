@@ -38,17 +38,17 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
      * 查询时，指定查询字段的包装
      * 例：concat('user-', a.name) columnName
      */
-    private final String wrapperColumn;
+    private String wrapperColumn;
 
     /**
      * 查询时若当前字段为字符串类型，是否null转为空字符串
      */
-    private final Boolean isNullToEmpty;
+    private boolean isNullToEmpty;
 
     /**
     * sql字段类型
     */
-    private final DbType dbType;
+    private DbType dbType;
 
     /**
     * java字段类型
@@ -68,40 +68,53 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     /**
     * sql字段长度
     */
-    private final String length;
+    private String length;
 
     /**
     * sql字段说明
     */
-    private final String desc;
+    private String desc;
 
     /**
     * 是否为空
     */
-    private final boolean isNull;
+    private boolean isNull;
 
     /**
      * 是否开启了表的默认值
      * 开启以后，在新增时若java属性值为null，则自动添加给定的默认值
      * 若字段跟表同时开启了默认值配置，则以字段设置的默认值优先
      */
-    private final boolean enabledDefaultValue;
+    private boolean enabledDefaultValue;
 
     /**
      * 默认值
      */
     private Object defaultValue;
 
-    public DbFieldParserModel(T t, Field field, String table, String alias, boolean underlineToCamel, boolean enabledDefaultValue) {
-        this(field, table, alias, underlineToCamel, enabledDefaultValue);
+    /**
+     * 是否标注了@DbField注解
+     */
+    private final boolean existsDbField;
+
+    public DbFieldParserModel(T t, Field field, String table, String alias, boolean underlineToCamel, boolean enabledDefaultValue, boolean existsDbField) {
+        this(field, table, alias, underlineToCamel, enabledDefaultValue, existsDbField);
         this.entity = t;
     }
 
-    public DbFieldParserModel(Field field, String table, String alias, boolean underlineToCamel, boolean enabledDefaultValue) {
+    /**
+     * 存在@DbField注解下的属性解析
+     */
+    public DbFieldParserModel(Field field, String table, String alias, boolean underlineToCamel, boolean enabledDefaultValue, boolean existsDbField) {
         this.fieldName = GlobalDataHandler.hasSqlKeyword(field.getName()) ? GlobalDataHandler.wrapperSqlKeyword(field.getName()) : field.getName();
         this.type = field.getType();
-        DbField annotation = field.getAnnotation(DbField.class);
         this.field = field;
+        this.existsDbField = existsDbField;
+        if (!existsDbField) {
+            this.noneAnnotationParser(table, alias, underlineToCamel);
+            return;
+        }
+        DbField annotation = field.getAnnotation(DbField.class);
         if (JudgeUtil.isEmpty(annotation.value())) {
             this.column = underlineToCamel ? CustomUtil.camelToUnderline(this.fieldName) : this.fieldName;
         }else {
@@ -118,6 +131,19 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
         this.length = this.dbType.getLength();
         this.defaultValue = annotation.defaultValue();
         this.enabledDefaultValue = enabledDefaultValue;
+        super.setTable(table);
+        super.setAlias(alias);
+        this.defaultValueInjector();
+    }
+
+    /**
+     * 无注解的属性解析
+     */
+    public void noneAnnotationParser(String table, String alias, boolean underlineToCamel) {
+        this.column = underlineToCamel ? CustomUtil.camelToUnderline(this.fieldName) : this.fieldName;
+        if(GlobalDataHandler.hasSqlKeyword(column)) {
+            this.column = GlobalDataHandler.wrapperSqlKeyword(column);
+        }
         super.setTable(table);
         super.setAlias(alias);
         this.defaultValueInjector();
@@ -193,6 +219,9 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
      */
     @Override
     public String buildTableSql() {
+        if (!existsDbField) {
+            return SymbolConstant.EMPTY;
+        }
         String newColumn = this.column;
         if (!RexUtil.hasRegex(this.column, RexUtil.back_quotes)) {
             newColumn = GlobalDataHandler.wrapperSqlKeyword(this.column);
@@ -266,5 +295,9 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
 
     public Object getDefaultValue() {
         return defaultValue;
+    }
+
+    public boolean isExistsDbField() {
+        return existsDbField;
     }
 }

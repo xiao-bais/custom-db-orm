@@ -99,7 +99,7 @@ public class ColumnParseHandler<T> {
         if (!tableModel.isFindUpDbJoinTables()) {
             ExThrowsUtil.toCustom("当@DbTable的findUpDbJoinTables设置为false时，不支持使用父类属性进行条件构造");
         }
-        throw new CustomCheckException(String.format("Unknown method: '%s', not found in class'%s', or please create getter or setter method with boxing type", implMethodName, cls.getName()));
+        throw new CustomCheckException(String.format("Unknown method: '%s', not found in class'%s', field may not exist, or please create a getter or setter method of boxing type for the field", implMethodName, cls.getName()));
     }
 
 

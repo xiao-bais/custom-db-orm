@@ -147,7 +147,10 @@ public class TableStructsInitializer {
 
 
     private void addColumnInfos(TableSqlBuilder<?> waitUpdateSqlBuilder, Set<ColumnCreateInfo> buildColumnSqls) {
-        for (DbFieldParserModel<?> fieldParserModel : waitUpdateSqlBuilder.getFieldParserModels()) {
+        List<? extends DbFieldParserModel<?>> fieldParserModels = waitUpdateSqlBuilder.getFieldParserModels().stream()
+                .filter(DbFieldParserModel::isExistsDbField)
+                .collect(Collectors.toList());
+        for (DbFieldParserModel<?> fieldParserModel : fieldParserModels) {
             ColumnCreateInfo columnCreateInfo = new ColumnCreateInfo();
             columnCreateInfo.setColumn(fieldParserModel.getColumn());
             columnCreateInfo.setCreateColumnSql(fieldParserModel.buildTableSql());
@@ -165,7 +168,10 @@ public class TableStructsInitializer {
                 sqlBuilder.getTable(), dataBaseName);
         SelectSqlParamInfo<String> sqlParamInfo = new SelectSqlParamInfo<>(String.class, selectColumnSql, false);
         List<String> columnList = selectJdbc.selectList(sqlParamInfo);
-        List<String> truthColumnList = sqlBuilder.getFieldParserModels().stream().map(DbFieldParserModel::getColumn).collect(Collectors.toList());
+        List<String> truthColumnList = sqlBuilder.getFieldParserModels().stream()
+                .filter(DbFieldParserModel::isExistsDbField)
+                .map(DbFieldParserModel::getColumn)
+                .collect(Collectors.toList());
         int size = truthColumnList.size();
         for (int i = 0; i < size; i++) {
             String currColumn = truthColumnList.get(i);

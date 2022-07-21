@@ -104,7 +104,9 @@ public class TableSqlBuilder<T> implements Cloneable {
         }
 
         if (!this.fieldParserModels.isEmpty()) {
-            fieldParserModels.stream().map(dbFieldParserModel -> dbFieldParserModel.buildTableSql() + "\n").forEach(fieldSql::add);
+            fieldParserModels.stream()
+                    .filter(DbFieldParserModel::isExistsDbField)
+                    .map(dbFieldParserModel -> dbFieldParserModel.buildTableSql() + "\n").forEach(fieldSql::add);
         }
 
         createTableSql.append(String.format("create table `%s` (\n%s)", this.table, fieldSql));
@@ -240,7 +242,7 @@ public class TableSqlBuilder<T> implements Cloneable {
                 keyParserModel = new DbKeyParserModel<>(field, this.table, this.alias, this.underlineToCamel);
 
             } else if (field.isAnnotationPresent(DbField.class)) {
-                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias, this.underlineToCamel, this.enabledDefaultValue);
+                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias, this.underlineToCamel, this.enabledDefaultValue, true);
                 fieldParserModels.add(fieldParserModel);
 
             } else if (field.isAnnotationPresent(DbMapper.class)) {
@@ -250,7 +252,9 @@ public class TableSqlBuilder<T> implements Cloneable {
             } else if (field.isAnnotationPresent(DbRelated.class)) {
                 DbRelationParserModel<T> relatedParserModel = new DbRelationParserModel<>(this.cls, field, this.table, this.alias, this.underlineToCamel);
                 relatedParserModels.add(relatedParserModel);
-
+            }else {
+                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias, this.underlineToCamel, this.enabledDefaultValue, false);
+                fieldParserModels.add(fieldParserModel);
             }
         }
     }
@@ -298,11 +302,15 @@ public class TableSqlBuilder<T> implements Cloneable {
                 keyParserModel = new DbKeyParserModel<>(entity, field, this.table, this.alias, this.underlineToCamel);
 
             } else if (field.isAnnotationPresent(DbField.class) && isBuildUpdateModels) {
-                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(entity, field, this.table, this.alias, this.underlineToCamel, this.enabledDefaultValue);
+                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(entity, field, this.table, this.alias, this.underlineToCamel, this.enabledDefaultValue, true);
                 fieldParserModels.add(fieldParserModel);
 
             } else if (field.isAnnotationPresent(DbField.class)) {
-                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias, this.underlineToCamel, this.enabledDefaultValue);
+                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias, this.underlineToCamel, this.enabledDefaultValue, true);
+                fieldParserModels.add(fieldParserModel);
+
+            } else {
+                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias, this.underlineToCamel, this.enabledDefaultValue, false);
                 fieldParserModels.add(fieldParserModel);
             }
         }

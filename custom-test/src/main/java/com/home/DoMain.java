@@ -2,6 +2,7 @@ package com.home;
 
 import com.custom.action.sqlparser.JdbcOpDao;
 import com.custom.action.sqlparser.JdbcDao;
+import com.custom.action.wrapper.Conditions;
 import com.home.customtest.entity.Student;
 
 /**
@@ -14,28 +15,9 @@ public class DoMain {
 
     public static void main(String[] args) throws Exception {
 
-//        JdbcOpDao jdbcDao = JdbcTestBuilder.builder().getJdbcDao();
-        JdbcDao jdbcDao = JdbcTestBuilder.builder().getJdbcDao2();
+        JdbcDao jdbcDao = JdbcTestBuilder.builder().getJdbcDao();
 
-//        DbPageRows<Student> studentDbPageRows = jdbcDao2.selectPageRows(Student.class, "and a.sex = ?", new DbPageRows<>(1, 3), 1);
-
-        Student childStudent = new Student();
-        childStudent.setId(22);
-        childStudent.setSex(false);
-        childStudent.setName("张三");
-        childStudent.setNickName("yiss");
-        jdbcDao.updateColumnByKey(childStudent, op -> {
-            op.add(Student::getName);
-            op.add(Student::getSex);
-            op.add(Student::getNickName);
-        });
-
-//        List<Student> studentList = jdbcDao.selectList(Conditions.lambdaQuery(Student.class));
-
-
-
-        System.out.println("childStudent.getId() = " + childStudent.getId());
-
+        jdbcDao.selectList(Conditions.lambdaQuery(Student.class).eq(Student::getPassword, "11111"));
 
     }
 

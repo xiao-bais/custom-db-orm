@@ -42,13 +42,13 @@ public class JdbcTestBuilder {
 
     }
 
-    public JdbcOpDao getJdbcDao() {
+    public JdbcOpDao getJdbcOpDao() {
         JdbcOpDao jdbcDao = new JdbcOpDao(dbDataSource, dbCustomStrategy);
         TableInfoCache.setUnderlineToCamel(true);
         return jdbcDao;
     }
 
-    public JdbcDao getJdbcDao2() {
+    public JdbcDao getJdbcDao() {
         JdbcDao jdbcDao = new JdbcDaoProxy(dbDataSource, dbCustomStrategy).createProxy();
         TableInfoCache.setUnderlineToCamel(true);
         return jdbcDao;

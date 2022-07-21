@@ -28,43 +28,41 @@ public class Student extends ActiveModel<Student, Integer> implements Serializab
 
 
 
-    @DbKey(value = "id", strategy = KeyStrategy.AUTO, dbType = DbType.DbInt)
+    @DbKey
     private Integer id;
 
-    @DbField(defaultValue = "abc")
     private String name;
 
-    @DbField
     private Boolean sex;
 
     @DbField("nick_code")
     private String nickName;
 
-    @DbField
+    @DbIgnore
     private String password;
 
-    @DbField(defaultValue = "0")
+
     private Integer age;
 
-    @DbField
+
     private BigDecimal money;
 
-    @DbField
+
     private String address;
 
     @DbField("birthday")
     private Date birth;
 
-    @DbField
+
     private Integer state;
 
-    @DbField
+
     private Integer proId;
 
-    @DbField
+
     private Integer cityId;
 
-    @DbField
+
     private Integer areaId;
 
     @DbMapper("pro.name")
@@ -73,8 +71,10 @@ public class Student extends ActiveModel<Student, Integer> implements Serializab
     @DbMapper("cy.name")
     private String city;
 
+    @DbIgnore
     private String area;
 
+    @DbIgnore
     private List<Street> modelList;
 
 
