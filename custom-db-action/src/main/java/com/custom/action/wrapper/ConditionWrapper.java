@@ -127,7 +127,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
     }
 
     protected void addParams(Object... params) {
-        this.paramValues.addAll(Arrays.stream(params).collect(Collectors.toList()));
+        paramValues.addAll(Arrays.asList(params));
     }
 
     protected void addParams(List<Object> params) {

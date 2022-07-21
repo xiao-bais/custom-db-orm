@@ -106,36 +106,44 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
                 setLastCondition(DbUtil.applyCondition(appendSybmol, column, dbSymbol.getSymbol()));
                 addParams(val1);
                 break;
+
             case LIKE:
             case NOT_LIKE:
                 setLastCondition(DbUtil.applyCondition(appendSybmol,
                         column, dbSymbol.getSymbol(), DbUtil.sqlConcat((SqlLike) val2)));
                 addParams(val1);
                 break;
+
             case IN:
             case NOT_IN:
                 ConditionOnInsqlAssembly(dbSymbol, column, val1);
                 break;
+
             case EXISTS:
             case NOT_EXISTS:
                 setLastCondition(DbUtil.applyExistsCondition(appendSybmol, dbSymbol.getSymbol(), express));
                 break;
+
             case BETWEEN:
             case NOT_BETWEEN:
                 ConditionOnSqlBetweenAssembly(dbSymbol, column, val1, val2);
                 break;
+
             case IS_NULL:
             case IS_NOT_NULL:
                 setLastCondition(DbUtil.applyIsNullCondition(appendSybmol, column, dbSymbol.getSymbol()));
                 break;
+
             case ORDER_BY:
             case ORDER_BY_ASC:
             case ORDER_BY_DESC:
                 getOrderBy().add(column);
                 break;
+
             case GROUP_BY:
                 getGroupBy().add(column);
                 break;
+
             case HAVING:
                 getHaving().append(column);
                 getHavingParams().addAll((List<Object>) val1);
@@ -341,6 +349,12 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
         setPrimaryTable();
         return childrenClass;
     }
+
+    /**
+     * 全等处理
+     */
+
+
 
 
     protected final Children childrenClass = (Children) this;
