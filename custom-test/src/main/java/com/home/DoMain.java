@@ -3,6 +3,7 @@ package com.home;
 import com.custom.action.sqlparser.JdbcOpDao;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.wrapper.Conditions;
+import com.custom.action.wrapper.LambdaUpdateWrapper;
 import com.home.customtest.entity.Student;
 
 import java.util.List;
@@ -23,8 +24,13 @@ public class DoMain {
 
 //        jdbcDao.selectList(Student.class, "and a.name = ? ", "张三");
 
-        List<Object> objects = jdbcDao.selectObjs(Conditions.lambdaQuery(Student.class).onlyPrimary().between(Student::getMoney, 4000, 6000).select(Student::getName));
-        System.out.println("objects = " + objects);
+//        List<Object> objects = jdbcDao.selectObjs(Conditions.lambdaQuery(Student.class).onlyPrimary().between(Student::getMoney, 4000, 6000).select(Student::getName));
+//        System.out.println("objects = " + objects);
+
+        Student student = jdbcDao.selectByKey(Student.class, 1);
+
+        LambdaUpdateWrapper<Student> updateWrapper = new LambdaUpdateWrapper<>(Student.class);
+
 
     }
 

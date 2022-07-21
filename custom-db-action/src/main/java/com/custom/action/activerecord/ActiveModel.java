@@ -64,7 +64,7 @@ public class ActiveModel<T extends ActiveModel<T, P>, P> implements Serializable
         JdbcActiveWrapper<T, P> activeWrapper = activeWrapper();
         P primaryKeyValue = activeWrapper.primaryKeyValue((T) this);
         if (primaryKeyValue == null) {
-            ExThrowsUtil.toCustom("未指定主键的值");
+            ExThrowsUtil.toCustom("Value of primary key not specified");
         }
         return ConvertUtil.conBool(activeWrapper.deleteByKey(primaryKeyValue));
     }
@@ -102,6 +102,9 @@ public class ActiveModel<T extends ActiveModel<T, P>, P> implements Serializable
      */
     public boolean insert() {
         JdbcActiveWrapper<T, P> activeWrapper = activeWrapper();
+        if (activeWrapper.primaryKeyValue((T) this) != null) {
+            return false;
+        }
         return ConvertUtil.conBool(activeWrapper.insert((T) this));
     }
 
@@ -117,10 +120,10 @@ public class ActiveModel<T extends ActiveModel<T, P>, P> implements Serializable
     private JdbcActiveWrapper<T, P> activeWrapper() {
         CustomConfigHelper configHelper = GlobalDataHandler.getConfigHelper();
         if (configHelper == null) {
-            throw new CustomCheckException("未配置数据源");
+            throw new CustomCheckException("No data source configured");
         }
         if (configHelper.getDbDataSource() == null) {
-            throw new CustomCheckException("未找到匹配的数据源");
+            throw new CustomCheckException("No matching data source found");
         }
         if (configHelper.getDbCustomStrategy() == null) {
             configHelper.setDbCustomStrategy(new DbCustomStrategy());
@@ -136,7 +139,7 @@ public class ActiveModel<T extends ActiveModel<T, P>, P> implements Serializable
             Type[] actualTypeArguments = genericSuperclass.getActualTypeArguments();
             return (Class<T>) actualTypeArguments[0];
         }catch (ClassCastException e) {
-            logger.error("缺少有效泛型，并且实体对象仅支持直接继承于ActiveModel");
+            logger.error("Valid generics are missing, and entity objects only support direct inheritance from 'ActiveModel'");
             throw e;
         }
 

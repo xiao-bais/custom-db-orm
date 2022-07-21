@@ -129,20 +129,9 @@ public class LambdaUpdateWrapper<T> extends ConditionAdapter<T, LambdaUpdateWrap
     }
 
 
-    LambdaUpdateWrapper(ConditionWrapper<T> wrapper) {
-        this.setEntityClass(wrapper.getEntityClass());
-        this.setColumnParseHandler(wrapper.getColumnParseHandler());
-        this.setLastCondition(wrapper.getLastCondition());
-        this.setSelectColumns(wrapper.getSelectColumns());
-        this.setPageParams(wrapper.getPageIndex(), wrapper.getPageSize());
-        this.setTableSqlBuilder(wrapper.getTableSqlBuilder());
-        this.setPrimaryTable(wrapper.getPrimaryTable());
-    }
-
-
     @Override
     public T getThisEntity() {
-        return this.get();
+        throw new UnsupportedOperationException();
     }
 
     @Override
