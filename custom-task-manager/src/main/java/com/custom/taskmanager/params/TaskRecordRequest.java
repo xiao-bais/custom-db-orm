@@ -40,12 +40,12 @@ public class TaskRecordRequest {
     private Integer endTime;
 
     @ApiModelProperty("任务是否过期")
-    private Boolean expireStatus;
+    private Boolean expireStatus = false;
 
     @ApiModelProperty("页数")
-    private Integer pageIndex;
+    private Integer pageIndex = 1;
 
     @ApiModelProperty("显示量")
-    private Integer pageSize;
+    private Integer pageSize = 10;
 
 }

@@ -69,7 +69,7 @@ public interface JdbcDao {
     /**
      * 条件构造器查询-查询多个
      */
-    <T> List<T> selectList(ConditionWrapper<T> wrapper) throws Exception;
+    <T> List<T> selectList(ConditionWrapper<T> wrapper);
 
     /**
      * 条件构造器查询-查询单个对象
@@ -115,7 +115,7 @@ public interface JdbcDao {
      *  {@link java.util.Date}
      * </p>
      */
-    <T> T[] selectArrays(Class<T> t, String sql, Object... params) throws Exception;
+    <T> T[] selectArrays(Class<T> t, String sql, Object... params);
 
     /* ----------------------------------------------------------------delete---------------------------------------------------------------- */
 

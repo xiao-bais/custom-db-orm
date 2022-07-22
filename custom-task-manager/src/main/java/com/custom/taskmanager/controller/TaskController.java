@@ -10,6 +10,7 @@ import com.custom.taskmanager.service.TaskRecordService;
 import com.custom.taskmanager.view.TaskRecordModel;
 import io.swagger.annotations.ApiOperation;
 import lombok.SneakyThrows;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -21,7 +22,7 @@ import java.util.Map;
  * @Date 2022/7/10 1:33
  * @Desc
  */
-@RestController
+@Controller
 @RequestMapping("/task")
 public class TaskController {
 
@@ -30,10 +31,9 @@ public class TaskController {
     TaskRecordService taskRecordService;
 
 
-    @SneakyThrows
     @ApiOperation("主任务列表查询")
     @PostMapping("/main_task_list")
-    public BackResult<DbPageRows<TaskRecordModel>> mainTaskList(@RequestBody TaskRecordRequest request) {
+    public BackResult<DbPageRows<TaskRecordModel>> mainTaskList(TaskRecordRequest request) {
         DbPageRows<TaskRecordModel> pageRows = taskRecordService.taskList(request);
         return BackResult.bySuccess(pageRows);
     }

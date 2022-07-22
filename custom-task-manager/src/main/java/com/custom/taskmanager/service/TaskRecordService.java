@@ -1,5 +1,6 @@
 package com.custom.taskmanager.service;
 
+import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.JdbcOpDao;
 import com.custom.action.condition.Conditions;
 import com.custom.comm.JudgeUtil;
@@ -28,13 +29,13 @@ import java.util.stream.Collectors;
 public class TaskRecordService {
 
     @Resource
-    private JdbcOpDao jdbcDao;
+    private JdbcDao jdbcDao;
 
 
     /**
      * 任务列表查询
      */
-    public DbPageRows<TaskRecordModel> taskList(TaskRecordRequest request) throws Exception {
+    public DbPageRows<TaskRecordModel> taskList(TaskRecordRequest request) {
 
         // 查询任务列表
         DbPageRows<TaskRecordModel> dbPageRows = jdbcDao.selectPageRows(Conditions.lambdaQuery(TaskRecordModel.class)
