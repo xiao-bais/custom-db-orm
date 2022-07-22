@@ -54,11 +54,11 @@ public class ParsingObjectStruts {
             paramsMap.put(name, null);
             return;
         }
-        // todo... 可考虑优化成beanToMap的方式，提升反射的效率
+        // todo 可考虑优化成beanToMap的方式，提升反射的效率
         Field[] fields = CustomUtil.loadFields(value.getClass(), false);
         if (fields.length == 0) ExThrowsUtil.toCustom("In %s, no available attributes were resolved", value.getClass());
         for (Field field : fields) {
-            String fieldName = String.format("%s.%s", name, field.getName());
+            String fieldName = formatMapperKey(name, field.getName());
             Object fieldValue = null;
             try {
                 fieldValue = CustomUtil.getFieldValue(value, field.getName());
@@ -114,7 +114,7 @@ public class ParsingObjectStruts {
         }
         Map<Object, Object> paramMap = (Map<Object, Object>) value;
         paramMap.forEach((key, val) -> {
-            String tempName = String.format("%s.%s", name, key);
+            String tempName = formatMapperKey(name, key);
             if (CustomUtil.isBasicType(val)) {
                 paramsMap.put(tempName, val);
             } else if (val instanceof Collection) {
@@ -131,6 +131,10 @@ public class ParsingObjectStruts {
                 parseObject(tempName, val);
             }
         });
+    }
+
+    private String formatMapperKey(String name, Object key) {
+        return String.format("%s.%s", name, key);
     }
 
     private void parseArray(String name, Object value) {
