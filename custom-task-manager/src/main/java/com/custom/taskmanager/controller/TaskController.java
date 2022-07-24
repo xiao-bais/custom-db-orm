@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -26,9 +27,16 @@ import java.util.Map;
 @RequestMapping("/task")
 public class TaskController {
 
-
     @Resource
-    TaskRecordService taskRecordService;
+    private TaskRecordService taskRecordService;
+
+    @RequestMapping("/index")
+    public ModelAndView forwardIndex(ModelAndView mav) {
+        mav.addObject("name", "张三");
+        mav.addObject("age", 15);
+        mav.setViewName("index");
+        return mav;
+    }
 
 
     @ApiOperation("主任务列表查询")

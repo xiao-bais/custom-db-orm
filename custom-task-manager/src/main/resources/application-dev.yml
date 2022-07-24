@@ -1,5 +1,7 @@
 server:
   port: 2021
+  servlet:
+    context-path: /myTask
 
   # 数据库连接配置
 custom:
@@ -16,3 +18,11 @@ custom:
       entity-package-scans: com.custom.taskmanager.entity
       sync-entity-enable: true
       sql-out-printing: true
+spring:
+  thymeleaf:
+    cache: false
+  resources:
+    static-locations: classpath:/templates/,classpath:/static/
+  mvc:
+    static-path-pattern: classpath:/static/**
+

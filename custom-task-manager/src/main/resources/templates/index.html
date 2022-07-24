@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>wait...</title>
+    <link rel="stylesheet" href="../resources/static/bootstrap-3.4.1/css/bootstrap.css" >
+</head>
+<style>
+    .myMain {
+        background-color: beige;
+        font-size: large;
+        width: 70%;
+        margin: auto;
+    }
+</style>
+
+<body>
+    <header>
+      <p style="text-align: center">爱普及</p>
+    </header>
+
+    <div class="myMain">
+        <p th:text = "${name}"></p>
+        <p th:text = "${age}"></p>
+
+        <ul class="nav nav-tabs">
+            <li role="presentation" class="active"><a href="#">Home</a></li>
+            <li role="presentation"><a href="#">Profile</a></li>
+            <li role="presentation"><a href="#">Messages</a></li>
+        </ul>
+    </div>
+
+</body>
+<script src="/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+
+</html>
