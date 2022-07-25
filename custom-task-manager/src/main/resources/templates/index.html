@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>wait...</title>
-    <link rel="stylesheet" href="../resources/static/bootstrap-3.4.1/css/bootstrap.css" >
+    <link rel="stylesheet" th:href="@{/normal/index.css}">
+    <link rel="stylesheet" th:href="@{/bootstrap-3.4.1/css/bootstrap.css}" >
 </head>
 <style>
     .myMain {
@@ -16,21 +17,24 @@
 
 <body>
     <header>
-      <p style="text-align: center">爱普及</p>
+      <p style="text-align: center; background-color: #9d9d9d">爱普及</p>
+        <ul class="nav nav-tabs" style="width:70%;margin: auto">
+            <li role="presentation" class="active"><a href="#">首要任务</a></li>
+            <li role="presentation"><a href="#">首要任务-</a></li>
+            <li role="presentation"><a href="#">Messages</a></li>
+        </ul>
     </header>
+
+    <br/>
 
     <div class="myMain">
         <p th:text = "${name}"></p>
         <p th:text = "${age}"></p>
 
-        <ul class="nav nav-tabs">
-            <li role="presentation" class="active"><a href="#">Home</a></li>
-            <li role="presentation"><a href="#">Profile</a></li>
-            <li role="presentation"><a href="#">Messages</a></li>
-        </ul>
+
     </div>
 
 </body>
-<script src="/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script th:src="@{/bootstrap-3.4.1/css/bootstrap.css}"></script>
 
 </html>
