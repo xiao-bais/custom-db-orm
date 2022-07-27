@@ -119,7 +119,7 @@ public class DefaultConditionWrapper<T> extends ConditionAssembly<T, String, Def
     public DefaultConditionWrapper<T> orderByAsc(boolean condition, String... columns) {
         String orderBy = Arrays.stream(columns)
                 .map(column -> orderByField(column, SqlOrderBy.ASC))
-                .collect(Collectors.joining("", SymbolConstant.EMPTY, ""));
+                .collect(Collectors.joining(SymbolConstant.SEPARATOR_COMMA_2));
         return adapter(DbSymbol.ORDER_BY, condition, orderBy);
     }
 
@@ -127,7 +127,7 @@ public class DefaultConditionWrapper<T> extends ConditionAssembly<T, String, Def
     public DefaultConditionWrapper<T> orderByDesc(boolean condition, String... columns) {
         String orderBy = Arrays.stream(columns)
                 .map(column -> orderByField(column, SqlOrderBy.DESC))
-                .collect(Collectors.joining("", SymbolConstant.EMPTY, ""));
+                .collect(Collectors.joining(SymbolConstant.SEPARATOR_COMMA_2));
         return adapter(DbSymbol.ORDER_BY, condition, orderBy);
     }
 

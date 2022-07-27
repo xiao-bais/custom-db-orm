@@ -27,18 +27,9 @@ public class DoMain {
 //        List<Object> objects = jdbcDao.selectObjs(Conditions.lambdaQuery(Student.class).onlyPrimary().between(Student::getMoney, 4000, 6000).select(Student::getName));
 //        System.out.println("objects = " + objects);
 
-        ChildStudent student = jdbcDao.selectByKey(ChildStudent.class, 1);
+//        ChildStudent student = jdbcDao.selectByKey(ChildStudent.class, 1);
 
-//        Student stu = new Student();
-//        stu.setSex(false);
-//        stu.setAge(22);
-//        List<Student> studentList = jdbcDao.selectList(Conditions.allEqQuery(Student.class, stu).toLambda().gt(Student::getMoney, 5000));
-
-        Object name = CustomUtil.readFieldValue(student, "name");
-        System.out.println("name = " + name);
-
-        CustomUtil.writeFieldValue(student, "password", "123456");
-        System.out.println("student = " + student);
+        Student selectOne = jdbcDao.selectOne(Student.class, "and a.name = ? and a.age =?", "张三", 18);
 
     }
 

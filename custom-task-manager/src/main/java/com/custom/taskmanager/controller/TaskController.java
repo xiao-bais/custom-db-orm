@@ -8,8 +8,8 @@ import com.custom.taskmanager.enums.TaskProgressEnum;
 import com.custom.taskmanager.params.TaskRecordRequest;
 import com.custom.taskmanager.service.TaskRecordService;
 import com.custom.taskmanager.view.TaskRecordModel;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -23,6 +23,7 @@ import java.util.Map;
  * @Date 2022/7/10 1:33
  * @Desc
  */
+@Api(tags = "主任务管理")
 @Controller
 @RequestMapping("/task")
 public class TaskController {
@@ -46,9 +47,10 @@ public class TaskController {
         return BackResult.bySuccess(pageRows);
     }
 
-    @SneakyThrows
-    @ApiOperation("主任务列表查询")
+
+    @ApiOperation("下拉框")
     @GetMapping("/main_task_select")
+    @ResponseBody
     public BackResult<Map<String, Object>> mainTaskList() {
         Map<String, Object> resMap = new HashMap<>();
         resMap.put("taskDifficulty", TaskDifficultyEnum.values());
@@ -56,6 +58,27 @@ public class TaskController {
         resMap.put("taskProgress", TaskProgressEnum.values());
         return BackResult.bySuccess(resMap);
     }
+
+    @ApiOperation("查询单个任务详情")
+    @GetMapping("/main_task_one")
+    @ResponseBody
+    public BackResult<TaskRecordModel> mainTaskOne(Integer taskId) {
+        if (taskId == null) {
+            return BackResult.byError("空的任务ID");
+        }
+        TaskRecordModel taskRecordModel = taskRecordService.selectTaskById(taskId);
+        return BackResult.bySuccess(taskRecordModel);
+    }
+
+    @ApiOperation("编辑任务详情")
+    @PostMapping("/edit_task_detail")
+    public BackResult editTaskDetail(@RequestBody TaskRecordModel model) {
+        taskRecordService.editTask(model);
+        return BackResult.bySuccess();
+    }
+
+
+
 
 
 }

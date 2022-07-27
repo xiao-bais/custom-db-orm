@@ -1,11 +1,11 @@
 package com.custom.taskmanager.service;
 
 import com.custom.action.sqlparser.JdbcDao;
-import com.custom.action.sqlparser.JdbcOpDao;
 import com.custom.action.condition.Conditions;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.date.DateTimeUtils;
 import com.custom.comm.page.DbPageRows;
+import com.custom.taskmanager.BException;
 import com.custom.taskmanager.entity.TaskImgPath;
 import com.custom.taskmanager.entity.TaskRecord;
 import com.custom.taskmanager.enums.TaskDifficultyEnum;
@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
  * @Desc
  */
 @Service
+@SuppressWarnings("unchecked")
 public class TaskRecordService {
 
     @Resource
@@ -61,6 +62,7 @@ public class TaskRecordService {
 
                 // 查询任务是否过期
                 .eq(TaskRecordModel::getExpireStatus, false)
+                .orderByDesc(TaskRecordModel::getCreateTime)
 
         );
 
@@ -68,44 +70,69 @@ public class TaskRecordService {
             return dbPageRows;
         }
 
-        // 主任务代码唯一标识集合
-        List<String> taskCodes = dbPageRows.getData().stream().map(TaskRecordModel::getTaskCode).distinct().collect(Collectors.toList());
-
-        // 查询任务对应的附件图片
-        List<TaskImgPath> taskImgPaths = jdbcDao.selectList(Conditions.lambdaQuery(TaskImgPath.class)
-                .in(TaskImgPath::getTaskCode, taskCodes)
-        );
-
-
         for (TaskRecordModel row : dbPageRows.getData()) {
-            row.setDifficultyStr(TaskDifficultyEnum.getName(row.getDifficulty()));
-            row.setCurrentProgressStr(TaskProgressEnum.getName(row.getCurrentProgress()));
-            row.setPriorityStr(TaskPriorityEnum.getName(row.getPriority()));
-            row.setStartTimeStr(DateTimeUtils.getFormatByTimeStamp(row.getStartTime()));
-            row.setEndTimeStr(DateTimeUtils.getFormatByTimeStamp(row.getEndTime()));
-            row.setCreateTimeStr(DateTimeUtils.getFormatByTimeStamp(row.getCreateTime()));
-            row.setOperatorTimeStr(DateTimeUtils.getFormatByTimeStamp(row.getOperatorTime()));
-
-            if (taskImgPaths.isEmpty()) {
-                continue;
-            }
-
-            // 任务图片附件
-            List<TaskImgPath> taskImgList = taskImgPaths.stream().filter(x -> x.getTaskCode().equals(row.getTaskCode()) && x.getImgType().equals(TaskImgTypeEnum.TASK.getCode())).collect(Collectors.toList());
-            if (!taskImgList.isEmpty()) {
-                row.setTaskImgs(taskImgList);
-            }
-
-            // 测压结果附件
-            List<TaskImgPath> testResultImgList = taskImgPaths.stream().filter(x -> x.getTaskCode().equals(row.getTaskCode()) && x.getImgType().equals(TaskImgTypeEnum.TEST_RESULT.getCode())).collect(Collectors.toList());
-            if (!testResultImgList.isEmpty()) {
-                row.setTestResultImgs(testResultImgList);
-            }
+            // 加载展示信息
+            this.loadViewInfo(row);
         }
         return dbPageRows;
     }
 
+    /**
+     * 加载展示信息
+     */
+    private void loadViewInfo(TaskRecordModel row) {
+        row.setDifficultyStr(TaskDifficultyEnum.getName(row.getDifficulty()));
+        row.setCurrentProgressStr(TaskProgressEnum.getName(row.getCurrentProgress()));
+        row.setPriorityStr(TaskPriorityEnum.getName(row.getPriority()));
+        row.setStartTimeStr(DateTimeUtils.getFormatByTimeStamp(row.getStartTime()));
+        row.setEndTimeStr(DateTimeUtils.getFormatByTimeStamp(row.getEndTime()));
+        row.setCreateTimeStr(DateTimeUtils.getFormatByTimeStamp(row.getCreateTime()));
+        row.setOperatorTimeStr(DateTimeUtils.getFormatByTimeStamp(row.getOperatorTime()));
+    }
 
+
+    public TaskRecordModel selectTaskById(Integer taskId) {
+
+        TaskRecordModel taskRecordModel = jdbcDao.selectByKey(TaskRecordModel.class, taskId);
+        this.loadViewInfo(taskRecordModel);
+
+        // 查询任务对应的附件图片
+        List<TaskImgPath> taskImgPaths = jdbcDao.selectList(Conditions.lambdaQuery(TaskImgPath.class)
+                .eq(TaskImgPath::getTaskCode, taskRecordModel.getTaskCode())
+        );
+
+        if (!taskImgPaths.isEmpty()) {
+            List<TaskImgPath> imgPaths = taskImgPaths.stream().filter(x -> x.getImgType().equals(TaskImgTypeEnum.TASK.getCode())).collect(Collectors.toList());
+            taskRecordModel.setTaskImgs(imgPaths);
+
+            List<TaskImgPath> testResult = taskImgPaths.stream().filter(x -> x.getImgType().equals(TaskImgTypeEnum.TEST_RESULT.getCode())).collect(Collectors.toList());
+            taskRecordModel.setTestResultImgs(testResult);
+        }
+
+        return taskRecordModel;
+
+    }
+
+    public void editTask(TaskRecordModel model) {
+        if (model == null) {
+            throw new BException("未知的任务");
+        }
+        model.setOperatorTime(DateTimeUtils.getThisTime());
+
+        if (!model.getTaskImgs().isEmpty()) {
+            for (TaskImgPath taskImg : model.getTaskImgs()) {
+                jdbcDao.save(taskImg);
+            }
+        }
+
+        if (!model.getTestResultImgs().isEmpty()) {
+            for (TaskImgPath testResultImg : model.getTestResultImgs()) {
+                jdbcDao.save(testResultImg);
+            }
+        }
+
+
+    }
 
 
 

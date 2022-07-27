@@ -17,7 +17,7 @@ custom:
       not-delete-logic-value: 0
       entity-package-scans: com.custom.taskmanager.entity
 #      sync-entity-enable: true
-      sql-out-printing: true
+#      sql-out-printing: true
 spring:
   thymeleaf:
     cache: false

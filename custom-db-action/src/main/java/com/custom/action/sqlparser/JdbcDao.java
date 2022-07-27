@@ -102,7 +102,7 @@ public interface JdbcDao {
     <T> List<Map<String, Object>> selectMaps(ConditionWrapper<T> wrapper);
 
     /**
-     * 查询多条记录映射到Map
+     * 查询多条记录映射到Map并分页
      */
     <T> DbPageRows<Map<String, Object>> selectPageMaps(ConditionWrapper<T> wrapper);
 
