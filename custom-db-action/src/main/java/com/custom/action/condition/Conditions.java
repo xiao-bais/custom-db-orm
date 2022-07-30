@@ -31,6 +31,7 @@ public class Conditions {
 
     /**
      * 给定一个条件为全等的条件构造器
+     * 参数中对象的所有属性条件皆为等于（只会拼接属性值!=null的条件）
      * @param entityClass 查询的实体Class对象
      * @param entity 全等条件的任意实体bean对象
      * @param <T>

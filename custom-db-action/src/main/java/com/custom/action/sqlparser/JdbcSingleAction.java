@@ -29,12 +29,10 @@ public class JdbcSingleAction<T, P> implements JdbcActiveWrapper<T, P> {
 
     private final AbstractSqlExecutor jdbcAction;
     private final Class<T> entityClass;
-    private final TableSqlBuilder<T> defaultSqlBuilder;
 
     public JdbcSingleAction(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy, Class<T> entityClass) {
         this.entityClass = entityClass;
         this.jdbcAction = new JdbcActionProxy<>(new JdbcAction(), dbDataSource, dbCustomStrategy).createProxy();
-        this.defaultSqlBuilder = this.jdbcAction.defaultSqlBuilder(entityClass);
     }
 
     private TableSqlBuilder<T> updateSqlBuilder(List<T> tList) {
