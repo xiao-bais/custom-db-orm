@@ -15,6 +15,7 @@ import com.custom.comm.page.DbPageRows;
 import com.custom.configuration.DbCustomStrategy;
 
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -203,6 +204,6 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
         if (e instanceof NullPointerException) {
             throw new NullPointerException(e.getMessage());
         }
-        throw new RuntimeException(e);
+        throw new RuntimeException(e.fillInStackTrace());
     }
 }

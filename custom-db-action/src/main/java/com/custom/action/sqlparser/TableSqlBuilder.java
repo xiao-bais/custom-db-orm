@@ -38,7 +38,15 @@ public class TableSqlBuilder<T> implements Cloneable {
 
     private String desc;
 
+    /**
+     * 表与实体对应的字段
+     */
     private Field[] fields;
+
+    /**
+     * 原始字段，包括上面的
+     */
+    private Field[] originFields;
 
     private boolean underlineToCamel;
 
@@ -198,9 +206,7 @@ public class TableSqlBuilder<T> implements Cloneable {
         initLocalProperty(cls, underlineToCamel);
 
         if (method != ExecuteMethod.NONE) {
-            this.fields = findUpDbJoinTables ? CustomUtil.loadFields(this.cls) : this.cls.getDeclaredFields();
-            this.fields = Arrays.stream(fields)
-                    .filter(op -> !op.isAnnotationPresent(DbIgnore.class)).toArray(Field[]::new);
+            this.fields = this.findUpDbJoinTables ? CustomUtil.loadFields(this.cls) : this.cls.getDeclaredFields();
 
 
             // 构建字段解析模板
@@ -238,6 +244,10 @@ public class TableSqlBuilder<T> implements Cloneable {
         this.mergeDbJoinTables();
 
         for (Field field : fields) {
+            if (field.isAnnotationPresent(DbIgnore.class)) {
+                continue;
+            }
+
             if (field.isAnnotationPresent(DbKey.class) && Objects.isNull(keyParserModel)) {
                 keyParserModel = new DbKeyParserModel<>(field, this.table, this.alias, this.underlineToCamel);
 

@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  **/
 @SuppressWarnings("all")
 public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper<T>
-        implements ConditionSplice<Children>, QueryFunction<Children, T, R> {
+        implements ConditionSplicer<Children>, QueryFunction<Children, T, R> {
 
 
     /**

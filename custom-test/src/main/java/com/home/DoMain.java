@@ -7,13 +7,14 @@ import com.home.customtest.entity.ChildStudent;
 import com.home.customtest.entity.Student;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author Xiao-Bai
  * @Date 2021/11/29 12:54
  * @Desc：
  **/
-@SuppressWarnings("all")
+//@SuppressWarnings("all")
 public class DoMain {
 
     public static void main(String[] args) throws Exception {
@@ -29,7 +30,12 @@ public class DoMain {
 
 //        ChildStudent student = jdbcDao.selectByKey(ChildStudent.class, 1);
 
-        Student selectOne = jdbcDao.selectOne(Student.class, "and a.name = ? and a.age =?", "张三", 18);
+        List<ChildStudent> childStudents = jdbcDao.selectList(Conditions.lambdaQuery(ChildStudent.class)
+                .select(ChildStudent::getSex)
+                .select(x -> x.count(ChildStudent::getSex, ChildStudent::getCountAge))
+                .groupBy(ChildStudent::getSex)
+        );
+        System.out.println("mapList = " + childStudents);
 
     }
 

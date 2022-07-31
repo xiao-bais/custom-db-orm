@@ -126,6 +126,9 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
         try {
             statementQuery(params.getPrepareSql(), params.isSqlPrintSupport(), params.getSqlParams());
             ResultSet resultSet = handleQueryStatement();
+            if (!params.isSupportMoreResult()) {
+                this.checkMoreResult(resultSet);
+            }
             if (resultSet.next()) {
                 this.handleResultMapper(resMap, resultSet.getMetaData());
             }
@@ -148,11 +151,8 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
         Map<String, T> resMap;
         List<Map<String, T>> mapList = new ArrayList<>();
         try {
-            statementQuery(params.getPrepareSql(), params.isSqlPrintSupport(), params.getSqlParams());
+            this.statementQueryReturnRows(params.getPrepareSql(), params.isSqlPrintSupport(), params.getSqlParams());
             ResultSet resultSet = handleQueryStatement();
-            if (!params.isSupportMoreResult()) {
-                this.checkMoreResult(resultSet);
-            }
             ResultSetMetaData metaData = resultSet.getMetaData();
             while (resultSet.next()) {
                 resMap = new HashMap<>();

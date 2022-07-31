@@ -11,63 +11,63 @@ import com.custom.comm.enums.SqlOrderBy;
 public class OrderByFunc<T> extends SqlFunc<T, OrderByFunc<T>>{
 
     @Override
-    public OrderByFunc<T> sum(SFunction<T, ?> func) {
-        String column = getColumnParseHandler().getColumn(func);
-        return doFunc(formatRex(SqlAggregate.SUM, null), SqlAggregate.SUM, column, orderBy);
+    public OrderByFunc<T> sum(SFunction<T, ?> column) {
+        String originColumn = getColumnParseHandler().getColumn(column);
+        return doFunc(formatRex(SqlAggregate.SUM, null), SqlAggregate.SUM, originColumn, orderBy);
     }
 
     @Override
-    public OrderByFunc<T> sum(boolean isNullToZero, SFunction<T, ?> func) {
-        String column = getColumnParseHandler().getColumn(func);
-        return doFunc(formatRex(SqlAggregate.SUM, isNullToZero, null), SqlAggregate.SUM, column, orderBy);
+    public OrderByFunc<T> sum(boolean isNullToZero, SFunction<T, ?> column) {
+        String originColumn = getColumnParseHandler().getColumn(column);
+        return doFunc(formatRex(SqlAggregate.SUM, isNullToZero, null), SqlAggregate.SUM, originColumn, orderBy);
     }
 
     @Override
-    public OrderByFunc<T> avg(SFunction<T, ?> func) {
-        String column = getColumnParseHandler().getColumn(func);
-        return doFunc(formatRex(SqlAggregate.AVG, null), SqlAggregate.AVG, column, orderBy);
+    public OrderByFunc<T> avg(SFunction<T, ?> column) {
+        String originColumn = getColumnParseHandler().getColumn(column);
+        return doFunc(formatRex(SqlAggregate.AVG, null), SqlAggregate.AVG, originColumn, orderBy);
     }
 
     @Override
-    public OrderByFunc<T> avg(boolean isNullToZero, SFunction<T, ?> func) {
-        String column = getColumnParseHandler().getColumn(func);
-        return doFunc(formatRex(SqlAggregate.AVG, isNullToZero, null), SqlAggregate.AVG, column, orderBy);
+    public OrderByFunc<T> avg(boolean isNullToZero, SFunction<T, ?> column) {
+        String originColumn = getColumnParseHandler().getColumn(column);
+        return doFunc(formatRex(SqlAggregate.AVG, isNullToZero, null), SqlAggregate.AVG, originColumn, orderBy);
     }
 
     @Override
-    public OrderByFunc<T> count(SFunction<T, ?> func, boolean distinct) {
-        String column = getColumnParseHandler().getColumn(func);
-        return doFunc(formatRex(SqlAggregate.COUNT, distinct), SqlAggregate.COUNT, column, orderBy);
+    public OrderByFunc<T> count(SFunction<T, ?> column, boolean distinct) {
+        String originColumn = getColumnParseHandler().getColumn(column);
+        return doFunc(formatRex(SqlAggregate.COUNT, distinct), SqlAggregate.COUNT, originColumn, orderBy);
     }
 
     @Override
-    public OrderByFunc<T> ifNull(SFunction<T, ?> func, Object elseVal) {
-        String column = getColumnParseHandler().getColumn(func);
-        return doFunc(formatRex(SqlAggregate.IFNULL, null), SqlAggregate.IFNULL, column, elseVal, orderBy);
+    public OrderByFunc<T> ifNull(SFunction<T, ?> column, Object elseVal) {
+        String originColumn = getColumnParseHandler().getColumn(column);
+        return doFunc(formatRex(SqlAggregate.IFNULL, null), SqlAggregate.IFNULL, originColumn, elseVal, orderBy);
     }
 
     @Override
-    public OrderByFunc<T> max(SFunction<T, ?> func) {
-        String column = getColumnParseHandler().getColumn(func);
-        return doFunc(formatRex(SqlAggregate.MAX, null), SqlAggregate.MAX, column, orderBy);
+    public OrderByFunc<T> max(SFunction<T, ?> column) {
+        String originColumn = getColumnParseHandler().getColumn(column);
+        return doFunc(formatRex(SqlAggregate.MAX, null), SqlAggregate.MAX, originColumn, orderBy);
     }
 
     @Override
-    public OrderByFunc<T> max(boolean isNullToZero, SFunction<T, ?> func) {
-        String column = getColumnParseHandler().getColumn(func);
-        return doFunc(formatRex(SqlAggregate.MAX, isNullToZero, null), SqlAggregate.MAX, column, orderBy);
+    public OrderByFunc<T> max(boolean isNullToZero, SFunction<T, ?> column) {
+        String originColumn = getColumnParseHandler().getColumn(column);
+        return doFunc(formatRex(SqlAggregate.MAX, isNullToZero, null), SqlAggregate.MAX, originColumn, orderBy);
     }
 
     @Override
-    public OrderByFunc<T> min(SFunction<T, ?> func) {
-        String column = getColumnParseHandler().getColumn(func);
-        return doFunc(formatRex(SqlAggregate.MIN, null), SqlAggregate.MIN, column, orderBy);
+    public OrderByFunc<T> min(SFunction<T, ?> column) {
+        String originColumn = getColumnParseHandler().getColumn(column);
+        return doFunc(formatRex(SqlAggregate.MIN, null), SqlAggregate.MIN, originColumn, orderBy);
     }
 
     @Override
-    public OrderByFunc<T> min(boolean isNullToZero, SFunction<T, ?> func) {
-        String column = getColumnParseHandler().getColumn(func);
-        return doFunc(formatRex(SqlAggregate.MIN, isNullToZero, null), SqlAggregate.MIN, column, orderBy);
+    public OrderByFunc<T> min(boolean isNullToZero, SFunction<T, ?> column) {
+        String originColumn = getColumnParseHandler().getColumn(column);
+        return doFunc(formatRex(SqlAggregate.MIN, isNullToZero, null), SqlAggregate.MIN, originColumn, orderBy);
     }
 
     private final String orderBy;

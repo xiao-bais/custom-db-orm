@@ -21,59 +21,66 @@ public abstract class SqlFunc<T, Child> {
     /**
      * sql sum函数
      * 例：x -> x.sum(Student::getAge)
-     * @param func 需要求和的属性 Student::getAge
+     * @param column 需要求和的属性 Student::getAge
      * @return SqlFunc
      */
-    public abstract Child sum(SFunction<T, ?> func);
-    public abstract Child sum(boolean isNullToZero, SFunction<T, ?> func);
+    public abstract Child sum(SFunction<T, ?> column);
+    public abstract Child sum(boolean isNullToZero, SFunction<T, ?> column);
 
     /**
      * sql sum函数
      * 例：x -> x.avg(Student::getAge)
-     * @param func 需要求平均的属性 Student::getAge
+     * @param column 需要求平均的属性 Student::getAge
      * @return SqlFunc
      */
-    public abstract Child avg(SFunction<T, ?> func);
-    public abstract Child avg(boolean isNullToZero, SFunction<T, ?> func);
+    public abstract Child avg(SFunction<T, ?> column);
+    public abstract Child avg(boolean isNullToZero, SFunction<T, ?> column);
 
     /**
      * sql count函数
      * 例：x -> x.count(Student::getAge, true, Student::getCountAge)
-     * @param func 需要求和的字段属性 Student::getAge
+     * @param column 需要求和的字段属性 Student::getAge
      * @param distinct 是否去重？
      * @return SqlFunc
      */
-    public Child count(SFunction<T, ?> func) {
-        return count(func, false);
+    public Child count(SFunction<T, ?> column) {
+        return count(column, false);
     }
-    public abstract Child count(SFunction<T, ?> func, boolean distinct);
+    public abstract Child count(SFunction<T, ?> column, boolean distinct);
 
     /**
      * sql ifnull函数
      * 例：x -> x.ifNull(Student::getAge, 0)
-     * @param func 实体::get属性方法 Student::getAge
+     * @param column 实体::get属性方法 Student::getAge
      * @param elseVal 为空时的替代值
      * @return SqlFunc
      */
-    public abstract Child ifNull(SFunction<T, ?> func, Object elseVal);
+    public abstract Child ifNull(SFunction<T, ?> column, Object elseVal);
 
     /**
      * sql max函数
      * 例：x -> x.max(Student::getAge)
-     * @param func 实体::get属性方法 Student::getAge
+     * @param column 实体::get属性方法 Student::getAge
      * @return SqlFunc
      */
-    public abstract Child max(SFunction<T, ?> func);
-    public abstract Child max(boolean isNullToZero, SFunction<T, ?> func);
+    public abstract Child max(SFunction<T, ?> column);
+    public abstract Child max(boolean isNullToZero, SFunction<T, ?> column);
 
     /**
      * sql min函数
      * 例：x -> x.min(Student::getAge)
-     * @param func 实体::get属性方法 Student::getAge
+     * @param column 实体::get属性方法 Student::getAge
      * @return SqlFunc
      */
-    public abstract Child min(SFunction<T, ?> func);
-    public abstract Child min(boolean isNullToZero, SFunction<T, ?> func);
+    public abstract Child min(SFunction<T, ?> column);
+    public abstract Child min(boolean isNullToZero, SFunction<T, ?> column);
+
+
+    /**
+     * mysql if函数
+     */
+//    public abstract Child ifCond()
+
 
     /**
      * SFunction接口实体字段解析对象
