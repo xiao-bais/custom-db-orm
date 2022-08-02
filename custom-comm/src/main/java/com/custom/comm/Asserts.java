@@ -47,4 +47,8 @@ public final class Asserts {
         }
     }
 
+    public static void isIllegal(boolean bool, String message) {
+        isTure(bool, message);
+    }
+
 }

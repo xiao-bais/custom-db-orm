@@ -11,7 +11,7 @@ import java.util.Collection;
  * @Desc：lambda表达式的条件构造对象
  **/
 public class LambdaUpdateWrapper<T> extends ConditionAdapter<T, LambdaUpdateWrapper<T>>
-        implements Wrapper<SFunction<T, ?>, LambdaUpdateWrapper<T>>, UpdateSet<SFunction<T, ?>, LambdaUpdateWrapper<T>> {
+        implements Wrapper<SFunction<T, ?>, LambdaUpdateWrapper<T>> {
 
 
     @Override
@@ -132,15 +132,5 @@ public class LambdaUpdateWrapper<T> extends ConditionAdapter<T, LambdaUpdateWrap
     @Override
     public T getThisEntity() {
         throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public LambdaUpdateWrapper<T> set(boolean condition, SFunction<T, ?> column, Object val) {
-        return null;
-    }
-
-    @Override
-    public LambdaUpdateWrapper<T> setSql(boolean condition, String setSql, Object... params) {
-        return null;
     }
 }

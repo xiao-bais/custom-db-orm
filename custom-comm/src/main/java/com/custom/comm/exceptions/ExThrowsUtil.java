@@ -28,4 +28,11 @@ public class ExThrowsUtil {
         throw new NullPointerException(msg);
     }
 
+    /**
+     * 抛出不合法参数异常
+     */
+    public static void toIllegal(String msg) {
+        throw new IllegalArgumentException(msg);
+    }
+
 }
