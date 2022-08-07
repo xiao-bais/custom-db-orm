@@ -32,32 +32,16 @@ public interface UpdateSet<Children, Setter, Wrapper> {
     }
 
     /**
-     * sql set设置器（无需条件，修改全部，慎用）
-     */
-    Children setNoNeedCondition(boolean condition, Setter setter);
-
-    default Children setNoNeedCondition(Setter setter) {
-        return setNoNeedCondition(true, setter);
-    }
-
-    /**
-     * sql set设置器（消费型，无需条件，修改全部，慎用）
-     */
-    Children setNoNeedCondition(boolean condition, Consumer<Setter> consumer);
-
-    default Children setNoNeedCondition(Consumer<Setter> consumer) {
-        return setNoNeedCondition(true, consumer);
-    }
-
-    /**
      * sql 条件构造器
      */
     Children where(boolean condition, Wrapper wrapper);
+
     default  Children where(Wrapper wrapper) {
         return where(true, wrapper);
     }
 
     Children where(boolean condition, Consumer<Wrapper> consumer);
+
     default  Children where(Consumer<Wrapper> consumer) {
         return where(true, consumer);
     }

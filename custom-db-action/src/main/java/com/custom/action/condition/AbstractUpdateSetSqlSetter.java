@@ -28,9 +28,9 @@ public abstract class AbstractUpdateSetSqlSetter<T, Children> extends UpdateSetW
         if (condition) {
             Asserts.notNull(column, "column cannot be null");
             this.addSqlSetter(DbUtil.formatSetSql(column));
-            Asserts.isIllegal(!CustomUtil.isBasicType(val),
+            Asserts.illegal(!CustomUtil.isBasicType(val),
                     String.format("Parameter types of type '%s' are not supported", val.getClass()));
-            this.getSetParams().add(val);
+            this.addParams(val);
         }
         return childrenClass;
     }
@@ -53,9 +53,9 @@ public abstract class AbstractUpdateSetSqlSetter<T, Children> extends UpdateSetW
             this.addSqlSetter(setSql);
             if (JudgeUtil.isNotEmpty(params)) {
                 for (Object param : params) {
-                    Asserts.isIllegal(!CustomUtil.isBasicType(param),
+                    Asserts.illegal(!CustomUtil.isBasicType(param),
                             String.format("Parameter types of type '%s' are not supported", param.getClass()));
-                    this.getSetParams().add(param);
+                    this.addParams(param);
                 }
             }
         }
@@ -71,7 +71,7 @@ public abstract class AbstractUpdateSetSqlSetter<T, Children> extends UpdateSetW
             Children instance = getInstance();
             consumer.accept(instance);
             AbstractUpdateSetSqlSetter<T, Children> thisSqlSetter = (AbstractUpdateSetSqlSetter<T, Children>) instance;
-            this.getSetParams().addAll(thisSqlSetter.getSetParams());
+            this.addParams(thisSqlSetter.getSetParams());
             this.addSqlSetter(thisSqlSetter.getSqlSetter());
         }
         return childrenClass;

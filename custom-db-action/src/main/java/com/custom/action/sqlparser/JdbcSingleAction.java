@@ -32,7 +32,7 @@ public class JdbcSingleAction<T, P> implements JdbcActiveWrapper<T, P> {
 
     public JdbcSingleAction(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy, Class<T> entityClass) {
         this.entityClass = entityClass;
-        this.jdbcAction = new JdbcActionProxy<>(new JdbcAction(), dbDataSource, dbCustomStrategy).createProxy();
+        this.jdbcAction = new JdbcActionProxy(new JdbcAction(), dbDataSource, dbCustomStrategy).createProxy();
     }
 
     private TableSqlBuilder<T> updateSqlBuilder(List<T> tList) {
@@ -96,7 +96,7 @@ public class JdbcSingleAction<T, P> implements JdbcActiveWrapper<T, P> {
 
     @Override
     public int deleteByCondition(ConditionWrapper<T> wrapper) {
-        return jdbcAction.deleteByCondition(wrapper);
+        return jdbcAction.deleteSelective(wrapper);
     }
 
     @Override
@@ -121,7 +121,7 @@ public class JdbcSingleAction<T, P> implements JdbcActiveWrapper<T, P> {
 
     @Override
     public int updateByCondition(T t, ConditionWrapper<T> wrapper) {
-        return jdbcAction.updateByCondition(t, wrapper);
+        return jdbcAction.updateSelective(t, wrapper);
     }
 
     @Override
@@ -134,7 +134,7 @@ public class JdbcSingleAction<T, P> implements JdbcActiveWrapper<T, P> {
     public P primaryKeyValue(T entity) {
         TableSqlBuilder<T> tableSqlBuilder = updateSqlBuilder(Collections.singletonList(entity));
         if (tableSqlBuilder.getKeyParserModel() == null) {
-            ExThrowsUtil.toCustom("未指定主键字段");
+            ExThrowsUtil.toCustom("No primary key field specified");
         }
         return (P) tableSqlBuilder.primaryKeyVal();
     }

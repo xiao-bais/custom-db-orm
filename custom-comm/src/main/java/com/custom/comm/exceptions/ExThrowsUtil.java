@@ -35,4 +35,11 @@ public class ExThrowsUtil {
         throw new IllegalArgumentException(msg);
     }
 
+    /**
+     * 抛出不支持操作异常
+     */
+    public static void toUnSupport(String msg) {
+        throw new UnsupportedOperationException(msg);
+    }
+
 }

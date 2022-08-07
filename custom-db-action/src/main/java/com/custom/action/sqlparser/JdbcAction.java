@@ -7,6 +7,7 @@ import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.condition.SFunction;
 import com.custom.action.util.DbUtil;
+import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.check.CheckExecute;
@@ -337,7 +338,7 @@ public class JdbcAction extends AbstractSqlExecutor {
 
     @Override
     @CheckExecute(target = ExecuteMethod.DELETE)
-    public <T> int deleteByCondition(ConditionWrapper<T> wrapper) {
+    public <T> int deleteSelective(ConditionWrapper<T> wrapper) {
         return deleteByCondition(wrapper.getEntityClass(), wrapper.getFinalConditional(), wrapper.getParamValues().toArray());
     }
 
@@ -420,7 +421,7 @@ public class JdbcAction extends AbstractSqlExecutor {
 
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
-    public <T> int updateByCondition(T t, ConditionWrapper<T> wrapper) {
+    public <T> int updateSelective(T t, ConditionWrapper<T> wrapper) {
         HandleUpdateSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(t, ExecuteMethod.UPDATE);
         sqlBuilder.setCondition(wrapper.getFinalConditional());
         sqlBuilder.setConditionVals(wrapper.getParamValues());
@@ -467,7 +468,7 @@ public class JdbcAction extends AbstractSqlExecutor {
             String sqlSetter = updateSetWrapper.getSqlSetter().toString();
             String updateSql = DbUtil.updateSql(table, alias, sqlSetter, conditionExecutor.execute());
             List<Object> sqlParams = new ArrayList<>(updateSetWrapper.getSetParams());
-            sqlParams.addAll(conditionWrapper.getParamValues());
+            CustomUtil.addParams(sqlParams, conditionWrapper.getParamValues());
             return executeSql(updateSql, sqlParams.toArray());
         }catch (Exception e) {
             throwsException(e);

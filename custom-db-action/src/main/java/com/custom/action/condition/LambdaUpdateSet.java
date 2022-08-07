@@ -35,24 +35,6 @@ public class LambdaUpdateSet<T> extends AbstractUpdateSet<T>
     }
 
     @Override
-    public LambdaUpdateSet<T> setNoNeedCondition(boolean condition, UpdateSqlSet<SFunction<T, ?>, LambdaUpdateSetSqlSetter<T>> updateSqlSet) {
-        if (condition) {
-            setExistCondition(false);
-            return this.setter(updateSqlSet);
-        }
-        return this;
-    }
-
-    @Override
-    public LambdaUpdateSet<T> setNoNeedCondition(boolean condition, Consumer<UpdateSqlSet<SFunction<T, ?>, LambdaUpdateSetSqlSetter<T>>> consumer) {
-        if (condition) {
-            setExistCondition(false);
-            return this.setter(consumer);
-        }
-        return this;
-    }
-
-    @Override
     public LambdaUpdateSet<T> where(boolean condition, LambdaConditionWrapper<T> wrapper) {
         if (condition) {
             setConditionWrapper(wrapper);

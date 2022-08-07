@@ -35,24 +35,6 @@ public class DefaultUpdateSet<T> extends AbstractUpdateSet<T>
     }
 
     @Override
-    public DefaultUpdateSet<T> setNoNeedCondition(boolean condition, UpdateSqlSet<String, DefaultUpdateSetSqlSetter<T>> updateSqlSet) {
-        if (condition) {
-            setExistCondition(false);
-            return this.setter(updateSqlSet);
-        }
-        return this;
-    }
-
-    @Override
-    public DefaultUpdateSet<T> setNoNeedCondition(boolean condition, Consumer<UpdateSqlSet<String, DefaultUpdateSetSqlSetter<T>>> consumer) {
-        if (condition) {
-            setExistCondition(false);
-            return this.setter(consumer);
-        }
-        return this;
-    }
-
-    @Override
     public DefaultUpdateSet<T> where(boolean condition, DefaultConditionWrapper<T> wrapper) {
         if (condition) {
             setConditionWrapper(wrapper);

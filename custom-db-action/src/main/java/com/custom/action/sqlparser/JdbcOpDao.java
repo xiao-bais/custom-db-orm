@@ -184,9 +184,9 @@ public class JdbcOpDao {
     /**
      * 根据条件删除记录
      */
-    public <T> int deleteByCondition(ConditionWrapper<T> wrapper) {
+    public <T> int deleteSelective(ConditionWrapper<T> wrapper) {
         JudgeUtil.checkObjNotNull(wrapper);
-        return jdbcAction.deleteByCondition(wrapper);
+        return jdbcAction.deleteSelective(wrapper);
     }
 
     /* ----------------------------------------------------------------insert---------------------------------------------------------------- */
@@ -231,19 +231,19 @@ public class JdbcOpDao {
     /**
      * 根据条件修改一条记录
      */
-    public <T> int updateByCondition(T entity, ConditionWrapper<T> wrapper) {
-        return jdbcAction.updateByCondition(entity, wrapper);
+    public <T> int updateSelective(T entity, ConditionWrapper<T> wrapper) {
+        return jdbcAction.updateSelective(entity, wrapper);
     }
 
     /**
      * 根据条件修改一条记录
      */
-    public <T> int updateByCondition(T entity, String condition, Object... params) {
+    public <T> int updateSelective(T entity, String condition, Object... params) {
         return jdbcAction.updateByCondition(entity, condition, params);
     }
 
     /**
-     * 根据sql set设置器修改n条记录
+     * 根据sql set设置器修改n条记录，
      * <p></p>
      *  示例1：Conditions.update(ChildStudent.class)
      *  .setter(x -> x.set("a.phone", "158xxxxxxxx"))
@@ -253,6 +253,8 @@ public class JdbcOpDao {
      * .setter(x -> x.set(ChildStudent::getPhone, "158xxxxxxxx"))
      * .where(x -> x.eq(ChildStudent::getName, "张三"))
      * <p></p>
+     * 注意：在同一条链式调用中，setter方法以及where方法若存在多次调用，则以最后一个为准.
+     * 因为储存的对象只存在一个，不会累加上一次的结果，只会被覆盖
      */
     public <T> int updateSelective(AbstractUpdateSet<T> updateSet) {
         return jdbcAction.updateSelective(updateSet);
@@ -291,6 +293,6 @@ public class JdbcOpDao {
     private final AbstractSqlExecutor jdbcAction;
 
     public JdbcOpDao(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
-        jdbcAction = new JdbcActionProxy<>(new JdbcAction(), dbDataSource, dbCustomStrategy).createProxy();
+        jdbcAction = new JdbcActionProxy(new JdbcAction(), dbDataSource, dbCustomStrategy).createProxy();
     }
 }

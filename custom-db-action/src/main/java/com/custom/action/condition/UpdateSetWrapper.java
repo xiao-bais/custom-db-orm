@@ -1,6 +1,7 @@
 package com.custom.action.condition;
 
 import com.custom.comm.Asserts;
+import com.custom.comm.CustomUtil;
 import com.custom.comm.SymbolConstant;
 
 import java.util.ArrayList;
@@ -30,24 +31,9 @@ public abstract class UpdateSetWrapper<T> {
      * SFunction接口实体字段解析对象
      */
     private final ColumnParseHandler<T> columnParseHandler;
-    /**
-     * 本次修改是否存在条件
-     */
-    private boolean existCondition = true;
 
     public List<Object> getSetParams() {
         return setParams;
-    }
-
-    public boolean isExistCondition() {
-        return existCondition;
-    }
-
-    public void existCondition() {
-        this.existCondition = true;
-    }
-    public void notExistCondition() {
-        this.existCondition = false;
     }
 
     public UpdateSetWrapper(Class<T> entityClass) {
@@ -73,9 +59,9 @@ public abstract class UpdateSetWrapper<T> {
         this.sqlSetter.add(sqlSetter);
     }
 
-    protected void addParams(List<Object> params) {
-        Asserts.notNull(params, "params cannot be empty");
-        this.setParams.addAll(params);
+    protected void addParams(Object val) {
+        Asserts.notNull(val, "params cannot be empty");
+        CustomUtil.addParams(this.setParams, val);
     }
 
     public StringJoiner getSqlSetter() {

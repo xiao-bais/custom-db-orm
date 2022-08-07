@@ -2,12 +2,16 @@ package com.custom.action.proxy;
 
 import com.custom.action.condition.AbstractUpdateSet;
 import com.custom.action.condition.UpdateSetWrapper;
+import com.custom.action.dbaction.AbstractSqlExecutor;
+import com.custom.action.sqlparser.JdbcAction;
 import com.custom.action.util.DbUtil;
 import com.custom.action.condition.ConditionWrapper;
+import com.custom.comm.Asserts;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.annotations.DbTable;
 import com.custom.comm.annotations.check.CheckExecute;
 import com.custom.comm.enums.ExecuteMethod;
+import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
@@ -25,26 +29,26 @@ import java.util.Objects;
  * @Desc：在执行之前做一些必要的检查，以减少异常的出现
  **/
 @SuppressWarnings("unchecked")
-public class JdbcActionProxy<T> implements MethodInterceptor {
+public class JdbcActionProxy implements MethodInterceptor {
 
-    private final T obj;
+    private final AbstractSqlExecutor sqlExecutor;
 
     private final DbDataSource dbDataSource;
 
     private final DbCustomStrategy dbCustomStrategy;
 
-    public JdbcActionProxy(T obj, DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
-        this.obj = obj;
+    public JdbcActionProxy(AbstractSqlExecutor sqlExecutor, DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
+        this.sqlExecutor = sqlExecutor;
         this.dbDataSource = dbDataSource;
         this.dbCustomStrategy = dbCustomStrategy;
     }
 
 
-    public T createProxy() {
+    public JdbcAction createProxy() {
         Enhancer enhancer = new Enhancer();
-        enhancer.setSuperclass(obj.getClass());
+        enhancer.setSuperclass(sqlExecutor.getClass());
         enhancer.setCallback(this);
-        return (T) enhancer.create(new Class[]{DbDataSource.class, DbCustomStrategy.class}, new Object[]{dbDataSource, dbCustomStrategy});
+        return (JdbcAction) enhancer.create(new Class[]{DbDataSource.class, DbCustomStrategy.class}, new Object[]{dbDataSource, dbCustomStrategy});
     }
 
 
@@ -128,14 +132,22 @@ public class JdbcActionProxy<T> implements MethodInterceptor {
             ExThrowsUtil.toNull("Update entity cannot be null");
         }
         if (methodName.equals("updateSelective")) {
-            AbstractUpdateSet<T> updateSet = (AbstractUpdateSet<T>) objects[0];
-            UpdateSetWrapper<T> updateSetWrapper = updateSet.getUpdateSetWrapper();
-            ConditionWrapper<T> conditionWrapper = updateSet.getConditionWrapper();
-            if (JudgeUtil.isEmpty(updateSetWrapper.getSqlSetter())) {
-                ExThrowsUtil.toCustom("Set value cannot be empty");
-            }
-            if (JudgeUtil.isEmpty(conditionWrapper.getFinalConditional()) && updateSetWrapper.isExistCondition()) {
-                ExThrowsUtil.toCustom("Update condition cannot be empty");
+            try {
+                AbstractUpdateSet<?> updateSet = (AbstractUpdateSet<?>) objects[0];
+                UpdateSetWrapper<?> updateSetWrapper = updateSet.getUpdateSetWrapper();
+                ConditionWrapper<?> conditionWrapper = updateSet.getConditionWrapper();
+                if (JudgeUtil.isEmpty(updateSetWrapper.getSqlSetter())) {
+                    ExThrowsUtil.toCustom("Set value cannot be empty");
+                }
+                if (JudgeUtil.isEmpty(conditionWrapper.getFinalConditional())) {
+                    ExThrowsUtil.toCustom("Update condition cannot be empty");
+                }
+            }catch (ClassCastException e) {
+                Object entity = objects[0];
+                Asserts.notNull(entity, "update entity cannot ba empty");
+                ConditionWrapper<?> conditionWrapper = (ConditionWrapper<?>) objects[1];
+                Asserts.notNull(conditionWrapper, "Update condition cannot be empty");
+                Asserts.notEmpty(conditionWrapper.getFinalConditional(), "Update condition cannot be empty");
             }
             return;
         }
@@ -145,7 +157,7 @@ public class JdbcActionProxy<T> implements MethodInterceptor {
         if(!DbUtil.isKeyTag(objects[0].getClass()) && methodName.equals("updateByKey")) {
             ExThrowsUtil.toCustom("@DbKey was not found in class " + objects[0].getClass());
         }
-        if(method.getName().equals("updateByCondition") && (JudgeUtil.isEmpty(objects[1])
+        if(methodName.equals("updateByCondition") && (JudgeUtil.isEmpty(objects[1])
                 || JudgeUtil.isEmpty(((ConditionWrapper<?>) objects[1]).getFinalConditional()))) {
             ExThrowsUtil.toCustom("update condition cannot be empty");
         }
@@ -157,7 +169,7 @@ public class JdbcActionProxy<T> implements MethodInterceptor {
     private void select(Object[] objects, Method method) {
 
         if (objects[0] instanceof ConditionWrapper) {
-            if (Objects.isNull(((ConditionWrapper<T>) objects[0]).getEntityClass())) {
+            if (Objects.isNull(((ConditionWrapper<?>) objects[0]).getEntityClass())) {
                 ExThrowsUtil.toCustom("实体Class对象不能为空");
             }
             return;
@@ -176,7 +188,7 @@ public class JdbcActionProxy<T> implements MethodInterceptor {
                 case "selectBySql":
                     ExThrowsUtil.toCustom("The Sql to be Not Empty");
 
-                case "selectOneByCondition":
+                case "selectOne":
                     ExThrowsUtil.toCustom("condition cannot be empty");
             }
         }

@@ -24,20 +24,20 @@ public final class Asserts {
         isTure(obj == null, "The argument must be null");
     }
 
-    public static void isEmpty(Object obj, String message) {
-        isTure(JudgeUtil.isEmpty(obj), message);
-    }
-
-    public static void isEmpty(Object obj) {
-        isTure(JudgeUtil.isEmpty(obj), "The argument must be Empty");
-    }
-
-    public static void isNotEmpty(Object obj, String message) {
+    public static void empty(Object obj, String message) {
         isTure(JudgeUtil.isNotEmpty(obj), message);
     }
 
-    public static void isNotEmpty(Object obj) {
-        isTure(JudgeUtil.isNotEmpty(obj), "The argument must not be Empty");
+    public static void empty(Object obj) {
+        isTure(JudgeUtil.isNotEmpty(obj), "The argument must be Empty");
+    }
+
+    public static void notEmpty(Object obj, String message) {
+        isTure(JudgeUtil.isEmpty(obj), message);
+    }
+
+    public static void notEmpty(Object obj) {
+        isTure(JudgeUtil.isEmpty(obj), "The argument must not be Empty");
     }
 
 
@@ -47,7 +47,7 @@ public final class Asserts {
         }
     }
 
-    public static void isIllegal(boolean bool, String message) {
+    public static void illegal(boolean bool, String message) {
         isTure(bool, message);
     }
 

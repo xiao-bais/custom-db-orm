@@ -55,7 +55,7 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
     public abstract <T> int deleteByKey(Class<T> t, Object key);
     public abstract <T> int deleteBatchKeys(Class<T> t, Collection<?> keys);
     public abstract <T> int deleteByCondition(Class<T> t, String condition, Object... params);
-    public abstract <T> int deleteByCondition(ConditionWrapper<T> wrapper);
+    public abstract <T> int deleteSelective(ConditionWrapper<T> wrapper);
 
     /*--------------------------------------- insert ---------------------------------------*/
     public abstract <T> int insert(T t);
@@ -64,7 +64,7 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
     /*--------------------------------------- update ---------------------------------------*/
     public abstract <T> int updateByKey(T t);
     public abstract <T> int updateColumnByKey(T t, Consumer<List<SFunction<T, ?>>> updateColumns);
-    public abstract <T> int updateByCondition(T t, ConditionWrapper<T> wrapper);
+    public abstract <T> int updateSelective(T t, ConditionWrapper<T> wrapper);
     public abstract <T> int updateByCondition(T t, String condition, Object... params);
 
     /**
@@ -89,8 +89,9 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
      * 初始化逻辑删除的sql
      */
     public void initLogic() {
-        if(isLogicDeleteOpen(dbCustomStrategy)) {
-            if(JudgeUtil.isEmpty(dbCustomStrategy.getNotDeleteLogicValue()) || JudgeUtil.isEmpty(dbCustomStrategy.getDeleteLogicValue())) {
+        if (isLogicDeleteOpen(dbCustomStrategy)) {
+            if (JudgeUtil.isEmpty(dbCustomStrategy.getNotDeleteLogicValue())
+                    || JudgeUtil.isEmpty(dbCustomStrategy.getDeleteLogicValue())) {
                 ExThrowsUtil.toCustom("The corresponding value of the logical deletion field is not configured");
             }
             this.logicColumn = dbCustomStrategy.getDbFieldDeleteLogic();
@@ -128,7 +129,7 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
      */
     protected <T, R extends AbstractSqlBuilder<T>> R buildSqlOperationTemplate(T entity, ExecuteMethod method) {
         if(Objects.isNull(entity)) {
-            ExThrowsUtil.toNull("实体对象不能为空");
+            ExThrowsUtil.toNull("Entity object cannot be empty");
         }
         return buildSqlOperationTemplate(Collections.singletonList(entity), method);
     }

@@ -4,6 +4,7 @@ import com.custom.action.condition.*;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.JdbcOpDao;
 import com.home.customtest.entity.ChildStudent;
+import com.home.customtest.entity.Student;
 
 /**
  * @Author Xiao-Bai
@@ -34,12 +35,18 @@ public class DoMain {
 //                .groupBy(ChildStudent::getSex)
 //        );
 
-        jdbcOpDao.updateSelective(Conditions.lambdaUpdate(ChildStudent.class)
-                .setter(x -> x.set(ChildStudent::getPhone, "158xxxxxxxx"))
-                .where(x -> x.eq(ChildStudent::getName, "张三")
-                        .or(p -> p.ge(ChildStudent::getAge, 22).between(ChildStudent::getMoney, 4000, 5000))
-                )
-        );
+//        int updateSelective = jdbcDao.updateSelective(Conditions.lambdaUpdate(ChildStudent.class)
+//                .setter(x -> x.set(ChildStudent::getPhone, "158xxxxxxxx"))
+//                .where(x -> x.eq(ChildStudent::getName, "张三")
+//                        .or(p -> p.ge(Student::getAge, 22).between(ChildStudent::getMoney, 4000, 5000))
+//                )
+//
+//        );
+
+        Student student = jdbcDao.selectByKey(Student.class, 13);
+        student.setProvince("17674635200");
+
+        jdbcDao.updateSelective(student, Conditions.lambdaQuery(Student.class));
 
 
 //        System.out.println("mapList = " + childStudents);

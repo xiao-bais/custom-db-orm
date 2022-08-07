@@ -371,6 +371,22 @@ public class CustomUtil {
     }
 
 
+    public static boolean addParams(List<Object> thisParams, Object addVal) {
+        Asserts.notNull(addVal);
+        if (isBasicType(addVal)) {
+            return thisParams.add(addVal);
+        }
+        if (addVal instanceof List) {
+            return thisParams.addAll((List<Object>) addVal);
+        }
+        if (addVal instanceof Set) {
+            return thisParams.addAll((Set<Object>) addVal);
+        }
+        ExThrowsUtil.toUnSupport(String.format("Adding parameters of '%s' type is not supported", addVal.getClass()));
+        return false;
+    }
+
+
 
 
 }

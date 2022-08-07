@@ -1,5 +1,6 @@
 package com.custom.action.sqlparser;
 
+import com.custom.action.condition.AbstractUpdateSet;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.condition.SFunction;
 import com.custom.comm.page.DbPageRows;
@@ -137,7 +138,7 @@ public interface JdbcDao {
     /**
      * 根据条件删除记录
      */
-    <T> int deleteByCondition(ConditionWrapper<T> wrapper);
+    <T> int deleteSelective(ConditionWrapper<T> wrapper);
 
     /* ----------------------------------------------------------------insert---------------------------------------------------------------- */
 
@@ -166,12 +167,28 @@ public interface JdbcDao {
     /**
      * 根据条件修改一条记录
      */
-    <T> int updateByCondition(T entity, ConditionWrapper<T> wrapper);
+    <T> int updateSelective(T entity, ConditionWrapper<T> wrapper);
 
     /**
      * 根据条件修改一条记录
      */
     <T> int updateByCondition(T entity, String condition, Object... params);
+
+    /**
+     * 根据sql set设置器修改n条记录，
+     * <p></p>
+     *  示例1：Conditions.update(ChildStudent.class)
+     *  .setter(x -> x.set("a.phone", "158xxxxxxxx"))
+     *  .where(x -> x.eq("a.name", "张三"))
+     * <p></p>
+     * 示例2：Conditions.lambdaUpdate(ChildStudent.class)
+     * .setter(x -> x.set(ChildStudent::getPhone, "158xxxxxxxx"))
+     * .where(x -> x.eq(ChildStudent::getName, "张三"))
+     * <p></p>
+     * 注意：在同一条链式调用中，setter方法以及where方法若存在多次调用，则以最后一个为准.
+     * 因为储存的对象只存在一个，不会累加上一次的结果，只会被覆盖
+     */
+    <T> int updateSelective(AbstractUpdateSet<T> updateSet);
 
     /* ----------------------------------------------------------------common---------------------------------------------------------------- */
 

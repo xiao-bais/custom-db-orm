@@ -8,12 +8,17 @@ package com.custom.action.condition;
 public abstract class AbstractUpdateSet<T> {
 
     /**
-     *
+     * sql set 设置器
      */
     private UpdateSetWrapper<T> updateSetWrapper;
+    /**
+     * sql 条件构造器
+     */
     private ConditionWrapper<T> conditionWrapper;
+    /**
+     * 实体class对象
+     */
     private final Class<T> entityClass;
-    private boolean existCondition = true;
 
 
     public AbstractUpdateSet(Class<T> entityClass) {
@@ -24,7 +29,7 @@ public abstract class AbstractUpdateSet<T> {
         return updateSetWrapper;
     }
 
-    public void setUpdateSetWrapper(UpdateSetWrapper<T> updateSetWrapper) {
+    protected void setUpdateSetWrapper(UpdateSetWrapper<T> updateSetWrapper) {
         this.updateSetWrapper = updateSetWrapper;
     }
 
@@ -32,19 +37,11 @@ public abstract class AbstractUpdateSet<T> {
         return conditionWrapper;
     }
 
-    public void setConditionWrapper(ConditionWrapper<T> conditionWrapper) {
+    protected void setConditionWrapper(ConditionWrapper<T> conditionWrapper) {
         this.conditionWrapper = conditionWrapper;
     }
 
     public Class<T> thisEntityClass() {
         return entityClass;
-    }
-
-    public boolean isExistCondition() {
-        return existCondition;
-    }
-
-    public void setExistCondition(boolean existCondition) {
-        this.existCondition = existCondition;
     }
 }
