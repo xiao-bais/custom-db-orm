@@ -1,5 +1,6 @@
 package com.custom.action.dbaction;
 
+import com.custom.action.condition.AbstractUpdateSet;
 import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.action.sqlparser.HandleSelectSqlBuilder;
 import com.custom.action.sqlparser.TableSqlBuilder;
@@ -65,6 +66,11 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
     public abstract <T> int updateColumnByKey(T t, Consumer<List<SFunction<T, ?>>> updateColumns);
     public abstract <T> int updateByCondition(T t, ConditionWrapper<T> wrapper);
     public abstract <T> int updateByCondition(T t, String condition, Object... params);
+
+    /**
+     * updateSet sql set设置器
+     */
+    public abstract <T> int updateSelective(AbstractUpdateSet<T> updateSet);
 
     /*--------------------------------------- comm ---------------------------------------*/
     public abstract <T> int save(T t);

@@ -1,9 +1,12 @@
 package com.custom.action.sqlparser;
 
+import com.custom.action.condition.AbstractUpdateSet;
+import com.custom.action.condition.UpdateSetWrapper;
 import com.custom.action.dbaction.AbstractSqlExecutor;
 import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.condition.SFunction;
+import com.custom.action.util.DbUtil;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.check.CheckExecute;
@@ -442,6 +445,30 @@ public class JdbcAction extends AbstractSqlExecutor {
         String updateSql = sqlBuilder.buildSql();
         try {
             return executeSql(updateSql, sqlBuilder.getSqlParams());
+        }catch (Exception e) {
+            throwsException(e);
+            return 0;
+        }
+    }
+
+    @Override
+    @CheckExecute(target = ExecuteMethod.UPDATE)
+    public <T> int updateSelective(AbstractUpdateSet<T> updateSet) {
+        TableSqlBuilder<T> tableSqlBuilder = TableInfoCache.getTableModel(updateSet.thisEntityClass());
+        UpdateSetWrapper<T> updateSetWrapper = updateSet.getUpdateSetWrapper();
+        ConditionWrapper<T> conditionWrapper = updateSet.getConditionWrapper();
+        String table = tableSqlBuilder.getTable();
+        String alias = tableSqlBuilder.getAlias();
+        String finalConditional = conditionWrapper.getFinalConditional();
+
+        try {
+            FullSqlConditionExecutor conditionExecutor = handleLogicWithCondition(alias,
+                    finalConditional, getLogicDeleteQuerySql(), table);
+            String sqlSetter = updateSetWrapper.getSqlSetter().toString();
+            String updateSql = DbUtil.updateSql(table, alias, sqlSetter, conditionExecutor.execute());
+            List<Object> sqlParams = new ArrayList<>(updateSetWrapper.getSetParams());
+            sqlParams.addAll(conditionWrapper.getParamValues());
+            return executeSql(updateSql, sqlParams.toArray());
         }catch (Exception e) {
             throwsException(e);
             return 0;

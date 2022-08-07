@@ -8,7 +8,7 @@ import com.custom.comm.enums.SqlOrderBy;
  * @Date 2022/3/19 17:27
  * @Desc：排序函数式接口方法
  **/
-public class OrderByFunc<T> extends SqlFunc<T, OrderByFunc<T>>{
+public class OrderByFunc<T> extends AbstractSqlFunc<T, OrderByFunc<T>> {
 
     @Override
     public OrderByFunc<T> sum(SFunction<T, ?> column) {

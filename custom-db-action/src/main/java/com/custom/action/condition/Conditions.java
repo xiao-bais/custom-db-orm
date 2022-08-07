@@ -44,5 +44,25 @@ public class Conditions {
         equalConditionHandler.allEqCondition();
         return conditionWrapper;
     }
+
+    /**
+     * 给定一个默认的update sql set设置器 + 默认条件构造器
+     * @param entityClass
+     * @param <T>
+     * @return
+     */
+    public static <T> DefaultUpdateSet<T> update(Class<T> entityClass) {
+        return new DefaultUpdateSet<>(entityClass);
+    }
+
+    /**
+     * 给定一个lambda表达式的update sql set设置器 + lambda的条件构造器
+     * @param entityClass
+     * @param <T>
+     * @return
+     */
+    public static <T> LambdaUpdateSet<T> lambdaUpdate(Class<T> entityClass) {
+        return new LambdaUpdateSet<>(entityClass);
+    }
     
 }

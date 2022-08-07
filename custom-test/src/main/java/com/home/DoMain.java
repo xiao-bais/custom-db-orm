@@ -1,13 +1,9 @@
 package com.home;
 
+import com.custom.action.condition.*;
 import com.custom.action.sqlparser.JdbcDao;
-import com.custom.action.condition.Conditions;
-import com.custom.comm.CustomUtil;
+import com.custom.action.sqlparser.JdbcOpDao;
 import com.home.customtest.entity.ChildStudent;
-import com.home.customtest.entity.Student;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * @Author Xiao-Bai
@@ -19,7 +15,9 @@ public class DoMain {
 
     public static void main(String[] args) throws Exception {
 
-        JdbcDao jdbcDao = JdbcTestBuilder.builder().getJdbcDao();
+        JdbcTestBuilder jdbcTestBuilder = JdbcTestBuilder.builder();
+        JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
+        JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
 //        jdbcDao.selectList(Conditions.lambdaQuery(Student.class).eq(Student::getPassword, ""));
 
@@ -30,12 +28,21 @@ public class DoMain {
 
 //        ChildStudent student = jdbcDao.selectByKey(ChildStudent.class, 1);
 
-        List<ChildStudent> childStudents = jdbcDao.selectList(Conditions.lambdaQuery(ChildStudent.class)
-                .select(ChildStudent::getSex)
-                .select(x -> x.count(ChildStudent::getSex, ChildStudent::getCountAge))
-                .groupBy(ChildStudent::getSex)
+//        List<ChildStudent> childStudents = jdbcDao.selectList(Conditions.lambdaQuery(ChildStudent.class)
+//                .select(ChildStudent::getSex)
+//                .select(x -> x.count(ChildStudent::getSex, ChildStudent::getCountAge))
+//                .groupBy(ChildStudent::getSex)
+//        );
+
+        jdbcOpDao.updateSelective(Conditions.lambdaUpdate(ChildStudent.class)
+                .setter(x -> x.set(ChildStudent::getPhone, "158xxxxxxxx"))
+                .where(x -> x.eq(ChildStudent::getName, "张三")
+                        .or(p -> p.ge(ChildStudent::getAge, 22).between(ChildStudent::getMoney, 4000, 5000))
+                )
         );
-        System.out.println("mapList = " + childStudents);
+
+
+//        System.out.println("mapList = " + childStudents);
 
     }
 

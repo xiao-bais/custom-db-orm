@@ -1,31 +1,65 @@
 package com.custom.action.condition;
 
+import java.util.function.Consumer;
+
 /**
  * @Author Xiao-Bai
- * @Date 2022/8/2 22:36
- * @Desc
+ * @Date 2022/8/6 16:28
+ * @Desc sql set修改器
+ * Children - 子类实例类型
+ * Setter - sql set 设置器类型
+ * Wrapper - 条件构造器类型
  */
-public interface UpdateSet<Param, T, Children> {
+public interface UpdateSet<Children, Setter, Wrapper> {
 
+    
     /**
-     * update set
-     * @param condition 条件成立，则加入set
-     * @param column set的列
-     * @param val set的值
-     * @return Children
+     * sql set设置器
      */
-    Children set(boolean condition, Param column, Object val);
-    default Children set(Param column, Object val) {
-        return set(true, column, val);
+    Children setter(boolean condition, Setter setter);
+
+    default Children setter(Setter setter) {
+        return setter(true, setter);
     }
 
+    /**
+     * sql set设置器（消费型）
+     */
+    Children setter(boolean condition, Consumer<Setter> consumer);
 
+    default Children setter(Consumer<Setter> consumer) {
+        return setter(true, consumer);
+    }
 
+    /**
+     * sql set设置器（无需条件，修改全部，慎用）
+     */
+    Children setNoNeedCondition(boolean condition, Setter setter);
 
+    default Children setNoNeedCondition(Setter setter) {
+        return setNoNeedCondition(true, setter);
+    }
 
+    /**
+     * sql set设置器（消费型，无需条件，修改全部，慎用）
+     */
+    Children setNoNeedCondition(boolean condition, Consumer<Setter> consumer);
 
+    default Children setNoNeedCondition(Consumer<Setter> consumer) {
+        return setNoNeedCondition(true, consumer);
+    }
 
+    /**
+     * sql 条件构造器
+     */
+    Children where(boolean condition, Wrapper wrapper);
+    default  Children where(Wrapper wrapper) {
+        return where(true, wrapper);
+    }
 
-
+    Children where(boolean condition, Consumer<Wrapper> consumer);
+    default  Children where(Consumer<Wrapper> consumer) {
+        return where(true, consumer);
+    }
 
 }

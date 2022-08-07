@@ -12,7 +12,7 @@ import java.util.Arrays;
  * @Date 2022/3/15 19:55
  * @Desc：sql查询函数，方法中，column参数的字段必须要标注Db*注解，alias可不带
  **/
-public class SelectFunc<T> extends SqlFunc<T, SelectFunc<T>> {
+public class SelectFunc<T> extends AbstractSqlFunc<T, SelectFunc<T>> {
 
     public SelectFunc(Class<T> entityClass) {
         super.init(entityClass);

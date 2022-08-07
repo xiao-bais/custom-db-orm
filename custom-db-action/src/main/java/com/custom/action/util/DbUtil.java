@@ -182,7 +182,7 @@ public class DbUtil {
      * 格式化where后面的sql条件
      */
     public static String whereSqlCondition(String alias, String logicSql, String condition) {
-        return String.format("\nwhere %s.%s \n%s ", alias, logicSql, condition);
+        return String.format("\nwhere %s.%s \n %s ", alias, logicSql, condition);
     }
 
     public static String whereSqlCondition(String alias, String logicSql) {
@@ -191,5 +191,16 @@ public class DbUtil {
 
     public static String whereSqlCondition(String condition) {
         return String.format("\nwhere %s ", DbUtil.trimAppendSqlCondition(condition));
+    }
+
+    /**
+     * update sql
+     */
+    public static String updateSql(String table, String alias, String sqlSet, String condition) {
+        if (JudgeUtil.isBlank(condition)) {
+            return String.format("update %s %s \n set %s ", table, alias, sqlSet);
+        }
+        return String.format("update %s %s \n set %s %s",
+                table, alias, sqlSet, condition);
     }
 }

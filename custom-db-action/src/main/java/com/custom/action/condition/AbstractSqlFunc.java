@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  * @Desc：sql函数方法
  **/
 @SuppressWarnings("all")
-public abstract class SqlFunc<T, Child> {
+public abstract class AbstractSqlFunc<T, Children> {
 
     /**
      * sql sum函数
@@ -24,8 +24,8 @@ public abstract class SqlFunc<T, Child> {
      * @param column 需要求和的属性 Student::getAge
      * @return SqlFunc
      */
-    public abstract Child sum(SFunction<T, ?> column);
-    public abstract Child sum(boolean isNullToZero, SFunction<T, ?> column);
+    public abstract Children sum(SFunction<T, ?> column);
+    public abstract Children sum(boolean isNullToZero, SFunction<T, ?> column);
 
     /**
      * sql sum函数
@@ -33,8 +33,11 @@ public abstract class SqlFunc<T, Child> {
      * @param column 需要求平均的属性 Student::getAge
      * @return SqlFunc
      */
-    public abstract Child avg(SFunction<T, ?> column);
-    public abstract Child avg(boolean isNullToZero, SFunction<T, ?> column);
+
+
+
+    public abstract Children avg(SFunction<T, ?> column);
+    public abstract Children avg(boolean isNullToZero, SFunction<T, ?> column);
 
     /**
      * sql count函数
@@ -43,10 +46,10 @@ public abstract class SqlFunc<T, Child> {
      * @param distinct 是否去重？
      * @return SqlFunc
      */
-    public Child count(SFunction<T, ?> column) {
+    public Children count(SFunction<T, ?> column) {
         return count(column, false);
     }
-    public abstract Child count(SFunction<T, ?> column, boolean distinct);
+    public abstract Children count(SFunction<T, ?> column, boolean distinct);
 
     /**
      * sql ifnull函数
@@ -55,7 +58,7 @@ public abstract class SqlFunc<T, Child> {
      * @param elseVal 为空时的替代值
      * @return SqlFunc
      */
-    public abstract Child ifNull(SFunction<T, ?> column, Object elseVal);
+    public abstract Children ifNull(SFunction<T, ?> column, Object elseVal);
 
     /**
      * sql max函数
@@ -63,8 +66,8 @@ public abstract class SqlFunc<T, Child> {
      * @param column 实体::get属性方法 Student::getAge
      * @return SqlFunc
      */
-    public abstract Child max(SFunction<T, ?> column);
-    public abstract Child max(boolean isNullToZero, SFunction<T, ?> column);
+    public abstract Children max(SFunction<T, ?> column);
+    public abstract Children max(boolean isNullToZero, SFunction<T, ?> column);
 
     /**
      * sql min函数
@@ -72,14 +75,8 @@ public abstract class SqlFunc<T, Child> {
      * @param column 实体::get属性方法 Student::getAge
      * @return SqlFunc
      */
-    public abstract Child min(SFunction<T, ?> column);
-    public abstract Child min(boolean isNullToZero, SFunction<T, ?> column);
-
-
-    /**
-     * mysql if函数
-     */
-//    public abstract Child ifCond()
+    public abstract Children min(SFunction<T, ?> column);
+    public abstract Children min(boolean isNullToZero, SFunction<T, ?> column);
 
 
     /**
@@ -153,9 +150,9 @@ public abstract class SqlFunc<T, Child> {
      * @param params 参数
      * @return SqlFunc
      */
-    protected Child doFunc(String format, Object... params) {
+    protected Children doFunc(String format, Object... params) {
         sqlFragments.add(String.format(format, params));
-        return childClass;
+        return childrenClass;
     }
 
     public List<String> getSqlFragments() {
@@ -182,5 +179,5 @@ public abstract class SqlFunc<T, Child> {
         return columnMapper;
     }
 
-    private final Child childClass = (Child) this;
+    private final Children childrenClass = (Children) this;
 }

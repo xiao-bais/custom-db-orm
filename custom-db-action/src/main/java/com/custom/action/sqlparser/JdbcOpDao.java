@@ -1,5 +1,6 @@
 package com.custom.action.sqlparser;
 
+import com.custom.action.condition.AbstractUpdateSet;
 import com.custom.action.dbaction.AbstractSqlExecutor;
 import com.custom.action.proxy.JdbcActionProxy;
 import com.custom.action.condition.ConditionWrapper;
@@ -239,6 +240,22 @@ public class JdbcOpDao {
      */
     public <T> int updateByCondition(T entity, String condition, Object... params) {
         return jdbcAction.updateByCondition(entity, condition, params);
+    }
+
+    /**
+     * 根据sql set设置器修改n条记录
+     * <p></p>
+     *  示例1：Conditions.update(ChildStudent.class)
+     *  .setter(x -> x.set("a.phone", "158xxxxxxxx"))
+     *  .where(x -> x.eq("a.name", "张三"))
+     * <p></p>
+     * 示例2：Conditions.lambdaUpdate(ChildStudent.class)
+     * .setter(x -> x.set(ChildStudent::getPhone, "158xxxxxxxx"))
+     * .where(x -> x.eq(ChildStudent::getName, "张三"))
+     * <p></p>
+     */
+    public <T> int updateSelective(AbstractUpdateSet<T> updateSet) {
+        return jdbcAction.updateSelective(updateSet);
     }
 
     /* ----------------------------------------------------------------common---------------------------------------------------------------- */

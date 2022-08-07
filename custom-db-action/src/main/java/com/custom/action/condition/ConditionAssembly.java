@@ -350,12 +350,6 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
         return childrenClass;
     }
 
-    /**
-     * 全等处理
-     */
-
-
-
 
     protected final Children childrenClass = (Children) this;
     protected static String appendSybmol = SymbolConstant.AND;

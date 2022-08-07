@@ -1,5 +1,7 @@
 package com.custom.action.proxy;
 
+import com.custom.action.condition.AbstractUpdateSet;
+import com.custom.action.condition.UpdateSetWrapper;
 import com.custom.action.util.DbUtil;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.comm.JudgeUtil;
@@ -118,13 +120,29 @@ public class JdbcActionProxy<T> implements MethodInterceptor {
     * 修改的时候做参数的预检查
     */
     private void update(Object[] objects, Method method) {
+        String methodName = method.getName();
         if(Objects.isNull(objects[0])) {
-            ExThrowsUtil.toNull("update entity cannot be null");
+            if (methodName.equals("updateSelective")) {
+                ExThrowsUtil.toNull("Update setter cannot be empty");
+            }
+            ExThrowsUtil.toNull("Update entity cannot be null");
+        }
+        if (methodName.equals("updateSelective")) {
+            AbstractUpdateSet<T> updateSet = (AbstractUpdateSet<T>) objects[0];
+            UpdateSetWrapper<T> updateSetWrapper = updateSet.getUpdateSetWrapper();
+            ConditionWrapper<T> conditionWrapper = updateSet.getConditionWrapper();
+            if (JudgeUtil.isEmpty(updateSetWrapper.getSqlSetter())) {
+                ExThrowsUtil.toCustom("Set value cannot be empty");
+            }
+            if (JudgeUtil.isEmpty(conditionWrapper.getFinalConditional()) && updateSetWrapper.isExistCondition()) {
+                ExThrowsUtil.toCustom("Update condition cannot be empty");
+            }
+            return;
         }
         if(!objects[0].getClass().isAnnotationPresent(DbTable.class)) {
             ExThrowsUtil.toCustom("@DbTable not found in class " + objects[0].getClass());
         }
-        if(!DbUtil.isKeyTag(objects[0].getClass()) && method.getName().equals("updateByKey")) {
+        if(!DbUtil.isKeyTag(objects[0].getClass()) && methodName.equals("updateByKey")) {
             ExThrowsUtil.toCustom("@DbKey was not found in class " + objects[0].getClass());
         }
         if(method.getName().equals("updateByCondition") && (JudgeUtil.isEmpty(objects[1])
