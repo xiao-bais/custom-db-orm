@@ -39,7 +39,7 @@ public interface JdbcActiveWrapper<T, P> {
     /*------------------------------------ update ---------------------------------------*/
     int updateByKey(T t);
     int updateByKey(T t, Consumer<List<SFunction<T, ?>>> updateColumns);
-    int updateByCondition(T t, ConditionWrapper<T> wrapper);
+    int updateSelective(T t, ConditionWrapper<T> wrapper);
 
     /*------------------------------------ comm ---------------------------------------*/
     int save(T t);

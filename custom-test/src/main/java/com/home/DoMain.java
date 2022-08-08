@@ -6,6 +6,7 @@ import com.custom.action.sqlparser.JdbcOpDao;
 import com.home.customtest.entity.ChildStudent;
 import com.home.customtest.entity.Student;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -21,11 +22,12 @@ public class DoMain {
         JdbcTestBuilder jdbcTestBuilder = JdbcTestBuilder.builder();
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-        List<Student> studentList = jdbcDao.selectList(Student.class, "and a.id = 13");
 
-//        Student student = jdbcDao.selectOne(Student.class, "and a.sex = ? and a.id = 14", false);
-//        student.setName("张三逢");
+
+        Student student = jdbcDao.selectOne(Student.class, "and a.sex = ? and a.id = 14", false);
+        student.setName("张三逢");
 //        jdbcDao.updateSelective(student);
 
 

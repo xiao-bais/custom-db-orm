@@ -120,7 +120,7 @@ public class JdbcSingleAction<T, P> implements JdbcActiveWrapper<T, P> {
     }
 
     @Override
-    public int updateByCondition(T t, ConditionWrapper<T> wrapper) {
+    public int updateSelective(T t, ConditionWrapper<T> wrapper) {
         return jdbcAction.updateSelective(t, wrapper);
     }
 

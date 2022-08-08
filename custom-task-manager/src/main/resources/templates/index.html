@@ -18,7 +18,7 @@
 <body>
     <header>
       <p style="text-align: center; background-color: #9d9d9d">爱普及</p>
-        <ul class="nav nav-tabs" style="width:70%;margin: auto">
+        <ul class="nav nav-tabs" id="my-naving" style="width:70%;margin: auto">
             <li role="presentation" class="active"><a href="#">首要任务</a></li>
             <li role="presentation"><a href="#">首要任务-</a></li>
             <li role="presentation"><a href="#">Messages</a></li>
@@ -30,10 +30,28 @@
     <div class="myMain">
         <p th:text = "${name}"></p>
         <p th:text = "${age}"></p>
+    </div>
 
+    <div class="myMain">
+        <p> this Two Page</p>
     </div>
 
 </body>
-<script th:src="@{/bootstrap-3.4.1/css/bootstrap.css}"></script>
+<script th:src="@{/normal/js/jquery-3.3.1.min.js}"></script>
+<script th:src="@{/bootstrap-3.4.1/js/bootstrap.js}"></script>
+<script>
+
+    $(document).ready(function () {
+
+        $("#my-naving").children.on('click', function(){
+
+
+        })
+
+
+    })
+
+
+</script>
 
 </html>

@@ -33,9 +33,11 @@ public class Student extends ActiveModel<Student, Integer> implements Serializab
 
     private String name;
 
-    private static String studentInfo;
-
     private Boolean sex;
+
+    private String phone;
+
+    private static String studentInfo;
 
     @DbField("nick_code")
     private String nickName;
