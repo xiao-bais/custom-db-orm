@@ -51,6 +51,28 @@ public class JdbcDaoProxy implements InvocationHandler, Serializable {
             String methodName = method.getName();
             Method typeCache = CUSTOMIZE_METHOD_CACHES.stream()
                     .filter(op -> op.getName().equals(methodName))
+                    .filter(op -> {
+                        Class<?>[] parameterTypes = op.getParameterTypes();
+                        if (args.length != parameterTypes.length) {
+                            return false;
+                        }
+                        // 判断两者的参数参数一一对应
+                        int targetIndex = 0;
+                        int len = parameterTypes.length;
+                        for (int i = 0; i < len; i++) {
+                            Class<?> targetClass = parameterTypes[i];
+                            Class<?> thisClass;
+                            if (args[i] == null) {
+                                thisClass = targetClass;
+                            }else {
+                                thisClass = args[i].getClass();
+                            }
+                            if (targetClass.isAssignableFrom(thisClass)) {
+                                targetIndex++;
+                            }
+                        }
+                        return targetIndex == len;
+                    })
                     .findFirst().orElseThrow(() ->
                             new CustomCheckException("Unknown execution method : " + methodName));
 
