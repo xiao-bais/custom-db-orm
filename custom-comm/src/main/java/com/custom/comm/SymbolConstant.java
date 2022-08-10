@@ -63,7 +63,8 @@ public class SymbolConstant {
      * java关键字
      */
     public final static String FILE = "file";
-    public final static String JAVA = "jar";
+    public final static String JAR = "jar";
+    public final static String JAVA_DOT = "java.";
     public final static String CLASS = ".class";
     public final static String DOT_JAVA = ".java";
     public final static String POINT = ".";

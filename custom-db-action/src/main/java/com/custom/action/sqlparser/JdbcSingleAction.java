@@ -41,7 +41,7 @@ public class JdbcSingleAction<T, P> implements JdbcActiveWrapper<T, P> {
 
     @Override
     public DbPageRows<T> selectPageRows(ConditionWrapper<T> wrapper) {
-        return jdbcAction.selectPageRows(wrapper);
+        return jdbcAction.selectPage(wrapper);
     }
 
     @Override

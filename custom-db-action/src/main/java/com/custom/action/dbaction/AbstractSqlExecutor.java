@@ -29,18 +29,21 @@ import java.util.function.Consumer;
 public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
 
     /*--------------------------------------- select ---------------------------------------*/
-    public abstract <T> List<T> selectList(Class<T> t, String condition, Object... params);
-    public abstract <T> List<T> selectListBySql(Class<T> t, String sql, Object... params);
-    public abstract <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, DbPageRows<T> dbPageRows, Object... params);
-    public abstract <T> T selectByKey(Class<T> t, Object key);
-    public abstract <T> List<T> selectBatchKeys(Class<T> t, Collection<? extends Serializable> keys);
-    public abstract <T> T selectOne(Class<T> t, String condition, Object... params);
-    public abstract <T> T selectOneBySql(Class<T> t, String sql, Object... params);
+    public abstract <T> List<T> selectList(Class<T> entityClass, String condition, Object... params);
+    public abstract <T> List<T> selectListBySql(Class<T> entityClass, String sql, Object... params);
+    public abstract <T> DbPageRows<T> selectPage(Class<T> entityClass, String condition, DbPageRows<T> dbPageRows, Object... params);
+    public abstract <T> T selectByKey(Class<T> entityClass, Object key);
+    public abstract <T> List<T> selectBatchKeys(Class<T> entityClass, Collection<? extends Serializable> keys);
+    public abstract <T> T selectOne(Class<T> entityClass, String condition, Object... params);
+    public abstract <T> T selectOneBySql(Class<T> entityClass, String sql, Object... params);
+    public abstract <T> T selectOne(T entity);
+    public abstract <T> List<T> selectList(T entity);
+    public abstract <T> DbPageRows<T> selectPage(T entity, DbPageRows<T> pageRows);
 
     /**
      * ConditionWrapper(条件构造器)
      */
-    public abstract <T> DbPageRows<T> selectPageRows(ConditionWrapper<T> wrapper);
+    public abstract <T> DbPageRows<T> selectPage(ConditionWrapper<T> wrapper);
     public abstract <T> List<T> selectList(ConditionWrapper<T> wrapper);
     public abstract <T> T selectOne(ConditionWrapper<T> wrapper);
     public abstract <T> long selectCount(ConditionWrapper<T> wrapper);
@@ -52,20 +55,20 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
 
 
     /*--------------------------------------- delete ---------------------------------------*/
-    public abstract <T> int deleteByKey(Class<T> t, Object key);
-    public abstract <T> int deleteBatchKeys(Class<T> t, Collection<?> keys);
-    public abstract <T> int deleteByCondition(Class<T> t, String condition, Object... params);
+    public abstract <T> int deleteByKey(Class<T> entityClass, Object key);
+    public abstract <T> int deleteBatchKeys(Class<T> entityClass, Collection<?> keys);
+    public abstract <T> int deleteByCondition(Class<T> entityClass, String condition, Object... params);
     public abstract <T> int deleteSelective(ConditionWrapper<T> wrapper);
 
     /*--------------------------------------- insert ---------------------------------------*/
-    public abstract <T> int insert(T t);
+    public abstract <T> int insert(T entity);
     public abstract <T> int insertBatch(List<T> tList);
 
     /*--------------------------------------- update ---------------------------------------*/
-    public abstract <T> int updateByKey(T t);
-    public abstract <T> int updateColumnByKey(T t, Consumer<List<SFunction<T, ?>>> updateColumns);
-    public abstract <T> int updateSelective(T t, ConditionWrapper<T> wrapper);
-    public abstract <T> int updateByCondition(T t, String condition, Object... params);
+    public abstract <T> int updateByKey(T entity);
+    public abstract <T> int updateColumnByKey(T entity, Consumer<List<SFunction<T, ?>>> updateColumns);
+    public abstract <T> int updateSelective(T entity, ConditionWrapper<T> wrapper);
+    public abstract <T> int updateByCondition(T entity, String condition, Object... params);
 
     /**
      * updateSet sql set设置器
@@ -73,11 +76,11 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
     public abstract <T> int updateSelective(AbstractUpdateSet<T> updateSet);
 
     /*--------------------------------------- comm ---------------------------------------*/
-    public abstract <T> int save(T t);
+    public abstract <T> int save(T entity);
     public abstract int executeSql(String sql, Object... params);
     public abstract void createTables(Class<?>... arr);
     public abstract void dropTables(Class<?>... arr);
-    public abstract <T> TableSqlBuilder<T> defaultSqlBuilder(Class<T> t);
+    public abstract <T> TableSqlBuilder<T> defaultSqlBuilder(Class<T> entityClass);
     public abstract <T> TableSqlBuilder<T> updateSqlBuilder(List<T> tList);
 
 

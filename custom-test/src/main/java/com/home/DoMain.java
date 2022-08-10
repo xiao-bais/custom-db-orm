@@ -3,9 +3,11 @@ package com.home;
 import com.custom.action.condition.*;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.JdbcOpDao;
+import com.custom.comm.CustomUtil;
 import com.home.customtest.entity.ChildStudent;
 import com.home.customtest.entity.Student;
 
+import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -22,13 +24,13 @@ public class DoMain {
         JdbcTestBuilder jdbcTestBuilder = JdbcTestBuilder.builder();
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-
-
-        Student student = jdbcDao.selectOne(Student.class, "and a.id = 14");
-        student.setName("张三逢");
-        jdbcDao.updateSelective(student, Conditions.lambdaQuery(Student.class));
+        Student student = new Student();
+        student.setName("张三");
+        student.setAge(18);
+        student.setState(1);
+        Student selectOne = jdbcDao.selectOne(student);
+        System.out.println("selectOne = " + selectOne);
 
 
     }

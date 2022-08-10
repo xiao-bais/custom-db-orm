@@ -223,10 +223,10 @@ public class TableSqlBuilder<T> implements Cloneable {
         this.cls = cls;
         DbTable annotation = cls.getAnnotation(DbTable.class);
         if (Objects.isNull(annotation)) {
-            ExThrowsUtil.toCustom(cls.getName() + "未标注@DbTable注解");
+            ExThrowsUtil.toCustom(cls.getName() + " 未标注@DbTable注解");
         }
         if (JudgeUtil.isEmpty(annotation.table())) {
-            ExThrowsUtil.toCustom(cls.getName() + "未指定@DbTable注解上实体映射的表名");
+            ExThrowsUtil.toCustom(cls.getName() + " 未指定@DbTable注解上实体映射的表名");
         }
         this.alias = annotation.alias();
         this.table = annotation.table();

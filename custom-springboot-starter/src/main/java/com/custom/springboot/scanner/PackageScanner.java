@@ -75,7 +75,7 @@ public class PackageScanner {
             String protocol = url.getProtocol();
             if (SymbolConstant.FILE.equals(protocol)) {
                 addLocalClass(packageScan);
-            } else if (SymbolConstant.JAVA.equals(protocol)) {
+            } else if (SymbolConstant.JAR.equals(protocol)) {
                 addJarClass(packageScan);
             }
         } catch (Exception e) {

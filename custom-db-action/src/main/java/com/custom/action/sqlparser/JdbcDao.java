@@ -118,6 +118,16 @@ public interface JdbcDao {
      */
     <T> T[] selectArrays(Class<T> t, String sql, Object... params);
 
+    /**
+     * 查询单条记录，!= null 的实体属性即为条件
+     */
+    <T> T selectOne(T entity);
+
+    /**
+     * 查询多条记录，!= null 的实体属性即为条件
+     */
+    <T> List<T> selectList(T entity);
+
     /* ----------------------------------------------------------------delete---------------------------------------------------------------- */
 
     /**

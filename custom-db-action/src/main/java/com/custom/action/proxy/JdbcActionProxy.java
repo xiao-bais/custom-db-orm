@@ -174,8 +174,12 @@ public class JdbcActionProxy implements MethodInterceptor {
             }
             return;
         }
-        if (!((Class<?>) objects[0]).isAnnotationPresent(DbTable.class)) {
-            ExThrowsUtil.toCustom("@DbTable not found in class " + objects[0].getClass());
+        Class<?> targetClass = objects[0].getClass();
+        if (!targetClass.isAnnotationPresent(DbTable.class)) {
+            ExThrowsUtil.toCustom("@DbTable not found in " + targetClass);
+        }
+        if(objects.length == 1) {
+            return;
         }
         String methodName = method.getName();
         if(JudgeUtil.isEmpty(objects[1])) {

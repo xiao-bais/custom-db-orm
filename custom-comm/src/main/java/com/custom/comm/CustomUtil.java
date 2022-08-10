@@ -82,6 +82,13 @@ public class CustomUtil {
                 || Date.class.equals(cls);
     }
 
+    /**
+     * 是否是java的原生对象
+     */
+    public static boolean isJavaOriginObject(Class<?> cls) {
+        return cls.getPackage().getName().startsWith(SymbolConstant.JAVA_DOT);
+    }
+
 
     /**
     * 是否是主键的允许类型
@@ -191,8 +198,8 @@ public class CustomUtil {
     }
 
     public static void main(String[] args) {
-        String userInfo = toIndexLower("UserInfo");
-        System.out.println("userInfo = " + userInfo);
+        boolean javaOriginObject = isJavaOriginObject(JudgeUtil.class);
+        System.out.println("javaOriginObject = " + javaOriginObject);
 
 
     }

@@ -336,7 +336,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
     @Override
     public Children pageParams(boolean condition, Integer pageIndex, Integer pageSize) {
         if((Objects.isNull(pageIndex) || Objects.isNull(pageSize))) {
-            ExThrowsUtil.toCustom("缺少分页参数：pageIndex：%s, pageSize：%s", pageIndex, pageSize);
+            ExThrowsUtil.toCustom("Missing paging parameter：pageIndex：%s, pageSize：%s", pageIndex, pageSize);
         }
         setPageParams(pageIndex, pageSize);
         return childrenClass;
