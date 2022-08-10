@@ -3,7 +3,7 @@ package com.custom.action.dbaction;
 import com.custom.action.sqlparser.DbFieldParserModel;
 import com.custom.action.sqlparser.DbKeyParserModel;
 import com.custom.action.util.DbUtil;
-import com.custom.action.condition.ColumnParseHandler;
+import com.custom.action.condition.DefaultColumnParseHandler;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
 import com.custom.jdbc.select.CustomSelectJdbcBasic;
@@ -34,7 +34,7 @@ public abstract class AbstractSqlBuilder<T> {
     private Map<String, String> columnMapper;
     private CustomSelectJdbcBasic selectJdbc;
     private CustomUpdateJdbcBasic updateJdbc;
-    private ColumnParseHandler<T> columnParseHandler;
+    private DefaultColumnParseHandler<T> columnParseHandler;
     private Boolean primaryTable = false;
     private String logicColumn;
     private Object logicNotDeleteValue;
@@ -89,7 +89,7 @@ public abstract class AbstractSqlBuilder<T> {
 
     public void setEntityClass(Class<T> entityClass) {
         this.entityClass = entityClass;
-        this.columnParseHandler = new ColumnParseHandler<>(entityClass);
+        this.columnParseHandler = new DefaultColumnParseHandler<>(entityClass);
     }
 
 
@@ -174,7 +174,7 @@ public abstract class AbstractSqlBuilder<T> {
         this.updateJdbc = updateJdbc;
     }
 
-    public ColumnParseHandler<T> getColumnParseHandler() {
+    public DefaultColumnParseHandler<T> getColumnParseHandler() {
         return columnParseHandler;
     }
 

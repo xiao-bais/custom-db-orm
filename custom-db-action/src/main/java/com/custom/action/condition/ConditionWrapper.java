@@ -1,5 +1,6 @@
 package com.custom.action.condition;
 
+import com.custom.action.interfaces.ColumnParseHandler;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableSqlBuilder;
 import com.custom.comm.CustomUtil;
@@ -262,14 +263,14 @@ public abstract class ConditionWrapper<T> implements Serializable {
      */
     @SafeVarargs
     protected final String[] parseColumn(SFunction<T, ?>... func) {
-        return getColumnParseHandler().getColumn(func);
+        return getColumnParseHandler().parseToColumns(Arrays.asList(func)).toArray(new String[0]);
     }
 
     /**
      * 解析函数后，得到java属性字段对应的表字段名称
      */
     protected String parseColumn(SFunction<T, ?> func) {
-        return getColumnParseHandler().getColumn(func);
+        return getColumnParseHandler().parseToColumn(func);
     }
 
     public abstract T getThisEntity();
@@ -288,7 +289,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
 
     protected ColumnParseHandler<T> getColumnParseHandler() {
         if (Objects.isNull(columnParseHandler)) {
-            this.columnParseHandler = new ColumnParseHandler<>(entityClass);
+            this.columnParseHandler = new DefaultColumnParseHandler<>(entityClass);
         }
         return columnParseHandler;
     }

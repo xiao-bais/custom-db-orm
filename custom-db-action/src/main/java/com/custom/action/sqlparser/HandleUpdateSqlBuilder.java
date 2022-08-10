@@ -10,10 +10,7 @@ import com.custom.comm.exceptions.ExThrowsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.StringJoiner;
+import java.util.*;
 
 /**
  * @author Xiao-Bai
@@ -146,7 +143,12 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
      * @param isFunc 是否使用Function函数表达式
      */
     private void chooseAppointFieldSql(boolean isFunc) {
-        String[] updateColumns = isFunc ? getColumnParseHandler().getColumn(this.updateFuncColumns) : this.updateStrColumns;
+        List<String> updateColumns;
+        if (isFunc) {
+            updateColumns = getColumnParseHandler().parseToColumns(Arrays.asList(updateFuncColumns));
+        }else {
+            updateColumns = Arrays.asList(this.updateStrColumns);
+        }
         for (String column : updateColumns) {
             Optional<DbFieldParserModel<T>> updateFieldOP = getFieldParserModels().stream().filter(x -> x.getFieldSql().equals(column)).findFirst();
             updateFieldOP.ifPresent(op -> {

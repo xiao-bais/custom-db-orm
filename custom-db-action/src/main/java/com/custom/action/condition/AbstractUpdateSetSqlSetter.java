@@ -36,7 +36,7 @@ public abstract class AbstractUpdateSetSqlSetter<T, Children> extends UpdateSetW
     }
 
     protected Children addSetSql(boolean condition, SFunction<T, ?> column, Object val) {
-        String originColumn = this.getColumnParseHandler().getColumn(column);
+        String originColumn = this.getColumnParseHandler().parseToColumn(column);
         return this.addSetSql(condition, originColumn, val);
     }
 

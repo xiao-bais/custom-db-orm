@@ -82,7 +82,7 @@ public abstract class AbstractSqlFunc<T, Children> {
     /**
      * SFunction接口实体字段解析对象
      */
-    private ColumnParseHandler<T> columnParseHandler;
+    private DefaultColumnParseHandler<T> columnParseHandler;
     /**
      * 实体字段到表字段的映射缓存
      */
@@ -104,7 +104,7 @@ public abstract class AbstractSqlFunc<T, Children> {
 
     // 初始化
     protected void init(Class<T> cls) {
-        columnParseHandler = new ColumnParseHandler<>(cls);
+        columnParseHandler = new DefaultColumnParseHandler<>(cls);
         TableSqlBuilder<T> tableModel = TableInfoCache.getTableModel(cls);
         fieldMapper = tableModel.getFieldMapper();
         columnMapper = tableModel.getColumnMapper();
@@ -163,7 +163,7 @@ public abstract class AbstractSqlFunc<T, Children> {
         return sqlFragments.stream().collect(Collectors.joining(SymbolConstant.SEPARATOR_COMMA_2));
     }
 
-    protected ColumnParseHandler<T> getColumnParseHandler() {
+    protected DefaultColumnParseHandler<T> getColumnParseHandler() {
         return columnParseHandler;
     }
 

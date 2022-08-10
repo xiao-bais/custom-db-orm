@@ -26,9 +26,9 @@ public class DoMain {
 
 
 
-        Student student = jdbcDao.selectOne(Student.class, "and a.sex = ? and a.id = 14", false);
+        Student student = jdbcDao.selectOne(Student.class, "and a.id = 14");
         student.setName("张三逢");
-//        jdbcDao.updateSelective(student);
+        jdbcDao.updateSelective(student, Conditions.lambdaQuery(Student.class));
 
 
     }

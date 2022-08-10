@@ -30,7 +30,7 @@ public abstract class UpdateSetWrapper<T> {
     /**
      * SFunction接口实体字段解析对象
      */
-    private final ColumnParseHandler<T> columnParseHandler;
+    private final DefaultColumnParseHandler<T> columnParseHandler;
 
     public List<Object> getSetParams() {
         return setParams;
@@ -40,14 +40,14 @@ public abstract class UpdateSetWrapper<T> {
         this.sqlSetter = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
         this.setParams = new ArrayList<>();
         this.entityClass = entityClass;
-        this.columnParseHandler = new ColumnParseHandler<>(entityClass);
+        this.columnParseHandler = new DefaultColumnParseHandler<>(entityClass);
     }
 
     public Class<T> thisEntityClass() {
         return entityClass;
     }
 
-    protected ColumnParseHandler<T> getColumnParseHandler() {
+    protected DefaultColumnParseHandler<T> getColumnParseHandler() {
         return columnParseHandler;
     }
 
