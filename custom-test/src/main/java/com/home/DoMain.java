@@ -29,7 +29,7 @@ public class DoMain {
         student.setName("张三");
         student.setAge(18);
         student.setState(1);
-        Student selectOne = jdbcDao.selectOne(student);
+        Student selectOne = jdbcDao.selectOne(null);
         System.out.println("selectOne = " + selectOne);
 
 

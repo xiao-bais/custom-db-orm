@@ -175,8 +175,8 @@ public class JdbcOpDao {
     /**
      * 查询多条记录并分页，!= null 的实体属性即为条件
      */
-    public <T> DbPageRows<T> selectPageRows(T entity) {
-        return jdbcAction.
+    public <T> DbPageRows<T> selectPageRows(T entity, DbPageRows<T> pageRows) {
+        return jdbcAction.selectPage(entity, pageRows);
     }
 
     /* ----------------------------------------------------------------delete---------------------------------------------------------------- */

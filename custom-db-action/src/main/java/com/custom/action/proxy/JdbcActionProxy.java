@@ -60,7 +60,7 @@ public class JdbcActionProxy implements MethodInterceptor {
             return methodProxy.invokeSuper(o, objects);
         }
         if(JudgeUtil.isEmpty(objects[0])) {
-            ExThrowsUtil.toNull("执行参数不能为空");
+            ExThrowsUtil.toNull("Execution parameter cannot be empty");
         }
 
         ExecuteMethod target = annotation.target();
@@ -170,7 +170,7 @@ public class JdbcActionProxy implements MethodInterceptor {
 
         if (objects[0] instanceof ConditionWrapper) {
             if (Objects.isNull(((ConditionWrapper<?>) objects[0]).getEntityClass())) {
-                ExThrowsUtil.toCustom("实体Class对象不能为空");
+                ExThrowsUtil.toCustom("Entity class object cannot be empty");
             }
             return;
         }

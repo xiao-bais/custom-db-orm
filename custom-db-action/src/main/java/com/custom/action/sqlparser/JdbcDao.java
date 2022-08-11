@@ -128,6 +128,11 @@ public interface JdbcDao {
      */
     <T> List<T> selectList(T entity);
 
+    /**
+     * 查询多条记录并分页，!= null 的实体属性即为条件
+     */
+    <T> DbPageRows<T> selectPage(T entity, DbPageRows<T> pageRows);
+
     /* ----------------------------------------------------------------delete---------------------------------------------------------------- */
 
     /**
