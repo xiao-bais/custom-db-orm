@@ -202,6 +202,8 @@ public interface JdbcDao {
      * <p></p>
      * 注意：在同一条链式调用中，setter方法以及where方法若存在多次调用，则以最后一个为准.
      * 因为储存的对象只存在一个，不会累加上一次的结果，只会被覆盖
+     * @see com.custom.action.condition.Conditions#update(Class)
+     * @see com.custom.action.condition.Conditions#lambdaUpdate(Class)
      */
     <T> int updateSelective(AbstractUpdateSet<T> updateSet);
 

@@ -74,7 +74,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
         if(!condition || !appendState) {
             return;
         }
-        if(CustomUtil.isBlank(column) && DbSymbol.EXISTS != dbSymbol && DbSymbol.NOT_EXISTS != dbSymbol) {
+        if(CustomUtil.isBlank(column) && !ALLOW_NOT_ALIAS.contains(dbSymbol)) {
             ExThrowsUtil.toCustom("column cannot be empty");
         }
         if(JudgeUtil.isNotEmpty(column) && !column.contains(SymbolConstant.POINT)) {
@@ -104,7 +104,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
             case LESS_THAN_EQUALS:
             case GREATER_THAN_EQUALS:
                 setLastCondition(DbUtil.applyCondition(appendSybmol, column, dbSymbol.getSymbol()));
-                addParams(val1);
+                CustomUtil.addParams(getParamValues(), val1);
                 break;
 
             case LIKE:
@@ -353,6 +353,8 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
 
     protected final Children childrenClass = (Children) this;
     protected static String appendSybmol = SymbolConstant.AND;
+    // 允许不包含别名的sql条件
+    private final static List<DbSymbol> ALLOW_NOT_ALIAS = Arrays.asList(DbSymbol.EXISTS, DbSymbol.NOT_EXISTS);
     /**
      * 拼接and or 方法时，对于后面sql条件的拼接做处理
      * 默认为true即and

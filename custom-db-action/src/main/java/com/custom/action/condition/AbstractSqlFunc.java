@@ -1,5 +1,6 @@
 package com.custom.action.condition;
 
+import com.custom.action.interfaces.ColumnParseHandler;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableSqlBuilder;
 import com.custom.comm.SymbolConstant;
@@ -82,7 +83,7 @@ public abstract class AbstractSqlFunc<T, Children> {
     /**
      * SFunction接口实体字段解析对象
      */
-    private DefaultColumnParseHandler<T> columnParseHandler;
+    private ColumnParseHandler<T> columnParseHandler;
     /**
      * 实体字段到表字段的映射缓存
      */
@@ -137,7 +138,7 @@ public abstract class AbstractSqlFunc<T, Children> {
                 template = distinct ? "%s(distinct %s) %s" : "%s(%s) %s";
                 break;
             case IFNULL:
-                template = "%s(%s,%s) %s";
+                template = "%s(%s, %s) %s";
                 break;
         }
         return template;
@@ -163,7 +164,7 @@ public abstract class AbstractSqlFunc<T, Children> {
         return sqlFragments.stream().collect(Collectors.joining(SymbolConstant.SEPARATOR_COMMA_2));
     }
 
-    protected DefaultColumnParseHandler<T> getColumnParseHandler() {
+    protected ColumnParseHandler<T> getColumnParseHandler() {
         return columnParseHandler;
     }
 

@@ -28,8 +28,8 @@ public class DoMain {
         Student student = new Student();
         student.setName("张三");
         student.setAge(18);
-        student.setState(1);
-        Student selectOne = jdbcDao.selectOne(null);
+        student.setPassword("123456");
+        Student selectOne = jdbcDao.selectOne(student);
         System.out.println("selectOne = " + selectOne);
 
 
