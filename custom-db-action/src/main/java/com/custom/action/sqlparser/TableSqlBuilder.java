@@ -208,7 +208,6 @@ public class TableSqlBuilder<T> implements Cloneable {
         if (method != ExecuteMethod.NONE) {
             this.fields = this.findUpDbJoinTables ? CustomUtil.loadFields(this.cls) : this.cls.getDeclaredFields();
 
-
             // 构建字段解析模板
             this.initTableBuild(method);
         }
@@ -252,6 +251,10 @@ public class TableSqlBuilder<T> implements Cloneable {
                 keyParserModel = new DbKeyParserModel<>(field, this.table, this.alias, this.underlineToCamel);
 
             } else if (field.isAnnotationPresent(DbField.class)) {
+                DbField dbField = field.getAnnotation(DbField.class);
+                if (!dbField.exist()) {
+                    continue;
+                }
                 DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias, this.underlineToCamel, this.enabledDefaultValue, true);
                 fieldParserModels.add(fieldParserModel);
 

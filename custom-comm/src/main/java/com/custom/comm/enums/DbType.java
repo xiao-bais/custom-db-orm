@@ -39,10 +39,25 @@ public enum DbType {
 
     DbDateTime("datetime", Date.class, null, "0", null);
 
+    /**
+     * 数据库类型
+     */
     private final String type;
+    /**
+     * java属性类型
+     */
     private final Class<?> fieldType;
+    /**
+     * java属性类型对应的基础类型，若不存在，则为null
+     */
     private final Class<?> baseType;
+    /**
+     * 字段长度
+     */
     private final String length;
+    /**
+     * 字段默认值
+     */
     private final Object value;
 
     DbType(String type, Class<?> fieldType, Class<?> baseType, String length, Object value) {

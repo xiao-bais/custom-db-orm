@@ -250,7 +250,7 @@ public class JdbcOpDao {
     }
 
     /**
-     * 根据条件修改一条记录
+     * 根据条件修改一条记录(除主键不会修改)
      */
     public <T> int updateSelective(T entity, ConditionWrapper<T> wrapper) {
         return jdbcAction.updateSelective(entity, wrapper);

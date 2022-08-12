@@ -42,7 +42,7 @@ public class TaskRecordServiceImpl implements TaskRecordService {
     public DbPageRows<TaskRecordModel> taskList(TaskRecordRequest request) {
 
         // 查询任务列表
-        DbPageRows<TaskRecordModel> dbPageRows = jdbcDao.selectPageRows(Conditions.lambdaQuery(TaskRecordModel.class)
+        DbPageRows<TaskRecordModel> dbPageRows = jdbcDao.selectPage(Conditions.lambdaQuery(TaskRecordModel.class)
                 .pageParams(request.getPageIndex(), request.getPageSize())
 
                 // 模糊搜索，主要查询任务标题

@@ -75,7 +75,7 @@ public class Student extends ActiveModel<Student, Integer> implements Serializab
     @DbMapper("cy.name")
     private String city;
 
-    @DbIgnore
+    @DbField(exist = false)
     private String area;
 
     @DbIgnore

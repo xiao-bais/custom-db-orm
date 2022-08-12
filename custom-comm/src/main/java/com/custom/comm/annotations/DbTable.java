@@ -1,6 +1,7 @@
 package com.custom.comm.annotations;
 
 import com.custom.comm.SymbolConstant;
+import com.custom.comm.enums.DbType;
 
 import java.lang.annotation.*;
 
@@ -46,6 +47,7 @@ public @interface DbTable {
      * 是否开启默认值(在创建表或者插入新记录时会附带自定义的默认值)
      * 注意: 若{@link DbField}上也给定了设定的默认值，则以{@link DbField}的默认值优先
      * @return enabledDefaultValue
+     * @see DbType 给定的默认值来源于该枚举类
      */
     boolean enabledDefaultValue() default false;
 

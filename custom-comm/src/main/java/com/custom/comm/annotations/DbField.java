@@ -37,6 +37,7 @@ public @interface DbField {
     /**
      * 默认值，在创建表或者插入新记录时会附带自定义的默认值
      * <br/> (若不想逐个设定，可由{@link DbTable#enabledDefaultValue()}开启给定的默认值)
+     * 给定的默认值可参照{@link DbType#getValue()}
      * <p>
      *     若默认值是int、long、double、decimal, float 等之类的数字类型，则自定义即可
      *     若默认值是 boolean类型，则直接以字符串的true/false或者1,0即可 (不区分大小写)
@@ -72,6 +73,11 @@ public @interface DbField {
      * @return wrapperColumn
      */
     String wrapperColumn() default SymbolConstant.EMPTY;
+
+    /**
+     * 是否存在该表字段，作用与{@link DbIgnore}一致
+     */
+    boolean exist() default true;
 
 
 }
