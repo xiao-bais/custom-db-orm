@@ -1,11 +1,9 @@
 package com.home;
 
-import com.custom.action.interfaces.BaseEntityDao;
 import com.custom.action.proxy.JdbcDaoProxy;
 import com.custom.action.sqlparser.JdbcOpDao;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.TableInfoCache;
-import com.custom.comm.BasicDao;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
 import com.custom.proxy.InterfacesProxyExecutor;
@@ -56,13 +54,9 @@ public class JdbcTestBuilder {
         return jdbcDao;
     }
 
-    public CustomTestDao getCustomTestDao() {
-        InterfacesProxyExecutor proxyExecutor = new InterfacesProxyExecutor(dbDataSource, dbCustomStrategy);
-        return proxyExecutor.createProxy(CustomTestDao.class);
-    }
-
     public <T> T getCustomClassDao(Class<T> entityClass) {
         InterfacesProxyExecutor proxyExecutor = new InterfacesProxyExecutor(dbDataSource, dbCustomStrategy);
         return proxyExecutor.createProxy(entityClass);
     }
+
 }
