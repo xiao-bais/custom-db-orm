@@ -49,7 +49,7 @@ public class JdbcOpDao {
     /**
      * 根据条件进行分页查询: 例（and a.name = ?）
      */
-    public <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, DbPageRows<T> dbPageRows, Object... params) {
+    public <T> DbPageRows<T> selectPage(Class<T> t, String condition, DbPageRows<T> dbPageRows, Object... params) {
         return jdbcAction.selectPage(t, condition, null, dbPageRows, params);
     }
 
@@ -86,7 +86,7 @@ public class JdbcOpDao {
     /**
      * 条件构造器查询-分页查询
      */
-    public <T> DbPageRows<T> selectPageRows(ConditionWrapper<T> wrapper) {
+    public <T> DbPageRows<T> selectPage(ConditionWrapper<T> wrapper) {
         return jdbcAction.selectPage(wrapper);
     }
 
@@ -175,7 +175,7 @@ public class JdbcOpDao {
     /**
      * 查询多条记录并分页，!= null 的实体属性即为条件
      */
-    public <T> DbPageRows<T> selectPageRows(T entity, DbPageRows<T> pageRows) {
+    public <T> DbPageRows<T> selectPage(T entity, DbPageRows<T> pageRows) {
         return jdbcAction.selectPage(entity, pageRows);
     }
 

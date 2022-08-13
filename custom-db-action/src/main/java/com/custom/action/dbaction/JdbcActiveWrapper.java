@@ -17,7 +17,7 @@ import java.util.function.Consumer;
 public interface JdbcActiveWrapper<T, P> {
 
     /*--------------------------------------- select ---------------------------------------*/
-    DbPageRows<T> selectPageRows(ConditionWrapper<T> wrapper);
+    DbPageRows<T> selectPage(ConditionWrapper<T> wrapper);
     List<T> selectList(ConditionWrapper<T> wrapper);
     T selectOneByCondition(ConditionWrapper<T> wrapper);
     long selectCount(ConditionWrapper<T> wrapper);
