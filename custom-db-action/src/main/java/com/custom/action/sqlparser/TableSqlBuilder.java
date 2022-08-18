@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @Author Xiao-Bai
@@ -26,16 +25,34 @@ public class TableSqlBuilder<T> implements Cloneable {
 
     private static final Logger logger = LoggerFactory.getLogger(TableSqlBuilder.class);
 
-    private Class<T> cls;
+    /**
+     * 实体表的class对象
+     */
+    private Class<T> entityClass;
 
+    /**
+     * 实体单个实例，通常用于插入或修改单条记录时用到
+     */
     private T entity;
 
-    private List<T> list;
+    /**
+     * 多个实体集合，用于批量插入时的sql生成
+     */
+    private List<T> entityList;
 
+    /**
+     * 表名称
+     */
     private String table;
 
+    /**
+     * 表别名
+     */
     private String alias;
 
+    /**
+     * 表说明
+     */
     private String desc;
 
     /**
@@ -44,12 +61,13 @@ public class TableSqlBuilder<T> implements Cloneable {
     private Field[] fields;
 
     /**
-     * 原始字段，包括上面的
+     * 驼峰转下划线
      */
-    private Field[] originFields;
-
     private boolean underlineToCamel;
 
+    /**
+     * 是否开启了默认值(创建表以及插入记录时有效)
+     */
     private boolean enabledDefaultValue;
     
     /**
@@ -57,23 +75,23 @@ public class TableSqlBuilder<T> implements Cloneable {
      */
     private boolean findUpDbJoinTables;
     /**
-     * 对于@DbKey注解的解析
+     * 对于{@link DbKey}注解的解析
      */
     private DbKeyParserModel<T> keyParserModel = null;
     /**
-     * 对于@DbField注解的解析
+     * 对于{@link DbField}注解的解析
      */
     private List<DbFieldParserModel<T>> fieldParserModels = new ArrayList<>();
     /**
-     * 对于@DbRelated注解的解析
+     * 对于{@link DbRelated}注解的解析
      */
     private List<DbRelationParserModel<T>> relatedParserModels = new ArrayList<>();
     /**
-     * 对于@DbJoinTables注解的解析
+     * 对于{@link DbJoinTables}注解的解析
      */
     private List<DbJoinTableParserModel<T>> joinDbMappers = new ArrayList<>();
     /**
-     * 对于@DbJoinTables注解的解析
+     * 对于{@link DbJoinTables}注解的解析
      */
     private List<String> joinTableParserModels = new ArrayList<>();
     /**
@@ -206,7 +224,7 @@ public class TableSqlBuilder<T> implements Cloneable {
         initLocalProperty(cls, underlineToCamel);
 
         if (method != ExecuteMethod.NONE) {
-            this.fields = this.findUpDbJoinTables ? CustomUtil.loadFields(this.cls) : this.cls.getDeclaredFields();
+            this.fields = this.findUpDbJoinTables ? CustomUtil.loadFields(this.entityClass) : this.entityClass.getDeclaredFields();
 
             // 构建字段解析模板
             this.initTableBuild(method);
@@ -219,7 +237,7 @@ public class TableSqlBuilder<T> implements Cloneable {
      * 初始化本对象属性
      */
     private void initLocalProperty(Class<T> cls, boolean underlineToCamel) {
-        this.cls = cls;
+        this.entityClass = cls;
         DbTable annotation = cls.getAnnotation(DbTable.class);
         if (Objects.isNull(annotation)) {
             ExThrowsUtil.toCustom(cls.getName() + " 未标注@DbTable注解");
@@ -259,11 +277,11 @@ public class TableSqlBuilder<T> implements Cloneable {
                 fieldParserModels.add(fieldParserModel);
 
             } else if (field.isAnnotationPresent(DbMapper.class)) {
-                DbJoinTableParserModel<T> joinTableParserModel = new DbJoinTableParserModel<>(this.cls, field);
+                DbJoinTableParserModel<T> joinTableParserModel = new DbJoinTableParserModel<>(this.entityClass, field);
                 joinDbMappers.add(joinTableParserModel);
 
             } else if (field.isAnnotationPresent(DbRelated.class)) {
-                DbRelationParserModel<T> relatedParserModel = new DbRelationParserModel<>(this.cls, field, this.table, this.alias, this.underlineToCamel);
+                DbRelationParserModel<T> relatedParserModel = new DbRelationParserModel<>(this.entityClass, field, this.table, this.alias, this.underlineToCamel);
                 relatedParserModels.add(relatedParserModel);
             }else {
                 DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias, this.underlineToCamel, this.enabledDefaultValue, false);
@@ -277,7 +295,7 @@ public class TableSqlBuilder<T> implements Cloneable {
      * 向上查找@DbjoinTables注解
      */
     private void mergeDbJoinTables() {
-        Class<?> entityClass = this.cls;
+        Class<?> entityClass = this.entityClass;
         if (findUpDbJoinTables) {
             while (!entityClass.equals(Object.class)) {
                 buildDbJoinTables(entityClass);
@@ -407,16 +425,16 @@ public class TableSqlBuilder<T> implements Cloneable {
         return entity;
     }
 
-    public List<T> getList() {
-        return list;
+    public List<T> getEntityList() {
+        return entityList;
     }
 
     public Field[] getFields() {
         return fields;
     }
 
-    public void setCls(Class<T> cls) {
-        this.cls = cls;
+    public void setEntityClass(Class<T> entityClass) {
+        this.entityClass = entityClass;
     }
 
     public void setEntity(T entity) {
@@ -429,8 +447,8 @@ public class TableSqlBuilder<T> implements Cloneable {
         }
     }
 
-    public void setList(List<T> list) {
-        this.list = list;
+    public void setEntityList(List<T> entityList) {
+        this.entityList = entityList;
     }
 
     public void setTable(String table) {
@@ -492,12 +510,12 @@ public class TableSqlBuilder<T> implements Cloneable {
     private void initializeSqlBuilder(AbstractSqlBuilder<T> sqlBuilder) {
         sqlBuilder.setTable(this.table);
         sqlBuilder.setAlias(this.alias);
-        sqlBuilder.setEntityClass(this.cls);
+        sqlBuilder.setEntityClass(this.entityClass);
         if(Objects.nonNull(this.entity)) {
             sqlBuilder.setEntity(this.entity);
         }
-        if(Objects.nonNull(this.list)) {
-            sqlBuilder.setEntityList(this.list);
+        if(Objects.nonNull(this.entityList)) {
+            sqlBuilder.setEntityList(this.entityList);
         }
         sqlBuilder.setFieldMapper(this.fieldMapper);
         sqlBuilder.setColumnMapper(this.columnMapper);
@@ -511,7 +529,7 @@ public class TableSqlBuilder<T> implements Cloneable {
             builder = (TableSqlBuilder<T>) super.clone();
             builder.setAlias(this.alias);
             builder.setTable(this.table);
-            builder.setCls(this.cls);
+            builder.setEntityClass(this.entityClass);
             builder.setKeyParserModel(this.keyParserModel);
             builder.setFieldParserModels(this.fieldParserModels);
             builder.setRelatedParserModels(this.relatedParserModels);

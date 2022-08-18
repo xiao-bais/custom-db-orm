@@ -205,7 +205,7 @@ public class JdbcWrapperExecutor {
     protected <T> TableSqlBuilder<T> updateTableSqlBuilder(List<T> tList) {
         TableSqlBuilder<T> tableModel = (TableSqlBuilder<T>) defaultTableSqlBuilder(tList.get(0).getClass());
         tableModel.setEntity(tList.get(0));
-        tableModel.setList(tList);
+        tableModel.setEntityList(tList);
         return tableModel;
     }
 }

@@ -81,14 +81,12 @@ public class InterfacesProxyExecutor implements InvocationHandler {
         // do Query
         if (method.isAnnotationPresent(Query.class)) {
             Query query = method.getAnnotation(Query.class);
-            checkIllegalParam(method.getName(), query.order(), query.value());
             proxyHandler = new SelectProxyHandler(selectJdbc, args, query.value(), method);
         }
 
         // do Update
         else if (method.isAnnotationPresent(Update.class)) {
             Update update = method.getAnnotation(Update.class);
-            checkIllegalParam(method.getName(), update.order(), update.value());
             proxyHandler = new UpdateProxyHandler(updateJdbc, args, update.value(), method);
         }
 
@@ -97,7 +95,6 @@ public class InterfacesProxyExecutor implements InvocationHandler {
             SqlPath sqlPath = method.getAnnotation(SqlPath.class);
             ExecuteMethod execType = sqlPath.method();
             String sql = new ClearNotesOnSqlHandler(sqlPath.value()).loadSql();
-            checkIllegalParam(method.getName(), sqlPath.order(), sql);
             if (execType == ExecuteMethod.SELECT) {
                 proxyHandler = new SelectProxyHandler(selectJdbc, args, sql, method);
             } else if (execType == ExecuteMethod.UPDATE
@@ -114,26 +111,6 @@ public class InterfacesProxyExecutor implements InvocationHandler {
         }
         proxyHandler.prepareParamsParsing();
         return proxyHandler.execute();
-    }
-
-    /**
-     * 检验参数合法性
-     */
-    private void checkIllegalParam(String methodName, boolean order, String sql) {
-        if (RexUtil.hasRegex(sql, RexUtil.sql_set_param) && sql.contains(SymbolConstant.QUEST)) {
-            log.error("如果order为true，仅支持使用 \"?\"  如果order为false 仅支持使用 \"#{ }\" 来设置参数");
-            log.error("Error Method ==> {}", methodName);
-            ExThrowsUtil.toCustom("The SQL cannot be resolved '%s'", sql);
-        }
-        if (order && RexUtil.hasRegex(sql, RexUtil.sql_set_param)) {
-            log.error("Error Method ==> {}", methodName);
-            ExThrowsUtil.toCustom("方法注解上建议使用 order = false");
-
-        }
-        if (!order && sql.contains(SymbolConstant.QUEST)) {
-            log.error("Error Method ==> {}", methodName);
-            ExThrowsUtil.toCustom("方法注解上建议使用 order = true");
-        }
     }
 
 

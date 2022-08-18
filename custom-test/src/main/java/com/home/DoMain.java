@@ -2,6 +2,7 @@ package com.home;
 
 import com.custom.action.condition.*;
 import com.custom.action.interfaces.BaseEntityDao;
+import com.custom.action.join.JoinRegister;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.JdbcOpDao;
 import com.custom.action.sqlparser.TableInfoCache;
@@ -35,6 +36,8 @@ public class DoMain {
         StudentDao studentDao = jdbcTestBuilder.getCustomClassDao(StudentDao.class);
 
         Student student = studentDao.selectByKey(13);
+
+        new JoinRegister<>();
 
 
 

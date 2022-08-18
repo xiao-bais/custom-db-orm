@@ -16,7 +16,6 @@ import com.custom.comm.page.DbPageRows;
 import com.custom.configuration.DbCustomStrategy;
 
 import java.io.Serializable;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -144,7 +143,7 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
         TableSqlBuilder<T> tableModelCache = updateTableSqlBuilder(entityList);
         TableSqlBuilder<T> tableModel = tableModelCache.clone();
         tableModel.setEntity(entityList.get(0));
-        tableModel.setList(entityList);
+        tableModel.setEntityList(entityList);
         tableModel.buildSqlConstructorModel(method);
         tableModel.setLogicFieldInfo(logicColumn, dbCustomStrategy.getDeleteLogicValue(), dbCustomStrategy.getNotDeleteLogicValue());
         return (R) tableModel.getSqlBuilder();

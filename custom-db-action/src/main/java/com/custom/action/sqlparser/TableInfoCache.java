@@ -46,6 +46,13 @@ public class TableInfoCache {
         return getTableModel(cls).getFieldMapper();
     }
 
+    /**
+     * 获取表名称
+     */
+    public static <T> String tableName(Class<T> cls) {
+        return getTableModel(cls).getTable();
+    }
+
 
     /**
      * 表的逻辑删除字段缓存
