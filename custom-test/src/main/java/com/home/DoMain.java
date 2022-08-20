@@ -20,7 +20,9 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-        jdbcDao.selectList(new Employee());
+        Employee employee = new Employee();
+        employee.setDeptName("aaaa");
+        jdbcDao.selectList(employee);
 
 
 

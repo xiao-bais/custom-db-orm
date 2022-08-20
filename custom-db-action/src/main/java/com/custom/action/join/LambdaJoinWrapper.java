@@ -12,11 +12,6 @@ public class LambdaJoinWrapper<Primary, Join> implements JoinWrapper<LambdaJoinW
 
 
     @Override
-    public LambdaJoinWrapper<Primary, Join> join(Class<Join> joinTable) {
-        return null;
-    }
-
-    @Override
     public LambdaJoinWrapper<Primary, Join> alias(String joinAlias) {
         return null;
     }

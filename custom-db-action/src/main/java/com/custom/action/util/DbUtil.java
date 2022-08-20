@@ -22,7 +22,7 @@ public class DbUtil {
     /**
      * 该类是否存在主键
      */
-    public static <T> boolean isKeyTag(Class<T> clazz){
+    public static <T> boolean hasPriKey(Class<T> clazz){
         Field[] fields = TableInfoCache.getTableModel(clazz).getFields();
         for (Field field : fields) {
             if (field.isAnnotationPresent(DbKey.class)) return true;
@@ -46,6 +46,11 @@ public class DbUtil {
         return String.format("ifnull(%s, '')", column);
     }
 
+    public static String ifNull(String column, Object value, String fieldName) {
+        String setValue = value instanceof CharSequence ? String.format("'%s'", value) : String.valueOf(value);
+        return String.format("ifnull(%s, %s) %s", column, setValue, fieldName);
+    }
+
     public static String ifNull(String column, String fieldName) {
         return String.format("ifnull(%s, '') %s", column, fieldName);
     }
@@ -61,7 +66,8 @@ public class DbUtil {
         if (existsLogic != null) {
             return existsLogic;
         }
-        String existSql = String.format("select count(*) count from information_schema.columns where table_name = '%s' and column_name = '%s'", table, logicField);
+        String existSql = String.format("select count(*) count from information_schema.columns " +
+                "where table_name = '%s' and column_name = '%s'", table, logicField);
         Object obj = select.selectObj(new SelectSqlParamInfo<>(Object.class, existSql, false));
         boolean conBool = ConvertUtil.conBool(obj);
         TableInfoCache.setTableLogic(table, conBool);

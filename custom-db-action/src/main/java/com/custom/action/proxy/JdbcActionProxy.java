@@ -11,7 +11,6 @@ import com.custom.comm.JudgeUtil;
 import com.custom.comm.annotations.DbTable;
 import com.custom.comm.annotations.check.CheckExecute;
 import com.custom.comm.enums.ExecuteMethod;
-import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
@@ -154,7 +153,7 @@ public class JdbcActionProxy implements MethodInterceptor {
         if(!objects[0].getClass().isAnnotationPresent(DbTable.class)) {
             ExThrowsUtil.toCustom("@DbTable not found in class " + objects[0].getClass());
         }
-        if(!DbUtil.isKeyTag(objects[0].getClass()) && methodName.equals("updateByKey")) {
+        if(!DbUtil.hasPriKey(objects[0].getClass()) && methodName.equals("updateByKey")) {
             ExThrowsUtil.toCustom("@DbKey was not found in class " + objects[0].getClass());
         }
         if(methodName.equals("updateByCondition") && (JudgeUtil.isEmpty(objects[1])

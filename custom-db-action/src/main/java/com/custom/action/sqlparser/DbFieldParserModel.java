@@ -37,11 +37,19 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     /**
      * 查询时，指定查询字段的包装
      * 例：concat('user-', a.name) columnName
+     * <p>
+     *     当设置了默认值后，查询时若值为null，则set默认值
+     *     ifnull(a.name, '默认值') AS 映射字段
+     * </p>
      */
     private String wrapperColumn;
 
     /**
      * 查询时若当前字段为字符串类型，是否null转为空字符串
+     * <p>
+     *     当设置了默认值后，查询时若值为null，则set默认值
+     *     ifnull(a.name, '默认值') AS 映射字段
+     * </p>
      */
     private boolean isNullToEmpty;
 
@@ -260,10 +268,13 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
 
     @Override
     public String getSelectFieldSql() {
+        if (JudgeUtil.isNotEmpty(this.defaultValue)) {
+            return DbUtil.ifNull(this.column, this.defaultValue, this.fieldName);
+        }
         if (JudgeUtil.isNotEmpty(this.wrapperColumn)) {
             return DbUtil.wrapperSqlColumn(this.wrapperColumn, this.fieldName, this.isNullToEmpty);
         }
-        String selectColumn = DbUtil.fullSqlColumn( this.getAlias(), this.column);
+        String selectColumn = DbUtil.fullSqlColumn(this.getAlias(), this.column);
         String column = this.isNullToEmpty ? DbUtil.ifNull(selectColumn) : selectColumn;
         return DbUtil.sqlSelectWrapper(column, this.fieldName);
     }
