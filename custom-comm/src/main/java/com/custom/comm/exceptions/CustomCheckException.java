@@ -13,6 +13,10 @@ public class CustomCheckException extends RuntimeException {
         super(message);
     }
 
+    public CustomCheckException(String mft, Object... params) {
+        super(String.format(mft, params));
+    }
+
     public CustomCheckException(Throwable throwable) {
         super(throwable);
     }

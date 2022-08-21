@@ -19,10 +19,6 @@ import java.util.List;
  **/
 @EqualsAndHashCode(callSuper = true)
 @Data
-@DbJoinTables({
-        @DbJoinTable("left join province pro on pro.id = a.pro_id"),
-        @DbJoinTable("left join city cy on cy.id = a.city_id"),
-})
 @DbTable(table = "student", desc = "学生信息表", enabledDefaultValue = true)
 public class Student extends ActiveModel<Student, Integer> implements Serializable {
 
@@ -33,11 +29,8 @@ public class Student extends ActiveModel<Student, Integer> implements Serializab
 
     private String name;
 
-    private Boolean sex;
-
-    private String phone;
-
-    private static String studentInfo;
+    @DbOneToOne(thisField = "proId")
+    private Province province;
 
     @DbField("nick_code")
     private String nickName;
@@ -68,9 +61,6 @@ public class Student extends ActiveModel<Student, Integer> implements Serializab
 
 
     private Integer areaId;
-
-    @DbMapper("pro.name")
-    private String province;
 
     @DbMapper("cy.name")
     private String city;

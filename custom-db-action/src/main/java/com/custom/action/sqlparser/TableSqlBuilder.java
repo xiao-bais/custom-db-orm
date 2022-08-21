@@ -94,6 +94,7 @@ public class TableSqlBuilder<T> implements Cloneable {
      * 对于{@link DbJoinTables}注解的解析
      */
     private List<String> joinTableParserModels = new ArrayList<>();
+
     /**
      * 对于java属性字段到表字段的映射关系
      */
@@ -264,7 +265,10 @@ public class TableSqlBuilder<T> implements Cloneable {
             if (field.isAnnotationPresent(DbIgnore.class)) {
                 continue;
             }
-
+            // 基础字段或关联字段的java属性类型必须是允许的基本类型
+            if (!CustomUtil.isBasicClass(field.getType())) {
+                continue;
+            }
             if (field.isAnnotationPresent(DbKey.class) && Objects.isNull(keyParserModel)) {
                 keyParserModel = new DbKeyParserModel<>(field, this.table, this.alias, this.underlineToCamel);
 
@@ -273,7 +277,8 @@ public class TableSqlBuilder<T> implements Cloneable {
                 if (!dbField.exist()) {
                     continue;
                 }
-                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias, this.underlineToCamel, this.enabledDefaultValue, true);
+                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias,
+                        this.underlineToCamel, this.enabledDefaultValue, true);
                 fieldParserModels.add(fieldParserModel);
 
             } else if (field.isAnnotationPresent(DbMapper.class)) {
@@ -281,12 +286,16 @@ public class TableSqlBuilder<T> implements Cloneable {
                 joinDbMappers.add(joinTableParserModel);
 
             } else if (field.isAnnotationPresent(DbRelated.class)) {
-                DbRelationParserModel<T> relatedParserModel = new DbRelationParserModel<>(this.entityClass, field, this.table, this.alias, this.underlineToCamel);
+                DbRelationParserModel<T> relatedParserModel = new DbRelationParserModel<>(this.entityClass, field,
+                        this.table, this.alias, this.underlineToCamel);
                 relatedParserModels.add(relatedParserModel);
-            }else {
-                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias, this.underlineToCamel, this.enabledDefaultValue, false);
+            } else {
+                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias,
+                        this.underlineToCamel, this.enabledDefaultValue, false);
                 fieldParserModels.add(fieldParserModel);
             }
+
+
         }
     }
 

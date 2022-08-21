@@ -1,14 +1,55 @@
 package com.custom.action.sqlparser;
 
+import com.custom.action.dbaction.AbstractJoinToResult;
+import com.custom.comm.annotations.DbOneToOne;
+import com.custom.comm.exceptions.ExThrowsUtil;
+
+import java.lang.reflect.Field;
+
 /**
  * @author Xiao-Bai
  * @date 2022/8/21 2:00
  * @desc 用于DbOneToOne注解的解析对象
  */
-public class DbJoinToOneParseModel {
+public class DbJoinToOneParseModel extends AbstractJoinToResult {
 
-    private Class<?> joinTarget = Object.class;
+    /**
+     * 若在一对一查询时，查询到不止一条数据的情况下，是否抛出异常
+     * <br/> true - 是
+     * <br/> false - 否，取多条中的第一条
+     */
+    private final boolean isThrowErr;
 
-    private
+    /**
+     * 构造方法
+     * @param joinToOneField 一对一的字段
+     */
+    public DbJoinToOneParseModel(Field joinToOneField) {
 
+        DbOneToOne oneToOne = joinToOneField.getAnnotation(DbOneToOne.class);
+        this.isThrowErr = oneToOne.isThrowErr();
+        super.setThisField(oneToOne.thisField());
+        super.setJoinField(oneToOne.joinField());
+
+        // 主表
+        setThisClass(joinToOneField.getDeclaringClass());
+        // 关联对象不是Object类时，去给定的目标类
+        if (!Object.class.equals(oneToOne.joinTarget())) {
+            setJoinTarget(oneToOne.joinTarget());
+
+        }else {
+            // 否则取关联字段的类型
+            Class<?> joinTarget = joinToOneField.getType();
+            if (Object.class.equals(joinTarget)) {
+                ExThrowsUtil.toCustom("The entity type associated in %s DbOneToOne.joinTarget() is not specified"
+                        , joinToOneField.getDeclaringClass());
+            }
+            setJoinTarget(joinTarget);
+        }
+        super.initJoinProperty();
+    }
+
+    public boolean isThrowErr() {
+        return isThrowErr;
+    }
 }

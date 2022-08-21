@@ -1,9 +1,7 @@
 package com.custom.comm.annotations;
 
-import com.custom.comm.BackResult;
 
 import java.lang.annotation.*;
-import java.util.function.Function;
 
 /**
  * @author Xiao-Bai

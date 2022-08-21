@@ -3,6 +3,7 @@ package com.home;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.JdbcOpDao;
 import com.home.customtest.dao.StudentDao;
+import com.home.customtest.entity.ChildStudent;
 import com.home.customtest.entity.Employee;
 import com.home.customtest.entity.Student;
 
@@ -22,9 +23,8 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-        Employee employee = new Employee();
-        employee.setDeptName("aaaa");
-        jdbcDao.selectList(employee);
+
+        jdbcDao.selectList(new ChildStudent());
 
 
 

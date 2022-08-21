@@ -70,6 +70,7 @@ public class CustomUtil {
     public static boolean isBasicClass(Class<?> cls) {
         return CharSequence.class.isAssignableFrom(cls)
                 || cls.isPrimitive()
+                || Object.class.equals(cls)
                 || Integer.class.equals(cls)
                 || Long.class.equals(cls)
                 || Double.class.equals(cls)

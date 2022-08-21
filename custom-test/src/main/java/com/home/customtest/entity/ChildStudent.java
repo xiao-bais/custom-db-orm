@@ -18,6 +18,10 @@ import lombok.ToString;
 )
 public class ChildStudent extends Student {
 
+    private Boolean sex;
+
+    private String phone;
+
     @DbIgnore
     private Integer sumAge;
     @DbIgnore
