@@ -19,7 +19,7 @@ public @interface DbOneToMany {
     /**
      * 一对多关联的实体对象
      * <br/> 若不填，则默认取被该注解标注的类型对象
-     * <br/> 注意: 该注解不可作用在泛型为java自带的类型下({@link Object}, {@link java.util.Map} 类除外)，否则在查询时会抛错
+     * <br/> 注意: 该注解不可作用在泛型为java自带的类型下({@link Object} 类除外)，否则在查询时会抛错
      */
     Class<?> joinTarget() default Object.class;
 

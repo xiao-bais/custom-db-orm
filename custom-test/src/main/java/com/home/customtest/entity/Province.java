@@ -2,6 +2,7 @@ package com.home.customtest.entity;
 
 import com.custom.comm.annotations.DbField;
 import com.custom.comm.annotations.DbKey;
+import com.custom.comm.annotations.DbOneToOne;
 import com.custom.comm.annotations.DbTable;
 import lombok.Data;
 
@@ -19,6 +20,9 @@ public class Province {
 
     @DbField
     private String name;
+
+    @DbOneToOne(joinField = "proId")
+    private Student student;
 
 
 }

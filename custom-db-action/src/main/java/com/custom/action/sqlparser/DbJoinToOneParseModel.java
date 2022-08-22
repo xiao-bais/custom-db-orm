@@ -1,10 +1,12 @@
 package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractJoinToResult;
+import com.custom.comm.JudgeUtil;
 import com.custom.comm.annotations.DbOneToOne;
 import com.custom.comm.exceptions.ExThrowsUtil;
 
 import java.lang.reflect.Field;
+import java.util.Map;
 
 /**
  * @author Xiao-Bai
@@ -40,13 +42,21 @@ public class DbJoinToOneParseModel extends AbstractJoinToResult {
         }else {
             // 否则取关联字段的类型
             Class<?> joinTarget = joinToOneField.getType();
-            if (Object.class.equals(joinTarget)) {
+            if (Object.class.equals(joinTarget) || Map.class.isAssignableFrom(joinTarget)) {
                 ExThrowsUtil.toCustom("The entity type associated in %s DbOneToOne.joinTarget() is not specified"
                         , joinToOneField.getDeclaringClass());
             }
             setJoinTarget(joinTarget);
         }
         super.initJoinProperty();
+
+        // 若存在两个对象之间存在相互引用一对一注解的关系，则抛出异常
+        if (TableInfoCache.existCrossReference(getThisClass(), getJoinTarget())) {
+            ExThrowsUtil.toIllegal("Wrong reference. One to one annotation is not allowed to act on the mutual reference relationship between two objects in [%s] and [%s.%s] ",
+                    getJoinTarget(), getThisClass(), joinToOneField.getName()
+            );
+        }
+
     }
 
     public boolean isThrowErr() {

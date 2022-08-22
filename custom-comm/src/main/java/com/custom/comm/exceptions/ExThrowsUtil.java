@@ -34,12 +34,18 @@ public class ExThrowsUtil {
     public static void toIllegal(String msg) {
         throw new IllegalArgumentException(msg);
     }
+    public static void toIllegal(String mft, Object... params) {
+        throw new IllegalArgumentException(String.format(mft, params));
+    }
 
     /**
      * 抛出不支持操作异常
      */
     public static void toUnSupport(String msg) {
         throw new UnsupportedOperationException(msg);
+    }
+    public static void toUnSupport(String mft, Object... params) {
+        throw new UnsupportedOperationException(String.format(mft, params));
     }
 
 }

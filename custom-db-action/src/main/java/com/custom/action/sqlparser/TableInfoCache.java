@@ -1,5 +1,8 @@
 package com.custom.action.sqlparser;
 
+import com.custom.comm.JudgeUtil;
+
+import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Objects;
 
@@ -13,8 +16,8 @@ public class TableInfoCache {
 
     /**
      * 实体解析模板缓存
-     * key-实体全路径名称
-     * value-实体解析模板（TableSqlBuilder）
+     * <br/>key-实体全路径名称
+     * <br/>value-实体解析模板 {@link TableSqlBuilder}
      */
     private final static Map<String, Object> tableModel = new CustomLocalCache();
     private static Boolean underlineToCamel = false;
@@ -56,8 +59,8 @@ public class TableInfoCache {
 
     /**
      * 表的逻辑删除字段缓存
-     * key-实体全路径名称
-     * value(是否存在逻辑删除字段)-true or false
+     * <br/>key-实体全路径名称
+     * <br/>value(是否存在逻辑删除字段)-true or false
      */
     private final static Map<String, Object> tableLogic = new CustomLocalCache();
 
@@ -68,6 +71,40 @@ public class TableInfoCache {
     public static Boolean isExistsLogic(String table) {
         return (Boolean) tableLogic.get(table);
     }
+
+    /**
+     * 实体查询时，是否存在相互引用的情况
+     * <br/>key - 实体全路径名称
+     * <br/>value - 是否存在逻辑删除字段: true or false
+     */
+    private final static Map<String, Object> entityExistCrossReference = new CustomLocalCache();
+
+    public static boolean existCrossReference(Class<?> thisClass, Class<?> joinClass) {
+        Boolean thisExist = (Boolean) entityExistCrossReference.get(thisClass.getName());
+        if (thisExist != null && thisExist) {
+            return true;
+        }
+        Boolean joinExist = (Boolean) entityExistCrossReference.get(joinClass.getName());
+        if (joinExist != null && joinExist) {
+            return true;
+        }
+
+        TableSqlBuilder<?> tableModel = getTableModel(joinClass);
+        if (JudgeUtil.isNotEmpty(tableModel.getOneToOneFieldList())) {
+            for (Field field : tableModel.getOneToOneFieldList()) {
+                if (field.getType().isAssignableFrom(thisClass)
+                        || thisClass.isAssignableFrom(field.getType())) {
+                    entityExistCrossReference.put(thisClass.getName(), true);
+                    entityExistCrossReference.put(joinClass.getName(), true);
+                    return true;
+                }
+            }
+        }
+        entityExistCrossReference.put(thisClass.getName(), false);
+        entityExistCrossReference.put(joinClass.getName(), false);
+        return false;
+    }
+
 
 
 }

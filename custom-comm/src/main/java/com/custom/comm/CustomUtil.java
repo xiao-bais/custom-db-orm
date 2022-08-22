@@ -1,6 +1,8 @@
 
 package com.custom.comm;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.custom.comm.annotations.DbTable;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -70,7 +72,6 @@ public class CustomUtil {
     public static boolean isBasicClass(Class<?> cls) {
         return CharSequence.class.isAssignableFrom(cls)
                 || cls.isPrimitive()
-                || Object.class.equals(cls)
                 || Integer.class.equals(cls)
                 || Long.class.equals(cls)
                 || Double.class.equals(cls)
@@ -143,11 +144,43 @@ public class CustomUtil {
         try {
             PropertyDescriptor descriptor = new PropertyDescriptor(fieldName, entityClass);
             Method writeMethod = descriptor.getWriteMethod();
+            Class<?>[] parameterTypes = writeMethod.getParameterTypes();
+            if (parameterTypes.length > 1) {
+                log.warn("When setting the value of field '{}', the set method of field '{}' cannot be found in '{}'",
+                        fieldName, fieldName, entity.getClass());
+                log.warn("The set method with only one parameter is supported");
+            }
+            Class<?> setParamType = parameterTypes[0];
+            if (Object.class.equals(setParamType)) {
+                writeMethod.invoke(entity, value);
+                return true;
+            }
+
+            if (isBasicClass(setParamType)) {
+                value = ConvertUtil.transToObject(setParamType, value);
+
+            } else if (Collections.class.isAssignableFrom(setParamType)) {
+                String valueStr = JSONArray.toJSONString(value);
+
+                if (List.class.isAssignableFrom(setParamType)) {
+                    value = JSONArray.parseArray(valueStr, List.class);
+
+                } else if (Set.class.isAssignableFrom(setParamType)) {
+                    value = JSONArray.parseArray(valueStr, Set.class);
+                }
+                log.warn("Only 'java.util.List' and 'java.util.Set' settings are supported");
+            } else {
+
+                String valueStr = JSONObject.toJSONString(value);
+                value = JSONObject.parseObject(valueStr, setParamType);
+            }
             writeMethod.invoke(entity, value);
             return true;
+
         } catch (InvocationTargetException | IllegalAccessException e) {
             log.error(e.toString(), e);
             return false;
+
         }catch (IntrospectionException e) {
             log.error(e.toString(), e);
             throw new NoSuchFieldException(" Field: '" + fieldName + "' not found in object " + entity.getClass());

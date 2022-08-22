@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author Xiao-Bai
@@ -29,7 +30,7 @@ public class Student extends ActiveModel<Student, Integer> implements Serializab
 
     private String name;
 
-    @DbOneToOne(thisField = "proId")
+    @DbOneToOne(thisField = "proId", joinTarget = Province.class)
     private Province province;
 
     @DbField("nick_code")

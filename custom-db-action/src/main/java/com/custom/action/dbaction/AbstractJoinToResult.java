@@ -70,7 +70,7 @@ public abstract class AbstractJoinToResult {
         if (JudgeUtil.isBlank(thisField)) {
             DbKeyParserModel<?> keyParserModel = thisTableModel.getKeyParserModel();
             Asserts.notNull(keyParserModel, "The defined primary key was not found on " + thisClass);
-            this.joinField = keyParserModel.getKey();
+            this.thisField = keyParserModel.getKey();
             this.thisColumn = keyParserModel.getDbKey();
 
         } else {
@@ -90,8 +90,8 @@ public abstract class AbstractJoinToResult {
             this.joinField = keyParserModel.getKey();
             this.joinColumn = keyParserModel.getDbKey();
         }else {
-            this.thisColumn = targetTableModel.getFieldParserModels().stream()
-                    .filter(x -> x.getFieldName().equals(this.thisField)).findFirst()
+            this.joinColumn = targetTableModel.getFieldParserModels().stream()
+                    .filter(x -> x.getFieldName().equals(this.joinField)).findFirst()
                     .orElseThrow(this::throwNotFoundFieldExp)
                     .getColumn();
         }

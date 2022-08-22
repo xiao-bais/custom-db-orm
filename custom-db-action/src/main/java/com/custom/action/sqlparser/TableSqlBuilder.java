@@ -119,6 +119,16 @@ public class TableSqlBuilder<T> implements Cloneable {
     private CustomSelectJdbcBasic selectJdbc;
     private CustomUpdateJdbcBasic updateJdbc;
 
+    /**
+     * 一对一字段
+     */
+    private List<Field> oneToOneFieldList;
+
+    /**
+     * 一对多字段
+     */
+    private List<Field> oneToManyFieldList;
+
 
     /**
      * 创建表结构
@@ -252,6 +262,8 @@ public class TableSqlBuilder<T> implements Cloneable {
         this.findUpDbJoinTables = annotation.mergeSuperDbJoinTables();
         this.enabledDefaultValue = annotation.enabledDefaultValue();
         this.underlineToCamel = underlineToCamel;
+        this.oneToOneFieldList = new ArrayList<>();
+        this.oneToManyFieldList = new ArrayList<>();
     }
 
     /**
@@ -266,7 +278,9 @@ public class TableSqlBuilder<T> implements Cloneable {
                 continue;
             }
             // 基础字段或关联字段的java属性类型必须是允许的基本类型
-            if (!CustomUtil.isBasicClass(field.getType())) {
+            Class<?> fieldType = field.getType();
+            if (!CustomUtil.isBasicClass(fieldType)) {
+                this.handleMoreResultField(field, fieldType);
                 continue;
             }
             if (field.isAnnotationPresent(DbKey.class) && Objects.isNull(keyParserModel)) {
@@ -295,7 +309,25 @@ public class TableSqlBuilder<T> implements Cloneable {
                 fieldParserModels.add(fieldParserModel);
             }
 
+        }
+    }
 
+    /**
+     * 处理一对一，一对多
+     */
+    private void handleMoreResultField(Field field, Class<?> fieldType) {
+        if (field.isAnnotationPresent(DbOneToOne.class)) {
+            if (Collection.class.isAssignableFrom(fieldType)) {
+                ExThrowsUtil.toIllegal("Annotation DbOneToOne does not support acting on properties of collection type");
+            }
+            this.oneToOneFieldList.add(field);
+        }
+        if (field.isAnnotationPresent(DbOneToMany.class)) {
+            if (Collection.class.isAssignableFrom(fieldType) || Object.class.equals(fieldType)) {
+                this.oneToManyFieldList.add(field);
+            } else if (Map.class.isAssignableFrom(fieldType)) {
+                ExThrowsUtil.toIllegal("Annotation DbOneToOne does not support acting on properties of Map type");
+            }
         }
     }
 
@@ -370,7 +402,9 @@ public class TableSqlBuilder<T> implements Cloneable {
     public void buildSqlConstructorModel(ExecuteMethod method) {
         switch (method) {
             case SELECT:
-                sqlBuilder = new HandleSelectSqlBuilder<>(findUpDbJoinTables, relatedParserModels, joinDbMappers, joinTableParserModels);
+                boolean existNeedInjectResult = JudgeUtil.isNotEmpty(this.oneToOneFieldList) || JudgeUtil.isNotEmpty(this.oneToManyFieldList);
+                sqlBuilder = new HandleSelectSqlBuilder<>(findUpDbJoinTables, relatedParserModels,
+                        joinDbMappers, joinTableParserModels, existNeedInjectResult);
                 break;
             case UPDATE:
                 sqlBuilder = new HandleUpdateSqlBuilder<>();
@@ -514,6 +548,14 @@ public class TableSqlBuilder<T> implements Cloneable {
 
     public boolean isFindUpDbJoinTables() {
         return findUpDbJoinTables;
+    }
+
+    public List<Field> getOneToOneFieldList() {
+        return oneToOneFieldList;
+    }
+
+    public List<Field> getOneToManyFieldList() {
+        return oneToManyFieldList;
     }
 
     private void initializeSqlBuilder(AbstractSqlBuilder<T> sqlBuilder) {

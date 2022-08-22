@@ -208,4 +208,20 @@ public class JdbcWrapperExecutor {
         tableModel.setEntityList(tList);
         return tableModel;
     }
+
+    /**
+     * 处理一对一，一对多的设置
+     * @param cls 本次查询的对象
+     * @param dataList 本次查询的结果
+     * @param <T> 主表对象
+     */
+    private <T> void handleOneToManyRecord(Class<T> cls, List<T> dataList) {
+
+        TableSqlBuilder<T> tableModel = TableInfoCache.getTableModel(cls);
+        if (JudgeUtil.isNotEmpty(tableModel.getOneToOneFieldList())) {
+
+        }
+
+
+    }
 }

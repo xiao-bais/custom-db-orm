@@ -27,17 +27,20 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
     private final List<DbRelationParserModel<T>> relatedParserModels;
     private final List<DbJoinTableParserModel<T>> joinDbMappers;
     private final List<String> joinTableParserModels;
+    private final boolean existNeedInjectResult;
 
     public HandleSelectSqlBuilder(
                                 boolean findUpDbJoinTables,
                                 List<DbRelationParserModel<T>> relatedParserModels,
                                   List<DbJoinTableParserModel<T>> joinDbMappers,
-                                  List<String> joinTableParserModels) {
+                                  List<String> joinTableParserModels,
+                                boolean existNeedInjectResult) {
         this.selectSql = new StringBuilder();
         this.findUpDbJoinTables = findUpDbJoinTables;
         this.relatedParserModels = relatedParserModels;
         this.joinDbMappers = joinDbMappers;
         this.joinTableParserModels = joinTableParserModels;
+        this.existNeedInjectResult = existNeedInjectResult;
     }
 
 
@@ -173,5 +176,9 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
     public boolean isMergeSuperDbJoinTable() {
         return this.findUpDbJoinTables;
+    }
+
+    public boolean isExistNeedInjectResult() {
+        return existNeedInjectResult;
     }
 }

@@ -11,6 +11,7 @@ import com.custom.comm.enums.DbSymbol;
 import com.custom.comm.exceptions.ExThrowsUtil;
 
 import java.lang.reflect.Field;
+import java.util.Map;
 
 /**
  * @author Xiao-Bai
@@ -38,6 +39,11 @@ public class DbJoinToManyParseModel extends AbstractJoinToResult {
         this.sortField = oneToMany.sortField();
         super.setThisField(oneToMany.thisField());
         super.setJoinField(oneToMany.joinField());
+
+        if (Map.class.isAssignableFrom(oneToMany.joinTarget())
+                || Map.class.isAssignableFrom(joinToManyField.getType())) {
+            ExThrowsUtil.toUnSupport("In '%s', @DbOneToMany.joinTarget or field type does not support working on java.util.Map", joinToManyField.toString());
+        }
 
         // 主表
         setThisClass(joinToManyField.getDeclaringClass());

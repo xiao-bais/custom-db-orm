@@ -164,8 +164,7 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
     /**
      * 公共获取完整查询sql
      */
-    protected <T> String getFullSelectSql(ConditionWrapper<T> wrapper) throws Exception {
-        HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(wrapper.getEntityClass());
+    protected <T> String queryFullSelectBuilder(ConditionWrapper<T> wrapper, HandleSelectSqlBuilder<T> sqlBuilder) throws Exception {
         sqlBuilder.setPrimaryTable(wrapper.getPrimaryTable());
         StringBuilder selectSql = new StringBuilder();
         if(wrapper.getSelectColumns() != null) {

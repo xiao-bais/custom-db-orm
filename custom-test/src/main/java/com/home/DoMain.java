@@ -27,16 +27,9 @@ public class DoMain {
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
 
-//        ChildStudent childStudent = new ChildStudent();
+        Student student = jdbcDao.selectByKey(Student.class, 8);
 
-        Field[] loadFields = CustomUtil.loadFields(ChildStudent.class);
-        for (Field loadField : loadFields) {
-            if (!CustomUtil.isBasicClass(loadField.getType())) {
-                DbJoinToOneParseModel dbJoinToOneParseModel = new DbJoinToOneParseModel(loadField);
-                System.out.println("dbJoinToOneParseModel = " + dbJoinToOneParseModel);
-            }
-        }
-
+        System.out.println("student = " + student);
 
     }
 

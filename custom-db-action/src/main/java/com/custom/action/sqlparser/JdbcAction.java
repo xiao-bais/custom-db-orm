@@ -54,7 +54,9 @@ public class JdbcAction extends AbstractSqlExecutor {
             HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(entityClass);
             FullSqlConditionExecutor executorHandler = this.handleLogicWithCondition(sqlBuilder.getAlias(), condition,
                     getLogicDeleteQuerySql(), sqlBuilder.getTable());
-            return selectBySql(entityClass, sqlBuilder.buildSql() + executorHandler.execute(), params);
+            List<T> result = selectBySql(entityClass, sqlBuilder.buildSql() + executorHandler.execute(), params);
+            this.injectOtherResult(entityClass, sqlBuilder, result);
+            return result;
         } catch (Exception e) {
             this.throwsException(e);
             return new ArrayList<>();
@@ -82,6 +84,7 @@ public class JdbcAction extends AbstractSqlExecutor {
             FullSqlConditionExecutor conditionExecutor = this.handleLogicWithCondition(sqlBuilder.getAlias(),
                     condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
             this.buildPageResult(entityClass, sqlBuilder.buildSql() + conditionExecutor.execute(), dbPageRows, params);
+            this.injectOtherResult(entityClass, sqlBuilder, dbPageRows.getData());
         }catch (Exception e) {
             this.throwsException(e);
         }
@@ -107,7 +110,9 @@ public class JdbcAction extends AbstractSqlExecutor {
         try {
             FullSqlConditionExecutor conditionExecutor = this.handleLogicWithCondition(sqlBuilder.getAlias(),
                     condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
-            return selectOneBySql(entityClass, sqlBuilder.buildSql() + conditionExecutor.execute(), key);
+            T result = selectOneBySql(entityClass, sqlBuilder.buildSql() + conditionExecutor.execute(), key);
+            this.injectOtherResult(entityClass, sqlBuilder, result);
+            return result;
         } catch (Exception e) {
             this.throwsException(e);
             return null;
@@ -124,7 +129,9 @@ public class JdbcAction extends AbstractSqlExecutor {
         try {
             FullSqlConditionExecutor conditionExecutor = this.handleLogicWithCondition(sqlBuilder.getAlias()
                     , condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
-            return selectBySql(entityClass, sqlBuilder.buildSql() + conditionExecutor.execute(), keys.toArray());
+            List<T> result = selectBySql(entityClass, sqlBuilder.buildSql() + conditionExecutor.execute(), keys.toArray());
+            this.injectOtherResult(entityClass, sqlBuilder, result);
+            return result;
         }catch (Exception e) {
             this.throwsException(e);
             return new ArrayList<>();
@@ -138,7 +145,9 @@ public class JdbcAction extends AbstractSqlExecutor {
         try {
             FullSqlConditionExecutor conditionExecutor = this.handleLogicWithCondition(sqlBuilder.getAlias()
                     , condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
-            return selectOneBySql(entityClass, sqlBuilder.buildSql() + conditionExecutor.execute(), params);
+            T result = selectOneBySql(entityClass, sqlBuilder.buildSql() + conditionExecutor.execute(), params);
+            this.injectOtherResult(entityClass, sqlBuilder, result);
+            return result;
         }catch (Exception e) {
             this.throwsException(e);
             return null;
@@ -189,9 +198,11 @@ public class JdbcAction extends AbstractSqlExecutor {
         }
         DbPageRows<T> dbPageRows = new DbPageRows<>(wrapper.getPageIndex(), wrapper.getPageSize());
         try {
-            String selectSql = getFullSelectSql(wrapper);
-            buildPageResult(wrapper.getEntityClass(), selectSql, dbPageRows, wrapper.getParamValues().toArray());
-        }catch (Exception e){
+            HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(wrapper.getEntityClass());
+            String selectSql = this.queryFullSelectBuilder(wrapper, sqlBuilder);
+            this.buildPageResult(wrapper.getEntityClass(), selectSql, dbPageRows, wrapper.getParamValues().toArray());
+            this.injectOtherResult(wrapper.getEntityClass(), sqlBuilder, dbPageRows.getData());
+        }catch (Exception e) {
             this.throwsException(e);
         }
         return dbPageRows;
@@ -201,8 +212,11 @@ public class JdbcAction extends AbstractSqlExecutor {
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> List<T> selectList(ConditionWrapper<T> wrapper) {
         try {
-            String selectSql = getFullSelectSql(wrapper);
-            return selectBySql(wrapper.getEntityClass(), selectSql, wrapper.getParamValues().toArray());
+            HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(wrapper.getEntityClass());
+            String selectSql = this.queryFullSelectBuilder(wrapper, sqlBuilder);
+            List<T> result = selectBySql(wrapper.getEntityClass(), selectSql, wrapper.getParamValues().toArray());
+            this.injectOtherResult(wrapper.getEntityClass(), sqlBuilder, result);
+            return result;
         }catch (Exception e) {
             this.throwsException(e);
             return new ArrayList<>();
@@ -213,8 +227,11 @@ public class JdbcAction extends AbstractSqlExecutor {
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> T selectOne(ConditionWrapper<T> wrapper) {
         try {
-            String selectSql = getFullSelectSql(wrapper);
-            return selectOneBySql(wrapper.getEntityClass(), selectSql, wrapper.getParamValues().toArray());
+            HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(wrapper.getEntityClass());
+            String selectSql = this.queryFullSelectBuilder(wrapper, sqlBuilder);
+            T result = selectOneBySql(wrapper.getEntityClass(), selectSql, wrapper.getParamValues().toArray());
+            this.injectOtherResult(wrapper.getEntityClass(), sqlBuilder, result);
+            return result;
         }catch (Exception e) {
             this.throwsException(e);
             return null;
@@ -225,7 +242,8 @@ public class JdbcAction extends AbstractSqlExecutor {
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> long selectCount(ConditionWrapper<T> wrapper) {
         try {
-            String selectSql = getFullSelectSql(wrapper);
+            HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(wrapper.getEntityClass());
+            String selectSql = this.queryFullSelectBuilder(wrapper, sqlBuilder);
             return (long) selectObjBySql(String.format("select count(0) from (%s) xxx ", selectSql), wrapper.getParamValues().toArray());
         }catch (Exception e){
             this.throwsException(e);
@@ -237,7 +255,8 @@ public class JdbcAction extends AbstractSqlExecutor {
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> Object selectObj(ConditionWrapper<T> wrapper) {
         try {
-            String selectSql = getFullSelectSql(wrapper);
+            HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(wrapper.getEntityClass());
+            String selectSql = this.queryFullSelectBuilder(wrapper, sqlBuilder);
             return selectObjBySql(selectSql, wrapper.getParamValues().toArray());
         }catch (Exception e) {
             this.throwsException(e);
@@ -249,7 +268,8 @@ public class JdbcAction extends AbstractSqlExecutor {
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> List<Object> selectObjs(ConditionWrapper<T> wrapper) {
         try {
-            String selectSql = getFullSelectSql(wrapper);
+            HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(wrapper.getEntityClass());
+            String selectSql = this.queryFullSelectBuilder(wrapper, sqlBuilder);
             return selectObjsBySql(selectSql, wrapper.getParamValues().toArray());
         }catch (Exception e) {
             this.throwsException(e);
@@ -262,7 +282,8 @@ public class JdbcAction extends AbstractSqlExecutor {
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> Map<String, Object> selectMap(ConditionWrapper<T> wrapper) {
         try {
-            String selectSql = getFullSelectSql(wrapper);
+            HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(wrapper.getEntityClass());
+            String selectSql = this.queryFullSelectBuilder(wrapper, sqlBuilder);
             return selectMapBySql(selectSql, wrapper.getParamValues().toArray());
         }catch (Exception e) {
             this.throwsException(e);
@@ -274,7 +295,8 @@ public class JdbcAction extends AbstractSqlExecutor {
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> List<Map<String, Object>> selectMaps(ConditionWrapper<T> wrapper) {
         try {
-            String selectSql = getFullSelectSql(wrapper);
+            HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(wrapper.getEntityClass());
+            String selectSql = this.queryFullSelectBuilder(wrapper, sqlBuilder);
             return selectMapsBySql(selectSql, wrapper.getParamValues().toArray());
         }catch (Exception e) {
             this.throwsException(e);
@@ -291,7 +313,8 @@ public class JdbcAction extends AbstractSqlExecutor {
         List<Map<String, Object>> dataList = new ArrayList<>();
         long count = 0;
         try {
-            String selectSql = getFullSelectSql(wrapper);
+            HandleSelectSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(wrapper.getEntityClass());
+            String selectSql = this.queryFullSelectBuilder(wrapper, sqlBuilder);
             Object[] params = wrapper.getParamValues().toArray();
             count = (long) selectObjBySql(String.format("select count(0) from (%s) xxx ", selectSql), params);
             if (count > 0) {
@@ -302,6 +325,20 @@ public class JdbcAction extends AbstractSqlExecutor {
             this.throwsException(e);
         }
         return dbPageRows.setTotal(count).setData(dataList);
+    }
+
+    private <T> void injectOtherResult(Class<T> entityClass, HandleSelectSqlBuilder<T> sqlBuilder, T result) {
+        if (sqlBuilder.isExistNeedInjectResult()) {
+            OneToResultInjector<T> resultInjector = new OneToResultInjector<>(entityClass, this);
+            resultInjector.injectorValue(Collections.singletonList(result));
+        }
+    }
+
+    private <T> void injectOtherResult(Class<T> entityClass, HandleSelectSqlBuilder<T> sqlBuilder, List<T> result) {
+        if (sqlBuilder.isExistNeedInjectResult()) {
+            OneToResultInjector<T> resultInjector = new OneToResultInjector<>(entityClass, this);
+            resultInjector.injectorValue(result);
+        }
     }
 
 
