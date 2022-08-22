@@ -1,9 +1,13 @@
 package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractJoinToResult;
+import com.custom.action.util.DbUtil;
+import com.custom.comm.JudgeUtil;
+import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.DbKey;
 import com.custom.comm.annotations.DbOneToMany;
 import com.custom.comm.annotations.DbOneToOne;
+import com.custom.comm.enums.DbSymbol;
 import com.custom.comm.exceptions.ExThrowsUtil;
 
 import java.lang.reflect.Field;
@@ -25,7 +29,7 @@ public class DbJoinToManyParseModel extends AbstractJoinToResult {
     /**
      * 指定排序的字段，同时对上面的orderByAsc起作用(java属性即可)
      */
-    private String sortField;
+    private final String sortField;
 
 
     public DbJoinToManyParseModel(Field joinToManyField) {
@@ -54,6 +58,13 @@ public class DbJoinToManyParseModel extends AbstractJoinToResult {
 
     }
 
-
+    public String orderByField() {
+        if (JudgeUtil.isBlank(sortField)) {
+            return null;
+        }
+        return SymbolConstant.ORDER_BY
+                + DbUtil.fullSqlColumn(getJoinAlias(), sortField)
+                + (orderByAsc ? SymbolConstant.ASC : SymbolConstant.DESC);
+    }
 
 }
