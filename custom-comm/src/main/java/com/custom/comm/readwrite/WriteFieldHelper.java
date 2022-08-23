@@ -85,6 +85,7 @@ public class WriteFieldHelper<T> {
                         && Object.class.equals(this.writeType))) {
                     ExThrowsUtil.toCustom("Field is inconsistent with parameter type of set method: " + writeMethod.toGenericString());
                 }
+                // 如果是集合类型的话，获取到集合中的泛型类型
                 Class<?> genericType = (Class<?>) actualTypeArguments[0];
                 if (Object.class.equals(genericType)) {
                     Collection<?> collection = (Collection<?>) this.writeValue;
