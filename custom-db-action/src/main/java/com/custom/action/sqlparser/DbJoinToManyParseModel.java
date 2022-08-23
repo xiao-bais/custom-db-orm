@@ -46,7 +46,8 @@ public class DbJoinToManyParseModel extends AbstractJoinToResult {
 
         if (Map.class.isAssignableFrom(oneToMany.joinTarget())
                 || Map.class.isAssignableFrom(joinToManyField.getType())) {
-            ExThrowsUtil.toUnSupport("In '%s', @DbOneToMany.joinTarget or field type does not support working on java.util.Map", joinToManyField.toString());
+            ExThrowsUtil.toUnSupport("In '%s', @DbOneToMany.joinTarget() or field type does not support working on java.util.Map"
+                    , joinToManyField.toString());
         }
 
         // 主表
@@ -55,7 +56,7 @@ public class DbJoinToManyParseModel extends AbstractJoinToResult {
         if (!Object.class.equals(oneToMany.joinTarget())) {
             setJoinTarget(oneToMany.joinTarget());
 
-        }else {
+        } else {
             // 否则取关联字段的类型
             Class<?> joinCollectionType = joinToManyField.getType();
             if (!Collection.class.isAssignableFrom(joinCollectionType)) {
@@ -64,7 +65,8 @@ public class DbJoinToManyParseModel extends AbstractJoinToResult {
             ParameterizedTypeImpl genericType = (ParameterizedTypeImpl) joinToManyField.getGenericType();
             Type[] actualTypeArguments = genericType.getActualTypeArguments();
             if (actualTypeArguments.length == 0 || CustomUtil.isNotAllowedGenericType((Class<?>) actualTypeArguments[0])) {
-                ExThrowsUtil.toCustom("@DbOneToMany does not support acting on Java property with generic type %s in Field : %s", actualTypeArguments[0], joinToManyField);
+                ExThrowsUtil.toCustom("@DbOneToMany does not support acting on Java property with generic type %s in Field : %s"
+                        , actualTypeArguments[0], joinToManyField);
             }
             Class<?> joinTarget = (Class<?>) actualTypeArguments[0];
 
@@ -80,7 +82,7 @@ public class DbJoinToManyParseModel extends AbstractJoinToResult {
 
     public String orderByField() {
         if (JudgeUtil.isBlank(sortField)) {
-            return null;
+            return "";
         }
         return SymbolConstant.ORDER_BY
                 + DbUtil.fullSqlColumn(getJoinAlias(), sortField)

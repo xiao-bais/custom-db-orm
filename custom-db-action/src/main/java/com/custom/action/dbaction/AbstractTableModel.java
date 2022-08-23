@@ -50,7 +50,7 @@ public abstract class AbstractTableModel<T> {
      */
     protected Object getFieldValue(T x, String fieldName)
             throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, NoSuchFieldException {
-       return CustomUtil.readFieldValue(x, fieldName);
+        return CustomUtil.readFieldValue(x, fieldName);
     }
 
     /**

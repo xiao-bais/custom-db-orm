@@ -27,7 +27,6 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-
         Dept student = jdbcDao.selectByKey(Dept.class, 1);
 
         System.out.println("student = " + student);

@@ -24,7 +24,7 @@ public class Dept {
     @DbField
     private String name;
 
-    @DbOneToMany(joinField = "deptId")
-    private Set<Employee> employeeList;
+    @DbOneToMany(joinField = "deptId", joinTarget = Employee.class)
+    private Set<Object> employeeList;
 
 }

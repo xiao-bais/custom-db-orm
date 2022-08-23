@@ -68,7 +68,8 @@ public class MappingResultInjector<T> {
                     List<?> queryResult = sqlExecutor.selectList(joinToManyParseModel.getJoinTarget(), joinToManyParseModel.queryCondition(), queryValue);
 
                     if (JudgeUtil.isNotEmpty(queryResult)) {
-                        CustomUtil.writeFieldValue(entity, waitSetField.getName(), queryResult);
+                        CustomUtil.writeFieldValue(queryResult, entity,
+                                waitSetField.getName(), joinToManyParseModel.getJoinTarget());
                     }
                 } catch (NoSuchFieldException e) {
                     logger.error(e.getMessage(), e);
@@ -100,9 +101,13 @@ public class MappingResultInjector<T> {
                 if (queryResult.size() > 1 && joinToOneParseModel.isThrowErr()) {
                     ExThrowsUtil.toCustom(joinToOneParseModel.getJoinTarget() + "One to one query, but %s results are found", queryResult.size());
                 }
+                if (queryResult.get(0) == null) {
+                    continue;
+                }
 
                 if (JudgeUtil.isNotEmpty(queryResult)) {
-                    CustomUtil.writeFieldValue(entity, waitSetField.getName(), queryResult.get(0));
+                    CustomUtil.writeFieldValue(queryResult.get(0), entity,
+                            waitSetField.getName(), joinToOneParseModel.getJoinTarget());
                 }
             } catch (NoSuchFieldException e) {
                 logger.error(e.getMessage(), e);

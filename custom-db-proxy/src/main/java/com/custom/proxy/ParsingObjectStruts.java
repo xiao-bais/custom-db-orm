@@ -5,6 +5,7 @@ import com.custom.comm.exceptions.ExThrowsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.beans.IntrospectionException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -39,7 +40,7 @@ public class ParsingObjectStruts {
             } else if (value instanceof Set) {
                 parseSet(name, value);
             } else {
-                ExThrowsUtil.toCustom("暂不支持的数据类型: " + value.getClass());
+                ExThrowsUtil.toCustom("Unsupported data type: " + value.getClass());
             }
         }else if (value instanceof Map) {
             parseMap(name, value);
@@ -54,14 +55,15 @@ public class ParsingObjectStruts {
             paramsMap.put(name, null);
             return;
         }
-        // todo 可考虑优化成beanToMap的方式，提升反射的效率
+
+
         Field[] fields = CustomUtil.loadFields(value.getClass(), false);
         if (fields.length == 0) ExThrowsUtil.toCustom("In %s, no available attributes were resolved", value.getClass());
         for (Field field : fields) {
             String fieldName = formatMapperKey(name, field.getName());
             Object fieldValue = null;
             try {
-                fieldValue = CustomUtil.getFieldValue(value, field.getName());
+                fieldValue = CustomUtil.readFieldValue(value, field.getName());
             } catch (Exception e) {
                 logger.error(e.toString(), e);
             }
@@ -78,7 +80,7 @@ public class ParsingObjectStruts {
                 } else if (Set.class.isAssignableFrom(fieldType)) {
                     parseSet(fieldName, fieldValue);
                 }else {
-                    ExThrowsUtil.toCustom("不支持的数据类型: " + fieldValue.getClass());
+                    ExThrowsUtil.toCustom("Unsupported data type: " + fieldValue.getClass());
                 }
             } else if (Map.class.isAssignableFrom(fieldType)) {
                 parseMap(fieldName, fieldValue);
@@ -125,7 +127,7 @@ public class ParsingObjectStruts {
                 } else if (val instanceof Set) {
                     parseSet(tempName, val);
                 } else {
-                    ExThrowsUtil.toCustom("不支持的数据类型: " + val.getClass());
+                    ExThrowsUtil.toCustom("Unsupported data type: " + val.getClass());
                 }
             } else {
                 parseObject(tempName, val);

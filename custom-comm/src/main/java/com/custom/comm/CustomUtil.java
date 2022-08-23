@@ -1,14 +1,13 @@
 
 package com.custom.comm;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.custom.comm.annotations.DbTable;
 import com.custom.comm.exceptions.ExThrowsUtil;
+import com.custom.comm.readwrite.ReadFieldHelper;
+import com.custom.comm.readwrite.WriteFieldHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -103,110 +102,19 @@ public class CustomUtil {
     }
 
     /**
-     * 获取字java属性值
+     * 读取对象的属性值
      */
-    public static <T> Object getFieldValue(T entity, String fieldName) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-        JudgeUtil.checkObjNotNull(entity, fieldName);
-        Object value;
-        String firstLetter;
-        String getter;
-        try {
-            if(RexUtil.hasRegex(fieldName, RexUtil.back_quotes)) {
-                fieldName = RexUtil.regexStr(fieldName, RexUtil.back_quotes);
-            }
-            if (Objects.isNull(fieldName)) return null;
-            firstLetter = fieldName.substring(0, 1).toUpperCase();
-            getter = SymbolConstant.GETTER + firstLetter + fieldName.substring(1);
-            Method method = entity.getClass().getMethod(getter);
-            value = method.invoke(entity);
-        }catch (NoSuchMethodException e){
-            try {
-                firstLetter = fieldName.substring(0, 1).toUpperCase();
-                Method method = entity.getClass().getMethod(SymbolConstant.IS + firstLetter + fieldName.substring(1));
-                value = method.invoke(entity);
-            }catch (NoSuchMethodException v) {
-                Method method = entity.getClass().getMethod(fieldName);
-                value = method.invoke(entity);
-            }
-        }
-        return value;
-    }
-
-    /**
-     * 将值写入指定对象的属性
-     */
-    public static <T> boolean writeFieldValue(T entity, String fieldName, Object value) throws NoSuchFieldException {
-        Asserts.notNull(entity, "The entity bean cannot be empty");
-        Asserts.notNull(fieldName, "The fieldName bean cannot be empty");
-        Class<?> entityClass = entity.getClass();
-        try {
-            PropertyDescriptor descriptor = new PropertyDescriptor(fieldName, entityClass);
-            Method writeMethod = descriptor.getWriteMethod();
-            Class<?>[] parameterTypes = writeMethod.getParameterTypes();
-            if (parameterTypes.length > 1) {
-                log.warn("When setting the value of field '{}', the set method of field '{}' cannot be found in '{}'",
-                        fieldName, fieldName, entity.getClass());
-                log.warn("The set method with only one parameter is supported");
-            }
-            Class<?> setParamType = parameterTypes[0];
-            if (Object.class.equals(setParamType)) {
-                writeMethod.invoke(entity, value);
-                return true;
-            }
-
-            if (isBasicClass(setParamType)) {
-                value = ConvertUtil.transToObject(setParamType, value);
-
-            } else if (Collection.class.isAssignableFrom(setParamType)) {
-                String valueStr = JSONArray.toJSONString(value);
-                Type[] actualTypeArguments = ((ParameterizedTypeImpl) writeMethod.getGenericParameterTypes()[0]).getActualTypeArguments();
-                if (actualTypeArguments.length == 0 || CustomUtil.isNotAllowedGenericType((Class<?>) actualTypeArguments[0])) {
-                    ExThrowsUtil.toCustom("Field is inconsistent with parameter type of set method: " + writeMethod.toGenericString());
-                }
-                Class<?> genericType = (Class<?>) actualTypeArguments[0];
-                value = JSONArray.parseArray(valueStr, genericType);
-                if (Set.class.isAssignableFrom(setParamType)) {
-                    value = new HashSet<>((ArrayList<?>) value);
-                }
-                log.warn("Only 'java.util.List' and 'java.util.Set' settings are supported");
-            } else {
-
-                String valueStr = JSONObject.toJSONString(value);
-                value = JSONObject.parseObject(valueStr, setParamType);
-            }
-            writeMethod.invoke(entity, value);
-            return true;
-
-        } catch (InvocationTargetException | IllegalAccessException e) {
-            log.error(e.toString(), e);
-            return false;
-
-        }catch (IntrospectionException e) {
-            log.error(e.toString(), e);
-            throw new NoSuchFieldException(" Field: '" + fieldName + "' not found in object " + entity.getClass());
-        }
+    public static <T> boolean writeFieldValue(Object writeValue, T waitWriteEntity, String fieldName, Class<?> writeType) throws NoSuchFieldException {
+        WriteFieldHelper<T> readFieldHelper = new WriteFieldHelper<>(writeValue, waitWriteEntity, fieldName, writeType);
+        return readFieldHelper.writeValue();
     }
 
     /**
      * 读取对象的属性值
      */
     public static <T> Object readFieldValue(T entity, String fieldName) throws NoSuchFieldException {
-        Asserts.notNull(entity, "The entity bean cannot be empty");
-        Asserts.notNull(fieldName, "The fieldName bean cannot be empty");
-        Map<String, Object> objectMap;
-        try {
-            if (entity instanceof Map) {
-                objectMap = (Map<String, Object>) entity;
-            } else {
-                objectMap = beanToMap(entity);
-            }
-            if (objectMap.containsKey(fieldName)) {
-                return objectMap.get(fieldName);
-            }
-        }catch (IntrospectionException e) {
-            log.error(e.toString(), e);
-        }
-        throw new NoSuchFieldException(" Field: '" + fieldName + "' not found in object " + entity.getClass());
+        ReadFieldHelper<T, Object> readFieldHelper = new ReadFieldHelper<>(entity, fieldName);
+        return readFieldHelper.readObjectValue();
     }
 
 
