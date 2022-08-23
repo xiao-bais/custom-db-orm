@@ -329,14 +329,14 @@ public class JdbcAction extends AbstractSqlExecutor {
 
     private <T> void injectOtherResult(Class<T> entityClass, HandleSelectSqlBuilder<T> sqlBuilder, T result) {
         if (sqlBuilder.isExistNeedInjectResult()) {
-            OneToResultInjector<T> resultInjector = new OneToResultInjector<>(entityClass, this);
+            MappingResultInjector<T> resultInjector = new MappingResultInjector<>(entityClass, this);
             resultInjector.injectorValue(Collections.singletonList(result));
         }
     }
 
     private <T> void injectOtherResult(Class<T> entityClass, HandleSelectSqlBuilder<T> sqlBuilder, List<T> result) {
         if (sqlBuilder.isExistNeedInjectResult()) {
-            OneToResultInjector<T> resultInjector = new OneToResultInjector<>(entityClass, this);
+            MappingResultInjector<T> resultInjector = new MappingResultInjector<>(entityClass, this);
             resultInjector.injectorValue(result);
         }
     }

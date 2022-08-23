@@ -2,8 +2,12 @@ package com.home.customtest.entity;
 
 import com.custom.comm.annotations.DbField;
 import com.custom.comm.annotations.DbKey;
+import com.custom.comm.annotations.DbOneToMany;
 import com.custom.comm.annotations.DbTable;
 import lombok.Data;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Xiao-Bai
@@ -11,7 +15,7 @@ import lombok.Data;
  * @desc:
  */
 @Data
-@DbTable(table = "dept1")
+@DbTable(table = "dept")
 public class Dept {
 
     @DbKey
@@ -19,5 +23,8 @@ public class Dept {
 
     @DbField
     private String name;
+
+    @DbOneToMany(joinField = "deptId")
+    private Set<Employee> employeeList;
 
 }

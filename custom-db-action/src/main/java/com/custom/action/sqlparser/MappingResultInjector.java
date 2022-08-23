@@ -15,9 +15,9 @@ import java.util.List;
  * @date 2022/8/22 18:16
  * @desc 一对一，一对多 value植入
  */
-public class OneToResultInjector<T> {
+public class MappingResultInjector<T> {
 
-    private final Logger logger = LoggerFactory.getLogger(OneToResultInjector.class);
+    private final Logger logger = LoggerFactory.getLogger(MappingResultInjector.class);
 
     /**
      * 主表的对象
@@ -29,7 +29,7 @@ public class OneToResultInjector<T> {
      */
     public AbstractSqlExecutor sqlExecutor;
 
-    public OneToResultInjector(Class<T> thisClass, AbstractSqlExecutor sqlExecutor) {
+    public MappingResultInjector(Class<T> thisClass, AbstractSqlExecutor sqlExecutor) {
         this.thisClass = thisClass;
         this.sqlExecutor = sqlExecutor;
     }
@@ -43,17 +43,38 @@ public class OneToResultInjector<T> {
             this.oneToOneHandler(tableModel, entity);
 
             // set 一对多
-            List<Field> oneToManyFieldList = tableModel.getOneToManyFieldList();
-            if (JudgeUtil.isNotEmpty(oneToManyFieldList)) {
-                for (Field waitSetField : oneToManyFieldList) {
-
-                }
-            }
-
+            this.oneToManyHandler(tableModel, entity);
 
         }
 
+    }
 
+    /**
+     * 一对多的值set
+     * @param tableModel - 实体解析模板
+     * @param entity - 实体对象
+     */
+    private void oneToManyHandler(TableSqlBuilder<T> tableModel, T entity) {
+        List<Field> oneToManyFieldList = tableModel.getOneToManyFieldList();
+        if (JudgeUtil.isNotEmpty(oneToManyFieldList)) {
+            for (Field waitSetField : oneToManyFieldList) {
+                DbJoinToManyParseModel joinToManyParseModel = new DbJoinToManyParseModel(waitSetField);
+
+                try {
+                    Object queryValue = CustomUtil.readFieldValue(entity, joinToManyParseModel.getThisField());
+                    if (queryValue == null) {
+                        continue;
+                    }
+                    List<?> queryResult = sqlExecutor.selectList(joinToManyParseModel.getJoinTarget(), joinToManyParseModel.queryCondition(), queryValue);
+
+                    if (JudgeUtil.isNotEmpty(queryResult)) {
+                        CustomUtil.writeFieldValue(entity, waitSetField.getName(), queryResult);
+                    }
+                } catch (NoSuchFieldException e) {
+                    logger.error(e.getMessage(), e);
+                }
+            }
+        }
     }
 
     /**

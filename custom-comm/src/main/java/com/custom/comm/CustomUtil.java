@@ -8,6 +8,7 @@ import com.custom.comm.exceptions.ExThrowsUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -15,10 +16,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -159,14 +157,16 @@ public class CustomUtil {
             if (isBasicClass(setParamType)) {
                 value = ConvertUtil.transToObject(setParamType, value);
 
-            } else if (Collections.class.isAssignableFrom(setParamType)) {
+            } else if (Collection.class.isAssignableFrom(setParamType)) {
                 String valueStr = JSONArray.toJSONString(value);
-
-                if (List.class.isAssignableFrom(setParamType)) {
-                    value = JSONArray.parseArray(valueStr, List.class);
-
-                } else if (Set.class.isAssignableFrom(setParamType)) {
-                    value = JSONArray.parseArray(valueStr, Set.class);
+                Type[] actualTypeArguments = ((ParameterizedTypeImpl) writeMethod.getGenericParameterTypes()[0]).getActualTypeArguments();
+                if (actualTypeArguments.length == 0 || CustomUtil.isNotAllowedGenericType((Class<?>) actualTypeArguments[0])) {
+                    ExThrowsUtil.toCustom("Field is inconsistent with parameter type of set method: " + writeMethod.toGenericString());
+                }
+                Class<?> genericType = (Class<?>) actualTypeArguments[0];
+                value = JSONArray.parseArray(valueStr, genericType);
+                if (Set.class.isAssignableFrom(setParamType)) {
+                    value = new HashSet<>((ArrayList<?>) value);
                 }
                 log.warn("Only 'java.util.List' and 'java.util.Set' settings are supported");
             } else {
@@ -427,6 +427,21 @@ public class CustomUtil {
         return false;
     }
 
+    /**
+     * 是否是不允许的泛型类型
+     */
+    public static boolean isNotAllowedGenericType(Class<?> genericType) {
+       if (Object.class.equals(genericType)) {
+           return true;
+       }
+       if (Collection.class.isAssignableFrom(genericType)) {
+           return true;
+       }
+       if (Map.class.isAssignableFrom(genericType)) {
+           return true;
+       }
+       return isBasicClass(genericType);
+    }
 
 
 

@@ -6,6 +6,7 @@ import com.custom.action.sqlparser.JdbcOpDao;
 import com.custom.comm.CustomUtil;
 import com.home.customtest.dao.StudentDao;
 import com.home.customtest.entity.ChildStudent;
+import com.home.customtest.entity.Dept;
 import com.home.customtest.entity.Employee;
 import com.home.customtest.entity.Student;
 
@@ -27,7 +28,7 @@ public class DoMain {
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
 
-        Student student = jdbcDao.selectByKey(Student.class, 8);
+        Dept student = jdbcDao.selectByKey(Dept.class, 1);
 
         System.out.println("student = " + student);
 

@@ -2,6 +2,7 @@ package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractJoinToResult;
 import com.custom.action.util.DbUtil;
+import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.DbKey;
@@ -9,8 +10,11 @@ import com.custom.comm.annotations.DbOneToMany;
 import com.custom.comm.annotations.DbOneToOne;
 import com.custom.comm.enums.DbSymbol;
 import com.custom.comm.exceptions.ExThrowsUtil;
+import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -53,7 +57,17 @@ public class DbJoinToManyParseModel extends AbstractJoinToResult {
 
         }else {
             // 否则取关联字段的类型
-            Class<?> joinTarget = joinToManyField.getType();
+            Class<?> joinCollectionType = joinToManyField.getType();
+            if (!Collection.class.isAssignableFrom(joinCollectionType)) {
+                ExThrowsUtil.toUnSupport("@DbOneToMany is not allowed to act on properties of non collection type : " + joinToManyField);
+            }
+            ParameterizedTypeImpl genericType = (ParameterizedTypeImpl) joinToManyField.getGenericType();
+            Type[] actualTypeArguments = genericType.getActualTypeArguments();
+            if (actualTypeArguments.length == 0 || CustomUtil.isNotAllowedGenericType((Class<?>) actualTypeArguments[0])) {
+                ExThrowsUtil.toCustom("@DbOneToMany does not support acting on Java property with generic type %s in Field : %s", actualTypeArguments[0], joinToManyField);
+            }
+            Class<?> joinTarget = (Class<?>) actualTypeArguments[0];
+
             if (Object.class.equals(joinTarget)) {
                 ExThrowsUtil.toCustom("The entity type associated in %s DbOneToOne.joinTarget() is not specified"
                         , joinToManyField.getDeclaringClass());
