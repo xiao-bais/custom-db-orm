@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 /**
  * @author Xiao-Bai
  * @date 2022/8/24 1:07
- * @desc
+ * 读取对象中指定属性的值
  */
 @Slf4j
 @SuppressWarnings("unchecked")
