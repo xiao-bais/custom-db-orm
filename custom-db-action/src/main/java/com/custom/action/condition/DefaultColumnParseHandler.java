@@ -25,6 +25,7 @@ public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {
     private final List<Field> fieldList;
     private final TableSqlBuilder<T> tableModel;
     private final Map<String, String> fieldMapper;
+//    private final static Map<Class<?>, Map<SFunction<>>>
 
     public DefaultColumnParseHandler(Class<T> thisClass) {
         this.thisClass = thisClass;

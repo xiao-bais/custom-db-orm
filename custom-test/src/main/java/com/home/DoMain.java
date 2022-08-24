@@ -4,6 +4,7 @@ import com.custom.action.sqlparser.DbJoinToOneParseModel;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.JdbcOpDao;
 import com.custom.comm.CustomUtil;
+import com.custom.comm.readwrite.ReadFieldHelper;
 import com.home.customtest.dao.StudentDao;
 import com.home.customtest.entity.ChildStudent;
 import com.home.customtest.entity.Dept;
@@ -12,6 +13,7 @@ import com.home.customtest.entity.Student;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 /**
@@ -28,11 +30,12 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-        List<Dept> deptList = jdbcDao.selectList(new Dept());
+        Dept dept = new Dept();
+        dept.setAdminFlag(true);
 
-        for (Dept dept : deptList) {
-            System.out.println("dept = " + dept);
-        }
+        ReadFieldHelper<Dept, Boolean> readFieldHelper = new ReadFieldHelper<>(dept, "adminFlag", Boolean.class);
+        Optional<Boolean> aBoolean = readFieldHelper.readCustomValue();
+        System.out.println("aBoolean.get() = " + aBoolean.orElse(null));
 
     }
 

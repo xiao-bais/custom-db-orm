@@ -159,21 +159,21 @@ public class JdbcOpDao {
     }
 
     /**
-     * 查询单条记录，!= null 的实体属性即为条件
+     * 查询单条记录，!= null 的实体属性即为条件(全等查询)
      */
     public <T> T selectOne(T entity) {
         return jdbcAction.selectOne(entity);
     }
 
     /**
-     * 查询多条记录，!= null 的实体属性即为条件
+     * 查询多条记录，!= null 的实体属性即为条件(全等查询)
      */
     public <T> List<T> selectList(T entity) {
         return jdbcAction.selectList(entity);
     }
 
     /**
-     * 查询多条记录并分页，!= null 的实体属性即为条件
+     * 查询多条记录并分页，!= null 的实体属性即为条件(全等查询)
      */
     public <T> DbPageRows<T> selectPage(T entity, DbPageRows<T> pageRows) {
         return jdbcAction.selectPage(entity, pageRows);

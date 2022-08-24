@@ -23,6 +23,8 @@ public class Dept {
     @DbField
     private String name;
 
+    private boolean adminFlag;
+
     @DbOneToMany(joinField = "deptId", joinTarget = Employee.class)
     private List<Map<String, Object>> employeeList;
 

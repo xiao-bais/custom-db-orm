@@ -119,17 +119,17 @@ public interface JdbcDao {
     <T> T[] selectArrays(Class<T> t, String sql, Object... params);
 
     /**
-     * 查询单条记录，!= null 的实体属性即为条件
+     * 查询单条记录，!= null 的实体属性即为条件(全等查询)
      */
     <T> T selectOne(T entity);
 
     /**
-     * 查询多条记录，!= null 的实体属性即为条件
+     * 查询多条记录，!= null 的实体属性即为条件(全等查询)
      */
     <T> List<T> selectList(T entity);
 
     /**
-     * 查询多条记录并分页，!= null 的实体属性即为条件
+     * 查询多条记录并分页，!= null 的实体属性即为条件(全等查询)
      */
     <T> DbPageRows<T> selectPage(T entity, DbPageRows<T> pageRows);
 
