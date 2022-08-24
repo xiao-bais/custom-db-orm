@@ -78,6 +78,9 @@ public class ReadFieldHelper<T, R> {
      * 直接获取值
      */
     public Object readObjectValue() {
+        if(convertType != null) {
+            return readCustomValue().orElse(null);
+        }
         return readValue;
     }
 
