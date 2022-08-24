@@ -11,6 +11,7 @@ import com.home.customtest.entity.Employee;
 import com.home.customtest.entity.Student;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.function.Predicate;
 
 /**
@@ -27,9 +28,11 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-        Dept student = jdbcDao.selectByKey(Dept.class, 1);
+        List<Dept> deptList = jdbcDao.selectList(new Dept());
 
-        System.out.println("student = " + student);
+        for (Dept dept : deptList) {
+            System.out.println("dept = " + dept);
+        }
 
     }
 

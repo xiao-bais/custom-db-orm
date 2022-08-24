@@ -100,8 +100,8 @@ public abstract class AbstractJoinToResult {
     }
 
     private CustomCheckException throwNotFoundFieldExp() {
-        return new CustomCheckException("%s DbOneToOne.thisField() could not find the corresponding Java attribute in %s",
-                this.thisClass, this.joinTarget
+        return new CustomCheckException("%s DbOneToOne.thisField() could not find the corresponding Java property: '%s' in %s",
+                this.thisClass.getName(), this.joinField, this.joinTarget
         );
     }
 

@@ -6,8 +6,7 @@ import com.custom.comm.annotations.DbOneToMany;
 import com.custom.comm.annotations.DbTable;
 import lombok.Data;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Xiao-Bai
@@ -19,12 +18,12 @@ import java.util.Set;
 public class Dept {
 
     @DbKey
-    private int id;
+    private Integer id;
 
     @DbField
     private String name;
 
     @DbOneToMany(joinField = "deptId", joinTarget = Employee.class)
-    private Set<Object> employeeList;
+    private List<Map<String, Object>> employeeList;
 
 }
