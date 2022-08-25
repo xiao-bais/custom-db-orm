@@ -108,6 +108,6 @@ public interface ColumnParseHandler<T> {
     /**
      * 函数解析缓存
      */
-    ColumnFunctionMap<?>  createFunctionMapsCache(SFunction<T, ?> function, String implMethodName);
+    ColumnFunctionMap<T>  createFunctionMapsCache(SFunction<T, ?> function, SerializedLambda serializedLambda);
 
 }

@@ -154,7 +154,7 @@ public class SelectFunc<T> extends AbstractSqlFunc<T, SelectFunc<T>> {
         Field targetField = getColumnParseHandler().loadFields().stream()
                 .filter(x -> x.getName().equals(getColumnMapper().get(originColumn)))
                 .findFirst()
-                .orElseThrow(() -> new CustomCheckException("未找到字段：" + getColumnMapper().get(originColumn)));
+                .orElseThrow(() -> new CustomCheckException("not found field：" + getColumnMapper().get(originColumn)));
         if (targetField.getType().equals(CharSequence.class)) {
             elseVal = new StringBuilder().append(SymbolConstant.SINGLE_QUOTES).append(elseVal).append(SymbolConstant.SINGLE_QUOTES);
         }

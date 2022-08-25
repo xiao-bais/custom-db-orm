@@ -1,13 +1,8 @@
 package com.custom.action.sqlparser;
 
 import com.custom.action.condition.SFunction;
-import com.custom.comm.exceptions.ExThrowsUtil;
 
 import java.io.Serializable;
-import java.lang.invoke.SerializedLambda;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Objects;
 
 /**
  * @author Xiao-Bai
@@ -37,13 +32,20 @@ public class ColumnFunctionMap<T> implements Serializable {
      * sql字段名
      */
     private String column;
+
+    /**
+     * 带别名前缀的sql字段名
+     */
+    private String aliasColumn;
     /**
      * 实体对象
      */
     private Class<T> entityClass;
 
 
-    public ColumnFunctionMap(SFunction<T, ?> lambdaFunction, String propertyName, Class<?> propertyType, String getMethodName, String column, Class<T> entityClass) {
+    public ColumnFunctionMap(SFunction<T, ?> lambdaFunction, String propertyName,
+                             Class<?> propertyType, String getMethodName,
+                             String column, Class<T> entityClass) {
         this.lambdaFunction = lambdaFunction;
         this.propertyName = propertyName;
         this.propertyType = propertyType;
@@ -97,6 +99,14 @@ public class ColumnFunctionMap<T> implements Serializable {
 
     public void setColumn(String column) {
         this.column = column;
+    }
+
+    public String getAliasColumn() {
+        return aliasColumn;
+    }
+
+    public void setAliasColumn(String aliasColumn) {
+        this.aliasColumn = aliasColumn;
     }
 
     public void setEntityClass(Class<T> entityClass) {

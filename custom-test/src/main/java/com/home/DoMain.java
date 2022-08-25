@@ -31,7 +31,11 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-        jdbcOpDao.selectList(Conditions.lambdaQuery(Student.class).eq(Student::getNickName, "zhangsan"));
+        List<Student> studentList = jdbcOpDao.selectList(Conditions.lambdaQuery(Student.class).ge(Student::getAge, 22)
+
+        );
+
+        jdbcDao.selectList(Conditions.lambdaQuery(Employee.class).eq(Employee::getDeptId, 5).eq(Employee::getExplain, "aaaa"));
 
     }
 

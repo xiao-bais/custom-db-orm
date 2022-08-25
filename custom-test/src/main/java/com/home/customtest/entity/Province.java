@@ -21,8 +21,8 @@ public class Province {
     @DbField
     private String name;
 
-    @DbOneToOne(joinField = "proId")
-    private Student student;
+//    @DbOneToOne(joinField = "proId")
+//    private Student student;
 
 
 }
