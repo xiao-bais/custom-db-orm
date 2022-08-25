@@ -1,6 +1,7 @@
 package com.custom.action.condition;
 
 import com.custom.action.interfaces.ColumnParseHandler;
+import com.custom.action.sqlparser.ColumnFunctionMap;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableSqlBuilder;
 import com.custom.jdbc.GlobalDataHandler;
@@ -12,6 +13,7 @@ import com.custom.comm.exceptions.ExThrowsUtil;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -25,7 +27,10 @@ public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {
     private final List<Field> fieldList;
     private final TableSqlBuilder<T> tableModel;
     private final Map<String, String> fieldMapper;
-//    private final static Map<Class<?>, Map<SFunction<>>>
+    /**
+     * 每个对象的Function函数，java属性，以及sql字段名称缓存
+     */
+    private final static Map<Class<?>, List<ColumnFunctionMap<?>>> COLUMN_PARSE_MAP = new ConcurrentHashMap<>();
 
     public DefaultColumnParseHandler(Class<T> thisClass) {
         this.thisClass = thisClass;
@@ -72,7 +77,13 @@ public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {
         final String finalFieldName = guessFieldName.replaceFirst(String.valueOf(guessFieldName.charAt(0)),
                 String.valueOf(guessFieldName.charAt(0)).toLowerCase());
 
+//        COLUMN_PARSE_MAP.get()
+
+
         Optional<Field> firstField = fieldList.stream().filter(x -> x.getName().equals(finalFieldName)).findFirst();
+        firstField.ifPresent(op -> {
+
+        });
         if (firstField.isPresent()) {
             return firstField.get().getName();
         }
