@@ -1,6 +1,7 @@
 package com.custom.action.interfaces;
 
 import com.custom.action.condition.SFunction;
+import com.custom.action.sqlparser.ColumnFunctionMap;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.exceptions.ExThrowsUtil;
 
@@ -79,7 +80,8 @@ public interface ColumnParseHandler<T> {
      */
     String parseToColumn(SFunction<T, ?> func);
 
-     /**
+
+    /**
      * 从SFunction中获取序列化的信息
      */
     default SerializedLambda parseSerializedLambda(SFunction<T, ?> fun) {
@@ -89,7 +91,7 @@ public interface ColumnParseHandler<T> {
             // 从function中取出序列化方法
             writeMethod = fun.getClass().getDeclaredMethod("writeReplace");
             writeMethod.setAccessible(true);
-            serializedLambda = (SerializedLambda)writeMethod.invoke(fun);
+            serializedLambda = (SerializedLambda) writeMethod.invoke(fun);
             writeMethod.setAccessible(false);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
@@ -103,7 +105,9 @@ public interface ColumnParseHandler<T> {
         return serializedLambda;
     }
 
-
-
+    /**
+     * 函数解析缓存
+     */
+    ColumnFunctionMap<?>  createFunctionMapsCache(SFunction<T, ?> function, String implMethodName);
 
 }

@@ -3,8 +3,10 @@ package com.custom.action.sqlparser;
 import com.custom.comm.JudgeUtil;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @Author Xiao-Bai
@@ -19,14 +21,14 @@ public class TableInfoCache {
      * <br/>key-实体全路径名称
      * <br/>value-实体解析模板 {@link TableSqlBuilder}
      */
-    private final static Map<String, Object> tableModel = new CustomLocalCache();
+    private final static Map<String, Object> TABLE_MODEL = new CustomLocalCache();
     private static Boolean underlineToCamel = false;
 
     public static <T> TableSqlBuilder<T> getTableModel(Class<T> cls) {
-        TableSqlBuilder<T> tableSqlBuilder = (TableSqlBuilder<T>) tableModel.get(cls.getName());
+        TableSqlBuilder<T> tableSqlBuilder = (TableSqlBuilder<T>) TABLE_MODEL.get(cls.getName());
         if(Objects.isNull(tableSqlBuilder)) {
             tableSqlBuilder = new TableSqlBuilder<>(cls, underlineToCamel);
-            tableModel.put(cls.getName(), tableSqlBuilder);
+            TABLE_MODEL.put(cls.getName(), tableSqlBuilder);
         }
         return tableSqlBuilder;
     }
@@ -62,14 +64,14 @@ public class TableInfoCache {
      * <br/>key-实体全路径名称
      * <br/>value(是否存在逻辑删除字段)-true or false
      */
-    private final static Map<String, Object> tableLogic = new CustomLocalCache();
+    private final static Map<String, Object> TABLE_LOGIC = new CustomLocalCache();
 
     public static void setTableLogic(String key, Object val) {
-        tableLogic.put(key, val);
+        TABLE_LOGIC.put(key, val);
     }
 
     public static Boolean isExistsLogic(String table) {
-        return (Boolean) tableLogic.get(table);
+        return (Boolean) TABLE_LOGIC.get(table);
     }
 
     /**
@@ -77,14 +79,14 @@ public class TableInfoCache {
      * <br/>key - 实体全路径名称
      * <br/>value - 是否存在逻辑删除字段: true or false
      */
-    private final static Map<String, Object> entityExistCrossReference = new CustomLocalCache();
+    private final static Map<String, Object> ENTITY_EXIST_CROSS_REFERENCE = new CustomLocalCache();
 
     public static boolean existCrossReference(Class<?> thisClass, Class<?> joinClass) {
-        Boolean thisExist = (Boolean) entityExistCrossReference.get(thisClass.getName());
+        Boolean thisExist = (Boolean) ENTITY_EXIST_CROSS_REFERENCE.get(thisClass.getName());
         if (thisExist != null && thisExist) {
             return true;
         }
-        Boolean joinExist = (Boolean) entityExistCrossReference.get(joinClass.getName());
+        Boolean joinExist = (Boolean) ENTITY_EXIST_CROSS_REFERENCE.get(joinClass.getName());
         if (joinExist != null && joinExist) {
             return true;
         }
@@ -94,16 +96,24 @@ public class TableInfoCache {
             for (Field field : tableModel.getOneToOneFieldList()) {
                 if (field.getType().isAssignableFrom(thisClass)
                         || thisClass.isAssignableFrom(field.getType())) {
-                    entityExistCrossReference.put(thisClass.getName(), true);
-                    entityExistCrossReference.put(joinClass.getName(), true);
+                    ENTITY_EXIST_CROSS_REFERENCE.put(thisClass.getName(), true);
+                    ENTITY_EXIST_CROSS_REFERENCE.put(joinClass.getName(), true);
                     return true;
                 }
             }
         }
-        entityExistCrossReference.put(thisClass.getName(), false);
-        entityExistCrossReference.put(joinClass.getName(), false);
+        ENTITY_EXIST_CROSS_REFERENCE.put(thisClass.getName(), false);
+        ENTITY_EXIST_CROSS_REFERENCE.put(joinClass.getName(), false);
         return false;
     }
+
+
+    /**
+     * 每个对象的Function函数，java属性，以及sql字段名称缓存
+     */
+    private final static Map<Class<?>, List<ColumnFunctionMap<?>>> COLUMN_FUNCTION_CACHE = new ConcurrentHashMap<>();
+
+
 
 
 

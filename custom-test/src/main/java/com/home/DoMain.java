@@ -1,5 +1,6 @@
 package com.home;
 
+import com.custom.action.condition.Conditions;
 import com.custom.action.sqlparser.DbJoinToOneParseModel;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.JdbcOpDao;
@@ -30,12 +31,7 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-        Dept dept = new Dept();
-        dept.setAdminFlag(true);
-
-        ReadFieldHelper<Dept, Boolean> readFieldHelper = new ReadFieldHelper<>(dept, "adminFlag", Boolean.class);
-        Optional<Boolean> aBoolean = readFieldHelper.readCustomValue();
-        System.out.println("aBoolean.get() = " + aBoolean.orElse(null));
+        jdbcOpDao.selectList(Conditions.lambdaQuery(Student.class).eq(Student::getNickName, "zhangsan"));
 
     }
 
