@@ -67,11 +67,6 @@ public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {
         if (columnFunctionMap != null) {
             return columnFunctionMap.getPropertyName();
         }
-        Class<?> entityClass = CustomUtil.loadReallyClassName(serializedLambda.getImplClass());
-
-        if (entityClass == null) {
-            throw new NullPointerException();
-        }
         ColumnFunctionMap<T> functionMapsCache = this.createFunctionMapsCache(func, serializedLambda);
         return functionMapsCache.getPropertyName();
     }
