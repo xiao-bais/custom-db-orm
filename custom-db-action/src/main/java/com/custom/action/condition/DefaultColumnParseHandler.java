@@ -79,7 +79,6 @@ public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {
     /**
      * 查找缓存
      */
-    @SuppressWarnings("unchecked")
     private ColumnFunctionMap<T> columnFunctionMapResolve(SerializedLambda serializedLambda) {
         String implMethodSignature = serializedLambda.getImplMethodSignature();
         Class<?> propertyType = CustomUtil.loadReallyClassName(
