@@ -106,9 +106,7 @@ public class WriteFieldHelper<T> {
                 }
                 log.warn("Only 'java.util.List' and 'java.util.Set' settings are supported");
             } else {
-
-                String valueStr = JSONObject.toJSONString(this.writeValue);
-                this.writeValue = JSONObject.parseObject(valueStr, setParamType);
+                this.writeValue = JSONObject.parseObject(JSONObject.toJSONString(this.writeValue), setParamType);
             }
             writeMethod.invoke(this.waitWriteEntity, this.writeValue);
             return true;
@@ -121,7 +119,5 @@ public class WriteFieldHelper<T> {
             log.error(e.toString(), e);
             throw new NoSuchFieldException(" Field: '" + this.fieldName + "' not found in object " + writeType);
         }
-
-
     }
 }

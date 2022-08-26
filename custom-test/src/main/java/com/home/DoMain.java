@@ -1,6 +1,7 @@
 package com.home;
 
 import com.custom.action.condition.Conditions;
+import com.custom.action.condition.LambdaConditionWrapper;
 import com.custom.action.sqlparser.DbJoinToOneParseModel;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.JdbcOpDao;
@@ -31,11 +32,17 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-        List<Student> studentList = jdbcOpDao.selectList(Conditions.lambdaQuery(Student.class).ge(Student::getAge, 22)
+        LambdaConditionWrapper<Student> conditionWrapper = Conditions.lambdaQuery(Student.class).ge(Student::getAge, 22)
+                .eq(Student::getPassword, "123456")
+                .like(Student::getNickName, "a")
+                .lt(Student::getAge, 25);
+        List<Student> studentList = jdbcOpDao.selectList(conditionWrapper);
 
-        );
-
-        jdbcDao.selectList(Conditions.lambdaQuery(Employee.class).eq(Employee::getDeptId, 5).eq(Employee::getExplain, "aaaa"));
+        LambdaConditionWrapper<Student> conditionWrapper2 = Conditions.lambdaQuery(Student.class).ge(Student::getAge, 23)
+                .eq(Student::getPassword, "666666")
+                .like(Student::getNickName, "bb")
+                .lt(Student::getAge, 24);
+        List<Student> studentList2 = jdbcOpDao.selectList(conditionWrapper2);
 
     }
 

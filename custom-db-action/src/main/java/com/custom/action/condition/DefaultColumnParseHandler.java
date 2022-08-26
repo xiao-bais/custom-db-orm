@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
  * @Desc：解析Function函数中字段名称
  **/
 @Slf4j
+
 public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {
 
     private final Class<T> thisClass;
@@ -36,12 +37,25 @@ public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {
     /**
      * 每个对象的Function函数，java属性，以及sql字段名称缓存
      */
-    private final List<ColumnFunctionMap<T>> COLUMN_PARSE_LIST = new ArrayList<>();
+    private final List<ColumnFunctionMap<T>> columnParseList;
 
     public DefaultColumnParseHandler(Class<T> thisClass) {
         this.thisClass = thisClass;
         this.tableModel = TableInfoCache.getTableModel(thisClass);
         this.fieldMapper = TableInfoCache.getFieldMap(thisClass);
+        List<ColumnFunctionMap<?>> columnFunctionCache = TableInfoCache.getColumnFunctionCache(thisClass);
+        if (columnFunctionCache == null) {
+            columnParseList = new ArrayList<>();
+        } else {
+            this.columnParseList = columnFunctionCache.stream().map(op -> {
+                if (op.getEntityClass().equals(thisClass)) {
+                    return (ColumnFunctionMap<T>) op;
+                } else {
+                    throw new ClassCastException(String.format("%s cannot be cast to %s", thisClass, op.getEntityClass()));
+                }
+            }).collect(Collectors.toList());
+        }
+
         this.fieldList = Arrays.stream(tableModel.getFields()).collect(Collectors.toList());
     }
 
@@ -63,6 +77,15 @@ public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {
         Asserts.notNull(func);
 
         SerializedLambda serializedLambda = this.parseSerializedLambda(func);
+        if (JudgeUtil.isNotEmpty(columnParseList)) {
+            ColumnFunctionMap<T> targetColumnFunctionMap = columnParseList.stream()
+                    .filter(x -> x.getSerializedLambda() != null && x.getSerializedLambda().equals(serializedLambda))
+                    .findFirst().orElse(null);
+            if (targetColumnFunctionMap != null) {
+                return targetColumnFunctionMap.getPropertyName();
+            }
+        }
+
         ColumnFunctionMap<T> columnFunctionMap = this.columnFunctionMapResolve(serializedLambda);
         if (columnFunctionMap != null) {
             return columnFunctionMap.getPropertyName();
@@ -80,8 +103,8 @@ public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {
                 implMethodSignature.substring(3, implMethodSignature.indexOf(";"))
         );
 
-        if (JudgeUtil.isNotEmpty(COLUMN_PARSE_LIST)) {
-            List<ColumnFunctionMap<T>> functionMapList = COLUMN_PARSE_LIST.stream()
+        if (JudgeUtil.isNotEmpty(columnParseList)) {
+            List<ColumnFunctionMap<T>> functionMapList = columnParseList.stream()
                     .filter(op -> op.getGetMethodName().equals(serializedLambda.getImplMethodName()))
                     .filter(op -> op.getPropertyType().equals(propertyType))
                     .collect(Collectors.toList());
@@ -106,6 +129,7 @@ public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {
      */
     public ColumnFunctionMap<T> createFunctionMapsCache(SFunction<T, ?> function, SerializedLambda serializedLambda) {
 
+        String implMethodName = serializedLambda.getImplMethodName();
         for (Field field : this.fieldList) {
             ColumnFunctionMap<T> functionMap = new ColumnFunctionMap<>();
             String fieldName = field.getName();
@@ -117,15 +141,14 @@ public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {
                 functionMap.setColumn(fieldMapper.get(fieldName));
                 functionMap.setPropertyType(field.getType());
                 functionMap.setAliasColumn(fieldMapper.get(fieldName));
-                functionMap.setLambdaFunction(function);
                 functionMap.setEntityClass(thisClass);
-                COLUMN_PARSE_LIST.add(functionMap);
+                columnParseList.add(functionMap);
             }catch (IntrospectionException e) {
                 log.error(e.toString(), e);
             }
         }
-        String implMethodName = serializedLambda.getImplMethodName();
-        return COLUMN_PARSE_LIST.stream()
+
+        ColumnFunctionMap<T> resColumnFuncMap = columnParseList.stream()
                 .filter(op -> op.getGetMethodName().equals(implMethodName))
                 .findFirst()
                 .orElseThrow(() -> {
@@ -134,6 +157,19 @@ public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {
                     }
                     return new CustomCheckException("Cannot find a matching property with method name: '%s'", implMethodName);
                 });
+        if (resColumnFuncMap.getSerializedLambda() == null) {
+            resColumnFuncMap.setSerializedLambda(serializedLambda);
+        }
+
+        List<ColumnFunctionMap<?>> waitSetColumnFunctionCache = columnParseList.stream().map(op -> {
+            if (op.getEntityClass().equals(thisClass)) {
+                return (ColumnFunctionMap<?>) op;
+            } else {
+                throw new ClassCastException(String.format("%s cannot be cast to %s", op.getEntityClass(), thisClass));
+            }
+        }).collect(Collectors.toList());
+        TableInfoCache.addColumnFunctionCache(thisClass, waitSetColumnFunctionCache);
+        return resColumnFuncMap;
     }
 
 

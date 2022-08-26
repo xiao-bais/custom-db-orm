@@ -113,6 +113,13 @@ public class TableInfoCache {
      */
     private final static Map<Class<?>, List<ColumnFunctionMap<?>>> COLUMN_FUNCTION_CACHE = new ConcurrentHashMap<>();
 
+    public static <T> void addColumnFunctionCache(Class<T> key, List<ColumnFunctionMap<?>> value) {
+        COLUMN_FUNCTION_CACHE.put(key, value);
+    }
+
+    public static <T> List<ColumnFunctionMap<?>> getColumnFunctionCache(Class<T> key) {
+        return COLUMN_FUNCTION_CACHE.get(key);
+    }
 
 
 

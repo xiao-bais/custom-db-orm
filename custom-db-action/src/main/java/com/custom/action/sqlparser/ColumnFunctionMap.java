@@ -3,6 +3,7 @@ package com.custom.action.sqlparser;
 import com.custom.action.condition.SFunction;
 
 import java.io.Serializable;
+import java.lang.invoke.SerializedLambda;
 
 /**
  * @author Xiao-Bai
@@ -15,6 +16,11 @@ public class ColumnFunctionMap<T> implements Serializable {
      * Function函数
      */
     private SFunction<T, ?> lambdaFunction;
+
+    /**
+     * lambda序列化对象
+     */
+    private SerializedLambda serializedLambda;
     /**
      * java属性名
      */
@@ -111,5 +117,13 @@ public class ColumnFunctionMap<T> implements Serializable {
 
     public void setEntityClass(Class<T> entityClass) {
         this.entityClass = entityClass;
+    }
+
+    public SerializedLambda getSerializedLambda() {
+        return serializedLambda;
+    }
+
+    public void setSerializedLambda(SerializedLambda serializedLambda) {
+        this.serializedLambda = serializedLambda;
     }
 }

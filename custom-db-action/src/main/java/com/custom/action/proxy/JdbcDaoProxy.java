@@ -1,5 +1,6 @@
 package com.custom.action.proxy;
 
+import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.dbaction.AbstractSqlExecutor;
 import com.custom.action.sqlparser.JdbcAction;
 import com.custom.action.sqlparser.JdbcDao;
@@ -30,7 +31,7 @@ public class JdbcDaoProxy implements InvocationHandler, Serializable {
     }
 
     private final AbstractSqlExecutor sqlExecutor;
-    private final static List<Method> CUSTOMIZE_METHOD_CACHES = new ArrayList<>();
+    private final static List<Method> CUSTOMIZE_METHOD_CACHES;
 
     public JdbcDaoProxy(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         sqlExecutor = new JdbcActionProxy(new JdbcAction(), dbDataSource, dbCustomStrategy).createProxy();
@@ -38,7 +39,7 @@ public class JdbcDaoProxy implements InvocationHandler, Serializable {
 
     static {
         Method[] declaredMethods = JdbcAction.class.getDeclaredMethods();
-        CUSTOMIZE_METHOD_CACHES.addAll(Arrays.asList(declaredMethods));
+        CUSTOMIZE_METHOD_CACHES = new ArrayList<>((Arrays.asList(declaredMethods)));
     }
 
 
@@ -56,7 +57,7 @@ public class JdbcDaoProxy implements InvocationHandler, Serializable {
                         if (args.length != parameterTypes.length) {
                             return false;
                         }
-                        // 判断两者的参数参数一一对应
+                        // 判断两者的参数类型一一对应
                         int targetIndex = 0;
                         int len = parameterTypes.length;
                         for (int i = 0; i < len; i++) {
@@ -67,6 +68,9 @@ public class JdbcDaoProxy implements InvocationHandler, Serializable {
                             }else {
                                 thisClass = args[i].getClass();
                             }
+                            if (ConditionWrapper.class.isAssignableFrom(thisClass)) {
+                                return !Object.class.equals(targetClass);
+                            }
                             if (targetClass.isAssignableFrom(thisClass)) {
                                 targetIndex++;
                             }
@@ -74,7 +78,8 @@ public class JdbcDaoProxy implements InvocationHandler, Serializable {
                         return targetIndex == len;
                     })
                     .findFirst().orElseThrow(() ->
-                            new CustomCheckException("Unknown execution method : " + methodName));
+                            new CustomCheckException("Unknown execution method : " + methodName)
+                    );
 
             return typeCache.invoke(sqlExecutor, args);
         }catch (Exception t) {
