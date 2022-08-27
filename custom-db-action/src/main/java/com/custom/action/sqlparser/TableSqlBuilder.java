@@ -13,7 +13,10 @@ import com.custom.jdbc.update.CustomUpdateJdbcBasic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -129,6 +132,11 @@ public class TableSqlBuilder<T> implements Cloneable {
      */
     private List<Field> oneToManyFieldList;
 
+    /**
+     * 全字段解析对象
+     */
+    private List<ColumnPropertyMap<T>> columnPropertyMaps;
+
 
     /**
      * 创建表结构
@@ -239,6 +247,14 @@ public class TableSqlBuilder<T> implements Cloneable {
 
             // 构建字段解析模板
             this.initTableBuild(method);
+
+            // 创建字段属性映射
+            try {
+                this.createColumnPropertyMaps();
+            } catch (IntrospectionException e) {
+                logger.error(e.toString(), e);
+            }
+
         }
         // 构建字段映射缓存
         this.buildMapper();
@@ -264,6 +280,7 @@ public class TableSqlBuilder<T> implements Cloneable {
         this.underlineToCamel = underlineToCamel;
         this.oneToOneFieldList = new ArrayList<>();
         this.oneToManyFieldList = new ArrayList<>();
+        this.columnPropertyMaps = new ArrayList<>();
     }
 
     /**
@@ -274,15 +291,10 @@ public class TableSqlBuilder<T> implements Cloneable {
         this.mergeDbJoinTables();
 
         for (Field field : fields) {
-            if (field.isAnnotationPresent(DbIgnore.class)) {
+            if (this.isNotNeedParseProperty(field)) {
                 continue;
             }
-            // 基础字段或关联字段的java属性类型必须是允许的基本类型
-            Class<?> fieldType = field.getType();
-            if (!CustomUtil.isBasicClass(fieldType)) {
-                this.handleMoreResultField(field, fieldType);
-                continue;
-            }
+
             if (field.isAnnotationPresent(DbKey.class) && Objects.isNull(keyParserModel)) {
                 keyParserModel = new DbKeyParserModel<>(field, this.table, this.alias, this.underlineToCamel);
 
@@ -310,6 +322,22 @@ public class TableSqlBuilder<T> implements Cloneable {
             }
 
         }
+    }
+
+    /**
+     * 若满足条件，则该字段无需解析
+     */
+    private boolean isNotNeedParseProperty(Field field) {
+        if (field.isAnnotationPresent(DbIgnore.class)) {
+            return true;
+        }
+        // 基础字段或关联字段的java属性类型必须是允许的基本类型
+        Class<?> fieldType = field.getType();
+        if (!CustomUtil.isBasicClass(fieldType)) {
+            this.handleMoreResultField(field, fieldType);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -368,6 +396,11 @@ public class TableSqlBuilder<T> implements Cloneable {
      */
     private void buildUpdateModels(boolean isBuildUpdateModels) {
         for (Field field : fields) {
+
+            if (this.isNotNeedParseProperty(field)) {
+                continue;
+            }
+
             if (field.isAnnotationPresent(DbKey.class)
                     && !field.isAnnotationPresent(DbField.class)
                     && Objects.isNull(keyParserModel)) {
@@ -572,24 +605,92 @@ public class TableSqlBuilder<T> implements Cloneable {
         sqlBuilder.setColumnMapper(this.columnMapper);
     }
 
+    public List<ColumnPropertyMap<T>> columnPropertyMaps() {
+        return this.columnPropertyMaps;
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public TableSqlBuilder<T> clone() {
         TableSqlBuilder<T> builder = null;
         try {
             builder = (TableSqlBuilder<T>) super.clone();
-            builder.setAlias(this.alias);
-            builder.setTable(this.table);
-            builder.setEntityClass(this.entityClass);
-            builder.setKeyParserModel(this.keyParserModel);
-            builder.setFieldParserModels(this.fieldParserModels);
-            builder.setRelatedParserModels(this.relatedParserModels);
-            builder.setJoinTableParserModels(this.joinTableParserModels);
-            builder.setJoinDbMappers(this.joinDbMappers);
+            builder.alias = this.alias;
+            builder.table = this.table;
+            builder.entityClass = this.entityClass;
+            builder.keyParserModel = this.keyParserModel;
+            builder.fieldParserModels = this.fieldParserModels;
+            builder.relatedParserModels = this.relatedParserModels;
+            builder.joinDbMappers = this.joinDbMappers;
+            builder.joinTableParserModels = this.joinTableParserModels;
+
+//            builder.setTable(this.table);
+//            builder.setEntityClass(this.entityClass);
+//            builder.setKeyParserModel(this.keyParserModel);
+//            builder.setFieldParserModels(this.fieldParserModels);
+//            builder.setRelatedParserModels(this.relatedParserModels);
+//            builder.setJoinTableParserModels(this.joinTableParserModels);
+//            builder.setJoinDbMappers(this.joinDbMappers);
+            builder.oneToOneFieldList = this.oneToOneFieldList;
+            builder.oneToManyFieldList = this.oneToManyFieldList;
         } catch (CloneNotSupportedException e) {
             logger.error(e.toString(), e);
         }
         return builder;
+    }
+
+
+
+    /**
+     * 创建字段属性关联映射
+     * <br/>为满足更多变的需求，特创建此映射对象，储存多个属性
+     * <br/>此方法与{@link #buildMapper()} 的字段映射缓存不同，可以说是{@link #buildMapper()}的一个升级版
+     * <br/>创建此对象并不会让{@link #buildMapper()}受到任何印象，两者均可正常使用
+     */
+    private void createColumnPropertyMaps() throws IntrospectionException {
+        boolean isKeyProperty = true;
+        // 全部字段
+        for (Field field : this.fields) {
+
+            String fieldName = field.getName();
+            Class<?> fieldType = field.getType();
+
+            if (this.isNotNeedParseProperty(field)) {
+                continue;
+            }
+
+            ColumnPropertyMap<T> cpMap = new ColumnPropertyMap<>();
+            cpMap.setPropertyName(fieldName);
+            cpMap.setPropertyType(fieldType);
+            cpMap.setTargetClass(this.entityClass);
+
+            PropertyDescriptor descriptor = new PropertyDescriptor(fieldName, this.entityClass);
+            Method readMethod = descriptor.getReadMethod();
+            cpMap.setGetMethodName(readMethod.getName());
+
+            // 设置主键
+            if (isKeyProperty && this.keyParserModel != null && this.keyParserModel.getKey().equals(fieldName)) {
+                cpMap.setColumn(this.keyParserModel.getDbKey());
+                cpMap.setAliasColumn(this.keyParserModel.getFieldSql());
+                this.columnPropertyMaps.add(cpMap);
+                isKeyProperty = false;
+                continue;
+            }
+
+            // 设置剩余表字段
+            DbFieldParserModel<T> fieldParserModel = this.fieldParserModels.stream()
+                    .filter(op -> fieldName.equals(op.getFieldName()))
+                    .findFirst()
+                    .orElse(null);
+
+
+            if (fieldParserModel != null) {
+                cpMap.setColumn(fieldParserModel.getColumn());
+                cpMap.setAliasColumn(fieldParserModel.getFieldSql());
+            }
+            this.columnPropertyMaps.add(cpMap);
+        }
+
     }
 
 

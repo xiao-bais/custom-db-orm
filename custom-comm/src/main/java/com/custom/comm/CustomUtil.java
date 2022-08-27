@@ -351,18 +351,6 @@ public class CustomUtil {
        return isBasicClass(genericType);
     }
 
-    /**
-     * 返回真实类对象
-     */
-    public static Class<?> loadReallyClassName(String classUrl) {
-        try {
-            return Class.forName(classUrl.replace('/', '.'));
-        } catch (ClassNotFoundException e) {
-            log.error(e.getMessage(), e);
-        }
-        return null;
-    }
-
 
 
 }
