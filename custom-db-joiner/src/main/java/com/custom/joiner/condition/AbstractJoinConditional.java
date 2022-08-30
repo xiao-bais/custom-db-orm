@@ -3,10 +3,10 @@ package com.custom.joiner.condition;
 import com.custom.action.condition.DefaultColumnParseHandler;
 import com.custom.action.condition.SFunction;
 import com.custom.action.interfaces.ColumnParseHandler;
+import com.custom.action.sqlparser.TableInfoCache;
+import com.custom.action.sqlparser.TableSqlBuilder;
 import com.custom.joiner.interfaces.DoJoin;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.Collection;
 
 /**
@@ -16,6 +16,11 @@ import java.util.Collection;
  */
 @SuppressWarnings("all")
 public abstract class AbstractJoinConditional<A, B> {
+
+    /**
+     * 关联表的别名
+     */
+    public abstract LambdaJoinConditional<A, B> alias(String joinAlias);
 
     public abstract LambdaJoinConditional<A, B> eq(SFunction<A, ?> aColumn, SFunction<B, ?> bColumn);
 
@@ -37,11 +42,20 @@ public abstract class AbstractJoinConditional<A, B> {
 
 
     private StringBuilder joinCondition;
+    private Class<A> primaryTable;
+    private Class<B> joinTable;
+    private String primaryTableName;
+    private String primaryTableAlias;
+    private String joinTableName;
+    private String joinTbaleAlias;
     private ColumnParseHandler<A> primaryParserHandler;
-    private ColumnParseHandler<B> relatedParserHandler;
+    private ColumnParseHandler<B> joinParserHandler;
     protected LambdaJoinConditional<A, B> childrenThis = (LambdaJoinConditional<A, B>) this;
 
 
+    /**
+     * 条件应用
+     */
     protected LambdaJoinConditional<A, B> applyCondition(DoJoin doJoin) {
         String action = doJoin.action();
         if (joinCondition != null) {
@@ -55,12 +69,59 @@ public abstract class AbstractJoinConditional<A, B> {
     }
 
     protected String toBColumn(SFunction<B, ?> aColumn) {
-        return relatedParserHandler.parseToNormalColumn(aColumn);
+        return joinParserHandler.parseToNormalColumn(aColumn);
+    }
+
+    protected String formatJoinCondition(String aColumn, String bColumn) {
+
+        return null;
     }
 
     public AbstractJoinConditional(Class<A> aClass, Class<B> bClass) {
         this.joinCondition = new StringBuilder();
+        this.primaryTable = aClass;
+        this.joinTable = bClass;
+        TableSqlBuilder<A> primaryModel = TableInfoCache.getTableModel(aClass);
+        TableSqlBuilder<B> joinModel = TableInfoCache.getTableModel(bClass);
+        this.primaryTableName = primaryModel.getTable();
+        this.joinTableName = joinModel.getTable();
         this.primaryParserHandler = new DefaultColumnParseHandler<>(aClass);
-        this.relatedParserHandler = new DefaultColumnParseHandler<>(bClass);
+        this.joinParserHandler = new DefaultColumnParseHandler<>(bClass);
+    }
+
+    public String getJoinTbaleAlias() {
+        return joinTbaleAlias;
+    }
+
+    public StringBuilder getJoinCondition() {
+        return joinCondition;
+    }
+
+    public String getPrimaryTableAlias() {
+        return primaryTableAlias;
+    }
+
+    public ColumnParseHandler<A> getPrimaryParserHandler() {
+        return primaryParserHandler;
+    }
+
+    public ColumnParseHandler<B> getJoinParserHandler() {
+        return joinParserHandler;
+    }
+
+    public String getPrimaryTableName() {
+        return primaryTableName;
+    }
+
+    public String getJoinTableName() {
+        return joinTableName;
+    }
+
+    public void setPrimaryTableAlias(String primaryTableAlias) {
+        this.primaryTableAlias = primaryTableAlias;
+    }
+
+    public void setJoinTbaleAlias(String joinTbaleAlias) {
+        this.joinTbaleAlias = joinTbaleAlias;
     }
 }

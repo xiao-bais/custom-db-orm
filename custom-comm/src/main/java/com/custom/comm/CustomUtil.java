@@ -366,6 +366,13 @@ public class CustomUtil {
         return new String(chars);
     }
 
+    /**
+     * 获取表名首字母拼接
+     */
+    public static String firstTableName(String tableName) {
+        return "";
+    }
+
 
 
 }

@@ -44,7 +44,7 @@ public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {
         this.fieldMapper = TableInfoCache.getFieldMap(thisClass);
         this.columnParseList = tableModel.columnPropertyMaps();
         if (JudgeUtil.isEmpty(columnParseList)) {
-
+            ExThrowsUtil.toCustom("该类找不到可解析的字段：" + this.thisClass);
         }
         this.fieldList = Arrays.stream(tableModel.getFields()).collect(Collectors.toList());
     }
@@ -65,7 +65,6 @@ public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {
     @Override
     public String parseToField(SFunction<T, ?> func) {
         Asserts.notNull(func);
-
         SerializedLambda serializedLambda = LambdaResolveUtil.resolve(func);
         String implMethodName = serializedLambda.getImplMethodName();
 

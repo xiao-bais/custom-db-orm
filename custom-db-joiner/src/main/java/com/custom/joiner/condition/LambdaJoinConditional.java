@@ -11,8 +11,16 @@ import java.util.Collection;
  */
 public class LambdaJoinConditional<A, B> extends AbstractJoinConditional<A, B> {
     @Override
+    public LambdaJoinConditional<A, B> alias(String joinAlias) {
+        return null;
+    }
+
+    @Override
     public LambdaJoinConditional<A, B> eq(SFunction<A, ?> aColumn, SFunction<B, ?> bColumn) {
-        return applyCondition(() -> String.format("a.%s = b.%s", toAColumn(aColumn), toBColumn(bColumn)));
+        return applyCondition(() ->
+                String.format("a.%s = b.%s",
+                        toAColumn(aColumn), toBColumn(bColumn))
+        );
     }
 
     @Override
