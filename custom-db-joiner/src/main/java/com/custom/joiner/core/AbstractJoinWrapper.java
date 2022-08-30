@@ -20,12 +20,14 @@ import java.util.function.Consumer;
  * @Date 2022/8/30 0030 16:35
  * @Desc
  */
-public abstract class AbstractJoinWrapper<T> {
+@SuppressWarnings("unchecked")
+public abstract class AbstractJoinWrapper<T, Children> {
 
     private final Class<T> thisClass;
     private AliasStrategy aliasStrategy;
     private final ColumnParseHandler<T> thisColumnParseHandler;
     private final List<AbstractJoinConditional<?, ?>> joinTableList;
+    protected Children childrenThis = (Children) this;
 
 
     public AbstractJoinWrapper(Class<T> thisClass) {
@@ -34,17 +36,32 @@ public abstract class AbstractJoinWrapper<T> {
         this.joinTableList = new ArrayList<>();
     }
 
-    public <B> void addJoinTable(Class<B> bClass, Consumer<AbstractJoinConditional<T, B>> consumer) {
-        this.addJoinTable(thisClass, bClass, consumer);
+    protected <B> Children addJoinTable(Class<B> bClass, Consumer<AbstractJoinConditional<B, T>> consumer) {
+        AbstractJoinConditional<B, T> joinModel = new LambdaJoinConditional<>(bClass);
+        this.registerAlias(joinModel);
+        consumer.accept(joinModel);
+        this.joinTableList.add(joinModel);
+        return childrenThis;
     }
 
-    public <A, B> void addJoinTable(Class<A> aClass, Class<B> bClass, Consumer<AbstractJoinConditional<A, B>> consumer) {
-        AbstractJoinConditional<A, B> joinModel = new LambdaJoinConditional<>(aClass, bClass);
+    protected  <A, B> Children addJoinTable(AbstractJoinConditional<A, B> joinConditional) {
+        this.registerAlias(joinConditional);
+        return childrenThis;
+    }
+
+    protected <B> Children addPrimaryInfo(AbstractJoinConditional<T, B> joinConditional) {
+        joinConditional.setPrimaryTableInfo(thisClass, thisColumnParseHandler);
+        return childrenThis;
+    }
+
+
+
+    protected <A, B> void registerAlias(AbstractJoinConditional<A, B> joinModel) {
         String primaryAlias = this.joinTableList.stream().filter(op -> JudgeUtil.isNotEmpty(op.getJoinTbaleAlias()) && op.getJoinTbaleAlias().equals(joinModel.getJoinTbaleAlias()))
                 .findFirst()
                 .map(AbstractJoinConditional::getJoinTbaleAlias).orElse(null);
 
-        Asserts.notEmpty(primaryAlias, String.format("表 [%s] 未定义别名", joinModel.getPrimaryTableName()));
+        Asserts.notEmpty(primaryAlias, String.format("表 [%s] 未找到别名", joinModel.getPrimaryTableName()));
 
         joinModel.setPrimaryTableAlias(primaryAlias);
         String joinAlias = this.customAlias(joinModel.getJoinTableName(), joinModel.getJoinTbaleAlias());
@@ -55,29 +72,47 @@ public abstract class AbstractJoinWrapper<T> {
                 join.getPrimaryTableName(), join.getPrimaryTableAlias(),
                 joinModel.getJoinTableName(), joinModel.getJoinTbaleAlias())
         ));
-
-        consumer.accept(joinModel);
-        this.joinTableList.add(joinModel);
     }
 
 
-
     private String customAlias(String tableName, String joinAlias) {
-        String newAlias = "";
+        String newAlias;
         switch (this.aliasStrategy) {
             case INPUT:
                 newAlias = joinAlias;
+                Asserts.illegal(this.joinTableList.stream().anyMatch(op -> JudgeUtil.isNotEmpty(op.getJoinTbaleAlias())
+                                && op.getJoinTbaleAlias().equals(joinAlias)),
+                        String.format("存在已定义的表别名: [%s]", joinAlias)
+                );
                 break;
             case UNIQUE_ID:
                 newAlias = JoinConstants.TABLE_ALIAS;
+                while (this.joinTableList.stream().anyMatch(op -> JudgeUtil.isNotEmpty(op.getJoinTbaleAlias())
+                        && op.getJoinTbaleAlias().equals(joinAlias))) {
+                    newAlias = JoinConstants.TABLE_ALIAS;
+                }
                 break;
+            default:
             case FIRST_APPEND:
                 newAlias = CustomUtil.firstTableName(tableName);
+                Asserts.illegal(this.joinTableList.stream().anyMatch(op -> JudgeUtil.isNotEmpty(op.getJoinTbaleAlias())
+                                && op.getJoinTbaleAlias().equals(joinAlias)),
+                        String.format("存在已定义的表别名: [%s]", joinAlias)
+                );
         }
         return newAlias;
     }
 
-    protected void setAliasStrategy(AliasStrategy aliasStrategy) {
+    protected Children setAliasStrategy(AliasStrategy aliasStrategy) {
         this.aliasStrategy = aliasStrategy;
+        return childrenThis;
+    }
+
+    public Class<T> getThisClass() {
+        return thisClass;
+    }
+
+    public ColumnParseHandler<T> getThisColumnParseHandler() {
+        return thisColumnParseHandler;
     }
 }

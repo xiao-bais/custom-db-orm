@@ -9,61 +9,58 @@ import java.util.Collection;
  * @date 2022/8/29 14:11
  * @desc
  */
-public class LambdaJoinConditional<A, B> extends AbstractJoinConditional<A, B> {
+public class LambdaJoinConditional<T, A> extends AbstractJoinConditional<T, A> {
     @Override
-    public LambdaJoinConditional<A, B> alias(String joinAlias) {
+    public LambdaJoinConditional<T, A> alias(String joinAlias) {
         return null;
     }
 
     @Override
-    public LambdaJoinConditional<A, B> eq(SFunction<A, ?> aColumn, SFunction<B, ?> bColumn) {
-        return applyCondition(() ->
-                String.format("a.%s = b.%s",
-                        toAColumn(aColumn), toBColumn(bColumn))
-        );
+    public LambdaJoinConditional<T, A> eq(SFunction<A, ?> aColumn, SFunction<T, ?> bColumn) {
+        return applyCondition(() -> this.formatJoinCondition(this.toAColumn(aColumn), this.toBColumn(bColumn)));
     }
 
     @Override
-    public LambdaJoinConditional<A, B> eq(SFunction<B, ?> bColumn, Object val) {
+    public LambdaJoinConditional<T, A> eq(SFunction<T, ?> bColumn, Object val) {
         return null;
     }
 
     @Override
-    public LambdaJoinConditional<A, B> gt(SFunction<B, ?> bColumn, Object val) {
+    public LambdaJoinConditional<T, A> gt(SFunction<T, ?> bColumn, Object val) {
         return null;
     }
 
     @Override
-    public LambdaJoinConditional<A, B> ge(SFunction<B, ?> bColumn, Object val) {
+    public LambdaJoinConditional<T, A> ge(SFunction<T, ?> bColumn, Object val) {
         return null;
     }
 
     @Override
-    public LambdaJoinConditional<A, B> lt(SFunction<B, ?> bColumn, Object val) {
+    public LambdaJoinConditional<T, A> lt(SFunction<T, ?> bColumn, Object val) {
         return null;
     }
 
     @Override
-    public LambdaJoinConditional<A, B> le(SFunction<B, ?> bColumn, Object val) {
+    public LambdaJoinConditional<T, A> le(SFunction<T, ?> bColumn, Object val) {
         return null;
     }
 
     @Override
-    public LambdaJoinConditional<A, B> between(SFunction<B, ?> bColumn, Object val1, Object val2) {
+    public LambdaJoinConditional<T, A> between(SFunction<T, ?> bColumn, Object val1, Object val2) {
         return null;
     }
 
     @Override
-    public LambdaJoinConditional<A, B> in(SFunction<B, ?> bColumn, Object... values) {
+    public LambdaJoinConditional<T, A> in(SFunction<T, ?> bColumn, Object... values) {
         return null;
     }
 
     @Override
-    public LambdaJoinConditional<A, B> in(SFunction<B, ?> bColumn, Collection<?> val) {
+    public LambdaJoinConditional<T, A> in(SFunction<T, ?> bColumn, Collection<?> val) {
         return null;
     }
 
-    public LambdaJoinConditional(Class<A> aClass, Class<B> bClass) {
-        super(aClass, bClass);
+    public LambdaJoinConditional(Class<T> bClass) {
+        super(bClass);
     }
 }

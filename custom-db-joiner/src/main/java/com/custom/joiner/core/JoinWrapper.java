@@ -31,21 +31,9 @@ public interface JoinWrapper<T> {
      * @param <B> 关联表对应实体类
      * @return Result
      */
-    <A, B> LambdaJoinWrapper<T> leftJoin(Class<A> aClass, Class<B> bClass, SFunction<A, ?> aColumn, SFunction<B, ?> bColumn);
-    <A, B> LambdaJoinWrapper<T> leftJoin(Class<A> aClass, Class<B> bClass, AbstractJoinConditional<A, B> joinConditional);
-
-    /**
-     * 表关联[left join], 与上面不同的是，当不填写A类型的主关联表，默认以主表去关联B
-     * @param aColumn
-     * @param bColumn
-     * @param <A>
-     * @param <B>
-     * @return
-     */
-    <B> LambdaJoinWrapper<T> leftJoin(Class<B> bClass, SFunction<T, ?> aColumn, SFunction<B, ?> bColumn);
-
-    <B> LambdaJoinWrapper<T> leftJoin(Class<B> bClass, AbstractJoinConditional<T, B> joinConditional);
-    <B> LambdaJoinWrapper<T> leftJoin(Class<B> bClass, Consumer<AbstractJoinConditional<T, B>> joinConditional);
+    <A, B> LambdaJoinWrapper<T> leftJoin(Class<B> bClass, SFunction<A, ?> aColumn, SFunction<B, ?> bColumn);
+    <A, B> LambdaJoinWrapper<T> leftJoin(AbstractJoinConditional<A, B> joinConditional);
+    <A, B> LambdaJoinWrapper<T> leftJoin(Class<B> bClass, Consumer<AbstractJoinConditional<A, B>> joinConditional);
 
 
 

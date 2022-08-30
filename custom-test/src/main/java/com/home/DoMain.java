@@ -32,12 +32,6 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-        LambdaJoinConditional<Student, Province> joinConditional = new LambdaJoinConditional<>(Student.class, Province.class);
-        joinConditional.eq(Student::getProId, Province::getId)
-                .ge(Province::getName, "aaa");
-
-        JoinWrapper<Student> joinWrapper = new LambdaJoinWrapper<>();
-        joinWrapper.leftJoin(Province.class, op -> op.eq(Student::getProId, Province::getId));
 
 
 

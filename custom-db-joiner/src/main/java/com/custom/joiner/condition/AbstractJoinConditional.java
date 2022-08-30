@@ -5,9 +5,12 @@ import com.custom.action.condition.SFunction;
 import com.custom.action.interfaces.ColumnParseHandler;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableSqlBuilder;
+import com.custom.action.util.LambdaResolveUtil;
 import com.custom.joiner.interfaces.DoJoin;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Xiao-Bai
@@ -15,78 +18,88 @@ import java.util.Collection;
  * @desc
  */
 @SuppressWarnings("all")
-public abstract class AbstractJoinConditional<A, B> {
+public abstract class AbstractJoinConditional<T, A> {
 
     /**
      * 关联表的别名
      */
-    public abstract LambdaJoinConditional<A, B> alias(String joinAlias);
+    public abstract LambdaJoinConditional<T, A> alias(String joinAlias);
 
-    public abstract LambdaJoinConditional<A, B> eq(SFunction<A, ?> aColumn, SFunction<B, ?> bColumn);
+    public abstract LambdaJoinConditional<T, A> eq(SFunction<A, ?> aColumn, SFunction<T, ?> bColumn);
 
-    public abstract LambdaJoinConditional<A, B> eq(SFunction<B, ?> bColumn, Object val);
+    public abstract LambdaJoinConditional<T, A> eq(SFunction<T, ?> bColumn, Object val);
 
-    public abstract LambdaJoinConditional<A, B> gt(SFunction<B, ?> bColumn, Object val);
+    public abstract LambdaJoinConditional<T, A> gt(SFunction<T, ?> bColumn, Object val);
 
-    public abstract LambdaJoinConditional<A, B> ge(SFunction<B, ?> bColumn, Object val);
+    public abstract LambdaJoinConditional<T, A> ge(SFunction<T, ?> bColumn, Object val);
 
-    public abstract LambdaJoinConditional<A, B> lt(SFunction<B, ?> bColumn, Object val);
+    public abstract LambdaJoinConditional<T, A> lt(SFunction<T, ?> bColumn, Object val);
 
-    public abstract LambdaJoinConditional<A, B> le(SFunction<B, ?> bColumn, Object val);
+    public abstract LambdaJoinConditional<T, A> le(SFunction<T, ?> bColumn, Object val);
 
-    public abstract LambdaJoinConditional<A, B> between(SFunction<B, ?> bColumn, Object val1, Object val2);
+    public abstract LambdaJoinConditional<T, A> between(SFunction<T, ?> bColumn, Object val1, Object val2);
 
 
-    public abstract LambdaJoinConditional<A, B> in(SFunction<B, ?> bColumn, Object... values);
-    public abstract LambdaJoinConditional<A, B> in(SFunction<B, ?> bColumn, Collection<?> val);
+    public abstract LambdaJoinConditional<T, A> in(SFunction<T, ?> bColumn, Object... values);
+    public abstract LambdaJoinConditional<T, A> in(SFunction<T, ?> bColumn, Collection<?> val);
 
 
     private StringBuilder joinCondition;
-    private Class<A> primaryTable;
-    private Class<B> joinTable;
-    private String primaryTableName;
-    private String primaryTableAlias;
+    private Class<T> joinClass;
     private String joinTableName;
     private String joinTbaleAlias;
+    private List<DoJoin> joinList;
+    private ColumnParseHandler<T> joinParserHandler;
+
+    private Class<A> primaryClass;
     private ColumnParseHandler<A> primaryParserHandler;
-    private ColumnParseHandler<B> joinParserHandler;
-    protected LambdaJoinConditional<A, B> childrenThis = (LambdaJoinConditional<A, B>) this;
+    private String primaryTableName;
+    private String primaryTableAlias;
+    protected LambdaJoinConditional<T, A> childrenThis = (LambdaJoinConditional<T, A>) this;
 
 
     /**
      * 条件应用
      */
-    protected LambdaJoinConditional<A, B> applyCondition(DoJoin doJoin) {
-        String action = doJoin.action();
-        if (joinCondition != null) {
-            joinCondition.append(action);
+    protected LambdaJoinConditional<T, A> applyCondition(DoJoin doJoin) {
+        if (doJoin != null) {
+            joinList.add(doJoin);
         }
         return childrenThis;
     }
 
-    protected String toAColumn(SFunction<A, ?> aColumn) {
+    protected <A> String toAColumn(SFunction<A, ?> aColumn) {
+        if (primaryParserHandler == null) {
+            Class<A> implClass = LambdaResolveUtil.getImplClass(aColumn);
+            this.primaryParserHandler = new DefaultColumnParseHandler<>(implClass);
+        }
         return primaryParserHandler.parseToNormalColumn(aColumn);
     }
 
-    protected String toBColumn(SFunction<B, ?> aColumn) {
+    protected String toBColumn(SFunction<T, ?> aColumn) {
         return joinParserHandler.parseToNormalColumn(aColumn);
     }
 
     protected String formatJoinCondition(String aColumn, String bColumn) {
-
-        return null;
+        return String.format("%s.%s = %s.%s",
+                this.primaryTableAlias, aColumn,
+                this.joinTbaleAlias, bColumn);
     }
 
-    public AbstractJoinConditional(Class<A> aClass, Class<B> bClass) {
+    public AbstractJoinConditional(Class<T> bClass) {
         this.joinCondition = new StringBuilder();
-        this.primaryTable = aClass;
-        this.joinTable = bClass;
-        TableSqlBuilder<A> primaryModel = TableInfoCache.getTableModel(aClass);
-        TableSqlBuilder<B> joinModel = TableInfoCache.getTableModel(bClass);
-        this.primaryTableName = primaryModel.getTable();
+        this.joinList = new ArrayList<>();
+        this.joinClass = bClass;
+        TableSqlBuilder<T> joinModel = TableInfoCache.getTableModel(bClass);
         this.joinTableName = joinModel.getTable();
-        this.primaryParserHandler = new DefaultColumnParseHandler<>(aClass);
         this.joinParserHandler = new DefaultColumnParseHandler<>(bClass);
+    }
+
+    public void setPrimaryTableInfo(Class<A> aClass, ColumnParseHandler<A> primaryParserHandler) {
+        this.primaryClass = aClass;
+        TableSqlBuilder<A> primaryModel = TableInfoCache.getTableModel(aClass);
+        this.primaryTableName = primaryModel.getTable();
+        this.primaryParserHandler = primaryParserHandler;
     }
 
     public String getJoinTbaleAlias() {
@@ -105,7 +118,7 @@ public abstract class AbstractJoinConditional<A, B> {
         return primaryParserHandler;
     }
 
-    public ColumnParseHandler<B> getJoinParserHandler() {
+    public ColumnParseHandler<T> getJoinParserHandler() {
         return joinParserHandler;
     }
 
@@ -123,5 +136,13 @@ public abstract class AbstractJoinConditional<A, B> {
 
     public void setJoinTbaleAlias(String joinTbaleAlias) {
         this.joinTbaleAlias = joinTbaleAlias;
+    }
+
+    public Class<A> getPrimaryClass() {
+        return primaryClass;
+    }
+
+    public Class<T> getJoinClass() {
+        return joinClass;
     }
 }
