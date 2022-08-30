@@ -74,10 +74,15 @@ public interface ColumnParseHandler<T> {
    }
 
     /**
-     * 解析函数接口后，返回解析后的java字段属性
+     * 解析函数接口后，返回解析后的sql字表字段(带别名)
      * @param func
      * @return
      */
     String parseToColumn(SFunction<T, ?> func);
+
+    /**
+     * 解析函数接口后，返回解析后的sql表字段(不带别名)
+     */
+    String parseToNormalColumn(SFunction<T, ?> func);
 
 }

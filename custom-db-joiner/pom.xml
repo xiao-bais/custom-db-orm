@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.custom</groupId>
-    <artifactId>custom-springboot-starter</artifactId>
+    <artifactId>custom-db-joiner</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-    <name>custom-springboot-starter</name>
+    <name>custom-db-joiner</name>
     <description>Demo project for Spring Boot</description>
     <properties>
         <java.version>1.8</java.version>
@@ -23,32 +23,10 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- 自定义jdbc-orm -->
-        <dependency>
             <groupId>com.custom</groupId>
             <artifactId>custom-db-action</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
-
-        <!-- 类似于mybatis的代理接口方法 -->
-        <dependency>
-            <groupId>com.custom</groupId>
-            <artifactId>custom-db-proxy</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <!-- 自定义表连接+条件构造器  -->
-        <dependency>
-            <groupId>com.custom</groupId>
-            <artifactId>custom-db-joiner</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
 
     </dependencies>
 
@@ -111,5 +89,16 @@
 
         </plugins>
     </build>
+
+    <distributionManagement>
+        <repository>
+            <id>rdc-releases</id>
+            <url>https://packages.aliyun.com/maven/repository/2146864-release-hlsJ2r/</url>
+        </repository>
+        <snapshotRepository>
+            <id>rdc-snapshots</id>
+            <url>https://packages.aliyun.com/maven/repository/2146864-snapshot-Uz1sk4/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
 </project>

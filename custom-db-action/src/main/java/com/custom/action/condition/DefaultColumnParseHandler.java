@@ -100,4 +100,11 @@ public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {
         }
         return column;
     }
+
+    @Override
+    public String parseToNormalColumn(SFunction<T, ?> func) {
+        SerializedLambda serializedLambda = LambdaResolveUtil.resolve(func);
+        String implMethodName = serializedLambda.getImplMethodName();
+        return ColumnPropertyMap.parse2Column(thisClass, implMethodName);
+    }
 }

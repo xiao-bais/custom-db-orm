@@ -55,9 +55,6 @@ public class SymbolConstant {
     public final static String EQUALS = " = ";//等于
     public final static String QUEST = "?";//占位符
     public final static String PERCENT = "%";//百分号
-    public final static String PREPARE_BEGIN_SHARP = "#{";
-    public final static String PREPARE_BEGIN_DOLLAR = "${";
-    public final static String PREPARE_END_REX = "}";
 
     /**
      * java关键字

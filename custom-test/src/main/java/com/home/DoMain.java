@@ -7,11 +7,11 @@ import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.JdbcOpDao;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.readwrite.ReadFieldHelper;
+import com.custom.joiner.condition.LambdaJoinConditional;
+import com.custom.joiner.core.JoinWrapper;
+import com.custom.joiner.core.LambdaJoinWrapper;
 import com.home.customtest.dao.StudentDao;
-import com.home.customtest.entity.ChildStudent;
-import com.home.customtest.entity.Dept;
-import com.home.customtest.entity.Employee;
-import com.home.customtest.entity.Student;
+import com.home.customtest.entity.*;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -32,17 +32,15 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-        LambdaConditionWrapper<Student> conditionWrapper = Conditions.lambdaQuery(Student.class).ge(Student::getAge, 22)
-                .eq(Student::getPassword, "123456")
-                .like(Student::getNickName, "a")
-                .lt(Student::getAge, 25);
-        List<Student> studentList = jdbcOpDao.selectList(conditionWrapper);
+        LambdaJoinConditional<Student, Province> joinConditional = new LambdaJoinConditional<>(Student.class, Province.class);
+        joinConditional.eq(Student::getProId, Province::getId)
+                .ge(Province::getName, "aaa");
 
-        LambdaConditionWrapper<Student> conditionWrapper2 = Conditions.lambdaQuery(Student.class).ge(Student::getAge, 23)
-                .eq(Student::getPassword, "666666")
-                .like(Student::getNickName, "bb")
-                .lt(Student::getAge, 24);
-        List<Student> studentList2 = jdbcOpDao.selectList(conditionWrapper2);
+        JoinWrapper<Student> joinWrapper = new LambdaJoinWrapper<>();
+        joinWrapper.leftJoin(Province.class, op -> op.eq(Student::getProId, Province::getId));
+
+
+
 
     }
 

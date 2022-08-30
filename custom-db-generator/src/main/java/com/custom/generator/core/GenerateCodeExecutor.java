@@ -258,7 +258,8 @@ public class GenerateCodeExecutor {
             // @Db字段注解信息
             columnModel.setDbFieldAnnotation(dbFieldAnnotation(columnModel));
             // 属性字段
-            columnModel.setOutputFieldInfo(String.format("%s %s %s;", SymbolConstant.PRIVATE, columnModel.getFieldType().getSimpleName(), columnModel.getFieldName()));
+            columnModel.setOutputFieldInfo(String.format("%s %s %s;",
+                    SymbolConstant.PRIVATE, columnModel.getFieldType().getSimpleName(), columnModel.getFieldName()));
         }
 
         tableInfo.setColumnStructModels(columnStructModels);
@@ -296,8 +297,6 @@ public class GenerateCodeExecutor {
             logger.error(e.toString(), e);
         }
     }
-
-
 
 
 
