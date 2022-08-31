@@ -32,8 +32,9 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
+        JoinWrapper<Student> joinWrapper = new LambdaJoinWrapper<>(Student.class);
 
-
+        joinWrapper.leftJoin(Province.class, join -> join.eq(Province::getId, Student::getProId));
 
 
     }

@@ -19,18 +19,12 @@ public class LambdaJoinWrapper<T> extends AbstractJoinWrapper<T, LambdaJoinWrapp
     }
 
     @Override
-    public <A, B> LambdaJoinWrapper<T> leftJoin(Class<B> bClass, SFunction<A, ?> aColumn, SFunction<B, ?> bColumn) {
-        return this.leftJoin(bClass, join -> join.eq(aColumn, bColumn));
+    public <R, A> LambdaJoinWrapper<T> leftJoin(AbstractJoinConditional<R> joinConditional) {
+        return addJoinTable(joinConditional);
     }
 
     @Override
-    public <A, B> LambdaJoinWrapper<T> leftJoin(AbstractJoinConditional<A, B> joinConditional) {
-        return this.addJoinTable(joinConditional);
-    }
-
-
-    @Override
-    public <B> LambdaJoinWrapper<T> leftJoin(Class<B> bClass, Consumer<AbstractJoinConditional<A, B>> joinConditional) {
-        return this.addJoinTable(bClass, joinConditional);
+    public <R, A> LambdaJoinWrapper<T> leftJoin(Class<R> joinClass, Consumer<AbstractJoinConditional<R>> joinConditional) {
+        return addJoinTable(joinClass, joinConditional);
     }
 }

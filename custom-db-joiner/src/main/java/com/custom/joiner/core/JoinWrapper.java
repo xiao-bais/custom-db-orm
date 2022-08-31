@@ -28,12 +28,14 @@ public interface JoinWrapper<T> {
      *                 left join B b on a.aColumn = b.bColumn
      *                </p>
      * @param <A> 主表对应实体类
-     * @param <B> 关联表对应实体类
+     * @param <R> 关联表对应实体类
      * @return Result
      */
-    <A, B> LambdaJoinWrapper<T> leftJoin(Class<B> bClass, SFunction<A, ?> aColumn, SFunction<B, ?> bColumn);
-    <A, B> LambdaJoinWrapper<T> leftJoin(AbstractJoinConditional<A, B> joinConditional);
-    <A, B> LambdaJoinWrapper<T> leftJoin(Class<B> bClass, Consumer<AbstractJoinConditional<A, B>> joinConditional);
+    default <R, A> LambdaJoinWrapper<T> leftJoin(Class<R> joinClass, SFunction<R, ?> joinColumn, SFunction<A, ?> aColumn) {
+        return leftJoin(joinClass, join -> join.eq(joinColumn, aColumn));
+    }
+    <R, A> LambdaJoinWrapper<T> leftJoin(AbstractJoinConditional<R, A> joinConditional);
+    <R, A> LambdaJoinWrapper<T> leftJoin(Class<R> joinClass, Consumer<AbstractJoinConditional<R, A>> joinConditional);
 
 
 

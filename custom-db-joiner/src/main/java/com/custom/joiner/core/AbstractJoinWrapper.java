@@ -13,7 +13,9 @@ import com.custom.joiner.util.JoinConstants;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * @Author Xiao-Bai
@@ -26,7 +28,7 @@ public abstract class AbstractJoinWrapper<T, Children> {
     private final Class<T> thisClass;
     private AliasStrategy aliasStrategy;
     private final ColumnParseHandler<T> thisColumnParseHandler;
-    private final List<AbstractJoinConditional<?, ?>> joinTableList;
+    private final List<AbstractJoinConditional<?>> joinTableList;
     protected Children childrenThis = (Children) this;
 
 
@@ -36,71 +38,64 @@ public abstract class AbstractJoinWrapper<T, Children> {
         this.joinTableList = new ArrayList<>();
     }
 
-    protected <B> Children addJoinTable(Class<B> bClass, Consumer<AbstractJoinConditional<B, T>> consumer) {
-        AbstractJoinConditional<B, T> joinModel = new LambdaJoinConditional<>(bClass);
-        this.registerAlias(joinModel);
+    protected <R> Children addJoinTable(Class<R> joinClass, Consumer<AbstractJoinConditional<R>> consumer) {
+        AbstractJoinConditional<R> joinModel = new LambdaJoinConditional<>(joinClass);
         consumer.accept(joinModel);
-        this.joinTableList.add(joinModel);
-        return childrenThis;
+        return addJoinTable(joinModel);
     }
 
-    protected  <A, B> Children addJoinTable(AbstractJoinConditional<A, B> joinConditional) {
-        this.registerAlias(joinConditional);
-        return childrenThis;
-    }
-
-    protected <B> Children addPrimaryInfo(AbstractJoinConditional<T, B> joinConditional) {
-        joinConditional.setPrimaryTableInfo(thisClass, thisColumnParseHandler);
+    protected <R> Children addJoinTable(AbstractJoinConditional<R> joinConditional) {
+        this.joinTableList.add(joinConditional);
         return childrenThis;
     }
 
 
 
-    protected <A, B> void registerAlias(AbstractJoinConditional<A, B> joinModel) {
-        String primaryAlias = this.joinTableList.stream().filter(op -> JudgeUtil.isNotEmpty(op.getJoinTbaleAlias()) && op.getJoinTbaleAlias().equals(joinModel.getJoinTbaleAlias()))
-                .findFirst()
-                .map(AbstractJoinConditional::getJoinTbaleAlias).orElse(null);
+    protected void registerAlias() {
+        Map<Class<?>, Long> joinClassMap = this.joinTableList.stream().filter(op -> JudgeUtil.isNotEmpty(op.getJoinTableAlias()))
+                .collect(Collectors.groupingBy(AbstractJoinConditional::getJoinClass, Collectors.counting()));
+        joinClassMap.forEach((joinClass, count) -> Asserts.unSupportOp(count > 1, String.format("不支持自关联或者一张表关联多次: [%s]", joinClass)));
 
-        Asserts.notEmpty(primaryAlias, String.format("表 [%s] 未找到别名", joinModel.getPrimaryTableName()));
-
-        joinModel.setPrimaryTableAlias(primaryAlias);
-        String joinAlias = this.customAlias(joinModel.getJoinTableName(), joinModel.getJoinTbaleAlias());
-        joinModel.setJoinTbaleAlias(joinAlias);
-
-        this.joinTableList.stream().filter(op -> JudgeUtil.isNotEmpty(op.getJoinTbaleAlias()) && op.getJoinTbaleAlias().equals(joinModel.getJoinTbaleAlias()))
-                .findFirst().ifPresent(join -> ExThrowsUtil.toIllegal(String.format("不允许存在相同的关联表别名：%s(%s) and %s(%s)",
-                join.getPrimaryTableName(), join.getPrimaryTableAlias(),
-                joinModel.getJoinTableName(), joinModel.getJoinTbaleAlias())
-        ));
+        if (this.aliasStrategy == AliasStrategy.INPUT) {
+            Map<String, Long> joinAliasMap = this.joinTableList.stream()
+                    .collect(Collectors.groupingBy(AbstractJoinConditional::getJoinTableAlias, Collectors.counting()));
+            joinAliasMap.forEach((joinAlias, count) ->
+                    Asserts.illegal(count > 1,
+                            "不允许存在相同的关联表别名: " + joinAlias));
+        }
+        this.aliasDefine();
     }
 
 
-    private String customAlias(String tableName, String joinAlias) {
-        String newAlias;
+    private void aliasDefine() {
+        List<String> aliasList = new ArrayList<>(this.joinTableList.size());
         switch (this.aliasStrategy) {
             case INPUT:
-                newAlias = joinAlias;
-                Asserts.illegal(this.joinTableList.stream().anyMatch(op -> JudgeUtil.isNotEmpty(op.getJoinTbaleAlias())
-                                && op.getJoinTbaleAlias().equals(joinAlias)),
-                        String.format("存在已定义的表别名: [%s]", joinAlias)
-                );
-                break;
-            case UNIQUE_ID:
-                newAlias = JoinConstants.TABLE_ALIAS;
-                while (this.joinTableList.stream().anyMatch(op -> JudgeUtil.isNotEmpty(op.getJoinTbaleAlias())
-                        && op.getJoinTbaleAlias().equals(joinAlias))) {
-                    newAlias = JoinConstants.TABLE_ALIAS;
-                }
+                this.joinTableList.stream().filter(op -> JudgeUtil.isNotEmpty(op.getJoinTableAlias())).findFirst().ifPresent(op -> {
+                    ExThrowsUtil.toCustom("存在未定义的表别名: " + op.getJoinClass().getName());
+                });
                 break;
             default:
+            case UNIQUE_ID:
+
+                for (AbstractJoinConditional<?> joinModel : this.joinTableList) {
+                    String newAlias = "";
+                    do {
+                        newAlias = JoinConstants.TABLE_ALIAS;
+                    } while (aliasList.contains(newAlias));
+                    joinModel.alias(newAlias);
+                    aliasList.add(newAlias);
+                }
+
+                break;
             case FIRST_APPEND:
-                newAlias = CustomUtil.firstTableName(tableName);
-                Asserts.illegal(this.joinTableList.stream().anyMatch(op -> JudgeUtil.isNotEmpty(op.getJoinTbaleAlias())
-                                && op.getJoinTbaleAlias().equals(joinAlias)),
-                        String.format("存在已定义的表别名: [%s]", joinAlias)
-                );
+                for (AbstractJoinConditional<?> joinModel : this.joinTableList) {
+                    String newAlias = CustomUtil.firstTableName(joinModel.getJoinPropertyMap().getTableName());
+                    Asserts.illegal(aliasList.contains(newAlias),
+                            String.format("存在已定义的表别名: [%s]", newAlias));
+                }
+
         }
-        return newAlias;
     }
 
     protected Children setAliasStrategy(AliasStrategy aliasStrategy) {

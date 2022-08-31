@@ -56,4 +56,10 @@ public final class Asserts {
         isTure(!bool, message);
     }
 
+    public static void unSupportOp(boolean bool, String message) {
+        if (bool) {
+            throw new UnsupportedOperationException(message);
+        }
+    }
+
 }

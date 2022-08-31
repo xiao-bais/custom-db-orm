@@ -672,6 +672,7 @@ public class TableSqlBuilder<T> implements Cloneable {
             if (isKeyProperty && this.keyParserModel != null && this.keyParserModel.getKey().equals(fieldName)) {
                 cpMap.setColumn(this.keyParserModel.getDbKey());
                 cpMap.setAliasColumn(this.keyParserModel.getFieldSql());
+                cpMap.setTableName(this.table);
                 this.columnPropertyMaps.add(cpMap);
                 isKeyProperty = false;
                 continue;
@@ -687,6 +688,7 @@ public class TableSqlBuilder<T> implements Cloneable {
             if (fieldParserModel != null) {
                 cpMap.setColumn(fieldParserModel.getColumn());
                 cpMap.setAliasColumn(fieldParserModel.getFieldSql());
+                cpMap.setTableName(this.table);
             }
             this.columnPropertyMaps.add(cpMap);
         }

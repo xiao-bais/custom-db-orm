@@ -32,6 +32,11 @@ public class ColumnPropertyMap<T> implements Serializable {
      */
     private String aliasColumn;
 
+    /**
+     * 表名
+     */
+    private String tableName;
+
     private Class<T> targetClass;
 
     public void setPropertyName(String propertyName) {
@@ -64,6 +69,14 @@ public class ColumnPropertyMap<T> implements Serializable {
 
     public String getGetMethodName() {
         return getMethodName;
+    }
+
+    public String getTableName() {
+        return tableName;
+    }
+
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
     }
 
     public String getColumn() {
