@@ -1,6 +1,7 @@
 package com.custom.joiner.core;
 
 import com.custom.action.condition.SFunction;
+import com.custom.comm.enums.DbSymbol;
 
 import java.util.Collection;
 
@@ -19,8 +20,7 @@ public class LambdaJoinConditional<T> extends AbstractJoinConditional<T> {
 
     @Override
     public LambdaJoinConditional<T> eq(SFunction<T, ?> joinColumn, Object val) {
-
-        return childrenThis;
+        return addCondition(joinColumn, DbSymbol.EQUALS, val);
     }
 
     @Override

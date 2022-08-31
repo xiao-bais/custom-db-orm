@@ -10,6 +10,7 @@ import com.custom.comm.JudgeUtil;
 import com.custom.comm.enums.DbJoinStyle;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;
+import com.custom.joiner.core.condition.LambdaJoinConditionWrapper;
 import com.custom.joiner.enums.AliasStrategy;
 
 import java.util.ArrayList;
@@ -24,19 +25,19 @@ import java.util.stream.Collectors;
  * @Desc
  */
 @SuppressWarnings("unchecked")
-public abstract class AbstractJoinStyleWrapper<T, Children> {
+public abstract class AbstractJoinWrapper<T> extends LambdaJoinConditionWrapper<T> {
 
     private final Class<T> thisClass;
     private final String primaryTableName;
     private final String primaryTableAlias;
-    private AliasStrategy aliasStrategy;
+    private AliasStrategy aliasStrategy = AliasStrategy.UNIQUE_ID;
     private final ColumnParseHandler<T> thisColumnParseHandler;
     private final List<AbstractJoinConditional<?>> joinTableList;
     private final List<String> aliasList;
-    protected Children childrenThis = (Children) this;
+    protected LambdaJoinWrapper<T> childrenThis = (LambdaJoinWrapper<T>) this;
 
 
-    public AbstractJoinStyleWrapper(Class<T> thisClass) {
+    public AbstractJoinWrapper(Class<T> thisClass) {
         this.thisClass = thisClass;
         this.thisColumnParseHandler = new DefaultColumnParseHandler<>(thisClass);
         TableSqlBuilder<T> tableModel = TableInfoCache.getTableModel(this.thisClass);
@@ -46,13 +47,13 @@ public abstract class AbstractJoinStyleWrapper<T, Children> {
         this.aliasList = new ArrayList<>();
     }
 
-    protected <R> Children addJoinTable(DbJoinStyle joinStyle, Class<R> joinClass, Consumer<AbstractJoinConditional<R>> consumer) {
+    protected <R> LambdaJoinWrapper<T> addJoinTable(DbJoinStyle joinStyle, Class<R> joinClass, Consumer<AbstractJoinConditional<R>> consumer) {
         AbstractJoinConditional<R> joinModel = new LambdaJoinConditional<>(joinClass);
         consumer.accept(joinModel);
         return addJoinTable(joinStyle, joinModel);
     }
 
-    protected <R> Children addJoinTable(DbJoinStyle joinStyle, AbstractJoinConditional<R> joinConditional) {
+    protected <R> LambdaJoinWrapper<T> addJoinTable(DbJoinStyle joinStyle, AbstractJoinConditional<R> joinConditional) {
         Asserts.unSupportOp(joinConditional.getJoinClass().equals(thisClass),
                 String.format("暂不支持自关联或者一张表关联多次: [%s]", joinConditional.getJoinClass().getName()));
 
@@ -85,7 +86,7 @@ public abstract class AbstractJoinStyleWrapper<T, Children> {
         joinConditional.setJoinInfo(joinStyle, primaryAlias, aliasStrategy);
     }
 
-    protected Children setAliasStrategy(AliasStrategy aliasStrategy) {
+    protected LambdaJoinWrapper<T> setAliasStrategy(AliasStrategy aliasStrategy) {
         this.aliasStrategy = aliasStrategy;
         return childrenThis;
     }

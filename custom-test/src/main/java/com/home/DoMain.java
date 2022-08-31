@@ -2,8 +2,10 @@ package com.home;
 
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.JdbcOpDao;
-import com.custom.joiner.core.JoinStyleWrapper;
-import com.custom.joiner.core.LambdaJoinStyleWrapper;
+import com.custom.joiner.core.AbstractJoinConditional;
+import com.custom.joiner.core.AbstractJoinWrapper;
+import com.custom.joiner.core.LambdaJoinConditional;
+import com.custom.joiner.core.LambdaJoinWrapper;
 import com.home.customtest.entity.*;
 
 /**
@@ -20,7 +22,11 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-        JoinStyleWrapper<Student> joinStyleWrapper = new LambdaJoinStyleWrapper<>(Student.class);
+        LambdaJoinWrapper<Student> joinStyleWrapper = new LambdaJoinWrapper<>(Student.class);
+        joinStyleWrapper.leftJoin(new LambdaJoinConditional<>(Province.class).eq(Province::getId, Student::getProId));
+        joinStyleWrapper.eq(Employee::getEmpName, "aaa");
+//        joinStyleWrapper.leftJoin(Province.class, join -> join.eq(Province::getId, Student::getProId).eq(Province::getName, Student::getName));
+
 
 
 

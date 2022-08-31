@@ -92,17 +92,23 @@ public abstract class AbstractJoinConditional<T> {
     protected LambdaJoinConditional<T> childrenThis = (LambdaJoinConditional<T>) this;
 
     /**
-     * 条件拼接
+     * 最终的关联条件拼接
      */
-    public String getJoinConditional() {
+    protected String formatJoinSqlAction() {
         if (joinList.isEmpty()) {
             ExThrowsUtil.toCustom("未指定关联条件");
         }
-        this.joinList.forEach(join -> this.joinConditional.append(join.action()));
-        return new StringBuilder()
-                .append(joinStyle.getStyle())
-                .append(String.format(" a_%s on %s", this.joinTableAlias, this.joinConditional))
-                .toString();
+        if (JudgeUtil.isEmpty(joinConditional)) {
+            StringBuilder sqlJoinAction = new StringBuilder();
+            this.joinList.forEach(join -> sqlJoinAction.append(join.action()));
+            this.joinConditional.append(joinStyle.getStyle())
+                    .append(String.format(" %s %s on ", this.joinPropertyMap.getTableName(), this.joinTableAlias))
+                    .append(DbUtil.trimAppendSqlCondition(sqlJoinAction.toString())
+                    );
+        }
+
+        return joinConditional.toString();
+
     }
 
     /**
@@ -125,7 +131,7 @@ public abstract class AbstractJoinConditional<T> {
             this.primaryPropertyMap = aColumnPropertyMap;
         }
 
-        this.addCondition(() -> String.format(" %s.%s = %s.%s",
+        this.addCondition(() -> String.format(" and %s.%s = %s.%s",
                 this.joinTableAlias, tColumnPropertyMap.getColumn(),
                 this.primaryTableAlias, aColumnPropertyMap.getColumn()
         ), null);
