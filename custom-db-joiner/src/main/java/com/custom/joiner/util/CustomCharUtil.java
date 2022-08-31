@@ -87,8 +87,6 @@ public class CustomCharUtil {
 //            System.out.println("nextStr = " + nextStr);
 //        }
 
-        String tableAlias = JoinConstants.TABLE_ALIAS;
-        System.out.println("tableAlias = " + tableAlias);
 
     }
 

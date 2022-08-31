@@ -1,22 +1,10 @@
 package com.home;
 
-import com.custom.action.condition.Conditions;
-import com.custom.action.condition.LambdaConditionWrapper;
-import com.custom.action.sqlparser.DbJoinToOneParseModel;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.JdbcOpDao;
-import com.custom.comm.CustomUtil;
-import com.custom.comm.readwrite.ReadFieldHelper;
-import com.custom.joiner.condition.LambdaJoinConditional;
-import com.custom.joiner.core.JoinWrapper;
-import com.custom.joiner.core.LambdaJoinWrapper;
-import com.home.customtest.dao.StudentDao;
+import com.custom.joiner.core.JoinStyleWrapper;
+import com.custom.joiner.core.LambdaJoinStyleWrapper;
 import com.home.customtest.entity.*;
-
-import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
 
 /**
  * @Author Xiao-Bai
@@ -32,9 +20,8 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-        JoinWrapper<Student> joinWrapper = new LambdaJoinWrapper<>(Student.class);
+        JoinStyleWrapper<Student> joinStyleWrapper = new LambdaJoinStyleWrapper<>(Student.class);
 
-        joinWrapper.leftJoin(Province.class, join -> join.eq(Province::getId, Student::getProId));
 
 
     }

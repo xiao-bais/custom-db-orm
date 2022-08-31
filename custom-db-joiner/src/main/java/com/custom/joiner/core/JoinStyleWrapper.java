@@ -1,7 +1,6 @@
 package com.custom.joiner.core;
 
 import com.custom.action.condition.SFunction;
-import com.custom.joiner.condition.AbstractJoinConditional;
 
 import java.util.function.Consumer;
 
@@ -18,7 +17,7 @@ import java.util.function.Consumer;
  * <br/> 那么 student便是A，而city便是B
  */
 @SuppressWarnings("all")
-public interface JoinWrapper<T> {
+public interface JoinStyleWrapper<T> {
 
     /**
      * 表关联[left join]
@@ -31,11 +30,11 @@ public interface JoinWrapper<T> {
      * @param <R> 关联表对应实体类
      * @return Result
      */
-    default <R, A> LambdaJoinWrapper<T> leftJoin(Class<R> joinClass, SFunction<R, ?> joinColumn, SFunction<A, ?> aColumn) {
+    default <R, A> LambdaJoinStyleWrapper<T> leftJoin(Class<R> joinClass, SFunction<R, ?> joinColumn, SFunction<A, ?> aColumn) {
         return leftJoin(joinClass, join -> join.eq(joinColumn, aColumn));
     }
-    <R, A> LambdaJoinWrapper<T> leftJoin(AbstractJoinConditional<R, A> joinConditional);
-    <R, A> LambdaJoinWrapper<T> leftJoin(Class<R> joinClass, Consumer<AbstractJoinConditional<R, A>> joinConditional);
+    <R> LambdaJoinStyleWrapper<T> leftJoin(AbstractJoinConditional<R> joinConditional);
+    <R> LambdaJoinStyleWrapper<T> leftJoin(Class<R> joinClass, Consumer<AbstractJoinConditional<R>> joinConditional);
 
 
 

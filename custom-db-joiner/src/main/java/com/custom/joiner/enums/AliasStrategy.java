@@ -1,5 +1,7 @@
 package com.custom.joiner.enums;
 
+import com.custom.joiner.core.LambdaJoinConditional;
+
 /**
  * @Author Xiao-Bai
  * @Date 2022/8/30 0030 17:44
@@ -9,7 +11,7 @@ public enum AliasStrategy {
 
     /**
      * 自定义表别名
-     * <br/>由用户自行通过{@link com.custom.joiner.condition.LambdaJoinConditional#alias(String joinAlias)} 指定
+     * <br/>由用户自行通过{@link LambdaJoinConditional#alias(String joinAlias)} 指定
      */
     INPUT,
 
