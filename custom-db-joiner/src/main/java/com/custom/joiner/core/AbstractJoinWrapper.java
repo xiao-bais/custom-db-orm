@@ -5,10 +5,8 @@ import com.custom.action.interfaces.ColumnParseHandler;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableSqlBuilder;
 import com.custom.comm.Asserts;
-import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.enums.DbJoinStyle;
-import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.joiner.core.condition.LambdaJoinConditionWrapper;
 import com.custom.joiner.enums.AliasStrategy;
@@ -25,7 +23,7 @@ import java.util.stream.Collectors;
  * @Desc
  */
 @SuppressWarnings("unchecked")
-public abstract class AbstractJoinWrapper<T> extends LambdaJoinConditionWrapper<T> {
+public class AbstractJoinWrapper<T> extends LambdaJoinConditionWrapper<T> {
 
     private final Class<T> thisClass;
     private final String primaryTableName;
@@ -37,7 +35,7 @@ public abstract class AbstractJoinWrapper<T> extends LambdaJoinConditionWrapper<
     protected LambdaJoinWrapper<T> childrenThis = (LambdaJoinWrapper<T>) this;
 
 
-    public AbstractJoinWrapper(Class<T> thisClass) {
+    protected AbstractJoinWrapper(Class<T> thisClass) {
         this.thisClass = thisClass;
         this.thisColumnParseHandler = new DefaultColumnParseHandler<>(thisClass);
         TableSqlBuilder<T> tableModel = TableInfoCache.getTableModel(this.thisClass);
