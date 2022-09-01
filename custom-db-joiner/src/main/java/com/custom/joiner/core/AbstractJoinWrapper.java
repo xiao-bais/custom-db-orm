@@ -9,7 +9,7 @@ import com.custom.comm.JudgeUtil;
 import com.custom.comm.enums.DbJoinStyle;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.joiner.core.condition.LambdaJoinConditionWrapper;
-import com.custom.joiner.enums.AliasStrategy;
+import com.custom.comm.enums.AliasStrategy;
 
 import java.util.ArrayList;
 import java.util.List;

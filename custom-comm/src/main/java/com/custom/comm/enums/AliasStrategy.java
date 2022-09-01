@@ -1,6 +1,4 @@
-package com.custom.joiner.enums;
-
-import com.custom.joiner.core.LambdaJoinConditional;
+package com.custom.comm.enums;
 
 /**
  * @Author Xiao-Bai

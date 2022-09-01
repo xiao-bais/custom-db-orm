@@ -1,7 +1,7 @@
 package com.custom.joiner.core;
 
 import com.custom.comm.enums.DbJoinStyle;
-import com.custom.joiner.enums.AliasStrategy;
+import com.custom.comm.enums.AliasStrategy;
 
 import java.util.function.Consumer;
 
@@ -44,7 +44,7 @@ public class LambdaJoinWrapper<T> extends AbstractJoinWrapper<T> implements Join
 
     @Override
     public <R> LambdaJoinWrapper<T> innerJoin(AbstractJoinConditional<R> joinConditional) {
-        return addJoinTable(DbJoinStyle.INNER, joinConditional);;
+        return addJoinTable(DbJoinStyle.INNER, joinConditional);
     }
 
     @Override

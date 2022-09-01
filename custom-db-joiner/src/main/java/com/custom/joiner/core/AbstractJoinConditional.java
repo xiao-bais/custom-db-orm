@@ -6,19 +6,15 @@ import com.custom.action.interfaces.ColumnParseHandler;
 import com.custom.action.sqlparser.ColumnPropertyMap;
 import com.custom.action.util.DbUtil;
 import com.custom.action.util.LambdaResolveUtil;
-import com.custom.comm.Asserts;
-import com.custom.comm.CustomUtil;
-import com.custom.comm.JudgeUtil;
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.*;
 import com.custom.comm.enums.DbJoinStyle;
 import com.custom.comm.enums.DbSymbol;
 import com.custom.comm.exceptions.ExThrowsUtil;
-import com.custom.joiner.enums.AliasStrategy;
+import com.custom.comm.enums.AliasStrategy;
 import com.custom.joiner.interfaces.DoJoin;
 import com.custom.joiner.util.CustomCharUtil;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Xiao-Bai
@@ -94,9 +90,12 @@ public abstract class AbstractJoinConditional<T> {
     /**
      * 最终的关联条件拼接
      */
-    protected String formatJoinSqlAction() {
+    public String formatJoinSqlAction() {
         if (joinList.isEmpty()) {
             ExThrowsUtil.toCustom("未指定关联条件");
+        }
+        if (StrUtils.isBlank(this.joinTableAlias) || StrUtils.isBlank(this.primaryTableAlias)) {
+            ExThrowsUtil.toUnSupport("Viewing is not supported before the association is completed");
         }
         if (JudgeUtil.isEmpty(joinConditional)) {
             StringBuilder sqlJoinAction = new StringBuilder();

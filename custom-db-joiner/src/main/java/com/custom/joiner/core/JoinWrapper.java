@@ -1,7 +1,7 @@
 package com.custom.joiner.core;
 
 import com.custom.action.condition.SFunction;
-import com.custom.joiner.enums.AliasStrategy;
+import com.custom.comm.enums.AliasStrategy;
 
 import java.util.function.Consumer;
 
