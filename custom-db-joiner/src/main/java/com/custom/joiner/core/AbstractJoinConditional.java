@@ -154,11 +154,7 @@ public abstract class AbstractJoinConditional<T> {
             case IN:
                 StringJoiner addSymbol = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
                 if (param instanceof Collection) {
-                    if (param instanceof List) {
-                        ((List<Object>) param).forEach(op -> addSymbol.add(SymbolConstant.QUEST));
-                    } else {
-                        ((Set<Object>) param).forEach(op -> addSymbol.add(SymbolConstant.QUEST));
-                    }
+                    ((Collection<Object>) param).forEach(op -> addSymbol.add(SymbolConstant.QUEST));
                     doJoin = () -> String.format(" and %s %s (%s)", ConditionColumn, dbSymbol.getSymbol(), addSymbol);
                 }
                 break;

@@ -9,7 +9,7 @@ import java.util.Collection;
  * @date 2022/8/31 23:49
  * @desc
  */
-public class LambdaJoinConditionWrapper<T> implements JoinConditionWrapper<LambdaJoinConditionWrapper<T>>{
+public class LambdaJoinConditionWrapper<T> implements JoinConditionWrapper<LambdaJoinConditionWrapper<T>> {
     @Override
     public <Param> LambdaJoinConditionWrapper<T> eq(boolean condition, SFunction<Param, ?> column, Object val) {
         return null;

@@ -34,9 +34,6 @@ public abstract class AbstractSqlFunc<T, Children> {
      * @param column 需要求平均的属性 Student::getAge
      * @return SqlFunc
      */
-
-
-
     public abstract Children avg(SFunction<T, ?> column);
     public abstract Children avg(boolean isNullToZero, SFunction<T, ?> column);
 
