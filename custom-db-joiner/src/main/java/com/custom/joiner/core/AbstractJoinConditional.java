@@ -27,7 +27,7 @@ public abstract class AbstractJoinConditional<T> {
     /**
      * 关联表的别名
      */
-    public LambdaJoinConditional<T> alias(String joinAlias) {
+    public LambdaJoinConditional<T> as(String joinAlias) {
         this.joinTableAlias = joinAlias;
         return childrenThis;
     }
@@ -206,6 +206,9 @@ public abstract class AbstractJoinConditional<T> {
     protected void setJoinInfo(DbJoinStyle joinStyle, String primaryAlias, AliasStrategy aliasStrategy) {
         this.joinStyle = joinStyle;
         this.primaryTableAlias = primaryAlias;
+        if (StrUtils.isNotBlank(this.joinTableAlias)) {
+            return;
+        }
 
         // 设定别名
         switch (aliasStrategy) {

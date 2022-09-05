@@ -2,11 +2,12 @@ package com.custom.joiner.interfaces;
 
 /**
  * @author Xiao-Bai
- * @date 2022/8/29 14:01
+ * @date 2022/9/3 20:47
  * @desc
  */
 @FunctionalInterface
-public interface DoJoin {
+public interface DoSelecting {
 
-    String action();
+    String select();
+
 }

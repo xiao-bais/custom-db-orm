@@ -2,6 +2,7 @@ package com.custom.joiner.core.func;
 
 import com.custom.action.condition.SFunction;
 import com.custom.action.interfaces.ColumnParseHandler;
+import com.custom.joiner.interfaces.DoSelecting;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,19 +93,18 @@ public abstract class AbstractJoinFunction<Children extends AbstractJoinFunction
      */
     private List<ColumnParseHandler<?>> columnParseHandlerList;
     /**
-     * sql片段
+     * sql查询字段
+     *
      */
-    private List<String> sqlFragments;
-
+    List<DoSelecting> selectingList;
 
     public AbstractJoinFunction() {
-        columnParseHandlerList = new ArrayList<>();
-        sqlFragments = new ArrayList<>();
+        selectingList = new ArrayList<>();
     }
 
 
-    public void doSaveFunction() {
-
+    public void doSelect(DoSelecting selecting) {
+        this.selectingList.add(selecting);
     }
 
 

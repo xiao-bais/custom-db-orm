@@ -23,7 +23,7 @@ public class DoMain {
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
         LambdaJoinWrapper<Student> joinStyleWrapper = new LambdaJoinWrapper<>(Student.class);
-        LambdaJoinConditional<Province> joinConditional = new LambdaJoinConditional<>(Province.class).eq(Province::getId, Student::getProId);
+        LambdaJoinConditional<Province> joinConditional = new LambdaJoinConditional<>(Province.class).eq(Province::getId, Student::getProId).as("myPro");
         joinStyleWrapper.leftJoin(joinConditional);
         joinStyleWrapper.eq(Employee::getEmpName, "aaa");
         String sqlAction = joinConditional.formatJoinSqlAction();
