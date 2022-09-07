@@ -23,15 +23,17 @@ import java.util.Map;
 @DbTable(table = "student", desc = "学生信息表", enabledDefaultValue = true)
 public class Student extends ActiveModel<Student, Integer> implements Serializable {
 
+    private Boolean sex;
 
+    private String phone;
 
     @DbKey
     private Integer id;
 
     private String name;
 
-    @DbOneToOne(thisField = "proId", joinTarget = Province.class)
-    private Province province;
+//    @DbOneToOne(thisField = "proId", joinTarget = Province.class)
+//    private Map<String, Object> province;
 
     @DbField("nick_code")
     private String nickName;

@@ -1,5 +1,6 @@
 package com.custom.action.condition;
 
+import com.custom.action.util.DbUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.enums.DbSymbol;
 import com.custom.comm.enums.SqlLike;
@@ -51,7 +52,8 @@ public class DefaultConditionWrapper<T> extends ConditionAssembly<T, String, Def
 
     @Override
     public DefaultConditionWrapper<T> inSql(boolean condition, String column, String inSql, Object... params) {
-        return adapter(DbSymbol.IN, condition, inSql, params);
+        appendInSql(column, DbSymbol.IN, inSql, params);
+        return childrenClass;
     }
 
     @Override

@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class AbstractJoinWrapper<T> extends LambdaJoinConditionWrapper<T> {
 
     private final Class<T> thisClass;
-    private final String primaryTableName;
+//    private final String primaryTableName;
     private final String primaryTableAlias;
     private AliasStrategy aliasStrategy = AliasStrategy.UNIQUE_ID;
     private final ColumnParseHandler<T> thisColumnParseHandler;
@@ -39,7 +39,7 @@ public class AbstractJoinWrapper<T> extends LambdaJoinConditionWrapper<T> {
         this.thisClass = thisClass;
         this.thisColumnParseHandler = new DefaultColumnParseHandler<>(thisClass);
         TableSqlBuilder<T> tableModel = TableInfoCache.getTableModel(this.thisClass);
-        this.primaryTableName = tableModel.getTable();
+//        this.primaryTableName = tableModel.getTable();
         this.primaryTableAlias = tableModel.getAlias();
         this.joinTableList = new ArrayList<>();
         this.aliasList = new ArrayList<>();

@@ -8,36 +8,36 @@ import com.custom.joiner.core.func.AbstractJoinFunction;
  * @Date 2022/9/1 0001 11:01
  * @Desc
  */
-public class JoinSelectFunction extends AbstractJoinFunction<JoinSelectFunction> {
+public class JoinSelectFunction<T> extends AbstractJoinFunction<JoinSelectFunction<T>> {
 
 
     @Override
-    public <A> JoinSelectFunction sum(boolean isNullToZero, SFunction<A, ?> column) {
+    public <A> JoinSelectFunction<T> sum(boolean isNullToZero, SFunction<A, ?> column) {
         return null;
     }
 
     @Override
-    public <A> JoinSelectFunction avg(boolean isNullToZero, SFunction<A, ?> column) {
+    public <A> JoinSelectFunction<T> avg(boolean isNullToZero, SFunction<A, ?> column) {
         return null;
     }
 
     @Override
-    public <R> JoinSelectFunction count(SFunction<R, ?> column, boolean distinct) {
+    public <R> JoinSelectFunction<T> count(SFunction<R, ?> column, boolean distinct) {
         return null;
     }
 
     @Override
-    public <A> JoinSelectFunction ifNull(SFunction<A, ?> column, Object elseVal) {
+    public <A> JoinSelectFunction<T> ifNull(SFunction<A, ?> column, Object elseVal) {
         return null;
     }
 
     @Override
-    public <A> JoinSelectFunction max(boolean isNullToZero, SFunction<A, ?> column) {
+    public <A> JoinSelectFunction<T> max(boolean isNullToZero, SFunction<A, ?> column) {
         return null;
     }
 
     @Override
-    public <A> JoinSelectFunction min(boolean isNullToZero, SFunction<A, ?> column) {
+    public <A> JoinSelectFunction<T> min(boolean isNullToZero, SFunction<A, ?> column) {
         return null;
     }
 }

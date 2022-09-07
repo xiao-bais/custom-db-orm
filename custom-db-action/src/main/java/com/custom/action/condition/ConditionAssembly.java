@@ -199,6 +199,9 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
      * 拼接insql条件
      */
     protected void appendInSql(String column, DbSymbol dbSymbol, String condition, Object... params) {
+        if(JudgeUtil.isNotEmpty(column) && !column.contains(SymbolConstant.POINT)) {
+            column = DbUtil.fullSqlColumn(getTableSqlBuilder().getAlias(), column);
+        }
         addCondition(DbUtil.applyInCondition(appendSybmol, column, dbSymbol.getSymbol(), condition));
         if (params.length > 0) {
             addParams(params);

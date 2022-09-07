@@ -38,6 +38,9 @@ public class MappingResultInjector<T> {
     public void injectorValue(List<T> resultList) {
         TableSqlBuilder<T> tableModel = TableInfoCache.getTableModel(thisClass);
         for (T entity : resultList) {
+            if (entity == null) {
+                continue;
+            }
 
             // set 一对一
             this.oneToOneHandler(tableModel, entity);
