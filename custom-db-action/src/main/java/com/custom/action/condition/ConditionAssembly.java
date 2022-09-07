@@ -8,6 +8,7 @@ import com.custom.comm.enums.DbSymbol;
 import com.custom.comm.enums.SqlLike;
 import com.custom.comm.enums.SqlOrderBy;
 import com.custom.comm.exceptions.ExThrowsUtil;
+import com.custom.jdbc.GlobalDataHandler;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -74,12 +75,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
         if(!condition || !appendState) {
             return;
         }
-        if(CustomUtil.isBlank(column) && !ALLOW_NOT_ALIAS.contains(dbSymbol)) {
-            ExThrowsUtil.toCustom("column cannot be empty");
-        }
-        if(JudgeUtil.isNotEmpty(column) && !column.contains(SymbolConstant.POINT)) {
-            column = DbUtil.fullSqlColumn(getTableSqlBuilder().getAlias(), column);
-        }
+        column = this.checkedColumn(dbSymbol, column);
         // sql最终条件组装
         this.handleFinalCondition(dbSymbol, column, val1, val2, expression);
 
@@ -90,6 +86,19 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
         if(appendSybmol.equals(SymbolConstant.OR)) {
             appendSybmol = SymbolConstant.AND;
         }
+    }
+
+    private String checkedColumn(DbSymbol dbSymbol, String column) {
+        if(CustomUtil.isBlank(column) && !ALLOW_NOT_ALIAS.contains(dbSymbol)) {
+            ExThrowsUtil.toCustom("column cannot be empty");
+        }
+        if (GlobalDataHandler.hasSqlKeyword(column)) {
+            column = GlobalDataHandler.wrapperSqlKeyword(column);
+        }
+        if(!column.contains(SymbolConstant.POINT)) {
+            column = DbUtil.fullSqlColumn(getTableSqlBuilder().getAlias(), column);
+        }
+        return column;
     }
 
     /**
@@ -199,9 +208,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
      * 拼接insql条件
      */
     protected void appendInSql(String column, DbSymbol dbSymbol, String condition, Object... params) {
-        if(JudgeUtil.isNotEmpty(column) && !column.contains(SymbolConstant.POINT)) {
-            column = DbUtil.fullSqlColumn(getTableSqlBuilder().getAlias(), column);
-        }
+        column = this.checkedColumn(dbSymbol, column);
         addCondition(DbUtil.applyInCondition(appendSybmol, column, dbSymbol.getSymbol(), condition));
         if (params.length > 0) {
             addParams(params);
