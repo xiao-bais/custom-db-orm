@@ -53,7 +53,7 @@ public final class Asserts {
     }
 
     public static void illegal(boolean bool, String message) {
-        isTure(!bool, message);
+        isTure(bool, message);
     }
 
     public static void unSupportOp(boolean bool, String message) {

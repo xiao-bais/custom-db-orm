@@ -42,16 +42,16 @@ public class WriteFieldHelper<T> {
     /**
      * 当写入的字段类型为List/Set时, 泛型的类型
      */
-    private final Class<?> writeType;
+    private final Class<?> fieldType;
 
 
-    public WriteFieldHelper(Object writeValue, T waitWriteEntity, String fieldName, Class<?> writeType) {
+    public WriteFieldHelper(Object writeValue, T waitWriteEntity, String fieldName, Class<?> fieldType) {
         Asserts.notNull(waitWriteEntity, "The entity bean cannot be empty");
         Asserts.notNull(fieldName, "The fieldName bean cannot be empty");
         this.writeValue = writeValue;
         this.waitWriteEntity = waitWriteEntity;
         this.fieldName = fieldName;
-        this.writeType = writeType;
+        this.fieldType = fieldType;
     }
 
     /**
@@ -82,7 +82,7 @@ public class WriteFieldHelper<T> {
                 Type[] actualTypeArguments = ((ParameterizedTypeImpl) writeMethod.getGenericParameterTypes()[0]).getActualTypeArguments();
                 if (actualTypeArguments.length == 0
                         || (CustomUtil.isNotAllowedGenericType((Class<?>) actualTypeArguments[0])
-                        && Object.class.equals(this.writeType))) {
+                        && Object.class.equals(this.fieldType))) {
                     ExThrowsUtil.toCustom("Field is inconsistent with parameter type of set method: " + writeMethod.toGenericString());
                 }
                 // 如果是集合类型的话，获取到集合中的泛型类型
@@ -117,7 +117,7 @@ public class WriteFieldHelper<T> {
 
         } catch (IntrospectionException e) {
             log.error(e.toString(), e);
-            throw new NoSuchFieldException(" Field: '" + this.fieldName + "' not found in object " + writeType);
+            throw new NoSuchFieldException(" Field: '" + this.fieldName + "' not found in object " + fieldType);
         }
     }
 }

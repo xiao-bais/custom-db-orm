@@ -88,10 +88,17 @@ public class CustomUtil extends StrUtils {
     }
 
     /**
-     * 读取对象的属性值
+     * 将值写入指定对象中
+     * @param writeValue 待写入的值
+     * @param waitWriteEntity 写入的目标对象
+     * @param fieldName 写入的目标属性
+     * @param fieldType 写入的目标属性类型(若类型为List/Set、则传入泛型的类型即可)
+     * @param <T>
+     * @return true/false
+     * @throws NoSuchFieldException
      */
-    public static <T> boolean writeFieldValue(Object writeValue, T waitWriteEntity, String fieldName, Class<?> writeType) throws NoSuchFieldException {
-        WriteFieldHelper<T> readFieldHelper = new WriteFieldHelper<>(writeValue, waitWriteEntity, fieldName, writeType);
+    public static <T> boolean writeFieldValue(Object writeValue, T waitWriteEntity, String fieldName, Class<?> fieldType) throws NoSuchFieldException {
+        WriteFieldHelper<T> readFieldHelper = new WriteFieldHelper<>(writeValue, waitWriteEntity, fieldName, fieldType);
         return readFieldHelper.writeValue();
     }
 

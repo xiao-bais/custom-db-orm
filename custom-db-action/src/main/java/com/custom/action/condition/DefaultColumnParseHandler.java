@@ -90,12 +90,9 @@ public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {
     @Override
     public String parseToColumn(SFunction<T, ?> func) {
         String field = parseToField(func);
-//        if(GlobalDataHandler.hasSqlKeyword(field)) {
-//            field = GlobalDataHandler.wrapperSqlKeyword(field);
-//        }
         String column = fieldMapper.get(field);
         if(Objects.isNull(column)) {
-            throw new CustomCheckException("Property '" + field + "' not found Db* Annotation.");
+            throw new CustomCheckException("Property '" + field + "',  the table field mapped by this attribute cannot be found");
         }
         return column;
     }

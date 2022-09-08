@@ -14,7 +14,7 @@ public interface UpdateSet<Children, Setter, Wrapper> {
 
     
     /**
-     * sql set设置器
+     * sql set设置器(只需调用一次，重复调用以最后一次为准)
      */
     Children setter(boolean condition, Setter setter);
 
@@ -23,7 +23,7 @@ public interface UpdateSet<Children, Setter, Wrapper> {
     }
 
     /**
-     * sql set设置器（消费型）
+     * sql set设置器（消费型,只需调用一次，重复调用以最后一次为准）
      */
     Children setter(boolean condition, Consumer<Setter> consumer);
 
@@ -32,7 +32,7 @@ public interface UpdateSet<Children, Setter, Wrapper> {
     }
 
     /**
-     * sql 条件构造器
+     * sql 条件构造器(只需调用一次，重复调用以最后一次为准)
      */
     Children where(boolean condition, Wrapper wrapper);
 
