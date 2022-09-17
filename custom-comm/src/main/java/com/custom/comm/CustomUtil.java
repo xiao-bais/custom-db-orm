@@ -92,7 +92,7 @@ public class CustomUtil extends StrUtils {
      * @param writeValue 待写入的值
      * @param waitWriteEntity 写入的目标对象
      * @param fieldName 写入的目标属性
-     * @param fieldType 写入的目标属性类型(若类型为List/Set、则传入泛型的类型即可)
+     * @param fieldType 写入的目标属性类型(若类型为Collection、则传入泛型的类型即可)
      * @param <T>
      * @return true/false
      * @throws NoSuchFieldException
@@ -138,7 +138,7 @@ public class CustomUtil extends StrUtils {
             }
         }
         if (fieldList.size() == 0 && checkDbField) {
-            ExThrowsUtil.toCustom("@DbField not found in class " + t);
+            ExThrowsUtil.toCustom("@DbField not found inD " + t);
         }
         return fieldList.toArray(new Field[0]);
     }

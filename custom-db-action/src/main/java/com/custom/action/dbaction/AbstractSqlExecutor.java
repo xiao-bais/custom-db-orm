@@ -122,7 +122,7 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
     /**
      * 获取实体解析模板中的操作对象
      */
-    protected <T, R extends AbstractSqlBuilder<T>> R buildSqlOperationTemplate(Class<T> entityClass) {
+    public <T, R extends AbstractSqlBuilder<T>> R buildSqlOperationTemplate(Class<T> entityClass) {
         return buildSqlOperationTemplate(entityClass, ExecuteMethod.SELECT);
     }
 

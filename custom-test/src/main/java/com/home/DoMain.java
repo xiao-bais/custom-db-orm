@@ -27,12 +27,8 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-        jdbcDao.updateSelective(Conditions.lambdaUpdate(Student.class)
-                .setter(x -> x.set(Student::getName, "张丹")
-                        .set(Student::getAreaId, "123")
-                )
-                .where(x -> x.eq(Student::getId, 13))
-        );
+        List<Province> provinces = jdbcDao.selectList(new Province());
+        System.out.println("provinces = " + provinces);
 
 
     }

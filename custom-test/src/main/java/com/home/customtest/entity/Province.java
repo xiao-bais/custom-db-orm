@@ -1,10 +1,9 @@
 package com.home.customtest.entity;
 
-import com.custom.comm.annotations.DbField;
-import com.custom.comm.annotations.DbKey;
-import com.custom.comm.annotations.DbOneToOne;
-import com.custom.comm.annotations.DbTable;
+import com.custom.comm.annotations.*;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * @Author Xiao-Bai
@@ -21,8 +20,8 @@ public class Province {
     @DbField
     private String name;
 
-//    @DbOneToOne(joinField = "proId")
-//    private Student student;
+    @DbOneToMany(joinField = "proId")
+    private List<Student> students;
 
 
 }

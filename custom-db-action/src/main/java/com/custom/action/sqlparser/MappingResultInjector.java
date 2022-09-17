@@ -1,19 +1,25 @@
 package com.custom.action.sqlparser;
 
+import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.dbaction.AbstractSqlExecutor;
+import com.custom.action.interfaces.FullSqlConditionExecutor;
+import com.custom.action.util.DbUtil;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.exceptions.ExThrowsUtil;
+import com.custom.jdbc.condition.SelectSqlParamInfo;
+import com.custom.jdbc.select.CustomSelectJdbcBasic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
  * @author Xiao-Bai
  * @date 2022/8/22 18:16
- * @desc 一对一，一对多 value植入
+ * @desc 一对一，一对多 value注入
  */
 public class MappingResultInjector<T> {
 
@@ -42,11 +48,28 @@ public class MappingResultInjector<T> {
                 continue;
             }
 
-            // set 一对一
-            this.oneToOneHandler(tableModel, entity);
+            try {
+                // set 一对一
+                this.oneToOneHandler(tableModel, entity);
+            }catch (Exception e) {
+                logger.error(e.toString(), e);
+                if (e.getCause() instanceof SQLException) {
+                    return;
+                }
+            }
 
-            // set 一对多
-            this.oneToManyHandler(tableModel, entity);
+
+            try {
+                // set 一对多
+                this.oneToManyHandler(tableModel, entity);
+            }catch (Exception e) {
+                logger.error(e.toString(), e);
+                if (e.getCause() instanceof SQLException) {
+                    return;
+                }
+            }
+
+
 
         }
 
@@ -57,19 +80,26 @@ public class MappingResultInjector<T> {
      * @param tableModel - 实体解析模板
      * @param entity - 实体对象
      */
-    private void oneToManyHandler(TableSqlBuilder<T> tableModel, T entity) {
+    private void oneToManyHandler(TableSqlBuilder<T> tableModel, T entity) throws Exception {
         List<Field> oneToManyFieldList = tableModel.getOneToManyFieldList();
         if (JudgeUtil.isNotEmpty(oneToManyFieldList)) {
             for (Field waitSetField : oneToManyFieldList) {
                 DbJoinToManyParseModel joinToManyParseModel = new DbJoinToManyParseModel(waitSetField);
+                Class<?> joinTarget = joinToManyParseModel.getJoinTarget();
+                TableSqlBuilder<?> targetTableModel = TableInfoCache.getTableModel(joinTarget);
 
                 try {
                     Object queryValue = CustomUtil.readFieldValue(entity, joinToManyParseModel.getThisField());
                     if (queryValue == null) {
                         continue;
                     }
-                    List<?> queryResult = sqlExecutor.selectList(joinToManyParseModel.getJoinTarget(), joinToManyParseModel.queryCondition(), queryValue);
 
+                    FullSqlConditionExecutor conditionExecutor = sqlExecutor.handleLogicWithCondition(targetTableModel.getAlias(), joinToManyParseModel.queryCondition(),
+                            sqlExecutor.getLogicDeleteQuerySql(), targetTableModel.getTable());
+
+                    AbstractSqlBuilder<?> abstractSqlBuilder = sqlExecutor.buildSqlOperationTemplate(joinTarget);
+                    String selectSql = abstractSqlBuilder.buildSql() + conditionExecutor.execute();
+                    List<?> queryResult = sqlExecutor.executeQueryNotPrintSql(joinTarget, selectSql, queryValue);
                     if (JudgeUtil.isNotEmpty(queryResult)) {
                         CustomUtil.writeFieldValue(queryResult, entity,
                                 waitSetField.getName(), joinToManyParseModel.getJoinTarget());
