@@ -62,4 +62,9 @@ public class DbJoinToOneParseModel extends AbstractJoinToResult {
     public boolean isThrowErr() {
         return isThrowErr;
     }
+
+    @Override
+    public String queryCondition() {
+        return String.format("and %s.%s = ? ", getJoinAlias(), getJoinColumn());
+    }
 }

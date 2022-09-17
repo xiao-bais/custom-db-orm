@@ -501,10 +501,6 @@ public class TableSqlBuilder<T> implements Cloneable {
         return entity;
     }
 
-    public List<T> getEntityList() {
-        return entityList;
-    }
-
     public Field[] getFields() {
         return fields;
     }
@@ -535,26 +531,6 @@ public class TableSqlBuilder<T> implements Cloneable {
         this.alias = alias;
     }
 
-    public void setKeyParserModel(DbKeyParserModel<T> keyParserModel) {
-        this.keyParserModel = keyParserModel;
-    }
-
-    public void setFieldParserModels(List<DbFieldParserModel<T>> fieldParserModels) {
-        this.fieldParserModels = fieldParserModels;
-    }
-
-    public void setRelatedParserModels(List<DbRelationParserModel<T>> relatedParserModels) {
-        this.relatedParserModels = relatedParserModels;
-    }
-
-    public void setJoinTableParserModels(List<String> joinTableParserModels) {
-        this.joinTableParserModels = joinTableParserModels;
-    }
-
-    protected void setJoinDbMappers(List<DbJoinTableParserModel<T>> joinDbMappers) {
-        this.joinDbMappers = joinDbMappers;
-    }
-
     public String getDesc() {
         return desc;
     }
@@ -577,10 +553,6 @@ public class TableSqlBuilder<T> implements Cloneable {
 
     public AbstractSqlBuilder<T> getSqlBuilder() {
         return sqlBuilder;
-    }
-
-    public boolean isFindUpDbJoinTables() {
-        return findUpDbJoinTables;
     }
 
     public List<Field> getOneToOneFieldList() {
@@ -623,14 +595,6 @@ public class TableSqlBuilder<T> implements Cloneable {
             builder.relatedParserModels = this.relatedParserModels;
             builder.joinDbMappers = this.joinDbMappers;
             builder.joinTableParserModels = this.joinTableParserModels;
-
-//            builder.setTable(this.table);
-//            builder.setEntityClass(this.entityClass);
-//            builder.setKeyParserModel(this.keyParserModel);
-//            builder.setFieldParserModels(this.fieldParserModels);
-//            builder.setRelatedParserModels(this.relatedParserModels);
-//            builder.setJoinTableParserModels(this.joinTableParserModels);
-//            builder.setJoinDbMappers(this.joinDbMappers);
             builder.oneToOneFieldList = this.oneToOneFieldList;
             builder.oneToManyFieldList = this.oneToManyFieldList;
         } catch (CloneNotSupportedException e) {
@@ -645,7 +609,7 @@ public class TableSqlBuilder<T> implements Cloneable {
      * 创建字段属性关联映射
      * <br/>为满足更多变的需求，特创建此映射对象，储存多个属性
      * <br/>此方法与{@link #buildMapper()} 的字段映射缓存不同，可以说是{@link #buildMapper()}的一个升级版
-     * <br/>创建此对象并不会让{@link #buildMapper()}受到任何印象，两者均可正常使用
+     * <br/>创建此对象并不会让{@link #buildMapper()}受到任何影响，两者均可正常使用
      */
     private void createColumnPropertyMaps() throws IntrospectionException {
         boolean isKeyProperty = true;
@@ -655,7 +619,7 @@ public class TableSqlBuilder<T> implements Cloneable {
             String fieldName = field.getName();
             Class<?> fieldType = field.getType();
 
-            if (this.isNotNeedParseProperty(field)) {
+            if (!CustomUtil.isBasicClass(fieldType)) {
                 continue;
             }
 

@@ -3,11 +3,14 @@ package com.home.customtest.controller;
 import com.custom.action.sqlparser.JdbcOpDao;
 import com.custom.comm.BackResult;
 import com.home.customtest.dao.CustomTestDao;
+import com.home.customtest.entity.Province;
 import com.home.customtest.entity.Student;
+import com.home.customtest.mapper.StudentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @Author Xiao-Bai
@@ -22,8 +25,11 @@ public class IndexControl {
     @Autowired
     private JdbcOpDao jdbcDao;
 
-    @Resource
-    private CustomTestDao customTestDao;
+    @Autowired
+    private StudentMapper studentMapper;
+
+//    @Resource
+//    private CustomTestDao customTestDao;
 
 
 //    @GetMapping("/getMain")
@@ -41,12 +47,31 @@ public class IndexControl {
 //        return BackResult.bySuccess("success01", students);
 //    }
 
-    @GetMapping("/search")
-    public BackResult<Student> getKeyInfo(String key) throws Exception {
-        long l = System.currentTimeMillis();
-        Student student = customTestDao.selectByOne(key);
-        long l1 = System.currentTimeMillis();
-        System.out.println("l1 = " + (l1 - l));
-        return BackResult.bySuccess(student);
+//    @GetMapping("/search")
+//    public BackResult<Student> getKeyInfo(String key) throws Exception {
+//        long l = System.currentTimeMillis();
+//        Student student = customTestDao.selectByOne(key);
+//        long l1 = System.currentTimeMillis();
+//        System.out.println("l1 = " + (l1 - l));
+//        return BackResult.bySuccess(student);
+//    }
+
+
+    @GetMapping("/comTime")
+    public BackResult<List<Province>> getComTime() {
+
+        long t1 = System.currentTimeMillis();
+        List<Province> provinces = jdbcDao.selectList(new Province());
+        long t2 = System.currentTimeMillis();
+
+        List<Province> provinceList = studentMapper.getProvinces();
+        long t3 = System.currentTimeMillis();
+        System.out.println("t2 = " + (t2 - t1));
+        System.out.println("t3 = " + (t3 - t2));
+
+        return BackResult.bySuccess(provinces);
+
     }
+
+
 }

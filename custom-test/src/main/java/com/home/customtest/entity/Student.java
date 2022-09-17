@@ -1,5 +1,8 @@
 package com.home.customtest.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.custom.action.activerecord.ActiveModel;
 import com.custom.comm.annotations.*;
 import com.custom.comm.enums.DbType;
@@ -21,6 +24,7 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @DbTable(table = "student", desc = "学生信息表", enabledDefaultValue = true)
+@TableName("student")
 public class Student extends ActiveModel<Student, Integer> implements Serializable {
 
     private Boolean sex;
@@ -28,6 +32,7 @@ public class Student extends ActiveModel<Student, Integer> implements Serializab
     private String phone;
 
     @DbKey
+    @TableId(type = IdType.AUTO)
     private Integer id;
 
     private String name;

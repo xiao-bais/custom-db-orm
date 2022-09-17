@@ -16,6 +16,7 @@ import com.custom.comm.page.DbPageRows;
 import com.custom.configuration.DbCustomStrategy;
 
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -205,13 +206,22 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
         return logicDeleteQuerySql;
     }
 
+    /**
+     * 处理异常抛出
+     */
     public void throwsException(Exception e) {
         if (e instanceof CustomCheckException) {
-            throw new CustomCheckException(e.getMessage(), e);
+            throw (CustomCheckException) e;
         }
-        if (e instanceof NullPointerException) {
+        else if (e instanceof NullPointerException) {
             throw new NullPointerException(e.getMessage());
         }
-        throw new RuntimeException(e.toString());
+        else if (e instanceof UnsupportedOperationException) {
+            throw (UnsupportedOperationException) e;
+        }
+        else if (e instanceof IllegalArgumentException) {
+            throw (IllegalArgumentException) e;
+        }
+        throw new RuntimeException(e.toString(), e);
     }
 }

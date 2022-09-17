@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.home.customtest.mapper.StudentMapper">
+
+    <resultMap id="baseResultMap" type="com.home.customtest.entity.Province">
+        <collection property="students" ofType="com.home.customtest.entity.Student" column="id" select="getStudents"/>
+    </resultMap>
+
+    <select id="getProvinces" resultMap="baseResultMap">
+        select id, name
+        from province
+    </select>
+
+    <select id="getStudents" resultType="com.home.customtest.entity.Student">
+        select id, name, nick_code, password, age, sex, phone, money, address, birthday, state, pro_id, city_id, area_id
+        from student a
+        where a.state = 0
+        and a.pro_id = #{id}
+    </select>
+
+
+</mapper>

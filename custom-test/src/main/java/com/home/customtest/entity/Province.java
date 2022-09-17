@@ -20,7 +20,7 @@ public class Province {
     @DbField
     private String name;
 
-    @DbOneToMany(joinField = "proId")
+    @DbOneToMany(joinField = "proId", sortField = "age")
     private List<Student> students;
 
 

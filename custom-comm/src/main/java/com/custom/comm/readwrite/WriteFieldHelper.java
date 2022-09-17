@@ -99,12 +99,15 @@ public class WriteFieldHelper<T> {
                     return true;
                 }
 
+                if (!List.class.isAssignableFrom(setParamType) && Set.class.isAssignableFrom(setParamType)){
+                    log.warn("Only 'java.util.List' and 'java.util.Set' settings are supported");
+                    return false;
+                }
                 String valueStr = JSONArray.toJSONString(this.writeValue);
                 this.writeValue = JSONArray.parseArray(valueStr, genericType);
                 if (Set.class.isAssignableFrom(setParamType)) {
                     this.writeValue = new HashSet<>((ArrayList<?>) this.writeValue);
                 }
-                log.warn("Only 'java.util.List' and 'java.util.Set' settings are supported");
             } else {
                 this.writeValue = JSONObject.parseObject(JSONObject.toJSONString(this.writeValue), setParamType);
             }

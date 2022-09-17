@@ -27,8 +27,13 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
+        long t1 = System.currentTimeMillis();
         List<Province> provinces = jdbcDao.selectList(new Province());
-        System.out.println("provinces = " + provinces);
+        long t2 = System.currentTimeMillis();
+        List<Province> provinces2 = jdbcDao.selectList(new Province());
+        long t3 = System.currentTimeMillis();
+        System.out.println("t = " + (t2 - t1));
+        System.out.println("t2 = " + (t3 - t2));
 
 
     }

@@ -161,7 +161,9 @@ public abstract class AbstractJoinToResult {
         this.thisClass = thisClass;
     }
 
-    public String queryCondition() {
-        return String.format("and %s.%s = ? ", this.joinAlias, this.joinColumn);
-    }
+    /**
+     * 查询条件实现
+     */
+    public abstract String queryCondition();
+
 }

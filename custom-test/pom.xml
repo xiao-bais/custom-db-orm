@@ -84,12 +84,17 @@
             <version>1.2.52.sec10</version>
         </dependency>
 
-        <dependency>
+        <!--<dependency>
             <groupId>com.github.yulichang</groupId>
             <artifactId>mybatis-plus-join</artifactId>
             <version>1.2.4</version>
-        </dependency>
+        </dependency>-->
 
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>3.3.2</version>
+        </dependency>
     </dependencies>
 
     <build>

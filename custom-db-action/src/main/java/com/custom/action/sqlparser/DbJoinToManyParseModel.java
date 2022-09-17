@@ -4,11 +4,10 @@ import com.custom.action.dbaction.AbstractJoinToResult;
 import com.custom.action.util.DbUtil;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
+import com.custom.comm.StrUtils;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.DbKey;
 import com.custom.comm.annotations.DbOneToMany;
-import com.custom.comm.annotations.DbOneToOne;
-import com.custom.comm.enums.DbSymbol;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
@@ -80,13 +79,21 @@ public class DbJoinToManyParseModel extends AbstractJoinToResult {
 
     }
 
-    public String orderByField() {
-        if (JudgeUtil.isBlank(sortField)) {
+    /**
+     * 排序规则
+     */
+    private String orderByField() {
+        if (StrUtils.isBlank(sortField.trim())) {
             return "";
         }
+        TableSqlBuilder<?> tableModel = TableInfoCache.getTableModel(getJoinTarget());
         return SymbolConstant.ORDER_BY
-                + DbUtil.fullSqlColumn(getJoinAlias(), sortField)
+                + tableModel.getFieldMapper().get(sortField) + " "
                 + (orderByAsc ? SymbolConstant.ASC : SymbolConstant.DESC);
     }
 
+    @Override
+    public String queryCondition() {
+        return String.format("and %s.%s = ? %s", getJoinAlias(), getJoinColumn(), orderByField());
+    }
 }

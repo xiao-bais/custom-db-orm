@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -327,14 +328,14 @@ public class JdbcAction extends AbstractSqlExecutor {
         return dbPageRows.setTotal(count).setData(dataList);
     }
 
-    private <T> void injectOtherResult(Class<T> entityClass, HandleSelectSqlBuilder<T> sqlBuilder, T result) {
+    private <T> void injectOtherResult(Class<T> entityClass, HandleSelectSqlBuilder<T> sqlBuilder, T result) throws Exception {
         if (sqlBuilder.isExistNeedInjectResult() && result != null) {
             MappingResultInjector<T> resultInjector = new MappingResultInjector<>(entityClass, this);
             resultInjector.injectorValue(Collections.singletonList(result));
         }
     }
 
-    private <T> void injectOtherResult(Class<T> entityClass, HandleSelectSqlBuilder<T> sqlBuilder, List<T> result) {
+    private <T> void injectOtherResult(Class<T> entityClass, HandleSelectSqlBuilder<T> sqlBuilder, List<T> result)throws Exception {
         if (sqlBuilder.isExistNeedInjectResult()) {
             MappingResultInjector<T> resultInjector = new MappingResultInjector<>(entityClass, this);
             resultInjector.injectorValue(result);
