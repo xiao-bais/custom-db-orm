@@ -209,7 +209,6 @@ public class JdbcWrapperExecutor {
         return tableModel;
     }
 
-    public CustomSelectJdbcBasic getSelectJdbc() {
-        return selectJdbc;
-    }
+
+
 }

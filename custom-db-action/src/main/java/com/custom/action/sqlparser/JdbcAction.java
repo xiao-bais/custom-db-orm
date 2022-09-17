@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
  * @date 2022/4/13 20:49
  * @desc:
  */
+@SuppressWarnings("unchecked")
 public class JdbcAction extends AbstractSqlExecutor {
 
     private static final Logger logger = LoggerFactory.getLogger(JdbcAction.class);
@@ -174,7 +175,6 @@ public class JdbcAction extends AbstractSqlExecutor {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> List<T> selectList(T entity) {
         ConditionWrapper<T> conditionWrapper = Conditions.allEqQuery((Class<T>) entity.getClass(), entity);
@@ -182,7 +182,6 @@ public class JdbcAction extends AbstractSqlExecutor {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> DbPageRows<T> selectPage(T entity, DbPageRows<T> pageRows) {
         Asserts.npe(pageRows, "Missing paging parameter");
@@ -326,20 +325,6 @@ public class JdbcAction extends AbstractSqlExecutor {
             this.throwsException(e);
         }
         return dbPageRows.setTotal(count).setData(dataList);
-    }
-
-    private <T> void injectOtherResult(Class<T> entityClass, HandleSelectSqlBuilder<T> sqlBuilder, T result) throws Exception {
-        if (sqlBuilder.isExistNeedInjectResult() && result != null) {
-            MappingResultInjector<T> resultInjector = new MappingResultInjector<>(entityClass, this);
-            resultInjector.injectorValue(Collections.singletonList(result));
-        }
-    }
-
-    private <T> void injectOtherResult(Class<T> entityClass, HandleSelectSqlBuilder<T> sqlBuilder, List<T> result)throws Exception {
-        if (sqlBuilder.isExistNeedInjectResult()) {
-            MappingResultInjector<T> resultInjector = new MappingResultInjector<>(entityClass, this);
-            resultInjector.injectorValue(result);
-        }
     }
 
 

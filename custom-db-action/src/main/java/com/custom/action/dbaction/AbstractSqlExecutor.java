@@ -3,6 +3,7 @@ package com.custom.action.dbaction;
 import com.custom.action.condition.AbstractUpdateSet;
 import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.action.sqlparser.HandleSelectSqlBuilder;
+import com.custom.action.sqlparser.MappingResultInjector;
 import com.custom.action.sqlparser.TableSqlBuilder;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.condition.SFunction;
@@ -223,5 +224,26 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
             throw (IllegalArgumentException) e;
         }
         throw new RuntimeException(e.toString(), e);
+    }
+
+
+    /**
+     * 查询后一对一结果注入
+     */
+    protected  <T> void injectOtherResult(Class<T> entityClass, HandleSelectSqlBuilder<T> sqlBuilder, T result) throws Exception {
+        if (sqlBuilder.isExistNeedInjectResult() && result != null) {
+            MappingResultInjector<T> resultInjector = new MappingResultInjector<>(entityClass, this);
+            resultInjector.injectorValue(Collections.singletonList(result));
+        }
+    }
+
+    /**
+     * 查询后一对多结果注入
+     */
+    protected <T> void injectOtherResult(Class<T> entityClass, HandleSelectSqlBuilder<T> sqlBuilder, List<T> result)throws Exception {
+        if (sqlBuilder.isExistNeedInjectResult()) {
+            MappingResultInjector<T> resultInjector = new MappingResultInjector<>(entityClass, this);
+            resultInjector.injectorValue(result);
+        }
     }
 }
