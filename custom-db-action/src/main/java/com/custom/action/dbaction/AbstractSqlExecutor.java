@@ -146,9 +146,8 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
         TableSqlBuilder<T> tableModel = tableModelCache.clone();
         tableModel.setEntity(entityList.get(0));
         tableModel.setEntityList(entityList);
-        tableModel.buildSqlConstructorModel(method);
-        tableModel.setLogicFieldInfo(logicColumn, dbCustomStrategy.getDeleteLogicValue(), dbCustomStrategy.getNotDeleteLogicValue());
-        return (R) tableModel.getSqlBuilder();
+        return (R)tableModel.buildSqlConstructorModel(method,
+                logicColumn, dbCustomStrategy.getDeleteLogicValue(), dbCustomStrategy.getNotDeleteLogicValue());
     }
 
     /**
@@ -156,9 +155,8 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
      */
     protected <T, R extends AbstractSqlBuilder<T>> R buildSqlOperationTemplate(Class<T> entityClass, ExecuteMethod method) {
         TableSqlBuilder<T> tableSqlBuilder = defaultTableSqlBuilder(entityClass);
-        tableSqlBuilder.buildSqlConstructorModel(method);
-        tableSqlBuilder.setLogicFieldInfo(logicColumn, dbCustomStrategy.getDeleteLogicValue(), dbCustomStrategy.getNotDeleteLogicValue());
-        return (R) tableSqlBuilder.getSqlBuilder();
+        return (R) tableSqlBuilder.buildSqlConstructorModel(method,
+                logicColumn, dbCustomStrategy.getDeleteLogicValue(), dbCustomStrategy.getNotDeleteLogicValue());
     }
 
 
@@ -230,7 +228,7 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
     /**
      * 查询后一对一结果注入
      */
-    protected  <T> void injectOtherResult(Class<T> entityClass, HandleSelectSqlBuilder<T> sqlBuilder, T result) throws Exception {
+    protected <T> void injectOtherResult(Class<T> entityClass, HandleSelectSqlBuilder<T> sqlBuilder, T result) throws Exception {
         if (sqlBuilder.isExistNeedInjectResult() && result != null) {
             MappingResultInjector<T> resultInjector = new MappingResultInjector<>(entityClass, this);
             resultInjector.injectorValue(Collections.singletonList(result));
@@ -240,7 +238,7 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
     /**
      * 查询后一对多结果注入
      */
-    protected <T> void injectOtherResult(Class<T> entityClass, HandleSelectSqlBuilder<T> sqlBuilder, List<T> result)throws Exception {
+    protected <T> void injectOtherResult(Class<T> entityClass, HandleSelectSqlBuilder<T> sqlBuilder, List<T> result) throws Exception {
         if (sqlBuilder.isExistNeedInjectResult()) {
             MappingResultInjector<T> resultInjector = new MappingResultInjector<>(entityClass, this);
             resultInjector.injectorValue(result);

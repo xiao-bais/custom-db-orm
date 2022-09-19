@@ -1,5 +1,6 @@
 package com.custom.action.condition;
 
+import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import org.slf4j.Logger;
@@ -23,12 +24,15 @@ public class AllEqualConditionHandler<T> {
     private final Map<String, String> fieldMapper;
     private final DefaultConditionWrapper<T> conditionWrapper;
 
-    public AllEqualConditionHandler(Object entity, Map<String, String> fieldMapper, DefaultConditionWrapper<T> conditionWrapper) {
+    public AllEqualConditionHandler(T entity, DefaultConditionWrapper<T> conditionWrapper) {
         this.entity = entity;
-        this.fieldMapper = fieldMapper;
         this.conditionWrapper = conditionWrapper;
+        this.fieldMapper = conditionWrapper.getTableSqlBuilder().getFieldMapper();
     }
 
+    /**
+     * 条件拼接
+     */
     public void allEqCondition() {
         Map<String, Object> parseMap = new HashMap<>();
         try {

@@ -1,5 +1,6 @@
 package com.home;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.condition.Conditions;
 import com.custom.action.condition.DefaultConditionWrapper;
@@ -27,14 +28,12 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-        long t1 = System.currentTimeMillis();
-        List<Province> provinces = jdbcDao.selectList(new Province());
-        long t2 = System.currentTimeMillis();
-        List<Province> provinces2 = jdbcDao.selectList(new Province());
-        long t3 = System.currentTimeMillis();
-        System.out.println("t = " + (t2 - t1));
-        System.out.println("t2 = " + (t3 - t2));
+        Student search = new Student();
+        search.setId(15);
+        search.setName("张三");
+        jdbcOpDao.selectList(Conditions.allEqQuery(search));
 
+        jdbcOpDao.selectList(Conditions.lambdaQuery(Student.class).gt(Student::getAge, 22));
 
     }
 

@@ -70,7 +70,7 @@ public class Student extends ActiveModel<Student, Integer> implements Serializab
 
     private Integer areaId;
 
-    @DbMapper("cy.name")
+    @DbField(exist = false)
     private String city;
 
     @DbField(exist = false)

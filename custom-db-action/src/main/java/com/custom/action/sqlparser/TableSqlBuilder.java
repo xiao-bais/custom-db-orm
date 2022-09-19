@@ -114,7 +114,8 @@ public class TableSqlBuilder<T> implements Cloneable {
      * @see HandleUpdateSqlBuilder
      * @see HandleSelectSqlBuilder
      */
-    private AbstractSqlBuilder<T> sqlBuilder;
+    private HandleSelectSqlBuilder<T> selectSqlBuilder;
+    private HandleInsertSqlBuilder<T> insertSqlBuilder;
 
     /**
      * sql执行对象（jdbc）
@@ -432,42 +433,39 @@ public class TableSqlBuilder<T> implements Cloneable {
     /**
      * 实例化sql构造模板
      */
-    public void buildSqlConstructorModel(ExecuteMethod method) {
+    public AbstractSqlBuilder<T> buildSqlConstructorModel(ExecuteMethod method, String logicColumn, Object logicDeleteValue, Object logicNotDeleteValue) {
+        AbstractSqlBuilder<T> sqlBuilder = null;
         switch (method) {
             case SELECT:
-                boolean existNeedInjectResult = JudgeUtil.isNotEmpty(this.oneToOneFieldList) || JudgeUtil.isNotEmpty(this.oneToManyFieldList);
+                boolean existNeedInjectResult = JudgeUtil.isNotEmpty(this.oneToOneFieldList)
+                        || JudgeUtil.isNotEmpty(this.oneToManyFieldList);
                 sqlBuilder = new HandleSelectSqlBuilder<>(findUpDbJoinTables, relatedParserModels,
                         joinDbMappers, joinTableParserModels, existNeedInjectResult);
+
                 break;
             case UPDATE:
                 sqlBuilder = new HandleUpdateSqlBuilder<>();
                 break;
             case INSERT:
-                sqlBuilder = new HandleInsertSqlBuilder<>();
+                if (this.insertSqlBuilder == null) {
+                    sqlBuilder = new HandleInsertSqlBuilder<>();
+                }
                 break;
             case DELETE:
                 sqlBuilder = new HandleDeleteSqlBuilder<>();
         }
-        if (Objects.nonNull(sqlBuilder)) {
-            // 注入sql注解解析对象
-            sqlBuilder.setKeyParserModel(keyParserModel);
-            sqlBuilder.setFieldParserModels(fieldParserModels);
+
+        if (sqlBuilder != null) {
             // 初始化
-            initializeSqlBuilder(sqlBuilder);
-            // 注入sql执行对象
-            sqlBuilder.setSelectJdbc(this.selectJdbc);
-            sqlBuilder.setUpdateJdbc(this.updateJdbc);
+            this.initializeSqlBuilder(sqlBuilder);
+            sqlBuilder.setLogicColumn(logicColumn);
+            sqlBuilder.setLogicDeleteValue(logicDeleteValue);
+            sqlBuilder.setLogicNotDeleteValue(logicNotDeleteValue);
         }
+
+        return sqlBuilder;
     }
 
-    /**
-     * 注入逻辑删除字段值
-     */
-    public void setLogicFieldInfo(String logicColumn, Object logicDeleteValue, Object logicNotDeleteValue) {
-        sqlBuilder.setLogicColumn(logicColumn);
-        sqlBuilder.setLogicDeleteValue(logicDeleteValue);
-        sqlBuilder.setLogicNotDeleteValue(logicNotDeleteValue);
-    }
 
     /**
      * 获取主键的值
@@ -551,10 +549,6 @@ public class TableSqlBuilder<T> implements Cloneable {
         this.updateJdbc = updateJdbc;
     }
 
-    public AbstractSqlBuilder<T> getSqlBuilder() {
-        return sqlBuilder;
-    }
-
     public List<Field> getOneToOneFieldList() {
         return oneToOneFieldList;
     }
@@ -563,10 +557,22 @@ public class TableSqlBuilder<T> implements Cloneable {
         return oneToManyFieldList;
     }
 
+    /**
+     * 初始化sql语句构造模板对象
+     */
     private void initializeSqlBuilder(AbstractSqlBuilder<T> sqlBuilder) {
         sqlBuilder.setTable(this.table);
         sqlBuilder.setAlias(this.alias);
         sqlBuilder.setEntityClass(this.entityClass);
+
+        // 注入sql注解解析对象
+        sqlBuilder.setKeyParserModel(keyParserModel);
+        sqlBuilder.setFieldParserModels(fieldParserModels);
+
+        // 注入sql执行对象
+        sqlBuilder.setSelectJdbc(this.selectJdbc);
+        sqlBuilder.setUpdateJdbc(this.updateJdbc);
+
         if(Objects.nonNull(this.entity)) {
             sqlBuilder.setEntity(this.entity);
         }
@@ -607,9 +613,9 @@ public class TableSqlBuilder<T> implements Cloneable {
 
     /**
      * 创建字段属性关联映射
-     * <br/>为满足更多变的需求，特创建此映射对象，储存多个属性
-     * <br/>此方法与{@link #buildMapper()} 的字段映射缓存不同，可以说是{@link #buildMapper()}的一个升级版
-     * <br/>创建此对象并不会让{@link #buildMapper()}受到任何影响，两者均可正常使用
+     * <li>为满足更多变的需求，特创建此映射对象，储存多个属性</li>
+     * <li>此方法与{@link #buildMapper()} 的字段映射缓存不同，可以说是{@link #buildMapper()}的一个升级版</li>
+     * <li>创建此对象并不会让{@link #buildMapper()}受到任何影响，两者均可正常使用</li>
      */
     private void createColumnPropertyMaps() throws IntrospectionException {
         boolean isKeyProperty = true;

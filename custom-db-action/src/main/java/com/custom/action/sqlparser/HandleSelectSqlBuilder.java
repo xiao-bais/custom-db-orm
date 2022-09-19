@@ -2,6 +2,7 @@ package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.util.DbUtil;
+import com.custom.comm.StrUtils;
 import com.custom.jdbc.GlobalDataHandler;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
@@ -23,6 +24,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final StringBuilder selectSql;
+    private final StringBuilder selectJoinSql;
     private final boolean findUpDbJoinTables;
     private final List<DbRelationParserModel<T>> relatedParserModels;
     private final List<DbJoinTableParserModel<T>> joinDbMappers;
@@ -32,10 +34,11 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
     public HandleSelectSqlBuilder(
                                 boolean findUpDbJoinTables,
                                 List<DbRelationParserModel<T>> relatedParserModels,
-                                  List<DbJoinTableParserModel<T>> joinDbMappers,
-                                  List<String> joinTableParserModels,
+                                List<DbJoinTableParserModel<T>> joinDbMappers,
+                                List<String> joinTableParserModels,
                                 boolean existNeedInjectResult) {
         this.selectSql = new StringBuilder();
+        this.selectJoinSql = new StringBuilder();
         this.findUpDbJoinTables = findUpDbJoinTables;
         this.relatedParserModels = relatedParserModels;
         this.joinDbMappers = joinDbMappers;
@@ -51,36 +54,34 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
     @Override
     public String buildSql() {
         try {
-            if (JudgeUtil.isNotEmpty(selectSql)) {
-                return selectSql.toString();
-            }
-            buildSelect(!getPrimaryTable());
+            return this.buildSelect(!getPrimaryTable()).toString();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return SymbolConstant.EMPTY;
         }
-        return selectSql.toString();
     }
 
     /**
      * 获取查询sql（主动指定是否需要拼接表连接的sql）
      */
-    protected void buildSelect(boolean isRelated) {
+    protected StringBuilder buildSelect(boolean isRelated) {
         try {
-            if (isRelated && (!relatedParserModels.isEmpty() || !joinTableParserModels.isEmpty())) {
-                getSelectRelationSql();
-            } else {
-                getSelectBaseTableSql();
+            if (StrUtils.isBlank(selectJoinSql)) {
+                this.createSelectRelationSql();
+            }
+            if (StrUtils.isBlank(selectSql)) {
+                this.createSelectBaseTableSql();
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
+        return isRelated ? this.selectJoinSql : this.selectSql;
     }
 
     /**
      * 生成表查询sql语句
      */
-    private void getSelectBaseTableSql() {
+    private void createSelectBaseTableSql() {
         StringJoiner baseFieldSql = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
 
         // 第一步 拼接主键
@@ -99,10 +100,10 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
     /**
      * 关联的sql分为两部分
-     * 一是 @DbJoinTables注解，二是@DbRelated注解
-     * 默认按注解放置顺序载入，优先加载DbJoinTables注解(顺带优先@DbMap的查询字段)
+     * <br/>一是 @DbJoinTables注解，二是@DbRelated注解
+     * <br/>默认按注解放置顺序载入，优先加载DbJoinTables注解(顺带优先@DbMap的查询字段)
      */
-    private void getSelectRelationSql() {
+    private void createSelectRelationSql() {
 
         StringJoiner baseFieldSql = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
 
@@ -127,16 +128,16 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
         }
 
         // 第四步 拼接主表
-        selectSql.append(String.format("select %s\n from %s %s", baseFieldSql, getTable(), getAlias()));
+        selectJoinSql.append(String.format("select %s\n from %s %s", baseFieldSql, getTable(), getAlias()));
 
         // 第五步 拼接以joinTables方式的关联条件
         if (!joinTableParserModels.isEmpty()) {
-            joinTableParserModels.stream().map(model -> String.format("\n %s", model)).forEach(selectSql::append);
+            joinTableParserModels.stream().map(model -> String.format("\n %s", model)).forEach(selectJoinSql::append);
         }
 
         // 第六步 拼接以related方式的关联条件
         if (!relatedParserModels.isEmpty()) {
-            selectSql.append(getRelatedTableSql(relatedParserModels));
+            selectJoinSql.append(getRelatedTableSql(relatedParserModels));
         }
     }
 

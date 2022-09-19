@@ -167,17 +167,16 @@ public class JdbcAction extends AbstractSqlExecutor {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> T selectOne(T entity) {
-        ConditionWrapper<T> conditionWrapper = Conditions.allEqQuery((Class<T>) entity.getClass(), entity);
+        ConditionWrapper<T> conditionWrapper = Conditions.allEqQuery(entity);
         return selectOne(conditionWrapper);
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> List<T> selectList(T entity) {
-        ConditionWrapper<T> conditionWrapper = Conditions.allEqQuery((Class<T>) entity.getClass(), entity);
+        ConditionWrapper<T> conditionWrapper = Conditions.allEqQuery(entity);
         return selectList(conditionWrapper);
     }
 
@@ -185,7 +184,7 @@ public class JdbcAction extends AbstractSqlExecutor {
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> DbPageRows<T> selectPage(T entity, DbPageRows<T> pageRows) {
         Asserts.npe(pageRows, "Missing paging parameter");
-        DefaultConditionWrapper<T> conditionWrapper = Conditions.allEqQuery((Class<T>) entity.getClass(), entity);
+        DefaultConditionWrapper<T> conditionWrapper = Conditions.allEqQuery(entity);
         conditionWrapper.pageParams(pageRows.getPageIndex(), pageRows.getPageSize());
         return selectPage(conditionWrapper);
     }
