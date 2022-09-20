@@ -444,6 +444,7 @@ public class TableSqlBuilder<T> implements Cloneable {
                         || JudgeUtil.isNotEmpty(this.oneToManyFieldList);
                 sqlBuilder = new HandleSelectSqlBuilder<>(findUpDbJoinTables, relatedParserModels,
                         joinDbMappers, joinTableParserModels, existNeedInjectResult);
+                this.selectSqlBuilder = (HandleSelectSqlBuilder<T>) sqlBuilder;
 
                 break;
             case UPDATE:
@@ -454,6 +455,7 @@ public class TableSqlBuilder<T> implements Cloneable {
                     return this.insertSqlBuilder;
                 }
                 sqlBuilder = new HandleInsertSqlBuilder<>();
+                this.insertSqlBuilder = (HandleInsertSqlBuilder<T>) sqlBuilder;
                 break;
             case DELETE:
                 sqlBuilder = new HandleDeleteSqlBuilder<>();
@@ -597,16 +599,6 @@ public class TableSqlBuilder<T> implements Cloneable {
         TableSqlBuilder<T> builder = null;
         try {
             builder = (TableSqlBuilder<T>) super.clone();
-            builder.alias = this.alias;
-            builder.table = this.table;
-            builder.entityClass = this.entityClass;
-            builder.keyParserModel = this.keyParserModel;
-            builder.fieldParserModels = this.fieldParserModels;
-            builder.relatedParserModels = this.relatedParserModels;
-            builder.joinDbMappers = this.joinDbMappers;
-            builder.joinTableParserModels = this.joinTableParserModels;
-            builder.oneToOneFieldList = this.oneToOneFieldList;
-            builder.oneToManyFieldList = this.oneToManyFieldList;
         } catch (CloneNotSupportedException e) {
             logger.error(e.toString(), e);
         }
