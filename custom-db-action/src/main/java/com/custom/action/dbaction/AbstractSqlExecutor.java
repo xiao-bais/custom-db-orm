@@ -146,7 +146,7 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
         TableSqlBuilder<T> tableModel = tableModelCache.clone();
         tableModel.setEntity(entityList.get(0));
         tableModel.setEntityList(entityList);
-        return (R)tableModel.buildSqlConstructorModel(method,
+        return (R) tableModel.buildSqlConstructorModel(method,
                 logicColumn, dbCustomStrategy.getDeleteLogicValue(), dbCustomStrategy.getNotDeleteLogicValue());
     }
 

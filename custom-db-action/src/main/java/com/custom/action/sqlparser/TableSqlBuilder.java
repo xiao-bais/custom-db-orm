@@ -437,6 +437,9 @@ public class TableSqlBuilder<T> implements Cloneable {
         AbstractSqlBuilder<T> sqlBuilder = null;
         switch (method) {
             case SELECT:
+                if (this.selectSqlBuilder != null) {
+                    return this.selectSqlBuilder;
+                }
                 boolean existNeedInjectResult = JudgeUtil.isNotEmpty(this.oneToOneFieldList)
                         || JudgeUtil.isNotEmpty(this.oneToManyFieldList);
                 sqlBuilder = new HandleSelectSqlBuilder<>(findUpDbJoinTables, relatedParserModels,
@@ -447,9 +450,10 @@ public class TableSqlBuilder<T> implements Cloneable {
                 sqlBuilder = new HandleUpdateSqlBuilder<>();
                 break;
             case INSERT:
-                if (this.insertSqlBuilder == null) {
-                    sqlBuilder = new HandleInsertSqlBuilder<>();
+                if (this.insertSqlBuilder != null) {
+                    return this.insertSqlBuilder;
                 }
+                sqlBuilder = new HandleInsertSqlBuilder<>();
                 break;
             case DELETE:
                 sqlBuilder = new HandleDeleteSqlBuilder<>();
