@@ -134,18 +134,25 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
             if (ColumnAutoFillHandleUtils.exists(getEntityClass(), x.getFieldName())
                     && Objects.isNull(fieldValue) ) {
                 fieldValue = ColumnAutoFillHandleUtils.getFillValue(getEntityClass(), x.getFieldName());
-            }else if (checkLogicFieldIsExist() && x.getColumn().equals(getLogicColumn())) {
+            }
+
+            // 否则若该字段为逻辑删除字段，则填入未删除的默认值
+            else if (checkLogicFieldIsExist()
+                    && x.getColumn().equals(getLogicColumn())) {
                 fieldValue = ConvertUtil.transToObject(x.getType(), getLogicNotDeleteValue());
             }
+
         } catch (Exception e) {
             fieldValue = ConvertUtil.transToObject(x.getType(),
                     RexUtil.regexStr(RexUtil.single_quotes, String.valueOf(getLogicNotDeleteValue()))
             );
         }
         // 当设定了默认值时，若字段值为null，则可从用户自定义或给定的默认值中设入
-        if (JudgeUtil.isEmpty(fieldValue) && Objects.nonNull(x.getDefaultValue())) {
+        if (JudgeUtil.isEmpty(fieldValue)
+                && Objects.nonNull(x.getDefaultValue())) {
             fieldValue = x.getDefaultValue();
         }
+
         return fieldValue;
     }
 

@@ -72,7 +72,7 @@ public class TableSqlBuilder<T> implements Cloneable {
      * 是否开启了默认值(创建表以及插入记录时有效)
      */
     private boolean enabledDefaultValue;
-    
+
     /**
      * 当子类跟父类同时标注了@DbJoinTable(s)注解时，是否在查询时向上查找父类的@DbJoinTable(s)注解，且合并关联条件
      */
@@ -84,19 +84,19 @@ public class TableSqlBuilder<T> implements Cloneable {
     /**
      * 对于{@link DbField}注解的解析
      */
-    private List<DbFieldParserModel<T>> fieldParserModels = new ArrayList<>();
+    private final List<DbFieldParserModel<T>> fieldParserModels = new ArrayList<>();
     /**
      * 对于{@link DbRelated}注解的解析
      */
-    private List<DbRelationParserModel<T>> relatedParserModels = new ArrayList<>();
+    private final List<DbRelationParserModel<T>> relatedParserModels = new ArrayList<>();
     /**
      * 对于{@link DbJoinTables}注解的解析
      */
-    private List<DbJoinTableParserModel<T>> joinDbMappers = new ArrayList<>();
+    private final List<DbJoinTableParserModel<T>> joinDbMappers = new ArrayList<>();
     /**
      * 对于{@link DbJoinTables}注解的解析
      */
-    private List<String> joinTableParserModels = new ArrayList<>();
+    private final List<String> joinTableParserModels = new ArrayList<>();
 
     /**
      * 对于java属性字段到表字段的映射关系
@@ -440,10 +440,8 @@ public class TableSqlBuilder<T> implements Cloneable {
                 if (this.selectSqlBuilder != null) {
                     return this.selectSqlBuilder;
                 }
-                boolean existNeedInjectResult = JudgeUtil.isNotEmpty(this.oneToOneFieldList)
-                        || JudgeUtil.isNotEmpty(this.oneToManyFieldList);
                 sqlBuilder = new HandleSelectSqlBuilder<>(findUpDbJoinTables, relatedParserModels,
-                        joinDbMappers, joinTableParserModels, existNeedInjectResult);
+                        joinDbMappers, joinTableParserModels, this.existNeedInjectResult());
                 this.selectSqlBuilder = (HandleSelectSqlBuilder<T>) sqlBuilder;
 
                 break;
@@ -472,6 +470,21 @@ public class TableSqlBuilder<T> implements Cloneable {
         return sqlBuilder;
     }
 
+    public boolean isFindUpDbJoinTables() {
+        return findUpDbJoinTables;
+    }
+
+    public List<DbRelationParserModel<T>> getRelatedParserModels() {
+        return relatedParserModels;
+    }
+
+    public List<DbJoinTableParserModel<T>> getJoinDbMappers() {
+        return joinDbMappers;
+    }
+
+    public List<String> getJoinTableParserModels() {
+        return joinTableParserModels;
+    }
 
     /**
      * 获取主键的值
@@ -481,6 +494,14 @@ public class TableSqlBuilder<T> implements Cloneable {
             return null;
         }
         return this.keyParserModel.getValue();
+    }
+
+    /**
+     * 是否存在一对一，一对多的结果注入
+     */
+    protected boolean existNeedInjectResult() {
+        return JudgeUtil.isNotEmpty(this.oneToOneFieldList)
+                || JudgeUtil.isNotEmpty(this.oneToManyFieldList);
     }
 
 

@@ -107,6 +107,21 @@ public class TableInfoCache {
         return false;
     }
 
+    /**
+     * sql构造模板缓存
+     */
+    private final static Map<String, Object> SQL_BUILDER_TEMPLATE = new CustomLocalCache();
+
+    protected static <T> CacheOptionalSqlBuilder<T> getSqlBuilderCache(Class<T> entityClass) {
+        CacheOptionalSqlBuilder<T> optionalSqlBuilder = (CacheOptionalSqlBuilder<T>)
+                SQL_BUILDER_TEMPLATE.get(entityClass.getName());
+        if (optionalSqlBuilder == null) {
+            optionalSqlBuilder = new CacheOptionalSqlBuilder<>(entityClass);
+            SQL_BUILDER_TEMPLATE.put(entityClass.getName(), optionalSqlBuilder);
+        }
+        return optionalSqlBuilder;
+    }
+
 
 
 }
