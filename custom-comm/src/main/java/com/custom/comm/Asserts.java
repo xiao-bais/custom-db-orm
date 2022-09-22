@@ -40,6 +40,12 @@ public final class Asserts {
         isTure(JudgeUtil.isEmpty(obj), "The argument must not be Empty");
     }
 
+    public static void npe(Object obj) {
+        if (obj == null) {
+            throw new NullPointerException();
+        }
+    }
+
     public static void npe(Object obj, String message) {
         if (JudgeUtil.isEmpty(obj)) {
             throw new NullPointerException(message);

@@ -6,6 +6,7 @@ import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableSqlBuilder;
 import com.custom.action.util.DbUtil;
 import com.custom.action.condition.DefaultColumnParseHandler;
+import com.custom.comm.Asserts;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
 import com.custom.jdbc.select.CustomSelectJdbcBasic;
@@ -192,9 +193,7 @@ public abstract class AbstractSqlBuilder<T> {
      * 直接执行，属于内部执行
      */
     public void executeUpdateNotPrintSql(String sql) throws Exception {
-        if (JudgeUtil.isEmpty(sql)) {
-            throw new NullPointerException();
-        }
+        Asserts.npe(sql);
         updateJdbc.executeUpdate(new SaveSqlParamInfo<>(sql, false, null));
     }
 

@@ -84,8 +84,8 @@ public class MappingResultInjector<T> {
 
     /**
      * 一对一的值set
-     * @param tableModel - 实体解析模板
-     * @param entityList - 实体对象集合
+     * @param tableModel 实体解析模板
+     * @param entityList 实体对象集合
      */
     private void oneToOneHandler(TableSqlBuilder<T> tableModel, List<T> entityList) throws Exception {
         List<Field> oneToOneFieldList = tableModel.getOneToOneFieldList();

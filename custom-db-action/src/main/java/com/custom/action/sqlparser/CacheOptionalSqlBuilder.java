@@ -32,6 +32,9 @@ public class CacheOptionalSqlBuilder<T> {
 
     public CacheOptionalSqlBuilder(Class<T> entityClass) {
         this.selectSqlBuilder = new HandleSelectSqlBuilder<>(entityClass);
+
+
+
         this.insertSqlBuilder = new HandleInsertSqlBuilder<>();
         this.updateSqlBuilder = new HandleInsertSqlBuilder<>();
         this.deleteSqlBuilder = new HandleInsertSqlBuilder<>();
