@@ -1,5 +1,7 @@
 package com.custom.comm;
 
+import com.custom.comm.exceptions.CustomCheckException;
+
 /**
  * @Author Xiao-Bai
  * @Date 2022/7/21 23:58
@@ -47,7 +49,7 @@ public final class Asserts {
     }
 
     public static void npe(Object obj, String message) {
-        if (JudgeUtil.isEmpty(obj)) {
+        if (obj == null) {
             throw new NullPointerException(message);
         }
     }

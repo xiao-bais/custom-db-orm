@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.condition.Conditions;
 import com.custom.action.condition.DefaultConditionWrapper;
+import com.custom.action.dbaction.AbstractSqlBuilder;
+import com.custom.action.sqlparser.CacheOptionalSqlBuilder;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.JdbcOpDao;
 import com.custom.joiner.core.AbstractJoinConditional;
@@ -28,12 +30,11 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-        Student search = new Student();
-        search.setId(15);
-        search.setName("张三");
-        jdbcOpDao.selectList(Conditions.allEqQuery(search));
+        CacheOptionalSqlBuilder<Student> optionalSqlBuilder = new CacheOptionalSqlBuilder<>(Student.class);
+        AbstractSqlBuilder<Student> selectSqlBuilder = optionalSqlBuilder.getSelectSqlBuilder();
+        String selectSql = selectSqlBuilder.buildSql();
+        System.out.println("selectSql = " + selectSql);
 
-        jdbcOpDao.selectList(Conditions.lambdaQuery(Student.class).gt(Student::getAge, 22));
 
     }
 

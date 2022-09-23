@@ -56,6 +56,9 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
         this.joinDbMappers = tableSqlBuilder.getJoinDbMappers();
         this.joinTableParserModels = tableSqlBuilder.getJoinTableParserModels();
         this.existNeedInjectResult = tableSqlBuilder.existNeedInjectResult();
+
+        setEntityClass(entityClass);
+        this.injectTableInfo(tableSqlBuilder);
     }
 
 
@@ -96,14 +99,16 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
     private void createSelectBaseTableSql() {
         StringJoiner baseFieldSql = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
 
+        DbKeyParserModel<T> keyParserModel = getKeyParserModel();
         // 第一步 拼接主键
-        if (getKeyParserModel() != null) {
-            baseFieldSql.add(getKeyParserModel().getSelectFieldSql());
+        if (keyParserModel != null) {
+            baseFieldSql.add(keyParserModel.getSelectFieldSql());
         }
 
+        List<DbFieldParserModel<T>> fieldParserModels = getFieldParserModels();
         // 第二步 拼接此表的其他字段
-        if (!getFieldParserModels().isEmpty()) {
-            getFieldParserModels().stream().map(DbFieldParserModel::getSelectFieldSql).forEach(baseFieldSql::add);
+        if (!fieldParserModels.isEmpty()) {
+            fieldParserModels.stream().map(DbFieldParserModel::getSelectFieldSql).forEach(baseFieldSql::add);
         }
 
         // 第三步 拼接主表

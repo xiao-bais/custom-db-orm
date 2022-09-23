@@ -9,6 +9,9 @@ import com.custom.action.condition.DefaultColumnParseHandler;
 import com.custom.comm.Asserts;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
+import com.custom.configuration.DbCustomStrategy;
+import com.custom.jdbc.CustomConfigHelper;
+import com.custom.jdbc.GlobalDataHandler;
 import com.custom.jdbc.select.CustomSelectJdbcBasic;
 import com.custom.jdbc.update.CustomUpdateJdbcBasic;
 import com.custom.jdbc.condition.SaveSqlParamInfo;
@@ -222,13 +225,26 @@ public abstract class AbstractSqlBuilder<T> {
      * 添加参数值
      */
     public void addParams(Object val) {
-        if (Objects.isNull(sqlParams)) {
-            sqlParams = new ArrayList<>();
-        }
-        if (val instanceof List) {
-            this.sqlParams.addAll((List<Object>)val);
-        }
-        this.sqlParams.add(val);
+        CustomUtil.addParams(this.sqlParams, val);
+    }
+
+    /**
+     * 注入基础表字段数据
+     * @param tableSqlBuilder
+     */
+    protected void injectTableInfo(TableSqlBuilder<T> tableSqlBuilder) {
+        this.table = tableSqlBuilder.getTable();
+        this.alias = tableSqlBuilder.getAlias();
+        this.keyParserModel = tableSqlBuilder.getKeyParserModel();
+        this.fieldParserModels = tableSqlBuilder.getFieldParserModels();
+
+        CustomConfigHelper configHelper = GlobalDataHandler.getConfigHelper();
+        Asserts.npe(configHelper, "未找到可用的数据源");
+        DbCustomStrategy customStrategy = configHelper.getDbCustomStrategy();
+
+        this.logicColumn = customStrategy.getDbFieldDeleteLogic();
+        this.setLogicDeleteValue(customStrategy.getDeleteLogicValue());
+        this.setLogicNotDeleteValue(customStrategy.getNotDeleteLogicValue());
     }
 
 

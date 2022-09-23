@@ -1,6 +1,9 @@
 package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractSqlBuilder;
+import com.custom.configuration.DbCustomStrategy;
+import com.custom.jdbc.CustomConfigHelper;
+import com.custom.jdbc.GlobalDataHandler;
 
 /**
  * @author Xiao-Bai
@@ -32,8 +35,6 @@ public class CacheOptionalSqlBuilder<T> {
 
     public CacheOptionalSqlBuilder(Class<T> entityClass) {
         this.selectSqlBuilder = new HandleSelectSqlBuilder<>(entityClass);
-
-
 
         this.insertSqlBuilder = new HandleInsertSqlBuilder<>();
         this.updateSqlBuilder = new HandleInsertSqlBuilder<>();
