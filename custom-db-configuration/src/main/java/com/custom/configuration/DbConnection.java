@@ -24,7 +24,6 @@ public class DbConnection {
     private Connection connection = null;
     private static final String CUSTOM_DRIVER = "com.mysql.cj.jdbc.Driver";
     private static final String DATA_BASE = "database";
-    @SuppressWarnings(value = "Unckecked")
     public static Map<String, Object> currMap  = new ConcurrentHashMap<>();
 
     /**
@@ -42,7 +41,12 @@ public class DbConnection {
     }
 
     private String getConnKey(DbDataSource dbDataSource) {
-        return String.format("%s-%s-%s-%s", dbDataSource.getUrl(), dbDataSource.getUsername(), dbDataSource.getPassword(), dbDataSource.getDatabase());
+        return String.format("%s-%s-%s-%s",
+                dbDataSource.getUrl(),
+                dbDataSource.getUsername(),
+                dbDataSource.getPassword(),
+                dbDataSource.getDatabase()
+        );
     }
 
     private void datasourceInitialize(DbDataSource dbDataSource) throws SQLException {

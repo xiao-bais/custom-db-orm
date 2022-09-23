@@ -11,6 +11,8 @@ import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.jdbc.CustomConfigHelper;
+import com.custom.jdbc.CustomSelectJdbcBasicImpl;
+import com.custom.jdbc.CustomUpdateJdbcBasicImpl;
 import com.custom.jdbc.GlobalDataHandler;
 import com.custom.jdbc.select.CustomSelectJdbcBasic;
 import com.custom.jdbc.update.CustomUpdateJdbcBasic;
@@ -242,9 +244,16 @@ public abstract class AbstractSqlBuilder<T> {
         Asserts.npe(configHelper, "未找到可用的数据源");
         DbCustomStrategy customStrategy = configHelper.getDbCustomStrategy();
 
+        // 设置逻辑删除字段
         this.logicColumn = customStrategy.getDbFieldDeleteLogic();
         this.setLogicDeleteValue(customStrategy.getDeleteLogicValue());
         this.setLogicNotDeleteValue(customStrategy.getNotDeleteLogicValue());
+
+        // 设置jdbc执行对象
+        this.selectJdbc = new CustomSelectJdbcBasicImpl(
+                configHelper.getDbDataSource(), customStrategy);
+        this.updateJdbc = new CustomUpdateJdbcBasicImpl(
+                configHelper.getDbDataSource(), customStrategy);
     }
 
 
