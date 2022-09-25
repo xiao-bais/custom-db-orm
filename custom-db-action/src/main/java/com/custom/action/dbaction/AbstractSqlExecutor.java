@@ -17,7 +17,6 @@ import com.custom.comm.page.DbPageRows;
 import com.custom.configuration.DbCustomStrategy;
 
 import java.io.Serializable;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -170,7 +169,7 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
         if(wrapper.getSelectColumns() != null) {
             selectSql.append(sqlBuilder.selectColumns(wrapper.getSelectColumns()));
         }else {
-            selectSql.append(sqlBuilder.buildSql());
+            selectSql.append(sqlBuilder.createTargetSql());
         }
         FullSqlConditionExecutor conditionExecutor = this.handleLogicWithCondition(sqlBuilder.getAlias(),
                 wrapper.getFinalConditional(), logicColumn, getLogicDeleteQuerySql(), sqlBuilder.getTable());

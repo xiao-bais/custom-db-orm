@@ -25,6 +25,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
     private final StringBuilder selectSql;
     private final StringBuilder selectJoinSql;
+    private final StringBuilder joinTableSql;
     private final boolean findUpDbJoinTables;
     private final List<DbRelationParserModel<T>> relatedParserModels;
     private final List<DbJoinTableParserModel<T>> joinDbMappers;
@@ -39,6 +40,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
                                 boolean existNeedInjectResult) {
         this.selectSql = new StringBuilder();
         this.selectJoinSql = new StringBuilder();
+        this.joinTableSql = new StringBuilder();
         this.findUpDbJoinTables = findUpDbJoinTables;
         this.relatedParserModels = relatedParserModels;
         this.joinDbMappers = joinDbMappers;
@@ -51,6 +53,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
         TableSqlBuilder<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
         this.selectSql = new StringBuilder();
         this.selectJoinSql = new StringBuilder();
+        this.joinTableSql = new StringBuilder();
         this.findUpDbJoinTables = tableSqlBuilder.isFindUpDbJoinTables();
         this.relatedParserModels = tableSqlBuilder.getRelatedParserModels();
         this.joinDbMappers = tableSqlBuilder.getJoinDbMappers();
@@ -67,7 +70,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
      * 获取查询sql（代码自行判定是否需要拼接表连接的sql）
      */
     @Override
-    public String buildSql() {
+    public String createTargetSql() {
         try {
             return this.buildSelect(!getPrimaryTable()).toString();
         } catch (Exception e) {
@@ -112,7 +115,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
         }
 
         // 第三步 拼接主表
-        selectSql.append(String.format("select %s\n from %s %s", baseFieldSql, getTable(), getAlias()));
+        selectSql.append(String.format(DbUtil.SELECT_TEMPLATE, baseFieldSql, getTable(), getAlias()));
     }
 
     /**
@@ -145,17 +148,20 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
         }
 
         // 第四步 拼接主表
-        selectJoinSql.append(String.format("select %s\n from %s %s", baseFieldSql, getTable(), getAlias()));
+        selectJoinSql.append(String.format(DbUtil.SELECT_TEMPLATE, baseFieldSql, getTable(), getAlias()));
 
-        // 第五步 拼接以joinTables方式的关联条件
-        if (!joinTableParserModels.isEmpty()) {
-            joinTableParserModels.stream().map(model -> String.format("\n %s", model)).forEach(selectJoinSql::append);
-        }
+        if (StrUtils.isBlank(joinTableSql)) {
+            // 第五步 拼接以joinTables方式的关联条件
+            if (!joinTableParserModels.isEmpty()) {
+                joinTableParserModels.stream().map(model -> String.format("\n %s", model)).forEach(joinTableSql::append);
+            }
 
-        // 第六步 拼接以related方式的关联条件
-        if (!relatedParserModels.isEmpty()) {
-            selectJoinSql.append(getRelatedTableSql(relatedParserModels));
+            // 第六步 拼接以related方式的关联条件
+            if (!relatedParserModels.isEmpty()) {
+                joinTableSql.append(getRelatedTableSql(relatedParserModels));
+            }
         }
+        selectJoinSql.append(joinTableSql);
     }
 
     /**
@@ -187,9 +193,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
             String field = getColumnMapper().get(column);
             columnStr.add(Objects.isNull(field) ? column : DbUtil.sqlSelectWrapper(column, field));
         }
-        String selectSql = buildSql();
-        selectSql = String.format("select %s\n %s", columnStr, selectSql.substring(selectSql.indexOf("from")));
-        return selectSql;
+        return String.format(DbUtil.SELECT_TEMPLATE, columnStr, getTable(), getAlias()) + joinTableSql;
     }
 
     public boolean isMergeSuperDbJoinTable() {

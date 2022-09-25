@@ -19,6 +19,14 @@ import java.lang.reflect.Field;
  */
 public class DbUtil {
 
+
+    public final static String SELECT_TEMPLATE = "SELECT %s\n FROM %s %s";
+    public final static String INSERT_TEMPLATE = "INSERT INTO %s(%s) VALUES";
+    public final static String DELETE_TEMPLATE = "DELETE FROM %s %s \nWHERE %s";
+    public final static String UPDATE_TEMPLATE = "UPDATE %s %s SET %s %s";
+    public final static String LOGIC_DELETE_TEMPLATE = "UPDATE %s %s SET %s \nWHERE %s %s";
+
+
     /**
      * 该类是否存在主键
      */
@@ -101,12 +109,15 @@ public class DbUtil {
     }
 
     /**
-     * update set sql格式化
+     * condition sql格式化
      */
-    public static String formatSetSql(String column) {
+    public static String formatSqlCondition(String column) {
         return String.format("%s = ?", column);
     }
-    public static String formatSetConditionSql(String logicSql, String column) {
+    public static String formatSqlAndCondition(String column) {
+        return String.format("AND %s = ?", column);
+    }
+    public static String formatSqlCondition(String logicSql, String column) {
         return String.format("%s and %s", logicSql, column);
     }
 
@@ -188,15 +199,15 @@ public class DbUtil {
      * 格式化where后面的sql条件
      */
     public static String whereSqlCondition(String alias, String logicSql, String condition) {
-        return String.format("\nwhere %s.%s \n %s ", alias, logicSql, condition);
+        return String.format("\nWHERE %s.%s \n %s ", alias, logicSql, condition);
     }
 
     public static String whereSqlCondition(String alias, String logicSql) {
-        return String.format("\nwhere %s.%s ", alias, logicSql);
+        return String.format("\nWHERE %s.%s ", alias, logicSql);
     }
 
     public static String whereSqlCondition(String condition) {
-        return String.format("\nwhere %s ", DbUtil.trimAppendSqlCondition(condition));
+        return String.format("\nWHERE %s ", DbUtil.trimAppendSqlCondition(condition));
     }
 
     /**

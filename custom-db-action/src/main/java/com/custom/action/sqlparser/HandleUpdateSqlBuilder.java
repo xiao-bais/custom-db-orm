@@ -1,7 +1,9 @@
 package com.custom.action.sqlparser;
 
+import com.custom.action.condition.DefaultColumnParseHandler;
 import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.fieldfill.ColumnAutoFillHandleUtils;
+import com.custom.action.interfaces.ColumnParseHandler;
 import com.custom.action.util.DbUtil;
 import com.custom.action.condition.SFunction;
 import com.custom.comm.JudgeUtil;
@@ -21,10 +23,7 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(HandleUpdateSqlBuilder.class);
 
-    /**
-     * 修改的最终sql
-     */
-    private final StringBuilder updateSql;
+
     /**
      * 修改的字段 set部分的sql
      */
@@ -41,14 +40,21 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
      * 指定要修改的字段-函数表达式
      */
     private SFunction<T, ?>[] updateFuncColumns;
-    /**
-     * 指定要修改的字段-字段字符串数组
-     */
-    private String[] updateStrColumns;
+
 
     public HandleUpdateSqlBuilder() {
-        updateSql = new StringBuilder();
         updateSqlColumns = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
+    }
+
+    public HandleUpdateSqlBuilder(Class<T> entityClass) {
+        updateSqlColumns = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
+        TableSqlBuilder<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
+        this.injectTableInfo(tableSqlBuilder);
+    }
+
+    @SuppressWarnings("unchecked")
+    public HandleUpdateSqlBuilder(T entity) {
+        this((Class<T>) entity.getClass());
     }
 
 
@@ -56,18 +62,16 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
      * 构建修改的sql字段语句(条件构造器使用)
      */
     @Override
-    public String buildSql() {
+    public String createTargetSql() {
         // 修改字段构建
         this.updateSqlFieldBuilder();
         String updateCondition = JudgeUtil.isEmpty(condition) ? this.updateKeyCondition() : this.updateCustomCondition();
-        return updateSql
-                .append(SymbolConstant.UPDATE)
-                .append(getTable()).append(" ")
-                .append(getAlias())
-                .append("\n")
-                .append(SymbolConstant.SET)
-                .append(updateSqlColumns)
-                .append(DbUtil.whereSqlCondition(updateCondition)).toString();
+        setEntity(null);
+        return String.format(DbUtil.UPDATE_TEMPLATE,
+                getTable(), getAlias(),
+                updateSqlColumns,
+                DbUtil.whereSqlCondition(updateCondition)
+        );
     }
 
     /**
@@ -78,8 +82,8 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
         String keySqlField = keyParserModel.getFieldSql();
         String condition = null;
         try {
-            String formatSetSql = DbUtil.formatSetSql(keySqlField);
-            condition = checkLogicFieldIsExist() ? DbUtil.formatSetConditionSql(getLogicDeleteQuerySql(), formatSetSql) : formatSetSql;
+            String formatSetSql = DbUtil.formatSqlCondition(keySqlField);
+            condition = checkLogicFieldIsExist() ? DbUtil.formatSqlCondition(getLogicDeleteQuerySql(), formatSetSql) : formatSetSql;
             Object keyVal = keyParserModel.getValue();
             if (Objects.isNull(keyVal)) {
                 ExThrowsUtil.toNull("主键的值缺失");
@@ -113,11 +117,7 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
      */
     private void updateSqlFieldBuilder() {
         if (Objects.nonNull(updateFuncColumns)) {
-            chooseAppointFieldSql(true);
-            return;
-        }
-        if (Objects.nonNull(updateStrColumns)) {
-            chooseAppointFieldSql(false);
+            this.chooseAppointFieldSql();
             return;
         }
         for (DbFieldParserModel<T> field : getFieldParserModels()) {
@@ -125,13 +125,14 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
             if (Objects.isNull(value)) {
                 // 修改时必要的自动填充
                 // 当修改时，用户没有为自动填充的字段额外设置业务值，则启用原本设定的默认值进行填充
-                Object fillValue = ColumnAutoFillHandleUtils.getFillValue(getEntityClass(), field.getFieldName());
+                Object fillValue = ColumnAutoFillHandleUtils
+                        .getFillValue(getEntityClass(), field.getFieldName());
                 if (Objects.nonNull(fillValue)) {
                     value = fillValue;
                 }
             }
             if (Objects.nonNull(value)) {
-                updateSqlColumns.add(DbUtil.formatSetSql(field.getFieldSql()));
+                updateSqlColumns.add(DbUtil.formatSqlCondition(field.getFieldSql()));
                 addParams(value);
             }
         }
@@ -142,17 +143,13 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
      * 选择以指定修改的字段去构建修改的sql
      * @param isFunc 是否使用Function函数表达式
      */
-    private void chooseAppointFieldSql(boolean isFunc) {
-        List<String> updateColumns;
-        if (isFunc) {
-            updateColumns = getColumnParseHandler().parseToColumns(Arrays.asList(updateFuncColumns));
-        }else {
-            updateColumns = Arrays.asList(this.updateStrColumns);
-        }
+    private void chooseAppointFieldSql() {
+        ColumnParseHandler<T> columnParseHandler = getColumnParseHandler();
+        List<String> updateColumns = columnParseHandler.parseToColumns(Arrays.asList(updateFuncColumns));
         for (String column : updateColumns) {
             Optional<DbFieldParserModel<T>> updateFieldOP = getFieldParserModels().stream().filter(x -> x.getFieldSql().equals(column)).findFirst();
             updateFieldOP.ifPresent(op -> {
-                updateSqlColumns.add(DbUtil.formatSetSql(op.getFieldSql()));
+                updateSqlColumns.add(DbUtil.formatSqlCondition(op.getFieldSql()));
                 addParams(op.getValue());
             });
         }
@@ -168,9 +165,5 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
     protected void setUpdateFuncColumns(SFunction<T, ?>[] updateFuncColumns) {
         this.updateFuncColumns = updateFuncColumns;
-    }
-
-    protected void setUpdateStrColumns(String[] updateStrColumns) {
-        this.updateStrColumns = updateStrColumns;
     }
 }

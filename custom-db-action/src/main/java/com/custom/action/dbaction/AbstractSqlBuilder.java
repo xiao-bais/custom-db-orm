@@ -1,5 +1,6 @@
 package com.custom.action.dbaction;
 
+import com.custom.action.interfaces.ColumnParseHandler;
 import com.custom.action.sqlparser.DbFieldParserModel;
 import com.custom.action.sqlparser.DbKeyParserModel;
 import com.custom.action.sqlparser.TableInfoCache;
@@ -42,7 +43,7 @@ public abstract class AbstractSqlBuilder<T> {
     private Map<String, String> columnMapper;
     private CustomSelectJdbcBasic selectJdbc;
     private CustomUpdateJdbcBasic updateJdbc;
-    private DefaultColumnParseHandler<T> columnParseHandler;
+    private ColumnParseHandler<T> columnParseHandler;
     private Boolean primaryTable = false;
     private String logicColumn;
     private Object logicNotDeleteValue;
@@ -51,7 +52,7 @@ public abstract class AbstractSqlBuilder<T> {
     private List<Object> sqlParams = new ArrayList<>();
 
     // 构建sql语句
-    public abstract String buildSql();
+    public abstract String createTargetSql();
 
     public String getTable() {
         return table;
@@ -102,7 +103,7 @@ public abstract class AbstractSqlBuilder<T> {
 
 
     public void setSqlParams(List<Object> sqlParams) {
-        if (Objects.nonNull(sqlParams)) {
+        if (JudgeUtil.isNotEmpty(sqlParams)) {
             this.sqlParams = sqlParams;
         }
     }
@@ -182,7 +183,7 @@ public abstract class AbstractSqlBuilder<T> {
         this.updateJdbc = updateJdbc;
     }
 
-    public DefaultColumnParseHandler<T> getColumnParseHandler() {
+    public ColumnParseHandler<T> getColumnParseHandler() {
         return columnParseHandler;
     }
 
@@ -227,7 +228,13 @@ public abstract class AbstractSqlBuilder<T> {
      * 添加参数值
      */
     public void addParams(Object val) {
-        CustomUtil.addParams(this.sqlParams, val);
+        if (Objects.isNull(sqlParams)) {
+            sqlParams = new ArrayList<>();
+        }
+        if (val instanceof List) {
+            this.sqlParams.addAll((List<Object>)val);
+        }
+        this.sqlParams.add(val);
     }
 
     /**

@@ -27,7 +27,7 @@ public abstract class AbstractUpdateSetSqlSetter<T, Children> extends UpdateSetW
     protected Children addSetSql(boolean condition, String column, Object val) {
         if (condition) {
             Asserts.notNull(column, "column cannot be null");
-            this.addSqlSetter(DbUtil.formatSetSql(column));
+            this.addSqlSetter(DbUtil.formatSqlCondition(column));
             Asserts.illegal(!CustomUtil.isBasicType(val),
                     String.format("Parameter types of type '%s' are not supported", val.getClass()));
             this.addParams(val);

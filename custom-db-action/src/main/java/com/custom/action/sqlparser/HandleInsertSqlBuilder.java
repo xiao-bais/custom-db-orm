@@ -2,11 +2,13 @@ package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.fieldfill.ColumnAutoFillHandleUtils;
+import com.custom.action.util.DbUtil;
 import com.custom.comm.ConvertUtil;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.RexUtil;
 import com.custom.comm.SymbolConstant;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -50,7 +52,7 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
     private String insertSql = "";
 
     @Override
-    public String buildSql() {
+    public String createTargetSql() {
         StringJoiner insertColumn = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
         if (Objects.nonNull(getKeyParserModel())) {
             insertColumn.add(getKeyParserModel().getDbKey());
@@ -59,9 +61,12 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
             getFieldParserModels().forEach(x -> insertColumn.add(x.getColumn()));
         }
         if (JudgeUtil.isEmpty(this.insertSql)) {
-            this.insertSql = String.format("insert into %s(%s) values", getTable(), insertColumn);
+            this.insertSql = String.format(DbUtil.INSERT_TEMPLATE, getTable(), insertColumn);
         }
-        return insertSql + (this.hasSubSelect ?  forBuildBatchSaveInfoBySubSql() : forBuildSaveInfoBySubSql());
+        String targetSql = insertSql + (this.hasSubSelect ?  forBuildBatchSaveInfoBySubSql() : forBuildSaveInfoBySubSql());
+        setEntity(null);
+        setEntityList(new ArrayList<>());
+        return targetSql;
     }
 
     /**
@@ -170,5 +175,13 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
     public List<T> getSubList() {
         return subList;
+    }
+
+    public HandleInsertSqlBuilder() {
+    }
+
+    public HandleInsertSqlBuilder(Class<T> entityClass) {
+        TableSqlBuilder<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
+        this.injectTableInfo(tableSqlBuilder);
     }
 }

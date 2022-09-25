@@ -4,6 +4,7 @@ import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.fieldfill.ColumnFillAutoHandler;
 import com.custom.action.fieldfill.TableFillObject;
 import com.custom.action.util.DbUtil;
+import com.custom.comm.Asserts;
 import com.custom.comm.CustomApplicationUtil;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.SymbolConstant;
@@ -31,11 +32,18 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
     private String deleteCondition;
 
     @Override
-    public String buildSql() {
-        String deleteSql = String.format(" delete from %s %s where %s", getTable(), getAlias(), deleteCondition);
+    public String createTargetSql() {
+        Asserts.notEmpty(deleteCondition, "删除条件不可为空");
+        String deleteSql = String.format(DbUtil.DELETE_TEMPLATE, getTable(), getAlias(), deleteCondition);
         try {
             if (checkLogicFieldIsExist()) {
-                return String.format(" update %s %s set %s where %s %s", getTable(), getAlias(), getLogicDeleteUpdateSql(), getLogicDeleteQuerySql(), deleteCondition);
+                return String.format(DbUtil.LOGIC_DELETE_TEMPLATE,
+                        getTable(),
+                        getAlias(),
+                        getLogicDeleteUpdateSql(),
+                        getLogicDeleteQuerySql(),
+                        deleteCondition
+                );
             }
         }catch (Exception e) {
             logger.error(e.toString(), e);
@@ -50,8 +58,11 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
     private void handleByKey() {
         DbKeyParserModel<T> keyParserModel = getKeyParserModel();
         try {
-            this.deleteCondition = checkLogicFieldIsExist() ? String.format("and %s = ?", keyParserModel.getFieldSql())
-                    : String.format("%s = ?", keyParserModel.getFieldSql());
+            if (checkLogicFieldIsExist()) {
+                this.deleteCondition = DbUtil.formatSqlAndCondition(keyParserModel.getFieldSql());
+            } else {
+                this.deleteCondition = DbUtil.formatSqlCondition(keyParserModel.getFieldSql());
+            }
         } catch (Exception e) {
             logger.error(e.toString(), e);
             return;
@@ -70,8 +81,8 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
         try {
             StringJoiner delSymbols = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2, SymbolConstant.BRACKETS_LEFT, SymbolConstant.BRACKETS_RIGHT);
             IntStream.range(0, keys.size()).mapToObj(i -> SymbolConstant.QUEST).forEach(delSymbols::add);
-            this.deleteCondition = checkLogicFieldIsExist() ? String.format("and %s in %s", keyParserModel.getFieldSql(), delSymbols)
-                    : String.format("%s in %s", keyParserModel.getFieldSql(), delSymbols);
+            this.deleteCondition = checkLogicFieldIsExist() ? String.format("AND %s IN %s", keyParserModel.getFieldSql(), delSymbols)
+                    : String.format("%s IN %s", keyParserModel.getFieldSql(), delSymbols);
         } catch (Exception e) {
             logger.error(e.toString(), e);
             return;
@@ -187,5 +198,19 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
     public void setDeleteCondition(String deleteCondition) {
         this.deleteCondition = deleteCondition;
         handleByCondition();
+    }
+
+    public HandleDeleteSqlBuilder(){}
+
+    public HandleDeleteSqlBuilder(Class<T> entityClass) {
+        TableSqlBuilder<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
+        this.injectTableInfo(tableSqlBuilder);
+    }
+
+    public HandleDeleteSqlBuilder(Class<T> entityClass, String deleteCondition, List<Object> sqlParams) {
+        this.deleteCondition = deleteCondition;
+        this.setSqlParams(sqlParams);
+        TableSqlBuilder<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
+        this.injectTableInfo(tableSqlBuilder);
     }
 }

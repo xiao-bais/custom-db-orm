@@ -122,6 +122,26 @@ public class TableInfoCache {
         return optionalSqlBuilder;
     }
 
+    protected static <T> HandleSelectSqlBuilder<T> getSelectSqlBuilderCache(Class<T> entityClass) {
+        CacheOptionalSqlBuilder<T> sqlBuilderCache = getSqlBuilderCache(entityClass);
+        return (HandleSelectSqlBuilder<T>) sqlBuilderCache.getSelectSqlBuilder();
+    }
+
+    protected static <T> HandleInsertSqlBuilder<T> getInsertSqlBuilderCache(Class<T> entityClass) {
+        CacheOptionalSqlBuilder<T> sqlBuilderCache = getSqlBuilderCache(entityClass);
+        return (HandleInsertSqlBuilder<T>) sqlBuilderCache.getInsertSqlBuilder();
+    }
+
+    protected static <T> HandleUpdateSqlBuilder<T> getUpdateSqlBuilderCache(Class<T> entityClass) {
+        CacheOptionalSqlBuilder<T> sqlBuilderCache = getSqlBuilderCache(entityClass);
+        return (HandleUpdateSqlBuilder<T>) sqlBuilderCache.getUpdateSqlBuilder();
+    }
+
+    protected static <T> HandleDeleteSqlBuilder<T> getDeleteSqlBuilderCache(Class<T> entityClass) {
+        CacheOptionalSqlBuilder<T> sqlBuilderCache = getSqlBuilderCache(entityClass);
+        return (HandleDeleteSqlBuilder<T>) sqlBuilderCache.getDeleteSqlBuilder();
+    }
+
 
 
 }

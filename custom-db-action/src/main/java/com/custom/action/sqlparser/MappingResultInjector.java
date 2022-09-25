@@ -142,7 +142,7 @@ public class MappingResultInjector<T> {
             // 构建该对象的查询sql模板
             AbstractSqlBuilder<?> abstractSqlBuilder = sqlExecutor.buildSqlOperationTemplate(joinTarget);
 
-            String selectSql = abstractSqlBuilder.buildSql() + conditionExecutor.execute();
+            String selectSql = abstractSqlBuilder.createTargetSql() + conditionExecutor.execute();
             return sqlExecutor.executeQueryNotPrintSql(joinTarget, selectSql, queryValue);
 
         }catch (NoSuchFieldException e) {
