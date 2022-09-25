@@ -47,9 +47,9 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
      */
     private List<T> subList;
     /**
-     * 插入的sql
+     * 插入的sql前缀
      */
-    private String insertSql = "";
+    private String insertPrefix = "";
 
     @Override
     public String createTargetSql() {
@@ -60,10 +60,10 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
         if (!getFieldParserModels().isEmpty()) {
             getFieldParserModels().forEach(x -> insertColumn.add(x.getColumn()));
         }
-        if (JudgeUtil.isEmpty(this.insertSql)) {
-            this.insertSql = String.format(DbUtil.INSERT_TEMPLATE, getTable(), insertColumn);
+        if (JudgeUtil.isEmpty(this.insertPrefix)) {
+            this.insertPrefix = String.format(DbUtil.INSERT_TEMPLATE, getTable(), insertColumn);
         }
-        String targetSql = insertSql + (this.hasSubSelect ?  forBuildBatchSaveInfoBySubSql() : forBuildSaveInfoBySubSql());
+        String targetSql = insertPrefix + (this.hasSubSelect ?  forBuildBatchSaveInfoBySubSql() : forBuildSaveInfoBySubSql());
         setEntity(null);
         setEntityList(new ArrayList<>());
         return targetSql;
