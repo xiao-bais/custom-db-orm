@@ -212,12 +212,12 @@ public interface JdbcDao {
     /**
      * 保存一条记录（根据主键添加或修改）
      */
-    <T> long save(T entity);
+    <T> int save(T entity);
 
     /**
      * 执行一条sql（增删改）
      */
-    <T> long executeSql(String sql, Object... params);
+    <T> int executeSql(String sql, Object... params);
 
     /**
      * 删除表

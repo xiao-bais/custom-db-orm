@@ -61,14 +61,17 @@ public class WriteFieldHelper<T> {
 
         Class<?> waitSetClass = waitWriteEntity.getClass();
         try {
+
             PropertyDescriptor descriptor = new PropertyDescriptor(this.fieldName, waitSetClass);
             Method writeMethod = descriptor.getWriteMethod();
             Class<?>[] parameterTypes = writeMethod.getParameterTypes();
+
             if (parameterTypes.length > 1) {
                 log.warn("When setting the value of field '{}', the set method of field '{}' cannot be found in '{}'",
                         this.fieldName, this.fieldName, waitSetClass);
                 log.warn("The set method with only one parameter is supported");
             }
+
             Class<?> setParamType = parameterTypes[0];
             if (Object.class.equals(setParamType)) {
                 writeMethod.invoke(waitWriteEntity, writeValue);
@@ -85,6 +88,7 @@ public class WriteFieldHelper<T> {
                         && Object.class.equals(this.fieldType))) {
                     ExThrowsUtil.toCustom("Field is inconsistent with parameter type of set method: " + writeMethod.toGenericString());
                 }
+
                 // 如果是集合类型的话，获取到集合中的泛型类型
                 Class<?> genericType = (Class<?>) actualTypeArguments[0];
                 if (Object.class.equals(genericType)) {
@@ -99,18 +103,21 @@ public class WriteFieldHelper<T> {
                     return true;
                 }
 
-                if (!List.class.isAssignableFrom(setParamType) && Set.class.isAssignableFrom(setParamType)){
+                if (!List.class.isAssignableFrom(setParamType) && !Set.class.isAssignableFrom(setParamType)){
                     log.warn("Only 'java.util.List' and 'java.util.Set' settings are supported");
                     return false;
                 }
+
                 String valueStr = JSONArray.toJSONString(this.writeValue);
                 this.writeValue = JSONArray.parseArray(valueStr, genericType);
                 if (Set.class.isAssignableFrom(setParamType)) {
                     this.writeValue = new HashSet<>((ArrayList<?>) this.writeValue);
                 }
+
             } else {
                 this.writeValue = JSONObject.parseObject(JSONObject.toJSONString(this.writeValue), setParamType);
             }
+
             writeMethod.invoke(this.waitWriteEntity, this.writeValue);
             return true;
 

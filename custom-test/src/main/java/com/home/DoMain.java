@@ -32,8 +32,19 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-        List<Student> studentList1 = jdbcOpDao.selectList(Student.class, "and name = ?", "宋希于");
-        List<Student> studentList2 = jdbcOpDao.selectList(Student.class, "and name = ?", "周清欢");
+
+        Employee employee = jdbcDao.selectByKey(Employee.class, 11);
+        employee.setId(null);
+
+        employee.setEmpName("新增的数据...");
+
+        HandleInsertSqlBuilder<Employee> insertSqlBuilder = new HandleInsertSqlBuilder<>(Employee.class);
+        insertSqlBuilder.setEntityList(Collections.singletonList(employee));
+        String targetSql = insertSqlBuilder.createTargetSql();
+
+        jdbcDao.executeSql(targetSql, insertSqlBuilder.getSqlParams());
+
+        System.out.println("targetSql = " + targetSql);
 
     }
 

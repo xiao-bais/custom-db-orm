@@ -59,10 +59,8 @@ public abstract class AbstractTableModel<T> {
     protected void setFieldValue(T entity, Field field, Object value) {
         JudgeUtil.checkObjNotNull(entity);
         try {
-            field.setAccessible(true);
-            field.set(entity, value);
-            field.setAccessible(false);
-        }catch (IllegalAccessException e) {
+            CustomUtil.writeFieldValue(value, entity, field.getName(), field.getType());
+        }catch (NoSuchFieldException e) {
             logger.error(e.toString(), e);
         }
     }

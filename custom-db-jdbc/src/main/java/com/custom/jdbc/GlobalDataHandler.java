@@ -1,5 +1,6 @@
 package com.custom.jdbc;
 
+import com.custom.comm.Asserts;
 import com.custom.comm.RexUtil;
 import com.custom.comm.SymbolConstant;
 import org.slf4j.Logger;
@@ -49,6 +50,7 @@ public class GlobalDataHandler {
      * 该字段是否是sql关键字
      */
     public static boolean hasSqlKeyword(String column) {
+        Asserts.notEmpty(column);
         if (RexUtil.hasRegex(RexUtil.back_quotes, column)) {
             return false;
         }
@@ -57,9 +59,18 @@ public class GlobalDataHandler {
 
     /**
      * 转换成包装的sql字段
+     * <br/>  name -> `name`
      */
     public static String wrapperSqlKeyword(String column) {
         return "`" + column + "`";
+    }
+
+    /**
+     * 去除sql字段上的包装
+     * <br/>  `name` -> name
+     */
+    public static String removeSqlKeywordWrapper(String column) {
+        return column.replace("`", "");
     }
 
     /**

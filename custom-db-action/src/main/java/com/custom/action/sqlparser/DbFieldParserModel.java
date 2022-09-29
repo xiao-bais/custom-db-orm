@@ -281,7 +281,12 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
 
     public Object getValue() {
         try {
-            value = getFieldValue(entity, fieldName);
+            String readValueField = fieldName;
+            char[] chars = readValueField.toCharArray();
+            if (chars[0] == 96 && chars[chars.length - 1] == 96) {
+                readValueField = GlobalDataHandler.removeSqlKeywordWrapper(fieldName);
+            }
+            value = getFieldValue(entity, readValueField);
         }catch (InvocationTargetException | IllegalAccessException
                 | NoSuchMethodException | NoSuchFieldException e) {
             logger.error(e.getMessage(), e);

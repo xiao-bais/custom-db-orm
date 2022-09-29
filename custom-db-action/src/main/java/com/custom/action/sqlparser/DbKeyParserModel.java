@@ -117,6 +117,7 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
                 break;
             case UUID:
                 key = CustomUtil.getUUID();
+                this.setValue(key);
                 break;
             case INPUT:
                 key = getValue();

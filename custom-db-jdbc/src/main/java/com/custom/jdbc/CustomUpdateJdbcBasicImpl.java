@@ -56,7 +56,7 @@ public class CustomUpdateJdbcBasicImpl extends CustomJdbcManagement implements C
         try {
             statementUpdate(true, params.getPrepareSql(), params.getSqlParams());
             res = handleUpdateStatement();
-            ResultSet resultSet = handleGenerateKeysStatement();
+            ResultSet resultSet = this.handleGenerateKeysStatement();
             int count = 0;
             Field keyField = params.getKeyField();
             while (resultSet.next()) {

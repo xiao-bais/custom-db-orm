@@ -286,14 +286,14 @@ public class JdbcOpDao {
     /**
      * 保存一条记录（根据主键添加或修改）
      */
-    public <T> long save(T entity) {
+    public <T> int save(T entity) {
         return jdbcAction.save(entity);
     }
 
     /**
      * 执行一条sql（增删改）
      */
-    public <T> long executeSql(String sql, Object... params) {
+    public <T> int executeSql(String sql, Object... params) {
         return jdbcAction.executeSql(sql, params);
     }
 

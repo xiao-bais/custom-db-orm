@@ -263,5 +263,13 @@ public abstract class AbstractSqlBuilder<T> {
                 configHelper.getDbDataSource(), customStrategy);
     }
 
+    /**
+     * 清空暂存
+     */
+    protected void clear() {
+        this.entityList = new ArrayList<>();
+        setEntity(null);
+    }
+
 
 }

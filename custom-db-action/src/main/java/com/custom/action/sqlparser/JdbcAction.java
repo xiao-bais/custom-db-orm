@@ -418,25 +418,25 @@ public class JdbcAction extends AbstractSqlExecutor {
         Asserts.notEmpty(ts, "insert data cannot be empty ");
         HandleInsertSqlBuilder<T> sqlBuilder = TableInfoCache.getInsertSqlBuilderCache((Class<T>) ts.get(0).getClass());
         sqlBuilder.setEntityList(ts);
-        sqlBuilder.setSaveSubSelection(getDbCustomStrategy().getSaveSubSelect());
-        DbKeyParserModel<T> keyParserModel = sqlBuilder.getKeyParserModel();
-        int res = 0;
-        String insertSql;
-        sqlBuilder.dataInitialize();
-        try {
-            if (sqlBuilder.isHasSubSelect()) {
-                for (int i = 0; i < sqlBuilder.getSubCount(); i++) {
-                    insertSql = sqlBuilder.createTargetSql();
-                    res += executeInsert(insertSql, sqlBuilder.getSubList(), keyParserModel.getField(), sqlBuilder.getSqlParams());
-                }
-            } else {
-                insertSql = sqlBuilder.createTargetSql();
-                res = executeInsert(insertSql, ts, keyParserModel.getField(), sqlBuilder.getSqlParams());
-            }
-        } catch (Exception e) {
-            this.throwsException(e);
-        }
-        return res;
+//        sqlBuilder.setSaveSubSelection(getDbCustomStrategy().getSaveSubSelect());
+//        DbKeyParserModel<T> keyParserModel = sqlBuilder.getKeyParserModel();
+//        int res = 0;
+//        String insertSql;
+//        sqlBuilder.dataInitialize();
+//        try {
+//            if (sqlBuilder.isHasSubSelect()) {
+//                for (int i = 0; i < sqlBuilder.getSubCount(); i++) {
+//                    insertSql = sqlBuilder.createTargetSql();
+//                    res += executeInsert(insertSql, sqlBuilder.getSubList(), keyParserModel.getField(), sqlBuilder.getSqlParams());
+//                }
+//            } else {
+//                insertSql = sqlBuilder.createTargetSql();
+//                res = executeInsert(insertSql, ts, keyParserModel.getField(), sqlBuilder.getSqlParams());
+//            }
+//        } catch (Exception e) {
+//            this.throwsException(e);
+//        }
+        return 0;
     }
 
     @Override
