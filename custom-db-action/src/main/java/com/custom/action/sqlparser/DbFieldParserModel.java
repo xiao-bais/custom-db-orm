@@ -114,7 +114,12 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
      * 存在@DbField注解下的属性解析
      */
     public DbFieldParserModel(Field field, String table, String alias, boolean underlineToCamel, boolean enabledDefaultValue, boolean existsDbField) {
-        this.fieldName = GlobalDataHandler.hasSqlKeyword(field.getName()) ? GlobalDataHandler.wrapperSqlKeyword(field.getName()) : field.getName();
+        if (GlobalDataHandler.hasSqlKeyword(field.getName())) {
+            this.fieldName =  GlobalDataHandler.wrapperSqlKeyword(field.getName());
+        }else {
+            this.fieldName = field.getName();
+        }
+
         this.type = field.getType();
         this.field = field;
         this.existsDbField = existsDbField;
@@ -282,8 +287,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     public Object getValue() {
         try {
             String readValueField = fieldName;
-            char[] chars = readValueField.toCharArray();
-            if (chars[0] == 96 && chars[chars.length - 1] == 96) {
+            if (GlobalDataHandler.isSqlKeywordWrapping(fieldName)) {
                 readValueField = GlobalDataHandler.removeSqlKeywordWrapper(fieldName);
             }
             value = getFieldValue(entity, readValueField);
@@ -317,5 +321,16 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
 
     public boolean isExistsDbField() {
         return existsDbField;
+    }
+
+    /**
+     * 是否是sql关键字
+     * <li> 该方法与{@link GlobalDataHandler#hasSqlKeyword(String)}相比，略有不同 </li>
+     * <li> 前者是判断是否已经是sql关键字，也就是说该字段是否已被包装成[`name`]这样的格式 </li>
+     * <li> 后者是判断是否可认定为sql关键字，该字段还未被包装</li>
+     */
+    private boolean isSqlWrapped() {
+        char[] chars = fieldName.toCharArray();
+        return chars[0] == 96 && chars[chars.length - 1] == 96;
     }
 }

@@ -58,6 +58,17 @@ public class GlobalDataHandler {
     }
 
     /**
+     * 是否是sql关键字
+     * <li> 该方法与{@link #hasSqlKeyword(String)}相比，略有不同 </li>
+     * <li> 前者是判断是否已经是sql关键字，也就是说该字段是否已被包装成[`name`]这样的格式 </li>
+     * <li> 后者(本方法)是判断是否可认定为sql关键字，此时该字段还未被包装</li>
+     */
+    public static boolean isSqlKeywordWrapping(String column) {
+        char[] chars = column.toCharArray();
+        return chars[0] == 96 && chars[chars.length - 1] == 96;
+    }
+
+    /**
      * 转换成包装的sql字段
      * <br/>  name -> `name`
      */
