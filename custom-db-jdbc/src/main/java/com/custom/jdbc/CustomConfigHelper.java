@@ -19,6 +19,9 @@ public class CustomConfigHelper {
         this.dbCustomStrategy = dbCustomStrategy;
     }
 
+    public CustomConfigHelper() {
+    }
+
     public DbDataSource getDbDataSource() {
         return dbDataSource;
     }

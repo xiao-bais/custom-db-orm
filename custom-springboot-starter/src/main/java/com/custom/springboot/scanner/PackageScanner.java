@@ -88,7 +88,6 @@ public class PackageScanner {
     /**
      * 加载本地类
      */
-    @SuppressWarnings("unchecked")
     private void addLocalClass(final String packageName) throws URISyntaxException {
 
         try {
@@ -132,7 +131,6 @@ public class PackageScanner {
     /**
      * 加载jar包中的类
      */
-    @SuppressWarnings("unchecked")
     private void addJarClass(final String packageName) throws IOException {
         if (JudgeUtil.isEmpty(packageName)) return;
         String pathName = packageName.replace(SymbolConstant.POINT, SymbolConstant.FILE_SEPARATOR);

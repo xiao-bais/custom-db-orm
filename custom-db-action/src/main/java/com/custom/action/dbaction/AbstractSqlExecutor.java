@@ -212,7 +212,7 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
             throw (CustomCheckException) e;
         }
         else if (e instanceof NullPointerException) {
-            throw new NullPointerException(e.getMessage());
+            throw (NullPointerException) e;
         }
         else if (e instanceof UnsupportedOperationException) {
             throw (UnsupportedOperationException) e;

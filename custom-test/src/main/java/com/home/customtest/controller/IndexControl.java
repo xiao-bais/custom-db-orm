@@ -60,8 +60,9 @@ public class IndexControl {
     @GetMapping("/comTime")
     public BackResult<List<Province>> getComTime() {
 
-        long t1 = System.currentTimeMillis();
         List<Province> provinces = jdbcDao.selectList(new Province());
+        long t1 = System.currentTimeMillis();
+        List<Province> provinces2 = jdbcDao.selectList(new Province());
         long t2 = System.currentTimeMillis();
 
         List<Province> provinceList = studentMapper.getProvinces();

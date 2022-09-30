@@ -12,10 +12,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @Author Xiao-Bai
@@ -87,19 +84,15 @@ public class GlobalDataHandler {
     /**
      * 全局配置对象暂存
      */
-   private static final ThreadLocal<CustomConfigHelper> CONFIG_HELPER = new ThreadLocal<>();
+   private static final CustomConfigHelper CONFIG_HELPER = new CustomConfigHelper();
 
    protected static void setConfigHelper(CustomConfigHelper configHelper) {
-       if (CONFIG_HELPER.get() == null) {
-           CONFIG_HELPER.set(configHelper);
-       }
+       CONFIG_HELPER.setDbDataSource(configHelper.getDbDataSource());
+       CONFIG_HELPER.setDbCustomStrategy(configHelper.getDbCustomStrategy());
    }
 
     public static CustomConfigHelper getConfigHelper() {
-       if (CONFIG_HELPER.get() == null) {
-           return null;
-       }
-        return CONFIG_HELPER.get();
+        return CONFIG_HELPER;
     }
 
 
