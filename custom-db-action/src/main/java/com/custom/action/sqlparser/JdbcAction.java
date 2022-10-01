@@ -414,29 +414,18 @@ public class JdbcAction extends AbstractSqlExecutor {
     @Override
     @CheckExecute(target = ExecuteMethod.INSERT)
     public <T> int insertBatch(List<T> ts) {
-//        HandleInsertSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(ts, ExecuteMethod.INSERT);
         Asserts.notEmpty(ts, "insert data cannot be empty ");
         HandleInsertSqlBuilder<T> sqlBuilder = TableInfoCache.getInsertSqlBuilderCache((Class<T>) ts.get(0).getClass());
         sqlBuilder.setEntityList(ts);
-//        sqlBuilder.setSaveSubSelection(getDbCustomStrategy().getSaveSubSelect());
-//        DbKeyParserModel<T> keyParserModel = sqlBuilder.getKeyParserModel();
-//        int res = 0;
-//        String insertSql;
-//        sqlBuilder.dataInitialize();
-//        try {
-//            if (sqlBuilder.isHasSubSelect()) {
-//                for (int i = 0; i < sqlBuilder.getSubCount(); i++) {
-//                    insertSql = sqlBuilder.createTargetSql();
-//                    res += executeInsert(insertSql, sqlBuilder.getSubList(), keyParserModel.getField(), sqlBuilder.getSqlParams());
-//                }
-//            } else {
-//                insertSql = sqlBuilder.createTargetSql();
-//                res = executeInsert(insertSql, ts, keyParserModel.getField(), sqlBuilder.getSqlParams());
-//            }
-//        } catch (Exception e) {
-//            this.throwsException(e);
-//        }
-        return 0;
+        DbKeyParserModel<T> keyParserModel = sqlBuilder.getKeyParserModel();
+        int res = 0;
+        try {
+            String insertSql = sqlBuilder.createTargetSql();
+            executeInsert(insertSql, ts, keyParserModel.getField(), sqlBuilder.getSqlParams());
+        } catch (Exception e) {
+            this.throwsException(e);
+        }
+        return res;
     }
 
     @Override
@@ -457,7 +446,7 @@ public class JdbcAction extends AbstractSqlExecutor {
     @SuppressWarnings("unchecked")
     @CheckExecute(target = ExecuteMethod.UPDATE)
     public <T> int updateColumnByKey(T entity, Consumer<List<SFunction<T, ?>>> updateColumns) {
-        HandleUpdateSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(entity, ExecuteMethod.UPDATE);
+        HandleUpdateSqlBuilder<T> sqlBuilder = TableInfoCache.getUpdateSqlBuilderCache((Class<T>) entity.getClass());
         List<SFunction<T, ?>> updateColumnList = new ArrayList<>();
         updateColumns.accept(updateColumnList);
         if(!updateColumnList.isEmpty()) {
@@ -480,7 +469,7 @@ public class JdbcAction extends AbstractSqlExecutor {
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
     public <T> int updateSelective(T entity, ConditionWrapper<T> wrapper) {
-        HandleUpdateSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(entity, ExecuteMethod.UPDATE);
+        HandleUpdateSqlBuilder<T> sqlBuilder = TableInfoCache.getUpdateSqlBuilderCache((Class<T>) entity.getClass());
         sqlBuilder.setCondition(wrapper.getFinalConditional());
         sqlBuilder.setConditionVals(wrapper.getParamValues());
         String updateSql = sqlBuilder.createTargetSql();
@@ -498,7 +487,7 @@ public class JdbcAction extends AbstractSqlExecutor {
         if (JudgeUtil.isEmpty(condition)) {
             ExThrowsUtil.toNull("修改条件不能为空");
         }
-        HandleUpdateSqlBuilder<T> sqlBuilder = buildSqlOperationTemplate(entity, ExecuteMethod.UPDATE);
+        HandleUpdateSqlBuilder<T> sqlBuilder = TableInfoCache.getUpdateSqlBuilderCache((Class<T>) entity.getClass());
         sqlBuilder.setCondition(condition);
         sqlBuilder.setConditionVals(Arrays.stream(params).collect(Collectors.toList()));
         String updateSql = sqlBuilder.createTargetSql();
@@ -521,10 +510,14 @@ public class JdbcAction extends AbstractSqlExecutor {
         String finalConditional = conditionWrapper.getFinalConditional();
 
         try {
+            // 条件拼接
             FullSqlConditionExecutor conditionExecutor = handleLogicWithCondition(alias,
                     finalConditional, getLogicDeleteQuerySql(), table);
+
+            // sql set设置器
             String sqlSetter = updateSetWrapper.getSqlSetter().toString();
             String updateSql = DbUtil.updateSql(table, alias, sqlSetter, conditionExecutor.execute());
+            
             List<Object> sqlParams = new ArrayList<>(updateSetWrapper.getSetParams());
             CustomUtil.addParams(sqlParams, conditionWrapper.getParamValues());
             return executeSql(updateSql, sqlParams.toArray());
@@ -537,7 +530,7 @@ public class JdbcAction extends AbstractSqlExecutor {
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
     public <T> int save(T entity) {
-        TableSqlBuilder<T> sqlBuilder = updateTableSqlBuilder(Collections.singletonList(entity));
+        TableSqlBuilder<T> sqlBuilder = TableInfoCache.getTableModel((Class<T>) entity.getClass());
         return Objects.nonNull(sqlBuilder.primaryKeyVal()) ? updateByKey(entity) : insert(entity);
     }
 

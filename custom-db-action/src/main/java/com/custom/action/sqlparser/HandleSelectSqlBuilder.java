@@ -72,6 +72,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
     @Override
     public String createTargetSql() {
         try {
+            this.clear();
             return this.buildSelect(!getPrimaryTable()).toString();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

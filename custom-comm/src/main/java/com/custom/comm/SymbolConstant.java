@@ -70,6 +70,11 @@ public class SymbolConstant {
     public final static String IMPORT = "import ";
     public final static String PRIVATE = "private";
 
+    /**
+     * global key
+     */
+    public final static String DATA_CONFIG = "DATA_CONFIG";
+
 
 
 

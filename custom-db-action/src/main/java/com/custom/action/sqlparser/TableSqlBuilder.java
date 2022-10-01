@@ -177,7 +177,8 @@ public class TableSqlBuilder<T> implements Cloneable {
         DbTable annotation = cls.getAnnotation(DbTable.class);
         String table = annotation.table();
         return String.format("SELECT COUNT(1) COUNT FROM " +
-                "`information_schema`.`TABLES` WHERE TABLE_NAME = '%s' AND TABLE_SCHEMA = '%s';", table, DbConnection.currMap.get(SymbolConstant.DATA_BASE));
+                "`information_schema`.`TABLES` WHERE TABLE_NAME = '%s' AND TABLE_SCHEMA = '%s';",
+                table, DbConnection.currMap.get(SymbolConstant.DATA_BASE));
     }
 
 
@@ -347,7 +348,7 @@ public class TableSqlBuilder<T> implements Cloneable {
     private void handleMoreResultField(Field field, Class<?> fieldType) {
         if (field.isAnnotationPresent(DbOneToOne.class)) {
             if (Collection.class.isAssignableFrom(fieldType)) {
-                ExThrowsUtil.toIllegal("Annotation DbOneToOne does not support acting on properties of collection type");
+                ExThrowsUtil.toIllegal("Annotation DbOneToOne does not support acting on properties of " + fieldType.getName());
             }
             this.oneToOneFieldList.add(field);
         }
@@ -355,7 +356,7 @@ public class TableSqlBuilder<T> implements Cloneable {
             if (Collection.class.isAssignableFrom(fieldType) || Object.class.equals(fieldType)) {
                 this.oneToManyFieldList.add(field);
             } else if (Map.class.isAssignableFrom(fieldType)) {
-                ExThrowsUtil.toIllegal("Annotation DbOneToOne does not support acting on properties of Map type");
+                ExThrowsUtil.toIllegal("Annotation DbOneToOne does not support acting on properties of " + fieldType.getName());
             }
         }
     }

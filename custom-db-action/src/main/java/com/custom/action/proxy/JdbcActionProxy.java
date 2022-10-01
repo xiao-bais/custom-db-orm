@@ -135,10 +135,10 @@ public class JdbcActionProxy implements MethodInterceptor {
                 AbstractUpdateSet<?> updateSet = (AbstractUpdateSet<?>) objects[0];
                 UpdateSetWrapper<?> updateSetWrapper = updateSet.getUpdateSetWrapper();
                 ConditionWrapper<?> conditionWrapper = updateSet.getConditionWrapper();
-                if (JudgeUtil.isEmpty(updateSetWrapper.getSqlSetter())) {
+                if (updateSetWrapper == null || JudgeUtil.isEmpty(updateSetWrapper.getSqlSetter())) {
                     ExThrowsUtil.toCustom("Set value cannot be empty");
                 }
-                if (JudgeUtil.isEmpty(conditionWrapper.getFinalConditional())) {
+                if (conditionWrapper == null || JudgeUtil.isEmpty(conditionWrapper.getFinalConditional())) {
                     ExThrowsUtil.toCustom("Update condition cannot be empty");
                 }
             }catch (ClassCastException e) {

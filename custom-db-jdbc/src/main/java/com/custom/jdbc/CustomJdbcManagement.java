@@ -26,7 +26,7 @@ public class CustomJdbcManagement extends DbConnection {
         super(dbDataSource);
         this.conn = super.getConnection();
         this.dbCustomStrategy = dbCustomStrategy;
-        GlobalDataHandler.setConfigHelper(new CustomConfigHelper(dbDataSource, dbCustomStrategy));
+        GlobalDataHandler.addGlobalHelper(SymbolConstant.DATA_CONFIG, new CustomConfigHelper(dbDataSource, dbCustomStrategy));
     }
 
     protected PreparedStatement getStatement() {

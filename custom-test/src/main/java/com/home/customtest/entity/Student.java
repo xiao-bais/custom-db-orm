@@ -37,8 +37,8 @@ public class Student extends ActiveModel<Student, Integer> implements Serializab
 
     private String name;
 
-//    @DbOneToOne(thisField = "proId", joinTarget = Province.class)
-//    private Map<String, Object> province;
+    @DbOneToOne(thisField = "proId")
+    private Province province;
 
     @DbField("nick_code")
     private String nickName;

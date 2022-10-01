@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @Author Xiao-Bai
@@ -82,17 +83,18 @@ public class GlobalDataHandler {
     }
 
     /**
-     * 全局配置对象暂存
+     * 全局对象暂存
      */
-   private static final CustomConfigHelper CONFIG_HELPER = new CustomConfigHelper();
+   private static final Map<String, Object> GLOBAL_CACHE = new ConcurrentHashMap<>();
 
-   protected static void setConfigHelper(CustomConfigHelper configHelper) {
-       CONFIG_HELPER.setDbDataSource(configHelper.getDbDataSource());
-       CONFIG_HELPER.setDbCustomStrategy(configHelper.getDbCustomStrategy());
+   protected static void addGlobalHelper(String key, Object value) {
+       if (!GLOBAL_CACHE.containsKey(key)) {
+           GLOBAL_CACHE.put(key, value);
+       }
    }
 
-    public static CustomConfigHelper getConfigHelper() {
-        return CONFIG_HELPER;
+    public static Object readGlobalObject(String key) {
+        return GLOBAL_CACHE.get(key);
     }
 
 

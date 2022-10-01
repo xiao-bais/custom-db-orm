@@ -49,6 +49,7 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
             logger.error(e.toString(), e);
             return null;
         }
+        this.clear();
         return deleteSql;
     }
 

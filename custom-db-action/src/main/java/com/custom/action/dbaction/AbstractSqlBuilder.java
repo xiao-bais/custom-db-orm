@@ -3,13 +3,13 @@ package com.custom.action.dbaction;
 import com.custom.action.interfaces.ColumnParseHandler;
 import com.custom.action.sqlparser.DbFieldParserModel;
 import com.custom.action.sqlparser.DbKeyParserModel;
-import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableSqlBuilder;
 import com.custom.action.util.DbUtil;
 import com.custom.action.condition.DefaultColumnParseHandler;
 import com.custom.comm.Asserts;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
+import com.custom.comm.SymbolConstant;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.jdbc.CustomConfigHelper;
 import com.custom.jdbc.CustomSelectJdbcBasicImpl;
@@ -247,7 +247,8 @@ public abstract class AbstractSqlBuilder<T> {
         this.keyParserModel = tableSqlBuilder.getKeyParserModel();
         this.fieldParserModels = tableSqlBuilder.getFieldParserModels();
 
-        CustomConfigHelper configHelper = GlobalDataHandler.getConfigHelper();
+        CustomConfigHelper configHelper = (CustomConfigHelper)
+                GlobalDataHandler.readGlobalObject(SymbolConstant.DATA_CONFIG);
         Asserts.npe(configHelper, "未找到可用的数据源");
         DbCustomStrategy customStrategy = configHelper.getDbCustomStrategy();
 

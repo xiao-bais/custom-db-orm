@@ -66,7 +66,7 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
         // 修改字段构建
         this.updateSqlFieldBuilder();
         String updateCondition = JudgeUtil.isEmpty(condition) ? this.updateKeyCondition() : this.updateCustomCondition();
-        setEntity(null);
+        this.clear();
         return String.format(DbUtil.UPDATE_TEMPLATE,
                 getTable(), getAlias(),
                 updateSqlColumns,
