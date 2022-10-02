@@ -38,7 +38,7 @@ public class MappingResultInjector<T> {
 
 
     public void injectorValue(List<T> resultList) throws Exception {
-        TableSqlBuilder<T> tableModel = TableInfoCache.getTableModel(thisClass);
+        TableParseModel<T> tableModel = TableInfoCache.getTableModel(thisClass);
 
         // set 一对一
         this.oneToOneHandler(tableModel, resultList);
@@ -53,13 +53,13 @@ public class MappingResultInjector<T> {
      * @param tableModel - 实体解析模板
      * @param entityList - 实体对象
      */
-    private void oneToManyHandler(TableSqlBuilder<T> tableModel, List<T> entityList) throws Exception {
+    private void oneToManyHandler(TableParseModel<T> tableModel, List<T> entityList) throws Exception {
         List<Field> oneToManyFieldList = tableModel.getOneToManyFieldList();
         if (JudgeUtil.isNotEmpty(oneToManyFieldList)) {
             for (Field waitSetField : oneToManyFieldList) {
                 DbJoinToManyParseModel joinToManyParseModel = new DbJoinToManyParseModel(waitSetField);
                 Class<?> joinTarget = joinToManyParseModel.getJoinTarget();
-                TableSqlBuilder<?> targetTableModel = TableInfoCache.getTableModel(joinTarget);
+                TableParseModel<?> targetTableModel = TableInfoCache.getTableModel(joinTarget);
                 String condition = joinToManyParseModel.queryCondition();
 
                 for (T entity : entityList) {
@@ -87,7 +87,7 @@ public class MappingResultInjector<T> {
      * @param tableModel 实体解析模板
      * @param entityList 实体对象集合
      */
-    private void oneToOneHandler(TableSqlBuilder<T> tableModel, List<T> entityList) throws Exception {
+    private void oneToOneHandler(TableParseModel<T> tableModel, List<T> entityList) throws Exception {
         List<Field> oneToOneFieldList = tableModel.getOneToOneFieldList();
         if (JudgeUtil.isEmpty(oneToOneFieldList)) {
             return;
@@ -95,7 +95,7 @@ public class MappingResultInjector<T> {
         for (Field waitSetField : oneToOneFieldList) {
             DbJoinToOneParseModel joinToOneParseModel = new DbJoinToOneParseModel(waitSetField);
             Class<?> joinTarget = joinToOneParseModel.getJoinTarget();
-            TableSqlBuilder<?> targetTableModel = TableInfoCache.getTableModel(joinTarget);
+            TableParseModel<?> targetTableModel = TableInfoCache.getTableModel(joinTarget);
             String condition = joinToOneParseModel.queryCondition();
 
             for (T entity : entityList) {
@@ -128,7 +128,7 @@ public class MappingResultInjector<T> {
      * @return Lists
      * @throws Exception
      */
-    private List<?> queryResult(T entity, String thisField, String condition, Class<?> joinTarget, TableSqlBuilder<?> targetTableModel) throws Exception {
+    private List<?> queryResult(T entity, String thisField, String condition, Class<?> joinTarget, TableParseModel<?> targetTableModel) throws Exception {
         try {
             Object queryValue = CustomUtil.readFieldValue(entity, thisField);
             if (queryValue == null) {
@@ -140,7 +140,7 @@ public class MappingResultInjector<T> {
                     sqlExecutor.getLogicDeleteQuerySql(), targetTableModel.getTable());
 
             // 构建该对象的查询sql模板
-            AbstractSqlBuilder<?> abstractSqlBuilder = sqlExecutor.buildSqlOperationTemplate(joinTarget);
+            AbstractSqlBuilder<?> abstractSqlBuilder = TableInfoCache.getSelectSqlBuilderCache(joinTarget);
 
             String selectSql = abstractSqlBuilder.createTargetSql() + conditionExecutor.execute();
             return sqlExecutor.executeQueryNotPrintSql(joinTarget, selectSql, queryValue);

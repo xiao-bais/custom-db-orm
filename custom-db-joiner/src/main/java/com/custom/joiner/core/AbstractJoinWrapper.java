@@ -3,7 +3,7 @@ package com.custom.joiner.core;
 import com.custom.action.condition.DefaultColumnParseHandler;
 import com.custom.action.interfaces.ColumnParseHandler;
 import com.custom.action.sqlparser.TableInfoCache;
-import com.custom.action.sqlparser.TableSqlBuilder;
+import com.custom.action.sqlparser.TableParseModel;
 import com.custom.comm.Asserts;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.enums.DbJoinStyle;
@@ -38,7 +38,7 @@ public class AbstractJoinWrapper<T> extends LambdaJoinConditionWrapper<T> {
     protected AbstractJoinWrapper(Class<T> thisClass) {
         this.thisClass = thisClass;
         this.thisColumnParseHandler = new DefaultColumnParseHandler<>(thisClass);
-        TableSqlBuilder<T> tableModel = TableInfoCache.getTableModel(this.thisClass);
+        TableParseModel<T> tableModel = TableInfoCache.getTableModel(this.thisClass);
 //        this.primaryTableName = tableModel.getTable();
         this.primaryTableAlias = tableModel.getAlias();
         this.joinTableList = new ArrayList<>();

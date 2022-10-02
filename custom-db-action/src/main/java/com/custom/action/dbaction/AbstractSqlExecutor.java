@@ -4,13 +4,12 @@ import com.custom.action.condition.AbstractUpdateSet;
 import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.action.sqlparser.HandleSelectSqlBuilder;
 import com.custom.action.sqlparser.MappingResultInjector;
-import com.custom.action.sqlparser.TableSqlBuilder;
+import com.custom.action.sqlparser.TableParseModel;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.condition.SFunction;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
-import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.page.DbPageRows;
@@ -21,11 +20,10 @@ import java.util.*;
 import java.util.function.Consumer;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/12/8 14:49
- * @Desc：方法执行处理抽象入口
+ * @author Xiao-Bai
+ * @date 2021/12/8 14:49
+ * @desc：方法执行处理抽象入口
  **/
-@SuppressWarnings("unchecked")
 public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
 
     /*--------------------------------------- select ---------------------------------------*/
@@ -80,8 +78,6 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
     public abstract int executeSql(String sql, Object... params);
     public abstract void createTables(Class<?>... arr);
     public abstract void dropTables(Class<?>... arr);
-    public abstract <T> TableSqlBuilder<T> defaultSqlBuilder(Class<T> entityClass);
-    public abstract <T> TableSqlBuilder<T> updateSqlBuilder(List<T> tList);
 
 
     private DbCustomStrategy dbCustomStrategy;
@@ -119,45 +115,6 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
         }
         return JudgeUtil.isNotEmpty(dbCustomStrategy.getDbFieldDeleteLogic());
     }
-
-    /**
-     * 获取实体解析模板中的操作对象
-     */
-    public <T, R extends AbstractSqlBuilder<T>> R buildSqlOperationTemplate(Class<T> entityClass) {
-        return buildSqlOperationTemplate(entityClass, ExecuteMethod.SELECT);
-    }
-
-    /**
-     * 获取实体解析模板中的操作对象
-     */
-    protected <T, R extends AbstractSqlBuilder<T>> R buildSqlOperationTemplate(T entity, ExecuteMethod method) {
-        if(Objects.isNull(entity)) {
-            ExThrowsUtil.toNull("Entity object cannot be empty");
-        }
-        return buildSqlOperationTemplate(Collections.singletonList(entity), method);
-    }
-
-    /**
-     * 获取实体解析模板中的操作对象
-     */
-    protected <T, R extends AbstractSqlBuilder<T>> R buildSqlOperationTemplate(List<T> entityList, ExecuteMethod method) {
-        TableSqlBuilder<T> tableModelCache = updateTableSqlBuilder(entityList);
-        TableSqlBuilder<T> tableModel = tableModelCache.clone();
-        tableModel.setEntity(entityList.get(0));
-        tableModel.setEntityList(entityList);
-        return (R) tableModel.buildSqlConstructorModel(method,
-                logicColumn, dbCustomStrategy.getDeleteLogicValue(), dbCustomStrategy.getNotDeleteLogicValue());
-    }
-
-    /**
-     * 获取实体解析模板中的操作对象
-     */
-    protected <T, R extends AbstractSqlBuilder<T>> R buildSqlOperationTemplate(Class<T> entityClass, ExecuteMethod method) {
-        TableSqlBuilder<T> tableSqlBuilder = defaultTableSqlBuilder(entityClass);
-        return (R) tableSqlBuilder.buildSqlConstructorModel(method,
-                logicColumn, dbCustomStrategy.getDeleteLogicValue(), dbCustomStrategy.getNotDeleteLogicValue());
-    }
-
 
 
     /**

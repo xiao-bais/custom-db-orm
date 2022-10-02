@@ -3,10 +3,8 @@ package com.custom.action.sqlparser;
 import com.custom.comm.JudgeUtil;
 
 import java.lang.reflect.Field;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @Author Xiao-Bai
@@ -19,15 +17,15 @@ public class TableInfoCache {
     /**
      * 实体解析模板缓存
      * <br/>key-实体全路径名称
-     * <br/>value-实体解析模板 {@link TableSqlBuilder}
+     * <br/>value-实体解析模板 {@link TableParseModel}
      */
     private final static Map<String, Object> TABLE_MODEL = new CustomLocalCache();
     private static Boolean underlineToCamel = false;
 
-    public static <T> TableSqlBuilder<T> getTableModel(Class<T> cls) {
-        TableSqlBuilder<T> tableSqlBuilder = (TableSqlBuilder<T>) TABLE_MODEL.get(cls.getName());
+    public static <T> TableParseModel<T> getTableModel(Class<T> cls) {
+        TableParseModel<T> tableSqlBuilder = (TableParseModel<T>) TABLE_MODEL.get(cls.getName());
         if(Objects.isNull(tableSqlBuilder)) {
-            tableSqlBuilder = new TableSqlBuilder<>(cls, underlineToCamel);
+            tableSqlBuilder = new TableParseModel<>(cls, underlineToCamel);
             TABLE_MODEL.put(cls.getName(), tableSqlBuilder);
         }
         return tableSqlBuilder;
@@ -91,7 +89,7 @@ public class TableInfoCache {
             return true;
         }
 
-        TableSqlBuilder<?> tableModel = getTableModel(joinClass);
+        TableParseModel<?> tableModel = getTableModel(joinClass);
         if (JudgeUtil.isNotEmpty(tableModel.getOneToOneFieldList())) {
             for (Field field : tableModel.getOneToOneFieldList()) {
                 if (field.getType().isAssignableFrom(thisClass)
@@ -140,6 +138,11 @@ public class TableInfoCache {
     protected static <T> HandleDeleteSqlBuilder<T> getDeleteSqlBuilderCache(Class<T> entityClass) {
         CacheOptionalSqlBuilder<T> sqlBuilderCache = getSqlBuilderCache(entityClass);
         return (HandleDeleteSqlBuilder<T>) sqlBuilderCache.getDeleteSqlBuilder();
+    }
+
+    protected static <T> EmptySqlBuilder<T> getEmptySqlBuilder(Class<T> entityClass) {
+        CacheOptionalSqlBuilder<T> sqlBuilderCache = getSqlBuilderCache(entityClass);
+        return (EmptySqlBuilder<T>) sqlBuilderCache.getEmptySqlBuilder();
     }
 
 

@@ -4,7 +4,6 @@ import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.util.DbUtil;
 import com.custom.comm.StrUtils;
 import com.custom.jdbc.GlobalDataHandler;
-import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +49,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
     public HandleSelectSqlBuilder(
             Class<T> entityClass) {
-        TableSqlBuilder<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
+        TableParseModel<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
         this.selectSql = new StringBuilder();
         this.selectJoinSql = new StringBuilder();
         this.joinTableSql = new StringBuilder();

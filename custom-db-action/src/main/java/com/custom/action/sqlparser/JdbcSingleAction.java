@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -33,10 +32,6 @@ public class JdbcSingleAction<T, P> implements JdbcActiveWrapper<T, P> {
     public JdbcSingleAction(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy, Class<T> entityClass) {
         this.entityClass = entityClass;
         this.jdbcAction = new JdbcActionProxy(new JdbcAction(), dbDataSource, dbCustomStrategy).createProxy();
-    }
-
-    private TableSqlBuilder<T> updateSqlBuilder(List<T> tList) {
-        return this.jdbcAction.updateSqlBuilder(tList);
     }
 
     @Override
@@ -132,11 +127,15 @@ public class JdbcSingleAction<T, P> implements JdbcActiveWrapper<T, P> {
     @Override
     @SuppressWarnings("unchecked")
     public P primaryKeyValue(T entity) {
-        TableSqlBuilder<T> tableSqlBuilder = updateSqlBuilder(Collections.singletonList(entity));
-        if (tableSqlBuilder.getKeyParserModel() == null) {
+        EmptySqlBuilder<T> emptySqlBuilder = TableInfoCache.getEmptySqlBuilder(entityClass);
+        emptySqlBuilder.setEntity(entity);
+        if (emptySqlBuilder.getKeyParserModel() == null) {
             ExThrowsUtil.toCustom("No primary key field specified");
         }
-        return (P) tableSqlBuilder.primaryKeyVal();
+        DbKeyParserModel<T> keyParserModel = emptySqlBuilder.getKeyParserModel();
+        P value = (P) keyParserModel.getValue();
+        emptySqlBuilder.clear();
+        return value;
     }
 
 

@@ -2,7 +2,7 @@ package com.custom.action.dbaction;
 
 import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.action.sqlparser.TableInfoCache;
-import com.custom.action.sqlparser.TableSqlBuilder;
+import com.custom.action.sqlparser.TableParseModel;
 import com.custom.action.util.DbUtil;
 import com.custom.comm.ConvertUtil;
 import com.custom.comm.JudgeUtil;
@@ -186,27 +186,6 @@ public class JdbcWrapperExecutor {
                         : condition == null ? SymbolConstant.EMPTY : condition.trim();
             }
         };
-    }
-
-    /**
-     * 从缓存中获取实体解析模板，若缓存中没有，就重新构造模板（查询、删除、创建删除表）
-     */
-    protected <T> TableSqlBuilder<T> defaultTableSqlBuilder(Class<T> t) {
-        TableSqlBuilder<T> tableModelCache = TableInfoCache.getTableModel(t);
-        TableSqlBuilder<T> tableModel = tableModelCache.clone();
-        tableModel.setSelectJdbc(this.selectJdbc);
-        tableModel.setUpdateJdbc(this.updateJdbc);
-        return tableModel;
-    }
-
-    /**
-     * 从缓存中获取实体解析模板，若缓存中没有，就重新构造模板（批量增加记录）
-     */
-    protected <T> TableSqlBuilder<T> updateTableSqlBuilder(List<T> tList) {
-        TableSqlBuilder<T> tableModel = (TableSqlBuilder<T>) defaultTableSqlBuilder(tList.get(0).getClass());
-        tableModel.setEntity(tList.get(0));
-        tableModel.setEntityList(tList);
-        return tableModel;
     }
 
 

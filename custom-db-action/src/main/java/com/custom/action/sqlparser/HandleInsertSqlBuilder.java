@@ -94,7 +94,7 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
         );
 
         // 添加?
-        TableSqlBuilder<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
+        TableParseModel<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
         // 初始化
         this.injectTableInfo(tableSqlBuilder);
 

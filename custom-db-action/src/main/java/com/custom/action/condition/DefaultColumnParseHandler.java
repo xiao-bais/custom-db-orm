@@ -3,22 +3,17 @@ package com.custom.action.condition;
 import com.custom.action.interfaces.ColumnParseHandler;
 import com.custom.action.sqlparser.ColumnPropertyMap;
 import com.custom.action.sqlparser.TableInfoCache;
-import com.custom.action.sqlparser.TableSqlBuilder;
+import com.custom.action.sqlparser.TableParseModel;
 import com.custom.action.util.LambdaResolveUtil;
 import com.custom.comm.Asserts;
-import com.custom.comm.CustomUtil;
-import com.custom.jdbc.GlobalDataHandler;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import lombok.extern.slf4j.Slf4j;
 
-import java.beans.IntrospectionException;
-import java.beans.PropertyDescriptor;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -40,7 +35,7 @@ public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {
 
     public DefaultColumnParseHandler(Class<T> thisClass) {
         this.thisClass = thisClass;
-        TableSqlBuilder<T> tableModel = TableInfoCache.getTableModel(thisClass);
+        TableParseModel<T> tableModel = TableInfoCache.getTableModel(thisClass);
         this.fieldMapper = TableInfoCache.getFieldMap(thisClass);
         this.columnParseList = tableModel.columnPropertyMaps();
         if (JudgeUtil.isEmpty(columnParseList)) {

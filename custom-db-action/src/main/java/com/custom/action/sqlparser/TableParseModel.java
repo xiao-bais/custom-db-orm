@@ -1,6 +1,5 @@
 package com.custom.action.sqlparser;
 
-import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
@@ -8,8 +7,6 @@ import com.custom.comm.annotations.*;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.configuration.DbConnection;
-import com.custom.jdbc.select.CustomSelectJdbcBasic;
-import com.custom.jdbc.update.CustomUpdateJdbcBasic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,9 +21,9 @@ import java.util.*;
  * @Date 2021/12/2 14:10
  * @Desc：构建实体表的基础模板，以及提供一系列的sql语句或字段
  **/
-public class TableSqlBuilder<T> implements Cloneable {
+public class TableParseModel<T> implements Cloneable {
 
-    private static final Logger logger = LoggerFactory.getLogger(TableSqlBuilder.class);
+    private static final Logger logger = LoggerFactory.getLogger(TableParseModel.class);
 
     /**
      * 实体表的class对象
@@ -106,22 +103,6 @@ public class TableSqlBuilder<T> implements Cloneable {
      * 对于表字段到java属性字段的映射关系
      */
     private final Map<String, String> columnMapper = new HashMap<>();
-
-    /**
-     * JDBC操作解析对象（增，删，改，查）四个对象
-     * @see HandleInsertSqlBuilder
-     * @see HandleDeleteSqlBuilder
-     * @see HandleUpdateSqlBuilder
-     * @see HandleSelectSqlBuilder
-     */
-    private HandleSelectSqlBuilder<T> selectSqlBuilder;
-    private HandleInsertSqlBuilder<T> insertSqlBuilder;
-
-    /**
-     * sql执行对象（jdbc）
-     */
-    private CustomSelectJdbcBasic selectJdbc;
-    private CustomUpdateJdbcBasic updateJdbc;
 
     /**
      * 一对一字段
@@ -236,11 +217,11 @@ public class TableSqlBuilder<T> implements Cloneable {
     /**
      * 默认构造方法为查询
      */
-    TableSqlBuilder(Class<T> cls, boolean underlineToCamel) {
+    TableParseModel(Class<T> cls, boolean underlineToCamel) {
         this(cls, ExecuteMethod.SELECT, underlineToCamel);
     }
 
-    TableSqlBuilder(Class<T> cls, ExecuteMethod method, boolean underlineToCamel) {
+    TableParseModel(Class<T> cls, ExecuteMethod method, boolean underlineToCamel) {
         // 初始化本对象属性
         initLocalProperty(cls, underlineToCamel);
 
@@ -431,45 +412,6 @@ public class TableSqlBuilder<T> implements Cloneable {
         fieldOptional.ifPresent(field -> keyParserModel = new DbKeyParserModel<>(field, this.table, this.alias, this.underlineToCamel));
     }
 
-    /**
-     * 实例化sql构造模板
-     */
-    public AbstractSqlBuilder<T> buildSqlConstructorModel(ExecuteMethod method, String logicColumn, Object logicDeleteValue, Object logicNotDeleteValue) {
-        AbstractSqlBuilder<T> sqlBuilder = null;
-        switch (method) {
-            case SELECT:
-                if (this.selectSqlBuilder != null) {
-                    return this.selectSqlBuilder;
-                }
-                sqlBuilder = new HandleSelectSqlBuilder<>(findUpDbJoinTables, relatedParserModels,
-                        joinDbMappers, joinTableParserModels, this.existNeedInjectResult());
-                this.selectSqlBuilder = (HandleSelectSqlBuilder<T>) sqlBuilder;
-
-                break;
-            case UPDATE:
-                sqlBuilder = new HandleUpdateSqlBuilder<>();
-                break;
-            case INSERT:
-                if (this.insertSqlBuilder != null) {
-                    return this.insertSqlBuilder;
-                }
-                sqlBuilder = new HandleInsertSqlBuilder<>();
-                this.insertSqlBuilder = (HandleInsertSqlBuilder<T>) sqlBuilder;
-                break;
-            case DELETE:
-                sqlBuilder = new HandleDeleteSqlBuilder<>();
-        }
-
-        if (sqlBuilder != null) {
-            // 初始化
-            this.initializeSqlBuilder(sqlBuilder);
-            sqlBuilder.setLogicColumn(logicColumn);
-            sqlBuilder.setLogicDeleteValue(logicDeleteValue);
-            sqlBuilder.setLogicNotDeleteValue(logicNotDeleteValue);
-        }
-
-        return sqlBuilder;
-    }
 
     public boolean isFindUpDbJoinTables() {
         return findUpDbJoinTables;
@@ -569,14 +511,6 @@ public class TableSqlBuilder<T> implements Cloneable {
         return columnMapper;
     }
 
-    public void setSelectJdbc(CustomSelectJdbcBasic selectJdbc) {
-        this.selectJdbc = selectJdbc;
-    }
-
-    public void setUpdateJdbc(CustomUpdateJdbcBasic updateJdbc) {
-        this.updateJdbc = updateJdbc;
-    }
-
     public List<Field> getOneToOneFieldList() {
         return oneToOneFieldList;
     }
@@ -585,31 +519,6 @@ public class TableSqlBuilder<T> implements Cloneable {
         return oneToManyFieldList;
     }
 
-    /**
-     * 初始化sql语句构造模板对象
-     */
-    private void initializeSqlBuilder(AbstractSqlBuilder<T> sqlBuilder) {
-        sqlBuilder.setTable(this.table);
-        sqlBuilder.setAlias(this.alias);
-        sqlBuilder.setEntityClass(this.entityClass);
-
-        // 注入sql注解解析对象
-        sqlBuilder.setKeyParserModel(keyParserModel);
-        sqlBuilder.setFieldParserModels(fieldParserModels);
-
-        // 注入sql执行对象
-        sqlBuilder.setSelectJdbc(this.selectJdbc);
-        sqlBuilder.setUpdateJdbc(this.updateJdbc);
-
-        if(Objects.nonNull(this.entity)) {
-            sqlBuilder.setEntity(this.entity);
-        }
-        if(Objects.nonNull(this.entityList)) {
-            sqlBuilder.setEntityList(this.entityList);
-        }
-        sqlBuilder.setFieldMapper(this.fieldMapper);
-        sqlBuilder.setColumnMapper(this.columnMapper);
-    }
 
     public List<ColumnPropertyMap<T>> columnPropertyMaps() {
         return this.columnPropertyMaps;
@@ -617,10 +526,10 @@ public class TableSqlBuilder<T> implements Cloneable {
 
     @Override
     @SuppressWarnings("unchecked")
-    public TableSqlBuilder<T> clone() {
-        TableSqlBuilder<T> builder = null;
+    public TableParseModel<T> clone() {
+        TableParseModel<T> builder = null;
         try {
-            builder = (TableSqlBuilder<T>) super.clone();
+            builder = (TableParseModel<T>) super.clone();
         } catch (CloneNotSupportedException e) {
             logger.error(e.toString(), e);
         }

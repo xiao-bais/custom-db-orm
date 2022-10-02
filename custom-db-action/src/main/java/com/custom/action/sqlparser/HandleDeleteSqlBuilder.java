@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ObjectUtils;
 
-import java.io.Serializable;
 import java.util.*;
 import java.util.stream.IntStream;
 
@@ -204,14 +203,14 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
     public HandleDeleteSqlBuilder(){}
 
     public HandleDeleteSqlBuilder(Class<T> entityClass) {
-        TableSqlBuilder<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
+        TableParseModel<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
         this.injectTableInfo(tableSqlBuilder);
     }
 
     public HandleDeleteSqlBuilder(Class<T> entityClass, String deleteCondition, List<Object> sqlParams) {
         this.deleteCondition = deleteCondition;
         this.setSqlParams(sqlParams);
-        TableSqlBuilder<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
+        TableParseModel<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
         this.injectTableInfo(tableSqlBuilder);
     }
 }

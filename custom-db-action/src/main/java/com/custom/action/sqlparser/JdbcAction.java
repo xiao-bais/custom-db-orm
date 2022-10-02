@@ -502,7 +502,7 @@ public class JdbcAction extends AbstractSqlExecutor {
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
     public <T> int updateSelective(AbstractUpdateSet<T> updateSet) {
-        TableSqlBuilder<T> tableSqlBuilder = TableInfoCache.getTableModel(updateSet.thisEntityClass());
+        TableParseModel<T> tableSqlBuilder = TableInfoCache.getTableModel(updateSet.thisEntityClass());
         UpdateSetWrapper<T> updateSetWrapper = updateSet.getUpdateSetWrapper();
         ConditionWrapper<T> conditionWrapper = updateSet.getConditionWrapper();
         String table = tableSqlBuilder.getTable();
@@ -530,7 +530,8 @@ public class JdbcAction extends AbstractSqlExecutor {
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
     public <T> int save(T entity) {
-        TableSqlBuilder<T> sqlBuilder = TableInfoCache.getTableModel((Class<T>) entity.getClass());
+        EmptySqlBuilder<T> sqlBuilder = TableInfoCache.getEmptySqlBuilder((Class<T>) entity.getClass());
+        sqlBuilder.setEntity(entity);
         return Objects.nonNull(sqlBuilder.primaryKeyVal()) ? updateByKey(entity) : insert(entity);
     }
 
@@ -546,9 +547,9 @@ public class JdbcAction extends AbstractSqlExecutor {
 
     @Override
     public void createTables(Class<?>... arr) {
-        TableSqlBuilder<?> tableSqlBuilder;
+        TableParseModel<?> tableSqlBuilder;
         for (int i = arr.length - 1; i >= 0; i--) {
-            tableSqlBuilder = defaultTableSqlBuilder(arr[i]);
+            tableSqlBuilder = TableInfoCache.getTableModel(arr[i]);
             String exitsTableSql = tableSqlBuilder.exitsTableSql(arr[i]);
             try {
                 if(!hasTableInfo(exitsTableSql)) {
@@ -565,20 +566,12 @@ public class JdbcAction extends AbstractSqlExecutor {
     @Override
     public void dropTables(Class<?>... arr) {
         for (int i = arr.length - 1; i >= 0; i--) {
-            TableSqlBuilder<?> tableSqlBuilder = defaultTableSqlBuilder(arr[i]);
+            TableParseModel<?> tableSqlBuilder = TableInfoCache.getTableModel(arr[i]);
             String dropTableSql = tableSqlBuilder.dropTableSql();
             execTable(dropTableSql);
             logger.warn("drop table '{}' completed\n", tableSqlBuilder.getTable());
         }
     }
 
-    @Override
-    public <T> TableSqlBuilder<T> defaultSqlBuilder(Class<T> entityClass) {
-        return this.defaultTableSqlBuilder(entityClass);
-    }
 
-    @Override
-    public <T> TableSqlBuilder<T> updateSqlBuilder(List<T> tList) {
-        return this.updateTableSqlBuilder(tList);
-    }
 }

@@ -26,11 +26,14 @@ public class CacheOptionalSqlBuilder<T> {
      */
     private final AbstractSqlBuilder<T> deleteSqlBuilder;
 
+    private final AbstractSqlBuilder<T> emptySqlBuilder;
+
     public CacheOptionalSqlBuilder(Class<T> entityClass) {
         this.selectSqlBuilder = new HandleSelectSqlBuilder<>(entityClass);
         this.insertSqlBuilder = new HandleInsertSqlBuilder<>(entityClass);
         this.updateSqlBuilder = new HandleUpdateSqlBuilder<>(entityClass);
         this.deleteSqlBuilder = new HandleDeleteSqlBuilder<>(entityClass);
+        this.emptySqlBuilder = new EmptySqlBuilder<>(entityClass);
     }
 
     public AbstractSqlBuilder<T> getSelectSqlBuilder() {
@@ -49,4 +52,7 @@ public class CacheOptionalSqlBuilder<T> {
         return deleteSqlBuilder;
     }
 
+    public AbstractSqlBuilder<T> getEmptySqlBuilder() {
+        return emptySqlBuilder;
+    }
 }

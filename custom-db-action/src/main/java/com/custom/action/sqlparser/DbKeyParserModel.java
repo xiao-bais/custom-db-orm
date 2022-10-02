@@ -78,7 +78,7 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
         return field;
     }
 
-    protected Object getValue() {
+    public Object getValue() {
         if(entity == null) throw new NullPointerException();
         try {
             this.value = getFieldValue(entity, key);

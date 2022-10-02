@@ -1,6 +1,5 @@
 package com.custom.action.sqlparser;
 
-import com.custom.action.condition.DefaultColumnParseHandler;
 import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.fieldfill.ColumnAutoFillHandleUtils;
 import com.custom.action.interfaces.ColumnParseHandler;
@@ -48,7 +47,7 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
     public HandleUpdateSqlBuilder(Class<T> entityClass) {
         updateSqlColumns = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
-        TableSqlBuilder<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
+        TableParseModel<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
         this.injectTableInfo(tableSqlBuilder);
     }
 

@@ -2,7 +2,7 @@ package com.custom.action.condition;
 
 import com.custom.action.interfaces.ColumnParseHandler;
 import com.custom.action.sqlparser.TableInfoCache;
-import com.custom.action.sqlparser.TableSqlBuilder;
+import com.custom.action.sqlparser.TableParseModel;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.enums.SqlAggregate;
 
@@ -103,7 +103,7 @@ public abstract class AbstractSqlFunc<T, Children> {
     // 初始化
     protected void init(Class<T> cls) {
         columnParseHandler = new DefaultColumnParseHandler<>(cls);
-        TableSqlBuilder<T> tableModel = TableInfoCache.getTableModel(cls);
+        TableParseModel<T> tableModel = TableInfoCache.getTableModel(cls);
         fieldMapper = tableModel.getFieldMapper();
         columnMapper = tableModel.getColumnMapper();
         alias = tableModel.getAlias();

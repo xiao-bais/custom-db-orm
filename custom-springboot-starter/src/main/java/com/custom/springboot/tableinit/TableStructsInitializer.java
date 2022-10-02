@@ -3,7 +3,7 @@ package com.custom.springboot.tableinit;
 import com.custom.action.sqlparser.DbFieldParserModel;
 import com.custom.action.sqlparser.DbKeyParserModel;
 import com.custom.action.sqlparser.TableInfoCache;
-import com.custom.action.sqlparser.TableSqlBuilder;
+import com.custom.action.sqlparser.TableParseModel;
 import com.custom.comm.ConvertUtil;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.RexUtil;
@@ -104,8 +104,8 @@ public class TableStructsInitializer {
             if (!entityClass.isAnnotationPresent(DbTable.class)) {
                 continue;
             }
-            TableSqlBuilder<?> sqlBuilder = TableInfoCache.getTableModel(entityClass);
-            TableSqlBuilder<?> waitUpdateSqlBuilder = sqlBuilder.clone();
+            TableParseModel<?> sqlBuilder = TableInfoCache.getTableModel(entityClass);
+            TableParseModel<?> waitUpdateSqlBuilder = sqlBuilder.clone();
             String exitsTableSql = waitUpdateSqlBuilder.exitsTableSql(entityClass);
             String table = waitUpdateSqlBuilder.getTable();
             // 若表已存在，则进行下一步判断表字段是否存在
@@ -122,7 +122,7 @@ public class TableStructsInitializer {
     /**
      * 保存待创建的表
      */
-    private void saveWaitCreateTableInfo(TableSqlBuilder<?> waitUpdateSqlBuilder, String table) {
+    private void saveWaitCreateTableInfo(TableParseModel<?> waitUpdateSqlBuilder, String table) {
         TableCreateInfo tableCreateInfo;
         if (waitCreateMapper.containsKey(table)) {
             tableCreateInfo = waitCreateMapper.get(table);
@@ -146,7 +146,7 @@ public class TableStructsInitializer {
     }
 
 
-    private void addColumnInfos(TableSqlBuilder<?> waitUpdateSqlBuilder, Set<ColumnCreateInfo> buildColumnSqls) {
+    private void addColumnInfos(TableParseModel<?> waitUpdateSqlBuilder, Set<ColumnCreateInfo> buildColumnSqls) {
         List<? extends DbFieldParserModel<?>> fieldParserModels = waitUpdateSqlBuilder.getFieldParserModels().stream()
                 .filter(DbFieldParserModel::isExistsDbField)
                 .collect(Collectors.toList());
@@ -163,7 +163,7 @@ public class TableStructsInitializer {
     /**
      * 更新表新增字段
      */
-    private void buildColumnInfo(TableSqlBuilder<?> sqlBuilder, String table) throws Exception {
+    private void buildColumnInfo(TableParseModel<?> sqlBuilder, String table) throws Exception {
         String selectColumnSql = String.format(SELECT_COLUMN_SQL,
                 sqlBuilder.getTable(), dataBaseName);
         SelectSqlParamInfo<String> sqlParamInfo = new SelectSqlParamInfo<>(String.class, selectColumnSql, false);

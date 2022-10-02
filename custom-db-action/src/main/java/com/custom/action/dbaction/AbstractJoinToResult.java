@@ -2,16 +2,11 @@ package com.custom.action.dbaction;
 
 import com.custom.action.sqlparser.DbKeyParserModel;
 import com.custom.action.sqlparser.TableInfoCache;
-import com.custom.action.sqlparser.TableSqlBuilder;
+import com.custom.action.sqlparser.TableParseModel;
 import com.custom.comm.Asserts;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.annotations.DbKey;
-import com.custom.comm.annotations.DbOneToOne;
 import com.custom.comm.exceptions.CustomCheckException;
-import com.custom.comm.exceptions.ExThrowsUtil;
-
-import java.lang.reflect.Field;
-import java.util.Optional;
 
 /**
  * @author Xiao-Bai
@@ -65,7 +60,7 @@ public abstract class AbstractJoinToResult {
     protected void initJoinProperty() {
 
         // 初始化主表的字段
-        TableSqlBuilder<?> thisTableModel = TableInfoCache.getTableModel(thisClass);
+        TableParseModel<?> thisTableModel = TableInfoCache.getTableModel(thisClass);
         // this ....
         if (JudgeUtil.isBlank(thisField)) {
             DbKeyParserModel<?> keyParserModel = thisTableModel.getKeyParserModel();
@@ -82,7 +77,7 @@ public abstract class AbstractJoinToResult {
         }
 
         // 初始化关联表的字段 join ....
-        TableSqlBuilder<?> targetTableModel = TableInfoCache.getTableModel(this.joinTarget);
+        TableParseModel<?> targetTableModel = TableInfoCache.getTableModel(this.joinTarget);
         this.joinAlias = targetTableModel.getAlias();
         if (JudgeUtil.isBlank(joinField)) {
             DbKeyParserModel<?> keyParserModel = targetTableModel.getKeyParserModel();

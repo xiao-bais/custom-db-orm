@@ -1,9 +1,7 @@
 package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractJoinToResult;
-import com.custom.action.util.DbUtil;
 import com.custom.comm.CustomUtil;
-import com.custom.comm.JudgeUtil;
 import com.custom.comm.StrUtils;
 import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.DbKey;
@@ -86,7 +84,7 @@ public class DbJoinToManyParseModel extends AbstractJoinToResult {
         if (StrUtils.isBlank(sortField.trim())) {
             return "";
         }
-        TableSqlBuilder<?> tableModel = TableInfoCache.getTableModel(getJoinTarget());
+        TableParseModel<?> tableModel = TableInfoCache.getTableModel(getJoinTarget());
         return SymbolConstant.ORDER_BY
                 + tableModel.getFieldMapper().get(sortField) + " "
                 + (orderByAsc ? SymbolConstant.ASC : SymbolConstant.DESC);

@@ -2,7 +2,7 @@ package com.custom.action.condition;
 
 import com.custom.action.interfaces.ColumnParseHandler;
 import com.custom.action.sqlparser.TableInfoCache;
-import com.custom.action.sqlparser.TableSqlBuilder;
+import com.custom.action.sqlparser.TableParseModel;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.SymbolConstant;
@@ -30,7 +30,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
     /**
      * 实体解析模板
      */
-    private TableSqlBuilder<T> tableSqlBuilder;
+    private TableParseModel<T> tableSqlBuilder;
 
     /**
      * 实体Class对象
@@ -89,11 +89,11 @@ public abstract class ConditionWrapper<T> implements Serializable {
     private String customizeSql;
 
 
-    protected TableSqlBuilder<T> getTableSqlBuilder() {
+    protected TableParseModel<T> getTableSqlBuilder() {
         return tableSqlBuilder;
     }
 
-    protected void setTableSqlBuilder(TableSqlBuilder<T> tableSqlBuilder) {
+    protected void setTableSqlBuilder(TableParseModel<T> tableSqlBuilder) {
         this.tableSqlBuilder = tableSqlBuilder;
     }
 
@@ -197,7 +197,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
         this.customizeSql = customizeSql;
     }
 
-    protected TableSqlBuilder<T> getTableParserModelCache(Class<T> key) {
+    protected TableParseModel<T> getTableParserModelCache(Class<T> key) {
         return TableInfoCache.getTableModel(key);
     }
 
@@ -233,7 +233,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
 
     protected void wrapperInitialize(Class<T> entityClass) {
         this.entityClass = entityClass;
-        TableSqlBuilder<T> tableSqlBuilder = getTableParserModelCache(entityClass);
+        TableParseModel<T> tableSqlBuilder = getTableParserModelCache(entityClass);
         setTableSqlBuilder(tableSqlBuilder);
         this.dataStructureInit();
 

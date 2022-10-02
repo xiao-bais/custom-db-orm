@@ -3,7 +3,7 @@ package com.custom.action.dbaction;
 import com.custom.action.interfaces.ColumnParseHandler;
 import com.custom.action.sqlparser.DbFieldParserModel;
 import com.custom.action.sqlparser.DbKeyParserModel;
-import com.custom.action.sqlparser.TableSqlBuilder;
+import com.custom.action.sqlparser.TableParseModel;
 import com.custom.action.util.DbUtil;
 import com.custom.action.condition.DefaultColumnParseHandler;
 import com.custom.comm.Asserts;
@@ -112,59 +112,24 @@ public abstract class AbstractSqlBuilder<T> {
         return keyParserModel;
     }
 
-    public void setKeyParserModel(DbKeyParserModel<T> keyParserModel) {
-        this.keyParserModel = keyParserModel;
-    }
-
     public List<DbFieldParserModel<T>> getFieldParserModels() {
         return fieldParserModels;
-    }
-
-    public void setFieldParserModels(List<DbFieldParserModel<T>> fieldParserModels) {
-        this.fieldParserModels = fieldParserModels;
     }
 
     public Map<String, String> getFieldMapper() {
         return fieldMapper;
     }
 
-    public void setFieldMapper(Map<String, String> fieldMapper) {
-        this.fieldMapper = fieldMapper;
-    }
-
     public Map<String, String> getColumnMapper() {
         return columnMapper;
-    }
-
-    public void setColumnMapper(Map<String, String> columnMapper) {
-        this.columnMapper = columnMapper;
     }
 
     public String getLogicColumn() {
         return logicColumn;
     }
 
-    public void setLogicColumn(String logicColumn) {
-        this.logicColumn = logicColumn;
-    }
-
-    public void setLogicDeleteValue(Object logicDeleteValue) {
-        if (logicDeleteValue instanceof CharSequence) {
-            logicDeleteValue = String.format("'%s'", logicDeleteValue);
-        }
-        this.logicDeleteUpdateSql = DbUtil.formatLogicSql(alias, logicColumn, logicDeleteValue);
-    }
-
     public Object getLogicNotDeleteValue() {
         return logicNotDeleteValue;
-    }
-
-    public void setLogicNotDeleteValue(Object logicNotDeleteValue) {
-        if (logicNotDeleteValue instanceof CharSequence) {
-            logicNotDeleteValue = String.format("'%s'", logicNotDeleteValue);
-        }
-        this.logicNotDeleteValue = logicNotDeleteValue;
-        this.logicDeleteQuerySql = DbUtil.formatLogicSql(alias, logicColumn, logicNotDeleteValue);
     }
 
     public String getLogicDeleteQuerySql() {
@@ -173,14 +138,6 @@ public abstract class AbstractSqlBuilder<T> {
 
     public String getLogicDeleteUpdateSql() {
         return this.logicDeleteUpdateSql;
-    }
-
-    public void setSelectJdbc(CustomSelectJdbcBasic selectJdbc) {
-        this.selectJdbc = selectJdbc;
-    }
-
-    public void setUpdateJdbc(CustomUpdateJdbcBasic updateJdbc) {
-        this.updateJdbc = updateJdbc;
     }
 
     public ColumnParseHandler<T> getColumnParseHandler() {
@@ -241,11 +198,13 @@ public abstract class AbstractSqlBuilder<T> {
      * 注入基础表字段数据
      * @param tableSqlBuilder
      */
-    protected void injectTableInfo(TableSqlBuilder<T> tableSqlBuilder) {
+    protected void injectTableInfo(TableParseModel<T> tableSqlBuilder) {
         this.table = tableSqlBuilder.getTable();
         this.alias = tableSqlBuilder.getAlias();
         this.keyParserModel = tableSqlBuilder.getKeyParserModel();
         this.fieldParserModels = tableSqlBuilder.getFieldParserModels();
+        this.columnMapper = tableSqlBuilder.getColumnMapper();
+        this.fieldMapper = tableSqlBuilder.getFieldMapper();
 
         CustomConfigHelper configHelper = (CustomConfigHelper)
                 GlobalDataHandler.readGlobalObject(SymbolConstant.DATA_CONFIG);
@@ -254,8 +213,7 @@ public abstract class AbstractSqlBuilder<T> {
 
         // 设置逻辑删除字段
         this.logicColumn = customStrategy.getDbFieldDeleteLogic();
-        this.setLogicDeleteValue(customStrategy.getDeleteLogicValue());
-        this.setLogicNotDeleteValue(customStrategy.getNotDeleteLogicValue());
+        this.initLogic(customStrategy.getDeleteLogicValue(), customStrategy.getNotDeleteLogicValue());
 
         // 设置jdbc执行对象
         this.selectJdbc = new CustomSelectJdbcBasicImpl(
@@ -267,10 +225,39 @@ public abstract class AbstractSqlBuilder<T> {
     /**
      * 清空暂存
      */
-    protected void clear() {
+    public void clear() {
         this.entityList = new ArrayList<>();
         setEntity(null);
     }
+
+    /**
+     * 获取主键的值
+     */
+    public Object primaryKeyVal() {
+        if (keyParserModel == null) {
+            return null;
+        }
+        Object value = keyParserModel.getValue();
+        this.clear();
+        return value;
+    }
+
+    /**
+     * 初始化逻辑删除
+     */
+    public void initLogic(Object logicDeleteValue, Object logicNotDeleteValue) {
+        if (logicDeleteValue instanceof CharSequence) {
+            logicDeleteValue = String.format("'%s'", logicDeleteValue);
+        }
+        this.logicDeleteUpdateSql = DbUtil.formatLogicSql(alias, logicColumn, logicDeleteValue);
+
+        if (logicNotDeleteValue instanceof CharSequence) {
+            logicNotDeleteValue = String.format("'%s'", logicNotDeleteValue);
+        }
+        this.logicNotDeleteValue = logicNotDeleteValue;
+        this.logicDeleteQuerySql = DbUtil.formatLogicSql(alias, logicColumn, logicNotDeleteValue);
+    }
+
 
 
 }

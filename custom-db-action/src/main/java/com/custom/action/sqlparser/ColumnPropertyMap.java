@@ -96,7 +96,7 @@ public class ColumnPropertyMap<T> implements Serializable {
     }
 
     public static ColumnPropertyMap<?> parse2Map(Class<?> targetClass, String implMethod) {
-        TableSqlBuilder<?> tableModel = TableInfoCache.getTableModel(targetClass);
+        TableParseModel<?> tableModel = TableInfoCache.getTableModel(targetClass);
         return tableModel.columnPropertyMaps()
                 .stream().filter(op -> op.getGetMethodName().equals(implMethod))
                 .findFirst().orElse(null);
