@@ -8,7 +8,7 @@
         <version>2.1.8.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.custom</groupId>
+    <groupId>com.xb-custom</groupId>
     <artifactId>custom-task-manager</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <name>custom-task-manager</name>
@@ -19,7 +19,7 @@
     <dependencies>
 
         <dependency>
-            <groupId>com.custom</groupId>
+            <groupId>com.xb-custom</groupId>
             <artifactId>custom-springboot-starter</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>

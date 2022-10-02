@@ -1,19 +1,12 @@
 package com.home;
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.condition.Conditions;
 import com.custom.action.condition.DefaultConditionWrapper;
-import com.custom.action.dbaction.AbstractSqlBuilder;
-import com.custom.action.sqlparser.*;
-import com.custom.joiner.core.AbstractJoinConditional;
-import com.custom.joiner.core.AbstractJoinWrapper;
-import com.custom.joiner.core.LambdaJoinConditional;
-import com.custom.joiner.core.LambdaJoinWrapper;
-import com.home.customtest.entity.*;
+import com.custom.action.sqlparser.JdbcDao;
+import com.custom.action.sqlparser.JdbcOpDao;
+import com.home.customtest.entity.Student;
 
-import java.math.BigDecimal;
-import java.util.*;
+import java.util.List;
 
 /**
  * @Author Xiao-Bai
@@ -30,8 +23,11 @@ public class DoMain {
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
 
-
-
+        DefaultConditionWrapper<Student> conditionWrapper = Conditions.query(Student.class)
+                .select("`name`")
+                .eq("age", 20).like("name", "5");
+        List<Student> studentList = jdbcDao.selectList(conditionWrapper);
+        System.out.println("studentList = " + studentList);
 
 
     }

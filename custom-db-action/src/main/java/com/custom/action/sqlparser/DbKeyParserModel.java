@@ -26,23 +26,14 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
     private static final Logger logger = LoggerFactory.getLogger(DbKeyParserModel.class);
 
     private T entity;
-
     private String dbKey;
-
     private String key;
-
     private final Field field;
-
     private final DbType dbType;
-
     private final KeyStrategy strategy;
-
     private final Class<?> type;
-
     private final String length;
-
     private final String desc;
-
     private Object value;
 
 

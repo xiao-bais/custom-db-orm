@@ -1,7 +1,7 @@
 package com.custom.action.activerecord;
 
 import com.custom.action.dbaction.JdbcActiveWrapper;
-import com.custom.action.sqlparser.JdbcSingleAction;
+import com.custom.action.sqlparser.DefaultTableAction;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.condition.SFunction;
 import com.custom.comm.ConvertUtil;
@@ -130,7 +130,7 @@ public class ActiveModel<T extends ActiveModel<T, P>, P> implements Serializable
         if (configHelper.getDbCustomStrategy() == null) {
             configHelper.setDbCustomStrategy(new DbCustomStrategy());
         }
-        return new JdbcSingleAction<>(configHelper.getDbDataSource(),configHelper.getDbCustomStrategy(), entityClass());
+        return new DefaultTableAction<>(configHelper.getDbDataSource(),configHelper.getDbCustomStrategy(), entityClass());
     }
 
 

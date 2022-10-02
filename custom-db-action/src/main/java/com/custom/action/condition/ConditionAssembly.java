@@ -56,7 +56,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
     protected abstract Children getInstance();
 
     /**
-     * 拼接自定义的sql条件
+     * 拼接自定义的sql条件(该条件只支持拼接在where之后, group by之前)
      */
     public Children addCutsomizeSql(String customizeSql, Object... params) {
         if (JudgeUtil.isEmpty(customizeSql)) {
@@ -64,6 +64,13 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
         }
         setCustomizeSql(customizeSql);
         addParams(Arrays.stream(params).collect(Collectors.toList()));
+        return childrenClass;
+    }
+
+    public Children addCutsomizeSql(boolean condition, String customizeSql, Object... params) {
+        if (condition) {
+            return addCutsomizeSql(customizeSql, params);
+        }
         return childrenClass;
     }
 

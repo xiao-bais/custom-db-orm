@@ -7,7 +7,7 @@ import com.custom.action.dbaction.AbstractSqlBuilder;
  * @date 2022/9/22 1:15
  * @desc
  */
-public class CacheOptionalSqlBuilder<T> {
+public class SqlBuilderTemplate<T> {
 
     /**
      * 查询sql构造模板对象
@@ -28,7 +28,7 @@ public class CacheOptionalSqlBuilder<T> {
 
     private final AbstractSqlBuilder<T> emptySqlBuilder;
 
-    public CacheOptionalSqlBuilder(Class<T> entityClass) {
+    public SqlBuilderTemplate(Class<T> entityClass) {
         this.selectSqlBuilder = new HandleSelectSqlBuilder<>(entityClass);
         this.insertSqlBuilder = new HandleInsertSqlBuilder<>(entityClass);
         this.updateSqlBuilder = new HandleUpdateSqlBuilder<>(entityClass);

@@ -18,18 +18,18 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/7/15 0015 16:11
- * @Desc
+ * @author Xiao-Bai
+ * @date 2022/7/15 0015 16:11
+ * 指定单表的专属DAO
  */
-public class JdbcSingleAction<T, P> implements JdbcActiveWrapper<T, P> {
+public class DefaultTableAction<T, P> implements JdbcActiveWrapper<T, P> {
 
-    private static final Logger logger = LoggerFactory.getLogger(JdbcSingleAction.class);
+    private static final Logger logger = LoggerFactory.getLogger(DefaultTableAction.class);
 
     private final AbstractSqlExecutor jdbcAction;
     private final Class<T> entityClass;
 
-    public JdbcSingleAction(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy, Class<T> entityClass) {
+    public DefaultTableAction(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy, Class<T> entityClass) {
         this.entityClass = entityClass;
         this.jdbcAction = new JdbcActionProxy(new JdbcAction(), dbDataSource, dbCustomStrategy).createProxy();
     }

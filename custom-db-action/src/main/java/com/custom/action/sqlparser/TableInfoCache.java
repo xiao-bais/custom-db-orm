@@ -110,38 +110,38 @@ public class TableInfoCache {
      */
     private final static Map<String, Object> SQL_BUILDER_TEMPLATE = new CustomLocalCache();
 
-    protected static <T> CacheOptionalSqlBuilder<T> getSqlBuilderCache(Class<T> entityClass) {
-        CacheOptionalSqlBuilder<T> optionalSqlBuilder = (CacheOptionalSqlBuilder<T>)
+    protected static <T> SqlBuilderTemplate<T> getSqlBuilderCache(Class<T> entityClass) {
+        SqlBuilderTemplate<T> optionalSqlBuilder = (SqlBuilderTemplate<T>)
                 SQL_BUILDER_TEMPLATE.get(entityClass.getName());
         if (optionalSqlBuilder == null) {
-            optionalSqlBuilder = new CacheOptionalSqlBuilder<>(entityClass);
+            optionalSqlBuilder = new SqlBuilderTemplate<>(entityClass);
             SQL_BUILDER_TEMPLATE.put(entityClass.getName(), optionalSqlBuilder);
         }
         return optionalSqlBuilder;
     }
 
     protected static <T> HandleSelectSqlBuilder<T> getSelectSqlBuilderCache(Class<T> entityClass) {
-        CacheOptionalSqlBuilder<T> sqlBuilderCache = getSqlBuilderCache(entityClass);
+        SqlBuilderTemplate<T> sqlBuilderCache = getSqlBuilderCache(entityClass);
         return (HandleSelectSqlBuilder<T>) sqlBuilderCache.getSelectSqlBuilder();
     }
 
     protected static <T> HandleInsertSqlBuilder<T> getInsertSqlBuilderCache(Class<T> entityClass) {
-        CacheOptionalSqlBuilder<T> sqlBuilderCache = getSqlBuilderCache(entityClass);
+        SqlBuilderTemplate<T> sqlBuilderCache = getSqlBuilderCache(entityClass);
         return (HandleInsertSqlBuilder<T>) sqlBuilderCache.getInsertSqlBuilder();
     }
 
     protected static <T> HandleUpdateSqlBuilder<T> getUpdateSqlBuilderCache(Class<T> entityClass) {
-        CacheOptionalSqlBuilder<T> sqlBuilderCache = getSqlBuilderCache(entityClass);
+        SqlBuilderTemplate<T> sqlBuilderCache = getSqlBuilderCache(entityClass);
         return (HandleUpdateSqlBuilder<T>) sqlBuilderCache.getUpdateSqlBuilder();
     }
 
     protected static <T> HandleDeleteSqlBuilder<T> getDeleteSqlBuilderCache(Class<T> entityClass) {
-        CacheOptionalSqlBuilder<T> sqlBuilderCache = getSqlBuilderCache(entityClass);
+        SqlBuilderTemplate<T> sqlBuilderCache = getSqlBuilderCache(entityClass);
         return (HandleDeleteSqlBuilder<T>) sqlBuilderCache.getDeleteSqlBuilder();
     }
 
     protected static <T> EmptySqlBuilder<T> getEmptySqlBuilder(Class<T> entityClass) {
-        CacheOptionalSqlBuilder<T> sqlBuilderCache = getSqlBuilderCache(entityClass);
+        SqlBuilderTemplate<T> sqlBuilderCache = getSqlBuilderCache(entityClass);
         return (EmptySqlBuilder<T>) sqlBuilderCache.getEmptySqlBuilder();
     }
 
