@@ -7,6 +7,9 @@ import com.custom.comm.annotations.*;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.configuration.DbConnection;
+import com.custom.configuration.DbDataSource;
+import com.custom.jdbc.CustomConfigHelper;
+import com.custom.jdbc.GlobalDataHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,16 +32,6 @@ public class TableParseModel<T> implements Cloneable {
      * 实体表的class对象
      */
     private Class<T> entityClass;
-
-    /**
-     * 实体单个实例，通常用于插入或修改单条记录时用到
-     */
-    private T entity;
-
-    /**
-     * 多个实体集合，用于批量插入时的sql生成
-     */
-    private List<T> entityList;
 
     /**
      * 表名称
@@ -256,7 +249,14 @@ public class TableParseModel<T> implements Cloneable {
             ExThrowsUtil.toCustom(cls.getName() + " 未指定@DbTable注解上实体映射的表名");
         }
         this.alias = annotation.alias();
-        this.table = annotation.table();
+        if (annotation.enabledDbPrefix()) {
+            CustomConfigHelper configHelper = (CustomConfigHelper) GlobalDataHandler.readGlobalObject(SymbolConstant.DATA_CONFIG);
+            DbDataSource dbDataSource = configHelper.getDbDataSource();
+            String dbPrefix = CustomUtil.getDataBase(dbDataSource.getUrl());
+            this.table = dbPrefix + "." + annotation.table();
+        } else {
+            this.table = annotation.table();
+        }
         this.desc = annotation.desc();
         this.findUpDbJoinTables = annotation.mergeSuperDbJoinTables();
         this.enabledDefaultValue = annotation.enabledDefaultValue();
@@ -387,10 +387,10 @@ public class TableParseModel<T> implements Cloneable {
             if (field.isAnnotationPresent(DbKey.class)
                     && !field.isAnnotationPresent(DbField.class)
                     && Objects.isNull(keyParserModel)) {
-                keyParserModel = new DbKeyParserModel<>(entity, field, this.table, this.alias, this.underlineToCamel);
+                keyParserModel = new DbKeyParserModel<>(field, this.table, this.alias, this.underlineToCamel);
 
             } else if (field.isAnnotationPresent(DbField.class) && isBuildUpdateModels) {
-                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(entity, field, this.table, this.alias, this.underlineToCamel, this.enabledDefaultValue, true);
+                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias, this.underlineToCamel, this.enabledDefaultValue, true);
                 fieldParserModels.add(fieldParserModel);
 
             } else if (field.isAnnotationPresent(DbField.class)) {
@@ -465,30 +465,12 @@ public class TableParseModel<T> implements Cloneable {
         return fieldParserModels;
     }
 
-    public T getEntity() {
-        return entity;
-    }
-
     public Field[] getFields() {
         return fields;
     }
 
     public void setEntityClass(Class<T> entityClass) {
         this.entityClass = entityClass;
-    }
-
-    public void setEntity(T entity) {
-        this.entity = entity;
-        if (Objects.nonNull(keyParserModel)) {
-            keyParserModel.setEntity(entity);
-        }
-        if (!fieldParserModels.isEmpty()) {
-            fieldParserModels.forEach(x -> x.setEntity(entity));
-        }
-    }
-
-    public void setEntityList(List<T> entityList) {
-        this.entityList = entityList;
     }
 
     public void setTable(String table) {

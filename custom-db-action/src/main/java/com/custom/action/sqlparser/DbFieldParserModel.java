@@ -105,11 +105,6 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
      */
     private final boolean existsDbField;
 
-    public DbFieldParserModel(T t, Field field, String table, String alias, boolean underlineToCamel, boolean enabledDefaultValue, boolean existsDbField) {
-        this(field, table, alias, underlineToCamel, enabledDefaultValue, existsDbField);
-        this.entity = t;
-    }
-
     /**
      * 存在@DbField注解下的属性解析
      */
@@ -247,8 +242,10 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
                     .append(SymbolConstant.BRACKETS_LEFT)
                     .append(this.length)
                     .append(SymbolConstant.BRACKETS_RIGHT).append(" ");
+
         return fieldSql.append("default ").append(CharSequence.class.isAssignableFrom(this.type) ?
                     String.valueOf(this.defaultValue).equals(SymbolConstant.EMPTY) ? "''"
+
                             : String.format("'%s'", this.defaultValue) : this.defaultValue).append(" ")
                 .append(this.isNull ? "null" : "not null").append(" ")
                 .append(String.format(" comment '%s'", this.desc)).toString();
@@ -273,6 +270,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
 
     @Override
     public String getSelectFieldSql() {
+        // todo 待优化，默认值为false时也能进入判断，显然这是不合理的
         if (JudgeUtil.isNotEmpty(this.defaultValue)) {
             return DbUtil.ifNull(this.column, this.defaultValue, this.fieldName);
         }

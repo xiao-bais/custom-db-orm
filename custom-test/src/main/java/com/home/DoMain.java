@@ -25,9 +25,7 @@ public class DoMain {
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
 
-        Student student = new Student();
-        student.setName("不为空");
-        jdbcDao.save(student);
+        jdbcDao.selectByKey(Student.class, 11);
 
 
     }

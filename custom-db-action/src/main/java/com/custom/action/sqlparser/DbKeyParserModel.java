@@ -152,11 +152,6 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
     }
 
 
-    public DbKeyParserModel(T t, Field field, String table, String alias, boolean underlineToCamel){
-        this(field, table, alias, underlineToCamel);
-        this.entity = t;
-    }
-
     public DbKeyParserModel(Field field, String table, String alias, boolean underlineToCamel){
         this.key = GlobalDataHandler.hasSqlKeyword(field.getName()) ? String.format("`%s`", field.getName()) : field.getName();
         DbKey annotation = field.getAnnotation(DbKey.class);

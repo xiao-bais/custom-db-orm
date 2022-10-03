@@ -23,7 +23,7 @@ import java.util.Map;
  **/
 @EqualsAndHashCode(callSuper = true)
 @Data
-@DbTable(table = "student", desc = "学生信息表", enabledDefaultValue = true)
+@DbTable(table = "student", desc = "学生信息表", enabledDbPrefix = true)
 @TableName("student")
 public class Student extends ActiveModel<Student, Integer> implements Serializable {
 
