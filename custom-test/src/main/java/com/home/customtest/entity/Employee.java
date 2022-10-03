@@ -13,7 +13,7 @@ import java.util.Date;
  * @Date 2021/11/27 15:37
  * @Desc：
  **/
-@DbTable(table = "employee", enabledDefaultValue = true)
+@DbTable(table = "employee")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,13 +25,13 @@ public class Employee {
     @DbKey(strategy = KeyStrategy.UUID)
     private String id;
 
-    @DbField(defaultValue = "员工")
+    @DbField()
     private String empName;
 
     @DbField
     private boolean sex;
 
-    @DbField(defaultValue = "20")
+    @DbField
     private Integer age;
 
     @DbField
@@ -46,7 +46,7 @@ public class Employee {
     @DbField
     private Integer areaId;
 
-    @DbField(defaultValue = "他很懒，什么都没写")
+    @DbField
     private String explain;
 
     @DbField

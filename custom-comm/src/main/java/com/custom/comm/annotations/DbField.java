@@ -37,22 +37,6 @@ public @interface DbField {
 
 
     /**
-     * 默认值，在创建表或者插入新记录时会附带自定义的默认值
-     * <br/> (若不想逐个设定，可由{@link DbTable#enabledDefaultValue()}开启给定的默认值)
-     * 给定的默认值可参照{@link DbType#getValue()}
-     * <p>
-     *     若默认值是int、long、double、decimal, float 等之类的数字类型，则自定义即可
-     *     若默认值是 boolean类型，则直接以字符串的true/false或者1,0即可 (不区分大小写)
-     * </p>
-     * <p>
-     *     注意：若给定的默认值是abc这样的字符串，而java属性或sql字段类型为int类型之类的，则会无法解析的，可能会抛出异常
-     * </p>
-     * @return defaultValue
-     */
-    String defaultValue() default SymbolConstant.EMPTY;
-
-
-    /**
      * 是否为空，只在创建表的时候用到
      * @return isNull
      */

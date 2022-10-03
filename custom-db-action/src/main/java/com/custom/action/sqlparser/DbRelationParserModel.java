@@ -61,7 +61,7 @@ public class DbRelationParserModel<T> extends AbstractTableModel<T> {
 
 
     @Override
-    public String buildTableSql() {
+    public String createTableSql() {
         throw new UnsupportedOperationException();
     }
 

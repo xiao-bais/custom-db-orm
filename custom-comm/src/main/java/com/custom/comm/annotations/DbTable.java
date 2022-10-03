@@ -48,15 +48,6 @@ public @interface DbTable {
 
 
     /**
-     * 是否开启默认值(在创建表或者插入新记录时会附带自定义的默认值)
-     * 注意: 若{@link DbField}上也给定了设定的默认值，则以{@link DbField}的默认值优先
-     * @return enabledDefaultValue
-     * @see DbType 给定的默认值来源于该枚举类
-     */
-    boolean enabledDefaultValue() default false;
-
-
-    /**
      * 是否开启数据库前缀，在操作sql时，生成的sql表名会自动附带数据库前缀
      * <br/> 表 -> 开启前: student, 开启后: hos.student
      */

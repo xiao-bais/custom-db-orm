@@ -120,13 +120,13 @@ public class TableParseModel<T> implements Cloneable {
         StringBuilder createTableSql = new StringBuilder();
         StringJoiner fieldSql = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_1);
         if (Objects.nonNull(keyParserModel)) {
-            fieldSql.add(keyParserModel.buildTableSql() + "\n");
+            fieldSql.add(keyParserModel.createTableSql() + "\n");
         }
 
         if (!this.fieldParserModels.isEmpty()) {
             fieldParserModels.stream()
                     .filter(DbFieldParserModel::isExistsDbField)
-                    .map(dbFieldParserModel -> dbFieldParserModel.buildTableSql() + "\n").forEach(fieldSql::add);
+                    .map(dbFieldParserModel -> dbFieldParserModel.createTableSql() + "\n").forEach(fieldSql::add);
         }
 
         createTableSql.append(String.format("create table `%s` (\n%s)", this.table, fieldSql));
@@ -259,7 +259,6 @@ public class TableParseModel<T> implements Cloneable {
         }
         this.desc = annotation.desc();
         this.findUpDbJoinTables = annotation.mergeSuperDbJoinTables();
-        this.enabledDefaultValue = annotation.enabledDefaultValue();
         this.underlineToCamel = underlineToCamel;
         this.oneToOneFieldList = new ArrayList<>();
         this.oneToManyFieldList = new ArrayList<>();

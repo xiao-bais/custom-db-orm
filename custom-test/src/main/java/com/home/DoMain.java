@@ -25,7 +25,11 @@ public class DoMain {
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
 
-        jdbcDao.selectByKey(Student.class, 11);
+        System.out.println(1);
+        Student student = jdbcOpDao.selectByKey(Student.class, 11);
+        System.out.println(2);
+        List<Student> studentList = jdbcOpDao.selectList(Student.class, "and a.name = ?", "李重阳");
+        System.out.println(3);
 
 
     }

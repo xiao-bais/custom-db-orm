@@ -75,12 +75,6 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
                     RexUtil.regexStr(RexUtil.single_quotes, String.valueOf(getLogicNotDeleteValue()))
             );
         }
-        // 当设定了默认值时，若字段值为null，则可从用户自定义或给定的默认值中设入
-        if (JudgeUtil.isEmpty(fieldValue)
-                && Objects.nonNull(fieldModel.getDefaultValue())) {
-            fieldValue = fieldModel.getDefaultValue();
-            fieldModel.setValue(fieldValue);
-        }
 
         return fieldValue;
     }

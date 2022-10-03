@@ -140,7 +140,7 @@ public class TableStructsInitializer {
         if (JudgeUtil.isEmpty(tableCreateInfo.getPrimaryKeyCreateSql())) {
             DbKeyParserModel<?> keyParserModel = waitUpdateSqlBuilder.getKeyParserModel();
             if (JudgeUtil.isNotEmpty(keyParserModel)) {
-                tableCreateInfo.setPrimaryKeyCreateSql(keyParserModel.buildTableSql());
+                tableCreateInfo.setPrimaryKeyCreateSql(keyParserModel.createTableSql());
             }
         }
     }
@@ -153,7 +153,7 @@ public class TableStructsInitializer {
         for (DbFieldParserModel<?> fieldParserModel : fieldParserModels) {
             ColumnCreateInfo columnCreateInfo = new ColumnCreateInfo();
             columnCreateInfo.setColumn(fieldParserModel.getColumn());
-            columnCreateInfo.setCreateColumnSql(fieldParserModel.buildTableSql());
+            columnCreateInfo.setCreateColumnSql(fieldParserModel.createTableSql());
             if (buildColumnSqls.stream().noneMatch(x -> x.equals(columnCreateInfo))) {
                 buildColumnSqls.add(columnCreateInfo);
             }
@@ -185,10 +185,10 @@ public class TableStructsInitializer {
             DbFieldParserModel<?> fieldParserModel = fieldParserModels.get(i);
             String addColumnSql;
             if (i == 0) {
-                addColumnSql = String.format(CREATE_COLUMN_FIRST_SQL, table, fieldParserModel.buildTableSql());
+                addColumnSql = String.format(CREATE_COLUMN_FIRST_SQL, table, fieldParserModel.createTableSql());
             } else {
                 String beforeColumn = truthColumnList.get(i - 1);
-                addColumnSql = String.format(CREATE_COLUMN_AFTER_SQL, table, fieldParserModel.buildTableSql(), beforeColumn);
+                addColumnSql = String.format(CREATE_COLUMN_AFTER_SQL, table, fieldParserModel.createTableSql(), beforeColumn);
             }
             addColumnSqlList.add(addColumnSql);
         }

@@ -31,8 +31,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
     private final List<String> joinTableParserModels;
     private final boolean existNeedInjectResult;
 
-    public HandleSelectSqlBuilder(
-            Class<T> entityClass) {
+    public HandleSelectSqlBuilder(Class<T> entityClass) {
         TableParseModel<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
         this.selectSql = new StringBuilder();
         this.selectJoinSql = new StringBuilder();

@@ -102,7 +102,7 @@ public class DbJoinTableParserModel<T> extends AbstractTableModel<T> {
     }
 
     @Override
-    public String buildTableSql() {
+    public String createTableSql() {
         throw new UnsupportedOperationException();
     }
 

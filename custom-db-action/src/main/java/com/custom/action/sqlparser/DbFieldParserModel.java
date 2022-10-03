@@ -46,10 +46,6 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
 
     /**
      * 查询时若当前字段为字符串类型，是否null转为空字符串
-     * <p>
-     *     当设置了默认值后，查询时若值为null，则set默认值
-     *     ifnull(a.name, '默认值') AS 映射字段
-     * </p>
      */
     private boolean isNullToEmpty;
 
@@ -89,18 +85,6 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     private boolean isNull;
 
     /**
-     * 是否开启了表的默认值
-     * 开启以后，在新增时若java属性值为null，则自动添加给定的默认值
-     * 若字段跟表同时开启了默认值配置，则以字段设置的默认值优先
-     */
-    private boolean enabledDefaultValue;
-
-    /**
-     * 默认值
-     */
-    private Object defaultValue;
-
-    /**
      * 是否标注了@DbField注解
      */
     private final boolean existsDbField;
@@ -137,11 +121,8 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
         this.desc = annotation.desc();
         this.dbType = annotation.dataType() == DbType.DbVarchar ? DbType.getDbMediaType(field.getType()) : annotation.dataType();
         this.length = this.dbType.getLength();
-        this.defaultValue = annotation.defaultValue();
-        this.enabledDefaultValue = enabledDefaultValue;
         super.setTable(table);
         super.setAlias(alias);
-        this.defaultValueInjector();
     }
 
     /**
@@ -154,7 +135,6 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
         }
         super.setTable(table);
         super.setAlias(alias);
-        this.defaultValueInjector();
     }
 
     public String getFieldName() {
@@ -182,73 +162,26 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     }
 
 
-    /**
-     * 默认值注入
-     */
-    private void defaultValueInjector() {
-        // 若本身未设置默认值，则给定表的默认值
-        if (JudgeUtil.isEmpty(this.defaultValue) && this.enabledDefaultValue) {
-            this.defaultValue = this.dbType.getValue();
-            return;
-        }
-
-        Object value = null;
-        String tmpValue = String.valueOf(this.defaultValue);
-        if (String.valueOf(this.defaultValue).matches(RexUtil.check_number)) {
-            try {
-                if (Integer.class.isAssignableFrom(this.type)) {
-                    value = Integer.parseInt(tmpValue);
-                } else if (Long.class.isAssignableFrom(this.type)) {
-                    value = Long.parseLong(tmpValue);
-                    // 如果java类型是Boolean 而默认值需要一致，true可写"true" 或 "1"，否则判定为false
-                } else if (Boolean.class.isAssignableFrom(this.type)) {
-                    value = ConvertUtil.conBool(tmpValue);
-                }
-            } catch (NumberFormatException e) {
-                if (Double.class.isAssignableFrom(this.type)) {
-                    value = Double.parseDouble(tmpValue);
-                } else if (Float.class.isAssignableFrom(this.type)) {
-                    value = Float.parseFloat(tmpValue);
-                } else if (BigDecimal.class.isAssignableFrom(this.type)) {
-                    value = new BigDecimal(tmpValue);
-                }
-            }
-        }else if (Boolean.class.isAssignableFrom(this.type)) {
-            value = Boolean.parseBoolean(tmpValue);
-        }else if (CharSequence.class.isAssignableFrom(this.type) && !tmpValue.equals("null")) {
-            value = tmpValue;
-        }
-        this.defaultValue = value;
-    }
-
 
     /**
      * 构建创建表的sql语句
      */
     @Override
-    public String buildTableSql() {
+    public String createTableSql() {
         if (!existsDbField) {
             return SymbolConstant.EMPTY;
         }
-        String newColumn = this.column;
-        if (!RexUtil.hasRegex(this.column, RexUtil.back_quotes)) {
-            newColumn = GlobalDataHandler.wrapperSqlKeyword(this.column);
-        }
-        StringBuilder fieldSql = new StringBuilder(newColumn).append(" ");
+        StringBuilder createSql = new StringBuilder(this.column).append(" ");
         if (dbType == DbType.DbDate || dbType == DbType.DbDateTime)
-            fieldSql.append(dbType.getType()).append(" ");
+            createSql.append(dbType.getType()).append(" ");
         else
-            fieldSql.append(dbType.getType())
+            createSql.append(dbType.getType())
                     .append(SymbolConstant.BRACKETS_LEFT)
                     .append(this.length)
                     .append(SymbolConstant.BRACKETS_RIGHT).append(" ");
 
-        return fieldSql.append("default ").append(CharSequence.class.isAssignableFrom(this.type) ?
-                    String.valueOf(this.defaultValue).equals(SymbolConstant.EMPTY) ? "''"
-
-                            : String.format("'%s'", this.defaultValue) : this.defaultValue).append(" ")
-                .append(this.isNull ? "null" : "not null").append(" ")
-                .append(String.format(" comment '%s'", this.desc)).toString();
+        return createSql.append(this.isNull ? "NULL" : "NOT NULL").append(" ")
+                .append(String.format(" COMMENT '%s'", this.desc)).toString();
     }
 
     @Override
@@ -270,10 +203,6 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
 
     @Override
     public String getSelectFieldSql() {
-        // todo 待优化，默认值为false时也能进入判断，显然这是不合理的
-        if (JudgeUtil.isNotEmpty(this.defaultValue)) {
-            return DbUtil.ifNull(this.column, this.defaultValue, this.fieldName);
-        }
         if (JudgeUtil.isNotEmpty(this.wrapperColumn)) {
             return DbUtil.wrapperSqlColumn(this.wrapperColumn, this.fieldName, this.isNullToEmpty);
         }
@@ -313,22 +242,8 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
         this.type = type;
     }
 
-    public Object getDefaultValue() {
-        return defaultValue;
-    }
-
     public boolean isExistsDbField() {
         return existsDbField;
     }
 
-    /**
-     * 是否是sql关键字
-     * <li> 该方法与{@link GlobalDataHandler#hasSqlKeyword(String)}相比，略有不同 </li>
-     * <li> 前者是判断是否已经是sql关键字，也就是说该字段是否已被包装成[`name`]这样的格式 </li>
-     * <li> 后者是判断是否可认定为sql关键字，该字段还未被包装</li>
-     */
-    private boolean isSqlWrapped() {
-        char[] chars = fieldName.toCharArray();
-        return chars[0] == 96 && chars[chars.length - 1] == 96;
-    }
 }
