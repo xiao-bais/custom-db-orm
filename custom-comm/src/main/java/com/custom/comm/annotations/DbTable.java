@@ -25,11 +25,13 @@ public @interface DbTable {
      */
     String table();
 
+
     /**
      * 指定表的别名
      * @return alias
      */
     String alias() default "a";
+
 
     /**
      * 指定表的说明
@@ -37,11 +39,13 @@ public @interface DbTable {
      */
     String desc() default SymbolConstant.EMPTY;
 
+
     /**
      * 当子类跟父类同时标注了@DbJoinTable(s)注解时，是否在查询时向上查找父类的@DbJoinTable(s)注解，且合并关联条件
      * @return mergeSuperDbJoinTables
      */
     boolean mergeSuperDbJoinTables() default true;
+
 
     /**
      * 是否开启默认值(在创建表或者插入新记录时会附带自定义的默认值)
@@ -50,5 +54,13 @@ public @interface DbTable {
      * @see DbType 给定的默认值来源于该枚举类
      */
     boolean enabledDefaultValue() default false;
+
+
+    /**
+     * 是否开启数据库前缀，在操作sql时，生成的sql表名会自动附带数据库前缀
+     * <br/> 表 -> 开启前: student, 开启后: hos.student
+     */
+    boolean enabledDbPrefix() default false;
+
 
 }

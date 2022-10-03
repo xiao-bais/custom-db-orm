@@ -3,6 +3,7 @@ package com.custom.action.dbaction;
 import com.custom.action.condition.AbstractUpdateSet;
 import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.action.sqlparser.HandleSelectSqlBuilder;
+import com.custom.action.sqlparser.JdbcOpDao;
 import com.custom.action.sqlparser.MappingResultInjector;
 import com.custom.action.sqlparser.TableParseModel;
 import com.custom.action.condition.ConditionWrapper;
@@ -30,7 +31,7 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
     public abstract <T> List<T> selectList(Class<T> entityClass, String condition, Object... params);
     public abstract <T> List<T> selectListBySql(Class<T> entityClass, String sql, Object... params);
     public abstract <T> DbPageRows<T> selectPage(Class<T> entityClass, String condition, DbPageRows<T> dbPageRows, Object... params);
-    public abstract <T> T selectByKey(Class<T> entityClass, Object key);
+    public abstract <T> T selectByKey(Class<T> entityClass, Serializable key);
     public abstract <T> List<T> selectBatchKeys(Class<T> entityClass, Collection<? extends Serializable> keys);
     public abstract <T> T selectOne(Class<T> entityClass, String condition, Object... params);
     public abstract <T> T selectOneBySql(Class<T> entityClass, String sql, Object... params);

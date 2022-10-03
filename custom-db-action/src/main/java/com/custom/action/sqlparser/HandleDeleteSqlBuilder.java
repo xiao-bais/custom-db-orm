@@ -200,16 +200,7 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
         handleByCondition();
     }
 
-    public HandleDeleteSqlBuilder(){}
-
     public HandleDeleteSqlBuilder(Class<T> entityClass) {
-        TableParseModel<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
-        this.injectTableInfo(tableSqlBuilder);
-    }
-
-    public HandleDeleteSqlBuilder(Class<T> entityClass, String deleteCondition, List<Object> sqlParams) {
-        this.deleteCondition = deleteCondition;
-        this.setSqlParams(sqlParams);
         TableParseModel<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
         this.injectTableInfo(tableSqlBuilder);
     }

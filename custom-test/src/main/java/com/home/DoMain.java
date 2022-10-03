@@ -1,7 +1,9 @@
 package com.home;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.custom.action.condition.Conditions;
 import com.custom.action.condition.DefaultConditionWrapper;
+import com.custom.action.condition.LambdaConditionWrapper;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.JdbcOpDao;
 import com.home.customtest.entity.Student;
@@ -23,11 +25,9 @@ public class DoMain {
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
 
-        DefaultConditionWrapper<Student> conditionWrapper = Conditions.query(Student.class)
-                .select("`name`")
-                .eq("age", 20).like("name", "5");
-        List<Student> studentList = jdbcDao.selectList(conditionWrapper);
-        System.out.println("studentList = " + studentList);
+        Student student = new Student();
+        student.setName("不为空");
+        jdbcDao.save(student);
 
 
     }

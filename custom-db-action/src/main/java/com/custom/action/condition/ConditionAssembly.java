@@ -269,7 +269,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
     protected Children doSelectSqlFunc(Consumer<SelectFunc<T>> consumer) {
         SelectFunc<T> sqlFunc = new SelectFunc<>(getEntityClass());
         consumer.accept(sqlFunc);
-        this.mergeSelect(sqlFunc.getColumns().split(SymbolConstant.SEPARATOR_COMMA_2));
+        this.mergeSelect(sqlFunc.getColumns().split(String.valueOf(SymbolConstant.CENTER_LINE)));
         return childrenClass;
     }
 

@@ -158,7 +158,7 @@ public abstract class AbstractSqlFunc<T, Children> {
     }
 
     protected String getColumns() {
-        return sqlFragments.stream().collect(Collectors.joining(SymbolConstant.SEPARATOR_COMMA_2));
+        return sqlFragments.stream().collect(Collectors.joining(String.valueOf(SymbolConstant.CENTER_LINE)));
     }
 
     protected ColumnParseHandler<T> getColumnParseHandler() {

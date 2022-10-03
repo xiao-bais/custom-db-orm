@@ -99,7 +99,7 @@ public class ConditionAdapter<T, Children> extends ConditionAssembly<T, SFunctio
 
     @Override
     public Children select(SelectFunc<T> selectFunc) {
-        mergeSelect(selectFunc.getColumns().split(SymbolConstant.SEPARATOR_COMMA_2));
+        mergeSelect(selectFunc.getColumns().split(String.valueOf(SymbolConstant.CENTER_LINE)));
         return childrenClass;
     }
 

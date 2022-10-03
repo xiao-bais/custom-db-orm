@@ -28,11 +28,13 @@ public @interface DbField {
      */
     DbType dataType() default DbType.DbVarchar;
 
+
     /**
      * 字段说明
      * @return desc
      */
     String desc() default SymbolConstant.EMPTY;
+
 
     /**
      * 默认值，在创建表或者插入新记录时会附带自定义的默认值
@@ -49,11 +51,13 @@ public @interface DbField {
      */
     String defaultValue() default SymbolConstant.EMPTY;
 
+
     /**
      * 是否为空，只在创建表的时候用到
      * @return isNull
      */
     boolean isNull() default true;
+
 
     /**
      * 查询时若当前sql字段为字符类型，是否null转为空字符
@@ -64,6 +68,7 @@ public @interface DbField {
      */
     boolean isNullToEmpty() default false;
 
+
     /**
      * 查询时，指定查询sql字段的包装
      * 例：concat('user-', tp.name) columnName
@@ -73,6 +78,7 @@ public @interface DbField {
      * @return wrapperColumn
      */
     String wrapperColumn() default SymbolConstant.EMPTY;
+
 
     /**
      * 是否存在该表字段，作用与{@link DbIgnore}一致

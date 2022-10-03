@@ -43,7 +43,7 @@ public interface JdbcDao {
     /**
      * 根据主键查询一条记录
      */
-    <T> T selectByKey(Class<T> t, Object key);
+    <T> T selectByKey(Class<T> t, Serializable key);
 
     /**
      * 纯sql查询一条记录

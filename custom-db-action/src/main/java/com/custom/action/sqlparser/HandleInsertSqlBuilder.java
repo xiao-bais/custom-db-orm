@@ -85,8 +85,6 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
         return fieldValue;
     }
 
-    public HandleInsertSqlBuilder() {
-    }
 
     public HandleInsertSqlBuilder(Class<T> entityClass) {
         this.insertSuffix = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_1,

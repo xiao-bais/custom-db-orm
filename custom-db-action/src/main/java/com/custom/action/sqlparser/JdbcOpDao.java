@@ -56,7 +56,7 @@ public class JdbcOpDao {
     /**
      * 根据主键查询一条记录
      */
-    public <T> T selectByKey(Class<T> t, Object key) {
+    public <T> T selectByKey(Class<T> t, Serializable key) {
         return jdbcAction.selectByKey(t, key);
     }
 

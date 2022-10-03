@@ -95,7 +95,7 @@ public class JdbcAction extends AbstractSqlExecutor {
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
-    public <T> T selectByKey(Class<T> entityClass, Object key) {
+    public <T> T selectByKey(Class<T> entityClass, Serializable key) {
         HandleSelectSqlBuilder<T> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(entityClass);
         if (JudgeUtil.isEmpty(sqlBuilder.getKeyParserModel())) {
             if (!sqlBuilder.isMergeSuperDbJoinTable()) {

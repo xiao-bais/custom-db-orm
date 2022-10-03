@@ -32,22 +32,6 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
     private final boolean existNeedInjectResult;
 
     public HandleSelectSqlBuilder(
-                                boolean findUpDbJoinTables,
-                                List<DbRelationParserModel<T>> relatedParserModels,
-                                List<DbJoinTableParserModel<T>> joinDbMappers,
-                                List<String> joinTableParserModels,
-                                boolean existNeedInjectResult) {
-        this.selectSql = new StringBuilder();
-        this.selectJoinSql = new StringBuilder();
-        this.joinTableSql = new StringBuilder();
-        this.findUpDbJoinTables = findUpDbJoinTables;
-        this.relatedParserModels = relatedParserModels;
-        this.joinDbMappers = joinDbMappers;
-        this.joinTableParserModels = joinTableParserModels;
-        this.existNeedInjectResult = existNeedInjectResult;
-    }
-
-    public HandleSelectSqlBuilder(
             Class<T> entityClass) {
         TableParseModel<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
         this.selectSql = new StringBuilder();

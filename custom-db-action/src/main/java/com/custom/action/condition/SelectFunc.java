@@ -176,7 +176,8 @@ public class SelectFunc<T> extends AbstractSqlFunc<T, SelectFunc<T>> {
     @Override
     public SelectFunc<T> max(boolean isNullToZero, SFunction<T, ?> column) {
         String originColumn = getColumnParseHandler().parseToColumn(column);
-        return doFunc(formatRex(SqlAggregate.MAX, isNullToZero), SqlAggregate.MAX, originColumn, getColumnMapper().get(originColumn));
+        String formatRex = formatRex(SqlAggregate.MAX, isNullToZero, false);
+        return doFunc(formatRex, SqlAggregate.MAX, originColumn, getColumnMapper().get(originColumn));
     }
 
     /**
@@ -195,7 +196,8 @@ public class SelectFunc<T> extends AbstractSqlFunc<T, SelectFunc<T>> {
     public final SelectFunc<T> max(boolean isNullToZero, SFunction<T, ?> column, SFunction<T, ?> alias) {
         String originColumn = getColumnParseHandler().parseToColumn(column);
         String aliasField = getColumnParseHandler().parseToField(alias);
-        return doFunc(formatRex(SqlAggregate.MAX, isNullToZero), SqlAggregate.MAX, originColumn, aliasField);
+        String formatRex = formatRex(SqlAggregate.MAX, isNullToZero, false);
+        return doFunc(formatRex, SqlAggregate.MAX, originColumn, aliasField);
     }
 
 
@@ -214,7 +216,8 @@ public class SelectFunc<T> extends AbstractSqlFunc<T, SelectFunc<T>> {
     @Override
     public SelectFunc<T> min(boolean isNullToZero, SFunction<T, ?> column) {
         String originColumn = getColumnParseHandler().parseToColumn(column);
-        return doFunc(formatRex(SqlAggregate.MIN, isNullToZero), SqlAggregate.MIN, originColumn, getColumnMapper().get(originColumn));
+        String formatRex = formatRex(SqlAggregate.MIN, isNullToZero, false);
+        return doFunc(formatRex, SqlAggregate.MIN, originColumn, getColumnMapper().get(originColumn));
     }
 
     /**
@@ -234,7 +237,8 @@ public class SelectFunc<T> extends AbstractSqlFunc<T, SelectFunc<T>> {
     public final SelectFunc<T> min(boolean isNullToZero, SFunction<T, ?> column, SFunction<T, ?> alias) {
         String originColumn = getColumnParseHandler().parseToColumn(column);
         String aliasField = getColumnParseHandler().parseToField(alias);
-        return doFunc(formatRex(SqlAggregate.MIN, isNullToZero), SqlAggregate.MIN, originColumn, aliasField);
+        String formatRex = formatRex(SqlAggregate.MIN, isNullToZero, false);
+        return doFunc(formatRex, SqlAggregate.MIN, originColumn, aliasField);
     }
 
 }
