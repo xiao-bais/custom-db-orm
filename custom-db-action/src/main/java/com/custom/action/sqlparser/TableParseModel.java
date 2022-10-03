@@ -258,7 +258,7 @@ public class TableParseModel<T> implements Cloneable {
             this.table = annotation.table();
         }
         this.desc = annotation.desc();
-        this.findUpDbJoinTables = annotation.mergeSuperDbJoinTables();
+        this.findUpDbJoinTables = annotation.mergeSuper();
         this.underlineToCamel = underlineToCamel;
         this.oneToOneFieldList = new ArrayList<>();
         this.oneToManyFieldList = new ArrayList<>();

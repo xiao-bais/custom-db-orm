@@ -23,7 +23,7 @@ import java.util.StringJoiner;
  **/
 public class HttpRequest {
 
-    private static Logger logger = LoggerFactory.getLogger(HttpRequest.class);
+    private static final Logger logger = LoggerFactory.getLogger(HttpRequest.class);
 
 
 
@@ -32,7 +32,7 @@ public class HttpRequest {
         if (requestMap.size() > 0) {
             requestMap.forEach((key, value) -> paramStr.add(String.format("%s=%s", key, value)));
         }
-        return get(requestUrl + "?" + paramStr.toString());
+        return get(requestUrl + "?" + paramStr);
     }
 
 

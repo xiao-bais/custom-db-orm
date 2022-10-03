@@ -42,9 +42,9 @@ public @interface DbTable {
 
     /**
      * 当子类跟父类同时标注了@DbJoinTable(s)注解时，是否在查询时向上查找父类的@DbJoinTable(s)注解，且合并关联条件
-     * @return mergeSuperDbJoinTables
+     * @return mergeSuper
      */
-    boolean mergeSuperDbJoinTables() default true;
+    boolean mergeSuper() default true;
 
 
     /**
