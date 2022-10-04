@@ -6,6 +6,7 @@ import com.custom.action.condition.DefaultConditionWrapper;
 import com.custom.action.condition.LambdaConditionWrapper;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.JdbcOpDao;
+import com.home.customtest.entity.Aklis;
 import com.home.customtest.entity.Student;
 
 import java.util.List;
@@ -25,11 +26,7 @@ public class DoMain {
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
 
-        System.out.println(1);
-        Student student = jdbcOpDao.selectByKey(Student.class, 11);
-        System.out.println(2);
-        List<Student> studentList = jdbcOpDao.selectList(Student.class, "and a.name = ?", "李重阳");
-        System.out.println(3);
+
 
 
     }

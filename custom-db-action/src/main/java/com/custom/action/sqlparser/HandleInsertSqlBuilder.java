@@ -31,7 +31,7 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
     @Override
     public String createTargetSql() {
 
-        StringJoiner insertSqlField = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_1);
+        StringJoiner insertSqlField = new StringJoiner(Constants.SEPARATOR_COMMA_1);
         List<T> saveList = getEntityList();
         Asserts.notEmpty(saveList, "未找到待新增的数据");
 
@@ -81,8 +81,8 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
 
     public HandleInsertSqlBuilder(Class<T> entityClass) {
-        this.insertSuffix = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_1,
-                SymbolConstant.BRACKETS_LEFT, SymbolConstant.BRACKETS_RIGHT
+        this.insertSuffix = new StringJoiner(Constants.SEPARATOR_COMMA_1,
+                Constants.BRACKETS_LEFT, Constants.BRACKETS_RIGHT
         );
 
         // 添加?
@@ -91,15 +91,15 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
         this.injectTableInfo(tableSqlBuilder);
 
         if (tableSqlBuilder.getKeyParserModel() != null) {
-            this.insertSuffix.add(SymbolConstant.QUEST);
+            this.insertSuffix.add(Constants.QUEST);
         }
         int fieldSize = tableSqlBuilder.getFieldParserModels().size();
         for (int i = 0; i < fieldSize; i++) {
-            this.insertSuffix.add(SymbolConstant.QUEST);
+            this.insertSuffix.add(Constants.QUEST);
         }
 
         // 添加字段
-        StringJoiner insertColumn = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
+        StringJoiner insertColumn = new StringJoiner(Constants.SEPARATOR_COMMA_2);
         if (Objects.nonNull(getKeyParserModel())) {
             insertColumn.add(getKeyParserModel().getDbKey());
         }

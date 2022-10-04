@@ -1,6 +1,6 @@
 package com.custom.comm.page;
 
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 
 import java.util.List;
 
@@ -55,14 +55,14 @@ public class AutoPageHelper<T> extends DbPageRows<T> {
     public AutoPageHelper(int pageIndex, int pageSize, List<T> dataRows) {
         super(pageIndex, pageSize, dataRows);
         int pages = super.getPages();
-        this.firstPage = SymbolConstant.DEFAULT_ONE;
+        this.firstPage = Constants.DEFAULT_ONE;
         this.lastPage = pages;
-        this.prePage = Math.max(pageIndex - SymbolConstant.DEFAULT_ONE, SymbolConstant.DEFAULT_ONE);
-        this.nextPage = Math.min(pageIndex + SymbolConstant.DEFAULT_ONE, pages);
+        this.prePage = Math.max(pageIndex - Constants.DEFAULT_ONE, Constants.DEFAULT_ONE);
+        this.nextPage = Math.min(pageIndex + Constants.DEFAULT_ONE, pages);
         this.isFirstPage = pageIndex == this.firstPage;
         this.isLastPage = pageIndex == pages;
-        this.hasPreviousPage = pageIndex - SymbolConstant.DEFAULT_ONE > SymbolConstant.DEFAULT_ZERO;
-        this.hasNextPage = pageIndex + SymbolConstant.DEFAULT_ONE < pages;
+        this.hasPreviousPage = pageIndex - Constants.DEFAULT_ONE > Constants.DEFAULT_ZERO;
+        this.hasNextPage = pageIndex + Constants.DEFAULT_ONE < pages;
     }
 
     public int getFirstPage() {

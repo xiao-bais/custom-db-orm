@@ -1,6 +1,6 @@
 package com.custom.comm.annotations;
 
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 import com.custom.comm.enums.DbType;
 
 import java.lang.annotation.*;
@@ -33,7 +33,7 @@ public @interface DbField {
      * 字段说明
      * @return desc
      */
-    String desc() default SymbolConstant.EMPTY;
+    String desc() default Constants.EMPTY;
 
 
     /**
@@ -61,7 +61,7 @@ public @interface DbField {
      * </p>
      * @return wrapperColumn
      */
-    String wrapperColumn() default SymbolConstant.EMPTY;
+    String wrapperColumn() default Constants.EMPTY;
 
 
     /**

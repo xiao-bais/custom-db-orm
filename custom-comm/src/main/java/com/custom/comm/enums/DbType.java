@@ -1,6 +1,6 @@
 package com.custom.comm.enums;
 
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 import com.custom.comm.exceptions.CustomCheckException;
 
 import java.math.BigDecimal;
@@ -17,9 +17,9 @@ public enum DbType {
 
     DbInt("int", Integer.class, Integer.TYPE, "11", 0),
 
-    DbVarchar("varchar", String.class, null, "50", SymbolConstant.EMPTY),
+    DbVarchar("varchar", String.class, null, "50", Constants.EMPTY),
 
-    DbChar("char", Character.class, Character.TYPE, "6", SymbolConstant.EMPTY),
+    DbChar("char", Character.class, Character.TYPE, "6", Constants.EMPTY),
 
     DbFloat("float", Float.class, Float.TYPE,  "11", 0.0F),
 
@@ -31,7 +31,7 @@ public enum DbType {
 
     DbBit("bit", Boolean.class, Boolean.TYPE, "1", false),
 
-    DbText("text", String.class, null,  "255", SymbolConstant.EMPTY),
+    DbText("text", String.class, null,  "255", Constants.EMPTY),
 
     DbBigint("bigint", Long.class, Long.TYPE,  "11", 0L),
 

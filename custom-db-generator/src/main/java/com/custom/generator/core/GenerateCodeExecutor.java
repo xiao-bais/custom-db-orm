@@ -11,7 +11,7 @@ import com.custom.generator.model.TableStructModel;
 import com.custom.action.sqlparser.JdbcAction;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 import com.custom.comm.enums.DbType;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.configuration.DbCustomStrategy;
@@ -81,7 +81,7 @@ public class GenerateCodeExecutor {
                 "import org.springframework.stereotype.Service;",
                 "import org.springframework.beans.factory.annotation.Autowired;"
         ).collect(Collectors.toList());
-        StringJoiner serviceImportPackage = new StringJoiner(SymbolConstant.POINT);
+        StringJoiner serviceImportPackage = new StringJoiner(Constants.POINT);
         if (JudgeUtil.isNotEmpty(packageConfig.getParentPackage())) {
             serviceImportPackage.add(packageConfig.getParentPackage());
         }
@@ -89,9 +89,9 @@ public class GenerateCodeExecutor {
         importPackages.add(String.format("import %s;", serviceImportPackage));
         serviceInfo.setImportPackages(importPackages);
         serviceInfo.setOverrideEnable(globalConfig.getOverrideEnable());
-        serviceInfo.setSourcePackage(packageConfig.getParentPackage() + SymbolConstant.POINT + packageConfig.getService());
-        serviceInfo.setServiceClassPath(globalConfig.getOutputDir() + SymbolConstant.FILE_SEPARATOR + serviceInfo.getSourcePackage().replace(SymbolConstant.POINT, SymbolConstant.FILE_SEPARATOR));
-        serviceInfo.setServiceImplClassPath(serviceInfo.getServiceClassPath() + SymbolConstant.FILE_SEPARATOR + "impl");
+        serviceInfo.setSourcePackage(packageConfig.getParentPackage() + Constants.POINT + packageConfig.getService());
+        serviceInfo.setServiceClassPath(globalConfig.getOutputDir() + Constants.FILE_SEPARATOR + serviceInfo.getSourcePackage().replace(Constants.POINT, Constants.FILE_SEPARATOR));
+        serviceInfo.setServiceImplClassPath(serviceInfo.getServiceClassPath() + Constants.FILE_SEPARATOR + "impl");
         tableInfo.setServiceStructModel(serviceInfo);
     }
 
@@ -159,7 +159,7 @@ public class GenerateCodeExecutor {
         String tableName = tableInfo.getTable();
         // 若配置了忽略前缀，则去除指定的前缀
         if(JudgeUtil.isNotEmpty(tableConfig.getTablePrefix())) {
-            tableName = tableName.replaceFirst(tableConfig.getTablePrefix(), SymbolConstant.EMPTY);
+            tableName = tableName.replaceFirst(tableConfig.getTablePrefix(), Constants.EMPTY);
         }
         // 下划线转驼峰
         if(dbCustomStrategy.isUnderlineToCamel()) {
@@ -188,10 +188,10 @@ public class GenerateCodeExecutor {
             String packageName = packageConfig.getParentPackage();
             String packagePath = "";
             if(JudgeUtil.isNotEmpty(packageConfig.getEntity())) {
-                packagePath = packageName.replace(SymbolConstant.POINT, SymbolConstant.FILE_SEPARATOR) + SymbolConstant.FILE_SEPARATOR + packageConfig.getEntity();
-                tableInfo.setSourcePackage(packageName + SymbolConstant.POINT + tableInfo.getEntityPackage());
+                packagePath = packageName.replace(Constants.POINT, Constants.FILE_SEPARATOR) + Constants.FILE_SEPARATOR + packageConfig.getEntity();
+                tableInfo.setSourcePackage(packageName + Constants.POINT + tableInfo.getEntityPackage());
             }
-            entityClassPath = entityClassPath + SymbolConstant.FILE_SEPARATOR + packagePath;
+            entityClassPath = entityClassPath + Constants.FILE_SEPARATOR + packagePath;
         }
         tableInfo.setEntityClassPath(entityClassPath);
     }
@@ -205,24 +205,24 @@ public class GenerateCodeExecutor {
 
         // 字段中的所有类型
         List<? extends Class<?>> fieldTypes = tableInfo.getColumnStructModels().stream().map(ColumnStructModel::getFieldType).collect(Collectors.toList());
-        List<String> importJavaPackages = fieldTypes.stream().filter(x -> !x.getName().contains("java.lang")).distinct().map(fieldType -> SymbolConstant.IMPORT + fieldType.getName() + ";").collect(Collectors.toList());
+        List<String> importJavaPackages = fieldTypes.stream().filter(x -> !x.getName().contains("java.lang")).distinct().map(fieldType -> Constants.IMPORT + fieldType.getName() + ";").collect(Collectors.toList());
 
         // 添加@Db*注解导入包信息
-        String dbAnnotationPackage = SymbolConstant.IMPORT + "com.custom.comm.annotations.";
+        String dbAnnotationPackage = Constants.IMPORT + "com.custom.comm.annotations.";
         importOtherPackages.add(dbAnnotationPackage + "DbField;");
         importOtherPackages.add( dbAnnotationPackage + "DbKey;");
         importOtherPackages.add(dbAnnotationPackage + "DbTable;");
 
         // 导入lombok
         if(tableInfo.getLombok()) {
-            importOtherPackages.add(SymbolConstant.IMPORT + "lombok.Data;");
+            importOtherPackages.add(Constants.IMPORT + "lombok.Data;");
         }
         if(tableInfo.getSwagger()) {
-            importOtherPackages.add(SymbolConstant.IMPORT + "io.swagger.annotations.ApiModelProperty;");
+            importOtherPackages.add(Constants.IMPORT + "io.swagger.annotations.ApiModelProperty;");
         }
         // 导入主键自增标识
         if(tableInfo.getColumnStructModels().stream().anyMatch(x -> x.getKeyExtra().equalsIgnoreCase("auto_increment"))) {
-            importOtherPackages.add(SymbolConstant.IMPORT + "com.custom.comm.enums.KeyStrategy;");
+            importOtherPackages.add(Constants.IMPORT + "com.custom.comm.enums.KeyStrategy;");
         }
 
         tableInfo.setImportJavaPackages(importJavaPackages);
@@ -252,14 +252,14 @@ public class GenerateCodeExecutor {
 
             // getter/setter
             String columnStart = column.substring(0, 1).toUpperCase(Locale.ROOT);
-            columnModel.setGetterMethodName(SymbolConstant.GETTER + columnStart + column.substring(1));
-            columnModel.setSetterMethodName(SymbolConstant.SETTER + columnStart + column.substring(1));
+            columnModel.setGetterMethodName(Constants.GETTER + columnStart + column.substring(1));
+            columnModel.setSetterMethodName(Constants.SETTER + columnStart + column.substring(1));
 
             // @Db字段注解信息
             columnModel.setDbFieldAnnotation(dbFieldAnnotation(columnModel));
             // 属性字段
             columnModel.setOutputFieldInfo(String.format("%s %s %s;",
-                    SymbolConstant.PRIVATE, columnModel.getFieldType().getSimpleName(), columnModel.getFieldName()));
+                    Constants.PRIVATE, columnModel.getFieldType().getSimpleName(), columnModel.getFieldName()));
         }
 
         tableInfo.setColumnStructModels(columnStructModels);

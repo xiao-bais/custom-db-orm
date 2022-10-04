@@ -7,7 +7,7 @@ import com.custom.action.sqlparser.TableParseModel;
 import com.custom.comm.ConvertUtil;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.RexUtil;
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 import com.custom.comm.annotations.DbTable;
 import com.custom.jdbc.condition.SelectSqlParamInfo;
 import com.custom.jdbc.select.CustomSelectJdbcBasic;
@@ -199,7 +199,7 @@ public class TableStructsInitializer {
      */
     private String buildCreateTableSql(TableCreateInfo tableCreateInfo) {
         StringBuilder createTableSql = new StringBuilder();
-        StringJoiner fieldSql = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_1);
+        StringJoiner fieldSql = new StringJoiner(Constants.SEPARATOR_COMMA_1);
         if (Objects.nonNull(tableCreateInfo.getPrimaryKeyCreateSql())) {
             fieldSql.add(tableCreateInfo.getPrimaryKeyCreateSql() + "\n");
         }

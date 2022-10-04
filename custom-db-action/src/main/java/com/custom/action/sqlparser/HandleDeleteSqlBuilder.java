@@ -7,7 +7,7 @@ import com.custom.action.util.DbUtil;
 import com.custom.comm.Asserts;
 import com.custom.comm.CustomApplicationUtil;
 import com.custom.comm.CustomUtil;
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 import com.custom.comm.enums.FillStrategy;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import org.slf4j.Logger;
@@ -79,8 +79,8 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
     private void handleByKeys() {
         DbKeyParserModel<T> keyParserModel = getKeyParserModel();
         try {
-            StringJoiner delSymbols = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2, SymbolConstant.BRACKETS_LEFT, SymbolConstant.BRACKETS_RIGHT);
-            IntStream.range(0, keys.size()).mapToObj(i -> SymbolConstant.QUEST).forEach(delSymbols::add);
+            StringJoiner delSymbols = new StringJoiner(Constants.SEPARATOR_COMMA_2, Constants.BRACKETS_LEFT, Constants.BRACKETS_RIGHT);
+            IntStream.range(0, keys.size()).mapToObj(i -> Constants.QUEST).forEach(delSymbols::add);
             this.deleteCondition = checkLogicFieldIsExist() ? String.format("AND %s IN %s", keyParserModel.getFieldSql(), delSymbols)
                     : String.format("%s IN %s", keyParserModel.getFieldSql(), delSymbols);
         } catch (Exception e) {
@@ -98,7 +98,7 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
      */
     private void handleByCondition() {
         try {
-            deleteCondition = checkLogicFieldIsExist()
+            this.deleteCondition = checkLogicFieldIsExist()
                     ? DbUtil.replaceOrWithAndOnSqlCondition(deleteCondition) : DbUtil.trimSqlCondition(deleteCondition);
         } catch (Exception e) {
             logger.error(e.toString(), e);
@@ -117,10 +117,12 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
         Optional<TableFillObject> first = fillColumnHandler.fillStrategy().stream()
                 .filter(x -> x.getEntityClass().equals(t)).findFirst();
         first.ifPresent(op -> {
-            String autoUpdateWhereSqlCondition = deleteSql.substring(deleteSql.indexOf(SymbolConstant.WHERE))
+
+            String autoUpdateWhereSqlCondition = deleteSql.substring(deleteSql.indexOf(Constants.WHERE))
                     .replace(getLogicDeleteQuerySql(), getLogicDeleteUpdateSql());
+
             FillStrategy strategy = op.getStrategy();
-            if (strategy.equals(FillStrategy.DEFAULT)) {
+            if (strategy == FillStrategy.DEFAULT) {
                 return;
             }
             String autoUpdateSql = buildLogicDelAfterAutoUpdateSql(strategy, autoUpdateWhereSqlCondition, params);
@@ -143,11 +145,11 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
         Optional<TableFillObject> first = Objects.requireNonNull(CustomApplicationUtil.getBean(ColumnFillAutoHandler.class))
                 .fillStrategy().stream().filter(x -> x.getEntityClass().equals(getEntityClass())).findFirst();
         first.ifPresent(op -> {
-            autoUpdateSql.append(SymbolConstant.UPDATE)
+            autoUpdateSql.append(Constants.UPDATE)
                     .append(getTable())
                     .append(" ")
                     .append(getAlias())
-                    .append(SymbolConstant.SET);
+                    .append(Constants.SET);
 
             if (strategy.toString().contains(op.getStrategy().toString())) {
                 String sqlFragment = buildAssignAutoUpdateSqlFragment(op.getTableFillMapper());
@@ -164,7 +166,7 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
      * 构建指定逻辑删除时自动填充的sql片段
      */
     private String buildAssignAutoUpdateSqlFragment(Map<String, Object> tableFillObjects) {
-        StringJoiner autoUpdateFieldSql = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
+        StringJoiner autoUpdateFieldSql = new StringJoiner(Constants.SEPARATOR_COMMA_2);
         StringBuilder updateField;
         if (ObjectUtils.isEmpty(tableFillObjects)) {
             return autoUpdateFieldSql.toString();
@@ -176,7 +178,7 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
             updateField = new StringBuilder();
             Object fieldVal = tableFillObjects.get(fieldName);
             if (ObjectUtils.isEmpty(fieldVal)) continue;
-            updateField.append(getFieldMapper().get(fieldName)).append(SymbolConstant.EQUALS).append(fieldVal);
+            updateField.append(getFieldMapper().get(fieldName)).append(Constants.EQUALS).append(fieldVal);
             autoUpdateFieldSql.add(updateField);
             getFieldParserModels().stream().filter(x -> x.getFieldName().equals(fieldName)).findFirst().ifPresent(op -> {
                 op.setValue(fieldVal);

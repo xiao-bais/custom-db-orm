@@ -4,7 +4,7 @@ import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.comm.ConvertUtil;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.RexUtil;
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 import com.custom.comm.annotations.DbKey;
 import com.custom.comm.enums.SqlLike;
 import com.custom.jdbc.select.CustomSelectJdbcBasic;
@@ -145,7 +145,7 @@ public class DbUtil {
     }
 
     public static String sqlConcat(SqlLike sqlLike) {
-        String sql = SymbolConstant.EMPTY;
+        String sql = Constants.EMPTY;
         switch (sqlLike) {
             case LEFT:
                 sql = "concat('%', ?)";
@@ -165,10 +165,10 @@ public class DbUtil {
      */
     public static String trimSqlCondition(String condition) {
         String finalCondition = condition;
-        if(condition.trim().startsWith(SymbolConstant.AND)) {
-            finalCondition = condition.replaceFirst(SymbolConstant.AND, SymbolConstant.EMPTY);
-        }else if(condition.trim().startsWith(SymbolConstant.OR)) {
-            finalCondition = condition.replaceFirst(SymbolConstant.OR, SymbolConstant.EMPTY);
+        if(condition.trim().startsWith(Constants.AND)) {
+            finalCondition = condition.replaceFirst(Constants.AND, Constants.EMPTY);
+        }else if(condition.trim().startsWith(Constants.OR)) {
+            finalCondition = condition.replaceFirst(Constants.OR, Constants.EMPTY);
         }
         return finalCondition.trim();
     }
@@ -178,8 +178,8 @@ public class DbUtil {
      */
     public static String trimAppendSqlCondition(String condition) {
         String finalCondition = condition;
-        if(condition.trim().startsWith(SymbolConstant.AND)) {
-            finalCondition = condition.replaceFirst(SymbolConstant.AND, SymbolConstant.EMPTY);
+        if(condition.trim().startsWith(Constants.AND)) {
+            finalCondition = condition.replaceFirst(Constants.AND, Constants.EMPTY);
         }
         return finalCondition.trim();
     }
@@ -189,8 +189,8 @@ public class DbUtil {
      */
     public static String replaceOrWithAndOnSqlCondition(String condition) {
         String finalCondition = condition;
-        if(condition.trim().startsWith(SymbolConstant.OR)) {
-            finalCondition = condition.replaceFirst(SymbolConstant.OR, SymbolConstant.AND);
+        if(condition.trim().startsWith(Constants.OR)) {
+            finalCondition = condition.replaceFirst(Constants.OR, Constants.AND);
         }
         return finalCondition.trim();
     }

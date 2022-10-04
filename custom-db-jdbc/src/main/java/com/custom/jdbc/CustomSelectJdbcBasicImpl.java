@@ -2,7 +2,7 @@ package com.custom.jdbc;
 
 import com.alibaba.fastjson.JSONObject;
 import com.custom.comm.CustomUtil;
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
@@ -44,7 +44,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
             while (resultSet.next()) {
                 T t;
                 if(CustomUtil.isBasicClass(params.getEntityClass())) {
-                    t = (T) resultSet.getObject(SymbolConstant.DEFAULT_ONE);
+                    t = (T) resultSet.getObject(Constants.DEFAULT_ONE);
                 }else {
                     map = new HashMap<>();
                     this.handleResultMapper(map, metaData);
@@ -103,7 +103,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
             statementQuery(params.getPrepareSql(), params.isSqlPrintSupport(), params.getSqlParams());
             ResultSet resultSet = handleQueryStatement();
             while (resultSet.next()) {
-                T object = (T) resultSet.getObject(SymbolConstant.DEFAULT_ONE);
+                T object = (T) resultSet.getObject(Constants.DEFAULT_ONE);
                 resSet.add(object);
             }
         } catch (SQLException e) {
@@ -189,7 +189,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
             Object res = Array.newInstance(params.getEntityClass(), rowsCount);
             int len = 0;
             while (resultSet.next()) {
-                T val = (T) resultSet.getObject(SymbolConstant.DEFAULT_ONE);
+                T val = (T) resultSet.getObject(Constants.DEFAULT_ONE);
                 Array.set(res, len, val);
                 len++;
             }
@@ -216,7 +216,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
             ResultSet resultSet = handleQueryStatement();
             this.checkMoreResult(resultSet);
             if (resultSet.next()) {
-                result = resultSet.getObject(SymbolConstant.DEFAULT_ONE);
+                result = resultSet.getObject(Constants.DEFAULT_ONE);
             }
         } catch (SQLException e) {
             SqlOutPrintBuilder
@@ -239,7 +239,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
             statementQuery(params.getPrepareSql(), params.isSqlPrintSupport(), params.getSqlParams());
             ResultSet resultSet = handleQueryStatement();
             while (resultSet.next()) {
-                result.add(resultSet.getObject(SymbolConstant.DEFAULT_ONE));
+                result.add(resultSet.getObject(Constants.DEFAULT_ONE));
             }
         } catch (SQLException e) {
             SqlOutPrintBuilder

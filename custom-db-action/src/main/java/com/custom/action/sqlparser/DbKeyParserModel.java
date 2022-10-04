@@ -5,7 +5,7 @@ import com.custom.action.util.DbUtil;
 import com.custom.comm.CustomUtil;
 import com.custom.jdbc.GlobalDataHandler;
 import com.custom.comm.JudgeUtil;
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 import com.custom.comm.annotations.DbKey;
 import com.custom.comm.enums.DbType;
 import com.custom.comm.enums.KeyStrategy;
@@ -139,9 +139,9 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
     public String createTableSql() {
         StringBuilder keyFieldSql = new StringBuilder(String.format("`%s` ", this.dbKey));
         keyFieldSql.append(this.dbType.getType())
-                .append(SymbolConstant.BRACKETS_LEFT)
+                .append(Constants.BRACKETS_LEFT)
                 .append(this.length)
-                .append(SymbolConstant.BRACKETS_RIGHT)
+                .append(Constants.BRACKETS_RIGHT)
                 .append(" primary key ");
 
         if(this.strategy == KeyStrategy.AUTO) {

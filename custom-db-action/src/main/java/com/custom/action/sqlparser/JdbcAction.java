@@ -7,7 +7,7 @@ import com.custom.action.util.DbUtil;
 import com.custom.comm.Asserts;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 import com.custom.comm.annotations.check.CheckExecute;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.ExThrowsUtil;
@@ -125,8 +125,8 @@ public class JdbcAction extends AbstractSqlExecutor {
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> List<T> selectBatchKeys(Class<T> entityClass, Collection<? extends Serializable> keys) {
         HandleSelectSqlBuilder<T> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(entityClass);
-        StringJoiner symbol = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
-        keys.forEach(x -> symbol.add(SymbolConstant.QUEST));
+        StringJoiner symbol = new StringJoiner(Constants.SEPARATOR_COMMA_2);
+        keys.forEach(x -> symbol.add(Constants.QUEST));
         String condition = String.format("and %s in (%s)", sqlBuilder.getKeyParserModel().getFieldSql(), symbol);
         try {
             FullSqlConditionExecutor conditionExecutor = this.handleLogicWithCondition(sqlBuilder.getAlias()

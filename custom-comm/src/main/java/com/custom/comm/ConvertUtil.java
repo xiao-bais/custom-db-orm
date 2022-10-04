@@ -125,7 +125,7 @@ public class ConvertUtil {
             return conBool((BigDecimal) i);
         }
         return i instanceof CharSequence
-                && (String.valueOf(i).equalsIgnoreCase(SymbolConstant.CONST_TRUE) || "1".equals(i));
+                && (String.valueOf(i).equalsIgnoreCase(Constants.CONST_TRUE) || "1".equals(i));
     }
 
 

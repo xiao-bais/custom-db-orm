@@ -5,7 +5,7 @@ import com.custom.action.sqlparser.DefaultTableAction;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.condition.SFunction;
 import com.custom.comm.ConvertUtil;
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.configuration.DbCustomStrategy;
@@ -120,7 +120,7 @@ public class ActiveModel<T extends ActiveModel<T, P>, P> implements Serializable
 
     private JdbcActiveWrapper<T, P> activeWrapper() {
         CustomConfigHelper configHelper = (CustomConfigHelper)
-                GlobalDataHandler.readGlobalObject(SymbolConstant.DATA_CONFIG);
+                GlobalDataHandler.readGlobalObject(Constants.DATA_CONFIG);
         if (configHelper == null) {
             throw new CustomCheckException("No data source configured");
         }

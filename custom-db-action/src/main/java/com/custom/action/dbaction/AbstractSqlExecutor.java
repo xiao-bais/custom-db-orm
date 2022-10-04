@@ -3,14 +3,12 @@ package com.custom.action.dbaction;
 import com.custom.action.condition.AbstractUpdateSet;
 import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.action.sqlparser.HandleSelectSqlBuilder;
-import com.custom.action.sqlparser.JdbcOpDao;
 import com.custom.action.sqlparser.MappingResultInjector;
-import com.custom.action.sqlparser.TableParseModel;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.condition.SFunction;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.page.DbPageRows;
@@ -82,8 +80,8 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
 
 
     private DbCustomStrategy dbCustomStrategy;
-    private String logicColumn = SymbolConstant.EMPTY;
-    private String logicDeleteQuerySql = SymbolConstant.EMPTY;
+    private String logicColumn = Constants.EMPTY;
+    private String logicDeleteQuerySql = Constants.EMPTY;
 
     /**
      * 初始化逻辑删除的sql
@@ -136,13 +134,13 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
             selectSql.append(wrapper.getCustomizeSql());
         }
         if(JudgeUtil.isNotEmpty(wrapper.getGroupBy())) {
-            selectSql.append(SymbolConstant.GROUP_BY).append(wrapper.getGroupBy());
+            selectSql.append(Constants.GROUP_BY).append(wrapper.getGroupBy());
         }
         if(JudgeUtil.isNotEmpty(wrapper.getHaving())) {
-            selectSql.append(SymbolConstant.HAVING).append(wrapper.getHaving());
+            selectSql.append(Constants.HAVING).append(wrapper.getHaving());
         }
         if(CustomUtil.isNotBlank(wrapper.getOrderBy().toString())) {
-            selectSql.append(SymbolConstant.ORDER_BY).append(wrapper.getOrderBy());
+            selectSql.append(Constants.ORDER_BY).append(wrapper.getOrderBy());
         }
         if(!wrapper.getHavingParams().isEmpty()) {
             wrapper.getParamValues().addAll(wrapper.getHavingParams());

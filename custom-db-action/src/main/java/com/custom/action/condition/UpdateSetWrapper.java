@@ -2,7 +2,7 @@ package com.custom.action.condition;
 
 import com.custom.comm.Asserts;
 import com.custom.comm.CustomUtil;
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +37,7 @@ public abstract class UpdateSetWrapper<T> {
     }
 
     public UpdateSetWrapper(Class<T> entityClass) {
-        this.sqlSetter = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
+        this.sqlSetter = new StringJoiner(Constants.SEPARATOR_COMMA_2);
         this.setParams = new ArrayList<>();
         this.entityClass = entityClass;
         this.columnParseHandler = new DefaultColumnParseHandler<>(entityClass);

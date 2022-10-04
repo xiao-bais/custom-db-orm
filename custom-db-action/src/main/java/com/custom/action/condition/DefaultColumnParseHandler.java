@@ -7,7 +7,7 @@ import com.custom.action.sqlparser.TableParseModel;
 import com.custom.action.util.LambdaResolveUtil;
 import com.custom.comm.Asserts;
 import com.custom.comm.JudgeUtil;
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -69,7 +69,7 @@ public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {
         if (JudgeUtil.isEmpty(columnPropertyMaps)) {
             throw new CustomCheckException("Cannot find a matching property with method name: '%s'", implMethodName);
         } else if (columnPropertyMaps.size() > 1) {
-            StringJoiner expMethodNames = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
+            StringJoiner expMethodNames = new StringJoiner(Constants.SEPARATOR_COMMA_2);
             columnPropertyMaps.stream()
                     .map(ColumnPropertyMap::getGetMethodName)
                     .forEach(expMethodNames::add);

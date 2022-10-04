@@ -1,7 +1,6 @@
 package com.custom.action.condition;
 
-import com.custom.action.util.DbUtil;
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 import com.custom.comm.enums.DbSymbol;
 import com.custom.comm.enums.SqlLike;
 import com.custom.comm.enums.SqlOrderBy;
@@ -121,7 +120,7 @@ public class DefaultConditionWrapper<T> extends ConditionAssembly<T, String, Def
     public DefaultConditionWrapper<T> orderByAsc(boolean condition, String... columns) {
         String orderBy = Arrays.stream(columns)
                 .map(column -> orderByField(column, SqlOrderBy.ASC))
-                .collect(Collectors.joining(SymbolConstant.SEPARATOR_COMMA_2));
+                .collect(Collectors.joining(Constants.SEPARATOR_COMMA_2));
         return adapter(DbSymbol.ORDER_BY, condition, orderBy);
     }
 
@@ -129,7 +128,7 @@ public class DefaultConditionWrapper<T> extends ConditionAssembly<T, String, Def
     public DefaultConditionWrapper<T> orderByDesc(boolean condition, String... columns) {
         String orderBy = Arrays.stream(columns)
                 .map(column -> orderByField(column, SqlOrderBy.DESC))
-                .collect(Collectors.joining(SymbolConstant.SEPARATOR_COMMA_2));
+                .collect(Collectors.joining(Constants.SEPARATOR_COMMA_2));
         return adapter(DbSymbol.ORDER_BY, condition, orderBy);
     }
 
@@ -194,7 +193,7 @@ public class DefaultConditionWrapper<T> extends ConditionAssembly<T, String, Def
     public DefaultConditionWrapper<T> or(boolean condition) {
         appendState = condition;
         if(condition) {
-            appendSybmol = SymbolConstant.OR;
+            appendSybmol = Constants.OR;
         }
         return childrenClass;
     }

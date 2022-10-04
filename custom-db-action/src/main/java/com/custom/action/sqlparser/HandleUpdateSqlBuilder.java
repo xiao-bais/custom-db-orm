@@ -6,7 +6,7 @@ import com.custom.action.interfaces.ColumnParseHandler;
 import com.custom.action.util.DbUtil;
 import com.custom.action.condition.SFunction;
 import com.custom.comm.JudgeUtil;
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,11 +42,11 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
 
     public HandleUpdateSqlBuilder() {
-        updateSqlColumns = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
+        updateSqlColumns = new StringJoiner(Constants.SEPARATOR_COMMA_2);
     }
 
     public HandleUpdateSqlBuilder(Class<T> entityClass) {
-        updateSqlColumns = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
+        updateSqlColumns = new StringJoiner(Constants.SEPARATOR_COMMA_2);
         TableParseModel<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
         this.injectTableInfo(tableSqlBuilder);
     }

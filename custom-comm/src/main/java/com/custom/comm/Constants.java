@@ -5,7 +5,7 @@ package com.custom.comm;
  * @Date 2021/10/6 17:37
  * @Desc：简短符号常量类
  **/
-public class SymbolConstant {
+public class Constants {
 
     public final static int DEFAULT_ZERO = 0;//默认0
     public final static int DEFAULT_ONE = 1;//默认1
@@ -40,7 +40,7 @@ public class SymbolConstant {
     public final static String ASC = "asc";
     public final static String DESC = "desc";
     public final static String UPDATE = "update ";
-    public final static String WHERE = " where ";
+    public final static String WHERE = " WHERE ";
     public final static String GROUP_BY = "\ngroup by ";
     public final static String HAVING = "\nhaving ";
     public final static String ORDER_BY = "\norder by ";

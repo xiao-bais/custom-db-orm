@@ -9,7 +9,7 @@ import com.custom.action.condition.DefaultColumnParseHandler;
 import com.custom.comm.Asserts;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.jdbc.CustomConfigHelper;
 import com.custom.jdbc.CustomSelectJdbcBasicImpl;
@@ -207,7 +207,7 @@ public abstract class AbstractSqlBuilder<T> {
         this.fieldMapper = tableSqlBuilder.getFieldMapper();
 
         CustomConfigHelper configHelper = (CustomConfigHelper)
-                GlobalDataHandler.readGlobalObject(SymbolConstant.DATA_CONFIG);
+                GlobalDataHandler.readGlobalObject(Constants.DATA_CONFIG);
         Asserts.npe(configHelper, "未找到可用的数据源");
         DbCustomStrategy customStrategy = configHelper.getDbCustomStrategy();
 

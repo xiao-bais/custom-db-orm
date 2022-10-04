@@ -1,6 +1,6 @@
 package com.custom.generator;
 
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 import com.custom.generator.model.ServiceStructModel;
 import com.custom.generator.model.TableStructModel;
 import freemarker.template.Configuration;
@@ -35,14 +35,14 @@ public class FreemarkerTemplateExecutor {
         try {
             // 配置模板路径
             configuration.setTagSyntax(Configuration.AUTO_DETECT_TAG_SYNTAX);
-            configuration.setDirectoryForTemplateLoading(new File(basePath + "\\custom-db-generator\\" + TEMPLATE_PATH));
+//            configuration.setDirectoryForTemplateLoading(new File(basePath + "\\custom-db-generator\\" + TEMPLATE_PATH));
             Template template = configuration.getTemplate("EntityTemplate.ftl");
 
-            File parentPackage = new File(basePath + SymbolConstant.FILE_SEPARATOR + tableStructModel.getEntityClassPath());
+            File parentPackage = new File(basePath + Constants.FILE_SEPARATOR + tableStructModel.getEntityClassPath());
             if(!parentPackage.exists()) {
                 parentPackage.mkdirs();
             }
-            File javaFile = new File(parentPackage.getPath() + SymbolConstant.FILE_SEPARATOR + tableStructModel.getEntityName() + SymbolConstant.DOT_JAVA);
+            File javaFile = new File(parentPackage.getPath() + Constants.FILE_SEPARATOR + tableStructModel.getEntityName() + Constants.DOT_JAVA);
             if(javaFile.exists() && tableStructModel.getOverrideEnable()) {
                 javaFile.delete();
             }
@@ -80,17 +80,17 @@ public class FreemarkerTemplateExecutor {
 
         try {
             // 配置模板路径
-            configuration.setDirectoryForTemplateLoading(new File(basePath +  "\\custom-db-generator" + SymbolConstant.FILE_SEPARATOR + TEMPLATE_PATH));
+            configuration.setDirectoryForTemplateLoading(new File(basePath +  "\\custom-db-generator" + Constants.FILE_SEPARATOR + TEMPLATE_PATH));
             Template template = configuration.getTemplate("ServiceTemplate.ftl");
 
-            File parentPackage = new File(basePath + SymbolConstant.FILE_SEPARATOR + serviceStructModel.getServiceClassPath());
+            File parentPackage = new File(basePath + Constants.FILE_SEPARATOR + serviceStructModel.getServiceClassPath());
             if(!parentPackage.exists()) {
                 parentPackage.mkdirs();
             }
 
 
             // service
-            File serviceFile = new File(parentPackage.getPath() + SymbolConstant.FILE_SEPARATOR, serviceStructModel.getServiceName() + SymbolConstant.DOT_JAVA);
+            File serviceFile = new File(parentPackage.getPath() + Constants.FILE_SEPARATOR, serviceStructModel.getServiceName() + Constants.DOT_JAVA);
             if(serviceFile.exists() && serviceStructModel.getOverrideEnable()) {
                 serviceFile.delete();
             }
@@ -125,16 +125,16 @@ public class FreemarkerTemplateExecutor {
 
         try {
             // 配置模板路径
-            configuration.setDirectoryForTemplateLoading(new File(basePath +  "\\custom-db-generator" + SymbolConstant.FILE_SEPARATOR + TEMPLATE_PATH));
+            configuration.setDirectoryForTemplateLoading(new File(basePath +  "\\custom-db-generator" + Constants.FILE_SEPARATOR + TEMPLATE_PATH));
             Template template = configuration.getTemplate("ServiceImplTemplate.ftl");
 
-            File parentPackage = new File(basePath + SymbolConstant.FILE_SEPARATOR + serviceStructModel.getServiceImplClassPath());
+            File parentPackage = new File(basePath + Constants.FILE_SEPARATOR + serviceStructModel.getServiceImplClassPath());
             if(!parentPackage.exists()) {
                 parentPackage.mkdirs();
             }
 
             // serviceImpl
-            File serviceImplFile = new File(parentPackage.getPath(), serviceStructModel.getServiceImplName() + SymbolConstant.DOT_JAVA);
+            File serviceImplFile = new File(parentPackage.getPath(), serviceStructModel.getServiceImplName() + Constants.DOT_JAVA);
             if(serviceImplFile.exists() && serviceStructModel.getOverrideEnable()) {
                 serviceImplFile.delete();
             }

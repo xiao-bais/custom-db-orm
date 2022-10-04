@@ -1,7 +1,5 @@
 package com.custom.comm.annotations.mapper;
 
-import com.custom.comm.SymbolConstant;
-
 import java.lang.annotation.*;
 
 /**

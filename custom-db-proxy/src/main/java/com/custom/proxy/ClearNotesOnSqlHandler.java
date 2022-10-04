@@ -1,7 +1,7 @@
 package com.custom.proxy;
 
 import com.custom.comm.JudgeUtil;
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
@@ -43,7 +43,7 @@ public class ClearNotesOnSqlHandler {
      * 加载指定路径中文件的内容
      */
     public String loadSql() {
-        String res = SymbolConstant.EMPTY;
+        String res = Constants.EMPTY;
         if(JudgeUtil.isEmpty(filePath)){
             ExThrowsUtil.toNull("filepath is null");
         }

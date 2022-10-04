@@ -1,6 +1,6 @@
 package com.custom.action.condition;
 
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 import com.custom.comm.enums.SqlAggregate;
 import com.custom.comm.exceptions.CustomCheckException;
 
@@ -135,7 +135,7 @@ public class SelectFunc<T> extends AbstractSqlFunc<T, SelectFunc<T>> {
         String originColumn = getColumnParseHandler().parseToColumn(column);
         String field = getColumnMapper().get(originColumn);
         if (elseVal instanceof CharSequence) {
-            elseVal = new StringBuilder().append(SymbolConstant.SINGLE_QUOTES).append(elseVal).append(SymbolConstant.SINGLE_QUOTES);
+            elseVal = new StringBuilder().append(Constants.SINGLE_QUOTES).append(elseVal).append(Constants.SINGLE_QUOTES);
         }
         return doFunc(formatRex(SqlAggregate.IFNULL), SqlAggregate.IFNULL, originColumn, elseVal, field);
     }
@@ -156,7 +156,7 @@ public class SelectFunc<T> extends AbstractSqlFunc<T, SelectFunc<T>> {
                 .findFirst()
                 .orElseThrow(() -> new CustomCheckException("not found field：" + getColumnMapper().get(originColumn)));
         if (targetField.getType().equals(CharSequence.class)) {
-            elseVal = new StringBuilder().append(SymbolConstant.SINGLE_QUOTES).append(elseVal).append(SymbolConstant.SINGLE_QUOTES);
+            elseVal = new StringBuilder().append(Constants.SINGLE_QUOTES).append(elseVal).append(Constants.SINGLE_QUOTES);
         }
         return doFunc(formatRex(SqlAggregate.IFNULL), SqlAggregate.IFNULL, originColumn, elseVal, aliasField);
     }

@@ -71,7 +71,7 @@ public class CustomUtil extends StrUtils {
      * 是否是java的原生对象
      */
     public static boolean isJavaOriginObject(Class<?> cls) {
-        return cls.getPackage().getName().startsWith(SymbolConstant.JAVA_DOT);
+        return cls.getPackage().getName().startsWith(Constants.JAVA_DOT);
     }
 
 
@@ -79,7 +79,7 @@ public class CustomUtil extends StrUtils {
     * 是否是主键的允许类型
     */
     public static boolean isKeyAllowType(Class<?> type, Object val) {
-        if(!isBasicType(val.getClass())) {
+        if(!isBasicType(val)) {
             ExThrowsUtil.toCustom("不允许的主键类型：" + val.getClass());
         }
         return CharSequence.class.isAssignableFrom(type)
@@ -177,7 +177,7 @@ public class CustomUtil extends StrUtils {
      * 可执行的sql条件
      */
     public static String handleExecuteSql(String sql, Object[] params) {
-        int symbolCount = countStr(sql, SymbolConstant.QUEST);
+        int symbolCount = countStr(sql, Constants.QUEST);
         int index = 0;
         while (index < symbolCount) {
             Object param = params[index];

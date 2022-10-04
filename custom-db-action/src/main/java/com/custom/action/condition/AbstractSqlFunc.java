@@ -3,7 +3,7 @@ package com.custom.action.condition;
 import com.custom.action.interfaces.ColumnParseHandler;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableParseModel;
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 import com.custom.comm.enums.SqlAggregate;
 
 import java.util.ArrayList;
@@ -123,7 +123,7 @@ public abstract class AbstractSqlFunc<T, Children> {
     }
 
     protected String formatRex(SqlAggregate aggregate, boolean isNullToZero,  Boolean distinct) {
-        String template = SymbolConstant.EMPTY;
+        String template = Constants.EMPTY;
         switch (aggregate) {
             case SUM:
             case MAX:
@@ -158,7 +158,7 @@ public abstract class AbstractSqlFunc<T, Children> {
     }
 
     protected String getColumns() {
-        return sqlFragments.stream().collect(Collectors.joining(String.valueOf(SymbolConstant.CENTER_LINE)));
+        return sqlFragments.stream().collect(Collectors.joining(String.valueOf(Constants.CENTER_LINE)));
     }
 
     protected ColumnParseHandler<T> getColumnParseHandler() {

@@ -4,7 +4,7 @@ import com.custom.action.dbaction.AbstractTableModel;
 import com.custom.action.util.DbUtil;
 import com.custom.jdbc.GlobalDataHandler;
 import com.custom.comm.JudgeUtil;
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 import com.custom.comm.annotations.DbMapper;
 import com.custom.comm.exceptions.ExThrowsUtil;
 
@@ -65,16 +65,16 @@ public class DbJoinTableParserModel<T> extends AbstractTableModel<T> {
         this.joinName = JudgeUtil.isEmpty(dbMap.value()) ? this.fieldName : dbMap.value();
         this.wrapperColumn = dbMap.wrapperColumn();
         this.isNullToEmpty = dbMap.isNullToEmpty();
-        if(!joinName.contains(SymbolConstant.POINT)) {
+        if(!joinName.contains(Constants.POINT)) {
             ExThrowsUtil.toCustom("%s.[%s] 在DBMapper注解上未指定关联表的别名", this.entityClass, this.fieldName);
         }
-        int pointIndex = joinName.indexOf(SymbolConstant.POINT);
+        int pointIndex = joinName.indexOf(Constants.POINT);
         String fieldPrefix = joinName.substring(0, pointIndex);
         String fieldSuffix = joinName.substring(pointIndex + 1);
         if(GlobalDataHandler.hasSqlKeyword(fieldSuffix)) {
             fieldSuffix = GlobalDataHandler.wrapperSqlKeyword(fieldSuffix);
         }
-        this.joinName = fieldPrefix + SymbolConstant.POINT + fieldSuffix;
+        this.joinName = fieldPrefix + Constants.POINT + fieldSuffix;
     }
 
     public Field getField() {

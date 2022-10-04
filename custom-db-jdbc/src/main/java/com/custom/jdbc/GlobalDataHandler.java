@@ -2,7 +2,7 @@ package com.custom.jdbc;
 
 import com.custom.comm.Asserts;
 import com.custom.comm.RexUtil;
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
@@ -37,7 +37,7 @@ public class GlobalDataHandler {
             br = new BufferedReader(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8));
             String str;
             while ((str = br.readLine()) != null) {
-                SQL_KEYWORDS.addAll(Arrays.asList(str.split(SymbolConstant.SEPARATOR_COMMA_1)));
+                SQL_KEYWORDS.addAll(Arrays.asList(str.split(Constants.SEPARATOR_COMMA_1)));
             }
         } catch (IOException e) {
             logger.error(e.toString(), e);

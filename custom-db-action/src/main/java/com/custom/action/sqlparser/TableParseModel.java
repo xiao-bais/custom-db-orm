@@ -2,7 +2,7 @@ package com.custom.action.sqlparser;
 
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 import com.custom.comm.annotations.*;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.ExThrowsUtil;
@@ -118,7 +118,7 @@ public class TableParseModel<T> implements Cloneable {
      */
     public String createTableSql() {
         StringBuilder createTableSql = new StringBuilder();
-        StringJoiner fieldSql = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_1);
+        StringJoiner fieldSql = new StringJoiner(Constants.SEPARATOR_COMMA_1);
         if (Objects.nonNull(keyParserModel)) {
             fieldSql.add(keyParserModel.createTableSql() + "\n");
         }
@@ -152,7 +152,7 @@ public class TableParseModel<T> implements Cloneable {
         String table = annotation.table();
         return String.format("SELECT COUNT(1) COUNT FROM " +
                 "`information_schema`.`TABLES` WHERE TABLE_NAME = '%s' AND TABLE_SCHEMA = '%s';",
-                table, DbConnection.currMap.get(SymbolConstant.DATA_BASE));
+                table, DbConnection.currMap.get(Constants.DATA_BASE));
     }
 
 
@@ -250,7 +250,7 @@ public class TableParseModel<T> implements Cloneable {
         }
         this.alias = annotation.alias();
         if (annotation.enabledDbPrefix()) {
-            CustomConfigHelper configHelper = (CustomConfigHelper) GlobalDataHandler.readGlobalObject(SymbolConstant.DATA_CONFIG);
+            CustomConfigHelper configHelper = (CustomConfigHelper) GlobalDataHandler.readGlobalObject(Constants.DATA_CONFIG);
             DbDataSource dbDataSource = configHelper.getDbDataSource();
             String dbPrefix = CustomUtil.getDataBase(dbDataSource.getUrl());
             this.table = dbPrefix + "." + annotation.table();

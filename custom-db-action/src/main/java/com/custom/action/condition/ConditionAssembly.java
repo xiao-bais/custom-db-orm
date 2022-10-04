@@ -3,7 +3,7 @@ package com.custom.action.condition;
 import com.custom.action.util.DbUtil;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 import com.custom.comm.enums.DbSymbol;
 import com.custom.comm.enums.SqlLike;
 import com.custom.comm.enums.SqlOrderBy;
@@ -88,10 +88,10 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
 
         if(CustomUtil.isNotBlank(getLastCondition())) {
             addCondition(getLastCondition());
-            setLastCondition(SymbolConstant.EMPTY);
+            setLastCondition(Constants.EMPTY);
         }
-        if(appendSybmol.equals(SymbolConstant.OR)) {
-            appendSybmol = SymbolConstant.AND;
+        if(appendSybmol.equals(Constants.OR)) {
+            appendSybmol = Constants.AND;
         }
     }
 
@@ -102,7 +102,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
         if (GlobalDataHandler.hasSqlKeyword(column)) {
             column = GlobalDataHandler.wrapperSqlKeyword(column);
         }
-        if(!column.contains(SymbolConstant.POINT)) {
+        if(!column.contains(Constants.POINT)) {
             column = DbUtil.fullSqlColumn(getTableSqlBuilder().getAlias(), column);
         }
         return column;
@@ -185,21 +185,21 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
      * in 、not in的条件组装
      */
     private void ConditionOnInsqlAssembly(DbSymbol dbSymbol, String column, Object val1) {
-        StringJoiner symbol = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
+        StringJoiner symbol = new StringJoiner(Constants.SEPARATOR_COMMA_2);
         if (CustomUtil.isBasicType(val1)) {
             addParams(val1);
 
         } else if (val1.getClass().isArray()) {
             int len = Array.getLength(val1);
             for (int i = 0; i < len; i++) {
-                symbol.add(SymbolConstant.QUEST);
+                symbol.add(Constants.QUEST);
                 addParams(Array.get(val1, i));
             }
 
         } else if (val1 instanceof Collection) {
             Collection<?> objects = (Collection<?>) val1;
             addParams(objects);
-            objects.forEach(x -> symbol.add(SymbolConstant.QUEST));
+            objects.forEach(x -> symbol.add(Constants.QUEST));
         }
         setLastCondition(DbUtil.applyInCondition(appendSybmol, column, dbSymbol.getSymbol(), symbol.toString()));
     }
@@ -226,16 +226,16 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
      * sql模糊查询条件拼接
      */
     protected String sqlConcat(SqlLike sqlLike, Object val) {
-        String sql = SymbolConstant.EMPTY;
+        String sql = Constants.EMPTY;
         switch (sqlLike) {
             case LEFT:
-                sql = SymbolConstant.PERCENT + val;
+                sql = Constants.PERCENT + val;
                 break;
             case RIGHT:
-                sql = val + SymbolConstant.PERCENT;
+                sql = val + Constants.PERCENT;
                 break;
             case LIKE:
-                sql = SymbolConstant.PERCENT + val + SymbolConstant.PERCENT;
+                sql = Constants.PERCENT + val + Constants.PERCENT;
                 break;
         }
         return sql;
@@ -269,7 +269,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
     protected Children doSelectSqlFunc(Consumer<SelectFunc<T>> consumer) {
         SelectFunc<T> sqlFunc = new SelectFunc<>(getEntityClass());
         consumer.accept(sqlFunc);
-        this.mergeSelect(sqlFunc.getColumns().split(String.valueOf(SymbolConstant.CENTER_LINE)));
+        this.mergeSelect(sqlFunc.getColumns().split(String.valueOf(Constants.CENTER_LINE)));
         return childrenClass;
     }
 
@@ -369,7 +369,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
 
 
     protected final Children childrenClass = (Children) this;
-    protected static String appendSybmol = SymbolConstant.AND;
+    protected static String appendSybmol = Constants.AND;
     // 允许不包含别名的sql条件
     private final static List<DbSymbol> ALLOW_NOT_ALIAS = Arrays.asList(DbSymbol.EXISTS, DbSymbol.NOT_EXISTS);
     /**

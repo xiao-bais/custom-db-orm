@@ -4,7 +4,7 @@ import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.util.DbUtil;
 import com.custom.comm.StrUtils;
 import com.custom.jdbc.GlobalDataHandler;
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +58,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
             return this.buildSelect(!getPrimaryTable()).toString();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return SymbolConstant.EMPTY;
+            return Constants.EMPTY;
         }
     }
 
@@ -83,7 +83,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
      * 生成表查询sql语句
      */
     private void createSelectBaseTableSql() {
-        StringJoiner baseFieldSql = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
+        StringJoiner baseFieldSql = new StringJoiner(Constants.SEPARATOR_COMMA_2);
 
         DbKeyParserModel<T> keyParserModel = getKeyParserModel();
         // 第一步 拼接主键
@@ -108,7 +108,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
      */
     private void createSelectRelationSql() {
 
-        StringJoiner baseFieldSql = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
+        StringJoiner baseFieldSql = new StringJoiner(Constants.SEPARATOR_COMMA_2);
 
         // 第一步 拼接主键
         if (getKeyParserModel() != null) {
@@ -167,11 +167,11 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
      * 自定义查询表列名
      */
     public String selectColumns(String[] columns) {
-        StringJoiner columnStr = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
+        StringJoiner columnStr = new StringJoiner(Constants.SEPARATOR_COMMA_2);
         for (String x : columns) {
             String column = GlobalDataHandler.hasSqlKeyword(x) ? String.format("`%s`", x) : x;
-            if(Objects.nonNull(column) && !column.contains(SymbolConstant.POINT)) {
-                column = getAlias() + SymbolConstant.POINT + column;
+            if(Objects.nonNull(column) && !column.contains(Constants.POINT)) {
+                column = getAlias() + Constants.POINT + column;
             }
             String field = getColumnMapper().get(column);
             columnStr.add(Objects.isNull(field) ? column : DbUtil.sqlSelectWrapper(column, field));

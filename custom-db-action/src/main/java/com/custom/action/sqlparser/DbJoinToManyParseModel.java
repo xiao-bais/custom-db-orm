@@ -3,7 +3,7 @@ package com.custom.action.sqlparser;
 import com.custom.action.dbaction.AbstractJoinToResult;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.StrUtils;
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 import com.custom.comm.annotations.DbKey;
 import com.custom.comm.annotations.DbOneToMany;
 import com.custom.comm.exceptions.ExThrowsUtil;
@@ -85,9 +85,9 @@ public class DbJoinToManyParseModel extends AbstractJoinToResult {
             return "";
         }
         TableParseModel<?> tableModel = TableInfoCache.getTableModel(getJoinTarget());
-        return SymbolConstant.ORDER_BY
+        return Constants.ORDER_BY
                 + tableModel.getFieldMapper().get(sortField) + " "
-                + (orderByAsc ? SymbolConstant.ASC : SymbolConstant.DESC);
+                + (orderByAsc ? Constants.ASC : Constants.DESC);
     }
 
     @Override

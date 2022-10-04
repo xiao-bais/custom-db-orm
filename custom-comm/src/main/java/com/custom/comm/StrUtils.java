@@ -16,7 +16,7 @@ public class StrUtils {
         if(is){
             return url.substring(lastIndex+1, url.indexOf("?"));
         }else{
-            return url.substring(url.lastIndexOf("/") + SymbolConstant.DEFAULT_ONE);
+            return url.substring(url.lastIndexOf("/") + Constants.DEFAULT_ONE);
         }
     }
 
@@ -166,7 +166,7 @@ public class StrUtils {
      * 类名转首字母小写
      */
     public static String toIndexLower(String text) {
-        String res = SymbolConstant.EMPTY;
+        String res = Constants.EMPTY;
         if(JudgeUtil.isEmpty(text)) {
             return res;
         }
@@ -207,7 +207,7 @@ public class StrUtils {
         for (int i = 0; i < len; i++) {
             char c = param.charAt(i);
             if (Character.isUpperCase(c) && i > 0) {
-                sb.append(SymbolConstant.UNDERLINE);
+                sb.append(Constants.UNDERLINE);
             }
             sb.append(Character.toLowerCase(c));
         }
@@ -219,13 +219,13 @@ public class StrUtils {
      */
     public static String underlineToCamel(String param) {
         if (isBlank(param)) {
-            return SymbolConstant.EMPTY;
+            return Constants.EMPTY;
         }
         int len = param.length();
         StringBuilder sb = new StringBuilder(len);
         for (int i = 0; i < len; i++) {
             char c = param.charAt(i);
-            if (c == SymbolConstant.UNDERLINE) {
+            if (c == Constants.UNDERLINE) {
                 if (++i < len) {
                     sb.append(Character.toUpperCase(param.charAt(i)));
                 }

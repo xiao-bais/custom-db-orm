@@ -1,6 +1,6 @@
 package com.custom.jdbc;
 
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.configuration.DbConnection;
 import com.custom.configuration.DbCustomStrategy;
@@ -26,7 +26,7 @@ public class CustomJdbcManagement extends DbConnection {
         super(dbDataSource);
         this.conn = super.getConnection();
         this.dbCustomStrategy = dbCustomStrategy;
-        GlobalDataHandler.addGlobalHelper(SymbolConstant.DATA_CONFIG, new CustomConfigHelper(dbDataSource, dbCustomStrategy));
+        GlobalDataHandler.addGlobalHelper(Constants.DATA_CONFIG, new CustomConfigHelper(dbDataSource, dbCustomStrategy));
     }
 
     protected PreparedStatement getStatement() {
@@ -122,7 +122,7 @@ public class CustomJdbcManagement extends DbConnection {
      */
     protected void checkMoreResult(ResultSet resultSet) throws SQLException {
         int rowsCount = this.getRowsCount(resultSet);
-        if (rowsCount > SymbolConstant.DEFAULT_ONE) {
+        if (rowsCount > Constants.DEFAULT_ONE) {
             ExThrowsUtil.toCustom("只查一条，但查询到%s条结果", rowsCount);
         }
     }

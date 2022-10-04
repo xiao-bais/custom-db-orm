@@ -2,7 +2,7 @@ package com.custom.springboot.scanner;
 
 import com.custom.comm.BasicDao;
 import com.custom.comm.JudgeUtil;
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 import com.custom.comm.annotations.DbTable;
 import com.custom.comm.annotations.mapper.SqlMapper;
 import com.custom.comm.exceptions.CustomCheckException;
@@ -41,7 +41,7 @@ public class PackageScanner {
     /**
      * 扫描的包
      */
-    private String packageScan = SymbolConstant.EMPTY;
+    private String packageScan = Constants.EMPTY;
 
     /**
      * 资源路径
@@ -68,14 +68,14 @@ public class PackageScanner {
      */
     private void scannerPackage() {
         try {
-            url = classLoader.getResource(packageScan.replace(SymbolConstant.POINT, SymbolConstant.FILE_SEPARATOR));
+            url = classLoader.getResource(packageScan.replace(Constants.POINT, Constants.FILE_SEPARATOR));
             if (url == null) {
                 throw new CustomCheckException(String.format("The package url cannot be found：'%s'", packageScan));
             }
             String protocol = url.getProtocol();
-            if (SymbolConstant.FILE.equals(protocol)) {
+            if (Constants.FILE.equals(protocol)) {
                 addLocalClass(packageScan);
-            } else if (SymbolConstant.JAR.equals(protocol)) {
+            } else if (Constants.JAR.equals(protocol)) {
                 addJarClass(packageScan);
             }
         } catch (Exception e) {
@@ -91,7 +91,7 @@ public class PackageScanner {
     private void addLocalClass(final String packageName) throws URISyntaxException {
 
         try {
-            url = classLoader.getResource(packageName.replace(SymbolConstant.POINT, SymbolConstant.FILE_SEPARATOR));
+            url = classLoader.getResource(packageName.replace(Constants.POINT, Constants.FILE_SEPARATOR));
             if (url == null) {
                 throw new CustomCheckException(String.format("The package url cannot be found：'%s'", packageScan));
             }
@@ -100,15 +100,15 @@ public class PackageScanner {
             classFile.listFiles(pathName -> {
                 if (pathName.isDirectory()) {
                     try {
-                        addLocalClass(packageName + SymbolConstant.POINT + pathName.getName());
+                        addLocalClass(packageName + Constants.POINT + pathName.getName());
                     } catch (URISyntaxException e) {
                         e.printStackTrace();
                     }
                 }
-                if (pathName.getName().endsWith(SymbolConstant.CLASS)) {
+                if (pathName.getName().endsWith(Constants.CLASS)) {
                     Class<?> clazz = null;
                     try {
-                        clazz = classLoader.loadClass(packageName + SymbolConstant.POINT + pathName.getName().replace(SymbolConstant.CLASS, SymbolConstant.EMPTY));
+                        clazz = classLoader.loadClass(packageName + Constants.POINT + pathName.getName().replace(Constants.CLASS, Constants.EMPTY));
                     } catch (ClassNotFoundException e) {
                         e.printStackTrace();
                     }
@@ -133,7 +133,7 @@ public class PackageScanner {
      */
     private void addJarClass(final String packageName) throws IOException {
         if (JudgeUtil.isEmpty(packageName)) return;
-        String pathName = packageName.replace(SymbolConstant.POINT, SymbolConstant.FILE_SEPARATOR);
+        String pathName = packageName.replace(Constants.POINT, Constants.FILE_SEPARATOR);
         JarFile jarFile = null;
 
         url = classLoader.getResource(packageName);
@@ -147,20 +147,20 @@ public class PackageScanner {
             JarEntry jarEntry = jarEntryEnumeration.nextElement();
             String jarEntryName = jarEntry.getName();
 
-            if (jarEntryName.contains(pathName) && !jarEntryName.equals(pathName + SymbolConstant.FILE_SEPARATOR)) {
+            if (jarEntryName.contains(pathName) && !jarEntryName.equals(pathName + Constants.FILE_SEPARATOR)) {
                 if (jarEntry.isDirectory()) {
-                    String beanClassName = jarEntry.getName().replace(SymbolConstant.FILE_SEPARATOR, SymbolConstant.POINT);
-                    int endIndex = beanClassName.lastIndexOf(SymbolConstant.POINT);
+                    String beanClassName = jarEntry.getName().replace(Constants.FILE_SEPARATOR, Constants.POINT);
+                    int endIndex = beanClassName.lastIndexOf(Constants.POINT);
                     String prefix = null;
                     if (endIndex > 0) {
                         prefix = beanClassName.substring(0, endIndex);
                     }
                     addJarClass(prefix);
-                    if (jarEntry.getName().endsWith(SymbolConstant.CLASS)) {
+                    if (jarEntry.getName().endsWith(Constants.CLASS)) {
                         Class<?> beanClass = null;
 
                         try {
-                            beanClass = classLoader.loadClass(jarEntry.getName().replace(SymbolConstant.FILE_SEPARATOR, SymbolConstant.POINT).replace(SymbolConstant.CLASS, SymbolConstant.EMPTY));
+                            beanClass = classLoader.loadClass(jarEntry.getName().replace(Constants.FILE_SEPARATOR, Constants.POINT).replace(Constants.CLASS, Constants.EMPTY));
                         } catch (ClassNotFoundException e) {
                             e.printStackTrace();
                         }

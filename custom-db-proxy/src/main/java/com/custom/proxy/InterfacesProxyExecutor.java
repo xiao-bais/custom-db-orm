@@ -1,8 +1,6 @@
 package com.custom.proxy;
 
 import com.custom.comm.BasicDao;
-import com.custom.comm.RexUtil;
-import com.custom.comm.SymbolConstant;
 import com.custom.comm.annotations.mapper.Query;
 import com.custom.comm.annotations.mapper.SqlMapper;
 import com.custom.comm.annotations.mapper.SqlPath;

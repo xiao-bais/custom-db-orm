@@ -1,6 +1,6 @@
 package com.custom.comm.annotations;
 
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 
 import java.lang.annotation.*;
 
@@ -38,5 +38,5 @@ public @interface DbMapper {
      * </p>
      * @return wrapperColumn
      */
-    String wrapperColumn() default SymbolConstant.EMPTY;
+    String wrapperColumn() default Constants.EMPTY;
 }

@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
 
 /**
  * @author Xiao-Bai
@@ -169,16 +168,16 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     @Override
     public String createTableSql() {
         if (!existsDbField) {
-            return SymbolConstant.EMPTY;
+            return Constants.EMPTY;
         }
         StringBuilder createSql = new StringBuilder(this.column).append(" ");
         if (dbType == DbType.DbDate || dbType == DbType.DbDateTime)
             createSql.append(dbType.getType()).append(" ");
         else
             createSql.append(dbType.getType())
-                    .append(SymbolConstant.BRACKETS_LEFT)
+                    .append(Constants.BRACKETS_LEFT)
                     .append(this.length)
-                    .append(SymbolConstant.BRACKETS_RIGHT).append(" ");
+                    .append(Constants.BRACKETS_RIGHT).append(" ");
 
         return createSql.append(this.isNull ? "NULL" : "NOT NULL").append(" ")
                 .append(String.format(" COMMENT '%s'", this.desc)).toString();

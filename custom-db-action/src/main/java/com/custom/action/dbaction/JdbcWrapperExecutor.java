@@ -1,12 +1,10 @@
 package com.custom.action.dbaction;
 
 import com.custom.action.interfaces.FullSqlConditionExecutor;
-import com.custom.action.sqlparser.TableInfoCache;
-import com.custom.action.sqlparser.TableParseModel;
 import com.custom.action.util.DbUtil;
 import com.custom.comm.ConvertUtil;
 import com.custom.comm.JudgeUtil;
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.page.DbPageRows;
 import com.custom.jdbc.condition.SaveSqlParamInfo;
@@ -174,7 +172,7 @@ public class JdbcWrapperExecutor {
     public FullSqlConditionExecutor handleLogicWithCondition(String alias, final String condition,
                                                              String logicColumn, String logicSql, String tableName) throws Exception {
         if (!DbUtil.checkLogicFieldIsExist(tableName, logicColumn, this.selectJdbc)) {
-            logicSql = SymbolConstant.EMPTY;
+            logicSql = Constants.EMPTY;
         }
         final String finalLogicSql = logicSql;
         return () -> {
@@ -183,7 +181,7 @@ public class JdbcWrapperExecutor {
                         : DbUtil.whereSqlCondition(condition);
             } else {
                 return JudgeUtil.isNotEmpty(finalLogicSql) ? DbUtil.whereSqlCondition(alias, finalLogicSql)
-                        : condition == null ? SymbolConstant.EMPTY : condition.trim();
+                        : condition == null ? Constants.EMPTY : condition.trim();
             }
         };
     }

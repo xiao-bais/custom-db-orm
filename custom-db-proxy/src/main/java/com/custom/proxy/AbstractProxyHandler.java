@@ -3,7 +3,7 @@ package com.custom.proxy;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
 import com.custom.comm.RexUtil;
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 import com.custom.comm.annotations.mapper.DbParam;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.jdbc.select.CustomSelectJdbcBasic;
@@ -158,14 +158,14 @@ public abstract class AbstractProxyHandler {
             }
 
             if (CustomUtil.isBasicType(value)) {
-                matcher.appendReplacement(exBuffer, SymbolConstant.QUEST);
+                matcher.appendReplacement(exBuffer, Constants.QUEST);
                 this.executeSqlParams.add(value);
             }else if (value instanceof Collection) {
-                StringJoiner symbolQuest = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
+                StringJoiner symbolQuest = new StringJoiner(Constants.SEPARATOR_COMMA_2);
                 Collection<?> paramCollection = (Collection<?>) value;
                 for (Object item : paramCollection) {
                     this.executeSqlParams.add(item);
-                    symbolQuest.add(SymbolConstant.QUEST);
+                    symbolQuest.add(Constants.QUEST);
                 }
                 matcher.appendReplacement(exBuffer, symbolQuest.toString());
             }

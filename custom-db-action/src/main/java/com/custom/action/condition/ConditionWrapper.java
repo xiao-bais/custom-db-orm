@@ -5,7 +5,7 @@ import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableParseModel;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 import com.custom.comm.exceptions.ExThrowsUtil;
 
 import java.io.Serializable;
@@ -215,14 +215,14 @@ public abstract class ConditionWrapper<T> implements Serializable {
             handleSqlBuilder.append(this.customizeSql);
         }
         if (JudgeUtil.isNotEmpty(this.groupBy)) {
-            handleSqlBuilder.append(SymbolConstant.GROUP_BY).append(this.groupBy);
+            handleSqlBuilder.append(Constants.GROUP_BY).append(this.groupBy);
         }
         if (JudgeUtil.isEmpty(this.having)) {
-            handleSqlBuilder.append(SymbolConstant.HAVING).append(this.having);
+            handleSqlBuilder.append(Constants.HAVING).append(this.having);
             this.paramValues.addAll(this.havingParams);
         }
         if (JudgeUtil.isNotEmpty(this.orderBy)) {
-            handleSqlBuilder.append(SymbolConstant.ORDER_BY).append(this.orderBy);
+            handleSqlBuilder.append(Constants.ORDER_BY).append(this.orderBy);
         }
         return CustomUtil.handleExecuteSql(handleSqlBuilder.toString(), this.paramValues.toArray());
     }
@@ -244,10 +244,10 @@ public abstract class ConditionWrapper<T> implements Serializable {
      */
     protected void dataStructureInit() {
         this.finalConditional = new StringBuilder();
-        this.lastCondition = SymbolConstant.EMPTY;
+        this.lastCondition = Constants.EMPTY;
         this.paramValues = new ArrayList<>();
-        this.orderBy = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
-        this.groupBy = new StringJoiner(SymbolConstant.SEPARATOR_COMMA_2);
+        this.orderBy = new StringJoiner(Constants.SEPARATOR_COMMA_2);
+        this.groupBy = new StringJoiner(Constants.SEPARATOR_COMMA_2);
         this.having = new StringBuilder();
         this.havingParams = new ArrayList<>();
     }

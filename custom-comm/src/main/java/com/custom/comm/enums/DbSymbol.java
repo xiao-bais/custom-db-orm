@@ -1,6 +1,6 @@
 package com.custom.comm.enums;
 
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 
 /**
  * @Author Xiao-Bai
@@ -19,16 +19,16 @@ public enum DbSymbol {
     NOT_EXISTS("not exists"),
     BETWEEN("between ? and ?"),
     NOT_BETWEEN("not between ? and ?"),
-    AND(SymbolConstant.AND),
-    OR(SymbolConstant.OR),
+    AND(Constants.AND),
+    OR(Constants.OR),
     LIKE("like"),
     NOT_LIKE("not like"),
     IS_NOT_NULL("is not null"),
     IS_NULL("is null"),
     NOT_IN("not in"),
     ORDER_BY("order by"),
-    ORDER_BY_ASC(SymbolConstant.ASC),
-    ORDER_BY_DESC(SymbolConstant.ASC),
+    ORDER_BY_ASC(Constants.ASC),
+    ORDER_BY_DESC(Constants.ASC),
     IN("in"),
     SELECT("select"),
     GROUP_BY("group by"),

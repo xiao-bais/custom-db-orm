@@ -1,6 +1,6 @@
 package com.custom.action.condition;
 
-import com.custom.comm.SymbolConstant;
+import com.custom.comm.Constants;
 import com.custom.comm.enums.DbSymbol;
 import com.custom.comm.enums.SqlOrderBy;
 import com.custom.comm.exceptions.ExThrowsUtil;
@@ -70,7 +70,7 @@ public class ConditionAdapter<T, Children> extends ConditionAssembly<T, SFunctio
     public Children or(boolean condition) {
         appendState = condition;
         if(condition) {
-            appendSybmol = SymbolConstant.OR;
+            appendSybmol = Constants.OR;
         }
         return childrenClass;
     }
@@ -99,7 +99,7 @@ public class ConditionAdapter<T, Children> extends ConditionAssembly<T, SFunctio
 
     @Override
     public Children select(SelectFunc<T> selectFunc) {
-        mergeSelect(selectFunc.getColumns().split(String.valueOf(SymbolConstant.CENTER_LINE)));
+        mergeSelect(selectFunc.getColumns().split(String.valueOf(Constants.CENTER_LINE)));
         return childrenClass;
     }
 
@@ -118,9 +118,9 @@ public class ConditionAdapter<T, Children> extends ConditionAssembly<T, SFunctio
 
     @Override
     public Children orderByAsc(boolean condition, OrderByFunc<T> orderByFunc) {
-        if (!orderByFunc.getOrderBy().equals(SymbolConstant.ASC)) {
+        if (!orderByFunc.getOrderBy().equals(Constants.ASC)) {
             ExThrowsUtil.toCustom("order by type is mismatch, should be entered '%s', current entered '%s'",
-                    SymbolConstant.ASC, SymbolConstant.DESC);
+                    Constants.ASC, Constants.DESC);
         }
         return adapter(DbSymbol.ORDER_BY_ASC, condition, orderByFunc.getColumns());
     }
@@ -132,9 +132,9 @@ public class ConditionAdapter<T, Children> extends ConditionAssembly<T, SFunctio
 
     @Override
     public Children orderByDesc(boolean condition, OrderByFunc<T> orderByFunc) {
-        if (!orderByFunc.getOrderBy().equals(SymbolConstant.DESC)) {
+        if (!orderByFunc.getOrderBy().equals(Constants.DESC)) {
             ExThrowsUtil.toCustom("order by type is mismatch, should be entered '%s', current entered '%s'",
-                    SymbolConstant.DESC, SymbolConstant.ASC);
+                    Constants.DESC, Constants.ASC);
         }
         return adapter(DbSymbol.ORDER_BY_DESC, condition, orderByFunc.getColumns());
     }
