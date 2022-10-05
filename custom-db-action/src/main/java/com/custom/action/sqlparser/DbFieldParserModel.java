@@ -91,7 +91,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     /**
      * 存在@DbField注解下的属性解析
      */
-    public DbFieldParserModel(Field field, String table, String alias, boolean underlineToCamel, boolean enabledDefaultValue, boolean existsDbField) {
+    public DbFieldParserModel(Field field, String table, String alias, boolean underlineToCamel, boolean existsDbField) {
         if (GlobalDataHandler.hasSqlKeyword(field.getName())) {
             this.fieldName =  GlobalDataHandler.wrapperSqlKeyword(field.getName());
         }else {

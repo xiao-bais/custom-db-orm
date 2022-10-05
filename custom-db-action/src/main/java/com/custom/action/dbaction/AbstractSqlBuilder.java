@@ -65,20 +65,8 @@ public abstract class AbstractSqlBuilder<T> {
         return table;
     }
 
-    public void setTable(String table) {
-        this.table = table;
-    }
-
     public String getAlias() {
         return alias;
-    }
-
-    public void setAlias(String alias) {
-        this.alias = alias;
-    }
-
-    public T getEntity() {
-        return entity;
     }
 
     public void setEntity(T entity) {

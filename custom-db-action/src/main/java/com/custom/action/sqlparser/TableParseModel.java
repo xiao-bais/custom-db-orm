@@ -59,11 +59,6 @@ public class TableParseModel<T> implements Cloneable {
     private boolean underlineToCamel;
 
     /**
-     * 是否开启了默认值(创建表以及插入记录时有效)
-     */
-    private boolean enabledDefaultValue;
-
-    /**
      * 当子类跟父类同时标注了@DbJoinTable(s)注解时，是否在查询时向上查找父类的@DbJoinTable(s)注解，且合并关联条件
      */
     private boolean findUpDbJoinTables;
@@ -286,7 +281,7 @@ public class TableParseModel<T> implements Cloneable {
                     continue;
                 }
                 DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias,
-                        this.underlineToCamel, this.enabledDefaultValue, true);
+                        this.underlineToCamel, true);
                 fieldParserModels.add(fieldParserModel);
 
             } else if (field.isAnnotationPresent(DbMapper.class)) {
@@ -299,7 +294,7 @@ public class TableParseModel<T> implements Cloneable {
                 relatedParserModels.add(relatedParserModel);
             } else {
                 DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias,
-                        this.underlineToCamel, this.enabledDefaultValue, false);
+                        this.underlineToCamel, false);
                 fieldParserModels.add(fieldParserModel);
             }
 
@@ -389,15 +384,15 @@ public class TableParseModel<T> implements Cloneable {
                 keyParserModel = new DbKeyParserModel<>(field, this.table, this.alias, this.underlineToCamel);
 
             } else if (field.isAnnotationPresent(DbField.class) && isBuildUpdateModels) {
-                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias, this.underlineToCamel, this.enabledDefaultValue, true);
+                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias, this.underlineToCamel, true);
                 fieldParserModels.add(fieldParserModel);
 
             } else if (field.isAnnotationPresent(DbField.class)) {
-                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias, this.underlineToCamel, this.enabledDefaultValue, true);
+                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias, this.underlineToCamel, true);
                 fieldParserModels.add(fieldParserModel);
 
             } else {
-                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias, this.underlineToCamel, this.enabledDefaultValue, false);
+                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias, this.underlineToCamel, false);
                 fieldParserModels.add(fieldParserModel);
             }
         }
@@ -412,10 +407,6 @@ public class TableParseModel<T> implements Cloneable {
     }
 
 
-    public boolean isFindUpDbJoinTables() {
-        return findUpDbJoinTables;
-    }
-
     public List<DbRelationParserModel<T>> getRelatedParserModels() {
         return relatedParserModels;
     }
@@ -426,16 +417,6 @@ public class TableParseModel<T> implements Cloneable {
 
     public List<String> getJoinTableParserModels() {
         return joinTableParserModels;
-    }
-
-    /**
-     * 获取主键的值
-     */
-    public Object primaryKeyVal() {
-        if (Objects.isNull(this.keyParserModel)) {
-            return null;
-        }
-        return this.keyParserModel.getValue();
     }
 
     /**
@@ -466,18 +447,6 @@ public class TableParseModel<T> implements Cloneable {
 
     public Field[] getFields() {
         return fields;
-    }
-
-    public void setEntityClass(Class<T> entityClass) {
-        this.entityClass = entityClass;
-    }
-
-    public void setTable(String table) {
-        this.table = table;
-    }
-
-    public void setAlias(String alias) {
-        this.alias = alias;
     }
 
     public String getDesc() {
