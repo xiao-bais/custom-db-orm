@@ -23,6 +23,7 @@
         <module>custom-db-configuration</module>
         <module>custom-db-generator</module>
         <module>custom-db-jdbc</module>
+        <module>custom-db-joiner</module>
         <module>custom-db-proxy</module>
         <module>custom-springboot-starter</module>
         <module>custom-test</module>
