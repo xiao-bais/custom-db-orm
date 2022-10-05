@@ -22,9 +22,9 @@ public class DbUtil {
 
     public final static String SELECT_TEMPLATE = "SELECT %s\n FROM %s %s";
     public final static String INSERT_TEMPLATE = "INSERT INTO %s(%s) VALUES";
-    public final static String DELETE_TEMPLATE = "DELETE FROM %s %s \nWHERE %s";
+    public final static String DELETE_TEMPLATE = "DELETE FROM %s %s";
     public final static String UPDATE_TEMPLATE = "UPDATE %s %s SET %s %s";
-    public final static String LOGIC_DELETE_TEMPLATE = "UPDATE %s %s SET %s \nWHERE %s %s";
+    public final static String LOGIC_DELETE_TEMPLATE = "UPDATE %s %s SET %s";
 
 
     /**
@@ -105,7 +105,7 @@ public class DbUtil {
      * 逻辑删除字段组装
      */
     public static String formatLogicSql(String alias, String logicColumn, Object value) {
-        return String.format("%s.%s = %s", alias, logicColumn, value);
+        return String.format("%s.%s = %s ", alias, logicColumn, value);
     }
 
     /**
@@ -118,7 +118,7 @@ public class DbUtil {
         return String.format("AND %s = ?", column);
     }
     public static String formatSqlCondition(String logicSql, String column) {
-        return String.format("%s and %s", logicSql, column);
+        return String.format("%s AND %s", logicSql, column);
     }
 
     /**
@@ -215,9 +215,9 @@ public class DbUtil {
      */
     public static String updateSql(String table, String alias, String sqlSet, String condition) {
         if (JudgeUtil.isBlank(condition)) {
-            return String.format("update %s %s \n set %s ", table, alias, sqlSet);
+            return String.format("UPDATE %s %s \n SET %s ", table, alias, sqlSet);
         }
-        return String.format("update %s %s \n set %s %s",
+        return String.format("UPDATE %s %s \n SET %s %s",
                 table, alias, sqlSet, condition);
     }
 }

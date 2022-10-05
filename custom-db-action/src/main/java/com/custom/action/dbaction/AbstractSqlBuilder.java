@@ -1,15 +1,15 @@
 package com.custom.action.dbaction;
 
 import com.custom.action.interfaces.ColumnParseHandler;
+import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.action.sqlparser.DbFieldParserModel;
 import com.custom.action.sqlparser.DbKeyParserModel;
+import com.custom.action.sqlparser.HandleDeleteSqlBuilder;
 import com.custom.action.sqlparser.TableParseModel;
 import com.custom.action.util.DbUtil;
 import com.custom.action.condition.DefaultColumnParseHandler;
-import com.custom.comm.Asserts;
-import com.custom.comm.CustomUtil;
-import com.custom.comm.JudgeUtil;
-import com.custom.comm.Constants;
+import com.custom.comm.*;
+import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.jdbc.CustomConfigHelper;
 import com.custom.jdbc.CustomSelectJdbcBasicImpl;
@@ -18,11 +18,12 @@ import com.custom.jdbc.GlobalDataHandler;
 import com.custom.jdbc.select.CustomSelectJdbcBasic;
 import com.custom.jdbc.update.CustomUpdateJdbcBasic;
 import com.custom.jdbc.condition.SaveSqlParamInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.io.Serializable;
+import java.util.*;
+import java.util.stream.IntStream;
 
 /**
  * @author Xiao-Bai
@@ -31,6 +32,8 @@ import java.util.Objects;
  */
 @SuppressWarnings("unchecked")
 public abstract class AbstractSqlBuilder<T> {
+
+    private static final Logger logger = LoggerFactory.getLogger(AbstractSqlBuilder.class);
 
     private String table;
     private String alias;
@@ -47,11 +50,19 @@ public abstract class AbstractSqlBuilder<T> {
     private Boolean primaryTable = false;
     private String logicColumn;
     private Object logicNotDeleteValue;
+    /**
+     * 逻辑删除的查询条件
+     */
     private String logicDeleteQuerySql;
+    /**
+     * 逻辑删除的修改条件
+     */
     private String logicDeleteUpdateSql;
     private List<Object> sqlParams = new ArrayList<>();
 
-    // 构建sql语句
+    /**
+     * 创建对应的sql
+     */
     public abstract String createTargetSql();
 
     public String getTable() {
@@ -189,13 +200,14 @@ public abstract class AbstractSqlBuilder<T> {
             sqlParams = new ArrayList<>();
         }
         if (val instanceof List) {
-            this.sqlParams.addAll((List<Object>)val);
+            this.sqlParams.addAll((List<Object>) val);
         }
         this.sqlParams.add(val);
     }
 
     /**
      * 注入基础表字段数据
+     *
      * @param tableSqlBuilder
      */
     protected void injectTableInfo(TableParseModel<T> tableSqlBuilder) {
@@ -258,6 +270,77 @@ public abstract class AbstractSqlBuilder<T> {
         this.logicDeleteQuerySql = DbUtil.formatLogicSql(alias, logicColumn, logicNotDeleteValue);
     }
 
+    /**
+     * 多个主键的条件
+     */
+    public String createKeysCondition(Collection<? extends Serializable> keys) {
+        Asserts.npe(keys);
+        this.checkParams(keys);
+        String condition = "";
+        DbKeyParserModel<T> keyParserModel = getKeyParserModel();
+
+        try {
+            StringJoiner symbols = new StringJoiner(Constants.SEPARATOR_COMMA_2, Constants.BRACKETS_LEFT, Constants.BRACKETS_RIGHT);
+            IntStream.range(0, keys.size()).mapToObj(i -> Constants.QUEST).forEach(symbols::add);
+
+            if (this.checkLogicFieldIsExist()) {
+                condition = String.format("AND %s IN %s", keyParserModel.getFieldSql(), symbols);
+            } else {
+                condition = String.format("%s IN %s", keyParserModel.getFieldSql(), symbols);
+            }
+        } catch (Exception e) {
+            logger.error(e.toString(), e);
+        }
+        return condition;
+    }
+
+
+    /**
+     * 一个主键的条件
+     */
+    public String createKeyCondition(Serializable key) {
+        Asserts.npe(key);
+        this.checkParams(Collections.singletonList(key));
+        String condition = "";
+        DbKeyParserModel<T> keyParserModel = getKeyParserModel();
+        try {
+            if (this.checkLogicFieldIsExist()) {
+                condition = DbUtil.formatSqlAndCondition(keyParserModel.getFieldSql());
+            } else {
+                condition = DbUtil.formatSqlCondition(keyParserModel.getFieldSql());
+            }
+        } catch (Exception e) {
+            logger.error(e.toString(), e);
+        }
+        return condition;
+    }
+
+    /**
+     * 检验参数的合法性
+     */
+    private void checkParams(Collection<? extends Serializable> keys) {
+        if (JudgeUtil.isEmpty(keyParserModel)) {
+            ExThrowsUtil.toCustom("%s 中未找到 @DbKey注解, 猜测该类或父类不存在主键字段，或没有标注@DbKey注解来表示主键", entityClass);
+        }
+
+        if (keys.stream().noneMatch(x -> CustomUtil.isKeyAllowType(keyParserModel.getType(), x))) {
+            ExThrowsUtil.toCustom("不允许的主键参数: " + keys);
+        }
+    }
+
+    /**
+     * 添加逻辑删除的条件
+     * <br/> 若存在逻辑删除的条件，则在条件前拼接逻辑删除的条件
+     */
+    public FullSqlConditionExecutor addLogicCondition(String condition) {
+        return () -> {
+            boolean isExist = checkLogicFieldIsExist();
+            if (StrUtils.isBlank(condition)) {
+                return isExist ? Constants.WHERE + getLogicDeleteQuerySql() : Constants.EMPTY;
+            }
+            return isExist ? Constants.WHERE + getLogicDeleteQuerySql() + condition : Constants.WHERE + condition;
+        };
+    }
 
 
 }

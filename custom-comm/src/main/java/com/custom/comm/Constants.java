@@ -40,7 +40,7 @@ public class Constants {
     public final static String ASC = "asc";
     public final static String DESC = "desc";
     public final static String UPDATE = "update ";
-    public final static String WHERE = " WHERE ";
+    public final static String WHERE = "\nWHERE ";
     public final static String GROUP_BY = "\ngroup by ";
     public final static String HAVING = "\nhaving ";
     public final static String ORDER_BY = "\norder by ";
@@ -51,6 +51,7 @@ public class Constants {
     public final static char UNDERLINE = '_'; //下划线
     public final static char CENTER_LINE = '-'; //中划线
     public final static String EMPTY = "";//空字符串
+    public final static String WHITESPACE = " ";//空格
     public final static String EMPTY_SQL_STR = "''";//空sql字符串
     public final static String EQUALS = " = ";//等于
     public final static String QUEST = "?";//占位符

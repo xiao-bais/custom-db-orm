@@ -86,7 +86,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
     /**
      * 自定义sql条件，只会在条件构造器的条件拼接完成之后才会拼接该条件
      */
-    private String customizeSql;
+    private StringBuilder customizeSql;
 
 
     protected TableParseModel<T> getTableSqlBuilder() {
@@ -190,11 +190,17 @@ public abstract class ConditionWrapper<T> implements Serializable {
     }
 
     public String getCustomizeSql() {
-        return customizeSql;
+        if (this.customizeSql == null) {
+            return Constants.EMPTY;
+        }
+        return customizeSql.toString();
     }
 
-    protected void setCustomizeSql(String customizeSql) {
-        this.customizeSql = customizeSql;
+    protected void addCustomizeSql(String customizeSql) {
+        if (this.customizeSql == null) {
+            this.customizeSql = new StringBuilder();
+        }
+        this.customizeSql.append(Constants.WHITESPACE).append(customizeSql);
     }
 
     protected TableParseModel<T> getTableParserModelCache(Class<T> key) {

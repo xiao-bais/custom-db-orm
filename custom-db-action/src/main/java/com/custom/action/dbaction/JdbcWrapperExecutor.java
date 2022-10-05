@@ -156,7 +156,7 @@ public class JdbcWrapperExecutor {
      */
     protected <T> void buildPageResult(Class<T> t, String selectSql, DbPageRows<T> dbPageRows, Object... params) throws Exception {
         List<T> dataList = new ArrayList<>();
-        long count = (long) selectObjBySql(String.format("select count(0) from (%s) xxx ", selectSql), params);
+        long count = (long) selectObjBySql(String.format("select count(0) from (\n%s\n) xxx ", selectSql), params);
         if (count > 0) {
             selectSql = dbPageRows.getPageIndex() == 1 ?
                     String.format("%s \nlimit %s", selectSql, dbPageRows.getPageSize())

@@ -32,23 +32,21 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
     @Override
     public String createTargetSql() {
-        Asserts.notEmpty(deleteCondition, "删除条件不可为空");
-        String deleteSql = String.format(DbUtil.DELETE_TEMPLATE, getTable(), getAlias(), deleteCondition);
+        String deleteSql = "";
         try {
-            if (checkLogicFieldIsExist()) {
-                return String.format(DbUtil.LOGIC_DELETE_TEMPLATE,
+            boolean isExist = checkLogicFieldIsExist();
+            if (isExist) {
+                deleteSql = String.format(DbUtil.DELETE_TEMPLATE, getTable(), getAlias());
+            } else {
+                deleteSql = String.format(DbUtil.LOGIC_DELETE_TEMPLATE,
                         getTable(),
                         getAlias(),
-                        getLogicDeleteUpdateSql(),
-                        getLogicDeleteQuerySql(),
-                        deleteCondition
+                        getLogicDeleteUpdateSql()
                 );
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error(e.toString(), e);
-            return null;
         }
-        this.clear();
         return deleteSql;
     }
 

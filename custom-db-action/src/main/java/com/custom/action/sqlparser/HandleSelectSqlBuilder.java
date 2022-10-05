@@ -1,7 +1,11 @@
 package com.custom.action.sqlparser;
 
+import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.dbaction.AbstractSqlBuilder;
+import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.action.util.DbUtil;
+import com.custom.comm.CustomUtil;
+import com.custom.comm.JudgeUtil;
 import com.custom.comm.StrUtils;
 import com.custom.jdbc.GlobalDataHandler;
 import com.custom.comm.Constants;
@@ -185,5 +189,45 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
     public boolean isExistNeedInjectResult() {
         return existNeedInjectResult;
+    }
+
+
+
+    /**
+     * 整合条件，获取最终可执行的sql
+     */
+    protected String selectExecuteSqlBuilder(ConditionWrapper<T> wrapper) throws Exception {
+        this.setPrimaryTable(wrapper.getPrimaryTable());
+        StringBuilder selectSql = new StringBuilder();
+        if(wrapper.getSelectColumns() != null) {
+            selectSql.append(this.selectColumns(wrapper.getSelectColumns()));
+        }else {
+            selectSql.append(this.createTargetSql());
+        }
+
+        FullSqlConditionExecutor finalCondition = this.addLogicCondition(wrapper.getFinalConditional());
+        selectSql.append(finalCondition.execute());
+
+        // 添加自定义拼接的sql条件
+        if (JudgeUtil.isNotEmpty(wrapper.getCustomizeSql())) {
+            selectSql.append(wrapper.getCustomizeSql());
+        }
+        // group by
+        if(JudgeUtil.isNotEmpty(wrapper.getGroupBy())) {
+            selectSql.append(Constants.GROUP_BY).append(wrapper.getGroupBy());
+        }
+        // having
+        if(JudgeUtil.isNotEmpty(wrapper.getHaving())) {
+            selectSql.append(Constants.HAVING).append(wrapper.getHaving());
+        }
+        // order by
+        if(CustomUtil.isNotBlank(wrapper.getOrderBy().toString())) {
+            selectSql.append(Constants.ORDER_BY).append(wrapper.getOrderBy());
+        }
+        // order by params
+        if(!wrapper.getHavingParams().isEmpty()) {
+            wrapper.getParamValues().addAll(wrapper.getHavingParams());
+        }
+        return selectSql.toString();
     }
 }

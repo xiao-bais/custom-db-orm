@@ -7,5 +7,5 @@ package com.custom.action.interfaces;
  */
 public interface FullSqlConditionExecutor {
 
-    String execute();
+    String execute() throws Exception;
 }

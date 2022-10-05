@@ -62,8 +62,8 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
         if (JudgeUtil.isEmpty(customizeSql)) {
             return childrenClass;
         }
-        setCustomizeSql(customizeSql);
-        addParams(Arrays.stream(params).collect(Collectors.toList()));
+        this.addCustomizeSql(customizeSql);
+        this.addParams(Arrays.stream(params).collect(Collectors.toList()));
         return childrenClass;
     }
 
