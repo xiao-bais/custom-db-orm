@@ -184,7 +184,7 @@ public class JdbcOpDao {
     /**
      * 根据主键删除一条记录
      */
-    public <T> int deleteByKey(Class<T> t, Object key) {
+    public <T> int deleteByKey(Class<T> t, Serializable key) {
         return jdbcAction.deleteByKey(t, key);
     }
 
@@ -226,21 +226,8 @@ public class JdbcOpDao {
         return jdbcAction.insertBatch(entityList);
     }
 
+
     /* ----------------------------------------------------------------update---------------------------------------------------------------- */
-
-    /**
-     * 根据主键修改一条记录（updateFields：指定要修改的表字段，否则则修改全部不为空的字段）
-     * 示例：
-     *     方法名(student, op -> {
-     *       op.add(Student::getName);
-     *       op.add(Student::getSex);
-     *       op.add(Student::getNickName);
-     *    })
-     */
-    public final <T> int updateColumnByKey(T entity, Consumer<List<SFunction<T, ?>>> updateColumns) {
-        return jdbcAction.updateColumnByKey(entity, updateColumns);
-    }
-
 
     /**
      * 根据主键修改一条记录
@@ -259,7 +246,7 @@ public class JdbcOpDao {
     /**
      * 根据条件修改一条记录
      */
-    public <T> int updateSelective(T entity, String condition, Object... params) {
+    public <T> int updateByCondition(T entity, String condition, Object... params) {
         return jdbcAction.updateByCondition(entity, condition, params);
     }
 

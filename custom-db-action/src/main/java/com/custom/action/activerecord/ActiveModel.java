@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  * P 主键类型
  */
 @SuppressWarnings("unchecked")
-public class ActiveModel<T extends ActiveModel<T, P>, P> implements Serializable {
+public class ActiveModel<T extends ActiveModel<T, P>, P extends Serializable> implements Serializable {
 
     private static final Logger logger = LoggerFactory.getLogger(ActiveModel.class);
 
@@ -70,17 +70,17 @@ public class ActiveModel<T extends ActiveModel<T, P>, P> implements Serializable
         return ConvertUtil.conBool(activeWrapper.deleteByKey(primaryKeyValue));
     }
 
-    /**
-     * 根据主键修改指定字段
-     */
-    public boolean update(SFunction<T, ?>... updateColumns) {
-        if (updateColumns.length == 0) {
-            return this.update();
-        }
-        JdbcActiveWrapper<T, P> activeWrapper = activeWrapper();
-        return ConvertUtil.conBool(activeWrapper.updateByKey((T) this,
-                op -> op.addAll(Arrays.stream(updateColumns).collect(Collectors.toList()))));
-    }
+//    /**
+//     * 根据主键修改指定字段
+//     */
+//    public boolean update(SFunction<T, ?>... updateColumns) {
+//        if (updateColumns.length == 0) {
+//            return this.update();
+//        }
+//        JdbcActiveWrapper<T, P> activeWrapper = activeWrapper();
+//        return ConvertUtil.conBool(activeWrapper.updateByKey((T) this,
+//                op -> op.addAll(Arrays.stream(updateColumns).collect(Collectors.toList()))));
+//    }
 
     /**
      * 根据主键修改

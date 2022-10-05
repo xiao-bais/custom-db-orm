@@ -26,23 +26,19 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(HandleDeleteSqlBuilder.class);
 
-    private Object key;
-    private Collection<?> keys;
-    private String deleteCondition;
-
     @Override
     public String createTargetSql() {
         String deleteSql = "";
         try {
             boolean isExist = checkLogicFieldIsExist();
             if (isExist) {
-                deleteSql = String.format(DbUtil.DELETE_TEMPLATE, getTable(), getAlias());
-            } else {
                 deleteSql = String.format(DbUtil.LOGIC_DELETE_TEMPLATE,
                         getTable(),
                         getAlias(),
                         getLogicDeleteUpdateSql()
                 );
+            } else {
+                deleteSql = String.format(DbUtil.DELETE_TEMPLATE, getTable(), getAlias());
             }
         } catch (Exception e) {
             logger.error(e.toString(), e);
@@ -50,64 +46,11 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
         return deleteSql;
     }
 
-    /**
-     * 处理单个主键删除
-     */
-    private void handleByKey() {
-        DbKeyParserModel<T> keyParserModel = getKeyParserModel();
-        try {
-            if (checkLogicFieldIsExist()) {
-                this.deleteCondition = DbUtil.formatSqlAndCondition(keyParserModel.getFieldSql());
-            } else {
-                this.deleteCondition = DbUtil.formatSqlCondition(keyParserModel.getFieldSql());
-            }
-        } catch (Exception e) {
-            logger.error(e.toString(), e);
-            return;
-        }
-        if(!CustomUtil.isKeyAllowType(keyParserModel.getType(), key)) {
-            ExThrowsUtil.toCustom("不允许的主键参数类型: " + key);
-        }
-        this.addParams(key);
-    }
-
-    /**
-     * 处理多个主键删除
-     */
-    private void handleByKeys() {
-        DbKeyParserModel<T> keyParserModel = getKeyParserModel();
-        try {
-            StringJoiner delSymbols = new StringJoiner(Constants.SEPARATOR_COMMA_2, Constants.BRACKETS_LEFT, Constants.BRACKETS_RIGHT);
-            IntStream.range(0, keys.size()).mapToObj(i -> Constants.QUEST).forEach(delSymbols::add);
-            this.deleteCondition = checkLogicFieldIsExist() ? String.format("AND %s IN %s", keyParserModel.getFieldSql(), delSymbols)
-                    : String.format("%s IN %s", keyParserModel.getFieldSql(), delSymbols);
-        } catch (Exception e) {
-            logger.error(e.toString(), e);
-            return;
-        }
-        if (Objects.nonNull(keys) && keys.stream().noneMatch(x -> CustomUtil.isKeyAllowType(keyParserModel.getType(), x))) {
-            ExThrowsUtil.toCustom("不允许的主键参数: " + keys);
-        }
-        this.addParams(keys);
-    }
-
-    /**
-     * 在where后面 若是存在逻辑删除字段，并且第一个条件以or开头，则转成and，防止出现意外结果
-     */
-    private void handleByCondition() {
-        try {
-            this.deleteCondition = checkLogicFieldIsExist()
-                    ? DbUtil.replaceOrWithAndOnSqlCondition(deleteCondition) : DbUtil.trimSqlCondition(deleteCondition);
-        } catch (Exception e) {
-            logger.error(e.toString(), e);
-        }
-    }
-
 
     /**
      * 在删除数据时，若是有逻辑删除，则在逻辑删除后，进行固定字段的自动填充
      */
-    protected void handleLogicDelAfter(Class<?> t, String deleteSql, Object... params) {
+    protected void handleLogicDelAfter(Class<?> t, String condition, Object... params) {
         ColumnFillAutoHandler fillColumnHandler = CustomApplicationUtil.getBean(ColumnFillAutoHandler.class);
         if (Objects.isNull(fillColumnHandler)) {
             return;
@@ -116,7 +59,7 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
                 .filter(x -> x.getEntityClass().equals(t)).findFirst();
         first.ifPresent(op -> {
 
-            String autoUpdateWhereSqlCondition = deleteSql.substring(deleteSql.indexOf(Constants.WHERE))
+            String autoUpdateWhereSqlCondition = condition.substring(condition.indexOf(Constants.WHERE))
                     .replace(getLogicDeleteQuerySql(), getLogicDeleteUpdateSql());
 
             FillStrategy strategy = op.getStrategy();
@@ -183,21 +126,6 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
             });
         }
         return autoUpdateFieldSql.toString();
-    }
-
-    protected void setKey(Object key) {
-        this.key = key;
-        handleByKey();
-    }
-
-    public void setKeys(Collection<?> keys) {
-        this.keys = keys;
-        handleByKeys();
-    }
-
-    public void setDeleteCondition(String deleteCondition) {
-        this.deleteCondition = deleteCondition;
-        handleByCondition();
     }
 
     public HandleDeleteSqlBuilder(Class<T> entityClass) {

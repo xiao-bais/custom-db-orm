@@ -52,8 +52,8 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
 
 
     /*--------------------------------------- delete ---------------------------------------*/
-    public abstract <T> int deleteByKey(Class<T> entityClass, Object key);
-    public abstract <T> int deleteBatchKeys(Class<T> entityClass, Collection<?> keys);
+    public abstract <T> int deleteByKey(Class<T> entityClass, Serializable key);
+    public abstract <T> int deleteBatchKeys(Class<T> entityClass, Collection<? extends Serializable> keys);
     public abstract <T> int deleteByCondition(Class<T> entityClass, String condition, Object... params);
     public abstract <T> int deleteSelective(ConditionWrapper<T> wrapper);
 
@@ -63,7 +63,6 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
 
     /*--------------------------------------- update ---------------------------------------*/
     public abstract <T> int updateByKey(T entity);
-    public abstract <T> int updateColumnByKey(T entity, Consumer<List<SFunction<T, ?>>> updateColumns);
     public abstract <T> int updateSelective(T entity, ConditionWrapper<T> wrapper);
     public abstract <T> int updateByCondition(T entity, String condition, Object... params);
 
@@ -77,88 +76,6 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
     public abstract int executeSql(String sql, Object... params);
     public abstract void createTables(Class<?>... arr);
     public abstract void dropTables(Class<?>... arr);
-
-
-    private DbCustomStrategy dbCustomStrategy;
-    private String logicColumn = Constants.EMPTY;
-    private String logicDeleteQuerySql = Constants.EMPTY;
-
-    /**
-     * 初始化逻辑删除的sql
-     */
-    public void initLogic() {
-        if (isLogicDeleteOpen(dbCustomStrategy)) {
-            if (JudgeUtil.isEmpty(dbCustomStrategy.getNotDeleteLogicValue())
-                    || JudgeUtil.isEmpty(dbCustomStrategy.getDeleteLogicValue())) {
-                ExThrowsUtil.toCustom("The corresponding value of the logical deletion field is not configured");
-            }
-            this.logicColumn = dbCustomStrategy.getDbFieldDeleteLogic();
-            this.logicDeleteQuerySql = String.format("%s = %s",
-                    logicColumn, dbCustomStrategy.getNotDeleteLogicValue());
-        }
-    }
-
-    /**
-     * 添加逻辑删除的部分sql
-     */
-    public FullSqlConditionExecutor handleLogicWithCondition(String alias, final String condition, String logicSql, String tableName) throws Exception {
-        return handleLogicWithCondition(alias, condition, logicColumn, logicSql, tableName);
-    }
-
-    /**
-     * 是否开启了逻辑删除字段
-     */
-    public static boolean isLogicDeleteOpen(DbCustomStrategy dbCustomStrategy) {
-        if(dbCustomStrategy == null) {
-            dbCustomStrategy = new DbCustomStrategy();
-        }
-        return JudgeUtil.isNotEmpty(dbCustomStrategy.getDbFieldDeleteLogic());
-    }
-
-
-    /**
-     * 公共获取完整查询sql
-     */
-    protected <T> String queryFullSelectBuilder(ConditionWrapper<T> wrapper, HandleSelectSqlBuilder<T> sqlBuilder) throws Exception {
-        sqlBuilder.setPrimaryTable(wrapper.getPrimaryTable());
-        StringBuilder selectSql = new StringBuilder();
-        if(wrapper.getSelectColumns() != null) {
-            selectSql.append(sqlBuilder.selectColumns(wrapper.getSelectColumns()));
-        }else {
-            selectSql.append(sqlBuilder.createTargetSql());
-        }
-        FullSqlConditionExecutor conditionExecutor = this.handleLogicWithCondition(sqlBuilder.getAlias(),
-                wrapper.getFinalConditional(), logicColumn, getLogicDeleteQuerySql(), sqlBuilder.getTable());
-        selectSql.append(conditionExecutor.execute());
-        if (JudgeUtil.isNotEmpty(wrapper.getCustomizeSql())) {
-            selectSql.append(wrapper.getCustomizeSql());
-        }
-        if(JudgeUtil.isNotEmpty(wrapper.getGroupBy())) {
-            selectSql.append(Constants.GROUP_BY).append(wrapper.getGroupBy());
-        }
-        if(JudgeUtil.isNotEmpty(wrapper.getHaving())) {
-            selectSql.append(Constants.HAVING).append(wrapper.getHaving());
-        }
-        if(CustomUtil.isNotBlank(wrapper.getOrderBy().toString())) {
-            selectSql.append(Constants.ORDER_BY).append(wrapper.getOrderBy());
-        }
-        if(!wrapper.getHavingParams().isEmpty()) {
-            wrapper.getParamValues().addAll(wrapper.getHavingParams());
-        }
-        return selectSql.toString();
-    }
-
-    public DbCustomStrategy getDbCustomStrategy() {
-        return dbCustomStrategy;
-    }
-
-    public void setDbCustomStrategy(DbCustomStrategy dbCustomStrategy) {
-        this.dbCustomStrategy = dbCustomStrategy;
-    }
-
-    public String getLogicDeleteQuerySql() {
-        return logicDeleteQuerySql;
-    }
 
     /**
      * 处理异常抛出

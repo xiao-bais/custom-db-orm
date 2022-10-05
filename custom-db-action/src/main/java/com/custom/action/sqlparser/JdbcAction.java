@@ -7,6 +7,7 @@ import com.custom.action.util.DbUtil;
 import com.custom.comm.Asserts;
 import com.custom.comm.CustomUtil;
 import com.custom.comm.JudgeUtil;
+import com.custom.comm.StrUtils;
 import com.custom.comm.annotations.check.CheckExecute;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.ExThrowsUtil;
@@ -38,10 +39,6 @@ public class JdbcAction extends AbstractSqlExecutor {
         // 配置sql执行器
         this.setSelectJdbc(new CustomSelectJdbcBasicImpl(dbDataSource, dbCustomStrategy));
         this.setUpdateJdbc(new CustomUpdateJdbcBasicImpl(dbDataSource, dbCustomStrategy));
-        // 配置sql执行策略
-        this.setDbCustomStrategy(dbCustomStrategy);
-        // 初始化逻辑删除策略
-        this.initLogic();
     }
 
     public JdbcAction(){}
@@ -51,12 +48,17 @@ public class JdbcAction extends AbstractSqlExecutor {
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> List<T> selectList(Class<T> entityClass, String condition, Object... params) {
         try {
-            HandleSelectSqlBuilder<T> sqlBuilder =  TableInfoCache.getSelectSqlBuilderCache(entityClass);
-            FullSqlConditionExecutor executorHandler = this.handleLogicWithCondition(sqlBuilder.getAlias(),
-                    condition, getLogicDeleteQuerySql(), sqlBuilder.getTable());
-            List<T> result = selectBySql(entityClass,
-                    sqlBuilder.createTargetSql() + executorHandler.execute(), params);
+            HandleSelectSqlBuilder<T> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(entityClass);
+            FullSqlConditionExecutor executor = sqlBuilder.addLogicCondition(condition);
+
+            // 封装结果
+            String selectSql = sqlBuilder.createTargetSql() + executor.execute();
+            List<T> result = selectBySql(entityClass, selectSql, params);
             this.injectOtherResult(entityClass, sqlBuilder, result);
+
+            // 清除暂存
+            sqlBuilder.clear();
+
             return result;
         } catch (Exception e) {
             this.throwsException(e);
@@ -90,6 +92,9 @@ public class JdbcAction extends AbstractSqlExecutor {
 
             // 注入一对一，一对多
             this.injectOtherResult(entityClass, sqlBuilder, dbPageRows.getData());
+
+            // 清除暂存
+            sqlBuilder.clear();
         }catch (Exception e) {
             this.throwsException(e);
         }
@@ -121,6 +126,7 @@ public class JdbcAction extends AbstractSqlExecutor {
             String selectSql = sqlBuilder.createTargetSql() + executor.execute();
             T result = selectOneBySql(entityClass, selectSql, params);
             this.injectOtherResult(entityClass, sqlBuilder, result);
+            sqlBuilder.clear();
             return result;
         }catch (Exception e) {
             this.throwsException(e);
@@ -293,6 +299,7 @@ public class JdbcAction extends AbstractSqlExecutor {
                 selectSql = String.format("%s \nlimit %s, %s", selectSql, (dbPageRows.getPageIndex() - 1) * dbPageRows.getPageSize(), dbPageRows.getPageSize());
                 dataList = selectMapsBySql(selectSql, params);
             }
+            sqlBuilder.clear();
         }catch (Exception e) {
             this.throwsException(e);
         }
@@ -302,52 +309,34 @@ public class JdbcAction extends AbstractSqlExecutor {
 
     @Override
     @CheckExecute(target = ExecuteMethod.DELETE)
-    public <T> int deleteByKey(Class<T> entityClass, Object key) {
+    public <T> int deleteByKey(Class<T> entityClass, Serializable key) {
         HandleDeleteSqlBuilder<T> sqlBuilder = TableInfoCache.getDeleteSqlBuilderCache(entityClass);
-        String deleteSql = sqlBuilder.createTargetSql();
-        int i = 0;
-        try {
-            i = executeSql(deleteSql, key);
-            if (i > 0 && sqlBuilder.checkLogicFieldIsExist()) {
-                sqlBuilder.handleLogicDelAfter(entityClass, deleteSql, sqlBuilder, key);
-            }
-        } catch (Exception e) {
-            this.throwsException(e);
-        }
-        return i;
+        String condition = sqlBuilder.createKeyCondition(key);
+        return this.deleteByCondition(entityClass, condition, key);
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.DELETE)
-    public <T> int deleteBatchKeys(Class<T> entityClass, Collection<?> keys) {
+    public <T> int deleteBatchKeys(Class<T> entityClass, Collection<? extends Serializable> keys) {
         HandleDeleteSqlBuilder<T> sqlBuilder = TableInfoCache.getDeleteSqlBuilderCache(entityClass);
-        sqlBuilder.setKeys(keys);
-        String deleteSql = sqlBuilder.createTargetSql();
-        int i = 0;
-        try {
-            i = executeSql(deleteSql, sqlBuilder.getSqlParams());
-            if (i > 0 && sqlBuilder.checkLogicFieldIsExist()) {
-                sqlBuilder.handleLogicDelAfter(entityClass, deleteSql, sqlBuilder.getSqlParams());
-            }
-        } catch (Exception e) {
-            this.throwsException(e);
-        }
-        return i;
+        String condition = sqlBuilder.createKeysCondition(keys);
+        return this.deleteByCondition(entityClass, condition, keys.toArray());
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.DELETE)
     public <T> int deleteByCondition(Class<T> entityClass, String condition, Object... params) {
         HandleDeleteSqlBuilder<T> sqlBuilder = TableInfoCache.getDeleteSqlBuilderCache(entityClass);
-        sqlBuilder.setSqlParams(Arrays.asList(params));
-        sqlBuilder.setDeleteCondition(condition);
         String deleteSql = sqlBuilder.createTargetSql();
         int i = 0;
         try {
+            FullSqlConditionExecutor conditionExecutor = sqlBuilder.addLogicCondition(condition);
+            deleteSql = deleteSql + conditionExecutor.execute();
             i = executeSql(deleteSql, params);
             if (i > 0 && sqlBuilder.checkLogicFieldIsExist()) {
-                sqlBuilder.handleLogicDelAfter(entityClass, deleteSql, params);
+                sqlBuilder.handleLogicDelAfter(entityClass, condition, params);
             }
+            sqlBuilder.clear();
         } catch (Exception e) {
             this.throwsException(e);
         }
@@ -403,53 +392,17 @@ public class JdbcAction extends AbstractSqlExecutor {
     @CheckExecute(target = ExecuteMethod.UPDATE)
     public <T> int updateByKey(T entity) {
         HandleUpdateSqlBuilder<T> sqlBuilder = TableInfoCache.getUpdateSqlBuilderCache((Class<T>) entity.getClass());
-        sqlBuilder.setEntity(entity);
-        String updateSql = sqlBuilder.createTargetSql();
-        try {
-            return executeSql(updateSql, sqlBuilder.getSqlParams());
-        }catch (Exception e) {
-            this.throwsException(e);
-            return 0;
-        }
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    @CheckExecute(target = ExecuteMethod.UPDATE)
-    public <T> int updateColumnByKey(T entity, Consumer<List<SFunction<T, ?>>> updateColumns) {
-        HandleUpdateSqlBuilder<T> sqlBuilder = TableInfoCache.getUpdateSqlBuilderCache((Class<T>) entity.getClass());
-        List<SFunction<T, ?>> updateColumnList = new ArrayList<>();
-        updateColumns.accept(updateColumnList);
-        if(!updateColumnList.isEmpty()) {
-            int columns = updateColumnList.size();
-            SFunction<T, ?>[] updateColumnArrays = (SFunction<T, ?>[]) Array.newInstance(SFunction.class, columns);
-            for (int i = 0; i < columns; i++) {
-                updateColumnArrays[i] = updateColumnList.get(i);
-            }
-            sqlBuilder.setUpdateFuncColumns(updateColumnArrays);
-        }
-        String updateSql = sqlBuilder.createTargetSql();
-        try {
-            return executeSql(updateSql, sqlBuilder.getSqlParams());
-        } catch (Exception e) {
-            this.throwsException(e);
-            return 0;
-        }
+        DbKeyParserModel<T> keyParserModel = sqlBuilder.getKeyParserModel();
+        Serializable value = (Serializable) keyParserModel.getValue(entity);
+        String condition = sqlBuilder.createKeyCondition(value);
+        return this.updateByCondition(entity, condition, value);
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
     public <T> int updateSelective(T entity, ConditionWrapper<T> wrapper) {
-        HandleUpdateSqlBuilder<T> sqlBuilder = TableInfoCache.getUpdateSqlBuilderCache((Class<T>) entity.getClass());
-        sqlBuilder.setCondition(wrapper.getFinalConditional());
-        sqlBuilder.setConditionVals(wrapper.getParamValues());
-        String updateSql = sqlBuilder.createTargetSql();
-        try {
-            return executeSql(updateSql, sqlBuilder.getSqlParams());
-        }catch (Exception e) {
-            this.throwsException(e);
-            return 0;
-        }
+        return this.updateByCondition(entity, wrapper.getFinalConditional() + wrapper.getCustomizeSql(),
+                wrapper.getParamValues().toArray());
     }
 
     @Override
@@ -458,13 +411,25 @@ public class JdbcAction extends AbstractSqlExecutor {
         if (JudgeUtil.isEmpty(condition)) {
             ExThrowsUtil.toNull("修改条件不能为空");
         }
-        HandleUpdateSqlBuilder<T> sqlBuilder = TableInfoCache.getUpdateSqlBuilderCache((Class<T>) entity.getClass());
-        sqlBuilder.setCondition(condition);
-        sqlBuilder.setConditionVals(Arrays.stream(params).collect(Collectors.toList()));
-        String updateSql = sqlBuilder.createTargetSql();
         try {
-            return executeSql(updateSql, sqlBuilder.getSqlParams());
-        }catch (Exception e) {
+            // 创建update sql创建对象
+            HandleUpdateSqlBuilder<T> sqlBuilder = TableInfoCache.getUpdateSqlBuilderCache((Class<T>) entity.getClass());
+            sqlBuilder.setEntity(entity);
+
+            // 创建update sql
+            String updateSql = sqlBuilder.createTargetSql();
+            List<Object> sqlParamList = new ArrayList<>(sqlBuilder.getSqlParamList());
+            CustomUtil.addParams(sqlParamList, params);
+
+            // 拼接sql
+            FullSqlConditionExecutor conditionExecutor = sqlBuilder.addLogicCondition(condition);
+            updateSql = updateSql + conditionExecutor.execute();
+
+            // 清除暂存
+            sqlBuilder.clear();
+
+            return executeSql(updateSql, sqlParamList.toArray());
+        } catch (Exception e) {
             this.throwsException(e);
             return 0;
         }
@@ -473,24 +438,18 @@ public class JdbcAction extends AbstractSqlExecutor {
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
     public <T> int updateSelective(AbstractUpdateSet<T> updateSet) {
-        TableParseModel<T> tableSqlBuilder = TableInfoCache.getTableModel(updateSet.thisEntityClass());
+        Class<T> entityClass = updateSet.thisEntityClass();
+        HandleUpdateSqlBuilder<T> sqlBuilder = TableInfoCache.getUpdateSqlBuilderCache((entityClass));
         UpdateSetWrapper<T> updateSetWrapper = updateSet.getUpdateSetWrapper();
         ConditionWrapper<T> conditionWrapper = updateSet.getConditionWrapper();
-        String table = tableSqlBuilder.getTable();
-        String alias = tableSqlBuilder.getAlias();
-        String finalConditional = conditionWrapper.getFinalConditional();
 
         try {
-            // 条件拼接
-            FullSqlConditionExecutor conditionExecutor = handleLogicWithCondition(alias,
-                    finalConditional, getLogicDeleteQuerySql(), table);
-
-            // sql set设置器
-            String sqlSetter = updateSetWrapper.getSqlSetter().toString();
-            String updateSql = DbUtil.updateSql(table, alias, sqlSetter, conditionExecutor.execute());
-            
+            FullSqlConditionExecutor executor = sqlBuilder.addLogicCondition(conditionWrapper.getFinalConditional());
+            String finalConditional = executor.execute();
             List<Object> sqlParams = updateSetWrapper.getSetParams();
             CustomUtil.addParams(sqlParams, conditionWrapper.getParamValues());
+            String updateSql = String.format(DbUtil.UPDATE_TEMPLATE, sqlBuilder.getTable(), sqlBuilder.getAlias(),
+                    updateSetWrapper.getSqlSetter(), finalConditional);
             return executeSql(updateSql, sqlParams.toArray());
         }catch (Exception e) {
             this.throwsException(e);

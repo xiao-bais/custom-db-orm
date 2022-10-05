@@ -4,6 +4,7 @@ import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.condition.SFunction;
 import com.custom.comm.page.DbPageRows;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +15,7 @@ import java.util.function.Consumer;
  * @Date 2022/7/15 0015 16:51
  * @Desc
  */
-public interface JdbcActiveWrapper<T, P> {
+public interface JdbcActiveWrapper<T, P extends Serializable> {
 
     /*--------------------------------------- select ---------------------------------------*/
     DbPageRows<T> selectPage(ConditionWrapper<T> wrapper);
@@ -38,7 +39,6 @@ public interface JdbcActiveWrapper<T, P> {
 
     /*------------------------------------ update ---------------------------------------*/
     int updateByKey(T t);
-    int updateByKey(T t, Consumer<List<SFunction<T, ?>>> updateColumns);
     int updateSelective(T t, ConditionWrapper<T> wrapper);
 
     /*------------------------------------ comm ---------------------------------------*/

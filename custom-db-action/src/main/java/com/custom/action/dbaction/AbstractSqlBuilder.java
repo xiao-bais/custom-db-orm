@@ -2,10 +2,7 @@ package com.custom.action.dbaction;
 
 import com.custom.action.interfaces.ColumnParseHandler;
 import com.custom.action.interfaces.FullSqlConditionExecutor;
-import com.custom.action.sqlparser.DbFieldParserModel;
-import com.custom.action.sqlparser.DbKeyParserModel;
-import com.custom.action.sqlparser.HandleDeleteSqlBuilder;
-import com.custom.action.sqlparser.TableParseModel;
+import com.custom.action.sqlparser.*;
 import com.custom.action.util.DbUtil;
 import com.custom.action.condition.DefaultColumnParseHandler;
 import com.custom.comm.*;
@@ -15,6 +12,7 @@ import com.custom.jdbc.CustomConfigHelper;
 import com.custom.jdbc.CustomSelectJdbcBasicImpl;
 import com.custom.jdbc.CustomUpdateJdbcBasicImpl;
 import com.custom.jdbc.GlobalDataHandler;
+import com.custom.jdbc.condition.SelectSqlParamInfo;
 import com.custom.jdbc.select.CustomSelectJdbcBasic;
 import com.custom.jdbc.update.CustomUpdateJdbcBasic;
 import com.custom.jdbc.condition.SaveSqlParamInfo;
@@ -46,8 +44,6 @@ public abstract class AbstractSqlBuilder<T> {
     private Map<String, String> columnMapper;
     private CustomSelectJdbcBasic selectJdbc;
     private CustomUpdateJdbcBasic updateJdbc;
-    private ColumnParseHandler<T> columnParseHandler;
-    private Boolean primaryTable = false;
     private String logicColumn;
     private Object logicNotDeleteValue;
     /**
@@ -109,14 +105,6 @@ public abstract class AbstractSqlBuilder<T> {
 
     public void setEntityClass(Class<T> entityClass) {
         this.entityClass = entityClass;
-        this.columnParseHandler = new DefaultColumnParseHandler<>(entityClass);
-    }
-
-
-    public void setSqlParams(List<Object> sqlParams) {
-        if (JudgeUtil.isNotEmpty(sqlParams)) {
-            this.sqlParams = sqlParams;
-        }
     }
 
     public DbKeyParserModel<T> getKeyParserModel() {
@@ -151,18 +139,6 @@ public abstract class AbstractSqlBuilder<T> {
         return this.logicDeleteUpdateSql;
     }
 
-    public ColumnParseHandler<T> getColumnParseHandler() {
-        return columnParseHandler;
-    }
-
-    public Boolean getPrimaryTable() {
-        return primaryTable;
-    }
-
-    public void setPrimaryTable(Boolean primaryTable) {
-        this.primaryTable = primaryTable;
-    }
-
     /**
      * 直接执行，属于内部执行
      */
@@ -171,6 +147,7 @@ public abstract class AbstractSqlBuilder<T> {
         updateJdbc.executeUpdate(new SaveSqlParamInfo<>(sql, false, null));
     }
 
+
     /**
      * 由于部分表可能没有逻辑删除字段，所以在每一次执行时，都需检查该表有没有逻辑删除的字段，以保证sql正常执行
      */
@@ -178,7 +155,16 @@ public abstract class AbstractSqlBuilder<T> {
         if (CustomUtil.isBlank(logicColumn)) {
             return false;
         }
-        return DbUtil.checkLogicFieldIsExist(table, logicColumn, selectJdbc);
+        Boolean existsLogic = TableInfoCache.isExistsLogic(table);
+        if (existsLogic != null) {
+            return existsLogic;
+        }
+        String existSql = String.format("select count(*) count from information_schema.columns " +
+                "where table_name = '%s' and column_name = '%s'", table, logicColumn);
+        Object obj = selectJdbc.selectObj(new SelectSqlParamInfo<>(Object.class, existSql, false));
+        boolean conBool = ConvertUtil.conBool(obj);
+        TableInfoCache.setTableLogic(table, conBool);
+        return conBool;
     }
 
 
@@ -190,6 +176,13 @@ public abstract class AbstractSqlBuilder<T> {
             return new Object[]{};
         }
         return sqlParams.toArray();
+    }
+
+    /**
+     * 获取sql参数值列表
+     */
+    public List<Object> getSqlParamList() {
+       return sqlParams;
     }
 
     /**
@@ -239,6 +232,7 @@ public abstract class AbstractSqlBuilder<T> {
      */
     public void clear() {
         this.entityList = new ArrayList<>();
+        this.sqlParams = new ArrayList<>();
         setEntity(null);
     }
 
@@ -338,7 +332,10 @@ public abstract class AbstractSqlBuilder<T> {
             if (StrUtils.isBlank(condition)) {
                 return isExist ? Constants.WHERE + getLogicDeleteQuerySql() : Constants.EMPTY;
             }
-            return isExist ? Constants.WHERE + getLogicDeleteQuerySql() + condition : Constants.WHERE + condition;
+            if (isExist) {
+                return Constants.WHERE + getLogicDeleteQuerySql() + condition.trim();
+            }
+            return Constants.WHERE + DbUtil.trimSqlCondition(condition);
         };
     }
 

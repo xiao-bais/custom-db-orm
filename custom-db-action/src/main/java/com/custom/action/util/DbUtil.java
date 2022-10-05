@@ -51,36 +51,13 @@ public class DbUtil {
 
 
     public static String ifNull(String column) {
-        return String.format("ifnull(%s, '')", column);
-    }
-
-    public static String ifNull(String column, Object value, String fieldName) {
-        String setValue = value instanceof CharSequence ? String.format("'%s'", value) : String.valueOf(value);
-        return String.format("ifnull(%s, %s) %s", column, setValue, fieldName);
+        return String.format("IFNULL(%s, '')", column);
     }
 
     public static String ifNull(String column, String fieldName) {
-        return String.format("ifnull(%s, '') %s", column, fieldName);
+        return String.format("IFNULL(%s, '') %s", column, fieldName);
     }
 
-    /**
-     * 由于部分表可能没有逻辑删除字段，所以在每一次执行时，都需检查该表有没有逻辑删除的字段，以保证sql正常执行
-     */
-    public static boolean checkLogicFieldIsExist(String table, String logicField, CustomSelectJdbcBasic select) throws Exception {
-        if (JudgeUtil.isEmpty(logicField)) {
-            return false;
-        }
-        Boolean existsLogic = TableInfoCache.isExistsLogic(table);
-        if (existsLogic != null) {
-            return existsLogic;
-        }
-        String existSql = String.format("select count(*) count from information_schema.columns " +
-                "where table_name = '%s' and column_name = '%s'", table, logicField);
-        Object obj = select.selectObj(new SelectSqlParamInfo<>(Object.class, existSql, false));
-        boolean conBool = ConvertUtil.conBool(obj);
-        TableInfoCache.setTableLogic(table, conBool);
-        return conBool;
-    }
 
     /**
      * sql的查询包装
@@ -117,10 +94,6 @@ public class DbUtil {
     public static String formatSqlAndCondition(String column) {
         return String.format("AND %s = ?", column);
     }
-    public static String formatSqlCondition(String logicSql, String column) {
-        return String.format("%s AND %s", logicSql, column);
-    }
-
     /**
      * 组装sql条件
      */
@@ -148,13 +121,13 @@ public class DbUtil {
         String sql = Constants.EMPTY;
         switch (sqlLike) {
             case LEFT:
-                sql = "concat('%', ?)";
+                sql = "CONCAT('%', ?)";
                 break;
             case RIGHT:
-                sql = "concat(?, '%')";
+                sql = "CONCAT(?, '%')";
                 break;
             case LIKE:
-                sql = "concat('%', ?, '%')";
+                sql = "CONCAT('%', ?, '%')";
                 break;
         }
         return sql;
@@ -193,31 +166,5 @@ public class DbUtil {
             finalCondition = condition.replaceFirst(Constants.OR, Constants.AND);
         }
         return finalCondition.trim();
-    }
-
-    /**
-     * 格式化where后面的sql条件
-     */
-    public static String whereSqlCondition(String alias, String logicSql, String condition) {
-        return String.format("\nWHERE %s.%s \n %s ", alias, logicSql, condition);
-    }
-
-    public static String whereSqlCondition(String alias, String logicSql) {
-        return String.format("\nWHERE %s.%s ", alias, logicSql);
-    }
-
-    public static String whereSqlCondition(String condition) {
-        return String.format("\nWHERE %s ", DbUtil.trimAppendSqlCondition(condition));
-    }
-
-    /**
-     * update sql
-     */
-    public static String updateSql(String table, String alias, String sqlSet, String condition) {
-        if (JudgeUtil.isBlank(condition)) {
-            return String.format("UPDATE %s %s \n SET %s ", table, alias, sqlSet);
-        }
-        return String.format("UPDATE %s %s \n SET %s %s",
-                table, alias, sqlSet, condition);
     }
 }

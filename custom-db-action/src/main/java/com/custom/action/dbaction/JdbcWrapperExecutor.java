@@ -166,26 +166,6 @@ public class JdbcWrapperExecutor {
         dbPageRows.setTotal(count).setData(dataList);
     }
 
-    /**
-     * 添加逻辑删除的部分sql
-     */
-    public FullSqlConditionExecutor handleLogicWithCondition(String alias, final String condition,
-                                                             String logicColumn, String logicSql, String tableName) throws Exception {
-        if (!DbUtil.checkLogicFieldIsExist(tableName, logicColumn, this.selectJdbc)) {
-            logicSql = Constants.EMPTY;
-        }
-        final String finalLogicSql = logicSql;
-        return () -> {
-            if (JudgeUtil.isNotEmpty(condition)) {
-                return JudgeUtil.isNotEmpty(finalLogicSql) ? DbUtil.whereSqlCondition(alias, finalLogicSql, condition.trim())
-                        : DbUtil.whereSqlCondition(condition);
-            } else {
-                return JudgeUtil.isNotEmpty(finalLogicSql) ? DbUtil.whereSqlCondition(alias, finalLogicSql)
-                        : condition == null ? Constants.EMPTY : condition.trim();
-            }
-        };
-    }
-
 
 
 }

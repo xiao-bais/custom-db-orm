@@ -138,7 +138,7 @@ public interface JdbcDao {
     /**
      * 根据主键删除一条记录
      */
-    <T> int deleteByKey(Class<T> t, Object key);
+    <T> int deleteByKey(Class<T> t, Serializable key);
 
     /**
      * 根据主键删除多条记录
@@ -168,11 +168,6 @@ public interface JdbcDao {
     <T> int insertBatch(List<T> entityList);
 
     /* ----------------------------------------------------------------update---------------------------------------------------------------- */
-
-    /**
-     * 根据主键修改一条记录（updateColumns：指定要修改的表字段，否则则修改全部 !=null 的字段）
-     */
-    <T> int updateColumnByKey(T entity, Consumer<List<SFunction<T, ?>>> updateColumns);
 
     /**
      * 根据主键修改一条记录

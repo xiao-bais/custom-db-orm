@@ -29,7 +29,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
     private final StringBuilder selectSql;
     private final StringBuilder selectJoinSql;
     private final StringBuilder joinTableSql;
-    private final boolean findUpDbJoinTables;
+    private boolean primaryTable = false;
     private final List<DbRelationParserModel<T>> relatedParserModels;
     private final List<DbJoinTableParserModel<T>> joinDbMappers;
     private final List<String> joinTableParserModels;
@@ -40,7 +40,6 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
         this.selectSql = new StringBuilder();
         this.selectJoinSql = new StringBuilder();
         this.joinTableSql = new StringBuilder();
-        this.findUpDbJoinTables = tableSqlBuilder.isFindUpDbJoinTables();
         this.relatedParserModels = tableSqlBuilder.getRelatedParserModels();
         this.joinDbMappers = tableSqlBuilder.getJoinDbMappers();
         this.joinTableParserModels = tableSqlBuilder.getJoinTableParserModels();
@@ -58,8 +57,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
     @Override
     public String createTargetSql() {
         try {
-            this.clear();
-            return this.buildSelect(!getPrimaryTable()).toString();
+            return this.buildSelect(!this.primaryTable).toString();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return Constants.EMPTY;
@@ -183,10 +181,6 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
         return String.format(DbUtil.SELECT_TEMPLATE, columnStr, getTable(), getAlias()) + joinTableSql;
     }
 
-    public boolean isMergeSuperDbJoinTable() {
-        return this.findUpDbJoinTables;
-    }
-
     public boolean isExistNeedInjectResult() {
         return existNeedInjectResult;
     }
@@ -197,7 +191,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
      * 整合条件，获取最终可执行的sql
      */
     protected String selectExecuteSqlBuilder(ConditionWrapper<T> wrapper) throws Exception {
-        this.setPrimaryTable(wrapper.getPrimaryTable());
+        this.primaryTable = wrapper.getPrimaryTable();
         StringBuilder selectSql = new StringBuilder();
         if(wrapper.getSelectColumns() != null) {
             selectSql.append(this.selectColumns(wrapper.getSelectColumns()));

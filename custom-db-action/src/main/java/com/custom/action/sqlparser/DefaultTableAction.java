@@ -12,6 +12,7 @@ import com.custom.configuration.DbDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,7 @@ import java.util.function.Consumer;
  * @date 2022/7/15 0015 16:11
  * 指定单表的专属DAO
  */
-public class DefaultTableAction<T, P> implements JdbcActiveWrapper<T, P> {
+public class DefaultTableAction<T, P extends Serializable> implements JdbcActiveWrapper<T, P> {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultTableAction.class);
 
@@ -107,11 +108,6 @@ public class DefaultTableAction<T, P> implements JdbcActiveWrapper<T, P> {
     @Override
     public int updateByKey(T t) {
         return jdbcAction.updateByKey(t);
-    }
-
-    @Override
-    public final int updateByKey(T t, Consumer<List<SFunction<T, ?>>> updateColumns) {
-        return jdbcAction.updateColumnByKey(t, updateColumns);
     }
 
     @Override

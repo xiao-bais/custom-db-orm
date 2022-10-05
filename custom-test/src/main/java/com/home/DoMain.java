@@ -27,8 +27,7 @@ public class DoMain {
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
 
-
-
+        jdbcOpDao.deleteBatchKeys(Aklis.class, Arrays.asList(1, 2, 3));
 
     }
 

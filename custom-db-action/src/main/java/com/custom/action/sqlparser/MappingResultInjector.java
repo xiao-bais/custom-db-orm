@@ -59,7 +59,7 @@ public class MappingResultInjector<T> {
             for (Field waitSetField : oneToManyFieldList) {
                 DbJoinToManyParseModel joinToManyParseModel = new DbJoinToManyParseModel(waitSetField);
                 Class<?> joinTarget = joinToManyParseModel.getJoinTarget();
-                TableParseModel<?> targetTableModel = TableInfoCache.getTableModel(joinTarget);
+                HandleSelectSqlBuilder<?> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(joinTarget);
                 String condition = joinToManyParseModel.queryCondition();
 
                 for (T entity : entityList) {
@@ -67,7 +67,7 @@ public class MappingResultInjector<T> {
                         continue;
                     }
                     List<?> queryResult = this.queryResult(entity, joinToManyParseModel.getThisField(), condition,
-                            joinTarget, targetTableModel);
+                            joinTarget, sqlBuilder);
                     if (queryResult == null) {
                         continue;
                     }
@@ -95,7 +95,7 @@ public class MappingResultInjector<T> {
         for (Field waitSetField : oneToOneFieldList) {
             DbJoinToOneParseModel joinToOneParseModel = new DbJoinToOneParseModel(waitSetField);
             Class<?> joinTarget = joinToOneParseModel.getJoinTarget();
-            TableParseModel<?> targetTableModel = TableInfoCache.getTableModel(joinTarget);
+            HandleSelectSqlBuilder<?> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(joinTarget);
             String condition = joinToOneParseModel.queryCondition();
 
             for (T entity : entityList) {
@@ -103,7 +103,7 @@ public class MappingResultInjector<T> {
                     continue;
                 }
                 List<?> queryResult = this.queryResult(entity, joinToOneParseModel.getThisField(), condition,
-                        joinTarget, targetTableModel);
+                        joinTarget, sqlBuilder);
                 if (JudgeUtil.isNotEmpty(queryResult)) {
                     if (queryResult.get(0) == null) {
                         continue;
@@ -124,11 +124,11 @@ public class MappingResultInjector<T> {
      * @param thisField 查询的关联java字段
      * @param condition 查询的条件
      * @param joinTarget 查询的对象
-     * @param targetTableModel 查询对象的注解模板解析对象
+     * @param sqlBuilder 查询的sql创建对象
      * @return Lists
      * @throws Exception
      */
-    private List<?> queryResult(T entity, String thisField, String condition, Class<?> joinTarget, TableParseModel<?> targetTableModel) throws Exception {
+    private List<?> queryResult(T entity, String thisField, String condition, Class<?> joinTarget, HandleSelectSqlBuilder<?> sqlBuilder) throws Exception {
         try {
             Object queryValue = CustomUtil.readFieldValue(entity, thisField);
             if (queryValue == null) {
@@ -136,13 +136,9 @@ public class MappingResultInjector<T> {
             }
 
             // 若该表存在逻辑删除的字段，则处理逻辑删除条件
-            FullSqlConditionExecutor conditionExecutor = sqlExecutor.handleLogicWithCondition(targetTableModel.getAlias(), condition,
-                    sqlExecutor.getLogicDeleteQuerySql(), targetTableModel.getTable());
+            FullSqlConditionExecutor conditionExecutor = sqlBuilder.addLogicCondition(condition);
 
-            // 构建该对象的查询sql模板
-            AbstractSqlBuilder<?> abstractSqlBuilder = TableInfoCache.getSelectSqlBuilderCache(joinTarget);
-
-            String selectSql = abstractSqlBuilder.createTargetSql() + conditionExecutor.execute();
+            String selectSql = sqlBuilder.createTargetSql() + conditionExecutor.execute();
             return sqlExecutor.executeQueryNotPrintSql(joinTarget, selectSql, queryValue);
 
         }catch (NoSuchFieldException e) {

@@ -222,6 +222,9 @@ public class CustomUtil extends StrUtils {
         if (isBasicType(addVal)) {
             return thisParams.add(addVal);
         }
+        if (addVal.getClass().isArray()) {
+            return thisParams.addAll(Arrays.asList((Object[]) addVal));
+        }
         if (addVal instanceof List) {
             return thisParams.addAll((List<Object>) addVal);
         }

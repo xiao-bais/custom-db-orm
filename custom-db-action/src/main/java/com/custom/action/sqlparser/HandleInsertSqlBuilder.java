@@ -20,13 +20,13 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
      * 插入的sql前缀
      * <br/> insert into 表(字段) values
      */
-    private String insertPrefix = "";
+    private final String insertPrefix;
 
     /**
      * 插入的sql后缀
      * <br/> (?,?,?,?,?)
      */
-    private StringJoiner insertSuffix;
+    private final StringJoiner insertSuffix;
 
     @Override
     public String createTargetSql() {
@@ -44,9 +44,7 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
             this.extractParams(op);
             insertSqlField.add(insertSuffix.toString());
         });
-        String targetSql = insertPrefix + insertSqlField;
-        this.clear();
-        return targetSql;
+        return insertPrefix + insertSqlField;
     }
 
 
