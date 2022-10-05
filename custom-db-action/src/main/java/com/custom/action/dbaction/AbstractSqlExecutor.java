@@ -78,7 +78,7 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
     public abstract void dropTables(Class<?>... arr);
 
     /**
-     * 处理异常抛出
+     * 处理异常抛出, 其实该方法只是做了一个隐式的异常抛出，没有别的作用
      */
     public void throwsException(Exception e) {
         if (e instanceof CustomCheckException) {

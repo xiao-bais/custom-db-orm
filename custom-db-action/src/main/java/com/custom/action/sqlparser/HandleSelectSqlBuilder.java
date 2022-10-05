@@ -50,7 +50,6 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
     }
 
 
-
     /**
      * 获取查询sql（代码自行判定是否需要拼接表连接的sql）
      */
@@ -172,7 +171,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
         StringJoiner columnStr = new StringJoiner(Constants.SEPARATOR_COMMA_2);
         for (String x : columns) {
             String column = GlobalDataHandler.hasSqlKeyword(x) ? String.format("`%s`", x) : x;
-            if(Objects.nonNull(column) && !column.contains(Constants.POINT)) {
+            if (Objects.nonNull(column) && !column.contains(Constants.POINT)) {
                 column = getAlias() + Constants.POINT + column;
             }
             String field = getColumnMapper().get(column);
@@ -186,16 +185,15 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
     }
 
 
-
     /**
      * 整合条件，获取最终可执行的sql
      */
     protected String selectExecuteSqlBuilder(ConditionWrapper<T> wrapper) throws Exception {
         this.primaryTable = wrapper.getPrimaryTable();
         StringBuilder selectSql = new StringBuilder();
-        if(wrapper.getSelectColumns() != null) {
+        if (wrapper.getSelectColumns() != null) {
             selectSql.append(this.selectColumns(wrapper.getSelectColumns()));
-        }else {
+        } else {
             selectSql.append(this.createTargetSql());
         }
 
@@ -207,19 +205,19 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
             selectSql.append(wrapper.getCustomizeSql());
         }
         // group by
-        if(JudgeUtil.isNotEmpty(wrapper.getGroupBy())) {
+        if (JudgeUtil.isNotEmpty(wrapper.getGroupBy())) {
             selectSql.append(Constants.GROUP_BY).append(wrapper.getGroupBy());
         }
         // having
-        if(JudgeUtil.isNotEmpty(wrapper.getHaving())) {
+        if (JudgeUtil.isNotEmpty(wrapper.getHaving())) {
             selectSql.append(Constants.HAVING).append(wrapper.getHaving());
         }
         // order by
-        if(CustomUtil.isNotBlank(wrapper.getOrderBy().toString())) {
+        if (CustomUtil.isNotBlank(wrapper.getOrderBy().toString())) {
             selectSql.append(Constants.ORDER_BY).append(wrapper.getOrderBy());
         }
         // order by params
-        if(!wrapper.getHavingParams().isEmpty()) {
+        if (!wrapper.getHavingParams().isEmpty()) {
             wrapper.getParamValues().addAll(wrapper.getHavingParams());
         }
         return selectSql.toString();
