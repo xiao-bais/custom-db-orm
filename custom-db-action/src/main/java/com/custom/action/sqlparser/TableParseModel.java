@@ -331,7 +331,7 @@ public class TableParseModel<T> implements Cloneable {
             if (Collection.class.isAssignableFrom(fieldType) || Object.class.equals(fieldType)) {
                 this.oneToManyFieldList.add(field);
             } else if (Map.class.isAssignableFrom(fieldType)) {
-                ExThrowsUtil.toIllegal("Annotation DbOneToOne does not support acting on properties of " + fieldType.getName());
+                ExThrowsUtil.toIllegal("Annotation DbOneToMany does not support acting on properties of " + fieldType.getName());
             }
         }
     }
@@ -342,7 +342,7 @@ public class TableParseModel<T> implements Cloneable {
      */
     private void mergeDbJoinTables() {
         Class<?> entityClass = this.entityClass;
-        if (findUpDbJoinTables) {
+        if (this.findUpDbJoinTables) {
             while (!entityClass.equals(Object.class)) {
                 buildDbJoinTables(entityClass);
                 entityClass = entityClass.getSuperclass();
@@ -358,12 +358,12 @@ public class TableParseModel<T> implements Cloneable {
     private void buildDbJoinTables(Class<?> entityClass) {
         DbJoinTables joinTables = entityClass.getAnnotation(DbJoinTables.class);
         if (Objects.nonNull(joinTables)) {
-            Arrays.stream(joinTables.value()).map(DbJoinTable::value).forEach(joinTableParserModels::add);
+            Arrays.stream(joinTables.value()).map(DbJoinTable::value).forEach(this.joinTableParserModels::add);
         }
 
         DbJoinTable joinTable = entityClass.getAnnotation(DbJoinTable.class);
         if(Objects.nonNull(joinTable)) {
-            joinTableParserModels.add(joinTable.value());
+            this.joinTableParserModels.add(joinTable.value());
         }
     }
 

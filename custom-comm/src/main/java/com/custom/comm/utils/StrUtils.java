@@ -13,9 +13,9 @@ public class StrUtils {
     public static String getDataBase(String url){
         int lastIndex =  url.lastIndexOf("/");
         boolean is = url.indexOf("?") > 0;
-        if(is){
-            return url.substring(lastIndex+1, url.indexOf("?"));
-        }else{
+        if (is) {
+            return url.substring(lastIndex + 1, url.indexOf("?"));
+        } else {
             return url.substring(url.lastIndexOf("/") + Constants.DEFAULT_ONE);
         }
     }
@@ -167,12 +167,11 @@ public class StrUtils {
      */
     public static String toIndexLower(String text) {
         String res = Constants.EMPTY;
-        if(JudgeUtil.isEmpty(text)) {
+        if (JudgeUtil.isEmpty(text)) {
             return res;
         }
         String first = text.substring(0, 1).toLowerCase();
-        res = first + text.substring(1);
-        return res;
+        return first + text.substring(1);
     }
 
     /**
@@ -239,7 +238,7 @@ public class StrUtils {
     /**
      * 查找字符串出现次数
      */
-    public static int countStr(String str,String rex) {
+    public static int countStr(String str, String rex) {
         int num = 0;
         while (str.contains(rex)) {
             str = str.substring(str.indexOf(rex) + rex.length());
