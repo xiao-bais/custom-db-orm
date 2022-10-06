@@ -1,8 +1,8 @@
 package com.custom.action.sqlparser;
 
-import com.custom.comm.CustomUtil;
-import com.custom.comm.JudgeUtil;
-import com.custom.comm.Constants;
+import com.custom.comm.utils.CustomUtil;
+import com.custom.comm.utils.JudgeUtil;
+import com.custom.comm.utils.Constants;
 import com.custom.comm.annotations.*;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.ExThrowsUtil;

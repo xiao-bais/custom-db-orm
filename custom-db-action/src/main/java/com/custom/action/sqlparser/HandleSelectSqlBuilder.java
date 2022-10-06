@@ -4,11 +4,11 @@ import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.action.util.DbUtil;
-import com.custom.comm.CustomUtil;
-import com.custom.comm.JudgeUtil;
-import com.custom.comm.StrUtils;
+import com.custom.comm.utils.CustomUtil;
+import com.custom.comm.utils.JudgeUtil;
+import com.custom.comm.utils.StrUtils;
 import com.custom.jdbc.GlobalDataHandler;
-import com.custom.comm.Constants;
+import com.custom.comm.utils.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

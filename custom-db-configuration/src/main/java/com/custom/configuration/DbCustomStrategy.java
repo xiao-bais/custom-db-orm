@@ -1,6 +1,6 @@
 package com.custom.configuration;
 
-import com.custom.comm.Constants;
+import com.custom.comm.utils.Constants;
 import com.custom.comm.enums.Rollback;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

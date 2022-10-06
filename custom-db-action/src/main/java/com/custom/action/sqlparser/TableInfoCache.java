@@ -1,6 +1,6 @@
 package com.custom.action.sqlparser;
 
-import com.custom.comm.JudgeUtil;
+import com.custom.comm.utils.JudgeUtil;
 
 import java.lang.reflect.Field;
 import java.util.Map;

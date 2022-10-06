@@ -1,11 +1,10 @@
 package com.custom.proxy;
 
-import com.custom.comm.CustomUtil;
+import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.beans.IntrospectionException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.*;

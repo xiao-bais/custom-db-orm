@@ -2,9 +2,11 @@ package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractTableModel;
 import com.custom.action.util.DbUtil;
-import com.custom.comm.*;
 import com.custom.comm.annotations.DbField;
 import com.custom.comm.enums.DbType;
+import com.custom.comm.utils.Constants;
+import com.custom.comm.utils.CustomUtil;
+import com.custom.comm.utils.JudgeUtil;
 import com.custom.jdbc.GlobalDataHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

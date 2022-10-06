@@ -1,4 +1,4 @@
-package com.custom.comm;
+package com.custom.comm.utils;
 
 import com.custom.comm.enums.ResultStatus;
 import org.slf4j.Logger;

@@ -1,8 +1,8 @@
 package com.custom.jdbc;
 
 import com.alibaba.fastjson.JSONObject;
-import com.custom.comm.CustomUtil;
-import com.custom.comm.Constants;
+import com.custom.comm.utils.CustomUtil;
+import com.custom.comm.utils.Constants;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;

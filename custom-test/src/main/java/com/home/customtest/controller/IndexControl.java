@@ -1,15 +1,12 @@
 package com.home.customtest.controller;
 
 import com.custom.action.sqlparser.JdbcOpDao;
-import com.custom.comm.BackResult;
-import com.home.customtest.dao.CustomTestDao;
+import com.custom.comm.utils.BackResult;
 import com.home.customtest.entity.Province;
-import com.home.customtest.entity.Student;
 import com.home.customtest.mapper.StudentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**

@@ -3,7 +3,7 @@ package com.custom.action.condition;
 import com.custom.action.interfaces.ColumnParseHandler;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableParseModel;
-import com.custom.comm.Constants;
+import com.custom.comm.utils.Constants;
 import com.custom.comm.enums.SqlAggregate;
 
 import java.util.ArrayList;

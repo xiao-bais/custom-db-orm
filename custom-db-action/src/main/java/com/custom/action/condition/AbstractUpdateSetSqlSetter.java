@@ -1,9 +1,9 @@
 package com.custom.action.condition;
 
 import com.custom.action.util.DbUtil;
-import com.custom.comm.Asserts;
-import com.custom.comm.CustomUtil;
-import com.custom.comm.JudgeUtil;
+import com.custom.comm.utils.Asserts;
+import com.custom.comm.utils.CustomUtil;
+import com.custom.comm.utils.JudgeUtil;
 
 import java.util.function.Consumer;
 

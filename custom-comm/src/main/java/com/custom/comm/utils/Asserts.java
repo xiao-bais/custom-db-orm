@@ -1,4 +1,4 @@
-package com.custom.comm;
+package com.custom.comm.utils;
 
 /**
  * @Author Xiao-Bai

@@ -1,7 +1,7 @@
 package com.custom.springboot;
 
 import com.custom.action.sqlparser.TableInfoCache;
-import com.custom.comm.JudgeUtil;
+import com.custom.comm.utils.JudgeUtil;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
 import com.custom.jdbc.CustomSelectJdbcBasicImpl;
@@ -13,10 +13,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-
-import java.util.Objects;
 
 /**
  * @Author Xiao-Bai

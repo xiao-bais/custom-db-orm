@@ -1,6 +1,6 @@
 package com.custom.joiner.util;
 
-import com.custom.comm.CustomUtil;
+import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.exceptions.ExThrowsUtil;
 
 import java.util.Random;

@@ -1,6 +1,6 @@
 package com.custom.comm.page;
 
-import com.custom.comm.Constants;
+import com.custom.comm.utils.Constants;
 
 import java.util.List;
 

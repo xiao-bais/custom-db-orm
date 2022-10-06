@@ -4,10 +4,9 @@ import com.custom.action.condition.*;
 import com.custom.action.dbaction.AbstractSqlExecutor;
 import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.action.util.DbUtil;
-import com.custom.comm.Asserts;
-import com.custom.comm.CustomUtil;
-import com.custom.comm.JudgeUtil;
-import com.custom.comm.StrUtils;
+import com.custom.comm.utils.Asserts;
+import com.custom.comm.utils.CustomUtil;
+import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.annotations.check.CheckExecute;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.ExThrowsUtil;
@@ -20,10 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 /**
  * @author Xiao-Bai
@@ -58,7 +54,6 @@ public class JdbcAction extends AbstractSqlExecutor {
 
             // 清除暂存
             sqlBuilder.clear();
-
             return result;
         } catch (Exception e) {
             this.throwsException(e);

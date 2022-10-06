@@ -1,4 +1,4 @@
-package com.custom.comm;
+package com.custom.comm.utils;
 
 import java.util.Locale;
 import java.util.UUID;

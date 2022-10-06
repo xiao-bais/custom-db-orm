@@ -1,6 +1,6 @@
 package com.custom.taskmanager.controller;
 
-import com.custom.comm.BackResult;
+import com.custom.comm.utils.BackResult;
 import com.custom.comm.page.DbPageRows;
 import com.custom.taskmanager.enums.TaskDifficultyEnum;
 import com.custom.taskmanager.enums.TaskPriorityEnum;

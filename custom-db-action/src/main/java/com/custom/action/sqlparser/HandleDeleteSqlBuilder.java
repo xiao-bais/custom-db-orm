@@ -4,10 +4,9 @@ import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.fieldfill.ColumnFillAutoHandler;
 import com.custom.action.fieldfill.TableFillObject;
 import com.custom.action.util.DbUtil;
-import com.custom.comm.Asserts;
-import com.custom.comm.CustomApplicationUtil;
-import com.custom.comm.CustomUtil;
-import com.custom.comm.Constants;
+import com.custom.comm.utils.CustomApplicationUtil;
+import com.custom.comm.utils.CustomUtil;
+import com.custom.comm.utils.Constants;
 import com.custom.comm.enums.FillStrategy;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import org.slf4j.Logger;
@@ -15,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.ObjectUtils;
 
 import java.util.*;
-import java.util.stream.IntStream;
 
 /**
  * @author Xiao-Bai

@@ -1,9 +1,9 @@
 package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractJoinToResult;
-import com.custom.comm.CustomUtil;
-import com.custom.comm.StrUtils;
-import com.custom.comm.Constants;
+import com.custom.comm.utils.CustomUtil;
+import com.custom.comm.utils.StrUtils;
+import com.custom.comm.utils.Constants;
 import com.custom.comm.annotations.DbKey;
 import com.custom.comm.annotations.DbOneToMany;
 import com.custom.comm.exceptions.ExThrowsUtil;

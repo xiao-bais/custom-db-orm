@@ -1,7 +1,7 @@
 package com.custom.proxy;
 
-import com.custom.comm.JudgeUtil;
-import com.custom.comm.Constants;
+import com.custom.comm.utils.JudgeUtil;
+import com.custom.comm.utils.Constants;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;

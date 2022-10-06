@@ -1,8 +1,8 @@
 package com.custom.jdbc;
 
-import com.custom.comm.Asserts;
-import com.custom.comm.RexUtil;
-import com.custom.comm.Constants;
+import com.custom.comm.utils.Asserts;
+import com.custom.comm.utils.RexUtil;
+import com.custom.comm.utils.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;

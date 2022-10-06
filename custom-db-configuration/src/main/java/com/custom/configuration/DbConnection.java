@@ -1,8 +1,8 @@
 package com.custom.configuration;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.custom.comm.CustomUtil;
-import com.custom.comm.JudgeUtil;
+import com.custom.comm.utils.CustomUtil;
+import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

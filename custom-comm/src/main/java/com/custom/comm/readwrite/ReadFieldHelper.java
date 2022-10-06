@@ -1,9 +1,9 @@
 package com.custom.comm.readwrite;
 
 import com.alibaba.fastjson.JSONObject;
-import com.custom.comm.Asserts;
-import com.custom.comm.CustomUtil;
-import com.custom.comm.JudgeUtil;
+import com.custom.comm.utils.Asserts;
+import com.custom.comm.utils.CustomUtil;
+import com.custom.comm.utils.JudgeUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.beans.IntrospectionException;

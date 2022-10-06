@@ -1,14 +1,10 @@
 package com.custom.action.util;
 
 import com.custom.action.sqlparser.TableInfoCache;
-import com.custom.comm.ConvertUtil;
-import com.custom.comm.JudgeUtil;
-import com.custom.comm.RexUtil;
-import com.custom.comm.Constants;
+import com.custom.comm.utils.RexUtil;
+import com.custom.comm.utils.Constants;
 import com.custom.comm.annotations.DbKey;
 import com.custom.comm.enums.SqlLike;
-import com.custom.jdbc.select.CustomSelectJdbcBasic;
-import com.custom.jdbc.condition.SelectSqlParamInfo;
 
 import java.lang.reflect.Field;
 

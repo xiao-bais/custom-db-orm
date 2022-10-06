@@ -1,4 +1,4 @@
-package com.custom.comm;
+package com.custom.comm.utils;
 
 import java.lang.reflect.Array;
 import java.math.BigDecimal;

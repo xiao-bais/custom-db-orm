@@ -1,7 +1,7 @@
 package com.custom.action.fieldfill;
 
-import com.custom.comm.CustomApplicationUtil;
-import com.custom.comm.RexUtil;
+import com.custom.comm.utils.CustomApplicationUtil;
+import com.custom.comm.utils.RexUtil;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

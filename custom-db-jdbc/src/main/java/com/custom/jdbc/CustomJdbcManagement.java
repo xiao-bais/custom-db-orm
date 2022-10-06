@@ -1,6 +1,6 @@
 package com.custom.jdbc;
 
-import com.custom.comm.Constants;
+import com.custom.comm.utils.Constants;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.configuration.DbConnection;
 import com.custom.configuration.DbCustomStrategy;

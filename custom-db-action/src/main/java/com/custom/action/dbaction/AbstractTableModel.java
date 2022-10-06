@@ -1,7 +1,7 @@
 package com.custom.action.dbaction;
 
-import com.custom.comm.CustomUtil;
-import com.custom.comm.JudgeUtil;
+import com.custom.comm.utils.CustomUtil;
+import com.custom.comm.utils.JudgeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

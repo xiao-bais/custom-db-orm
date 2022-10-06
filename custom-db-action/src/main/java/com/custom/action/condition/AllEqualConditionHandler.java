@@ -1,7 +1,6 @@
 package com.custom.action.condition;
 
-import com.custom.action.sqlparser.TableInfoCache;
-import com.custom.comm.CustomUtil;
+import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

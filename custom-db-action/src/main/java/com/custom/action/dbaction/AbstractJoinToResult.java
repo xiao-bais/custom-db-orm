@@ -3,8 +3,8 @@ package com.custom.action.dbaction;
 import com.custom.action.sqlparser.DbKeyParserModel;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableParseModel;
-import com.custom.comm.Asserts;
-import com.custom.comm.JudgeUtil;
+import com.custom.comm.utils.Asserts;
+import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.annotations.DbKey;
 import com.custom.comm.exceptions.CustomCheckException;
 

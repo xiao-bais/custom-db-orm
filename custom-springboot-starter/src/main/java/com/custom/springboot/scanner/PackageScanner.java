@@ -1,8 +1,8 @@
 package com.custom.springboot.scanner;
 
 import com.custom.comm.BasicDao;
-import com.custom.comm.JudgeUtil;
-import com.custom.comm.Constants;
+import com.custom.comm.utils.JudgeUtil;
+import com.custom.comm.utils.Constants;
 import com.custom.comm.annotations.DbTable;
 import com.custom.comm.annotations.mapper.SqlMapper;
 import com.custom.comm.exceptions.CustomCheckException;

@@ -3,8 +3,8 @@ package com.custom.action.sqlparser;
 import com.custom.action.dbaction.AbstractTableModel;
 import com.custom.action.util.DbUtil;
 import com.custom.jdbc.GlobalDataHandler;
-import com.custom.comm.JudgeUtil;
-import com.custom.comm.Constants;
+import com.custom.comm.utils.JudgeUtil;
+import com.custom.comm.utils.Constants;
 import com.custom.comm.annotations.DbMapper;
 import com.custom.comm.exceptions.ExThrowsUtil;
 

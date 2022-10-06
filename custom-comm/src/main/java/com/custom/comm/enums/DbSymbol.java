@@ -1,6 +1,6 @@
 package com.custom.comm.enums;
 
-import com.custom.comm.Constants;
+import com.custom.comm.utils.Constants;
 
 /**
  * @Author Xiao-Bai

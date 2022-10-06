@@ -1,6 +1,6 @@
 package com.custom.generator;
 
-import com.custom.comm.Constants;
+import com.custom.comm.utils.Constants;
 import com.custom.generator.model.ServiceStructModel;
 import com.custom.generator.model.TableStructModel;
 import freemarker.template.Configuration;

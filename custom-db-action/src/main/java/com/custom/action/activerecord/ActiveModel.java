@@ -3,9 +3,8 @@ package com.custom.action.activerecord;
 import com.custom.action.dbaction.JdbcActiveWrapper;
 import com.custom.action.sqlparser.DefaultTableAction;
 import com.custom.action.condition.ConditionWrapper;
-import com.custom.action.condition.SFunction;
-import com.custom.comm.ConvertUtil;
-import com.custom.comm.Constants;
+import com.custom.comm.utils.ConvertUtil;
+import com.custom.comm.utils.Constants;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.configuration.DbCustomStrategy;
@@ -17,9 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @Author Xiao-Bai

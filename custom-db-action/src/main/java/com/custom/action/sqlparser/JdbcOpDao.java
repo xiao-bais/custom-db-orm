@@ -4,8 +4,7 @@ import com.custom.action.condition.AbstractUpdateSet;
 import com.custom.action.dbaction.AbstractSqlExecutor;
 import com.custom.action.proxy.JdbcActionProxy;
 import com.custom.action.condition.ConditionWrapper;
-import com.custom.action.condition.SFunction;
-import com.custom.comm.JudgeUtil;
+import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.page.DbPageRows;
 import com.custom.configuration.DbCustomStrategy;
 import com.custom.configuration.DbDataSource;
@@ -14,7 +13,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 /**
  * @author Xiao-Bai

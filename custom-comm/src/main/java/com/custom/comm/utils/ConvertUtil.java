@@ -1,4 +1,4 @@
-package com.custom.comm;
+package com.custom.comm.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,6 +1,6 @@
 package com.custom.taskmanager.config;
 
-import com.custom.comm.BackResult;
+import com.custom.comm.utils.BackResult;
 import com.custom.taskmanager.BException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

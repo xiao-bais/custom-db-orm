@@ -2,8 +2,8 @@ package com.custom.taskmanager.service.impl;
 
 import com.custom.action.condition.Conditions;
 import com.custom.action.sqlparser.JdbcDao;
-import com.custom.comm.CustomUtil;
-import com.custom.comm.JudgeUtil;
+import com.custom.comm.utils.CustomUtil;
+import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.date.DateTimeUtils;
 import com.custom.comm.page.DbPageRows;
 import com.custom.taskmanager.BException;

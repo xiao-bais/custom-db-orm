@@ -1,5 +1,5 @@
 
-package com.custom.comm;
+package com.custom.comm.utils;
 
 import com.custom.comm.annotations.DbTable;
 import com.custom.comm.exceptions.ExThrowsUtil;

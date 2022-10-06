@@ -1,6 +1,6 @@
 package com.custom.action.condition;
 
-import com.custom.comm.Constants;
+import com.custom.comm.utils.Constants;
 import com.custom.comm.enums.DbSymbol;
 import com.custom.comm.enums.SqlOrderBy;
 import com.custom.comm.exceptions.ExThrowsUtil;

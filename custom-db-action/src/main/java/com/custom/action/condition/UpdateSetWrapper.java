@@ -1,8 +1,8 @@
 package com.custom.action.condition;
 
-import com.custom.comm.Asserts;
-import com.custom.comm.CustomUtil;
-import com.custom.comm.Constants;
+import com.custom.comm.utils.Asserts;
+import com.custom.comm.utils.CustomUtil;
+import com.custom.comm.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.List;

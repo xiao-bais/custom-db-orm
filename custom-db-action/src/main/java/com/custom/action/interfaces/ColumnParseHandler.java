@@ -1,18 +1,12 @@
 package com.custom.action.interfaces;
 
 import com.custom.action.condition.SFunction;
-import com.custom.action.sqlparser.ColumnPropertyMap;
-import com.custom.comm.CustomUtil;
-import com.custom.comm.exceptions.ExThrowsUtil;
+import com.custom.comm.utils.CustomUtil;
 
-import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**

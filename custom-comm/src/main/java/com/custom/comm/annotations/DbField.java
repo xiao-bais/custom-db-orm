@@ -1,6 +1,6 @@
 package com.custom.comm.annotations;
 
-import com.custom.comm.Constants;
+import com.custom.comm.utils.Constants;
 import com.custom.comm.enums.DbType;
 
 import java.lang.annotation.*;

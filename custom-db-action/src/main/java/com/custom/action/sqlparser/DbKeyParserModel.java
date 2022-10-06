@@ -2,10 +2,10 @@ package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractTableModel;
 import com.custom.action.util.DbUtil;
-import com.custom.comm.CustomUtil;
+import com.custom.comm.utils.CustomUtil;
 import com.custom.jdbc.GlobalDataHandler;
-import com.custom.comm.JudgeUtil;
-import com.custom.comm.Constants;
+import com.custom.comm.utils.JudgeUtil;
+import com.custom.comm.utils.Constants;
 import com.custom.comm.annotations.DbKey;
 import com.custom.comm.enums.DbType;
 import com.custom.comm.enums.KeyStrategy;

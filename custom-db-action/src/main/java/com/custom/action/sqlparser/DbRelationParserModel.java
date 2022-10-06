@@ -2,8 +2,8 @@ package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractTableModel;
 import com.custom.action.util.DbUtil;
-import com.custom.comm.CustomUtil;
-import com.custom.comm.JudgeUtil;
+import com.custom.comm.utils.CustomUtil;
+import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.annotations.DbRelated;
 import com.custom.comm.annotations.DbTable;
 import com.custom.comm.enums.DbJoinStyle;

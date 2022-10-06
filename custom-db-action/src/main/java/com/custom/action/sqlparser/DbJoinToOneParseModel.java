@@ -1,7 +1,6 @@
 package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractJoinToResult;
-import com.custom.comm.JudgeUtil;
 import com.custom.comm.annotations.DbOneToOne;
 import com.custom.comm.exceptions.ExThrowsUtil;
 

@@ -1,10 +1,7 @@
 package com.custom.action.dbaction;
 
-import com.custom.action.interfaces.FullSqlConditionExecutor;
-import com.custom.action.util.DbUtil;
-import com.custom.comm.ConvertUtil;
-import com.custom.comm.JudgeUtil;
-import com.custom.comm.Constants;
+import com.custom.comm.utils.ConvertUtil;
+import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.page.DbPageRows;
 import com.custom.jdbc.condition.SaveSqlParamInfo;
