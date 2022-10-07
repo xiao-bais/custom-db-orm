@@ -43,11 +43,11 @@
         </dependency>
 
         <!-- 自定义表连接+条件构造器  -->
-<!--        <dependency>-->
-<!--            <groupId>com.xb-custom</groupId>-->
-<!--            <artifactId>custom-db-joiner</artifactId>-->
-<!--            <version>1.0.0-SNAPSHOT</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>com.xb-custom</groupId>
+            <artifactId>custom-db-joiner</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
 
 
     </dependencies>
