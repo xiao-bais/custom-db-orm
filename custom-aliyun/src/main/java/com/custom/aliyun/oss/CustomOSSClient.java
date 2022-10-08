@@ -3,6 +3,7 @@ package com.custom.aliyun.oss;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.model.GetObjectRequest;
+import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.BackResult;
 
 import java.io.File;
@@ -38,6 +39,27 @@ public class CustomOSSClient {
         return result;
     }
 
+    /**
+     * 上传
+     */
+    public BackResult<String> upload(String key, File file) {
+        Asserts.notNull(file);
+        BackResult<String> result = new BackResult<>();
+        OSS ossClient = new OSSClientBuilder().build(this.ossKey.getEndpoint(), this.ossKey.getAccessKeyId(), this.ossKey.getAccessKeySecret());
+        try {
+            if (!file.exists()) {
+                result.error(String.format("filePath:[%s] is not exist", file.getPath()));
+                return result;
+            }
+            ossClient.putObject(this.ossKey.getEndpoint(), key, file);
+        } catch (Exception e) {
+            result.error("AliyunOSS Upload Error ====> " + e);
+        } finally {
+            ossClient.shutdown();
+        }
+        return result;
+    }
+
 
     /**
      * 下载
@@ -58,17 +80,17 @@ public class CustomOSSClient {
     }
 
 
-    public boolean existFile(String filePath) {
+    private boolean existFile(String filePath) {
         File file = new File(filePath);
         return file.exists() && file.isFile();
     }
 
 
 
-    private final CustomOSSKey ossKey;
+    private final AliyunOssConfig ossKey;
 
 
-    public CustomOSSClient(CustomOSSKey ossKey) {
+    public CustomOSSClient(AliyunOssConfig ossKey) {
         this.ossKey = ossKey;
     }
 

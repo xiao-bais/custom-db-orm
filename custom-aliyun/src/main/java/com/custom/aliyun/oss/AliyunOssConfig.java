@@ -3,9 +3,9 @@ package com.custom.aliyun.oss;
 /**
  * @author Xiao-Bai
  * @date 2022/10/7 22:05
- * 开启oss的秘钥对象
+ * 开启oss的授权对象
  */
-public class CustomOSSKey {
+public class AliyunOssConfig {
 
     private String accessKeyId;
 
