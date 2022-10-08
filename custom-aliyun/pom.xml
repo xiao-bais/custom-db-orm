@@ -8,7 +8,7 @@
         <version>2.1.6.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.custom.aliyun</groupId>
+    <groupId>com.xb-custom</groupId>
     <artifactId>custom-aliyun</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <name>custom-aliyun</name>
@@ -31,7 +31,7 @@
         <dependency>
             <groupId>com.aliyun.oss</groupId>
             <artifactId>aliyun-sdk-oss</artifactId>
-            <version>3.5.0</version>
+            <version>3.8.0</version>
         </dependency>
 
         <dependency>

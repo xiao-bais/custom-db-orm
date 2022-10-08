@@ -55,9 +55,9 @@ public class SwaggerConfig {
      */
     private ApiInfo apiInfo(){
         return new ApiInfoBuilder()
-                .title("自定义-开发任务列表")//标题
+                .title("自定义-任务管理列表")//标题
                 .version("1.0")//版本
-                .description("开发任务列表")//文档说明
+                .description("任务管理列表")//文档说明
                 .termsOfServiceUrl("127.0.0.1:2021")//接口地址前缀
                 .build();
     }

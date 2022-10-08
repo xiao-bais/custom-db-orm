@@ -24,20 +24,12 @@ import java.util.Map;
  * @Desc
  */
 @Api(tags = "主任务管理")
-@Controller
+@RestController
 @RequestMapping("/task")
 public class TaskController {
 
     @Resource
     private TaskRecordService taskRecordService;
-
-    @RequestMapping("/index")
-    public ModelAndView forwardIndex(ModelAndView mav) {
-        mav.addObject("name", "张三");
-        mav.addObject("age", 15);
-        mav.setViewName("index");
-        return mav;
-    }
 
 
     @ApiOperation("主任务列表查询")
@@ -50,7 +42,6 @@ public class TaskController {
 
     @ApiOperation("下拉框")
     @GetMapping("/main_task_select")
-    @ResponseBody
     public BackResult<Map<String, Object>> mainTaskList() {
         Map<String, Object> resMap = new HashMap<>();
         resMap.put("taskDifficulty", TaskDifficultyEnum.values());
@@ -59,10 +50,10 @@ public class TaskController {
         return BackResult.bySuccess(resMap);
     }
 
+
     @ApiOperation("查询单个任务详情")
-    @GetMapping("/main_task_one")
-    @ResponseBody
-    public BackResult<TaskRecordModel> mainTaskOne(Integer taskId) {
+    @GetMapping("/select_one")
+    public BackResult<TaskRecordModel> selectOne(@RequestParam Integer taskId) {
         if (taskId == null) {
             return BackResult.byError("空的任务ID");
         }
@@ -70,10 +61,19 @@ public class TaskController {
         return BackResult.bySuccess(taskRecordModel);
     }
 
+
+
     @ApiOperation("编辑任务详情")
     @PostMapping("/edit_task_detail")
     public BackResult editTaskDetail(@RequestBody TaskRecordModel model) {
         taskRecordService.editTask(model);
+        return BackResult.bySuccess();
+    }
+
+    @ApiOperation("删除")
+    @GetMapping("/delete_one")
+    public BackResult deleteOne(@RequestParam Integer taskId) {
+        taskRecordService.deleteTask(taskId);
         return BackResult.bySuccess();
     }
 

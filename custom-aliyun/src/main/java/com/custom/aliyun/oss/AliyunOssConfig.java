@@ -15,6 +15,16 @@ public class AliyunOssConfig {
 
     private String bucketName;
 
+    private String dirPrefix;
+
+    public String getDirPrefix() {
+        return dirPrefix;
+    }
+
+    public void setDirPrefix(String dirPrefix) {
+        this.dirPrefix = dirPrefix;
+    }
+
     public String getAccessKeyId() {
         return accessKeyId;
     }
