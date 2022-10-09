@@ -15,6 +15,7 @@ import java.util.Objects;
  * @Desc：从spring容器中获取实例bean的工具类
  **/
 @Slf4j
+@Component
 public class CustomApplicationUtil implements ApplicationContextAware {
 
     private static ApplicationContext applicationContext;

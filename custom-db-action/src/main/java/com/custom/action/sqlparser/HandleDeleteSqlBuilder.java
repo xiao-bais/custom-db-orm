@@ -55,24 +55,30 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
         }
         Optional<TableFillObject> first = fillColumnHandler.fillStrategy().stream()
                 .filter(x -> x.getEntityClass().equals(t)).findFirst();
-        first.ifPresent(op -> {
 
-            String autoUpdateWhereSqlCondition = condition.substring(condition.indexOf(Constants.WHERE))
-                    .replace(getLogicDeleteQuerySql(), getLogicDeleteUpdateSql());
+        if (!first.isPresent()) {
+            first = fillColumnHandler.fillStrategy().stream()
+                    .filter(x -> x.getEntityClass().isAssignableFrom(t)).findFirst();
+        }
+        if (!first.isPresent()) {
+            return;
+        }
+        TableFillObject op = first.get();
 
-            FillStrategy strategy = op.getStrategy();
-            if (strategy == FillStrategy.DEFAULT) {
-                return;
+        String autoUpdateWhereSqlCondition = Constants.WHERE + getLogicDeleteUpdateSql() + condition;
+
+        FillStrategy strategy = op.getStrategy();
+        if (strategy == FillStrategy.DEFAULT) {
+            return;
+        }
+        String autoUpdateSql = buildLogicDelAfterAutoUpdateSql(strategy, autoUpdateWhereSqlCondition, params);
+        if (!ObjectUtils.isEmpty(autoUpdateSql)) {
+            try {
+                executeUpdateNotPrintSql(autoUpdateSql);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            String autoUpdateSql = buildLogicDelAfterAutoUpdateSql(strategy, autoUpdateWhereSqlCondition, params);
-            if (!ObjectUtils.isEmpty(autoUpdateSql)) {
-                try {
-                    executeUpdateNotPrintSql(autoUpdateSql);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        }
 
     }
 
