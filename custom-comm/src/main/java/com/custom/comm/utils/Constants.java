@@ -30,20 +30,20 @@ public class Constants {
      * sql常量
      */
     public final static String DATA_BASE = "database";
-    public final static String SET = " set ";
+    public final static String SET = " SET ";
     public final static String IS = "is";
     public final static String IN = " in ";
     public final static String NULL = "null";
     public final static String NOT_NULL = "not null";
-    public final static String AND = "and";
-    public final static String OR = "or";
-    public final static String ASC = "asc";
-    public final static String DESC = "desc";
-    public final static String UPDATE = "update ";
+    public final static String AND = "AND";
+    public final static String OR = "OR";
+    public final static String ASC = "ASC";
+    public final static String DESC = "DESC";
+    public final static String UPDATE = "UPDATE ";
     public final static String WHERE = "\nWHERE ";
-    public final static String GROUP_BY = "\ngroup by ";
+    public final static String GROUP_BY = "\nGROUP BY ";
     public final static String HAVING = "\nhaving ";
-    public final static String ORDER_BY = "\norder by ";
+    public final static String ORDER_BY = "\nORDER BY ";
 
     /**
      * 符号

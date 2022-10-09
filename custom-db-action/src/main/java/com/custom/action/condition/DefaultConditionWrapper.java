@@ -25,6 +25,11 @@ public class DefaultConditionWrapper<T> extends ConditionAssembly<T, String, Def
     }
 
     @Override
+    public DefaultConditionWrapper<T> ne(boolean condition, String column, Object val) {
+        return adapter(DbSymbol.NOT_EQUALS, condition, column, val);
+    }
+
+    @Override
     public DefaultConditionWrapper<T> ge(boolean condition, String column, Object val) {
         return adapter(DbSymbol.GREATER_THAN_EQUALS, condition, column, val);
     }

@@ -2,10 +2,12 @@ package com.custom.taskmanager.service.impl;
 
 import com.custom.action.condition.Conditions;
 import com.custom.action.sqlparser.JdbcDao;
+import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.date.DateTimeUtils;
 import com.custom.comm.page.DbPageRows;
+import com.custom.comm.utils.StrUtils;
 import com.custom.taskmanager.exception.BException;
 import com.custom.taskmanager.entity.TaskImgPath;
 import com.custom.taskmanager.entity.TaskRecord;
@@ -73,10 +75,7 @@ public class TaskRecordServiceImpl implements TaskRecordService {
             return dbPageRows;
         }
 
-        for (TaskRecordModel row : dbPageRows.getData()) {
-            // 加载展示信息
-            this.loadViewInfo(row);
-        }
+        dbPageRows.getData().forEach(this::loadViewInfo);
         return dbPageRows;
     }
 
@@ -121,7 +120,40 @@ public class TaskRecordServiceImpl implements TaskRecordService {
         if (model == null) {
             throw new BException("未知的任务");
         }
-        model.setOperatorTime(DateTimeUtils.getThisTime());
+
+        TaskRecordModel oldTaskModel = jdbcDao.selectByKey(TaskRecordModel.class, model.getId());
+        TaskProgressEnum oldTaskProgress = TaskProgressEnum.valueOf(oldTaskModel.getCurrentProgress());
+        if (oldTaskProgress == null) {
+            throw new BException("未知的进度");
+        }
+        TaskProgressEnum newTaskProgress = TaskProgressEnum.valueOf(oldTaskModel.getCurrentProgress());
+        if (newTaskProgress == null) {
+            throw new BException("未知的进度");
+        }
+
+        // 若进度是已完成待检测，或者是完成，则不允许修改
+        if (TaskProgressEnum.isNotAllowEdit(oldTaskProgress)) {
+            throw new BException(String.format("当前任务进度为[%s], 不允许进行修改", oldTaskProgress.getName()));
+        }
+
+        // 检查标题是否存在重复
+        long count = jdbcDao.selectCount(Conditions.lambdaQuery(TaskRecordModel.class)
+                .eq(TaskRecordModel::getTaskTitle, model.getTaskTitle())
+                .ne(TaskRecordModel::getId, model.getId())
+        );
+        if (count > 0) {
+            throw new BException("该标题已存在");
+        }
+
+        if (newTaskProgress == TaskProgressEnum.UN_FINISHED && StrUtils.isBlank(model.getReason())) {
+            throw new BException("未完成时，需填写未完成原因");
+        }
+
+        if (newTaskProgress == TaskProgressEnum.ENDED && StrUtils.isBlank(model.getTestResult())) {
+            throw new BException("任务完成后，需填写检测结果");
+        }
+
+        jdbcDao.save(model);
 
         if (!model.getTaskImgs().isEmpty()) {
             for (TaskImgPath taskImg : model.getTaskImgs()) {
@@ -144,6 +176,16 @@ public class TaskRecordServiceImpl implements TaskRecordService {
         if (taskRecordModel == null) {
             throw new BException("未知的任务ID");
         }
+
+        TaskProgressEnum taskProgressEnum = TaskProgressEnum.valueOf(taskRecordModel.getCurrentProgress());
+        Asserts.notNull(taskProgressEnum, "未知的进度");
+        if (TaskProgressEnum.isNotAllowEdit(taskProgressEnum)) {
+            throw new BException(String.format("该任务当前进度为[%s], 不允许删除", taskProgressEnum.getName()));
+        }
+
+        // 删除
+        jdbcDao.deleteByKey(TaskRecordModel.class, taskId);
+
         List<TaskImgPath> taskImgPaths = jdbcDao.selectList(Conditions.lambdaQuery(TaskImgPath.class)
                 .eq(TaskImgPath::getTaskCode, taskRecordModel.getTaskCode())
         );
@@ -159,7 +201,7 @@ public class TaskRecordServiceImpl implements TaskRecordService {
                 .eq(TaskRecordModel::getTaskTitle, model.getTaskTitle())
         );
         if (count > 0) {
-            throw new BException("已存在该标题，请更换");
+            throw new BException(String.format("已存在标题为[%s]的任务", model.getTaskTitle()));
         }
         model.setTaskCode(CustomUtil.getUUID());
         jdbcDao.insert(model);

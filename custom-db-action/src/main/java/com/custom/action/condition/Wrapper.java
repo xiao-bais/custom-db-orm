@@ -19,6 +19,11 @@ public interface Wrapper<Param, Result>  {
         return eq(true, column, val);
     }
 
+    Result ne(boolean condition, Param column, Object val);
+    default Result ne(Param column, Object val) {
+        return ne(true, column, val);
+    }
+
     Result ge(boolean condition, Param column, Object val);
     default Result ge(Param column, Object val) {
         return ge(true, column, val);

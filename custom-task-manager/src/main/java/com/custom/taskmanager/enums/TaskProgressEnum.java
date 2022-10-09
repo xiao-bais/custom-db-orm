@@ -34,6 +34,22 @@ public enum TaskProgressEnum {
         return null;
     }
 
+    public static TaskProgressEnum valueOf(Integer code) {
+        for (TaskProgressEnum value : values()) {
+            if (value.code.equals(code)) {
+                return value;
+            }
+        }
+        return null;
+    }
+
+
+    public static boolean isNotAllowEdit(TaskProgressEnum taskProgress) {
+        return taskProgress == TaskProgressEnum.FINISH_TO_CHECK
+                || taskProgress == TaskProgressEnum.ENDED
+                || taskProgress == TaskProgressEnum.UN_FINISHED;
+    }
+
     public Integer getCode() {
         return code;
     }

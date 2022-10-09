@@ -25,6 +25,11 @@ public class LambdaConditionWrapper<T> extends ConditionAdapter<T, LambdaConditi
     }
 
     @Override
+    public LambdaConditionWrapper<T> ne(boolean condition, SFunction<T, ?> column, Object val) {
+        return adapter(DbSymbol.NOT_EQUALS, condition, column, val);
+    }
+
+    @Override
     public LambdaConditionWrapper<T> ge(boolean condition, SFunction<T, ?> column, Object val) {
         return adapter(DbSymbol.GREATER_THAN_EQUALS, condition, column, val);
     }

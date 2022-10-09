@@ -34,6 +34,16 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * 断言的异常
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    @Order(10)
+    public BackResult IllegalException(Exception e) {
+        logger.error(e.toString(), e);
+        return BackResult.byError(e.getMessage());
+    }
+
+    /**
      * 自定义抛出的异常
      */
     @ExceptionHandler(BException.class)
