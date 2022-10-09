@@ -1,6 +1,6 @@
 package com.custom.taskmanager.controller;
 
-import com.custom.comm.utils.BackResult;
+import com.custom.jdbc.back.BackResult;
 import com.custom.comm.page.DbPageRows;
 import com.custom.taskmanager.enums.TaskDifficultyEnum;
 import com.custom.taskmanager.enums.TaskPriorityEnum;
@@ -10,9 +10,7 @@ import com.custom.taskmanager.service.TaskRecordService;
 import com.custom.taskmanager.view.TaskRecordModel;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import java.util.HashMap;

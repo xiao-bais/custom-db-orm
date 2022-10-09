@@ -1,12 +1,13 @@
-package com.custom.comm.utils;
+package com.custom.jdbc.back;
 
-import com.custom.comm.enums.ResultStatus;
+import com.custom.jdbc.transaction.BackResultTransactionProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * @Author Xiao-Bai
@@ -170,11 +171,14 @@ public class BackResult<T> {
         void execCall(BackResult<T> backResult) throws Exception;
     }
 
-    public static <T> BackResult<T> execCall(Back<T> back) {
+    public static <T> BackResult<T> execCall(Consumer<Back<T>> back) {
         BackResult<T> backResult = new BackResult<>();
         try {
-            back.execCall(backResult);
-        }catch (Exception e){
+            BackResultTransactionProxy<T> transactionProxy = new BackResultTransactionProxy<>();
+            Back<T> proxyBack = transactionProxy.getBack();
+            back.accept(proxyBack);
+            proxyBack.execCall(backResult);
+        }catch (Exception e) {
             logger.error(e.getMessage(), e);
             backResult = new BackResult<>(ResultStatus.error.getCode(), e.getMessage());
         }

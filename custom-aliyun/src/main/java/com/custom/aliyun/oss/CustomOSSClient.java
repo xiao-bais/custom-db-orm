@@ -7,7 +7,7 @@ import com.aliyun.oss.model.GetObjectRequest;
 import com.aliyun.oss.model.MatchMode;
 import com.aliyun.oss.model.PolicyConditions;
 import com.custom.comm.utils.Asserts;
-import com.custom.comm.utils.BackResult;
+import com.custom.jdbc.back.BackResult;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;

@@ -1,7 +1,7 @@
 package com.home.customtest.controller;
 
 import com.custom.action.sqlparser.JdbcOpDao;
-import com.custom.comm.utils.BackResult;
+import com.custom.jdbc.back.BackResult;
 import com.home.customtest.entity.Province;
 import com.home.customtest.mapper.StudentMapper;
 import org.springframework.beans.factory.annotation.Autowired;

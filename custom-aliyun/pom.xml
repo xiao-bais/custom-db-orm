@@ -36,7 +36,7 @@
 
         <dependency>
             <groupId>com.xb-custom</groupId>
-            <artifactId>custom-comm</artifactId>
+            <artifactId>custom-db-jdbc</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 

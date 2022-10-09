@@ -1,18 +1,11 @@
 package com.custom.taskmanager.controller;
 
-import com.aliyun.oss.OSS;
-import com.aliyun.oss.OSSClient;
-import com.aliyun.oss.OSSClientBuilder;
-import com.aliyun.oss.common.utils.BinaryUtil;
-import com.aliyun.oss.model.MatchMode;
-import com.aliyun.oss.model.PolicyConditions;
 import com.custom.aliyun.oss.AliyunOssConfig;
 import com.custom.aliyun.oss.CustomOSSClient;
 import com.custom.aliyun.oss.OssPolicyResult;
 import com.custom.comm.date.DateTimeUtils;
-import com.custom.comm.utils.BackResult;
+import com.custom.jdbc.back.BackResult;
 import com.custom.taskmanager.config.AliyunOss;
-import com.custom.taskmanager.view.OssPolicyModel;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
 
 /**
  * @author Xiao-Bai

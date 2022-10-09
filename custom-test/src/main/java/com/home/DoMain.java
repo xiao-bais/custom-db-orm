@@ -1,16 +1,8 @@
 package com.home;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.custom.action.condition.Conditions;
-import com.custom.action.condition.DefaultConditionWrapper;
-import com.custom.action.condition.LambdaConditionWrapper;
-import com.custom.action.sqlparser.JdbcDao;
-import com.custom.action.sqlparser.JdbcOpDao;
-import com.home.customtest.entity.Aklis;
+import com.custom.jdbc.back.BackResult;
+import com.custom.jdbc.transaction.BackResultTransactionProxy;
 import com.home.customtest.entity.Student;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @Author Xiao-Bai
@@ -22,12 +14,23 @@ public class DoMain {
 
     public static void main(String[] args) throws Exception {
 
-        JdbcTestBuilder jdbcTestBuilder = JdbcTestBuilder.builder();
-        JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
-        JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
+        BackResultTransactionProxy<Student> transactionProxy = new BackResultTransactionProxy<>();
+
+        BackResult.Back<Student> proxyBack = transactionProxy.getBack();
+
+        BackResult<Student> result = new BackResult<>();
+        proxyBack.execCall(result);
 
 
-        jdbcOpDao.deleteBatchKeys(Aklis.class, Arrays.asList(1, 2, 3));
+
+//        JdbcTestBuilder jdbcTestBuilder = JdbcTestBuilder.builder();
+//        JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
+//        JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
+//
+//
+//        jdbcOpDao.deleteBatchKeys(Aklis.class, Arrays.asList(1, 2, 3));
+//
+//        Aklis aklis = jdbcDao.selectByKey(Aklis.class, 123);
 
     }
 
