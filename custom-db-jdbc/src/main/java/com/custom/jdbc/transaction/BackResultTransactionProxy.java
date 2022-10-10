@@ -6,7 +6,6 @@ import com.custom.configuration.DbDataSource;
 import com.custom.jdbc.CustomConfigHelper;
 import com.custom.jdbc.GlobalDataHandler;
 import com.custom.jdbc.back.BackResult;
-import jdk.nashorn.internal.ir.BaseNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +13,6 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
-import java.sql.Savepoint;
 
 /**
  * @author Xiao-Bai

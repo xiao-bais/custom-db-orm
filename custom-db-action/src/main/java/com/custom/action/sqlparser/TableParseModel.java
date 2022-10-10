@@ -427,7 +427,9 @@ public class TableParseModel<T> implements Cloneable {
                 || JudgeUtil.isNotEmpty(this.oneToManyFieldList);
     }
 
-
+    public Class<T> getEntityClass() {
+        return entityClass;
+    }
 
     public String getTable() {
         return table;

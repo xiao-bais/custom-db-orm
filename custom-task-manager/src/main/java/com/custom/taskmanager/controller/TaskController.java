@@ -68,7 +68,7 @@ public class TaskController {
         return BackResult.bySuccess();
     }
 
-    @ApiOperation("删除")
+    @ApiOperation("删除单个任务")
     @GetMapping("/delete_one")
     public BackResult deleteOne(@RequestParam Integer taskId) {
         taskRecordService.deleteTask(taskId);

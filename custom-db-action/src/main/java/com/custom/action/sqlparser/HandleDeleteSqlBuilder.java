@@ -4,15 +4,14 @@ import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.fieldfill.ColumnFillAutoHandler;
 import com.custom.action.fieldfill.TableFillObject;
 import com.custom.action.util.DbUtil;
-import com.custom.comm.utils.CustomApplicationUtil;
-import com.custom.comm.utils.CustomUtil;
-import com.custom.comm.utils.Constants;
 import com.custom.comm.enums.FillStrategy;
 import com.custom.comm.exceptions.ExThrowsUtil;
+import com.custom.comm.utils.Constants;
+import com.custom.comm.utils.CustomApplicationUtil;
 import com.custom.comm.utils.JudgeUtil;
+import com.custom.comm.utils.StrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.ObjectUtils;
 
 import java.util.*;
 
@@ -31,11 +30,13 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
         try {
             boolean isExist = checkLogicFieldIsExist();
             if (isExist) {
+                String setColumnSql = getLogicDeleteUpdateSql();
+                String customFillSql = this.handleLogicDelBefore();
+                if (StrUtils.isNotBlank(customFillSql)) {
+                    setColumnSql = setColumnSql + Constants.SEPARATOR_COMMA_2 + customFillSql;
+                }
                 deleteSql = String.format(DbUtil.LOGIC_DELETE_TEMPLATE,
-                        getTable(),
-                        getAlias(),
-                        getLogicDeleteUpdateSql()
-                );
+                        getTable(), getAlias(), setColumnSql);
             } else {
                 deleteSql = String.format(DbUtil.DELETE_TEMPLATE, getTable(), getAlias());
             }
@@ -47,65 +48,32 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
 
     /**
-     * 在删除数据时，若是有逻辑删除，则在逻辑删除后，进行固定字段的自动填充
+     * 在删除数据时，若是有逻辑删除，则在逻辑删除前，进行固定字段的自动填充
+     * <br/> 例如: 修改时间，修改人
      */
-    protected void handleLogicDelAfter(Class<?> t, String condition, Object... params) {
+    protected String handleLogicDelBefore() {
         ColumnFillAutoHandler fillColumnHandler = CustomApplicationUtil.getBean(ColumnFillAutoHandler.class);
         if (Objects.isNull(fillColumnHandler)) {
-            return;
+            return null;
         }
+        Class<T> entityClass = getEntityClass();
         Optional<TableFillObject> first = fillColumnHandler.fillStrategy().stream()
-                .filter(x -> x.getEntityClass().equals(t)).findFirst();
+                .filter(x -> x.getEntityClass().equals(entityClass)).findFirst();
 
         if (!first.isPresent()) {
             first = fillColumnHandler.fillStrategy().stream()
-                    .filter(x -> x.getEntityClass().isAssignableFrom(t)).findFirst();
+                    .filter(x -> x.getEntityClass().isAssignableFrom(entityClass)).findFirst();
         }
         if (!first.isPresent()) {
-            return;
+            return null;
         }
-        TableFillObject op = first.get();
+        TableFillObject fillObject = first.get();
 
-        String autoUpdateWhereSqlCondition = Constants.WHERE + getLogicDeleteUpdateSql() + condition;
-
-        FillStrategy strategy = op.getStrategy();
+        FillStrategy strategy = fillObject.getStrategy();
         if (strategy == FillStrategy.DEFAULT) {
-            return;
+            return null;
         }
-        String autoUpdateSql = buildLogicDelAfterAutoUpdateSql(strategy, autoUpdateWhereSqlCondition, params);
-        if (JudgeUtil.isNotEmpty(autoUpdateSql)) {
-            try {
-                this.executeUpdateNotPrintSql(autoUpdateSql);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-    }
-
-    /**
-     * 自动填充的sql构造（采用逻辑删除后进行Update操作的方式进行自动填充）
-     */
-    private String buildLogicDelAfterAutoUpdateSql(FillStrategy strategy, String whereKeySql, Object... params) {
-        StringBuilder autoUpdateSql = new StringBuilder();
-        Optional<TableFillObject> first = Objects.requireNonNull(CustomApplicationUtil.getBean(ColumnFillAutoHandler.class))
-                .fillStrategy().stream().filter(x -> x.getEntityClass().equals(getEntityClass())).findFirst();
-        first.ifPresent(op -> {
-            autoUpdateSql.append(Constants.UPDATE)
-                    .append(getTable())
-                    .append(" ")
-                    .append(getAlias())
-                    .append(Constants.SET);
-
-            if (strategy.toString().contains(op.getStrategy().toString())) {
-                String sqlFragment = buildAssignAutoUpdateSqlFragment(op.getTableFillMapper());
-                if (Objects.nonNull(sqlFragment)) {
-                    autoUpdateSql.append(sqlFragment);
-                }
-                autoUpdateSql.append(CustomUtil.handleExecuteSql(whereKeySql, params));
-            }
-        });
-        return autoUpdateSql.toString();
+        return this.buildAssignAutoUpdateSqlFragment(fillObject.getTableFillMapper());
     }
 
     /**
@@ -113,22 +81,23 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
      */
     private String buildAssignAutoUpdateSqlFragment(Map<String, Object> tableFillObjects) {
         StringJoiner autoUpdateFieldSql = new StringJoiner(Constants.SEPARATOR_COMMA_2);
-        StringBuilder updateField;
-        if (ObjectUtils.isEmpty(tableFillObjects)) {
+
+        Map<String, String> fieldMapper = getFieldMapper();
+        if (JudgeUtil.isEmpty(tableFillObjects)) {
             return autoUpdateFieldSql.toString();
         }
         for (String fieldName : tableFillObjects.keySet()) {
-            if (ObjectUtils.isEmpty(getFieldMapper().get(fieldName))) {
+            String column = fieldMapper.get(fieldName);
+            if (JudgeUtil.isEmpty(column)) {
                 ExThrowsUtil.toCustom("未找到可匹配的java属性字段");
             }
-            updateField = new StringBuilder();
+
             Object fieldVal = tableFillObjects.get(fieldName);
-            if (ObjectUtils.isEmpty(fieldVal)) continue;
-            updateField.append(getFieldMapper().get(fieldName)).append(Constants.EQUALS).append(fieldVal);
+            // 若自定义的值为null, 则跳过
+            if (fieldVal == null) continue;
+
+            String updateField = DbUtil.formatMapperSqlCondition(column, fieldVal);
             autoUpdateFieldSql.add(updateField);
-            getFieldParserModels().stream().filter(x -> x.getFieldName().equals(fieldName)).findFirst().ifPresent(op -> {
-                op.setValue(fieldVal);
-            });
         }
         return autoUpdateFieldSql.toString();
     }

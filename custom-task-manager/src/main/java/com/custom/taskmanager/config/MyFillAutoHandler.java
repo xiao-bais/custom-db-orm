@@ -1,5 +1,6 @@
 package com.custom.taskmanager.config;
 
+import com.custom.action.fieldfill.ColumnFillAutoHandler;
 import com.custom.action.fieldfill.TableFillObject;
 import com.custom.comm.date.DateTimeUtils;
 import com.custom.comm.enums.FillStrategy;
@@ -15,7 +16,7 @@ import java.util.List;
  * @Desc
  */
 @Component
-public class ColumnFillAutoFillAutoHandler implements com.custom.action.fieldfill.ColumnFillAutoHandler {
+public class MyFillAutoHandler implements ColumnFillAutoHandler {
 
 
     @Override

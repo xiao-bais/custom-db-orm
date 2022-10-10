@@ -330,10 +330,7 @@ public class JdbcAction extends AbstractSqlExecutor {
         try {
             FullSqlConditionExecutor conditionExecutor = sqlBuilder.addLogicCondition(condition);
             deleteSql = deleteSql + conditionExecutor.execute();
-            i = executeSql(deleteSql, params);
-            if (i > 0 && sqlBuilder.checkLogicFieldIsExist()) {
-                sqlBuilder.handleLogicDelAfter(entityClass, condition, params);
-            }
+            i = this.executeSql(deleteSql, params);
             sqlBuilder.clear();
         } catch (Exception e) {
             this.throwsException(e);

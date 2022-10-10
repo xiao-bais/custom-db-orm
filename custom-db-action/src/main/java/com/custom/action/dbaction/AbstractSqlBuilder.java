@@ -196,6 +196,7 @@ public abstract class AbstractSqlBuilder<T> {
         this.fieldParserModels = tableSqlBuilder.getFieldParserModels();
         this.columnMapper = tableSqlBuilder.getColumnMapper();
         this.fieldMapper = tableSqlBuilder.getFieldMapper();
+        this.entityClass = tableSqlBuilder.getEntityClass();
 
         CustomConfigHelper configHelper = (CustomConfigHelper)
                 GlobalDataHandler.readGlobalObject(Constants.DATA_CONFIG);

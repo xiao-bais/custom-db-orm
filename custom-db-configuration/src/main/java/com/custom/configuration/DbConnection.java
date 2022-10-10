@@ -22,6 +22,8 @@ public class DbConnection {
     private static final Logger logger = LoggerFactory.getLogger(DbConnection.class);
 
     private Connection connection = null;
+    private DbDataSource dbDataSource = null;
+    private DruidDataSource druidDataSource = null;
     private static final String CUSTOM_DRIVER = "com.mysql.cj.jdbc.Driver";
     private static final String DATA_BASE = "database";
     public static Map<String, Object> currMap  = new ConcurrentHashMap<>();
@@ -32,11 +34,12 @@ public class DbConnection {
      */
     public DbConnection(DbDataSource dbDataSource) {
         try {
-            this.loaderDriver(dbDataSource);
-            this.datasourceInitialize(dbDataSource);
+            this.dbDataSource = dbDataSource;
+            this.loaderDriver();
+            this.datasourceInitialize();
         }catch (Exception e) {
             logger.error("不存在mysql驱动：" + CUSTOM_DRIVER);
-            ExThrowsUtil.toCustom(e.getMessage());
+            ExThrowsUtil.toCustom(e.toString());
         }
     }
 
@@ -49,22 +52,12 @@ public class DbConnection {
         );
     }
 
-    private void datasourceInitialize(DbDataSource dbDataSource) throws SQLException {
+    private void datasourceInitialize() throws ClassNotFoundException {
         connection = (Connection) currMap.get(getConnKey(dbDataSource));
-        if (null == connection) {
-            initConnection(dbDataSource);
-            logger.info("DataSource Connection Successfully !");
+        if (connection != null) {
+            return;
         }
-        if (JudgeUtil.isEmpty(dbDataSource.getDatabase())) {
-            dbDataSource.setDatabase(CustomUtil.getDataBase(dbDataSource.getUrl()));
-        }
-        currMap.put(DATA_BASE, dbDataSource.getDatabase());
-        currMap.put(getConnKey(dbDataSource), connection);
-
-    }
-
-    private void initConnection(DbDataSource dbDataSource) throws SQLException {
-        DruidDataSource druidDataSource = new DruidDataSource();
+        this.druidDataSource = new DruidDataSource();
         druidDataSource.setDriverClassName(dbDataSource.getDriver());
         druidDataSource.setUrl(dbDataSource.getUrl());
         druidDataSource.setUsername(dbDataSource.getUsername());
@@ -79,11 +72,19 @@ public class DbConnection {
         druidDataSource.setTestWhileIdle(dbDataSource.isTestWhileIdle());
         druidDataSource.setTestOnBorrow(dbDataSource.isTestOnBorrow());
         druidDataSource.setTestOnReturn(dbDataSource.isTestOnReturn());
-        connection = druidDataSource.getConnection();
+
+        if (JudgeUtil.isEmpty(dbDataSource.getDatabase())) {
+            if (dbDataSource.getDriver().equals(CUSTOM_DRIVER)) {
+                dbDataSource.setDatabase(CustomUtil.getDataBase(dbDataSource.getUrl()));
+            }
+            else ExThrowsUtil.toCustom("未指定数据库名称");
+        }
+        currMap.put(DATA_BASE, dbDataSource.getDatabase());
+        connection = getConnection();
     }
 
 
-    private void loaderDriver(DbDataSource dbDataSource) throws ClassNotFoundException {
+    private void loaderDriver() throws ClassNotFoundException {
         if(JudgeUtil.isEmpty(dbDataSource.getDriver())) {
             dbDataSource.setDriver(CUSTOM_DRIVER);
         }
@@ -93,13 +94,18 @@ public class DbConnection {
     //线程隔离
     private final ThreadLocal<Connection> CONN_LOCAL = new ThreadLocal<>();
 
-    protected Connection getConnection() {
+    protected synchronized Connection getConnection() {
         try {
             if(null == CONN_LOCAL.get() || connection.isClosed()) {
-                CONN_LOCAL.set(connection);
+                if (druidDataSource != null) {
+                    connection = druidDataSource.getConnection();
+                    currMap.put(getConnKey(dbDataSource), this.connection);
+                    CONN_LOCAL.set(connection);
+                }
                 return connection;
             }
         }catch (SQLException e) {
+            logger.error(e.toString(), e);
             return null;
         }
         return CONN_LOCAL.get();

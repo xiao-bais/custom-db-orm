@@ -87,6 +87,15 @@ public class DbUtil {
     public static String formatSqlCondition(String column) {
         return String.format("%s = ?", column);
     }
+
+    /**
+     * 格式化sql条件，直接映射(a = b)
+     */
+    public static String formatMapperSqlCondition(String column, Object val) {
+        return String.format("%s = %s", column, val);
+    }
+
+
     public static String formatSqlAndCondition(String column) {
         return String.format("AND %s = ?", column);
     }

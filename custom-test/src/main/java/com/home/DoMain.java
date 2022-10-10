@@ -25,7 +25,8 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-        int byKey = jdbcDao.deleteByKey(Student.class, 44);
+        Student student = jdbcDao.selectByKey(Student.class, 11);
+        Student student1 = jdbcDao.selectByKey(Student.class, 13);
 
     }
 

@@ -35,7 +35,7 @@ public class CustomUpdateJdbcBasicImpl extends CustomJdbcManagement implements C
     public int executeUpdate(SaveSqlParamInfo<Object> params) throws Exception {
         int res;
         try {
-            statementUpdate(false, params.getPrepareSql(), params.getSqlParams());
+            this.statementUpdate(false, params.getPrepareSql(), params.getSqlParams());
             res = getStatement().executeUpdate();
         } catch (SQLException e) {
             SqlOutPrintBuilder
@@ -43,7 +43,7 @@ public class CustomUpdateJdbcBasicImpl extends CustomJdbcManagement implements C
                     .sqlErrPrint();
             throw e;
         }finally {
-            closeAll();
+            this.closeResources();
         }
         return res;
     }
@@ -78,7 +78,7 @@ public class CustomUpdateJdbcBasicImpl extends CustomJdbcManagement implements C
                     .sqlErrPrint();
             throw e;
         }finally {
-            closeAll();
+            this.closeResources();
         }
         return res;
     }
@@ -95,7 +95,7 @@ public class CustomUpdateJdbcBasicImpl extends CustomJdbcManagement implements C
                     .sqlErrPrint();
             logger.error(e.toString(), e);
         }finally {
-            closeAll();
+            this.closeResources();
         }
     }
 }

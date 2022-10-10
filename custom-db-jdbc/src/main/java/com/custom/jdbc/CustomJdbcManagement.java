@@ -17,14 +17,14 @@ import java.util.Map;
 @SuppressWarnings("unchecked")
 public class CustomJdbcManagement extends DbConnection {
 
-    private final Connection conn;
+    private Connection conn = null;
     private PreparedStatement statement = null;
     private ResultSet resultSet = null;
     private final DbCustomStrategy dbCustomStrategy;
 
     public CustomJdbcManagement(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         super(dbDataSource);
-        this.conn = super.getConnection();
+//        this.conn = super.getConnection();
         this.dbCustomStrategy = dbCustomStrategy;
         GlobalDataHandler.addGlobalHelper(Constants.DATA_CONFIG, new CustomConfigHelper(dbDataSource, dbCustomStrategy));
     }
@@ -65,6 +65,7 @@ public class CustomJdbcManagement extends DbConnection {
      * 预编译-更新
      */
     protected void statementUpdate(boolean isSave, String sql, Object... params) throws Exception {
+        this.conn = super.getConnection();
         statement = isSave ? conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS) : conn.prepareStatement(sql);
         for (int i = 0; i < params.length; i++) {
             statement.setObject((i + 1), params[i]);
@@ -80,9 +81,10 @@ public class CustomJdbcManagement extends DbConnection {
      * 预编译-查询1
      */
     protected void statementQuery(String sql, boolean sqlPrintSupport, Object... params) throws Exception {
-        statement = conn.prepareStatement(sql);
+        this.conn = super.getConnection();
+        this.statement = conn.prepareStatement(sql);
         for (int i = 0; i < params.length; i++) {
-            statement.setObject((i + 1), params[i]);
+            this.statement.setObject((i + 1), params[i]);
         }
         if (dbCustomStrategy.isSqlOutPrinting() && sqlPrintSupport) {
             SqlOutPrintBuilder
@@ -95,6 +97,7 @@ public class CustomJdbcManagement extends DbConnection {
      * 预编译-查询2（可预先获取结果集行数）
      */
     protected void statementQueryReturnRows(String sql, boolean sqlPrintSupport, Object... params) throws Exception {
+        this.conn = super.getConnection();
         statement = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         for (int i = 0; i < params.length; i++) {
             statement.setObject((i + 1), params[i]);
@@ -140,8 +143,11 @@ public class CustomJdbcManagement extends DbConnection {
     /**
      * 关闭资源
      */
-    protected void closeAll() {
+    protected void closeResources() {
         try {
+            if (this.conn != null) {
+                this.conn.close();
+            }
             if (this.resultSet != null) {
                 this.resultSet.close();
             }

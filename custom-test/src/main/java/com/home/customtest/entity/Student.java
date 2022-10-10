@@ -37,8 +37,8 @@ public class Student extends ActiveModel<Student, Integer> {
 
     private String name;
 
-    @DbOneToOne(thisField = "proId")
-    private Province province;
+//    @DbOneToOne(thisField = "proId")
+//    private Province province;
 
     @DbField("nick_code")
     private String nickName;

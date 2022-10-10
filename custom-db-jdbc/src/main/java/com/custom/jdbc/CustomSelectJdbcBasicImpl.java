@@ -58,7 +58,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
                     .sqlErrPrint();
             throw e;
         }finally {
-            closeAll();
+            this.closeResources();
         }
         return list;
 
@@ -88,7 +88,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
                     .sqlErrPrint();
             throw e;
         }finally {
-            closeAll();
+            this.closeResources();
         }
         return JSONObject.parseObject(JSONObject.toJSONString(map), params.getEntityClass());
     }
@@ -112,7 +112,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
                     .sqlErrPrint();
             throw e;
         }finally {
-            closeAll();
+            this.closeResources();
         }
         return resSet;
     }
@@ -138,7 +138,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
                     .sqlErrPrint();
             throw e;
         }finally {
-            closeAll();
+            this.closeResources();
         }
         return resMap;
     }
@@ -165,7 +165,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
                     .sqlErrPrint();
             throw e;
         }finally {
-            closeAll();
+            this.closeResources();
         }
         return mapList;
     }
@@ -200,7 +200,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
                     .sqlErrPrint();
             throw e;
         }finally {
-            closeAll();
+            this.closeResources();
         }
     }
 
@@ -224,7 +224,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
                     .sqlErrPrint();
             throw e;
         }finally {
-            closeAll();
+            this.closeResources();
         }
         return result;
     }
@@ -247,7 +247,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
                     .sqlErrPrint();
             throw e;
         }finally {
-            closeAll();
+            this.closeResources();
         }
         return result;
     }
