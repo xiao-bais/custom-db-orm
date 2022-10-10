@@ -81,7 +81,7 @@ public abstract class AbstractJoinToResult {
         // 初始化关联表的字段 join ....
         TableParseModel<?> targetTableModel = TableInfoCache.getTableModel(this.joinTarget);
         this.joinAlias = targetTableModel.getAlias();
-        if (JudgeUtil.isBlank(joinField)) {
+        if (JudgeUtil.isBlank(this.joinField)) {
             DbKeyParserModel<?> keyParserModel = targetTableModel.getKeyParserModel();
             Asserts.notNull(keyParserModel, "The defined primary key was not found on " + this.joinTarget);
             this.joinField = keyParserModel.getKey();
@@ -94,9 +94,9 @@ public abstract class AbstractJoinToResult {
         }
 
         // 若多个对象之间存在循环引用一对一注解的关系，则抛出异常
-        if (TableInfoCache.existCrossReference(getThisClass(), getJoinTarget())) {
+        if (TableInfoCache.existCrossReference(this.thisClass, this.joinTarget)) {
             ExThrowsUtil.toIllegal("Wrong reference. One to one annotation is not allowed to act on the mutual reference relationship between two objects in [%s] and [%s.%s] ",
-                    getJoinTarget(), getThisClass(), errField
+                    this.joinTarget, this.thisClass, errField
             );
         }
 
