@@ -9,6 +9,7 @@ import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.enums.FillStrategy;
 import com.custom.comm.exceptions.ExThrowsUtil;
+import com.custom.comm.utils.JudgeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ObjectUtils;
@@ -72,9 +73,9 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
             return;
         }
         String autoUpdateSql = buildLogicDelAfterAutoUpdateSql(strategy, autoUpdateWhereSqlCondition, params);
-        if (!ObjectUtils.isEmpty(autoUpdateSql)) {
+        if (JudgeUtil.isNotEmpty(autoUpdateSql)) {
             try {
-                executeUpdateNotPrintSql(autoUpdateSql);
+                this.executeUpdateNotPrintSql(autoUpdateSql);
             } catch (Exception e) {
                 e.printStackTrace();
             }
