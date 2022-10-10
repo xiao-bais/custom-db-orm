@@ -1,6 +1,7 @@
 package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractJoinToResult;
+import com.custom.action.util.DbUtil;
 import com.custom.comm.annotations.DbOneToOne;
 import com.custom.comm.exceptions.ExThrowsUtil;
 
@@ -64,6 +65,6 @@ public class DbJoinToOneParseModel extends AbstractJoinToResult {
 
     @Override
     public String queryCondition() {
-        return String.format("and %s.%s = ? ", getJoinAlias(), getJoinColumn());
+        return DbUtil.formatSqlAndCondition(getJoinAlias(), getJoinColumn());
     }
 }

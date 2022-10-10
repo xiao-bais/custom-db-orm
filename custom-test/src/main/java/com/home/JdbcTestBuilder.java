@@ -35,7 +35,7 @@ public class JdbcTestBuilder {
         dbCustomStrategy.setSqlOutPrinting(true);
         dbCustomStrategy.setSqlOutPrintExecute(true);
         dbCustomStrategy.setUnderlineToCamel(true);
-        dbCustomStrategy.setDbFieldDeleteLogic("state");
+//        dbCustomStrategy.setDbFieldDeleteLogic("state");
         dbCustomStrategy.setDeleteLogicValue(1);
         dbCustomStrategy.setNotDeleteLogicValue(0);
 

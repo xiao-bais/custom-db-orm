@@ -25,15 +25,7 @@ public class DoMain {
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
 
-        Student student = jdbcOpDao.selectByKey(Student.class, 7);
-        BackResult<Student> backResult = BackResult.execCall(op -> {
-            jdbcDao.deleteByKey(Student.class, 56);
-//            int a = 1 / 0;
-            jdbcDao.deleteByKey(Student.class, 57);
-            op.success(student);
-        });
-
-        System.out.println("backResult = " + backResult);
+        Student student = jdbcDao.selectByKey(Student.class, 8);
 
 
     }

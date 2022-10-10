@@ -90,6 +90,9 @@ public class DbUtil {
     public static String formatSqlAndCondition(String column) {
         return String.format("AND %s = ?", column);
     }
+    public static String formatSqlAndCondition(String alias, String column) {
+        return String.format("AND %s.%s = ?", alias, column);
+    }
     /**
      * 组装sql条件
      */
