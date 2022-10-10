@@ -40,7 +40,7 @@ public class DbConnection {
         }
     }
 
-    public String getConnKey(DbDataSource dbDataSource) {
+    public static String getConnKey(DbDataSource dbDataSource) {
         return String.format("%s-%s-%s-%s",
                 dbDataSource.getUrl(),
                 dbDataSource.getUsername(),

@@ -171,12 +171,11 @@ public class BackResult<T> {
         void execCall(BackResult<T> backResult) throws Exception;
     }
 
-    public static <T> BackResult<T> execCall(Consumer<Back<T>> back) {
+    public static <T> BackResult<T> execCall(Back<T> back) {
         BackResult<T> backResult = new BackResult<>();
         try {
-            BackResultTransactionProxy<T> transactionProxy = new BackResultTransactionProxy<>();
-            Back<T> proxyBack = transactionProxy.getBack();
-            back.accept(proxyBack);
+            BackResultTransactionProxy<T> transactionProxy = new BackResultTransactionProxy<>(back);
+            Back<T> proxyBack = transactionProxy.getProxyBack();
             proxyBack.execCall(backResult);
         }catch (Exception e) {
             logger.error(e.getMessage(), e);
