@@ -36,6 +36,13 @@ public @interface DbOneToMany {
     String joinField() default "";
 
     /**
+     * 补充条件
+     * <br/> 若当前主外键条件还不足以满足一对多的查询，则可由此补充剩余的条件
+     * <br/> 例如 and a.type = 2
+     */
+    String fillSuffix() default "";
+
+    /**
      * 该列表是否以升序的方式来排序
      * <br/> 若{@link DbOneToMany#sortField()} 指定了排序字段，则以该字段来进行列表的升降序排列
      * <br/> 若{@link DbOneToMany#sortField()} 未指定排序字段，则默认以关联的对象主键{@link DbKey} 排序(前提是被关联的对象存在主键)

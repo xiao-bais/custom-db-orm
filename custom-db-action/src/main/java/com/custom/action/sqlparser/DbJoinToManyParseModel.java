@@ -1,6 +1,7 @@
 package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractJoinToResult;
+import com.custom.action.util.DbUtil;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.StrUtils;
 import com.custom.comm.utils.Constants;
@@ -33,11 +34,19 @@ public class DbJoinToManyParseModel extends AbstractJoinToResult {
      */
     private final String sortField;
 
+    /**
+     * 补充条件
+     * <br/> 若当前主外键条件还不足以满足一对多的查询，则可由此补充剩余的条件
+     * <br/> 例如 and a.type = 2
+     */
+    private final String fillSuffix;
+
 
     public DbJoinToManyParseModel(Field joinToManyField) {
         DbOneToMany oneToMany = joinToManyField.getAnnotation(DbOneToMany.class);
         this.orderByAsc = oneToMany.orderByAsc();
         this.sortField = oneToMany.sortField();
+        this.fillSuffix = oneToMany.fillSuffix();
         super.setThisField(oneToMany.thisField());
         super.setJoinField(oneToMany.joinField());
 
@@ -73,7 +82,7 @@ public class DbJoinToManyParseModel extends AbstractJoinToResult {
             }
             setJoinTarget(joinTarget);
         }
-        super.initJoinProperty();
+        super.initJoinProperty(joinToManyField.getName());
 
     }
 
@@ -92,6 +101,7 @@ public class DbJoinToManyParseModel extends AbstractJoinToResult {
 
     @Override
     public String queryCondition() {
-        return String.format("and %s.%s = ? %s", getJoinAlias(), getJoinColumn(), orderByField());
+        String addCondition = this.fillSuffix + orderByField();
+        return DbUtil.formatSqlAndCondition(getJoinAlias(), getJoinColumn()) + addCondition;
     }
 }

@@ -5,6 +5,7 @@ import com.custom.action.sqlparser.JdbcOpDao;
 import com.custom.jdbc.back.BackResult;
 import com.custom.jdbc.transaction.BackResultTransactionProxy;
 import com.home.customtest.entity.Aklis;
+import com.home.customtest.entity.Province;
 import com.home.customtest.entity.Student;
 
 import java.util.Arrays;
@@ -24,8 +25,9 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
+        Student student = jdbcDao.selectByKey(Student.class, 2);
 
-        Student student = jdbcDao.selectByKey(Student.class, 8);
+        System.out.println("student = " + student);
 
 
     }

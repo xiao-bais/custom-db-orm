@@ -1,10 +1,9 @@
 package com.custom.action.sqlparser;
 
-import com.custom.comm.utils.JudgeUtil;
-
-import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * @Author Xiao-Bai
@@ -75,33 +74,19 @@ public class TableInfoCache {
     /**
      * 实体查询时，是否存在相互引用的情况
      * <br/>key - 实体全路径名称
-     * <br/>value - 是否存在逻辑删除字段: true or false
+     * <br/>value - 是否存在相互引用字段: true or false
      */
-    private final static Map<String, Object> ENTITY_EXIST_CROSS_REFERENCE = new CustomLocalCache();
+    private final static Set<Class<?>> ENTITY_EXIST_CROSS_REFERENCE = new CopyOnWriteArraySet<>();
 
     public static boolean existCrossReference(Class<?> thisClass, Class<?> joinClass) {
-        Boolean thisExist = (Boolean) ENTITY_EXIST_CROSS_REFERENCE.get(thisClass.getName());
-        if (thisExist != null && thisExist) {
+        if (ENTITY_EXIST_CROSS_REFERENCE.contains(thisClass)) {
             return true;
         }
-        Boolean joinExist = (Boolean) ENTITY_EXIST_CROSS_REFERENCE.get(joinClass.getName());
-        if (joinExist != null && joinExist) {
+        ENTITY_EXIST_CROSS_REFERENCE.add(thisClass);
+        if (ENTITY_EXIST_CROSS_REFERENCE.contains(joinClass)) {
             return true;
         }
-
-        TableParseModel<?> tableModel = getTableModel(joinClass);
-        if (JudgeUtil.isNotEmpty(tableModel.getOneToOneFieldList())) {
-            for (Field field : tableModel.getOneToOneFieldList()) {
-                if (field.getType().isAssignableFrom(thisClass)
-                        || thisClass.isAssignableFrom(field.getType())) {
-                    ENTITY_EXIST_CROSS_REFERENCE.put(thisClass.getName(), true);
-                    ENTITY_EXIST_CROSS_REFERENCE.put(joinClass.getName(), true);
-                    return true;
-                }
-            }
-        }
-        ENTITY_EXIST_CROSS_REFERENCE.put(thisClass.getName(), false);
-        ENTITY_EXIST_CROSS_REFERENCE.put(joinClass.getName(), false);
+        ENTITY_EXIST_CROSS_REFERENCE.add(joinClass);
         return false;
     }
 

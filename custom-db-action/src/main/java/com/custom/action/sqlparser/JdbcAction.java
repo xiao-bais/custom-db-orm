@@ -64,7 +64,10 @@ public class JdbcAction extends AbstractSqlExecutor {
     @Override
     public <T> List<T> selectListBySql(Class<T> entityClass, String sql, Object... params) {
         try {
-            return this.selectBySql(entityClass, sql, params);
+            HandleSelectSqlBuilder<T> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(entityClass);
+            List<T> result = this.selectBySql(entityClass, sql, params);
+            this.injectOtherResult(entityClass, sqlBuilder, result);
+            return result;
         }catch (Exception e) {
             this.throwsException(e);
             return new ArrayList<>();

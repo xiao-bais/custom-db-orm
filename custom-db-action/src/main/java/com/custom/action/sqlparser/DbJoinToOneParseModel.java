@@ -48,14 +48,7 @@ public class DbJoinToOneParseModel extends AbstractJoinToResult {
             }
             setJoinTarget(joinTarget);
         }
-        super.initJoinProperty();
-
-        // 若多个对象之间存在循环引用一对一注解的关系，则抛出异常
-        if (TableInfoCache.existCrossReference(getThisClass(), getJoinTarget())) {
-            ExThrowsUtil.toIllegal("Wrong reference. One to one annotation is not allowed to act on the mutual reference relationship between two objects in [%s] and [%s.%s] ",
-                    getJoinTarget(), getThisClass(), joinToOneField.getName()
-            );
-        }
+        super.initJoinProperty(joinToOneField.getName());
 
     }
 

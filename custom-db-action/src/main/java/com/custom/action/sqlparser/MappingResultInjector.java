@@ -138,7 +138,7 @@ public class MappingResultInjector<T> {
             FullSqlConditionExecutor conditionExecutor = sqlBuilder.addLogicCondition(condition);
 
             String selectSql = sqlBuilder.createTargetSql() + conditionExecutor.execute();
-            return sqlExecutor.executeQueryNotPrintSql(joinTarget, selectSql, queryValue);
+            return sqlExecutor.selectListBySql(joinTarget, selectSql, queryValue);
 
         }catch (NoSuchFieldException e) {
             logger.error(e.getMessage(), e);

@@ -3,6 +3,7 @@ package com.custom.action.dbaction;
 import com.custom.action.sqlparser.DbKeyParserModel;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableParseModel;
+import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.annotations.DbKey;
@@ -56,8 +57,9 @@ public abstract class AbstractJoinToResult {
 
     /**
      * 初始化剩余字段
+     * @param errField 若出现循环引用，目标循环引用的字段
      */
-    protected void initJoinProperty() {
+    protected void initJoinProperty(String errField) {
 
         // 初始化主表的字段
         TableParseModel<?> thisTableModel = TableInfoCache.getTableModel(thisClass);
@@ -89,6 +91,13 @@ public abstract class AbstractJoinToResult {
                     .filter(x -> x.getFieldName().equals(this.joinField)).findFirst()
                     .orElseThrow(this::throwNotFoundFieldExp)
                     .getColumn();
+        }
+
+        // 若多个对象之间存在循环引用一对一注解的关系，则抛出异常
+        if (TableInfoCache.existCrossReference(getThisClass(), getJoinTarget())) {
+            ExThrowsUtil.toIllegal("Wrong reference. One to one annotation is not allowed to act on the mutual reference relationship between two objects in [%s] and [%s.%s] ",
+                    getJoinTarget(), getThisClass(), errField
+            );
         }
 
 
