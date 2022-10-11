@@ -75,6 +75,7 @@ public class Constants {
      * global key
      */
     public final static String DATA_CONFIG = "DATA_CONFIG";
+    public final static String TRANS_CURSOR = "TRANS_CURSOR";
 
 
 

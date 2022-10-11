@@ -25,8 +25,21 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-        Student student = jdbcDao.selectByKey(Student.class, 11);
-        Student student1 = jdbcDao.selectByKey(Student.class, 13);
+        BackResult<Object> objectBackResult = BackResult.execCall(x -> {
+            Student student = jdbcDao.selectByKey(Student.class, 11);
+            Student student1 = jdbcDao.selectByKey(Student.class, 13);
+        });
+
+        Student student = jdbcDao.selectByKey(Student.class, 14);
+        Student student2 = jdbcDao.selectByKey(Student.class, 15);
+
+        BackResult<Object> objectBackResult2 = BackResult.execCall(x -> {
+            Student student22 = jdbcDao.selectByKey(Student.class, 11);
+            Student student111 = jdbcDao.selectByKey(Student.class, 13);
+        });
+
+        System.out.println("objectBackResult = " + objectBackResult);
+
 
     }
 

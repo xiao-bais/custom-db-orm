@@ -1,5 +1,6 @@
 package com.custom.jdbc.transaction;
 
+import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.Constants;
 import com.custom.configuration.DbConnection;
 import com.custom.configuration.DbDataSource;
@@ -25,15 +26,9 @@ public class BackResultTransactionProxy<T> implements InvocationHandler {
     private static final Logger logger = LoggerFactory.getLogger(BackResultTransactionProxy.class);
 
     public BackResultTransactionProxy(BackResult.Back<T> back) {
-        CustomConfigHelper configHelper = (CustomConfigHelper) GlobalDataHandler.readGlobalObject(Constants.DATA_CONFIG);
-        if (configHelper != null) {
-            DbDataSource dbDataSource = configHelper.getDbDataSource();
-            this.connection = (Connection) DbConnection.currMap.get(DbConnection.getConnKey(dbDataSource));
-        }
         this.back = back;
     }
 
-    private Connection connection;
     private final BackResult.Back<T> back;
 
     @Override
@@ -43,14 +38,28 @@ public class BackResultTransactionProxy<T> implements InvocationHandler {
             return method.invoke(this, args);
         }
 
+        Connection connection = getConnection();
+        GlobalDataHandler.addGlobalHelper(Constants.TRANS_CURSOR, Boolean.TRUE);
+        Asserts.notNull(connection, "未能获取到正确的");
         try {
             connection.setAutoCommit(false);
             back.execCall((BackResult<T>) args[0]);
+            connection = getConnection();
             connection.commit();
             connection.setAutoCommit(true);
         } catch (Exception e) {
             connection.rollback();
             throw e;
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (Exception e) {
+                    logger.error(e.toString(), e);
+                } finally {
+                    GlobalDataHandler.addGlobalHelper(Constants.TRANS_CURSOR, Boolean.FALSE);
+                }
+            }
         }
         return null;
     }
@@ -59,5 +68,16 @@ public class BackResultTransactionProxy<T> implements InvocationHandler {
         ClassLoader classLoader = BackResult.Back.class.getClassLoader();
         Class<?>[] interfaces = new Class[]{BackResult.Back.class};
         return (BackResult.Back<T>) Proxy.newProxyInstance(classLoader, interfaces, this);
+    }
+
+    public Connection getConnection() {
+        CustomConfigHelper configHelper = (CustomConfigHelper) GlobalDataHandler.readGlobalObject(Constants.DATA_CONFIG);
+        Connection connection = null;
+        if (configHelper != null) {
+            DbDataSource dbDataSource = configHelper.getDbDataSource();
+            DbConnection dbConnection = new DbConnection(dbDataSource);
+            connection = dbConnection.getConnection();
+        }
+        return connection;
     }
 }

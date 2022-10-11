@@ -24,7 +24,6 @@ public class CustomJdbcManagement extends DbConnection {
 
     public CustomJdbcManagement(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         super(dbDataSource);
-//        this.conn = super.getConnection();
         this.dbCustomStrategy = dbCustomStrategy;
         GlobalDataHandler.addGlobalHelper(Constants.DATA_CONFIG, new CustomConfigHelper(dbDataSource, dbCustomStrategy));
     }
@@ -146,7 +145,10 @@ public class CustomJdbcManagement extends DbConnection {
     protected void closeResources() {
         try {
             if (this.conn != null) {
-                this.conn.close();
+                Boolean connCanClose = (Boolean) GlobalDataHandler.readGlobalObject(Constants.TRANS_CURSOR);
+                if (connCanClose == null || !connCanClose) {
+                    this.conn.close();
+                }
             }
             if (this.resultSet != null) {
                 this.resultSet.close();

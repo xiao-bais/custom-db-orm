@@ -94,7 +94,7 @@ public class DbConnection {
     //线程隔离
     private final ThreadLocal<Connection> CONN_LOCAL = new ThreadLocal<>();
 
-    protected synchronized Connection getConnection() {
+    public synchronized Connection getConnection() {
         try {
             if(null == CONN_LOCAL.get() || connection.isClosed()) {
                 if (druidDataSource != null) {
