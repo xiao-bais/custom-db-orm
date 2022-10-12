@@ -7,6 +7,7 @@ import com.custom.jdbc.transaction.BackResultTransactionProxy;
 import com.home.customtest.entity.Aklis;
 import com.home.customtest.entity.Province;
 import com.home.customtest.entity.Student;
+import com.home.customtest.entity.ThreadDemo;
 
 import java.util.Arrays;
 
@@ -25,20 +26,27 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-        BackResult<Object> objectBackResult = BackResult.execCall(x -> {
-            Student student = jdbcDao.selectByKey(Student.class, 11);
-            Student student1 = jdbcDao.selectByKey(Student.class, 13);
-        });
+        ThreadDemo threadDemo1 = new ThreadDemo(jdbcDao, 1);
+        ThreadDemo threadDemo2 = new ThreadDemo(jdbcDao, 2);
+        threadDemo2.run();
+        threadDemo1.run();
 
-        Student student = jdbcDao.selectByKey(Student.class, 14);
-        Student student2 = jdbcDao.selectByKey(Student.class, 15);
 
-        BackResult<Object> objectBackResult2 = BackResult.execCall(x -> {
-            Student student22 = jdbcDao.selectByKey(Student.class, 11);
-            Student student111 = jdbcDao.selectByKey(Student.class, 13);
-        });
 
-        System.out.println("objectBackResult = " + objectBackResult);
+//        Runnable runnable = () -> {
+//            BackResult<Object> objectBackResult = BackResult.execCall(x -> {
+//                Student student = jdbcDao.selectByKey(Student.class, 11);
+//                Thread.sleep(5000);
+//                Student student1 = jdbcDao.selectByKey(Student.class, 13);
+//            });
+//
+//            Student student = jdbcDao.selectByKey(Student.class, 14);
+//            Student student2 = jdbcDao.selectByKey(Student.class, 15);
+//        };
+//        runnable.run();
+
+
+
 
 
     }

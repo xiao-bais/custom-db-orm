@@ -45,8 +45,10 @@ public class BackResultTransactionProxy<T> implements InvocationHandler {
             connection.setAutoCommit(false);
             back.execCall((BackResult<T>) args[0]);
             connection = getConnection();
-            connection.commit();
-            connection.setAutoCommit(true);
+            if (!connection.getAutoCommit()) {
+                connection.commit();
+                connection.setAutoCommit(true);
+            }
         } catch (Exception e) {
             connection.rollback();
             throw e;

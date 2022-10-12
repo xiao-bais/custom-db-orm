@@ -52,9 +52,9 @@ public class DbConnection {
         );
     }
 
-    private void datasourceInitialize() throws ClassNotFoundException {
+    private void datasourceInitialize() throws SQLException {
         connection = (Connection) currMap.get(getConnKey(dbDataSource));
-        if (connection != null) {
+        if (connection != null && !connection.isClosed()) {
             return;
         }
         this.druidDataSource = new DruidDataSource();
