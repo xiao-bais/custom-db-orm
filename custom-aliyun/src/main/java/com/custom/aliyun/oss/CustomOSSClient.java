@@ -28,20 +28,7 @@ public class CustomOSSClient {
      * @return
      */
     public BackResult<String> upload(String key, String filePath) {
-        BackResult<String> result = new BackResult<>();
-        OSS ossClient = new OSSClientBuilder().build(this.ossKey.getEndpoint(), this.ossKey.getAccessKeyId(), this.ossKey.getAccessKeySecret());
-        try {
-            if (!existFile(filePath)) {
-                result.error(String.format("filePath:[%s] is not exist", filePath));
-                return result;
-            }
-            ossClient.putObject(this.ossKey.getBucketName(), key, new File(filePath));
-        } catch (Exception e) {
-            result.error("AliyunOSS Upload Error ====> " + e);
-        } finally {
-            ossClient.shutdown();
-        }
-        return result;
+        return upload(key, new File(filePath));
     }
 
     /**
