@@ -40,7 +40,7 @@ public class BackResultTransactionProxy<T> implements InvocationHandler {
 
         Connection connection = getConnection();
         GlobalDataHandler.addGlobalHelper(Constants.TRANS_CURSOR, Boolean.TRUE);
-        Asserts.notNull(connection, "未能获取到正确的");
+        Asserts.notNull(connection, "未能获取到可用的连接");
         try {
             connection.setAutoCommit(false);
             back.execCall((BackResult<T>) args[0]);
