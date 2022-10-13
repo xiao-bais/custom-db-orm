@@ -409,7 +409,7 @@ public class JdbcAction extends AbstractSqlExecutor {
         try {
             // 创建update sql创建对象
             HandleUpdateSqlBuilder<T> sqlBuilder = TableInfoCache.getUpdateSqlBuilderCache((Class<T>) entity.getClass());
-            sqlBuilder.setEntity(entity);
+            sqlBuilder.injectEntity(entity);
 
             // 创建update sql
             String updateSql = sqlBuilder.createTargetSql();
@@ -456,7 +456,7 @@ public class JdbcAction extends AbstractSqlExecutor {
     @CheckExecute(target = ExecuteMethod.UPDATE)
     public <T> int save(T entity) {
         EmptySqlBuilder<T> sqlBuilder = TableInfoCache.getEmptySqlBuilder((Class<T>) entity.getClass());
-        sqlBuilder.setEntity(entity);
+        sqlBuilder.injectEntity(entity);
         return Objects.nonNull(sqlBuilder.primaryKeyVal()) ? updateByKey(entity) : insert(entity);
     }
 

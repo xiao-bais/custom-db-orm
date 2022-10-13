@@ -38,6 +38,7 @@ public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {
         TableParseModel<T> tableModel = TableInfoCache.getTableModel(thisClass);
         this.fieldMapper = TableInfoCache.getFieldMap(thisClass);
         this.columnParseList = tableModel.columnPropertyMaps();
+
         if (JudgeUtil.isEmpty(columnParseList)) {
             ExThrowsUtil.toCustom("该类找不到可解析的字段：" + this.thisClass);
         }
@@ -66,15 +67,19 @@ public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {
         List<ColumnPropertyMap<T>> columnPropertyMaps = columnParseList.stream()
                 .filter(op -> op.getGetMethodName().equals(implMethodName))
                 .collect(Collectors.toList());
+
         if (JudgeUtil.isEmpty(columnPropertyMaps)) {
             throw new CustomCheckException("Cannot find a matching property with method name: '%s'", implMethodName);
-        } else if (columnPropertyMaps.size() > 1) {
+        }
+
+        else if (columnPropertyMaps.size() > 1) {
             StringJoiner expMethodNames = new StringJoiner(Constants.SEPARATOR_COMMA_2);
             columnPropertyMaps.stream()
                     .map(ColumnPropertyMap::getGetMethodName)
                     .forEach(expMethodNames::add);
             ExThrowsUtil.toCustom("Lambda parsing error, found multiple matching results: " + expMethodNames);
         }
+
         return columnPropertyMaps.get(0).getPropertyName();
     }
 

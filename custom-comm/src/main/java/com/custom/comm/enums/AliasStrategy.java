@@ -9,7 +9,7 @@ public enum AliasStrategy {
 
     /**
      * 自定义表别名
-     * <br/>由用户自行通过{@link LambdaJoinConditional#alias(String joinAlias)} 指定
+     * <br/>由用户自行通过{@link LambdaJoinConditional#(String joinAlias)} 指定
      */
     INPUT,
 

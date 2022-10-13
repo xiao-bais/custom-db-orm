@@ -17,13 +17,13 @@ public enum DbType {
 
     DbInt("int", Integer.class, Integer.TYPE, "11", 0),
 
-    DbVarchar("varchar", String.class, null, "50", Constants.EMPTY),
+    DbVarchar("varchar", String.class, null, "64", Constants.EMPTY),
 
     DbChar("char", Character.class, Character.TYPE, "6", Constants.EMPTY),
 
     DbFloat("float", Float.class, Float.TYPE,  "11", 0.0F),
 
-    DbDecimal("decimal", BigDecimal.class, null, "16,2", BigDecimal.ZERO),
+    DbDecimal("decimal", BigDecimal.class, null, "10,2", BigDecimal.ZERO),
 
     DbDouble("double", Double.class, Double.TYPE, "5,2", 0.0D),
 

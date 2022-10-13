@@ -1,5 +1,6 @@
 package com.custom.action.dbaction;
 
+import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
 import org.slf4j.Logger;
@@ -57,7 +58,7 @@ public abstract class AbstractTableModel<T> {
      * 将值设置进实体的指定属性中
      */
     protected void setFieldValue(T entity, Field field, Object value) {
-        JudgeUtil.checkObjNotNull(entity);
+        Asserts.npe(entity);
         try {
             CustomUtil.writeFieldValue(value, entity, field.getName(), field.getType());
         }catch (NoSuchFieldException e) {

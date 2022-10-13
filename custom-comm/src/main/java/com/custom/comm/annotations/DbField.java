@@ -20,7 +20,7 @@ public @interface DbField {
      * 字段名称
      * @return value
      */
-    String value() default "";
+    String value() default Constants.EMPTY;
 
     /**
      * 数据类型

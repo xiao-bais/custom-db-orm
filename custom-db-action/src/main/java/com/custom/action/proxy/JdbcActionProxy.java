@@ -88,7 +88,7 @@ public class JdbcActionProxy implements MethodInterceptor {
     */
     private void insert(Object[] objects) {
         Object insertParam = objects[0];
-        if(objects[0] instanceof List) {
+        if(List.class.isAssignableFrom(objects[0].getClass())) {
             insertParam = ((List<Object>) objects[0]).get(0);
         }
         if(!insertParam.getClass().isAnnotationPresent(DbTable.class)) {

@@ -4,7 +4,6 @@ import com.custom.action.dbaction.AbstractSqlExecutor;
 import com.custom.action.dbaction.JdbcActiveWrapper;
 import com.custom.action.proxy.JdbcActionProxy;
 import com.custom.action.condition.ConditionWrapper;
-import com.custom.action.condition.SFunction;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.page.DbPageRows;
 import com.custom.configuration.DbCustomStrategy;
@@ -16,7 +15,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 /**
  * @author Xiao-Bai
@@ -124,7 +122,7 @@ public class DefaultTableAction<T, P extends Serializable> implements JdbcActive
     @SuppressWarnings("unchecked")
     public P primaryKeyValue(T entity) {
         EmptySqlBuilder<T> emptySqlBuilder = TableInfoCache.getEmptySqlBuilder(entityClass);
-        emptySqlBuilder.setEntity(entity);
+        emptySqlBuilder.injectEntity(entity);
         if (emptySqlBuilder.getKeyParserModel() == null) {
             ExThrowsUtil.toCustom("No primary key field specified");
         }

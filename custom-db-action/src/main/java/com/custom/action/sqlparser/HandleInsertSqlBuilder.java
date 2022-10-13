@@ -118,7 +118,7 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
      */
     private void extractParams(T currEntity) {
         Asserts.npe(currEntity);
-        setEntity(currEntity);
+        injectEntity(currEntity);
         DbKeyParserModel<T> keyParserModel = getKeyParserModel();
 
         // 读取

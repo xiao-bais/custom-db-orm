@@ -33,7 +33,6 @@ public abstract class AbstractSqlBuilder<T> {
 
     private String table;
     private String alias;
-    private T entity;
     private List<T> entityList;
     private Class<T> entityClass;
     private DbKeyParserModel<T> keyParserModel;
@@ -67,8 +66,7 @@ public abstract class AbstractSqlBuilder<T> {
         return alias;
     }
 
-    public void setEntity(T entity) {
-        this.entity = entity;
+    public void injectEntity(T entity) {
         if (Objects.nonNull(keyParserModel)) {
             keyParserModel.setEntity(entity);
         }
@@ -220,7 +218,7 @@ public abstract class AbstractSqlBuilder<T> {
     public void clear() {
         this.entityList = new ArrayList<>();
         this.sqlParams = new ArrayList<>();
-        setEntity(null);
+        this.injectEntity(null);
     }
 
     /**

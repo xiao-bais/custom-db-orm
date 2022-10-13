@@ -17,7 +17,7 @@ public @interface DbMapper {
 
     /**
      * 关联表映射的字段 例如：example：‘left join employee emp on emp.id = a.emp_id’
-     * value=emp.name
+     * <br/>那么value = emp.name
      */
     String value();
 

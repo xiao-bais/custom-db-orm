@@ -26,17 +26,21 @@ public final class LambdaResolveUtil {
     public static <T> SerializedLambda resolve(SFunction<T, ?> function) {
         Method writeMethod;
         SerializedLambda serializedLambda = null;
+
         try {
             // 从function中取出序列化方法
             writeMethod = function.getClass().getDeclaredMethod("writeReplace");
             writeMethod.setAccessible(true);
             serializedLambda = (SerializedLambda) writeMethod.invoke(function);
             writeMethod.setAccessible(false);
-        } catch (NoSuchMethodException e) {
+        }
+        catch (NoSuchMethodException e) {
             e.printStackTrace();
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        }
+        catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
+
         if (Objects.isNull(serializedLambda)) {
             ExThrowsUtil.toCustom("Unable to parse：" + function);
         }
