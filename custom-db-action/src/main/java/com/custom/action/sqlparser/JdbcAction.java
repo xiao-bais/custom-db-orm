@@ -219,7 +219,7 @@ public class JdbcAction extends AbstractSqlExecutor {
         try {
             HandleSelectSqlBuilder<T> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(wrapper.getEntityClass());
             String selectSql = sqlBuilder.selectExecuteSqlBuilder(wrapper);
-            return (long) selectObjBySql(String.format("select count(0) from (\n\t%s\t\n) xxx ", selectSql),
+            return (long) selectObjBySql(String.format(DbUtil.SELECT_COUNT_TEMPLATE, selectSql),
                     wrapper.getParamValues().toArray());
         }catch (Exception e) {
             this.throwsException(e);
@@ -292,9 +292,9 @@ public class JdbcAction extends AbstractSqlExecutor {
             HandleSelectSqlBuilder<T> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(wrapper.getEntityClass());
             String selectSql = sqlBuilder.selectExecuteSqlBuilder(wrapper);
             Object[] params = wrapper.getParamValues().toArray();
-            count = (long) selectObjBySql(String.format("select count(0) from (%s) xxx ", selectSql), params);
+            count = (long) selectObjBySql(String.format(DbUtil.SELECT_COUNT_TEMPLATE, selectSql), params);
             if (count > 0) {
-                selectSql = String.format("%s \nlimit %s, %s", selectSql, (dbPageRows.getPageIndex() - 1) * dbPageRows.getPageSize(), dbPageRows.getPageSize());
+                selectSql = String.format("%s \nLIMIT %s, %s", selectSql, (dbPageRows.getPageIndex() - 1) * dbPageRows.getPageSize(), dbPageRows.getPageSize());
                 dataList = selectMapsBySql(selectSql, params);
             }
             sqlBuilder.clear();

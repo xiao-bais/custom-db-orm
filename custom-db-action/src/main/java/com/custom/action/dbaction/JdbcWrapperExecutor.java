@@ -1,5 +1,6 @@
 package com.custom.action.dbaction;
 
+import com.custom.action.util.DbUtil;
 import com.custom.comm.utils.ConvertUtil;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.exceptions.ExThrowsUtil;
@@ -153,16 +154,14 @@ public class JdbcWrapperExecutor {
      */
     protected <T> void buildPageResult(Class<T> t, String selectSql, DbPageRows<T> dbPageRows, Object... params) throws Exception {
         List<T> dataList = new ArrayList<>();
-        long count = (long) selectObjBySql(String.format("select count(0) from (\n%s\n) xxx ", selectSql), params);
+        long count = (long) selectObjBySql(String.format(DbUtil.SELECT_COUNT_TEMPLATE, selectSql), params);
         if (count > 0) {
             selectSql = dbPageRows.getPageIndex() == 1 ?
-                    String.format("%s \nlimit %s", selectSql, dbPageRows.getPageSize())
-                    : String.format("%s \nlimit %s, %s", selectSql, (dbPageRows.getPageIndex() - 1) * dbPageRows.getPageSize(), dbPageRows.getPageSize());
+                    String.format("%s \nLIMIT %s", selectSql, dbPageRows.getPageSize())
+                    : String.format("%s \nLIMIT %s, %s", selectSql, (dbPageRows.getPageIndex() - 1) * dbPageRows.getPageSize(), dbPageRows.getPageSize());
             dataList = selectBySql(t, selectSql, params);
         }
         dbPageRows.setTotal(count).setData(dataList);
     }
-
-
 
 }

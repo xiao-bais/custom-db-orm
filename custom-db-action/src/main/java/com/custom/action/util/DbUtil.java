@@ -17,6 +17,7 @@ public class DbUtil {
 
 
     public final static String SELECT_TEMPLATE = "SELECT %s\n FROM %s %s";
+    public final static String SELECT_COUNT_TEMPLATE = "SELECT COUNT(0) FROM (\n%s\n) xxx";
     public final static String INSERT_TEMPLATE = "INSERT INTO %s(%s) VALUES";
     public final static String DELETE_TEMPLATE = "DELETE FROM %s %s";
     public final static String UPDATE_TEMPLATE = "UPDATE %s %s SET %s %s";
