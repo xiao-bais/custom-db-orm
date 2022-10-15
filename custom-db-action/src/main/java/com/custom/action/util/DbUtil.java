@@ -1,5 +1,6 @@
 package com.custom.action.util;
 
+import com.custom.action.sqlparser.DbKeyParserModel;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.comm.utils.RexUtil;
 import com.custom.comm.utils.Constants;
@@ -28,11 +29,8 @@ public class DbUtil {
      * 该类是否存在主键
      */
     public static <T> boolean hasPriKey(Class<T> clazz){
-        Field[] fields = TableInfoCache.getTableModel(clazz).getFields();
-        for (Field field : fields) {
-            if (field.isAnnotationPresent(DbKey.class)) return true;
-        }
-        return false;
+        DbKeyParserModel<T> keyParserModel = TableInfoCache.getTableModel(clazz).getKeyParserModel();
+        return keyParserModel != null;
     }
 
     /**
@@ -126,7 +124,7 @@ public class DbUtil {
         return String.format(" %s %s %s", v1, v2, v3);
     }
 
-    public static String sqlConcat(SqlLike sqlLike) {
+    public static String sqlLikeConcat(SqlLike sqlLike) {
         String sql = Constants.EMPTY;
         switch (sqlLike) {
             case LEFT:
@@ -158,7 +156,7 @@ public class DbUtil {
     /**
      * 消除sql条件中的第一个and
      */
-    public static String trimAppendSqlCondition(String condition) {
+    public static String trimFirstAndBySqlCondition(String condition) {
         String finalCondition = condition;
         if(condition.trim().startsWith(Constants.AND)) {
             finalCondition = condition.replaceFirst(Constants.AND, Constants.EMPTY);

@@ -126,7 +126,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
             case LIKE:
             case NOT_LIKE:
                 setLastCondition(DbUtil.applyCondition(appendSybmol,
-                        column, dbSymbol.getSymbol(), DbUtil.sqlConcat((SqlLike) val2)));
+                        column, dbSymbol.getSymbol(), DbUtil.sqlLikeConcat((SqlLike) val2)));
                 addParams(val1);
                 break;
 

@@ -102,8 +102,7 @@ public abstract class AbstractJoinConditional<T> {
             this.joinList.forEach(join -> sqlJoinAction.append(join.action()));
             this.joinConditional.append(joinStyle.getStyle())
                     .append(String.format(" %s %s on ", this.joinPropertyMap.getTableName(), this.joinTableAlias))
-                    .append(DbUtil.trimAppendSqlCondition(sqlJoinAction.toString())
-                    );
+                    .append(DbUtil.trimFirstAndBySqlCondition(sqlJoinAction.toString()));
         }
 
         return joinConditional.toString();
