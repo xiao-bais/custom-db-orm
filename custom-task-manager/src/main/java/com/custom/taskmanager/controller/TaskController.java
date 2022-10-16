@@ -55,8 +55,11 @@ public class TaskController {
         if (taskId == null) {
             return BackResult.byError("空的任务ID");
         }
-        TaskRecordModel taskRecordModel = taskRecordService.selectTaskById(taskId);
-        return BackResult.bySuccess(taskRecordModel);
+        return BackResult.execCall(op -> {
+            TaskRecordModel taskRecordModel = taskRecordService.selectTaskById(taskId);
+            op.setData(taskRecordModel);
+        });
+
     }
 
 

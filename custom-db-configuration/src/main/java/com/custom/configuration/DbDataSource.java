@@ -34,9 +34,9 @@ public class DbDataSource {
     private String database;
 
     /* 初始化配置 */
-    private int initialSize = 5;
-    private int minIdle = 5;
-    private int maxActive = 20;
+    private int initialSize = 0;
+    private int minIdle = 0;
+    private int maxActive = 500;
 
     /* 连接等待超时时间 */
     private int maxWait = 60000;
@@ -48,9 +48,9 @@ public class DbDataSource {
 
     private boolean testWhileIdle = true;
 
-    private boolean testOnBorrow = true;
+    private boolean testOnBorrow = false;
 
-    private boolean testOnReturn = true;
+    private boolean testOnReturn = false;
 
 
     public int getInitialSize() {

@@ -42,8 +42,14 @@ public class BackResultTransactionProxy<T> implements InvocationHandler {
         GlobalDataHandler.addGlobalHelper(Constants.TRANS_CURSOR, Boolean.TRUE);
         Asserts.notNull(connection, "未能获取到可用的连接");
         try {
-            connection.setAutoCommit(false);
-            back.execCall((BackResult<T>) args[0]);
+            if (connection.getAutoCommit()) {
+                connection.setAutoCommit(false);
+            }
+            BackResult<T> result = null;
+            if (args.length > 0) {
+                result = (BackResult<T>) args[0];
+            }
+            back.execCall(result);
             connection = getConnection();
             if (!connection.getAutoCommit()) {
                 connection.commit();
