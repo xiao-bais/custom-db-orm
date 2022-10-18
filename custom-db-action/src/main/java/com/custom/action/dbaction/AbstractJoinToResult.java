@@ -9,6 +9,11 @@ import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.annotations.DbKey;
 import com.custom.comm.exceptions.CustomCheckException;
 
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
+
 /**
  * @author Xiao-Bai
  * @date 2022/8/21 2:00
@@ -94,7 +99,7 @@ public abstract class AbstractJoinToResult {
         }
 
         // 若多个对象之间存在循环引用一对一注解的关系，则抛出异常
-        if (TableInfoCache.existCrossReference(this.thisClass, this.joinTarget)) {
+        if (existCrossReference()) {
             ExThrowsUtil.toIllegal("Wrong reference. One to one annotation is not allowed to act on the mutual reference relationship between two objects in [%s] and [%s.%s] ",
                     this.joinTarget, this.thisClass, errField
             );
@@ -169,5 +174,29 @@ public abstract class AbstractJoinToResult {
      * 查询条件实现
      */
     public abstract String queryCondition();
+
+
+
+    /**
+     * 实体查询时，是否存在相互引用的情况
+     */
+    private final Map<String, Set<Class<?>>> CROSS_REFERENCE = new ConcurrentHashMap<>();
+
+
+    protected boolean existCrossReference() {
+        if (CROSS_REFERENCE.isEmpty()) {
+            return false;
+        }
+
+        Set<Class<?>> toResultSet = CROSS_REFERENCE.get(this.thisClass.getName());
+        if (JudgeUtil.isNotEmpty(toResultSet)) {
+            return false;
+        }
+//        toResultSet.stream().filter(op -> op.)
+
+
+        return false;
+    }
+
 
 }

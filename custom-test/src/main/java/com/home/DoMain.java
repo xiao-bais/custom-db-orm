@@ -26,38 +26,13 @@ public class DoMain {
 
 
         JdbcTestBuilder jdbcTestBuilder = JdbcTestBuilder.builder();
-//        StopWatch stopWatch = new StopWatch("jdbcDao");
-//        stopWatch.start();
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
-//        stopWatch.stop();
-//        System.out.println("stopWatch.getTotalTimeMillis() = " + stopWatch.getTotalTimeMillis());
-//        StopWatch stopWatch2 = new StopWatch("jdbcOpDao");
-//        stopWatch2.start();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
-//        stopWatch2.stop();
-//        System.out.println("stopWatch2.getTotalTimeMillis() = " + stopWatch2.getTotalTimeMillis());
-
-//        jdbcDao.selectListBySql(Student.class, "select * from student a where a.id = ?", 8);
-//        jdbcDao.selectListBySql(Student.class, "select * from student a where a.id = ?", 9);
 
 
-        StopWatch stopWatch = new StopWatch("exec");
-        stopWatch.start();
-        BackResult.execCall(op -> {
-            jdbcOpDao.selectListBySql(Student.class, "select * from student a where a.id = ?", 11);
-            jdbcOpDao.selectListBySql(Student.class, "select * from student a where a.id = ?", 13);
-        });
-        stopWatch.stop();
-        System.out.println("stopWatch.getTotalTimeMillis() = " + stopWatch.getTotalTimeMillis());
 
-        StopWatch stopWatch2 = new StopWatch("exec");
-        stopWatch2.start();
-        BackResult.execCall(op -> {
-            jdbcOpDao.selectListBySql(Student.class, "select * from student a where a.id = ?", 11);
-            jdbcOpDao.selectListBySql(Student.class, "select * from student a where a.id = ?", 13);
-        });
-        stopWatch2.stop();
-        System.out.println("stopWatch2.getTotalTimeMillis() = " + stopWatch2.getTotalTimeMillis());
+
+
 
 
 

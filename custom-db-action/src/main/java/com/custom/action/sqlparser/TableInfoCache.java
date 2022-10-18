@@ -72,19 +72,6 @@ public class TableInfoCache {
     }
 
     /**
-     * 实体查询时，是否存在相互引用的情况
-     * <br/>key - 实体全路径名称
-     * <br/>value - 是否存在相互引用字段: true or false
-     */
-    private final static Set<String> ENTITY_EXIST_CROSS_REFERENCE = new CopyOnWriteArraySet<>();
-
-    // TODO 问题：暂时没有毕竟好的办法找判断这两个类型是否存在循环引用的情况
-    public static boolean existCrossReference(Class<?> thisClass, Class<?> joinClass) {
-        String joinKey = thisClass.getName() + "$_$" + joinClass.getName();
-        return !ENTITY_EXIST_CROSS_REFERENCE.add(joinKey);
-    }
-
-    /**
      * sql构造模板缓存
      */
     private final static Map<String, Object> SQL_BUILDER_TEMPLATE = new CustomLocalCache();
