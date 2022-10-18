@@ -29,19 +29,7 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-        System.out.println(1);
-        jdbcOpDao.selectList(Student.class, "and a.id = ?", 3);
-        System.out.println(2);
-        jdbcOpDao.selectList(Province.class, "a.id = ?", 4);
-        System.out.println(3);
-        jdbcOpDao.selectList(Student.class, "and a.id = ?", 5);
-        System.out.println(4);
-        jdbcOpDao.selectList(Student.class, "and a.age = ?", 22);
-        System.out.println(5);
-
-
-
-
+        jdbcOpDao.selectOne(Conditions.lambdaQuery(Student.class).between(Student::getId, 28, 35).addCutsomizeSql("and (id = 36 or (id between ? and ?))", 38, 41));
 
 
     }

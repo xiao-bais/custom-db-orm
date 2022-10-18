@@ -199,10 +199,6 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
         FullSqlConditionExecutor finalCondition = this.addLogicCondition(wrapper.getFinalConditional());
         selectSql.append(finalCondition.execute());
 
-        // 添加自定义拼接的sql条件
-        if (JudgeUtil.isNotEmpty(wrapper.getCustomizeSql())) {
-            selectSql.append(wrapper.getCustomizeSql());
-        }
         // group by
         if (JudgeUtil.isNotEmpty(wrapper.getGroupBy())) {
             selectSql.append(Constants.GROUP_BY).append(wrapper.getGroupBy());

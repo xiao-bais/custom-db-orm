@@ -204,7 +204,6 @@ public class JdbcOpDao {
      * 根据条件删除记录
      */
     public <T> int deleteSelective(ConditionWrapper<T> wrapper) {
-        JudgeUtil.checkObjNotNull(wrapper);
         return jdbcAction.deleteSelective(wrapper);
     }
 

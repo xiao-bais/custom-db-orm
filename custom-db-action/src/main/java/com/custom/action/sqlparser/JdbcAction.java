@@ -396,7 +396,7 @@ public class JdbcAction extends AbstractSqlExecutor {
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
     public <T> int updateSelective(T entity, ConditionWrapper<T> wrapper) {
-        return this.updateByCondition(entity, wrapper.getFinalConditional() + wrapper.getCustomizeSql(),
+        return this.updateByCondition(entity, wrapper.getFinalConditional(),
                 wrapper.getParamValues().toArray());
     }
 

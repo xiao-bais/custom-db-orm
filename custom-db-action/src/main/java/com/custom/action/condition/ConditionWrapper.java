@@ -138,7 +138,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
     }
 
     public String getFinalConditional() {
-        return finalConditional.toString();
+        return finalConditional.toString() + this.customizeSql;
     }
 
     protected StringBuilder getFinalCondition() {
