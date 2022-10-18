@@ -29,7 +29,8 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-        jdbcOpDao.selectOne(Conditions.lambdaQuery(Student.class).between(Student::getId, 28, 35).addCutsomizeSql("and (id = 36 or (id between ? and ?))", 38, 41));
+        Student student = jdbcOpDao.selectOne(Conditions.lambdaQuery(Student.class)
+                .between(Student::getId, 88, 89));
 
 
     }
