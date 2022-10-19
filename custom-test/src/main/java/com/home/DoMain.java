@@ -6,13 +6,11 @@ import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.JdbcOpDao;
 import com.custom.jdbc.back.BackResult;
 import com.custom.jdbc.transaction.BackResultTransactionProxy;
-import com.home.customtest.entity.Aklis;
-import com.home.customtest.entity.Province;
-import com.home.customtest.entity.Student;
-import com.home.customtest.entity.ThreadDemo;
+import com.home.customtest.entity.*;
 import org.springframework.util.StopWatch;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @Author Xiao-Bai
@@ -29,8 +27,19 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-        Student student = jdbcOpDao.selectOne(Conditions.lambdaQuery(Student.class)
+        List<Student> students = jdbcOpDao.selectList(Conditions.lambdaQuery(Student.class)
                 .between(Student::getId, 88, 89));
+
+        BackResult.execCall(op -> {
+            Employee employee = jdbcDao.selectByKey(Employee.class, "94b7dbaee3c448c29a95dd4618249d45");
+            employee.setEmpName("刹那间的");
+            jdbcOpDao.updateByKey(employee);
+//            int a = 1 / 0;
+            employee.setExplain("我来说点什么");
+            jdbcOpDao.updateByKey(employee);
+
+        });
+
 
 
     }

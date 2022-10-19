@@ -22,7 +22,7 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
     /**
      * 修改的字段 set部分的sql
      */
-    private final StringJoiner updateSqlColumns;
+    private StringJoiner updateSqlColumns;
 
     public HandleUpdateSqlBuilder(Class<T> entityClass) {
         updateSqlColumns = new StringJoiner(Constants.SEPARATOR_COMMA_2);
@@ -46,6 +46,12 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
         return String.format(DbUtil.UPDATE_TEMPLATE, getTable(), getAlias(),
                 updateSqlColumns, Constants.EMPTY);
+    }
+
+    @Override
+    public void clear() {
+        this.updateSqlColumns = new StringJoiner(Constants.SEPARATOR_COMMA_2);
+        super.clear();
     }
 
 

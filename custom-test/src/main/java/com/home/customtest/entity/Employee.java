@@ -25,7 +25,7 @@ public class Employee {
     @DbKey(strategy = KeyStrategy.UUID)
     private String id;
 
-    @DbField()
+    @DbField
     private String empName;
 
     @DbField
