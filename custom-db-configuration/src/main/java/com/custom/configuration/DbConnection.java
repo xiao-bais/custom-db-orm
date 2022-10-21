@@ -1,7 +1,6 @@
 package com.custom.configuration;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.alibaba.druid.pool.DruidDataSourceFactory;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.exceptions.ExThrowsUtil;
@@ -24,7 +23,6 @@ public class DbConnection {
     private static final Logger logger = LoggerFactory.getLogger(DbConnection.class);
 
     private DbDataSource dbDataSource = null;
-    private DataSource dataSource = null;
     private static final String CUSTOM_DRIVER = "com.mysql.cj.jdbc.Driver";
     private static final String DATA_BASE = "database";
     private static final String DATA_SOURCE = "dataSource";
@@ -82,7 +80,6 @@ public class DbConnection {
         }
         currMap.put(DATA_BASE, dbDataSource.getDatabase());
         currMap.put(DATA_SOURCE, druidDataSource);
-        this.dataSource = druidDataSource;
     }
 
 
@@ -96,7 +93,7 @@ public class DbConnection {
     //线程隔离
     private final ThreadLocal<Connection> CONN_LOCAL = new ThreadLocal<>();
 
-    public Connection getConnection() {
+    public Connection createConnection() {
         Connection connection = null;
         try {
             // 从本地变量中获取连接
@@ -129,7 +126,7 @@ public class DbConnection {
             // 若本地变量中的连接已关闭，则递归重新获取
             else if (connection.isClosed()) {
                 CONN_LOCAL.set(null);
-                connection = this.getConnection();
+                connection = this.createConnection();
             }
         }catch (SQLException e) {
             logger.error(e.toString(), e);

@@ -64,7 +64,7 @@ public class CustomJdbcManagement extends DbConnection {
      * 预编译-更新
      */
     protected void statementUpdate(boolean isSave, String sql, Object... params) throws Exception {
-        this.conn = super.getConnection();
+        this.conn = super.createConnection();
         statement = isSave ? conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS) : conn.prepareStatement(sql);
         for (int i = 0; i < params.length; i++) {
             statement.setObject((i + 1), params[i]);
@@ -80,7 +80,7 @@ public class CustomJdbcManagement extends DbConnection {
      * 预编译-查询1
      */
     protected void statementQuery(String sql, boolean sqlPrintSupport, Object... params) throws Exception {
-        this.conn = super.getConnection();
+        this.conn = super.createConnection();
         this.statement = conn.prepareStatement(sql);
         for (int i = 0; i < params.length; i++) {
             this.statement.setObject((i + 1), params[i]);
@@ -96,7 +96,7 @@ public class CustomJdbcManagement extends DbConnection {
      * 预编译-查询2（可预先获取结果集行数）
      */
     protected void statementQueryReturnRows(String sql, boolean sqlPrintSupport, Object... params) throws Exception {
-        this.conn = super.getConnection();
+        this.conn = super.createConnection();
         statement = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         for (int i = 0; i < params.length; i++) {
             statement.setObject((i + 1), params[i]);
