@@ -36,10 +36,6 @@ public class DbConnGlobal {
         return dbConnection.createConnection();
     }
 
-    public static String getDataBaseName() {
-        DbConnection.currMap.get()
-    }
-
 
 
 }
