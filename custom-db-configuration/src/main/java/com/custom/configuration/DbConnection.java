@@ -1,12 +1,14 @@
 package com.custom.configuration;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.alibaba.druid.pool.DruidDataSourceFactory;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
@@ -22,7 +24,7 @@ public class DbConnection {
     private static final Logger logger = LoggerFactory.getLogger(DbConnection.class);
 
     private DbDataSource dbDataSource = null;
-    private DruidDataSource druidDataSource = null;
+    private DataSource dataSource = null;
     private static final String CUSTOM_DRIVER = "com.mysql.cj.jdbc.Driver";
     private static final String DATA_BASE = "database";
     private static final String DATA_SOURCE = "dataSource";
@@ -57,7 +59,7 @@ public class DbConnection {
         if (cacheDataSource != null) {
             return;
         }
-        this.druidDataSource = new DruidDataSource();
+        DruidDataSource druidDataSource  = new DruidDataSource();
         druidDataSource.setDriverClassName(dbDataSource.getDriver());
         druidDataSource.setUrl(dbDataSource.getUrl());
         druidDataSource.setUsername(dbDataSource.getUsername());
@@ -80,6 +82,7 @@ public class DbConnection {
         }
         currMap.put(DATA_BASE, dbDataSource.getDatabase());
         currMap.put(DATA_SOURCE, druidDataSource);
+        this.dataSource = druidDataSource;
     }
 
 
@@ -93,8 +96,8 @@ public class DbConnection {
     //线程隔离
     private final ThreadLocal<Connection> CONN_LOCAL = new ThreadLocal<>();
 
-    public synchronized Connection getConnection() {
-        Connection connection;
+    public Connection getConnection() {
+        Connection connection = null;
         try {
             // 从本地变量中获取连接
             connection = CONN_LOCAL.get();
@@ -102,36 +105,34 @@ public class DbConnection {
             // 若本地变量为空时，则从缓存中取
             if (connection == null) {
 
-                Connection connCache = (Connection) currMap.get(getConnKey(dbDataSource));
-                DruidDataSource druidDataSource = (DruidDataSource) currMap.get(DATA_SOURCE);
+                connection = (Connection) currMap.get(getConnKey(dbDataSource));
+                DataSource dataSource = (DataSource) currMap.get(DATA_SOURCE);
 
                 // 若缓存中的连接不为空，则返回该连接
-                if (connCache != null) {
+                if (connection != null) {
 
                     // 若缓存中的连接已关闭，则重新获取连接
-                    if (connCache.isClosed()) {
-                        connCache = druidDataSource.getConnection();
-                        currMap.put(getConnKey(dbDataSource), connCache);
+                    if (connection.isClosed()) {
+                        connection = dataSource.getConnection();
+                        currMap.put(getConnKey(dbDataSource), connection);
                     }
-                    return connCache;
                 }
 
                 // 若缓存中的连接为空，若重新获取连接，加入缓存
                 else {
-                    connection = druidDataSource.getConnection();
+                    connection = dataSource.getConnection();
                     currMap.put(getConnKey(dbDataSource), connection);
                 }
                 CONN_LOCAL.set(connection);
             }
 
             // 若本地变量中的连接已关闭，则递归重新获取
-            else if (connection.isClosed()){
+            else if (connection.isClosed()) {
                 CONN_LOCAL.set(null);
                 connection = this.getConnection();
             }
         }catch (SQLException e) {
             logger.error(e.toString(), e);
-            return null;
         }
         return connection;
     }

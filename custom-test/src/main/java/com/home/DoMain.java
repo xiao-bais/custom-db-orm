@@ -1,15 +1,12 @@
 package com.home;
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.custom.action.condition.Conditions;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.JdbcOpDao;
 import com.custom.jdbc.back.BackResult;
-import com.custom.jdbc.transaction.BackResultTransactionProxy;
-import com.home.customtest.entity.*;
-import org.springframework.util.StopWatch;
+import com.home.customtest.entity.Employee;
+import com.home.customtest.entity.Student;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -28,16 +25,17 @@ public class DoMain {
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
         List<Student> students = jdbcOpDao.selectList(Conditions.lambdaQuery(Student.class)
-                .between(Student::getId, 88, 89));
+                .between(Student::getId, 88, 89)
+        );
 
         BackResult.execCall(op -> {
             Employee employee = jdbcDao.selectByKey(Employee.class, "94b7dbaee3c448c29a95dd4618249d45");
-            employee.setEmpName("刹那间的");
-            jdbcOpDao.updateByKey(employee);
-//            int a = 1 / 0;
-            employee.setExplain("我来说点什么");
+            employee.setEmpName("1231");
             jdbcOpDao.updateByKey(employee);
 
+            employee.setExplain("213332");
+            jdbcOpDao.updateByKey(employee);
+            int a = 1 / 0;
         });
 
 
