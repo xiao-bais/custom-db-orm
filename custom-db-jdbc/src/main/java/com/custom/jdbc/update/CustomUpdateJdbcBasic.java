@@ -1,6 +1,7 @@
 package com.custom.jdbc.update;
 
 import com.custom.jdbc.condition.SaveSqlParamInfo;
+import com.custom.jdbc.configuretion.DbDataSource;
 
 /**
  * @Author Xiao-Bai
@@ -26,5 +27,7 @@ public interface CustomUpdateJdbcBasic {
     void execTableInfo(String sql);
 
     String getDataBase();
+
+    DbDataSource getDbDataSource();
 
 }

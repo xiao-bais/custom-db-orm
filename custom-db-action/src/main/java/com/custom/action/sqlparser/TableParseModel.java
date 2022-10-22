@@ -6,8 +6,8 @@ import com.custom.comm.utils.Constants;
 import com.custom.comm.annotations.*;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.ExThrowsUtil;
-import com.custom.configuration.DbConnection;
-import com.custom.configuration.DbDataSource;
+import com.custom.jdbc.configuretion.DbConnection;
+import com.custom.jdbc.configuretion.DbDataSource;
 import com.custom.jdbc.CustomConfigHelper;
 import com.custom.jdbc.GlobalDataHandler;
 import org.slf4j.Logger;
@@ -137,17 +137,6 @@ public class TableParseModel<T> implements Cloneable {
      */
     protected String dropTableSql() {
         return String.format("DROP TABLE IF EXISTS `%s`", this.table);
-    }
-
-    /**
-     * 表是否存在
-     */
-    public String exitsTableSql(Class<?> cls) {
-        DbTable annotation = cls.getAnnotation(DbTable.class);
-        String table = annotation.table();
-        return String.format("SELECT COUNT(1) COUNT FROM " +
-                "`information_schema`.`TABLES` WHERE TABLE_NAME = '%s' AND TABLE_SCHEMA = '%s';",
-                table, DbConnection.currMap.get(Constants.DATA_BASE));
     }
 
 

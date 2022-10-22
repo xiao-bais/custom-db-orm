@@ -2,9 +2,6 @@ package com.custom.jdbc.transaction;
 
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.Constants;
-import com.custom.configuration.DbConnection;
-import com.custom.configuration.DbDataSource;
-import com.custom.jdbc.CustomConfigHelper;
 import com.custom.jdbc.GlobalDataHandler;
 import com.custom.jdbc.back.BackResult;
 import org.slf4j.Logger;

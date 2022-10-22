@@ -4,10 +4,9 @@ import com.custom.action.proxy.JdbcDaoProxy;
 import com.custom.action.sqlparser.JdbcOpDao;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.TableInfoCache;
-import com.custom.configuration.DbCustomStrategy;
-import com.custom.configuration.DbDataSource;
+import com.custom.jdbc.configuretion.DbCustomStrategy;
+import com.custom.jdbc.configuretion.DbDataSource;
 import com.custom.proxy.InterfacesProxyExecutor;
-import com.home.customtest.dao.CustomTestDao;
 
 /**
  * @Author Xiao-Bai
@@ -17,6 +16,7 @@ import com.home.customtest.dao.CustomTestDao;
 public class JdbcTestBuilder {
 
     private final DbDataSource dbDataSource;
+    private final DbDataSource dbDataSource2;
     private final DbCustomStrategy dbCustomStrategy;
 
     public static JdbcTestBuilder builder() {
@@ -29,6 +29,11 @@ public class JdbcTestBuilder {
         dbDataSource.setUrl("jdbc:mysql://39.108.225.176:3306/hos?characterEncoding=utf-8&allowMultiQueries=true&autoreconnect=true&serverTimezone=UTC");
         dbDataSource.setUsername("root");
         dbDataSource.setPassword("xh@Mysql1524");
+
+        dbDataSource2 = new DbDataSource();
+        dbDataSource2.setUrl("jdbc:mysql://hougu-test.mysql.rds.aliyuncs.com:5678/hm_erp_test3?characterEncoding=utf-8&allowMultiQueries=true&autoreconnect=true");
+        dbDataSource2.setUsername("hougu_erp_dev");
+        dbDataSource2.setPassword("hougu@123");
 
         // 增删改查映射策略配置
         dbCustomStrategy = new DbCustomStrategy();
@@ -43,7 +48,7 @@ public class JdbcTestBuilder {
     }
 
     public JdbcOpDao getJdbcOpDao() {
-        JdbcOpDao jdbcDao = new JdbcOpDao(dbDataSource, dbCustomStrategy);
+        JdbcOpDao jdbcDao = new JdbcOpDao(dbDataSource2, dbCustomStrategy);
         TableInfoCache.setUnderlineToCamel(true);
         return jdbcDao;
     }

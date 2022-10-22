@@ -6,8 +6,8 @@ import com.custom.action.sqlparser.JdbcAction;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;
-import com.custom.configuration.DbCustomStrategy;
-import com.custom.configuration.DbDataSource;
+import com.custom.jdbc.configuretion.DbCustomStrategy;
+import com.custom.jdbc.configuretion.DbDataSource;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;

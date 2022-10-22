@@ -2,8 +2,8 @@ package com.custom.springboot;
 
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.comm.utils.JudgeUtil;
-import com.custom.configuration.DbCustomStrategy;
-import com.custom.configuration.DbDataSource;
+import com.custom.jdbc.configuretion.DbCustomStrategy;
+import com.custom.jdbc.configuretion.DbDataSource;
 import com.custom.jdbc.CustomSelectJdbcBasicImpl;
 import com.custom.jdbc.CustomUpdateJdbcBasicImpl;
 import com.custom.springboot.tableinit.TableStructsInitializer;

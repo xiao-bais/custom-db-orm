@@ -2,15 +2,15 @@
   "properties": [
     {
       "name": "custom.db.datasource",
-      "type": "com.custom.configuration.DbDataSource",
+      "type": "com.custom.jdbc.configuretion.DbDataSource",
       "description": "The Connection database configuration.",
-      "sourceType": "com.custom.configuration.DbDataSource"
+      "sourceType": "com.custom.jdbc.configuretion.DbDataSource"
     },
     {
       "name": "custom.db.strategy",
-      "type": "com.custom.configuration.DbCustomStrategy",
+      "type": "com.custom.jdbc.configuretion.DbCustomStrategy",
       "description": "The Custom Strategy Rule.",
-      "sourceType": "com.custom.configuration.DbCustomStrategy"
+      "sourceType": "com.custom.jdbc.configuretion.DbCustomStrategy"
     }
   ],
 
@@ -18,8 +18,8 @@
     {
       "name": "custom.db.datasource",
       "sourceMethod": "DbDataSource()",
-      "type": "com.custom.configuration.DbDataSource",
-      "sourceType": "com.custom.configuration.DbDataSource"
+      "type": "com.custom.jdbc.configuretion.DbDataSource",
+      "sourceType": "com.custom.jdbc.configuretion.DbDataSource"
     }
   ]
 

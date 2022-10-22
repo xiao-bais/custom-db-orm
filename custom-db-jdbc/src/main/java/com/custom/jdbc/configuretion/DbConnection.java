@@ -1,9 +1,10 @@
-package com.custom.configuration;
+package com.custom.jdbc.configuretion;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.exceptions.ExThrowsUtil;
+import com.custom.jdbc.transaction.DbConnGlobal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,8 +25,6 @@ public class DbConnection {
 
     private DbDataSource dbDataSource = null;
     private static final String CUSTOM_DRIVER = "com.mysql.cj.jdbc.Driver";
-    private static final String DATA_BASE = "database";
-    private static final String DATA_SOURCE = "dataSource";
     public static Map<String, Object> currMap  = new ConcurrentHashMap<>();
 
     /**
@@ -43,17 +42,11 @@ public class DbConnection {
         }
     }
 
-    public static String getConnKey(DbDataSource dbDataSource) {
-        return String.format("%s-%s-%s-%s",
-                dbDataSource.getUrl(),
-                dbDataSource.getUsername(),
-                dbDataSource.getPassword(),
-                dbDataSource.getDatabase()
-        );
-    }
+
 
     private void datasourceInitialize() {
-        DruidDataSource cacheDataSource = (DruidDataSource) currMap.get(DATA_SOURCE);
+        String dataSourceKey = DbConnGlobal.getDataSourceKey(dbDataSource);
+        DruidDataSource cacheDataSource = (DruidDataSource) currMap.get(dataSourceKey);
         if (cacheDataSource != null) {
             return;
         }
@@ -78,8 +71,8 @@ public class DbConnection {
             }
             else ExThrowsUtil.toCustom("未指定数据库名称");
         }
-        currMap.put(DATA_BASE, dbDataSource.getDatabase());
-        currMap.put(DATA_SOURCE, druidDataSource);
+        currMap.put(DbConnGlobal.getDataBaseKey(dbDataSource), dbDataSource.getDatabase());
+        currMap.put(DbConnGlobal.getDataSourceKey(dbDataSource), druidDataSource);
     }
 
 
@@ -102,8 +95,8 @@ public class DbConnection {
             // 若本地变量为空时，则从缓存中取
             if (connection == null) {
 
-                connection = (Connection) currMap.get(getConnKey(dbDataSource));
-                DataSource dataSource = (DataSource) currMap.get(DATA_SOURCE);
+                connection = (Connection) currMap.get(DbConnGlobal.getConnKey(dbDataSource));
+                DataSource dataSource = (DataSource) currMap.get(DbConnGlobal.getDataSourceKey(dbDataSource));
 
                 // 若缓存中的连接不为空，则返回该连接
                 if (connection != null) {
@@ -111,14 +104,14 @@ public class DbConnection {
                     // 若缓存中的连接已关闭，则重新获取连接
                     if (connection.isClosed()) {
                         connection = dataSource.getConnection();
-                        currMap.put(getConnKey(dbDataSource), connection);
+                        currMap.put(DbConnGlobal.getConnKey(dbDataSource), connection);
                     }
                 }
 
                 // 若缓存中的连接为空，若重新获取连接，加入缓存
                 else {
                     connection = dataSource.getConnection();
-                    currMap.put(getConnKey(dbDataSource), connection);
+                    currMap.put(DbConnGlobal.getConnKey(dbDataSource), connection);
                 }
                 CONN_LOCAL.set(connection);
             }
@@ -135,7 +128,7 @@ public class DbConnection {
     }
 
     public String getDataBase() {
-        return currMap.get(DATA_BASE).toString();
+        String dataBaseKey = DbConnGlobal.getDataBaseKey(dbDataSource);
+        return currMap.get(dataBaseKey).toString();
     }
-
 }

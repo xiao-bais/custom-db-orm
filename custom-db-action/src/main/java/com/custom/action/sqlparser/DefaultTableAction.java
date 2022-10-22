@@ -6,8 +6,8 @@ import com.custom.action.proxy.JdbcActionProxy;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.page.DbPageRows;
-import com.custom.configuration.DbCustomStrategy;
-import com.custom.configuration.DbDataSource;
+import com.custom.jdbc.configuretion.DbCustomStrategy;
+import com.custom.jdbc.configuretion.DbDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

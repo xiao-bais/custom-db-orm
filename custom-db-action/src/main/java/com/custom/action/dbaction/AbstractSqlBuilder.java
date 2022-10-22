@@ -5,7 +5,7 @@ import com.custom.action.sqlparser.*;
 import com.custom.action.util.DbUtil;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.utils.*;
-import com.custom.configuration.DbCustomStrategy;
+import com.custom.jdbc.configuretion.DbCustomStrategy;
 import com.custom.jdbc.CustomConfigHelper;
 import com.custom.jdbc.CustomSelectJdbcBasicImpl;
 import com.custom.jdbc.CustomUpdateJdbcBasicImpl;

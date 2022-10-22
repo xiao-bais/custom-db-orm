@@ -1,4 +1,4 @@
-package com.custom.configuration;
+package com.custom.jdbc.configuretion;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

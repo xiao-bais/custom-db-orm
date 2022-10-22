@@ -1,4 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.custom.configuration.DbCustomStrategy,\
-  com.custom.configuration.DbDataSource,\
+  com.custom.jdbc.configuretion.DbCustomStrategy,\
+  com.custom.jdbc.configuretion.DbDataSource,\
   com.custom.springboot.CustomConfiguration

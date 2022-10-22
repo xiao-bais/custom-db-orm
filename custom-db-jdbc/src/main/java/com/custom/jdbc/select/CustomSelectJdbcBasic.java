@@ -1,6 +1,7 @@
 package com.custom.jdbc.select;
 
 import com.custom.jdbc.condition.SelectSqlParamInfo;
+import com.custom.jdbc.configuretion.DbDataSource;
 
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,8 @@ import java.util.Set;
  */
 //
 public interface CustomSelectJdbcBasic {
+
+    DbDataSource getDbDataSource();
 
     /**
      * 查询多条记录（通用型）

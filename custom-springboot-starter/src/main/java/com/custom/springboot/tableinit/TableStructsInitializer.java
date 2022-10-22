@@ -10,7 +10,9 @@ import com.custom.comm.utils.RexUtil;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.annotations.DbTable;
 import com.custom.jdbc.condition.SelectSqlParamInfo;
+import com.custom.jdbc.configuretion.DbDataSource;
 import com.custom.jdbc.select.CustomSelectJdbcBasic;
+import com.custom.jdbc.transaction.DbConnGlobal;
 import com.custom.jdbc.update.CustomUpdateJdbcBasic;
 import com.custom.springboot.scanner.PackageScanner;
 import org.slf4j.Logger;
@@ -44,6 +46,8 @@ public class TableStructsInitializer {
      */
     private final String dataBaseName;
 
+    private DbDataSource dbDataSource;
+
     /**
      * 需要添加的字段列表
      */
@@ -64,6 +68,7 @@ public class TableStructsInitializer {
         this.packageScans = packageScans;
         this.selectJdbc = selectJdbc;
         this.updateJdbc = updateJdbc;
+        this.dbDataSource = selectJdbc.getDbDataSource();
         this.addColumnSqlList = new ArrayList<>();
         this.waitCreateMapper = new HashMap<>();
         this.dataBaseName = updateJdbc.getDataBase();
@@ -106,7 +111,7 @@ public class TableStructsInitializer {
             }
             TableParseModel<?> sqlBuilder = TableInfoCache.getTableModel(entityClass);
             TableParseModel<?> waitUpdateSqlBuilder = sqlBuilder.clone();
-            String exitsTableSql = waitUpdateSqlBuilder.exitsTableSql(entityClass);
+            String exitsTableSql = DbConnGlobal.exitsTableSql(sqlBuilder.getTable(), dbDataSource);
             String table = waitUpdateSqlBuilder.getTable();
             // 若表已存在，则进行下一步判断表字段是否存在
             Object exists = selectJdbc.selectObj(new SelectSqlParamInfo<>(Object.class, exitsTableSql, false));

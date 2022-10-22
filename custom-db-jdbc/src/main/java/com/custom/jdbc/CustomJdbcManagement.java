@@ -2,9 +2,9 @@ package com.custom.jdbc;
 
 import com.custom.comm.utils.Constants;
 import com.custom.comm.exceptions.ExThrowsUtil;
-import com.custom.configuration.DbConnection;
-import com.custom.configuration.DbCustomStrategy;
-import com.custom.configuration.DbDataSource;
+import com.custom.jdbc.configuretion.DbConnection;
+import com.custom.jdbc.configuretion.DbCustomStrategy;
+import com.custom.jdbc.configuretion.DbDataSource;
 
 import java.sql.*;
 import java.util.Map;

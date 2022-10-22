@@ -11,10 +11,11 @@ import com.custom.comm.annotations.check.CheckExecute;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.page.DbPageRows;
-import com.custom.configuration.DbCustomStrategy;
-import com.custom.configuration.DbDataSource;
+import com.custom.jdbc.configuretion.DbCustomStrategy;
+import com.custom.jdbc.configuretion.DbDataSource;
 import com.custom.jdbc.CustomSelectJdbcBasicImpl;
 import com.custom.jdbc.CustomUpdateJdbcBasicImpl;
+import com.custom.jdbc.transaction.DbConnGlobal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -475,7 +476,7 @@ public class JdbcAction extends AbstractSqlExecutor {
         TableParseModel<?> tableSqlBuilder;
         for (int i = arr.length - 1; i >= 0; i--) {
             tableSqlBuilder = TableInfoCache.getTableModel(arr[i]);
-            String exitsTableSql = tableSqlBuilder.exitsTableSql(arr[i]);
+            String exitsTableSql = DbConnGlobal.exitsTableSql(tableSqlBuilder.getTable(), getDbDataSource());
             try {
                 if(!hasTableInfo(exitsTableSql)) {
                     String createTableSql = tableSqlBuilder.createTableSql();

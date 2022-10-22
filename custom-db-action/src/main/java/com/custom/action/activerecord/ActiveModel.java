@@ -7,7 +7,7 @@ import com.custom.comm.utils.ConvertUtil;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;
-import com.custom.configuration.DbCustomStrategy;
+import com.custom.jdbc.configuretion.DbCustomStrategy;
 import com.custom.jdbc.CustomConfigHelper;
 import com.custom.jdbc.GlobalDataHandler;
 import org.slf4j.Logger;

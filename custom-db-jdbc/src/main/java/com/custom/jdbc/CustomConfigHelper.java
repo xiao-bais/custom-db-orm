@@ -1,7 +1,7 @@
 package com.custom.jdbc;
 
-import com.custom.configuration.DbCustomStrategy;
-import com.custom.configuration.DbDataSource;
+import com.custom.jdbc.configuretion.DbCustomStrategy;
+import com.custom.jdbc.configuretion.DbDataSource;
 
 /**
  * @Author Xiao-Bai

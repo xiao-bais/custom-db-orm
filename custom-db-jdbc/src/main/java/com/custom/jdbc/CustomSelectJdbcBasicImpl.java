@@ -4,8 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.exceptions.ExThrowsUtil;
-import com.custom.configuration.DbCustomStrategy;
-import com.custom.configuration.DbDataSource;
+import com.custom.jdbc.configuretion.DbCustomStrategy;
+import com.custom.jdbc.configuretion.DbDataSource;
 import com.custom.jdbc.condition.SelectSqlParamInfo;
 import com.custom.jdbc.select.CustomSelectJdbcBasic;
 
@@ -23,11 +23,18 @@ import java.util.*;
 @SuppressWarnings("unchecked")
 public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements CustomSelectJdbcBasic {
 
+    private final DbDataSource dbDataSource;
     private final DbCustomStrategy dbCustomStrategy;
 
     public CustomSelectJdbcBasicImpl(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         super(dbDataSource, dbCustomStrategy);
+        this.dbDataSource = dbDataSource;
         this.dbCustomStrategy = dbCustomStrategy;
+    }
+
+    @Override
+    public DbDataSource getDbDataSource() {
+        return dbDataSource;
     }
 
     /**

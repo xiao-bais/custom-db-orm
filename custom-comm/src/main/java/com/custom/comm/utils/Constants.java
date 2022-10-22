@@ -29,7 +29,6 @@ public class Constants {
     /**
      * sql常量
      */
-    public final static String DATA_BASE = "database";
     public final static String SET = " SET ";
     public final static String IS = "is";
     public final static String IN = " in ";
@@ -76,6 +75,8 @@ public class Constants {
      */
     public final static String DATA_CONFIG = "DATA_CONFIG";
     public final static String TRANS_CURSOR = "TRANS_CURSOR";
+    public final static String DATA_BASE = "DATABASE";
+    public final static String DATASOURCE = "DATASOURCE";
 
 
 

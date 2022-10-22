@@ -5,6 +5,7 @@ import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.JdbcOpDao;
 import com.custom.jdbc.back.BackResult;
 import com.home.customtest.entity.Employee;
+import com.home.customtest.entity.HmErpOrderPO;
 import com.home.customtest.entity.Student;
 
 import java.util.List;
@@ -24,20 +25,17 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-        List<Student> students = jdbcOpDao.selectList(Conditions.lambdaQuery(Student.class)
-                .between(Student::getId, 88, 89)
-        );
+        HmErpOrderPO hmErpOrderPO1 = jdbcOpDao.selectByKey(HmErpOrderPO.class, 65521);
+        HmErpOrderPO hmErpOrderPO2 = jdbcOpDao.selectByKey(HmErpOrderPO.class, 65522);
+        HmErpOrderPO hmErpOrderPO3 = jdbcOpDao.selectByKey(HmErpOrderPO.class, 65523);
 
-        BackResult.execCall(op -> {
-            Employee employee = jdbcDao.selectByKey(Employee.class, "94b7dbaee3c448c29a95dd4618249d45");
-            employee.setEmpName("1231");
-            jdbcOpDao.updateByKey(employee);
+        jdbcDao.selectList(Conditions.lambdaQuery(Student.class).eq(Student::getNickName, "aaaad"));
 
-            employee.setExplain("213332");
-            jdbcOpDao.updateByKey(employee);
-            int a = 1 / 0;
-        });
+        HmErpOrderPO hmErpOrderPO4 = jdbcOpDao.selectByKey(HmErpOrderPO.class, 65524);
+        HmErpOrderPO hmErpOrderPO5 = jdbcOpDao.selectByKey(HmErpOrderPO.class, 65525);
+        HmErpOrderPO hmErpOrderPO6 = jdbcOpDao.selectByKey(HmErpOrderPO.class, 65526);
 
+        System.out.printf("该订单【%s】, 套餐售价【%d】元", hmErpOrderPO1.getOrderNum(), hmErpOrderPO1.getActivAmount());
 
 
     }

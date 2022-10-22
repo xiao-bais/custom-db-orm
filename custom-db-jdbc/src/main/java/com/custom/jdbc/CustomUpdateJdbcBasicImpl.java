@@ -1,7 +1,7 @@
 package com.custom.jdbc;
 
-import com.custom.configuration.DbCustomStrategy;
-import com.custom.configuration.DbDataSource;
+import com.custom.jdbc.configuretion.DbCustomStrategy;
+import com.custom.jdbc.configuretion.DbDataSource;
 import com.custom.jdbc.condition.SaveSqlParamInfo;
 import com.custom.jdbc.update.CustomUpdateJdbcBasic;
 import org.slf4j.Logger;
@@ -21,11 +21,18 @@ import java.sql.SQLException;
 public class CustomUpdateJdbcBasicImpl extends CustomJdbcManagement implements CustomUpdateJdbcBasic {
 
     private static final Logger logger = LoggerFactory.getLogger(CustomUpdateJdbcBasicImpl.class);
+    private final DbDataSource dbDataSource;
     private final DbCustomStrategy dbCustomStrategy;
 
     public CustomUpdateJdbcBasicImpl(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         super(dbDataSource, dbCustomStrategy);
+        this.dbDataSource = dbDataSource;
         this.dbCustomStrategy = getDbCustomStrategy();
+    }
+
+    @Override
+    public DbDataSource getDbDataSource() {
+        return dbDataSource;
     }
 
     /**

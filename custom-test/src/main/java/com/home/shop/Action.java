@@ -1,8 +1,8 @@
 package com.home.shop;
 
 import com.custom.comm.enums.KeyStrategy;
-import com.custom.configuration.DbCustomStrategy;
-import com.custom.configuration.DbDataSource;
+import com.custom.jdbc.configuretion.DbCustomStrategy;
+import com.custom.jdbc.configuretion.DbDataSource;
 import com.custom.generator.FreemarkerTemplateExecutor;
 import com.custom.generator.config.GlobalConfig;
 import com.custom.generator.config.PackageConfig;
