@@ -1,7 +1,7 @@
 package com.custom.jdbc;
 
-import com.custom.jdbc.configuretion.DbCustomStrategy;
-import com.custom.jdbc.configuretion.DbDataSource;
+import com.custom.jdbc.configuration.DbCustomStrategy;
+import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.condition.SaveSqlParamInfo;
 import com.custom.jdbc.update.CustomUpdateJdbcBasic;
 import org.slf4j.Logger;

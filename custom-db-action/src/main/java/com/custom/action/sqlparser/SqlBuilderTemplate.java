@@ -28,12 +28,12 @@ public class SqlBuilderTemplate<T> {
 
     private final AbstractSqlBuilder<T> emptySqlBuilder;
 
-    public SqlBuilderTemplate(Class<T> entityClass) {
-        this.selectSqlBuilder = new HandleSelectSqlBuilder<>(entityClass);
-        this.insertSqlBuilder = new HandleInsertSqlBuilder<>(entityClass);
-        this.updateSqlBuilder = new HandleUpdateSqlBuilder<>(entityClass);
-        this.deleteSqlBuilder = new HandleDeleteSqlBuilder<>(entityClass);
-        this.emptySqlBuilder = new EmptySqlBuilder<>(entityClass);
+    public SqlBuilderTemplate(Class<T> entityClass, int order) {
+        this.selectSqlBuilder = new HandleSelectSqlBuilder<>(entityClass, order);
+        this.insertSqlBuilder = new HandleInsertSqlBuilder<>(entityClass, order);
+        this.updateSqlBuilder = new HandleUpdateSqlBuilder<>(entityClass, order);
+        this.deleteSqlBuilder = new HandleDeleteSqlBuilder<>(entityClass, order);
+        this.emptySqlBuilder = new EmptySqlBuilder<>(entityClass, order);
     }
 
     public AbstractSqlBuilder<T> getSelectSqlBuilder() {

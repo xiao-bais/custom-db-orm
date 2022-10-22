@@ -1,4 +1,4 @@
-package com.custom.jdbc.configuretion;
+package com.custom.jdbc.configuration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -33,15 +33,21 @@ public class DbDataSource {
     */
     private String database;
 
-    /* 初始化配置 */
+    /**
+     * 初始化配置
+     */
     private int initialSize = 0;
     private int minIdle = 0;
     private int maxActive = 500;
 
-    /* 连接等待超时时间 */
+    /**
+     * 连接等待超时时间
+     */
     private int maxWait = 60000;
 
-    /* 间隔多久进行一次检查,检查需要关闭的空闲连接 */
+    /**
+     * 间隔多久进行一次检查,检查需要关闭的空闲连接
+     */
     private int runsMillis = 60000;
 
     private String validationQuery = "select 1";
@@ -52,6 +58,10 @@ public class DbDataSource {
 
     private boolean testOnReturn = false;
 
+    /**
+     * 指定这是第几个数据源
+     */
+    private int order = 1;
 
     public int getInitialSize() {
         return initialSize;
@@ -175,5 +185,13 @@ public class DbDataSource {
 
     public void setDatabase(String database) {
         this.database = database;
+    }
+
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
     }
 }

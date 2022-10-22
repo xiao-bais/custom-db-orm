@@ -1,4 +1,4 @@
-package com.custom.jdbc.configuretion;
+package com.custom.jdbc.configuration;
 
 import com.custom.comm.utils.Constants;
 import com.custom.comm.enums.Rollback;

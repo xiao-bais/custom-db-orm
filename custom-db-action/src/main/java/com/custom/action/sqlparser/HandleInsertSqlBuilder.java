@@ -81,7 +81,7 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
     }
 
 
-    public HandleInsertSqlBuilder(Class<T> entityClass) {
+    public HandleInsertSqlBuilder(Class<T> entityClass, int order) {
         this.insertSuffix = new StringJoiner(Constants.SEPARATOR_COMMA_1,
                 Constants.BRACKETS_LEFT, Constants.BRACKETS_RIGHT
         );
@@ -89,7 +89,7 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
         // 添加?
         TableParseModel<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
         // 初始化
-        this.injectTableInfo(tableSqlBuilder);
+        this.injectTableInfo(tableSqlBuilder, order);
 
         if (tableSqlBuilder.getKeyParserModel() != null) {
             this.insertSuffix.add(Constants.QUEST);

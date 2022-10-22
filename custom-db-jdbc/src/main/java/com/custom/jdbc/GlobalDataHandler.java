@@ -88,9 +88,7 @@ public class GlobalDataHandler {
    private static final Map<String, Object> GLOBAL_CACHE = new ConcurrentHashMap<>();
 
    public static void addGlobalHelper(String key, Object value) {
-       if (!GLOBAL_CACHE.containsKey(key)) {
-           GLOBAL_CACHE.put(key, value);
-       }
+       GLOBAL_CACHE.putIfAbsent(key, value);
    }
 
     public static Object readGlobalObject(String key) {

@@ -10,7 +10,7 @@ import com.custom.comm.utils.RexUtil;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.annotations.DbTable;
 import com.custom.jdbc.condition.SelectSqlParamInfo;
-import com.custom.jdbc.configuretion.DbDataSource;
+import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.select.CustomSelectJdbcBasic;
 import com.custom.jdbc.transaction.DbConnGlobal;
 import com.custom.jdbc.update.CustomUpdateJdbcBasic;

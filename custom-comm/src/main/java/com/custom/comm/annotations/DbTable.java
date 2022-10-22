@@ -46,11 +46,4 @@ public @interface DbTable {
     boolean mergeSuper() default true;
 
 
-    /**
-     * 是否开启数据库前缀，在操作sql时，生成的sql表名会自动附带数据库前缀
-     * <br/> 表 -> 开启前: student, 开启后: hos.student
-     */
-    boolean enabledDbPrefix() default false;
-
-
 }

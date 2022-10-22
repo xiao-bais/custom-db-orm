@@ -4,8 +4,8 @@ import com.custom.action.proxy.JdbcDaoProxy;
 import com.custom.action.sqlparser.JdbcOpDao;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.TableInfoCache;
-import com.custom.jdbc.configuretion.DbCustomStrategy;
-import com.custom.jdbc.configuretion.DbDataSource;
+import com.custom.jdbc.configuration.DbCustomStrategy;
+import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.proxy.InterfacesProxyExecutor;
 
 /**

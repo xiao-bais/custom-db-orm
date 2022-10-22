@@ -6,8 +6,7 @@ import com.custom.comm.utils.Constants;
 import com.custom.comm.annotations.*;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.ExThrowsUtil;
-import com.custom.jdbc.configuretion.DbConnection;
-import com.custom.jdbc.configuretion.DbDataSource;
+import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.CustomConfigHelper;
 import com.custom.jdbc.GlobalDataHandler;
 import org.slf4j.Logger;
@@ -233,14 +232,7 @@ public class TableParseModel<T> implements Cloneable {
             ExThrowsUtil.toCustom(cls.getName() + " 未指定@DbTable注解上实体映射的表名");
         }
         this.alias = annotation.alias();
-        if (annotation.enabledDbPrefix()) {
-            CustomConfigHelper configHelper = (CustomConfigHelper) GlobalDataHandler.readGlobalObject(Constants.DATA_CONFIG);
-            DbDataSource dbDataSource = configHelper.getDbDataSource();
-            String dbPrefix = CustomUtil.getDataBase(dbDataSource.getUrl());
-            this.table = dbPrefix + "." + annotation.table();
-        } else {
-            this.table = annotation.table();
-        }
+        this.table = annotation.table();
         this.desc = annotation.desc();
         this.findUpDbJoinTables = annotation.mergeSuper();
         this.underlineToCamel = underlineToCamel;

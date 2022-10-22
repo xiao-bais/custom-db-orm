@@ -5,8 +5,8 @@ import com.custom.action.dbaction.AbstractSqlExecutor;
 import com.custom.action.proxy.JdbcActionProxy;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.comm.page.DbPageRows;
-import com.custom.jdbc.configuretion.DbCustomStrategy;
-import com.custom.jdbc.configuretion.DbDataSource;
+import com.custom.jdbc.configuration.DbCustomStrategy;
+import com.custom.jdbc.configuration.DbDataSource;
 
 import java.io.Serializable;
 import java.util.Collection;

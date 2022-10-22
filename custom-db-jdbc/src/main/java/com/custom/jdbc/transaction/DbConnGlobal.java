@@ -1,8 +1,8 @@
 package com.custom.jdbc.transaction;
 
 import com.custom.comm.utils.Constants;
-import com.custom.jdbc.configuretion.DbConnection;
-import com.custom.jdbc.configuretion.DbDataSource;
+import com.custom.jdbc.configuration.DbConnection;
+import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.CustomConfigHelper;
 import com.custom.jdbc.GlobalDataHandler;
 
@@ -19,7 +19,7 @@ public class DbConnGlobal {
      * 获取当前数据库连接
      */
     public static Connection getCurrentConnection() {
-        CustomConfigHelper configHelper = (CustomConfigHelper) GlobalDataHandler.readGlobalObject(Constants.DATA_CONFIG);
+        CustomConfigHelper configHelper = DbConnGlobal.getConfigHelper();
         Connection connection = null;
         if (configHelper != null) {
             DbDataSource dbDataSource = configHelper.getDbDataSource();
@@ -70,6 +70,34 @@ public class DbConnGlobal {
         return String.format("SELECT COUNT(1) COUNT ROM " +
                         "`information_schema`.`TABLES` WHERE TABLE_NAME = '%s' AND TABLE_SCHEMA = '%s';",
                 table, getDataBaseKey(dbDataSource));
+    }
+
+    public static void addDataSource(CustomConfigHelper configHelper) {
+        DbDataSource dbDataSource = configHelper.getDbDataSource();
+        String key = Constants.DATA_CONFIG + "-" + dbDataSource.getOrder();
+        // 添加全局数据源配置
+        GlobalDataHandler.addGlobalHelper(key, configHelper);
+    }
+
+    public static DbDataSource getDataSource(int order) {
+        CustomConfigHelper configHelper = getConfigHelper(order);
+        if (configHelper != null) {
+            return configHelper.getDbDataSource();
+        }
+        return null;
+    }
+
+    public static CustomConfigHelper getConfigHelper(int order) {
+        String key = Constants.DATA_CONFIG + "-" + order;
+        return (CustomConfigHelper) GlobalDataHandler.readGlobalObject(key);
+    }
+
+    public static DbDataSource getDataSource() {
+        return getDataSource(Constants.DEFAULT_ONE);
+    }
+
+    public static CustomConfigHelper getConfigHelper() {
+        return getConfigHelper(Constants.DEFAULT_ONE);
     }
 
 

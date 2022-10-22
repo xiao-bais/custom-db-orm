@@ -1,7 +1,7 @@
 package com.custom.jdbc.update;
 
 import com.custom.jdbc.condition.SaveSqlParamInfo;
-import com.custom.jdbc.configuretion.DbDataSource;
+import com.custom.jdbc.configuration.DbDataSource;
 
 /**
  * @Author Xiao-Bai

@@ -10,9 +10,9 @@ import com.custom.action.dbaction.AbstractSqlBuilder;
 public class EmptySqlBuilder<T> extends AbstractSqlBuilder<T> {
 
 
-    public EmptySqlBuilder(Class<T> entityClass) {
+    public EmptySqlBuilder(Class<T> entityClass, int order) {
         TableParseModel<T> tableModel = TableInfoCache.getTableModel(entityClass);
-        this.injectTableInfo(tableModel);
+        this.injectTableInfo(tableModel, order);
     }
 
     @Override

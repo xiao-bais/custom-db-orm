@@ -6,8 +6,8 @@ import com.custom.action.proxy.JdbcActionProxy;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.page.DbPageRows;
-import com.custom.jdbc.configuretion.DbCustomStrategy;
-import com.custom.jdbc.configuretion.DbDataSource;
+import com.custom.jdbc.configuration.DbCustomStrategy;
+import com.custom.jdbc.configuration.DbDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,7 +121,9 @@ public class DefaultTableAction<T, P extends Serializable> implements JdbcActive
     @Override
     @SuppressWarnings("unchecked")
     public P primaryKeyValue(T entity) {
-        EmptySqlBuilder<T> emptySqlBuilder = TableInfoCache.getEmptySqlBuilder(entityClass);
+        DbDataSource dbDataSource = jdbcAction.getDbDataSource();
+        int order = dbDataSource.getOrder();
+        EmptySqlBuilder<T> emptySqlBuilder = TableInfoCache.getEmptySqlBuilder(entityClass, order);
         emptySqlBuilder.injectEntity(entity);
         if (emptySqlBuilder.getKeyParserModel() == null) {
             ExThrowsUtil.toCustom("No primary key field specified");

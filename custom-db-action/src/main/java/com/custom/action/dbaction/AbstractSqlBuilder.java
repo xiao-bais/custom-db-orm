@@ -5,13 +5,14 @@ import com.custom.action.sqlparser.*;
 import com.custom.action.util.DbUtil;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.utils.*;
-import com.custom.jdbc.configuretion.DbCustomStrategy;
+import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.CustomConfigHelper;
 import com.custom.jdbc.CustomSelectJdbcBasicImpl;
 import com.custom.jdbc.CustomUpdateJdbcBasicImpl;
 import com.custom.jdbc.GlobalDataHandler;
 import com.custom.jdbc.condition.SelectSqlParamInfo;
 import com.custom.jdbc.select.CustomSelectJdbcBasic;
+import com.custom.jdbc.transaction.DbConnGlobal;
 import com.custom.jdbc.update.CustomUpdateJdbcBasic;
 import com.custom.jdbc.condition.SaveSqlParamInfo;
 import org.slf4j.Logger;
@@ -184,10 +185,10 @@ public abstract class AbstractSqlBuilder<T> {
 
     /**
      * 注入基础表字段数据
-     *
-     * @param tableSqlBuilder
+     * @param tableSqlBuilder 表解析对象
+     * @param order 数据源序号
      */
-    protected void injectTableInfo(TableParseModel<T> tableSqlBuilder) {
+    protected void injectTableInfo(TableParseModel<T> tableSqlBuilder, int order) {
         this.table = tableSqlBuilder.getTable();
         this.alias = tableSqlBuilder.getAlias();
         this.keyParserModel = tableSqlBuilder.getKeyParserModel();
@@ -196,8 +197,7 @@ public abstract class AbstractSqlBuilder<T> {
         this.fieldMapper = tableSqlBuilder.getFieldMapper();
         this.entityClass = tableSqlBuilder.getEntityClass();
 
-        CustomConfigHelper configHelper = (CustomConfigHelper)
-                GlobalDataHandler.readGlobalObject(Constants.DATA_CONFIG);
+        CustomConfigHelper configHelper = DbConnGlobal.getConfigHelper(order);
         Asserts.npe(configHelper, "未找到可用的数据源");
         DbCustomStrategy customStrategy = configHelper.getDbCustomStrategy();
 

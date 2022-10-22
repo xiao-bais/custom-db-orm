@@ -1,7 +1,7 @@
 package com.custom.jdbc.select;
 
 import com.custom.jdbc.condition.SelectSqlParamInfo;
-import com.custom.jdbc.configuretion.DbDataSource;
+import com.custom.jdbc.configuration.DbDataSource;
 
 import java.util.List;
 import java.util.Map;

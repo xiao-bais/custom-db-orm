@@ -1,4 +1,4 @@
-package com.custom.jdbc.configuretion;
+package com.custom.jdbc.configuration;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.custom.comm.utils.CustomUtil;

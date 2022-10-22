@@ -1,7 +1,7 @@
 package com.custom.jdbc;
 
-import com.custom.jdbc.configuretion.DbCustomStrategy;
-import com.custom.jdbc.configuretion.DbDataSource;
+import com.custom.jdbc.configuration.DbCustomStrategy;
+import com.custom.jdbc.configuration.DbDataSource;
 
 /**
  * @Author Xiao-Bai
@@ -17,9 +17,6 @@ public class CustomConfigHelper {
     public CustomConfigHelper(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         this.dbDataSource = dbDataSource;
         this.dbCustomStrategy = dbCustomStrategy;
-    }
-
-    public CustomConfigHelper() {
     }
 
     public DbDataSource getDbDataSource() {

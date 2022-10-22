@@ -24,15 +24,10 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
      */
     private StringJoiner updateSqlColumns;
 
-    public HandleUpdateSqlBuilder(Class<T> entityClass) {
+    public HandleUpdateSqlBuilder(Class<T> entityClass, int order) {
         updateSqlColumns = new StringJoiner(Constants.SEPARATOR_COMMA_2);
         TableParseModel<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
-        this.injectTableInfo(tableSqlBuilder);
-    }
-
-    @SuppressWarnings("unchecked")
-    public HandleUpdateSqlBuilder(T entity) {
-        this((Class<T>) entity.getClass());
+        this.injectTableInfo(tableSqlBuilder, order);
     }
 
 

@@ -7,9 +7,11 @@ import com.custom.comm.utils.ConvertUtil;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;
-import com.custom.jdbc.configuretion.DbCustomStrategy;
+import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.CustomConfigHelper;
 import com.custom.jdbc.GlobalDataHandler;
+import com.custom.jdbc.configuration.DbDataSource;
+import com.custom.jdbc.transaction.DbConnGlobal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,9 +21,10 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/7/15 0015 14:47
- * @Desc ActiveRecord装配模式的父类，继承该类即可获得crud功能（对象需要直接继承该类，否则子类的子类调用会报错）
+ * @author Xiao-Bai
+ * @date 2022/7/15 0015 14:47
+ * ActiveRecord装配模式的父类，继承该类即可获得crud功能（对象需要直接继承该类，否则子类的子类调用会报错）
+ * 多数据源下，可通过重写{@link #order()}方法来指定不同数据源
  * T 实体对象类型
  * P 主键类型
  */
@@ -104,8 +107,7 @@ public class ActiveModel<T extends ActiveModel<T, P>, P extends Serializable> im
 
 
     private JdbcActiveWrapper<T, P> activeWrapper() {
-        CustomConfigHelper configHelper = (CustomConfigHelper)
-                GlobalDataHandler.readGlobalObject(Constants.DATA_CONFIG);
+        CustomConfigHelper configHelper = DbConnGlobal.getConfigHelper(order());
         if (configHelper == null) {
             throw new CustomCheckException("No data source configured");
         }
@@ -130,5 +132,14 @@ public class ActiveModel<T extends ActiveModel<T, P>, P extends Serializable> im
             throw e;
         }
 
+    }
+    
+    /**
+     * @see DbDataSource#getOrder()
+     * 多个数据源的情况下，可由此指定数据源
+     * @return {@link DbDataSource#getOrder()}
+     */
+    public int order() {
+        return Constants.DEFAULT_ONE;
     }
 }

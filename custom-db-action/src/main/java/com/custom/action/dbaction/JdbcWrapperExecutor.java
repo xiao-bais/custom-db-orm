@@ -1,18 +1,12 @@
 package com.custom.action.dbaction;
 
-import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.util.DbUtil;
-import com.custom.comm.annotations.DbTable;
 import com.custom.comm.utils.Asserts;
-import com.custom.comm.utils.Constants;
 import com.custom.comm.utils.ConvertUtil;
-import com.custom.comm.utils.JudgeUtil;
-import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.page.DbPageRows;
 import com.custom.jdbc.condition.SaveSqlParamInfo;
 import com.custom.jdbc.condition.SelectSqlParamInfo;
-import com.custom.jdbc.configuretion.DbConnection;
-import com.custom.jdbc.configuretion.DbDataSource;
+import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.select.CustomSelectJdbcBasic;
 import com.custom.jdbc.update.CustomUpdateJdbcBasic;
 
@@ -175,4 +169,5 @@ public class JdbcWrapperExecutor {
     public DbDataSource getDbDataSource() {
         return dbDataSource;
     }
+
 }

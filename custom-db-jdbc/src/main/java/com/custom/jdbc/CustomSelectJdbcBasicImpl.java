@@ -4,8 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.exceptions.ExThrowsUtil;
-import com.custom.jdbc.configuretion.DbCustomStrategy;
-import com.custom.jdbc.configuretion.DbDataSource;
+import com.custom.jdbc.configuration.DbCustomStrategy;
+import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.condition.SelectSqlParamInfo;
 import com.custom.jdbc.select.CustomSelectJdbcBasic;
 

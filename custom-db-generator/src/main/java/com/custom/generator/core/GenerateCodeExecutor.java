@@ -14,8 +14,8 @@ import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.enums.DbType;
 import com.custom.comm.exceptions.ExThrowsUtil;
-import com.custom.jdbc.configuretion.DbCustomStrategy;
-import com.custom.jdbc.configuretion.DbDataSource;
+import com.custom.jdbc.configuration.DbCustomStrategy;
+import com.custom.jdbc.configuration.DbDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

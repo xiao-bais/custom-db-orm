@@ -2,9 +2,10 @@ package com.custom.jdbc;
 
 import com.custom.comm.utils.Constants;
 import com.custom.comm.exceptions.ExThrowsUtil;
-import com.custom.jdbc.configuretion.DbConnection;
-import com.custom.jdbc.configuretion.DbCustomStrategy;
-import com.custom.jdbc.configuretion.DbDataSource;
+import com.custom.jdbc.configuration.DbConnection;
+import com.custom.jdbc.configuration.DbCustomStrategy;
+import com.custom.jdbc.configuration.DbDataSource;
+import com.custom.jdbc.transaction.DbConnGlobal;
 
 import java.sql.*;
 import java.util.Map;
@@ -25,7 +26,7 @@ public class CustomJdbcManagement extends DbConnection {
     public CustomJdbcManagement(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         super(dbDataSource);
         this.dbCustomStrategy = dbCustomStrategy;
-        GlobalDataHandler.addGlobalHelper(Constants.DATA_CONFIG, new CustomConfigHelper(dbDataSource, dbCustomStrategy));
+        DbConnGlobal.addDataSource(new CustomConfigHelper(dbDataSource, dbCustomStrategy));
     }
 
     protected PreparedStatement getStatement() {

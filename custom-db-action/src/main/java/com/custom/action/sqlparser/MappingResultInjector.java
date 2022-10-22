@@ -5,6 +5,7 @@ import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.exceptions.ExThrowsUtil;
+import com.custom.jdbc.configuration.DbDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,11 +29,18 @@ public class MappingResultInjector<T> {
     /**
      * select 查询对象
      */
-    public AbstractSqlExecutor sqlExecutor;
+    private final AbstractSqlExecutor sqlExecutor;
+
+    /**
+     * 数据源序号
+     */
+    private final int order;
 
     public MappingResultInjector(Class<T> thisClass, AbstractSqlExecutor sqlExecutor) {
         this.thisClass = thisClass;
         this.sqlExecutor = sqlExecutor;
+        DbDataSource dbDataSource = sqlExecutor.getDbDataSource();
+        this.order = dbDataSource.getOrder();
     }
 
 
@@ -58,7 +66,7 @@ public class MappingResultInjector<T> {
             for (Field waitSetField : oneToManyFieldList) {
                 DbJoinToManyParseModel joinToManyParseModel = new DbJoinToManyParseModel(waitSetField);
                 Class<?> joinTarget = joinToManyParseModel.getJoinTarget();
-                HandleSelectSqlBuilder<?> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(joinTarget);
+                HandleSelectSqlBuilder<?> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(joinTarget, order);
                 String condition = joinToManyParseModel.queryCondition();
 
                 for (T entity : entityList) {
@@ -94,7 +102,7 @@ public class MappingResultInjector<T> {
         for (Field waitSetField : oneToOneFieldList) {
             DbJoinToOneParseModel joinToOneParseModel = new DbJoinToOneParseModel(waitSetField);
             Class<?> joinTarget = joinToOneParseModel.getJoinTarget();
-            HandleSelectSqlBuilder<?> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(joinTarget);
+            HandleSelectSqlBuilder<?> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(joinTarget, order);
             String condition = joinToOneParseModel.queryCondition();
 
             for (T entity : entityList) {

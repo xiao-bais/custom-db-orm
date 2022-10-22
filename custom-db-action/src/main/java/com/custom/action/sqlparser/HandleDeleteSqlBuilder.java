@@ -102,8 +102,8 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
         return autoUpdateFieldSql.toString();
     }
 
-    public HandleDeleteSqlBuilder(Class<T> entityClass) {
+    public HandleDeleteSqlBuilder(Class<T> entityClass, int order) {
         TableParseModel<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
-        this.injectTableInfo(tableSqlBuilder);
+        this.injectTableInfo(tableSqlBuilder, order);
     }
 }
