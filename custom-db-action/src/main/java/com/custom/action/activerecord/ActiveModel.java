@@ -1,7 +1,7 @@
 package com.custom.action.activerecord;
 
-import com.custom.action.dbaction.JdbcActiveWrapper;
-import com.custom.action.sqlparser.DefaultTableAction;
+import com.custom.action.interfaces.TableExecutor;
+import com.custom.action.sqlparser.DefaultTableExecutor;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.comm.utils.ConvertUtil;
 import com.custom.comm.utils.Constants;
@@ -9,7 +9,6 @@ import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.CustomConfigHelper;
-import com.custom.jdbc.GlobalDataHandler;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.transaction.DbConnGlobal;
 import org.slf4j.Logger;
@@ -37,7 +36,7 @@ public class ActiveModel<T extends ActiveModel<T, P>, P extends Serializable> im
      * 根据主键删除多条记录
      */
     public boolean delete(List<P> keys) {
-        JdbcActiveWrapper<T, P> activeWrapper = activeWrapper();
+        TableExecutor<T, P> activeWrapper = activeWrapper();
         return ConvertUtil.conBool(activeWrapper.deleteBatchKeys(keys));
     }
 
@@ -46,7 +45,7 @@ public class ActiveModel<T extends ActiveModel<T, P>, P extends Serializable> im
      * 根据条件删除记录
      */
     public boolean delete(ConditionWrapper<T> wrapper) {
-        JdbcActiveWrapper<T, P> activeWrapper = activeWrapper();
+        TableExecutor<T, P> activeWrapper = activeWrapper();
         return ConvertUtil.conBool(activeWrapper.deleteByCondition(wrapper));
     }
 
@@ -54,7 +53,7 @@ public class ActiveModel<T extends ActiveModel<T, P>, P extends Serializable> im
      * 根据主键删除一条记录
      */
     public boolean delete(P key) {
-        JdbcActiveWrapper<T, P> activeWrapper = activeWrapper();
+        TableExecutor<T, P> activeWrapper = activeWrapper();
         return ConvertUtil.conBool(activeWrapper.deleteByKey(key));
     }
 
@@ -62,7 +61,7 @@ public class ActiveModel<T extends ActiveModel<T, P>, P extends Serializable> im
      * 删除此记录
      */
     public boolean delete() {
-        JdbcActiveWrapper<T, P> activeWrapper = activeWrapper();
+        TableExecutor<T, P> activeWrapper = activeWrapper();
         P primaryKeyValue = activeWrapper.primaryKeyValue((T) this);
         if (primaryKeyValue == null) {
             ExThrowsUtil.toCustom("Value of primary key not specified");
@@ -74,7 +73,7 @@ public class ActiveModel<T extends ActiveModel<T, P>, P extends Serializable> im
      * 根据主键修改
      */
     public boolean update() {
-        JdbcActiveWrapper<T, P> activeWrapper = activeWrapper();
+        TableExecutor<T, P> activeWrapper = activeWrapper();
         return ConvertUtil.conBool(activeWrapper.updateByKey((T) this));
     }
 
@@ -82,7 +81,7 @@ public class ActiveModel<T extends ActiveModel<T, P>, P extends Serializable> im
      * 根据主键是否为空自行插入或修改一条记录
      */
     public boolean save() {
-        JdbcActiveWrapper<T, P> activeWrapper = activeWrapper();
+        TableExecutor<T, P> activeWrapper = activeWrapper();
         return ConvertUtil.conBool(activeWrapper.save((T) this));
     }
 
@@ -90,7 +89,7 @@ public class ActiveModel<T extends ActiveModel<T, P>, P extends Serializable> im
      * 插入一条记录
      */
     public boolean insert() {
-        JdbcActiveWrapper<T, P> activeWrapper = activeWrapper();
+        TableExecutor<T, P> activeWrapper = activeWrapper();
         if (activeWrapper.primaryKeyValue((T) this) != null) {
             return false;
         }
@@ -101,12 +100,12 @@ public class ActiveModel<T extends ActiveModel<T, P>, P extends Serializable> im
      * 插入多条记录
      */
     public boolean insert(List<T> tList) {
-        JdbcActiveWrapper<T, P> activeWrapper = activeWrapper();
+        TableExecutor<T, P> activeWrapper = activeWrapper();
         return ConvertUtil.conBool(activeWrapper.insert(tList));
     }
 
 
-    private JdbcActiveWrapper<T, P> activeWrapper() {
+    private TableExecutor<T, P> activeWrapper() {
         CustomConfigHelper configHelper = DbConnGlobal.getConfigHelper(order());
         if (configHelper == null) {
             throw new CustomCheckException("No data source configured");
@@ -117,7 +116,7 @@ public class ActiveModel<T extends ActiveModel<T, P>, P extends Serializable> im
         if (configHelper.getDbCustomStrategy() == null) {
             configHelper.setDbCustomStrategy(new DbCustomStrategy());
         }
-        return new DefaultTableAction<>(configHelper.getDbDataSource(),configHelper.getDbCustomStrategy(), entityClass());
+        return new DefaultTableExecutor<>(configHelper.getDbDataSource(),configHelper.getDbCustomStrategy(), entityClass());
     }
 
 

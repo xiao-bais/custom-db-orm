@@ -2,7 +2,7 @@ package com.custom.proxy;
 
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.exceptions.ExThrowsUtil;
-import com.custom.jdbc.condition.SelectSqlParamInfo;
+import com.custom.jdbc.condition.SelectExecutorModel;
 import com.custom.jdbc.select.CustomSelectJdbcBasic;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
@@ -33,7 +33,7 @@ public class SelectProxyHandler extends AbstractProxyHandler {
     @Override
     protected Object execute() throws Exception {
         CustomSelectJdbcBasic selectJdbc = getSelectJdbc();
-        SelectSqlParamInfo<?> sqlParamInfo;
+        SelectExecutorModel<?> sqlParamInfo;
         String readyExecuteSql = sqlExecuteParamParser();
         Object[] sqlParams = getExecuteSqlParams().toArray();
 
@@ -49,7 +49,7 @@ public class SelectProxyHandler extends AbstractProxyHandler {
             // do Collection
             if (Collection.class.isAssignableFrom(truthResType)) {
                 genericType = (Class<?>) pt.getActualTypeArguments()[0];
-                sqlParamInfo = new SelectSqlParamInfo<>(genericType, readyExecuteSql, sqlParams);
+                sqlParamInfo = new SelectExecutorModel<>(genericType, readyExecuteSql, sqlParams);
 
                 if (List.class.isAssignableFrom(truthResType)) {
                     return selectJdbc.selectList(sqlParamInfo);
@@ -64,7 +64,7 @@ public class SelectProxyHandler extends AbstractProxyHandler {
             // do Map
             else if (Map.class.isAssignableFrom(truthResType)) {
                 genericType = (Class<?>) pt.getActualTypeArguments()[1];
-                sqlParamInfo = new SelectSqlParamInfo<>(genericType, readyExecuteSql, sqlParams);
+                sqlParamInfo = new SelectExecutorModel<>(genericType, readyExecuteSql, sqlParams);
                 return selectJdbc.selectMap(sqlParamInfo);
             }
             else return null;
@@ -72,18 +72,18 @@ public class SelectProxyHandler extends AbstractProxyHandler {
         truthResType = getMethod().getReturnType();
         // do Array
         if (truthResType.isArray()) {
-            sqlParamInfo = new SelectSqlParamInfo<>(truthResType.getComponentType(), readyExecuteSql, sqlParams);
+            sqlParamInfo = new SelectExecutorModel<>(truthResType.getComponentType(), readyExecuteSql, sqlParams);
             return selectJdbc.selectArrays(sqlParamInfo);
         }
 
         // do Basic type
         else if (CustomUtil.isBasicClass(truthResType)) {
-            SelectSqlParamInfo<Object> objSqlParam = new SelectSqlParamInfo<>(Object.class, readyExecuteSql, sqlParams);
+            SelectExecutorModel<Object> objSqlParam = new SelectExecutorModel<>(Object.class, readyExecuteSql, sqlParams);
             return selectJdbc.selectObj(objSqlParam);
         }
 
         // do custom Object
-        sqlParamInfo = new SelectSqlParamInfo<>(truthResType, readyExecuteSql, sqlParams);
+        sqlParamInfo = new SelectExecutorModel<>(truthResType, readyExecuteSql, sqlParams);
         return selectJdbc.selectOne(sqlParamInfo);
 //        return jdbcExecutor.selectBasicObjBySql(readyExecuteSql, sqlParams);
     }

@@ -5,7 +5,7 @@ package com.custom.jdbc.condition;
  * @Date 2022/6/17 0:57
  * @Desc sql参数对象
  */
-public class SelectSqlParamInfo<T> extends BaseSqlParamInfo {
+public class SelectExecutorModel<T> extends BaseExecutorModel<T> {
 
     /**
      * 泛型实体Class对象
@@ -18,27 +18,27 @@ public class SelectSqlParamInfo<T> extends BaseSqlParamInfo {
     private boolean supportMoreResult;
 
 
-    public SelectSqlParamInfo(Class<T> entityClass, String selectSql, boolean sqlPrintSupport, Object[] sqlParams) {
+    public SelectExecutorModel(Class<T> entityClass, String selectSql, boolean sqlPrintSupport, Object[] sqlParams) {
         super(selectSql, sqlPrintSupport, sqlParams);
         this.entityClass = entityClass;
     }
 
-    public SelectSqlParamInfo(Class<T> entityClass, String selectSql, boolean sqlPrintSupport) {
+    public SelectExecutorModel(Class<T> entityClass, String selectSql, boolean sqlPrintSupport) {
         super(selectSql, sqlPrintSupport, new Object[]{});
         this.entityClass = entityClass;
     }
 
-    public SelectSqlParamInfo(Class<T> entityClass, String selectSql) {
+    public SelectExecutorModel(Class<T> entityClass, String selectSql) {
         super(selectSql, true, new Object[]{});
         this.entityClass = entityClass;
     }
 
-    public SelectSqlParamInfo(Class<T> entityClass, String selectSql, Object[] sqlParams) {
+    public SelectExecutorModel(Class<T> entityClass, String selectSql, Object[] sqlParams) {
         super(selectSql, true, sqlParams);
         this.entityClass = entityClass;
     }
 
-    public SelectSqlParamInfo(String selectSql, boolean supportMoreResult, Object[] sqlParams) {
+    public SelectExecutorModel(String selectSql, boolean supportMoreResult, Object[] sqlParams) {
         super(selectSql, true, sqlParams);
         this.supportMoreResult = supportMoreResult;
     }

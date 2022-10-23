@@ -9,12 +9,11 @@ import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.CustomConfigHelper;
 import com.custom.jdbc.CustomSelectJdbcBasicImpl;
 import com.custom.jdbc.CustomUpdateJdbcBasicImpl;
-import com.custom.jdbc.GlobalDataHandler;
-import com.custom.jdbc.condition.SelectSqlParamInfo;
+import com.custom.jdbc.condition.SelectExecutorModel;
 import com.custom.jdbc.select.CustomSelectJdbcBasic;
 import com.custom.jdbc.transaction.DbConnGlobal;
 import com.custom.jdbc.update.CustomUpdateJdbcBasic;
-import com.custom.jdbc.condition.SaveSqlParamInfo;
+import com.custom.jdbc.condition.SaveExecutorModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -129,7 +128,7 @@ public abstract class AbstractSqlBuilder<T> {
      */
     public void executeUpdateNotPrintSql(String sql) throws Exception {
         Asserts.npe(sql);
-        updateJdbc.executeUpdate(new SaveSqlParamInfo<>(sql, false, null));
+        updateJdbc.executeUpdate(new SaveExecutorModel<>(sql, false, null));
     }
 
 
@@ -146,7 +145,7 @@ public abstract class AbstractSqlBuilder<T> {
         }
         String existSql = String.format("select count(*) count from information_schema.columns " +
                 "where table_name = '%s' and column_name = '%s'", table, logicColumn);
-        Object obj = selectJdbc.selectObj(new SelectSqlParamInfo<>(Object.class, existSql, false));
+        Object obj = selectJdbc.selectObj(new SelectExecutorModel<>(Object.class, existSql, false));
         boolean conBool = ConvertUtil.conBool(obj);
         TableInfoCache.setTableLogic(table, conBool);
         return conBool;

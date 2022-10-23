@@ -1,17 +1,19 @@
-package com.custom.action.dbaction;
+package com.custom.action.executor;
 
-import com.custom.action.util.DbUtil;
+import com.custom.jdbc.interfaces.SqlSessionExecutor;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.ConvertUtil;
-import com.custom.comm.page.DbPageRows;
-import com.custom.jdbc.condition.SaveSqlParamInfo;
-import com.custom.jdbc.condition.SelectSqlParamInfo;
+import com.custom.jdbc.session.CustomSqlSession;
+import com.custom.jdbc.condition.SaveExecutorModel;
+import com.custom.jdbc.condition.SelectExecutorModel;
 import com.custom.jdbc.configuration.DbDataSource;
+import com.custom.jdbc.executor.CustomJdbcExecutor;
 import com.custom.jdbc.select.CustomSelectJdbcBasic;
+import com.custom.jdbc.transaction.DbConnGlobal;
 import com.custom.jdbc.update.CustomUpdateJdbcBasic;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
+import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +22,6 @@ import java.util.Map;
  * @Date 2022/6/16 13:18
  * @Desc jdbc条件封装执行
  */
-@SuppressWarnings("unchecked")
 public class JdbcWrapperExecutor {
 
     /**
@@ -41,12 +42,18 @@ public class JdbcWrapperExecutor {
         this.database = updateJdbc.getDataBase();
     }
 
+    public Connection createConnection() {
+       return DbConnGlobal.getCurrentConnection(dbDataSource);
+    }
+
+
+
     /**
      * 查询数组
      */
     public <T> T[] selectArrays(Class<T> t, String sql, Object... params) throws Exception {
         Asserts.notEmpty(sql, "The Sql to be Not Empty");
-        SelectSqlParamInfo<T> paramInfo = new SelectSqlParamInfo<>(t, sql, params);
+        SelectExecutorModel<T> paramInfo = new SelectExecutorModel<>(t, sql, params);
         return selectJdbc.selectArrays(paramInfo);
     }
 
@@ -55,7 +62,7 @@ public class JdbcWrapperExecutor {
      */
     public <T> List<T> selectBySql(Class<T> t, String sql, Object... params) throws Exception {
         Asserts.notEmpty(sql, "The Sql to be Not Empty");
-        SelectSqlParamInfo<T> paramInfo = new SelectSqlParamInfo<>(t, sql, params);
+        SelectExecutorModel<T> paramInfo = new SelectExecutorModel<>(t, sql, params);
         return selectJdbc.selectList(paramInfo);
     }
 
@@ -64,7 +71,7 @@ public class JdbcWrapperExecutor {
      */
     public <T> T selectOneSql(Class<T> t, String sql, Object... params) throws Exception {
         Asserts.notEmpty(sql, "The Sql to be Not Empty");
-        SelectSqlParamInfo<T> paramInfo = new SelectSqlParamInfo<>(t, sql, params);
+        SelectExecutorModel<T> paramInfo = new SelectExecutorModel<>(t, sql, params);
         return selectJdbc.selectOne(paramInfo);
     }
 
@@ -73,7 +80,7 @@ public class JdbcWrapperExecutor {
      */
     public Map<String, Object> selectMapBySql(String sql, Object... params) throws Exception {
         Asserts.notEmpty(sql, "The Sql to be Not Empty");
-        SelectSqlParamInfo<Object> paramInfo = new SelectSqlParamInfo<>(Object.class, sql, params);
+        SelectExecutorModel<Object> paramInfo = new SelectExecutorModel<>(Object.class, sql, params);
         return selectJdbc.selectMap(paramInfo);
     }
 
@@ -82,7 +89,7 @@ public class JdbcWrapperExecutor {
      */
     public List<Map<String, Object>> selectMapsBySql(String sql, Object... params) throws Exception {
         Asserts.notEmpty(sql, "The Sql to be Not Empty");
-        SelectSqlParamInfo<Object> paramInfo = new SelectSqlParamInfo<>(Object.class, sql, params);
+        SelectExecutorModel<Object> paramInfo = new SelectExecutorModel<>(Object.class, sql, params);
         return selectJdbc.selectMaps(paramInfo);
     }
 
@@ -91,7 +98,7 @@ public class JdbcWrapperExecutor {
      */
     public Object selectObjBySql(String sql, Object... params) throws Exception {
         Asserts.notEmpty(sql, "The Sql to be Not Empty");
-        SelectSqlParamInfo<Object> paramInfo = new SelectSqlParamInfo<>(Object.class, sql, params);
+        SelectExecutorModel<Object> paramInfo = new SelectExecutorModel<>(Object.class, sql, params);
         return selectJdbc.selectObj(paramInfo);
     }
 
@@ -100,7 +107,7 @@ public class JdbcWrapperExecutor {
      */
     public List<Object> selectObjsBySql(String sql, Object... params) throws Exception {
         Asserts.notEmpty(sql, "The Sql to be Not Empty");
-        SelectSqlParamInfo<Object> paramInfo = new SelectSqlParamInfo<>(Object.class, sql, params);
+        SelectExecutorModel<Object> paramInfo = new SelectExecutorModel<>(Object.class, sql, params);
         return selectJdbc.selectObjs(paramInfo);
     }
 
@@ -109,7 +116,7 @@ public class JdbcWrapperExecutor {
      */
     public int executeAnySql(String sql, Object... params) throws Exception {
         Asserts.notEmpty(sql, "The Sql to be Not Empty");
-        SaveSqlParamInfo<Object> paramInfo = new SaveSqlParamInfo<>(sql, true, params);
+        SaveExecutorModel<Object> paramInfo = new SaveExecutorModel<>(sql, true, params);
         return updateJdbc.executeUpdate(paramInfo);
     }
 
@@ -118,7 +125,7 @@ public class JdbcWrapperExecutor {
      */
     public <T> List<T> executeQueryNotPrintSql(Class<T> t, String sql, Object... params) throws Exception {
         Asserts.notEmpty(sql, "The Sql to be Not Empty");
-        SelectSqlParamInfo<T> paramInfo = new SelectSqlParamInfo<>(t, sql, false, params);
+        SelectExecutorModel<T> paramInfo = new SelectExecutorModel<>(t, sql, false, params);
         return selectJdbc.selectList(paramInfo);
     }
 
@@ -133,7 +140,7 @@ public class JdbcWrapperExecutor {
      * 查询该表是否存在
      */
     public boolean hasTableInfo(String sql) throws Exception {
-        Object obj = selectJdbc.selectObj(new SelectSqlParamInfo<>(Object.class, sql, false));
+        Object obj = selectJdbc.selectObj(new SelectExecutorModel<>(Object.class, sql, false));
         return ConvertUtil.conBool(obj);
     }
 
@@ -142,25 +149,12 @@ public class JdbcWrapperExecutor {
      */
     public <T> int executeInsert(String sql, List<T> obj, Field keyField, Object... params) throws Exception {
         Asserts.notEmpty(sql, "The Sql to be Not Empty");
-        SaveSqlParamInfo<T> paramInfo = new SaveSqlParamInfo<>(obj, keyField, sql, true, params);
+        SaveExecutorModel<T> paramInfo = new SaveExecutorModel<>(obj, keyField, sql, true, params);
         return updateJdbc.executeSave(paramInfo);
     }
 
 
-    /**
-     * 分页数据整合
-     */
-    protected <T> void buildPageResult(Class<T> t, String selectSql, DbPageRows<T> dbPageRows, Object... params) throws Exception {
-        List<T> dataList = new ArrayList<>();
-        long count = (long) selectObjBySql(String.format(DbUtil.SELECT_COUNT_TEMPLATE, selectSql), params);
-        if (count > 0) {
-            selectSql = dbPageRows.getPageIndex() == 1 ?
-                    String.format("%s \nLIMIT %s", selectSql, dbPageRows.getPageSize())
-                    : String.format("%s \nLIMIT %s, %s", selectSql, (dbPageRows.getPageIndex() - 1) * dbPageRows.getPageSize(), dbPageRows.getPageSize());
-            dataList = selectBySql(t, selectSql, params);
-        }
-        dbPageRows.setTotal(count).setData(dataList);
-    }
+
 
     public String getDatabase() {
         return database;

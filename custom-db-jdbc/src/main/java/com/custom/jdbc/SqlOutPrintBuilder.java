@@ -22,7 +22,7 @@ public class SqlOutPrintBuilder implements Serializable {
     /**
      * PRINT-ERROR-SQL
      */
-    protected void sqlErrPrint() {
+    public void sqlErrPrint() {
         if(sqlExecute) {
             handleExecuteSql();
             logger.error("Sql Error ====>\n \n{}\n===================\n", sql);
@@ -44,7 +44,7 @@ public class SqlOutPrintBuilder implements Serializable {
     /**
      * PRINT-INFO-QUERY-SQL
      */
-    protected void sqlInfoQueryPrint() {
+    public void sqlInfoQueryPrint() {
         if(sqlExecute) {
             handleExecuteSql();
             logger.info("QUERY-SQL ====>\n \n{}\n===================\n", sql);
@@ -57,7 +57,7 @@ public class SqlOutPrintBuilder implements Serializable {
     /**
      * PRINT-INFO-UPDATE-SQL
      */
-    protected void sqlInfoUpdatePrint() {
+    public void sqlInfoUpdatePrint() {
         if(sqlExecute) {
             handleExecuteSql();
             logger.info("UPDATE-SQL ====>\n \n{}\n===================\n", sql);
@@ -88,7 +88,7 @@ public class SqlOutPrintBuilder implements Serializable {
     /**
      * 构建sql打印
      */
-    protected static SqlOutPrintBuilder build(String sql, Object[] params, boolean sqlExecute) {
+    public static SqlOutPrintBuilder build(String sql, Object[] params, boolean sqlExecute) {
         return new SqlOutPrintBuilder(sql, params, sqlExecute);
     }
 

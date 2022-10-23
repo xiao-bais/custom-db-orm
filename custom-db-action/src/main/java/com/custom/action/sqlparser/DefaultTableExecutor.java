@@ -1,7 +1,7 @@
 package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractSqlExecutor;
-import com.custom.action.dbaction.JdbcActiveWrapper;
+import com.custom.action.interfaces.TableExecutor;
 import com.custom.action.proxy.JdbcActionProxy;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.comm.exceptions.ExThrowsUtil;
@@ -21,14 +21,14 @@ import java.util.Map;
  * @date 2022/7/15 0015 16:11
  * 指定单表的专属DAO
  */
-public class DefaultTableAction<T, P extends Serializable> implements JdbcActiveWrapper<T, P> {
+public class DefaultTableExecutor<T, P extends Serializable> implements TableExecutor<T, P> {
 
-    private static final Logger logger = LoggerFactory.getLogger(DefaultTableAction.class);
+    private static final Logger logger = LoggerFactory.getLogger(DefaultTableExecutor.class);
 
     private final AbstractSqlExecutor jdbcAction;
     private final Class<T> entityClass;
 
-    public DefaultTableAction(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy, Class<T> entityClass) {
+    public DefaultTableExecutor(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy, Class<T> entityClass) {
         this.entityClass = entityClass;
         this.jdbcAction = new JdbcActionProxy(new JdbcAction(), dbDataSource, dbCustomStrategy).createProxy();
     }

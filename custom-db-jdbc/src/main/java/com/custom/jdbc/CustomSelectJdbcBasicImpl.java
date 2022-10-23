@@ -6,7 +6,7 @@ import com.custom.comm.utils.Constants;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
-import com.custom.jdbc.condition.SelectSqlParamInfo;
+import com.custom.jdbc.condition.SelectExecutorModel;
 import com.custom.jdbc.select.CustomSelectJdbcBasic;
 
 import java.lang.reflect.Array;
@@ -41,7 +41,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
      * 查询多条记录（通用型）
      */
     @Override
-    public <T> List<T> selectList(SelectSqlParamInfo<T> params) throws Exception {
+    public <T> List<T> selectList(SelectExecutorModel<T> params) throws Exception {
         Map<String, Object> map;
         List<T> list = new ArrayList<>();
         try {
@@ -75,7 +75,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
      * 查询单条记录
      */
     @Override
-    public <T> T selectOne(SelectSqlParamInfo<T> params) throws Exception {
+    public <T> T selectOne(SelectExecutorModel<T> params) throws Exception {
         Map<String, Object> map = new HashMap<>();
         try {
             this.statementQueryReturnRows(params.getPrepareSql(), params.isSqlPrintSupport(), params.getSqlParams());
@@ -104,7 +104,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
      * 查询单个字段的多结果集（Set）
      */
     @Override
-    public <T> Set<T> selectSet(SelectSqlParamInfo<T> params) throws Exception {
+    public <T> Set<T> selectSet(SelectExecutorModel<T> params) throws Exception {
         Set<T> resSet = new HashSet<>();
         try {
             statementQuery(params.getPrepareSql(), params.isSqlPrintSupport(), params.getSqlParams());
@@ -128,7 +128,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
      * 查询单个Map
      */
     @Override
-    public <T> Map<String, T> selectMap(SelectSqlParamInfo<T> params) throws Exception {
+    public <T> Map<String, T> selectMap(SelectExecutorModel<T> params) throws Exception {
         Map<String, T> resMap = new HashMap<>();
         try {
             statementQuery(params.getPrepareSql(), params.isSqlPrintSupport(), params.getSqlParams());
@@ -154,7 +154,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
      * 通用查询单个对象sql（映射到Map）
      */
     @Override
-    public <T> List<Map<String, T>> selectMaps(SelectSqlParamInfo<T> params) throws Exception {
+    public <T> List<Map<String, T>> selectMaps(SelectExecutorModel<T> params) throws Exception {
         Map<String, T> resMap;
         List<Map<String, T>> mapList = new ArrayList<>();
         try {
@@ -181,7 +181,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
      * 查询单个字段的多结果集（Arrays）
      */
     @Override
-    public <T> T[] selectArrays(SelectSqlParamInfo<T> params) throws Exception {
+    public <T> T[] selectArrays(SelectExecutorModel<T> params) throws Exception {
         try {
             this.statementQueryReturnRows(params.getPrepareSql(), params.isSqlPrintSupport(), params.getSqlParams());
             ResultSet resultSet = handleQueryStatement();
@@ -216,7 +216,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
      * 查询单个字段的单个值
      */
     @Override
-    public Object selectObj(SelectSqlParamInfo<Object> params) throws Exception {
+    public Object selectObj(SelectExecutorModel<Object> params) throws Exception {
         Object result = null;
         try {
             this.statementQueryReturnRows(params.getPrepareSql(), params.isSqlPrintSupport(), params.getSqlParams());
@@ -240,7 +240,7 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
      * 查询单个字段的多条记录
      */
     @Override
-    public List<Object> selectObjs(SelectSqlParamInfo<Object> params) throws Exception {
+    public List<Object> selectObjs(SelectExecutorModel<Object> params) throws Exception {
         List<Object> result = new ArrayList<>();
         try {
             statementQuery(params.getPrepareSql(), params.isSqlPrintSupport(), params.getSqlParams());

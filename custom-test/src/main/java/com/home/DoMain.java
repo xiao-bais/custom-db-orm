@@ -21,6 +21,8 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
+
+
         HmErpOrderPO hmErpOrderPO1 = jdbcOpDao.selectByKey(HmErpOrderPO.class, 65521);
         HmErpOrderPO hmErpOrderPO2 = jdbcOpDao.selectByKey(HmErpOrderPO.class, 65522);
         HmErpOrderPO hmErpOrderPO3 = jdbcOpDao.selectByKey(HmErpOrderPO.class, 65523);
@@ -31,7 +33,7 @@ public class DoMain {
         HmErpOrderPO hmErpOrderPO5 = jdbcOpDao.selectByKey(HmErpOrderPO.class, 65525);
         HmErpOrderPO hmErpOrderPO6 = jdbcOpDao.selectByKey(HmErpOrderPO.class, 65526);
 
-        System.out.printf("该订单【%s】, 套餐售价【%d】元", hmErpOrderPO1.getOrderNum(), hmErpOrderPO1.getActivAmount());
+//        System.out.printf("该订单【%s】, 套餐售价【%d】元", hmErpOrderPO1.getOrderNum(), hmErpOrderPO1.getActivAmount());
 
 
     }

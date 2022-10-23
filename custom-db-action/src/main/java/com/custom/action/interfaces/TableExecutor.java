@@ -1,4 +1,4 @@
-package com.custom.action.dbaction;
+package com.custom.action.interfaces;
 
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.condition.SFunction;
@@ -15,7 +15,7 @@ import java.util.function.Consumer;
  * @Date 2022/7/15 0015 16:51
  * @Desc
  */
-public interface JdbcActiveWrapper<T, P extends Serializable> {
+public interface TableExecutor<T, P extends Serializable> {
 
     /*--------------------------------------- select ---------------------------------------*/
     DbPageRows<T> selectPage(ConditionWrapper<T> wrapper);

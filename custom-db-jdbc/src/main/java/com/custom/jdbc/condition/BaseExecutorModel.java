@@ -7,7 +7,7 @@ import java.util.Objects;
  * @Date 2022/6/17 21:50
  * @Desc
  */
-public class BaseSqlParamInfo {
+public class BaseExecutorModel<T> {
 
     /**
      * 待执行的sql
@@ -23,7 +23,7 @@ public class BaseSqlParamInfo {
      */
     private final Object[] sqlParams;
 
-    public BaseSqlParamInfo(String prepareSql, boolean sqlPrintSupport, Object[] sqlParams) {
+    public BaseExecutorModel(String prepareSql, boolean sqlPrintSupport, Object[] sqlParams) {
         this.prepareSql = prepareSql;
         this.sqlPrintSupport = sqlPrintSupport;
         this.sqlParams = sqlParams;

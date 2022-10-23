@@ -1,6 +1,6 @@
 package com.custom.jdbc.update;
 
-import com.custom.jdbc.condition.SaveSqlParamInfo;
+import com.custom.jdbc.condition.SaveExecutorModel;
 import com.custom.jdbc.configuration.DbDataSource;
 
 /**
@@ -13,12 +13,12 @@ public interface CustomUpdateJdbcBasic {
     /**
      * 通用添加、修改、删除
      */
-    int executeUpdate(SaveSqlParamInfo<Object> params) throws Exception;
+    int executeUpdate(SaveExecutorModel<Object> params) throws Exception;
 
     /**
      * 插入记录，并为参数中的dataList自动生成主键值
      */
-    <T> int executeSave(SaveSqlParamInfo<T> params) throws Exception;
+    <T> int executeSave(SaveExecutorModel<T> params) throws Exception;
 
     /**
      * 表结构相关操作，

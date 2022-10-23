@@ -2,7 +2,7 @@ package com.custom.jdbc;
 
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
-import com.custom.jdbc.condition.SaveSqlParamInfo;
+import com.custom.jdbc.condition.SaveExecutorModel;
 import com.custom.jdbc.update.CustomUpdateJdbcBasic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +39,7 @@ public class CustomUpdateJdbcBasicImpl extends CustomJdbcManagement implements C
      * 通用添加、修改、删除
      */
     @Override
-    public int executeUpdate(SaveSqlParamInfo<Object> params) throws Exception {
+    public int executeUpdate(SaveExecutorModel<Object> params) throws Exception {
         int res;
         try {
             this.statementUpdate(false, params.getPrepareSql(), params.getSqlParams());
@@ -58,7 +58,7 @@ public class CustomUpdateJdbcBasicImpl extends CustomJdbcManagement implements C
     /**
      * 插入（实体可生成主键值）
      */
-    public <T> int executeSave(SaveSqlParamInfo<T> params) throws Exception {
+    public <T> int executeSave(SaveExecutorModel<T> params) throws Exception {
         int res;
         try {
             statementUpdate(true, params.getPrepareSql(), params.getSqlParams());

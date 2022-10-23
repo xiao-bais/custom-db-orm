@@ -1,9 +1,11 @@
 package com.custom.action.dbaction;
 
 import com.custom.action.condition.AbstractUpdateSet;
+import com.custom.action.executor.JdbcWrapperExecutor;
 import com.custom.action.sqlparser.HandleSelectSqlBuilder;
 import com.custom.action.sqlparser.MappingResultInjector;
 import com.custom.action.condition.ConditionWrapper;
+import com.custom.action.util.DbUtil;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.page.DbPageRows;
 
@@ -107,5 +109,20 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
             MappingResultInjector<T> resultInjector = new MappingResultInjector<>(entityClass, this);
             resultInjector.injectorValue(result);
         }
+    }
+
+    /**
+     * 分页数据整合
+     */
+    protected <T> void buildPageResult(Class<T> t, String selectSql, DbPageRows<T> dbPageRows, Object... params) throws Exception {
+        List<T> dataList = new ArrayList<>();
+        long count = (long) selectObjBySql(String.format(DbUtil.SELECT_COUNT_TEMPLATE, selectSql), params);
+        if (count > 0) {
+            selectSql = dbPageRows.getPageIndex() == 1 ?
+                    String.format("%s \nLIMIT %s", selectSql, dbPageRows.getPageSize())
+                    : String.format("%s \nLIMIT %s, %s", selectSql, (dbPageRows.getPageIndex() - 1) * dbPageRows.getPageSize(), dbPageRows.getPageSize());
+            dataList = selectBySql(t, selectSql, params);
+        }
+        dbPageRows.setTotal(count).setData(dataList);
     }
 }

@@ -9,7 +9,7 @@ import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.RexUtil;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.annotations.DbTable;
-import com.custom.jdbc.condition.SelectSqlParamInfo;
+import com.custom.jdbc.condition.SelectExecutorModel;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.select.CustomSelectJdbcBasic;
 import com.custom.jdbc.transaction.DbConnGlobal;
@@ -46,7 +46,7 @@ public class TableStructsInitializer {
      */
     private final String dataBaseName;
 
-    private DbDataSource dbDataSource;
+    private final DbDataSource dbDataSource;
 
     /**
      * 需要添加的字段列表
@@ -114,7 +114,7 @@ public class TableStructsInitializer {
             String exitsTableSql = DbConnGlobal.exitsTableSql(sqlBuilder.getTable(), dbDataSource);
             String table = waitUpdateSqlBuilder.getTable();
             // 若表已存在，则进行下一步判断表字段是否存在
-            Object exists = selectJdbc.selectObj(new SelectSqlParamInfo<>(Object.class, exitsTableSql, false));
+            Object exists = selectJdbc.selectObj(new SelectExecutorModel<>(Object.class, exitsTableSql, false));
             if (ConvertUtil.conBool(exists)) {
                 buildColumnInfo(waitUpdateSqlBuilder, table);
                 continue;
@@ -171,7 +171,7 @@ public class TableStructsInitializer {
     private void buildColumnInfo(TableParseModel<?> sqlBuilder, String table) throws Exception {
         String selectColumnSql = String.format(SELECT_COLUMN_SQL,
                 sqlBuilder.getTable(), dataBaseName);
-        SelectSqlParamInfo<String> sqlParamInfo = new SelectSqlParamInfo<>(String.class, selectColumnSql, false);
+        SelectExecutorModel<String> sqlParamInfo = new SelectExecutorModel<>(String.class, selectColumnSql, false);
         List<String> columnList = selectJdbc.selectList(sqlParamInfo);
         List<String> truthColumnList = sqlBuilder.getFieldParserModels().stream()
                 .filter(DbFieldParserModel::isExistsDbField)
