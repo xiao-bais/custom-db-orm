@@ -252,6 +252,22 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
     }
 
 
+    @Override
+    public int executeUpdate(CustomSqlSession sqlSession) throws Exception {
+        return 0;
+    }
+
+    @Override
+    public <T> int executeSave(CustomSqlSession sqlSession) throws Exception {
+        return 0;
+    }
+
+    @Override
+    public void execTableInfo(CustomSqlSession sqlSession) throws Exception {
+
+    }
+
+
     /**
      * 返回单条记录或单个值
      */

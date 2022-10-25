@@ -1,5 +1,6 @@
 package com.custom.jdbc.executor;
 
+import com.custom.jdbc.condition.SaveExecutorModel;
 import com.custom.jdbc.session.CustomSqlSession;
 
 import java.util.List;
@@ -84,6 +85,23 @@ public interface CustomJdbcExecutor {
      * <br/> key即为<b>[c01]</b>, value为<b>[78.5]</b>
      */
     <K, V> List<Map<K, V>> selectMaps(CustomSqlSession sqlSession) throws Exception;
+
+
+    /**
+     * 通用添加、修改、删除
+     */
+    int executeUpdate(CustomSqlSession sqlSession) throws Exception;
+
+    /**
+     * 插入记录，并为参数中的dataList自动生成主键值
+     */
+    <T> int executeSave(CustomSqlSession sqlSession) throws Exception;
+
+    /**
+     * 表结构相关操作，
+     * 执行表(字段)结构创建或删除
+     */
+    void execTableInfo(CustomSqlSession sqlSession) throws Exception;
 
 
 
