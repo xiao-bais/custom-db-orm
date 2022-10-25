@@ -133,9 +133,6 @@ public class CustomSelectJdbcBasicImpl extends CustomJdbcManagement implements C
         try {
             statementQuery(params.getPrepareSql(), params.isSqlPrintSupport(), params.getSqlParams());
             ResultSet resultSet = handleQueryStatement();
-            if (!params.isSupportMoreResult()) {
-                this.checkMoreResult(resultSet);
-            }
             if (resultSet.next()) {
                 this.handleResultMapper(resMap, resultSet.getMetaData());
             }

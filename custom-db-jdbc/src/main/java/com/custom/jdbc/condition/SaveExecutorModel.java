@@ -8,7 +8,7 @@ import java.util.List;
  * @Date 2022/6/17 21:50
  * @Desc
  */
-public class SaveExecutorModel<T> extends BaseExecutorModel<T> {
+public class SaveExecutorModel<T> extends BaseExecutorModel {
 
     /**
      * 要插入的数据

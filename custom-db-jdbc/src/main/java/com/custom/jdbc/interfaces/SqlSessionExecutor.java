@@ -9,8 +9,8 @@ import java.sql.Connection;
  * @date 2022/10/23 18:37
  * @desc
  */
-public interface SqlSessionExecutor<T> {
+public interface SqlSessionExecutor {
 
-    CustomSqlSession<T> createSession(Connection conn);
+    CustomSqlSession createSession(Connection conn);
 
 }

@@ -15,7 +15,7 @@ import java.sql.SQLException;
  * @date 2022/10/22 20:17
  * @desc
  */
-public class CustomSqlSession<T> implements DbTransaction {
+public class CustomSqlSession implements DbTransaction {
 
     private static final Logger logger = LoggerFactory.getLogger(CustomSqlSession.class);
 
@@ -27,19 +27,19 @@ public class CustomSqlSession<T> implements DbTransaction {
     /**
      * 执行体
      */
-    private final BaseExecutorModel<T> executorModel;
+    private final BaseExecutorModel executorModel;
 
     /**
      * 数据源
      */
     private DataSource dataSource;
-    private boolean autoCommit;
+    private boolean autoCommit = true;
 
-    public BaseExecutorModel<T> getExecutorModel() {
+    public BaseExecutorModel getExecutorModel() {
         return executorModel;
     }
 
-    public CustomSqlSession(Connection currentConn, BaseExecutorModel<T> executorModel) {
+    public CustomSqlSession(Connection currentConn, BaseExecutorModel executorModel) {
         if (currentConn == null) {
             throw new SQLSessionException("No JDBC connection obtained");
         }
@@ -47,7 +47,7 @@ public class CustomSqlSession<T> implements DbTransaction {
         this.executorModel = executorModel;
     }
 
-    public CustomSqlSession(BaseExecutorModel<T> executorModel, DataSource dataSource, boolean autoCommit) {
+    public CustomSqlSession(BaseExecutorModel executorModel, DataSource dataSource, boolean autoCommit) {
         this.executorModel = executorModel;
         this.dataSource = dataSource;
         this.autoCommit = autoCommit;
@@ -84,5 +84,9 @@ public class CustomSqlSession<T> implements DbTransaction {
             }
             currentConn.close();
         }
+    }
+
+    public boolean isAutoCommit() {
+        return autoCommit;
     }
 }

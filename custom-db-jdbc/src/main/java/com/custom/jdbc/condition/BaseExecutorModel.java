@@ -7,7 +7,7 @@ import java.util.Objects;
  * @Date 2022/6/17 21:50
  * @Desc
  */
-public class BaseExecutorModel<T> {
+public class BaseExecutorModel {
 
     /**
      * 待执行的sql

@@ -1,6 +1,9 @@
 
 package com.custom.comm.utils;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.custom.comm.annotations.DbTable;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.readwrite.ReadFieldHelper;
@@ -15,9 +18,12 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.lang.reflect.*;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -63,6 +69,8 @@ public class CustomUtil extends StrUtils {
                 || Float.class.equals(cls)
                 || Boolean.class.equals(cls)
                 || Byte.class.equals(cls)
+                || LocalDate.class.equals(cls)
+                || Serializable.class.isAssignableFrom(cls)
                 || BigDecimal.class.equals(cls)
                 || Date.class.equals(cls);
     }
@@ -249,6 +257,40 @@ public class CustomUtil extends StrUtils {
            return true;
        }
        return isBasicClass(genericType);
+    }
+
+    /**
+     * map转bean(jdbc查询版)
+     */
+    public static <T> T convertBean(Map<String, Object> map, Class<T> t) {
+        if (map.isEmpty()) {
+            return null;
+        }
+        return JSONObject.parseObject(JSONObject.toJSONString(map), t);
+    }
+
+    /**
+     * map转json字符串
+     */
+    public static String mapStrToJsonString(Map<String, Object> map) {
+        return JSON.toJSONString(map);
+    }
+    public static String mapObjToJsonString(Map<Object, Object> map) {
+        return JSON.toJSONString(map);
+    }
+
+    /**
+     * 反序列化实例化泛型对象(单泛型)
+     */
+    public static <T> T jsonParseToObject(String json, Class<T> type) {
+        return JSON.parseObject(json, new TypeReference<T>(type){});
+    }
+
+    /**
+     * 反序列化实例化泛型对象(双泛型)
+     */
+    public static <K, V> Map<K, V> jsonParseToMap(String json, Class<K> keyType, Class<V> valueType) {
+        return JSON.parseObject(json, new TypeReference<Map<K, V>>(keyType, valueType){});
     }
 
 

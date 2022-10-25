@@ -1,9 +1,8 @@
 package com.custom.jdbc;
 
-import com.custom.comm.utils.Constants;
 import com.custom.jdbc.condition.BaseExecutorModel;
-import com.custom.jdbc.session.CustomSqlSession;
 import com.custom.jdbc.configuration.DbCustomStrategy;
+import com.custom.jdbc.session.CustomSqlSession;
 
 import java.sql.*;
 import java.util.Map;
@@ -13,19 +12,19 @@ import java.util.Map;
  * @date 2022/10/23 19:08
  * @desc
  */
-public class CustomSqlSessionHandler<T> {
+public class CustomSqlSessionHandler {
 
     private final DbCustomStrategy strategy;
-    private final CustomSqlSession<T> sqlSession;
+    private final CustomSqlSession sqlSession;
 
-    public CustomSqlSessionHandler(DbCustomStrategy strategy, CustomSqlSession<T> sqlSession) {
+    public CustomSqlSessionHandler(DbCustomStrategy strategy, CustomSqlSession sqlSession) {
         this.strategy = strategy;
         this.sqlSession = sqlSession;
     }
 
     public PreparedStatement statementQuery() throws Exception {
         Connection connection = sqlSession.getConnection();
-        BaseExecutorModel<T> executorModel = sqlSession.getExecutorModel();
+        BaseExecutorModel executorModel = sqlSession.getExecutorModel();
         String prepareSql = executorModel.getPrepareSql();
         return connection.prepareStatement(prepareSql);
     }
@@ -35,7 +34,7 @@ public class CustomSqlSessionHandler<T> {
      */
     public void handleQueryBefore(PreparedStatement statement) throws SQLException {
 
-        BaseExecutorModel<T> executorModel = sqlSession.getExecutorModel();
+        BaseExecutorModel executorModel = sqlSession.getExecutorModel();
         Object[] sqlParams = executorModel.getSqlParams();
         boolean sqlPrintSupport = executorModel.isSqlPrintSupport();
         String prepareSql = executorModel.getPrepareSql();
@@ -68,7 +67,9 @@ public class CustomSqlSessionHandler<T> {
      * 关闭资源
      */
     public void closeResources(PreparedStatement statement, ResultSet resultSet) throws SQLException {
-        sqlSession.closeResources();
+        if (sqlSession.isAutoCommit()) {
+            sqlSession.closeResources();
+        }
         if (resultSet != null) {
             resultSet.close();
         }

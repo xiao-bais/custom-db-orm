@@ -5,17 +5,12 @@ package com.custom.jdbc.condition;
  * @Date 2022/6/17 0:57
  * @Desc sql参数对象
  */
-public class SelectExecutorModel<T> extends BaseExecutorModel<T> {
+public class SelectExecutorModel<T> extends BaseExecutorModel {
 
     /**
      * 泛型实体Class对象
      */
     private Class<T> entityClass;
-
-    /**
-     * 是否支持查询多条记录
-     */
-    private boolean supportMoreResult;
 
 
     public SelectExecutorModel(Class<T> entityClass, String selectSql, boolean sqlPrintSupport, Object[] sqlParams) {
@@ -38,9 +33,8 @@ public class SelectExecutorModel<T> extends BaseExecutorModel<T> {
         this.entityClass = entityClass;
     }
 
-    public SelectExecutorModel(String selectSql, boolean supportMoreResult, Object[] sqlParams) {
+    public SelectExecutorModel(String selectSql, Object[] sqlParams) {
         super(selectSql, true, sqlParams);
-        this.supportMoreResult = supportMoreResult;
     }
 
     public Class<T> getEntityClass() {
@@ -51,7 +45,4 @@ public class SelectExecutorModel<T> extends BaseExecutorModel<T> {
         this.entityClass = entityClass;
     }
 
-    public boolean isSupportMoreResult() {
-        return supportMoreResult;
-    }
 }
