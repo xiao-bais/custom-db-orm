@@ -55,7 +55,10 @@ public class CustomSqlSession implements DbTransaction {
 
     @Override
     public Connection getConnection() throws SQLException {
-        if (currentConn == null) {
+        if (currentConn != null) {
+            return currentConn;
+        }
+        if (dataSource != null) {
             currentConn = dataSource.getConnection();
             currentConn.setAutoCommit(autoCommit);
         }
