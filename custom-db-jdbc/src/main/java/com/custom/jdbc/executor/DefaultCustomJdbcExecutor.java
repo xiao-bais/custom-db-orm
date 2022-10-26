@@ -6,6 +6,7 @@ import com.custom.comm.utils.Constants;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.jdbc.CustomSqlSessionHandler;
 import com.custom.jdbc.SqlOutPrintBuilder;
+import com.custom.jdbc.condition.SaveExecutorModel;
 import com.custom.jdbc.condition.SelectMapExecutorModel;
 import com.custom.jdbc.session.CustomSqlSession;
 import com.custom.jdbc.condition.SelectExecutorModel;
@@ -42,9 +43,9 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
         ResultSet resultSet = null;
         try {
 
-            statement = sessionHandler.statementQuery();
+            statement = sessionHandler.statementPrepareSql();
             // 处理预编译以及sql打印
-            sessionHandler.handleQueryBefore(statement);
+            sessionHandler.handleExecuteBefore(statement);
             resultSet = statement.executeQuery();
             ResultSetMetaData metaData = resultSet.getMetaData();
 
@@ -86,9 +87,9 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
         ResultSet resultSet = null;
         try {
             // 执行
-            statement = sessionHandler.statementQuery();
+            statement = sessionHandler.statementPrepareSql();
             // 处理预编译以及sql打印
-            sessionHandler.handleQueryBefore(statement);
+            sessionHandler.handleExecuteBefore(statement);
             resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
@@ -118,9 +119,9 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
         ResultSet resultSet = null;
         try {
 
-            statement = sessionHandler.statementQuery();
+            statement = sessionHandler.statementPrepareSql();
             // 处理预编译以及sql打印
-            sessionHandler.handleQueryBefore(statement);
+            sessionHandler.handleExecuteBefore(statement);
             resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
@@ -162,9 +163,9 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
         ResultSet resultSet = null;
         try {
 
-            statement = sessionHandler.statementQuery();
+            statement = sessionHandler.statementPrepareSql();
             // 处理预编译以及sql打印
-            sessionHandler.handleQueryBefore(statement);
+            sessionHandler.handleExecuteBefore(statement);
             resultSet = statement.executeQuery();
             ResultSetMetaData metaData = resultSet.getMetaData();
 
@@ -201,9 +202,9 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
         ResultSet resultSet = null;
         try {
 
-            statement = sessionHandler.statementQuery();
+            statement = sessionHandler.statementPrepareSql();
             // 处理预编译以及sql打印
-            sessionHandler.handleQueryBefore(statement);
+            sessionHandler.handleExecuteBefore(statement);
             resultSet = statement.executeQuery();
             ResultSetMetaData metaData = resultSet.getMetaData();
 
@@ -253,13 +254,44 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
 
 
     @Override
-    public int executeUpdate(CustomSqlSession sqlSession) throws Exception {
+    public <T> int executeUpdate(CustomSqlSession sqlSession) throws Exception {
+        CustomSqlSessionHandler sessionHandler = new CustomSqlSessionHandler(strategy, sqlSession);
+        SaveExecutorModel<T> executorModel = (SaveExecutorModel<T>) sqlSession.getExecutorModel();
+
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            sessionHandler.closeResources(statement, resultSet);
+        }catch (Exception e) {
+
+        }
+
         return 0;
     }
 
     @Override
     public <T> int executeSave(CustomSqlSession sqlSession) throws Exception {
-        return 0;
+
+        CustomSqlSessionHandler sessionHandler = new CustomSqlSessionHandler(strategy, sqlSession);
+        SaveExecutorModel<T> executorModel = (SaveExecutorModel<T>) sqlSession.getExecutorModel();
+
+        int res = 0;
+        PreparedStatement statement = null;
+        try {
+            statement = sessionHandler.statementPrepareSql();
+            // 处理预编译以及sql打印
+            sessionHandler.handleExecuteBefore(statement);
+            res = statement.executeUpdate();
+        } catch (SQLException e) {
+            SqlOutPrintBuilder
+                    .build(executorModel.getPrepareSql(), executorModel.getSqlParams(), strategy.isSqlOutPrintExecute())
+                    .sqlErrPrint();
+            throw e;
+        }finally {
+            sessionHandler.closeResources(statement, null);
+        }
+        return res;
     }
 
     @Override

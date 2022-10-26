@@ -90,7 +90,7 @@ public interface CustomJdbcExecutor {
     /**
      * 通用添加、修改、删除
      */
-    int executeUpdate(CustomSqlSession sqlSession) throws Exception;
+    <T> int executeUpdate(CustomSqlSession sqlSession) throws Exception;
 
     /**
      * 插入记录，并为参数中的dataList自动生成主键值

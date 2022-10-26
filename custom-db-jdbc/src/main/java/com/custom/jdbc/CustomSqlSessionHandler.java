@@ -22,7 +22,7 @@ public class CustomSqlSessionHandler {
         this.sqlSession = sqlSession;
     }
 
-    public PreparedStatement statementQuery() throws Exception {
+    public PreparedStatement statementPrepareSql() throws Exception {
         Connection connection = sqlSession.getConnection();
         BaseExecutorModel executorModel = sqlSession.getExecutorModel();
         String prepareSql = executorModel.getPrepareSql();
@@ -32,7 +32,7 @@ public class CustomSqlSessionHandler {
     /**
      * 查询之前的处理
      */
-    public void handleQueryBefore(PreparedStatement statement) throws SQLException {
+    public void handleExecuteBefore(PreparedStatement statement) throws SQLException {
 
         BaseExecutorModel executorModel = sqlSession.getExecutorModel();
         Object[] sqlParams = executorModel.getSqlParams();
@@ -77,6 +77,13 @@ public class CustomSqlSessionHandler {
             statement.close();
         }
     }
+
+
+    /**
+     * 通用一般增删改
+     */
+//    public <T> int executeUpdate()
+
 
 
 }

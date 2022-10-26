@@ -90,38 +90,13 @@ public class DbConnection {
     public Connection createConnection() {
         Connection connection = null;
         try {
-            // 从本地变量中获取连接
             connection = CONN_LOCAL.get();
-
-            // 若本地变量为空时，则从缓存中取
             if (connection == null) {
-
-                connection = (Connection) currMap.get(DbConnGlobal.getConnKey(dbDataSource));
                 DataSource dataSource = (DataSource) currMap.get(DbConnGlobal.getDataSourceKey(dbDataSource));
-
-                // 若缓存中的连接不为空，则返回该连接
-                if (connection != null) {
-
-                    // 若缓存中的连接已关闭，则重新获取连接
-                    if (connection.isClosed()) {
-                        connection = dataSource.getConnection();
-                        currMap.put(DbConnGlobal.getConnKey(dbDataSource), connection);
-                    }
-                }
-
-                // 若缓存中的连接为空，若重新获取连接，加入缓存
-                else {
-                    connection = dataSource.getConnection();
-                    currMap.put(DbConnGlobal.getConnKey(dbDataSource), connection);
-                }
+                connection = dataSource.getConnection();
                 CONN_LOCAL.set(connection);
             }
 
-            // 若本地变量中的连接已关闭，则递归重新获取
-            else if (connection.isClosed()) {
-                CONN_LOCAL.set(null);
-                connection = this.createConnection();
-            }
         }catch (SQLException e) {
             logger.error(e.toString(), e);
         }
