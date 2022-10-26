@@ -68,7 +68,7 @@ public class WriteFieldHelper<T> {
 
             if (parameterTypes.length > 1) {
                 log.warn("When setting the value of field '{}', the set method of field '{}' cannot be found in '{}'",
-                        this.fieldName, this.fieldName, waitSetClass);
+                        this.fieldName, this.fieldName, waitSetClass.getName());
                 log.warn("The set method with only one parameter is supported");
             }
 
@@ -115,7 +115,7 @@ public class WriteFieldHelper<T> {
                 }
 
             } else {
-                this.writeValue = JSONObject.parseObject(JSONObject.toJSONString(this.writeValue), setParamType);
+                this.writeValue = CustomUtil.jsonParseToObject(CustomUtil.objToJsonString(this.writeValue), setParamType);
             }
 
             writeMethod.invoke(this.waitWriteEntity, this.writeValue);

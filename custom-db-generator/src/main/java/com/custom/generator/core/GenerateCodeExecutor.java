@@ -1,6 +1,7 @@
 package com.custom.generator.core;
 
 import com.custom.action.dbaction.AbstractSqlExecutor;
+import com.custom.action.executor.JdbcExecutorFactory;
 import com.custom.comm.date.DateTimeUtils;
 import com.custom.generator.config.GlobalConfig;
 import com.custom.generator.config.PackageConfig;
@@ -34,7 +35,7 @@ public class GenerateCodeExecutor {
 
     private static String DATA_BASE;
     private List<TableStructModel> tableStructModels;
-    private final AbstractSqlExecutor sqlExecutor;
+    private final JdbcExecutorFactory executorFactory;
 
     public GenerateCodeExecutor(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         if (Objects.isNull(dbDataSource)) {
@@ -45,7 +46,7 @@ public class GenerateCodeExecutor {
         }
         DATA_BASE = CustomUtil.getDataBase(dbDataSource.getUrl());
         this.dbCustomStrategy = dbCustomStrategy;
-        this.sqlExecutor = new JdbcAction(dbDataSource, dbCustomStrategy);
+        this.executorFactory = new JdbcExecutorFactory(dbDataSource, dbCustomStrategy);
     }
 
     public void start() {
@@ -113,7 +114,7 @@ public class GenerateCodeExecutor {
         String selectTableSql = String.format(CustomUtil.loadFiles("/sql/queryTableColumnStruct.sql"), tableStr, DATA_BASE);
         List<ColumnStructModel> columnStructModels = new ArrayList<>();
         try {
-            columnStructModels = sqlExecutor.executeQueryNotPrintSql(ColumnStructModel.class, selectTableSql);
+            columnStructModels = executorFactory.executeQueryNotPrintSql(ColumnStructModel.class, selectTableSql);
             if(columnStructModels.isEmpty()) {
                 return;
             }
@@ -292,7 +293,7 @@ public class GenerateCodeExecutor {
     private void handleTruthTables(String tableStr) {
         try {
             String selectTableSql  = String.format(CustomUtil.loadFiles("/sql/queryTableStruct.sql"), tableStr, DATA_BASE);
-            tableStructModels = sqlExecutor.executeQueryNotPrintSql(TableStructModel.class, selectTableSql);
+            tableStructModels = executorFactory.executeQueryNotPrintSql(TableStructModel.class, selectTableSql);
         }catch (Exception e) {
             logger.error(e.toString(), e);
         }

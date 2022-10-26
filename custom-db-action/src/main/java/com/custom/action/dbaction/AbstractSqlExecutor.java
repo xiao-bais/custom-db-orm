@@ -1,13 +1,12 @@
 package com.custom.action.dbaction;
 
 import com.custom.action.condition.AbstractUpdateSet;
-import com.custom.action.executor.JdbcWrapperExecutor;
 import com.custom.action.sqlparser.HandleSelectSqlBuilder;
 import com.custom.action.sqlparser.MappingResultInjector;
 import com.custom.action.condition.ConditionWrapper;
-import com.custom.action.util.DbUtil;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.page.DbPageRows;
+import com.custom.jdbc.configuration.DbDataSource;
 
 import java.io.Serializable;
 import java.util.*;
@@ -17,7 +16,7 @@ import java.util.*;
  * @date 2021/12/8 14:49
  * @desc：方法执行处理抽象入口
  **/
-public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
+public abstract class AbstractSqlExecutor  {
 
     /*--------------------------------------- select ---------------------------------------*/
     public abstract <T> List<T> selectList(Class<T> entityClass, String condition, Object... params);
@@ -30,6 +29,9 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
     public abstract <T> T selectOne(T entity);
     public abstract <T> List<T> selectList(T entity);
     public abstract <T> DbPageRows<T> selectPage(T entity, DbPageRows<T> pageRows);
+    public abstract <T> T[] selectArrays(Class<T> t, String sql, Object... params) throws Exception;
+    public abstract Object selectObjBySql(String sql, Object... params) throws Exception;
+
 
     /**
      * ConditionWrapper(条件构造器)
@@ -69,7 +71,8 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
     public abstract <T> int save(T entity);
     public abstract int executeSql(String sql, Object... params);
     public abstract void createTables(Class<?>... arr);
-    public abstract void dropTables(Class<?>... arr);
+    public abstract void dropTables(Class<?>... arr) throws Exception;
+    public abstract DbDataSource getDbDataSource();
 
     /**
      * 处理异常抛出, 其实该方法只是做了一个隐式的异常抛出，没有别的作用
@@ -111,18 +114,4 @@ public abstract class AbstractSqlExecutor extends JdbcWrapperExecutor {
         }
     }
 
-    /**
-     * 分页数据整合
-     */
-    protected <T> void buildPageResult(Class<T> t, String selectSql, DbPageRows<T> dbPageRows, Object... params) throws Exception {
-        List<T> dataList = new ArrayList<>();
-        long count = (long) selectObjBySql(String.format(DbUtil.SELECT_COUNT_TEMPLATE, selectSql), params);
-        if (count > 0) {
-            selectSql = dbPageRows.getPageIndex() == 1 ?
-                    String.format("%s \nLIMIT %s", selectSql, dbPageRows.getPageSize())
-                    : String.format("%s \nLIMIT %s, %s", selectSql, (dbPageRows.getPageIndex() - 1) * dbPageRows.getPageSize(), dbPageRows.getPageSize());
-            dataList = selectBySql(t, selectSql, params);
-        }
-        dbPageRows.setTotal(count).setData(dataList);
-    }
 }

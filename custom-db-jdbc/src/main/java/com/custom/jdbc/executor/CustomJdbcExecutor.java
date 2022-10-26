@@ -1,6 +1,5 @@
 package com.custom.jdbc.executor;
 
-import com.custom.jdbc.condition.SaveExecutorModel;
 import com.custom.jdbc.session.CustomSqlSession;
 
 import java.util.List;
@@ -85,6 +84,11 @@ public interface CustomJdbcExecutor {
      * <br/> key即为<b>[c01]</b>, value为<b>[78.5]</b>
      */
     <K, V> List<Map<K, V>> selectMaps(CustomSqlSession sqlSession) throws Exception;
+
+    /**
+     * 查询数组(T类型不可以是基础类型，只能是基础类型对应的包装类)
+     */
+    <T> T[] selectArrays(CustomSqlSession sqlSession) throws Exception;
 
 
     /**

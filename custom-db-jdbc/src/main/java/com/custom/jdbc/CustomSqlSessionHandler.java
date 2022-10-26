@@ -22,12 +22,39 @@ public class CustomSqlSessionHandler {
         this.sqlSession = sqlSession;
     }
 
-    public PreparedStatement statementPrepareSql() throws Exception {
+    /**
+     * 返回一个 增/删/改/查 通用的预编译(默认)
+     */
+    public PreparedStatement defaultPreparedStatement() throws Exception {
         Connection connection = sqlSession.getConnection();
         BaseExecutorModel executorModel = sqlSession.getExecutorModel();
         String prepareSql = executorModel.getPrepareSql();
         return connection.prepareStatement(prepareSql);
     }
+
+    /**
+     * 返回可生成新ID的预编译对象
+     * <br/> 一般用于插入新数据时使用
+     */
+    public PreparedStatement generateKeysStatement() throws Exception {
+        Connection connection = sqlSession.getConnection();
+        BaseExecutorModel executorModel = sqlSession.getExecutorModel();
+        String prepareSql = executorModel.getPrepareSql();
+        return connection.prepareStatement(prepareSql, Statement.RETURN_GENERATED_KEYS);
+    }
+
+    /**
+     * 返回可预知查询结果行数的预编译对象
+     * <br/> 用于数组查询时，实例化对应的数组长度
+     */
+    public PreparedStatement resultRowsStatement() throws Exception {
+        Connection connection = sqlSession.getConnection();
+        BaseExecutorModel executorModel = sqlSession.getExecutorModel();
+        String prepareSql = executorModel.getPrepareSql();
+        return connection.prepareStatement(prepareSql, Statement.RETURN_GENERATED_KEYS);
+    }
+
+
 
     /**
      * 查询之前的处理
@@ -78,11 +105,6 @@ public class CustomSqlSessionHandler {
         }
     }
 
-
-    /**
-     * 通用一般增删改
-     */
-//    public <T> int executeUpdate()
 
 
 

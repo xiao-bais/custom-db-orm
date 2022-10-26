@@ -1,11 +1,11 @@
 package com.custom.jdbc.executor;
 
-import com.alibaba.fastjson.JSONException;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.jdbc.CustomSqlSessionHandler;
 import com.custom.jdbc.SqlOutPrintBuilder;
+import com.custom.jdbc.condition.BaseExecutorModel;
 import com.custom.jdbc.condition.SaveExecutorModel;
 import com.custom.jdbc.condition.SelectMapExecutorModel;
 import com.custom.jdbc.session.CustomSqlSession;
@@ -14,6 +14,7 @@ import com.custom.jdbc.configuration.DbCustomStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Field;
 import java.sql.*;
 import java.util.*;
 
@@ -43,7 +44,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
         ResultSet resultSet = null;
         try {
 
-            statement = sessionHandler.statementPrepareSql();
+            statement = sessionHandler.defaultPreparedStatement();
             // 处理预编译以及sql打印
             sessionHandler.handleExecuteBefore(statement);
             resultSet = statement.executeQuery();
@@ -87,7 +88,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
         ResultSet resultSet = null;
         try {
             // 执行
-            statement = sessionHandler.statementPrepareSql();
+            statement = sessionHandler.defaultPreparedStatement();
             // 处理预编译以及sql打印
             sessionHandler.handleExecuteBefore(statement);
             resultSet = statement.executeQuery();
@@ -102,7 +103,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
                     .build(executorModel.getPrepareSql(), executorModel.getSqlParams(), strategy.isSqlOutPrintExecute())
                     .sqlErrPrint();
             throw e;
-        }finally {
+        } finally {
             sessionHandler.closeResources(statement, resultSet);
         }
         return resSet;
@@ -119,7 +120,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
         ResultSet resultSet = null;
         try {
 
-            statement = sessionHandler.statementPrepareSql();
+            statement = sessionHandler.defaultPreparedStatement();
             // 处理预编译以及sql打印
             sessionHandler.handleExecuteBefore(statement);
             resultSet = statement.executeQuery();
@@ -151,7 +152,6 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
     }
 
 
-
     @Override
     public List<Map<String, Object>> selectListMap(CustomSqlSession sqlSession) throws Exception {
         Map<String, Object> map;
@@ -163,7 +163,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
         ResultSet resultSet = null;
         try {
 
-            statement = sessionHandler.statementPrepareSql();
+            statement = sessionHandler.defaultPreparedStatement();
             // 处理预编译以及sql打印
             sessionHandler.handleExecuteBefore(statement);
             resultSet = statement.executeQuery();
@@ -185,11 +185,14 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
         return list;
     }
 
+
+
     @Override
     public Map<String, Object> selectOneMap(CustomSqlSession sqlSession) throws Exception {
         List<Map<String, Object>> result = selectListMap(sqlSession);
         return getOne(result);
     }
+
 
     @Override
     public <K, V> List<Map<K, V>> selectMaps(CustomSqlSession sqlSession) throws Exception {
@@ -202,7 +205,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
         ResultSet resultSet = null;
         try {
 
-            statement = sessionHandler.statementPrepareSql();
+            statement = sessionHandler.defaultPreparedStatement();
             // 处理预编译以及sql打印
             sessionHandler.handleExecuteBefore(statement);
             resultSet = statement.executeQuery();
@@ -211,32 +214,44 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
             // 若查询的结果列数不是2列，则抛出异常
             int columnCount = metaData.getColumnCount();
             if (columnCount != 2) {
-                throw new SQLDataException("This query only supports dual column queries. Current number of query fields: (" + columnCount +")");
+                throw new SQLDataException("This query only supports dual column queries. Current number of query fields: (" + columnCount + ")");
             }
 
             Map<K, V> map = null;
-            Map<Object, Object> tempMap;
+//            Map<Object, Object> tempMap;
             while (resultSet.next()) {
-                tempMap = new HashMap<>();
+//                tempMap = new HashMap<>();
+                map = new HashMap<>();
 
-                // 映射键值对
-                Object key = resultSet.getObject(1);
-                Object value = resultSet.getObject(2);
-                tempMap.put(key, value);
-
-                // 利用反序列化生成目标map实例
                 try {
-
-                    String jsonStr = CustomUtil.mapObjToJsonString(tempMap);
-                    map = CustomUtil.jsonParseToMap(jsonStr, executorModel.getKeyType(), executorModel.getValueType());
-
-                } catch (JSONException e) {
-                    if (e.getCause() instanceof NumberFormatException) {
-                        // 可能错误: 查询结果中出现给定泛型之外的类型
-                        logger.error("The error may be: because the value in the query result has a type other than the given generic type");
-                    }
+                    K key = (K) resultSet.getObject(1);
+                    V value = (V) resultSet.getObject(2);
+                    map.put(key, value);
+                } catch (NumberFormatException e) {
+                    // 可能错误: 查询结果中出现给定泛型之外的类型
+                    logger.error("The error may be: because the value in the query result has a type other than the given generic type");
                     throw e;
                 }
+
+
+                // 映射键值对
+//                Object key = resultSet.getObject(1);
+//                Object value = resultSet.getObject(2);
+
+
+                // 利用反序列化生成目标map实例
+//                try {
+//
+//                    String jsonStr = CustomUtil.mapObjToJsonString(tempMap);
+//                    map = CustomUtil.jsonParseToMap(jsonStr, executorModel.getKeyType(), executorModel.getValueType());
+//
+//                } catch (JSONException e) {
+//                    if (e.getCause() instanceof NumberFormatException) {
+//                        // 可能错误: 查询结果中出现给定泛型之外的类型
+//                        logger.error("The error may be: because the value in the query result has a type other than the given generic type");
+//                    }
+//                    throw e;
+//                }
 
                 list.add(map);
             }
@@ -245,29 +260,60 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
                     .build(executorModel.getPrepareSql(), executorModel.getSqlParams(), strategy.isSqlOutPrintExecute())
                     .sqlErrPrint();
             throw e;
-        }
-        finally {
+        } finally {
             sessionHandler.closeResources(statement, resultSet);
         }
         return list;
     }
 
-
     @Override
-    public <T> int executeUpdate(CustomSqlSession sqlSession) throws Exception {
-        CustomSqlSessionHandler sessionHandler = new CustomSqlSessionHandler(strategy, sqlSession);
-        SaveExecutorModel<T> executorModel = (SaveExecutorModel<T>) sqlSession.getExecutorModel();
+    public <T> T[] selectArrays(CustomSqlSession sqlSession) throws Exception {
 
+        CustomSqlSessionHandler sessionHandler = new CustomSqlSessionHandler(strategy, sqlSession);
+        SelectExecutorModel<T> executorModel = (SelectExecutorModel<T>) sqlSession.getExecutorModel();
         PreparedStatement statement = null;
         ResultSet resultSet = null;
 
         try {
-            sessionHandler.closeResources(statement, resultSet);
-        }catch (Exception e) {
+            statement = sessionHandler.defaultPreparedStatement();
+            // 处理预编译以及sql打印
+            sessionHandler.handleExecuteBefore(statement);
+            resultSet = statement.executeQuery();
 
+
+
+            return null;
+        } catch (Exception e) {
+            SqlOutPrintBuilder
+                    .build(executorModel.getPrepareSql(), executorModel.getSqlParams(), strategy.isSqlOutPrintExecute())
+                    .sqlErrPrint();
+            throw e;
+        } finally {
+            sessionHandler.closeResources(statement, null);
+        }
+    }
+
+
+    @Override
+    public <T> int executeUpdate(CustomSqlSession sqlSession) throws Exception {
+
+        CustomSqlSessionHandler sessionHandler = new CustomSqlSessionHandler(strategy, sqlSession);
+        BaseExecutorModel executorModel = sqlSession.getExecutorModel();
+        PreparedStatement statement = null;
+        try {
+            statement = sessionHandler.defaultPreparedStatement();
+            // 处理预编译以及sql打印
+            sessionHandler.handleExecuteBefore(statement);
+            return statement.executeUpdate();
+        } catch (SQLException e) {
+            SqlOutPrintBuilder
+                    .build(executorModel.getPrepareSql(), executorModel.getSqlParams(), strategy.isSqlOutPrintExecute())
+                    .sqlErrPrint();
+            throw e;
+        } finally {
+            sessionHandler.closeResources(statement, null);
         }
 
-        return 0;
     }
 
     @Override
@@ -276,27 +322,58 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
         CustomSqlSessionHandler sessionHandler = new CustomSqlSessionHandler(strategy, sqlSession);
         SaveExecutorModel<T> executorModel = (SaveExecutorModel<T>) sqlSession.getExecutorModel();
 
-        int res = 0;
         PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        Field keyField = executorModel.getKeyField();
+        List<T> dataList = executorModel.getDataList();
         try {
-            statement = sessionHandler.statementPrepareSql();
+            statement = sessionHandler.generateKeysStatement();
             // 处理预编译以及sql打印
             sessionHandler.handleExecuteBefore(statement);
-            res = statement.executeUpdate();
+            int res = statement.executeUpdate();
+            // 若是自增，则返回生成的新ID
+            resultSet = statement.getGeneratedKeys();
+
+            int count = 0;
+            while (resultSet.next()) {
+                Object newKey = resultSet.getObject(1);
+                T entity = dataList.get(count);
+                // 新的ID写入到实体
+                CustomUtil.writeFieldValue(newKey, entity, keyField.getName(), keyField.getType());
+                count++;
+            }
+            return res;
         } catch (SQLException e) {
             SqlOutPrintBuilder
                     .build(executorModel.getPrepareSql(), executorModel.getSqlParams(), strategy.isSqlOutPrintExecute())
                     .sqlErrPrint();
             throw e;
-        }finally {
-            sessionHandler.closeResources(statement, null);
+        } finally {
+            sessionHandler.closeResources(statement, resultSet);
         }
-        return res;
+
     }
 
     @Override
     public void execTableInfo(CustomSqlSession sqlSession) throws Exception {
 
+        BaseExecutorModel executorModel = sqlSession.getExecutorModel();
+        String prepareSql = executorModel.getPrepareSql();
+        CustomSqlSessionHandler sessionHandler = new CustomSqlSessionHandler(strategy, sqlSession);
+        PreparedStatement statement = null;
+
+        try {
+            Connection connection = sqlSession.getConnection();
+            statement = connection.prepareStatement(prepareSql);
+            statement.execute();
+        } catch (Exception e) {
+            SqlOutPrintBuilder
+                    .build(prepareSql, new String[]{}, strategy.isSqlOutPrintExecute())
+                    .sqlErrPrint();
+            logger.error(e.toString(), e);
+        } finally {
+            sessionHandler.closeResources(statement, null);
+        }
     }
 
 

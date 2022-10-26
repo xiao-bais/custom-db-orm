@@ -1,5 +1,7 @@
 package com.custom.jdbc.condition;
 
+import com.custom.comm.utils.Asserts;
+
 import java.util.Objects;
 
 /**
@@ -24,6 +26,7 @@ public class BaseExecutorModel {
     private final Object[] sqlParams;
 
     public BaseExecutorModel(String prepareSql, boolean sqlPrintSupport, Object[] sqlParams) {
+        Asserts.notEmpty(prepareSql, "The Sql to be Not Empty");
         this.prepareSql = prepareSql;
         this.sqlPrintSupport = sqlPrintSupport;
         this.sqlParams = sqlParams;

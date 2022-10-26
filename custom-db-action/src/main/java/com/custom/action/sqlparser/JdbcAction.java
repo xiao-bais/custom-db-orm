@@ -2,6 +2,7 @@ package com.custom.action.sqlparser;
 
 import com.custom.action.condition.*;
 import com.custom.action.dbaction.AbstractSqlExecutor;
+import com.custom.action.executor.JdbcExecutorFactory;
 import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.action.util.DbUtil;
 import com.custom.comm.utils.Asserts;
@@ -13,8 +14,6 @@ import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.page.DbPageRows;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
-import com.custom.jdbc.CustomSelectJdbcBasicImpl;
-import com.custom.jdbc.CustomUpdateJdbcBasicImpl;
 import com.custom.jdbc.transaction.DbConnGlobal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,11 +31,13 @@ public class JdbcAction extends AbstractSqlExecutor {
 
     private static final Logger logger = LoggerFactory.getLogger(JdbcAction.class);
     private int order;
+    private DbDataSource dbDataSource;
+    private JdbcExecutorFactory executorFactory;
 
     public JdbcAction(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
-        // 配置sql执行器
-        this.setSelectJdbc(new CustomSelectJdbcBasicImpl(dbDataSource, dbCustomStrategy));
-        this.setUpdateJdbc(new CustomUpdateJdbcBasicImpl(dbDataSource, dbCustomStrategy));
+        // 创建sql执行器
+        this.executorFactory = new JdbcExecutorFactory(dbDataSource, dbCustomStrategy);
+        this.dbDataSource = dbDataSource;
         this.order = dbDataSource.getOrder();
     }
 
@@ -52,7 +53,7 @@ public class JdbcAction extends AbstractSqlExecutor {
 
             // 封装结果
             String selectSql = sqlBuilder.createTargetSql() + executor.execute();
-            List<T> result = selectBySql(entityClass, selectSql, params);
+            List<T> result = executorFactory.selectBySql(entityClass, selectSql, params);
             this.injectOtherResult(entityClass, sqlBuilder, result);
 
             // 清除暂存
@@ -68,7 +69,7 @@ public class JdbcAction extends AbstractSqlExecutor {
     public <T> List<T> selectListBySql(Class<T> entityClass, String sql, Object... params) {
         try {
             HandleSelectSqlBuilder<T> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(entityClass, order);
-            List<T> result = this.selectBySql(entityClass, sql, params);
+            List<T> result = executorFactory.selectBySql(entityClass, sql, params);
             this.injectOtherResult(entityClass, sqlBuilder, result);
             return result;
         }catch (Exception e) {
@@ -138,7 +139,7 @@ public class JdbcAction extends AbstractSqlExecutor {
     @Override
     public <T> T selectOneBySql(Class<T> entityClass, String sql, Object... params) {
         try {
-            return this.selectOneSql(entityClass, sql, params);
+            return executorFactory.selectOneSql(entityClass, sql, params);
         }catch (Exception e) {
             this.throwsException(e);
             return null;
@@ -169,6 +170,16 @@ public class JdbcAction extends AbstractSqlExecutor {
     }
 
     @Override
+    public <T> T[] selectArrays(Class<T> t, String sql, Object... params) throws Exception {
+        return executorFactory.selectArrays(t, sql, params);
+    }
+
+    @Override
+    public Object selectObjBySql(String sql, Object... params) throws Exception {
+        return executorFactory.selectObjBySql(sql, params);
+    }
+
+    @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> DbPageRows<T> selectPage(ConditionWrapper<T> wrapper) {
         if(!wrapper.hasPageParams()) {
@@ -192,7 +203,7 @@ public class JdbcAction extends AbstractSqlExecutor {
         try {
             HandleSelectSqlBuilder<T> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(wrapper.getEntityClass(), order);
             String selectSql = sqlBuilder.selectExecuteSqlBuilder(wrapper);
-            List<T> result = selectBySql(wrapper.getEntityClass(), selectSql, wrapper.getParamValues().toArray());
+            List<T> result = executorFactory.selectBySql(wrapper.getEntityClass(), selectSql, wrapper.getParamValues().toArray());
             this.injectOtherResult(wrapper.getEntityClass(), sqlBuilder, result);
             return result;
         }catch (Exception e) {
@@ -222,7 +233,7 @@ public class JdbcAction extends AbstractSqlExecutor {
         try {
             HandleSelectSqlBuilder<T> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(wrapper.getEntityClass(), order);
             String selectSql = sqlBuilder.selectExecuteSqlBuilder(wrapper);
-            return (long) selectObjBySql(String.format(DbUtil.SELECT_COUNT_TEMPLATE, selectSql),
+            return (long) executorFactory.selectObjBySql(String.format(DbUtil.SELECT_COUNT_TEMPLATE, selectSql),
                     wrapper.getParamValues().toArray());
         }catch (Exception e) {
             this.throwsException(e);
@@ -236,7 +247,7 @@ public class JdbcAction extends AbstractSqlExecutor {
         try {
             HandleSelectSqlBuilder<T> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(wrapper.getEntityClass(), order);
             String selectSql = sqlBuilder.selectExecuteSqlBuilder(wrapper);
-            return selectObjBySql(selectSql, wrapper.getParamValues().toArray());
+            return executorFactory.selectObjBySql(selectSql, wrapper.getParamValues().toArray());
         }catch (Exception e) {
             this.throwsException(e);
             return null;
@@ -249,7 +260,7 @@ public class JdbcAction extends AbstractSqlExecutor {
         try {
             HandleSelectSqlBuilder<T> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(wrapper.getEntityClass(), order);
             String selectSql = sqlBuilder.selectExecuteSqlBuilder(wrapper);
-            return selectObjsBySql(selectSql, wrapper.getParamValues().toArray());
+            return executorFactory.selectObjsBySql(selectSql, wrapper.getParamValues().toArray());
         }catch (Exception e) {
             this.throwsException(e);
             return new ArrayList<>();
@@ -263,7 +274,7 @@ public class JdbcAction extends AbstractSqlExecutor {
         try {
             HandleSelectSqlBuilder<T> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(wrapper.getEntityClass(), order);
             String selectSql = sqlBuilder.selectExecuteSqlBuilder(wrapper);
-            return selectMapBySql(selectSql, wrapper.getParamValues().toArray());
+            return executorFactory.selectMapBySql(selectSql, wrapper.getParamValues().toArray());
         }catch (Exception e) {
             this.throwsException(e);
             return new HashMap<>();
@@ -276,7 +287,7 @@ public class JdbcAction extends AbstractSqlExecutor {
         try {
             HandleSelectSqlBuilder<T> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(wrapper.getEntityClass(), order);
             String selectSql = sqlBuilder.selectExecuteSqlBuilder(wrapper);
-            return selectMapsBySql(selectSql, wrapper.getParamValues().toArray());
+            return executorFactory.selectMapsBySql(selectSql, wrapper.getParamValues().toArray());
         }catch (Exception e) {
             this.throwsException(e);
             return new ArrayList<>();
@@ -295,10 +306,10 @@ public class JdbcAction extends AbstractSqlExecutor {
             HandleSelectSqlBuilder<T> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(wrapper.getEntityClass(), order);
             String selectSql = sqlBuilder.selectExecuteSqlBuilder(wrapper);
             Object[] params = wrapper.getParamValues().toArray();
-            count = (long) selectObjBySql(String.format(DbUtil.SELECT_COUNT_TEMPLATE, selectSql), params);
+            count = (long) executorFactory.selectObjBySql(String.format(DbUtil.SELECT_COUNT_TEMPLATE, selectSql), params);
             if (count > 0) {
                 selectSql = String.format("%s \nLIMIT %s, %s", selectSql, (dbPageRows.getPageIndex() - 1) * dbPageRows.getPageSize(), dbPageRows.getPageSize());
-                dataList = selectMapsBySql(selectSql, params);
+                dataList = executorFactory.selectMapsBySql(selectSql, params);
             }
             sqlBuilder.clear();
         }catch (Exception e) {
@@ -360,7 +371,7 @@ public class JdbcAction extends AbstractSqlExecutor {
         String insertSql = sqlBuilder.createTargetSql();
         DbKeyParserModel<T> keyParserModel = sqlBuilder.getKeyParserModel();
         try {
-            i = this.executeInsert(insertSql,
+            i = executorFactory.executeInsert(insertSql,
                     Collections.singletonList(entity),
                     keyParserModel.getField(),
                     sqlBuilder.getSqlParams());
@@ -381,7 +392,7 @@ public class JdbcAction extends AbstractSqlExecutor {
         int res = 0;
         try {
             String insertSql = sqlBuilder.createTargetSql();
-            executeInsert(insertSql, ts, keyParserModel.getField(), sqlBuilder.getSqlParams());
+            executorFactory.executeInsert(insertSql, ts, keyParserModel.getField(), sqlBuilder.getSqlParams());
         } catch (Exception e) {
             this.throwsException(e);
         }
@@ -471,7 +482,7 @@ public class JdbcAction extends AbstractSqlExecutor {
     @Override
     public int executeSql(String sql, Object... params) {
         try {
-            return this.executeAnySql(sql, params);
+            return executorFactory.executeAnySql(sql, params);
         }catch (Exception e) {
             this.throwsException(e);
             return 0;
@@ -483,11 +494,11 @@ public class JdbcAction extends AbstractSqlExecutor {
         TableParseModel<?> tableSqlBuilder;
         for (int i = arr.length - 1; i >= 0; i--) {
             tableSqlBuilder = TableInfoCache.getTableModel(arr[i]);
-            String exitsTableSql = DbConnGlobal.exitsTableSql(tableSqlBuilder.getTable(), getDbDataSource());
+            String exitsTableSql = DbConnGlobal.exitsTableSql(tableSqlBuilder.getTable(), dbDataSource);
             try {
-                if(!hasTableInfo(exitsTableSql)) {
+                if(!executorFactory.hasTableInfo(exitsTableSql)) {
                     String createTableSql = tableSqlBuilder.createTableSql();
-                    execTable(createTableSql);
+                    executorFactory.execTable(createTableSql);
                     logger.info("createTableSql ->\n " + createTableSql);
                 }
             }catch (Exception e) {
@@ -497,13 +508,33 @@ public class JdbcAction extends AbstractSqlExecutor {
     }
 
     @Override
-    public void dropTables(Class<?>... arr) {
+    public void dropTables(Class<?>... arr) throws Exception {
         for (int i = arr.length - 1; i >= 0; i--) {
             TableParseModel<?> tableSqlBuilder = TableInfoCache.getTableModel(arr[i]);
             String dropTableSql = tableSqlBuilder.dropTableSql();
-            execTable(dropTableSql);
+            executorFactory.execTable(dropTableSql);
             logger.warn("drop table '{}' completed\n", tableSqlBuilder.getTable());
         }
+    }
+
+    @Override
+    public DbDataSource getDbDataSource() {
+        return this.dbDataSource;
+    }
+
+    /**
+     * 分页数据整合
+     */
+    protected <T> void buildPageResult(Class<T> t, String selectSql, DbPageRows<T> dbPageRows, Object... params) throws Exception {
+        List<T> dataList = new ArrayList<>();
+        long count = (long) executorFactory.selectObjBySql(String.format(DbUtil.SELECT_COUNT_TEMPLATE, selectSql), params);
+        if (count > 0) {
+            selectSql = dbPageRows.getPageIndex() == 1 ?
+                    String.format("%s \nLIMIT %s", selectSql, dbPageRows.getPageSize())
+                    : String.format("%s \nLIMIT %s, %s", selectSql, (dbPageRows.getPageIndex() - 1) * dbPageRows.getPageSize(), dbPageRows.getPageSize());
+            dataList = executorFactory.selectBySql(t, selectSql, params);
+        }
+        dbPageRows.setTotal(count).setData(dataList);
     }
 
 

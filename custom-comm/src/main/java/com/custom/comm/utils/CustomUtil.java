@@ -275,8 +275,15 @@ public class CustomUtil extends StrUtils {
     public static String mapStrToJsonString(Map<String, Object> map) {
         return JSON.toJSONString(map);
     }
-    public static String mapObjToJsonString(Map<Object, Object> map) {
+    public static String mapToJsonString(Map<Object, Object> map) {
         return JSON.toJSONString(map);
+    }
+
+    /**
+     * 任意对象转json字符串
+     */
+    public static String objToJsonString(Object obj) {
+        return JSON.toJSONString(obj);
     }
 
     /**

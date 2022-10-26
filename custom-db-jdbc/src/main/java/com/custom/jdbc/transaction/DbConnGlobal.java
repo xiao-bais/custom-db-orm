@@ -1,10 +1,12 @@
 package com.custom.jdbc.transaction;
 
 import com.custom.comm.utils.Constants;
+import com.custom.jdbc.condition.BaseExecutorModel;
 import com.custom.jdbc.configuration.DbConnection;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.CustomConfigHelper;
 import com.custom.jdbc.GlobalDataHandler;
+import com.custom.jdbc.session.CustomSqlSession;
 
 import java.sql.Connection;
 
@@ -69,7 +71,7 @@ public class DbConnGlobal {
         }
         return String.format("SELECT COUNT(1) COUNT ROM " +
                         "`information_schema`.`TABLES` WHERE TABLE_NAME = '%s' AND TABLE_SCHEMA = '%s';",
-                table, getDataBaseKey(dbDataSource));
+                table, DbConnection.getCurrMapData(getDataBaseKey(dbDataSource)));
     }
 
     public static void addDataSource(CustomConfigHelper configHelper) {
@@ -98,6 +100,14 @@ public class DbConnGlobal {
 
     public static CustomConfigHelper getConfigHelper() {
         return getConfigHelper(Constants.DEFAULT_ONE);
+    }
+
+
+    /**
+     * 创建jdbc请求会话
+     */
+    private static CustomSqlSession createSqlSession(Connection connection, BaseExecutorModel executorModel) {
+        return new CustomSqlSession(connection, executorModel);
     }
 
 

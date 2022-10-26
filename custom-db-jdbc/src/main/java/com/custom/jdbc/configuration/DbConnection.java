@@ -26,7 +26,7 @@ public class DbConnection {
 
     private DbDataSource dbDataSource = null;
     private static final String CUSTOM_DRIVER = "com.mysql.cj.jdbc.Driver";
-    public static Map<String, Object> currMap  = new ConcurrentHashMap<>();
+    private static Map<String, Object> currMap  = new ConcurrentHashMap<>();
 
     /**
      * 获取连接
@@ -106,5 +106,9 @@ public class DbConnection {
     public String getDataBase() {
         String dataBaseKey = DbConnGlobal.getDataBaseKey(dbDataSource);
         return currMap.get(dataBaseKey).toString();
+    }
+
+    public static Object getCurrMapData(String key) {
+        return currMap.get(key);
     }
 }
