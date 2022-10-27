@@ -15,18 +15,10 @@ import com.custom.comm.enums.SqlLike;
 public class DbUtil {
 
 
-    public final static String SELECT_TEMPLATE = "SELECT %s\n FROM %s %s";
-    public final static String SELECT_COUNT_TEMPLATE = "SELECT COUNT(0) FROM (\n%s\n) xxx";
-    public final static String INSERT_TEMPLATE = "INSERT INTO %s(%s) VALUES";
-    public final static String DELETE_TEMPLATE = "DELETE FROM %s %s";
-    public final static String UPDATE_TEMPLATE = "UPDATE %s %s SET %s %s";
-    public final static String LOGIC_DELETE_TEMPLATE = "UPDATE %s %s SET %s";
-
-
     /**
      * 该类是否存在主键
      */
-    public static <T> boolean hasPriKey(Class<T> clazz){
+    public static <T> boolean hasPriKey(Class<T> clazz) {
         DbKeyParserModel<T> keyParserModel = TableInfoCache.getTableModel(clazz).getKeyParserModel();
         return keyParserModel != null;
     }
@@ -120,22 +112,6 @@ public class DbUtil {
 
     public static String applyIsNullCondition(String v1, String v2, String v3) {
         return String.format(" %s %s %s", v1, v2, v3);
-    }
-
-    public static String sqlLikeConcat(SqlLike sqlLike) {
-        String sql = Constants.EMPTY;
-        switch (sqlLike) {
-            case LEFT:
-                sql = "CONCAT('%', ?)";
-                break;
-            case RIGHT:
-                sql = "CONCAT(?, '%')";
-                break;
-            case LIKE:
-                sql = "CONCAT('%', ?, '%')";
-                break;
-        }
-        return sql;
     }
 
     /**
