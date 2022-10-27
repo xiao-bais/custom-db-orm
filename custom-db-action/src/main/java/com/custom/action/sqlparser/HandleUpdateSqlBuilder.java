@@ -3,6 +3,7 @@ package com.custom.action.sqlparser;
 import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.fieldfill.ColumnAutoFillHandleUtils;
 import com.custom.action.util.DbUtil;
+import com.custom.comm.enums.SqlExecTemplate;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.Constants;
 import org.slf4j.Logger;
@@ -36,10 +37,12 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
      */
     @Override
     public String createTargetSql() {
+
+        // 创建需要set的sql字段
         this.createUpdateSetColumn();
         Asserts.notEmpty(updateSqlColumns, "update set column segment cannot be empty");
 
-        return String.format(DbUtil.UPDATE_TEMPLATE, getTable(), getAlias(),
+        return SqlExecTemplate.format(SqlExecTemplate.UPDATE_DATA, getTable(), getAlias(),
                 updateSqlColumns, Constants.EMPTY);
     }
 

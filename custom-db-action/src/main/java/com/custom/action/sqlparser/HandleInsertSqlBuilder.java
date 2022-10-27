@@ -3,6 +3,7 @@ package com.custom.action.sqlparser;
 import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.fieldfill.ColumnAutoFillHandleUtils;
 import com.custom.action.util.DbUtil;
+import com.custom.comm.enums.SqlExecTemplate;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.utils.ConvertUtil;
@@ -107,8 +108,8 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
         if (!getFieldParserModels().isEmpty()) {
             getFieldParserModels().forEach(x -> insertColumn.add(x.getColumn()));
         }
-        this.insertPrefix = String.format(DbUtil.INSERT_TEMPLATE, getTable(), insertColumn);
 
+        this.insertPrefix = SqlExecTemplate.format(SqlExecTemplate.INSERT_DATA, getTable(), insertColumn);
 
     }
 

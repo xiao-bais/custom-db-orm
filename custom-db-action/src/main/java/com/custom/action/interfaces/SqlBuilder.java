@@ -14,5 +14,5 @@ public interface SqlBuilder {
      * @param template sql模板枚举
      * @return
      */
-    StringBuilder create(SqlExecTemplate template);
+    String create(SqlExecTemplate template);
 }

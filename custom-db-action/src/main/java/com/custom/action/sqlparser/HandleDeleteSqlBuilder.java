@@ -5,6 +5,7 @@ import com.custom.action.fieldfill.ColumnFillAutoHandler;
 import com.custom.action.fieldfill.TableFillObject;
 import com.custom.action.util.DbUtil;
 import com.custom.comm.enums.FillStrategy;
+import com.custom.comm.enums.SqlExecTemplate;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.utils.CustomApplicationUtil;
@@ -32,13 +33,18 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
             if (isExist) {
                 String setColumnSql = getLogicDeleteUpdateSql();
                 String customFillSql = this.handleLogicDelBefore();
+
                 if (StrUtils.isNotBlank(customFillSql)) {
                     setColumnSql = setColumnSql + Constants.SEPARATOR_COMMA_2 + customFillSql;
                 }
-                deleteSql = String.format(DbUtil.LOGIC_DELETE_TEMPLATE,
-                        getTable(), getAlias(), setColumnSql);
+
+                // 逻辑删除
+                deleteSql = SqlExecTemplate.format(SqlExecTemplate.LOGIC_DELETE, getTable(), getAlias(), setColumnSql);
+
             } else {
-                deleteSql = String.format(DbUtil.DELETE_TEMPLATE, getTable(), getAlias());
+
+                // 物理删除
+                deleteSql = SqlExecTemplate.format(SqlExecTemplate.DELETE_DATA, getTable(), getAlias());
             }
         } catch (Exception e) {
             logger.error(e.toString(), e);

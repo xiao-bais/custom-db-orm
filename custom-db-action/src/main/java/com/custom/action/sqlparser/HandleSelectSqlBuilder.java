@@ -57,8 +57,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
     public String createTargetSql() {
         try {
             return this.build(!this.primaryTable)
-                    .create(SqlExecTemplate.SELECT_LIST)
-                    .toString();
+                    .create(SqlExecTemplate.SELECT_LIST);
         } catch (Exception e) {
             logger.error(e.toString(), e);
             return Constants.EMPTY;
@@ -135,8 +134,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
         this.createJoinTableSql();
 
-        return template -> SqlExecTemplate.format(template, baseFieldSql, getTable(), getAlias())
-                .append(joinTableSql);
+        return template -> SqlExecTemplate.format(template, baseFieldSql, getTable(), getAlias()) + joinTableSql;
     }
 
     /**
@@ -199,8 +197,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
         }
 
         this.createJoinTableSql();
-        return template -> SqlExecTemplate.format(template, columnStr, getTable(), getAlias())
-                .append(joinTableSql);
+        return template -> SqlExecTemplate.format(template, columnStr, getTable(), getAlias()) + joinTableSql;
     }
 
     public boolean isExistNeedInjectResult() {
@@ -211,7 +208,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
     /**
      * 整合条件，获取最终可执行的sql
      */
-    protected String selectExecuteSqlBuilder(ConditionWrapper<T> wrapper) throws Exception {
+    protected String executeSqlBuilder(ConditionWrapper<T> wrapper) throws Exception {
 
         this.primaryTable = wrapper.getPrimaryTable();
         StringBuilder selectSql = new StringBuilder();
@@ -244,4 +241,18 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
         }
         return selectSql.toString();
     }
+
+
+    /**
+     * 创建查询数量的SQL
+     * @param wrapper 条件构造器
+     */
+    public String createSelectCountSql(ConditionWrapper<T> wrapper) throws Exception {
+        String selectSql = this.executeSqlBuilder(wrapper);
+       return SqlExecTemplate.format(SqlExecTemplate.SELECT_COUNT, selectSql).toString();
+    }
+
+
+
+
 }

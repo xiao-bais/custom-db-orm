@@ -39,7 +39,7 @@ public enum SqlExecTemplate {
         return template;
     }
 
-    public static StringBuilder format(SqlExecTemplate template, Object... params) {
-        return new StringBuilder().append(String.format(template.getTemplate(), params));
+    public static String format(SqlExecTemplate template, Object... params) {
+        return String.format(template.getTemplate(), params);
     }
 }
