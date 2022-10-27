@@ -16,14 +16,11 @@ public class UpdateProxyHandler extends AbstractProxyHandler {
     protected Object execute() throws Exception {
         String readyExecuteSql = sqlExecuteParamParser();
         Object[] sqlParams = getExecuteSqlParams().toArray();
-        SaveExecutorModel<Object> sqlParamInfo = new SaveExecutorModel<>(readyExecuteSql, sqlParams);
-        return getUpdateJdbc().executeUpdate(sqlParamInfo);
+        return thisJdbcExecutor().executeAnySql(readyExecuteSql, sqlParams);
     }
 
     protected UpdateProxyHandler(CustomUpdateJdbcBasic updateJdbc, Object[] methodParams,
                                  String prepareSql, Method method) {
-
-        super.setUpdateJdbc(updateJdbc);
         super.setMethodParams(methodParams);
         super.setPrepareSql(prepareSql);
         super.setMethod(method);

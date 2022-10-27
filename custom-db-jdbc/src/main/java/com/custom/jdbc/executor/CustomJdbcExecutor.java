@@ -83,7 +83,7 @@ public interface CustomJdbcExecutor {
      * </tr>
      * <br/> key即为<b>[c01]</b>, value为<b>[78.5]</b>
      */
-    <K, V> Map<K, V> selectMaps(CustomSqlSession sqlSession) throws Exception;
+    <K, V> Map<K, V> selectMap(CustomSqlSession sqlSession) throws Exception;
 
     /**
      * 查询数组(T类型不可以是基础类型，只能是基础类型对应的包装类)

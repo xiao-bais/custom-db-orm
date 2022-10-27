@@ -6,6 +6,7 @@ import com.custom.comm.utils.RexUtil;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.annotations.mapper.DbParam;
 import com.custom.comm.exceptions.ExThrowsUtil;
+import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.jdbc.select.CustomSelectJdbcBasic;
 import com.custom.jdbc.update.CustomUpdateJdbcBasic;
 import org.slf4j.Logger;
@@ -33,6 +34,7 @@ public abstract class AbstractProxyHandler {
      */
     private CustomSelectJdbcBasic selectJdbc;
     private CustomUpdateJdbcBasic updateJdbc;
+    private JdbcExecutorFactory executorFactory;
 
     /**
      * 方法参数
@@ -78,6 +80,10 @@ public abstract class AbstractProxyHandler {
         return updateJdbc;
     }
 
+    public void setExecutorFactory(JdbcExecutorFactory executorFactory) {
+        this.executorFactory = executorFactory;
+    }
+
     public void setUpdateJdbc(CustomUpdateJdbcBasic updateJdbc) {
         this.updateJdbc = updateJdbc;
     }
@@ -113,6 +119,10 @@ public abstract class AbstractProxyHandler {
 
     public List<Object> getExecuteSqlParams() {
         return executeSqlParams;
+    }
+
+    public JdbcExecutorFactory thisJdbcExecutor() {
+        return executorFactory;
     }
 
     /**

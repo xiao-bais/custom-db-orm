@@ -198,7 +198,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
 
 
     @Override
-    public <K, V> Map<K, V> selectMaps(CustomSqlSession sqlSession) throws Exception {
+    public <K, V> Map<K, V> selectMap(CustomSqlSession sqlSession) throws Exception {
 
         SelectMapExecutorModel<K, V> executorModel = (SelectMapExecutorModel<K, V>) sqlSession.getExecutorModel();
         CustomSqlSessionHelper sessionHelper = new CustomSqlSessionHelper(strategy, sqlSession);

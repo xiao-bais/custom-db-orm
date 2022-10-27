@@ -22,6 +22,7 @@ import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @Author Xiao-Bai
@@ -125,6 +126,15 @@ public class JdbcExecutorFactory {
         SelectExecutorModel<T> paramInfo = new SelectExecutorModel<>(t, sql, params);
         CustomSqlSession sqlSession = this.createSqlSession(paramInfo);
         return jdbcExecutor.selectList(sqlSession);
+    }
+
+    /**
+     * 查询单列的Set集合
+     */
+    public <T> Set<T> selectSetBySql(Class<T> t, String sql, Object... params) throws Exception {
+        SelectExecutorModel<T> paramInfo = new SelectExecutorModel<>(t, sql, params);
+        CustomSqlSession sqlSession = this.createSqlSession(paramInfo);
+        return jdbcExecutor.selectSet(sqlSession);
     }
 
     /**

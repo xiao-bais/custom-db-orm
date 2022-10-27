@@ -12,6 +12,7 @@ import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.CustomSelectJdbcBasicImpl;
 import com.custom.jdbc.CustomUpdateJdbcBasicImpl;
+import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.jdbc.select.CustomSelectJdbcBasic;
 import com.custom.jdbc.update.CustomUpdateJdbcBasic;
 import lombok.extern.slf4j.Slf4j;
@@ -39,10 +40,12 @@ public class InterfacesProxyExecutor implements InvocationHandler {
     private String targetClassName;
     private final CustomSelectJdbcBasic selectJdbc;
     private final CustomUpdateJdbcBasic updateJdbc;
+    private final JdbcExecutorFactory executorFactory;
 
     public InterfacesProxyExecutor(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         selectJdbc = new CustomSelectJdbcBasicImpl(dbDataSource, dbCustomStrategy);
         updateJdbc = new CustomUpdateJdbcBasicImpl(dbDataSource, dbCustomStrategy);
+        executorFactory = new JdbcExecutorFactory(dbDataSource, dbCustomStrategy);
     }
 
 
@@ -79,7 +82,7 @@ public class InterfacesProxyExecutor implements InvocationHandler {
         // do Query
         if (method.isAnnotationPresent(Query.class)) {
             Query query = method.getAnnotation(Query.class);
-            proxyHandler = new SelectProxyHandler(selectJdbc, args, query.value(), method);
+            proxyHandler = new SelectProxyHandler(executorFactory, selectJdbc, args, query.value(), method);
         }
 
         // do Update
@@ -94,7 +97,7 @@ public class InterfacesProxyExecutor implements InvocationHandler {
             ExecuteMethod execType = sqlPath.method();
             String sql = new ClearNotesOnSqlHandler(sqlPath.value()).loadSql();
             if (execType == ExecuteMethod.SELECT) {
-                proxyHandler = new SelectProxyHandler(selectJdbc, args, sql, method);
+                proxyHandler = new SelectProxyHandler(executorFactory, selectJdbc, args, sql, method);
             } else if (execType == ExecuteMethod.UPDATE
                     || execType == ExecuteMethod.DELETE
                     || execType == ExecuteMethod.INSERT) {
