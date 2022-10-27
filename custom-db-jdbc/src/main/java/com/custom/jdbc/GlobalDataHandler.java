@@ -85,10 +85,10 @@ public class GlobalDataHandler {
     /**
      * 全局对象暂存
      */
-   private static final Map<String, Object> GLOBAL_CACHE = new ConcurrentHashMap<>();
+       private static final Map<String, Object> GLOBAL_CACHE = new ConcurrentHashMap<>();
 
-   public static void addGlobalHelper(String key, Object value) {
-       GLOBAL_CACHE.putIfAbsent(key, value);
+   public static Object addGlobalHelper(String key, Object value) {
+      return GLOBAL_CACHE.putIfAbsent(key, value);
    }
 
     public static Object readGlobalObject(String key) {

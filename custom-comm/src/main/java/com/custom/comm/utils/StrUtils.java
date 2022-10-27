@@ -10,7 +10,7 @@ import java.util.UUID;
  */
 public class StrUtils {
 
-    public static String getDataBase(String url){
+    public static String getDataBase(String url) {
         int lastIndex =  url.lastIndexOf("/");
         boolean is = url.indexOf("?") > 0;
         if (is) {

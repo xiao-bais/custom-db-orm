@@ -35,7 +35,6 @@ public class DbConnection {
     public DbConnection(DbDataSource dbDataSource) {
         try {
             this.dbDataSource = dbDataSource;
-            this.loadDriver();
             this.datasourceInitialize();
         }catch (Exception e) {
             logger.error("不存在mysql驱动：" + CUSTOM_DRIVER);
@@ -66,22 +65,8 @@ public class DbConnection {
         druidDataSource.setTestOnBorrow(dbDataSource.isTestOnBorrow());
         druidDataSource.setTestOnReturn(dbDataSource.isTestOnReturn());
 
-        if (JudgeUtil.isEmpty(dbDataSource.getDatabase())) {
-            if (dbDataSource.getDriver().equals(CUSTOM_DRIVER)) {
-                dbDataSource.setDatabase(CustomUtil.getDataBase(dbDataSource.getUrl()));
-            }
-            else ExThrowsUtil.toCustom("未指定数据库名称");
-        }
         currMap.put(DbConnGlobal.getDataBaseKey(dbDataSource), dbDataSource.getDatabase());
         currMap.put(DbConnGlobal.getDataSourceKey(dbDataSource), druidDataSource);
-    }
-
-
-    private void loadDriver() throws ClassNotFoundException {
-        if(JudgeUtil.isEmpty(dbDataSource.getDriver())) {
-            dbDataSource.setDriver(CUSTOM_DRIVER);
-        }
-        Class.forName(dbDataSource.getDriver());
     }
 
     //线程隔离

@@ -6,6 +6,7 @@ import com.custom.action.dbaction.AbstractSqlExecutor;
 import com.custom.action.sqlparser.JdbcAction;
 import com.custom.action.util.DbUtil;
 import com.custom.action.condition.ConditionWrapper;
+import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.annotations.DbTable;
@@ -14,6 +15,7 @@ import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
+import com.custom.jdbc.exceptions.SQLSessionException;
 import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;
 import org.springframework.cglib.proxy.MethodProxy;
@@ -47,7 +49,20 @@ public class JdbcActionProxy implements MethodInterceptor {
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(sqlExecutor.getClass());
         enhancer.setCallback(this);
-        return (JdbcAction) enhancer.create(new Class[]{DbDataSource.class, DbCustomStrategy.class}, new Object[]{dbDataSource, dbCustomStrategy});
+        try {
+            return (JdbcAction) enhancer.create(new Class[]{DbDataSource.class, DbCustomStrategy.class}
+                    , new Object[]{dbDataSource, dbCustomStrategy});
+        } catch (Exception e) {
+            Throwable throwable = e.getCause();
+            if (throwable instanceof SQLSessionException) {
+                throw (SQLSessionException) e.getCause();
+            }
+            if (throwable instanceof CustomCheckException) {
+                throw (CustomCheckException) e.getCause();
+            }
+            throw e;
+        }
+
     }
 
 

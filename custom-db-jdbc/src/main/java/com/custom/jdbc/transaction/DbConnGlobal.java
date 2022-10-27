@@ -1,5 +1,6 @@
 package com.custom.jdbc.transaction;
 
+import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.Constants;
 import com.custom.jdbc.condition.BaseExecutorModel;
 import com.custom.jdbc.configuration.DbConnection;
@@ -74,11 +75,29 @@ public class DbConnGlobal {
                 table, DbConnection.getCurrMapData(getDataBaseKey(dbDataSource)));
     }
 
+    /**
+     * 添加全局数据源配置
+     * <br/>在多个数据源的情况下，需要指定dataSource中的order属性，并且order不能存在重复值
+     */
     public static void addDataSource(CustomConfigHelper configHelper) {
         DbDataSource dbDataSource = configHelper.getDbDataSource();
         String key = Constants.DATA_CONFIG + "-" + dbDataSource.getOrder();
+        String newDataSourceKey = getDataSourceKey(dbDataSource);
+
         // 添加全局数据源配置
-        GlobalDataHandler.addGlobalHelper(key, configHelper);
+        CustomConfigHelper configHelperCache = (CustomConfigHelper) GlobalDataHandler.addGlobalHelper(key, configHelper);
+        if (configHelperCache != null) {
+            DbDataSource dataSourceCache = configHelperCache.getDbDataSource();
+            String dataSourceCacheKey = getDataSourceKey(dataSourceCache);
+
+            // 在多个数据源的情况下，需要指定dataSource中的order属性，并且order不能存在重复值
+            if (dataSourceCacheKey.equals(newDataSourceKey)) {
+                throw new CustomCheckException("Duplicate 'order': (%d), " +
+                        "In the case of multiple data sources, you need to specify the order in the data source, " +
+                        "and the order cannot have duplicate values", dbDataSource.getOrder());
+            }
+
+        }
     }
 
     public static DbDataSource getDataSource(int order) {

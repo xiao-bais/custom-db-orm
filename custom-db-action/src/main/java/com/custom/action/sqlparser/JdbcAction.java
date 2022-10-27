@@ -39,8 +39,6 @@ public class JdbcAction extends AbstractSqlExecutor {
         // 创建sql执行器
         this.executorFactory = new JdbcExecutorFactory(dbDataSource, dbCustomStrategy);
         this.dbDataSource = dbDataSource;
-        CustomConfigHelper configHelper = new CustomConfigHelper(dbDataSource, dbCustomStrategy);
-        DbConnGlobal.addDataSource(configHelper);
         this.order = dbDataSource.getOrder();
     }
 

@@ -1,7 +1,15 @@
 package com.custom.action.executor;
 
-import com.custom.comm.utils.Asserts;
+import com.custom.comm.utils.JudgeUtil;
+import com.custom.jdbc.dbAdapetr.Mysql5Adapter;
+import com.custom.jdbc.dbAdapetr.Mysql8Adapter;
+import com.custom.jdbc.dbAdapetr.OracleAdapter;
+import com.custom.jdbc.interfaces.DatabaseAdapter;
+import com.custom.comm.enums.DatabaseType;
+import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.ConvertUtil;
+import com.custom.comm.utils.StrUtils;
+import com.custom.jdbc.CustomConfigHelper;
 import com.custom.jdbc.condition.BaseExecutorModel;
 import com.custom.jdbc.condition.SaveExecutorModel;
 import com.custom.jdbc.condition.SelectExecutorModel;
@@ -44,8 +52,63 @@ public class JdbcExecutorFactory {
 
     public JdbcExecutorFactory(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         this.dbDataSource = dbDataSource;
+
+        if (StrUtils.isBlank(dbDataSource.getDriver())) {
+
+            if (dbDataSource.getDatabaseType() == null) {
+
+                // 在没有填写驱动类的情况下，使用默认的驱动去尝试加载
+                try {
+                    Class.forName(DatabaseType.DEFAULT.getDriverClassName());
+                    dbDataSource.setDatabaseType(DatabaseType.DEFAULT);
+                } catch (ClassNotFoundException e) {
+                    throw new CustomCheckException("未指定连接的数据库驱动");
+                }
+            }
+
+            DatabaseType databaseType = dbDataSource.getDatabaseType();
+            dbDataSource.setDriver(databaseType.getDriverClassName());
+
+        } else {
+            if (dbDataSource.getDatabaseType() == null) {
+                DatabaseType databaseType = DatabaseType.findTypeByDriver(dbDataSource.getDriver());
+                dbDataSource.setDatabaseType(databaseType);
+            }
+        }
+
+        DatabaseAdapter databaseAdapter = getDatabaseAdapter();
+        dbDataSource.setDatabase(databaseAdapter.databaseName());
+        CustomConfigHelper configHelper = new CustomConfigHelper(dbDataSource, dbCustomStrategy, databaseAdapter);
         this.jdbcExecutor = new DefaultCustomJdbcExecutor(dbCustomStrategy);
+        DbConnGlobal.addDataSource(configHelper);
+
     }
+
+
+    private DatabaseAdapter getDatabaseAdapter() {
+        DatabaseType type = dbDataSource.getDatabaseType();
+        if (type == null) {
+            throw new NullPointerException();
+        }
+        DatabaseAdapter databaseAdapter;
+
+        switch (type) {
+
+            default:
+            case MYSQL8:
+                databaseAdapter = new Mysql8Adapter(dbDataSource);
+                break;
+
+            case MYSQL5:
+                databaseAdapter = new Mysql5Adapter(dbDataSource);
+                break;
+
+            case ORACLE:
+                databaseAdapter = new OracleAdapter(dbDataSource);
+        }
+        return databaseAdapter;
+    }
+
 
     /**
      * 查询数组

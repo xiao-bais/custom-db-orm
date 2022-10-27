@@ -2,6 +2,7 @@ package com.custom.jdbc;
 
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
+import com.custom.jdbc.interfaces.DatabaseAdapter;
 
 /**
  * @Author Xiao-Bai
@@ -14,9 +15,17 @@ public class CustomConfigHelper {
 
     private DbCustomStrategy dbCustomStrategy;
 
+    private DatabaseAdapter databaseAdapter;
+
     public CustomConfigHelper(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         this.dbDataSource = dbDataSource;
         this.dbCustomStrategy = dbCustomStrategy;
+    }
+
+    public CustomConfigHelper(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy, DatabaseAdapter databaseAdapter) {
+        this.dbDataSource = dbDataSource;
+        this.dbCustomStrategy = dbCustomStrategy;
+        this.databaseAdapter = databaseAdapter;
     }
 
     public DbDataSource getDbDataSource() {
@@ -33,5 +42,13 @@ public class CustomConfigHelper {
 
     public void setDbCustomStrategy(DbCustomStrategy dbCustomStrategy) {
         this.dbCustomStrategy = dbCustomStrategy;
+    }
+
+    public DatabaseAdapter getDatabaseAdapter() {
+        return databaseAdapter;
+    }
+
+    public void setDatabaseAdapter(DatabaseAdapter databaseAdapter) {
+        this.databaseAdapter = databaseAdapter;
     }
 }

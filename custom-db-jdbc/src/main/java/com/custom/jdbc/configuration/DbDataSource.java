@@ -1,5 +1,6 @@
 package com.custom.jdbc.configuration;
 
+import com.custom.comm.enums.DatabaseType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +33,11 @@ public class DbDataSource {
     * 指定数据库
     */
     private String database;
+
+    /**
+     * 数据库类型(该属性与 {@link #driver} 两者指定其一即可)
+     */
+    private DatabaseType databaseType;
 
     /**
      * 初始化配置
@@ -193,5 +199,13 @@ public class DbDataSource {
 
     public void setOrder(int order) {
         this.order = order;
+    }
+
+    public DatabaseType getDatabaseType() {
+        return databaseType;
+    }
+
+    public void setDatabaseType(DatabaseType databaseType) {
+        this.databaseType = databaseType;
     }
 }
