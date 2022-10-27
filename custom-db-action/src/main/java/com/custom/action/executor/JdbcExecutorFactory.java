@@ -78,6 +78,7 @@ public class JdbcExecutorFactory {
 
         DatabaseAdapter databaseAdapter = getDatabaseAdapter();
         dbDataSource.setDatabase(databaseAdapter.databaseName());
+
         CustomConfigHelper configHelper = new CustomConfigHelper(dbDataSource, dbCustomStrategy, databaseAdapter);
         this.jdbcExecutor = new DefaultCustomJdbcExecutor(dbCustomStrategy);
         DbConnGlobal.addDataSource(configHelper);

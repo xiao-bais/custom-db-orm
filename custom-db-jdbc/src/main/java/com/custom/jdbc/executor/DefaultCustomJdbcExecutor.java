@@ -131,7 +131,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
                 try {
                     T t = (T) resultSet.getObject(Constants.DEFAULT_ONE);
                     list.add(t);
-                }catch (ClassCastException e) {
+                } catch (ClassCastException e) {
                     if (!CustomUtil.isBasicClass(executorModel.getEntityClass())) {
                         throw new UnsupportedOperationException("This [" + executorModel.getEntityClass() + "] of query is not supported");
                     }
@@ -188,7 +188,6 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
         }
         return list;
     }
-
 
 
     @Override
@@ -262,28 +261,23 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
 
             // 返回的数组长度
             int rowsCount = sessionHelper.getRowsCount(resultSet);
-            int count = resultSet.getMetaData().getColumnCount();
-            if (count == 0) {
-                return null;
-            } else if (count > 1) {
-                ExThrowsUtil.toCustom("数组不支持返回多列结果");
-            }
-
             Object res = Array.newInstance(executorModel.getEntityClass(), rowsCount);
             int len = 0;
+
             while (resultSet.next()) {
                 T val = (T) resultSet.getObject(Constants.DEFAULT_ONE);
                 Array.set(res, len, val);
                 len++;
             }
-            return (T[])res;
+
+            return (T[]) res;
         } catch (Exception e) {
             SqlOutPrintBuilder
                     .build(executorModel.getPrepareSql(), executorModel.getSqlParams(), strategy.isSqlOutPrintExecute())
                     .sqlErrPrint();
             throw e;
         } finally {
-            sessionHelper.closeResources(statement, null);
+            sessionHelper.closeResources(statement, resultSet);
         }
     }
 
