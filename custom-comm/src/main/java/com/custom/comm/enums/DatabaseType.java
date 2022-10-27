@@ -13,7 +13,10 @@ public enum DatabaseType {
 
     MYSQL5("MYSQL", "MYSQL5.0+ 数据库", "com.mysql.jdbc.Driver"),
 
-    ORACLE("ORACLE", "ORACLE数据库", "oracle.jdbc.driver.OracleDriver")
+    ORACLE("ORACLE", "ORACLE数据库", "oracle.jdbc.driver.OracleDriver"),
+
+    SQL_SERVER("SQL_SERVER", "SQL_SERVER 数据库", "com.mircosoft.sqlserver.jdbc.SQLServerDriver")
+
 
     ;
 

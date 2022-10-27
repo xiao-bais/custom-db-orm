@@ -64,4 +64,15 @@ public class JdbcTestBuilder {
         return proxyExecutor.createProxy(entityClass);
     }
 
+    public DbDataSource getDbDataSource() {
+        return dbDataSource;
+    }
+
+    public DbDataSource getDbDataSource2() {
+        return dbDataSource2;
+    }
+
+    public DbCustomStrategy getDbCustomStrategy() {
+        return dbCustomStrategy;
+    }
 }

@@ -18,6 +18,12 @@ public class SelectMapExecutorModel<K, V> extends BaseExecutorModel {
         this.valueType = valueType;
     }
 
+    public SelectMapExecutorModel(String prepareSql, boolean sqlPrintSupport, Class<K> keyType, Class<V> valueType) {
+        super(prepareSql, sqlPrintSupport, new Object[]{});
+        this.keyType = keyType;
+        this.valueType = valueType;
+    }
+
     public Class<K> getKeyType() {
         return keyType;
     }

@@ -29,12 +29,12 @@ public interface CustomJdbcExecutor {
     <T> Set<T> selectSet(CustomSqlSession sqlSession) throws Exception;
 
     /**
-     * 查询单个字段的单个值
+     * 返回查询后的第一个字段，也就是说该方法只支持查询一个字段
      */
     <T> List<T> selectObjs(CustomSqlSession sqlSession) throws Exception;
 
     /**
-     * 查询单个字段的单个值
+     * 返回查询后的第一个字段，也就是说该方法只支持查询一个字段，并只返回该结果集的第一个值
      */
      Object selectObj(CustomSqlSession sqlSession) throws Exception;
 
@@ -83,7 +83,7 @@ public interface CustomJdbcExecutor {
      * </tr>
      * <br/> key即为<b>[c01]</b>, value为<b>[78.5]</b>
      */
-    <K, V> List<Map<K, V>> selectMaps(CustomSqlSession sqlSession) throws Exception;
+    <K, V> Map<K, V> selectMaps(CustomSqlSession sqlSession) throws Exception;
 
     /**
      * 查询数组(T类型不可以是基础类型，只能是基础类型对应的包装类)

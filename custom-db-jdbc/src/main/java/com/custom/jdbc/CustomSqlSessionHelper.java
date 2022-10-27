@@ -12,12 +12,12 @@ import java.util.Map;
  * @date 2022/10/23 19:08
  * @desc
  */
-public class CustomSqlSessionHandler {
+public class CustomSqlSessionHelper {
 
     private final DbCustomStrategy strategy;
     private final CustomSqlSession sqlSession;
 
-    public CustomSqlSessionHandler(DbCustomStrategy strategy, CustomSqlSession sqlSession) {
+    public CustomSqlSessionHelper(DbCustomStrategy strategy, CustomSqlSession sqlSession) {
         this.strategy = strategy;
         this.sqlSession = sqlSession;
     }
@@ -54,6 +54,16 @@ public class CustomSqlSessionHandler {
         return connection.prepareStatement(prepareSql, Statement.RETURN_GENERATED_KEYS);
     }
 
+
+    /**
+     * 获取结果集行数
+     */
+    public int getRowsCount(ResultSet resultSet) throws SQLException {
+        resultSet.last();
+        final int rowsCount = resultSet.getRow();
+        resultSet.beforeFirst();
+        return rowsCount;
+    }
 
 
     /**
@@ -93,15 +103,16 @@ public class CustomSqlSessionHandler {
     /**
      * 关闭资源
      */
-    public void closeResources(PreparedStatement statement, ResultSet resultSet) throws SQLException {
-        if (sqlSession.isAutoCommit()) {
-            sqlSession.closeResources();
-        }
+    public void closeResources(Statement statement, ResultSet resultSet) throws SQLException {
+
         if (resultSet != null) {
             resultSet.close();
         }
         if (statement != null) {
             statement.close();
+        }
+        if (sqlSession != null && sqlSession.isAutoCommit()) {
+            sqlSession.closeResources();
         }
     }
 
