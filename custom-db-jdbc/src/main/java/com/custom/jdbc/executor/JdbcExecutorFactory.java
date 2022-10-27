@@ -1,10 +1,5 @@
-package com.custom.action.executor;
+package com.custom.jdbc.executor;
 
-import com.custom.comm.utils.JudgeUtil;
-import com.custom.jdbc.dbAdapetr.Mysql5Adapter;
-import com.custom.jdbc.dbAdapetr.Mysql8Adapter;
-import com.custom.jdbc.dbAdapetr.OracleAdapter;
-import com.custom.jdbc.interfaces.DatabaseAdapter;
 import com.custom.comm.enums.DatabaseType;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.ConvertUtil;
@@ -15,8 +10,10 @@ import com.custom.jdbc.condition.SaveExecutorModel;
 import com.custom.jdbc.condition.SelectExecutorModel;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
-import com.custom.jdbc.executor.CustomJdbcExecutor;
-import com.custom.jdbc.executor.DefaultCustomJdbcExecutor;
+import com.custom.jdbc.dbAdapetr.Mysql5Adapter;
+import com.custom.jdbc.dbAdapetr.Mysql8Adapter;
+import com.custom.jdbc.dbAdapetr.OracleAdapter;
+import com.custom.jdbc.interfaces.DatabaseAdapter;
 import com.custom.jdbc.interfaces.SqlSessionExecutor;
 import com.custom.jdbc.session.CustomSqlSession;
 import com.custom.jdbc.transaction.DbConnGlobal;

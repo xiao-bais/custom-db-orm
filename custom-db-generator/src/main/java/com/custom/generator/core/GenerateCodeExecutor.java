@@ -1,7 +1,6 @@
 package com.custom.generator.core;
 
-import com.custom.action.dbaction.AbstractSqlExecutor;
-import com.custom.action.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.comm.date.DateTimeUtils;
 import com.custom.generator.config.GlobalConfig;
 import com.custom.generator.config.PackageConfig;
@@ -9,7 +8,6 @@ import com.custom.generator.config.TableConfig;
 import com.custom.generator.model.ColumnStructModel;
 import com.custom.generator.model.ServiceStructModel;
 import com.custom.generator.model.TableStructModel;
-import com.custom.action.sqlparser.JdbcAction;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.Constants;

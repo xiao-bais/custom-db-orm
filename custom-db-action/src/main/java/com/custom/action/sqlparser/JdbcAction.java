@@ -2,7 +2,7 @@ package com.custom.action.sqlparser;
 
 import com.custom.action.condition.*;
 import com.custom.action.dbaction.AbstractSqlExecutor;
-import com.custom.action.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.comm.annotations.check.CheckExecute;
 import com.custom.comm.enums.ExecuteMethod;
@@ -12,7 +12,6 @@ import com.custom.comm.page.DbPageRows;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
-import com.custom.jdbc.CustomConfigHelper;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.transaction.DbConnGlobal;
