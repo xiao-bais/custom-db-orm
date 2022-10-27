@@ -17,6 +17,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @Author Xiao-Bai
@@ -246,7 +247,8 @@ public class TableParseModel<T> implements Cloneable {
      */
     private void buildSelectModels() {
         // 解析@DbJoinTables注解
-        this.mergeDbJoinTables();
+        List<String> joinTables = this.mergeDbJoinTables();
+        this.joinTableParserModels.addAll(joinTables);
 
         for (Field field : fields) {
             if (this.isNotNeedParseProperty(field)) {
@@ -321,31 +323,65 @@ public class TableParseModel<T> implements Cloneable {
     /**
      * 向上查找@DbjoinTables注解
      */
-    private void mergeDbJoinTables() {
+    private List<String> mergeDbJoinTables() {
         Class<?> entityClass = this.entityClass;
+
         if (this.findUpDbJoinTables) {
+
+            // 创建一个二维list
+            // 一般按照正常思维，关联的表SQL都是从父类开始进行拼接
+            // 然后开始拼接子类的关联，拼接完成后，则继续拼接子类的子类关联表，一层层地循环下去
+            List<List<String>> joinTwoList = new ArrayList<>();
+            List<String> joinResult = new ArrayList<>();
+
             while (!entityClass.equals(Object.class)) {
-                buildDbJoinTables(entityClass);
+                List<String> currClassJoinList = this.buildDbJoinTables(entityClass);
+                joinTwoList.add(currClassJoinList);
                 entityClass = entityClass.getSuperclass();
             }
-            return;
+
+            for (int i = joinTwoList.size() - 1; i >= 0; i--) {
+
+                List<String> currJoins = joinTwoList.get(i);
+                if (currJoins.isEmpty()) {
+                    continue;
+                }
+
+                // 各层级子类的关联表SQL
+                for (String join : currJoins) {
+                    // 去除首尾空格
+                    String joinSql = join.trim();
+                    if (!joinResult.contains(joinSql)) {
+                        joinResult.add(joinSql);
+                    }
+                }
+            }
+
+            return joinResult;
         }
-        this.buildDbJoinTables(entityClass);
+        return this.buildDbJoinTables(entityClass);
     }
 
     /**
      * 解析@DbJoinTable(s)
      */
-    private void buildDbJoinTables(Class<?> entityClass) {
+    private List<String> buildDbJoinTables(Class<?> entityClass) {
+
+        List<String> joinList = new ArrayList<>();
         DbJoinTables joinTables = entityClass.getAnnotation(DbJoinTables.class);
+
         if (Objects.nonNull(joinTables)) {
-            Arrays.stream(joinTables.value()).map(DbJoinTable::value).forEach(this.joinTableParserModels::add);
+            Arrays.stream(joinTables.value()).map(DbJoinTable::value).forEach(joinList::add);
         }
 
         DbJoinTable joinTable = entityClass.getAnnotation(DbJoinTable.class);
-        if(Objects.nonNull(joinTable)) {
-            this.joinTableParserModels.add(joinTable.value());
+        if (Objects.nonNull(joinTable)) {
+            String joinSql = joinTable.value();
+            if (!joinList.contains(joinSql)) {
+                joinList.add(joinTable.value());
+            }
         }
+        return joinList;
     }
 
 
@@ -468,7 +504,6 @@ public class TableParseModel<T> implements Cloneable {
         }
         return builder;
     }
-
 
 
     /**

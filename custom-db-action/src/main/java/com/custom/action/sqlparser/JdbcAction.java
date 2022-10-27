@@ -12,6 +12,7 @@ import com.custom.comm.annotations.check.CheckExecute;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.page.DbPageRows;
+import com.custom.jdbc.CustomConfigHelper;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.transaction.DbConnGlobal;
@@ -38,6 +39,8 @@ public class JdbcAction extends AbstractSqlExecutor {
         // 创建sql执行器
         this.executorFactory = new JdbcExecutorFactory(dbDataSource, dbCustomStrategy);
         this.dbDataSource = dbDataSource;
+        CustomConfigHelper configHelper = new CustomConfigHelper(dbDataSource, dbCustomStrategy);
+        DbConnGlobal.addDataSource(configHelper);
         this.order = dbDataSource.getOrder();
     }
 
@@ -508,12 +511,16 @@ public class JdbcAction extends AbstractSqlExecutor {
     }
 
     @Override
-    public void dropTables(Class<?>... arr) throws Exception {
+    public void dropTables(Class<?>... arr) {
         for (int i = arr.length - 1; i >= 0; i--) {
             TableParseModel<?> tableSqlBuilder = TableInfoCache.getTableModel(arr[i]);
             String dropTableSql = tableSqlBuilder.dropTableSql();
-            executorFactory.execTable(dropTableSql);
-            logger.warn("drop table '{}' completed\n", tableSqlBuilder.getTable());
+            try {
+                executorFactory.execTable(dropTableSql);
+                logger.warn("drop table '{}' completed\n", tableSqlBuilder.getTable());
+            }catch (Exception e) {
+                this.throwsException(e);
+            }
         }
     }
 

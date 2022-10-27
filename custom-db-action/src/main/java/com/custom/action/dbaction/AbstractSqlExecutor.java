@@ -71,7 +71,7 @@ public abstract class AbstractSqlExecutor  {
     public abstract <T> int save(T entity);
     public abstract int executeSql(String sql, Object... params);
     public abstract void createTables(Class<?>... arr);
-    public abstract void dropTables(Class<?>... arr) throws Exception;
+    public abstract void dropTables(Class<?>... arr);
     public abstract DbDataSource getDbDataSource();
 
     /**

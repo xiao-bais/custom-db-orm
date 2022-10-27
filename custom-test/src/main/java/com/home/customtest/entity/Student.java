@@ -25,6 +25,7 @@ import java.util.Map;
 @Data
 @DbTable(table = "student", desc = "学生信息表")
 @TableName("student")
+@DbJoinTable("left join province pv on pv.id = a.pro_id")
 public class Student extends ActiveModel<Student, Integer> {
 
     private Boolean sex;
@@ -78,6 +79,9 @@ public class Student extends ActiveModel<Student, Integer> {
 
     @DbIgnore
     private List<Street> modelList;
+
+    @DbMapper("pv.name")
+    private String provinceName;
 
 
 

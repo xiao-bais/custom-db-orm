@@ -3,7 +3,9 @@ package com.custom.action.sqlparser;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.interfaces.FullSqlConditionExecutor;
+import com.custom.action.interfaces.SqlBuilder;
 import com.custom.action.util.DbUtil;
+import com.custom.comm.enums.SqlExecTemplate;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.StrUtils;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 /**
  * @Author Xiao-Bai
@@ -26,8 +29,8 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final StringBuilder selectSql;
-    private final StringBuilder selectJoinSql;
+    private SqlBuilder selectSqlBuilder = null;
+    private SqlBuilder selectJoinSqlBuilder = null;
     private final StringBuilder joinTableSql;
     private boolean primaryTable = false;
     private final List<DbRelationParserModel<T>> relatedParserModels;
@@ -37,8 +40,6 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
     public HandleSelectSqlBuilder(Class<T> entityClass, int order) {
         TableParseModel<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
-        this.selectSql = new StringBuilder();
-        this.selectJoinSql = new StringBuilder();
         this.joinTableSql = new StringBuilder();
         this.relatedParserModels = tableSqlBuilder.getRelatedParserModels();
         this.joinDbMappers = tableSqlBuilder.getJoinDbMappers();
@@ -55,34 +56,37 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
     @Override
     public String createTargetSql() {
         try {
-            return this.buildSelect(!this.primaryTable).toString();
+            return this.build(!this.primaryTable)
+                    .create(SqlExecTemplate.SELECT_LIST)
+                    .toString();
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            logger.error(e.toString(), e);
             return Constants.EMPTY;
         }
     }
 
     /**
      * 获取查询sql（主动指定是否需要拼接表连接的sql）
+     * @param isRelated 是否需要关联的sql
      */
-    protected StringBuilder buildSelect(boolean isRelated) {
-        try {
-            if (StrUtils.isBlank(selectJoinSql)) {
-                this.createSelectRelationSql();
-            }
-            if (StrUtils.isBlank(selectSql)) {
-                this.createSelectBaseTableSql();
-            }
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+    protected SqlBuilder build(boolean isRelated) {
+
+        // 关联表的查询SQL
+        if (JudgeUtil.isEmpty(selectJoinSqlBuilder)) {
+            this.selectJoinSqlBuilder = this.createSelectRelationSql();
         }
-        return isRelated ? this.selectJoinSql : this.selectSql;
+
+        // 不关联的查询SQL
+        if (JudgeUtil.isEmpty(selectSqlBuilder)) {
+            this.selectSqlBuilder = this.createSelectBaseTableSql();
+        }
+        return isRelated ? this.selectJoinSqlBuilder : this.selectSqlBuilder;
     }
 
     /**
      * 生成表查询sql语句
      */
-    private void createSelectBaseTableSql() {
+    private SqlBuilder createSelectBaseTableSql() {
         StringJoiner baseFieldSql = new StringJoiner(Constants.SEPARATOR_COMMA_2);
 
         DbKeyParserModel<T> keyParserModel = getKeyParserModel();
@@ -96,17 +100,16 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
         if (!fieldParserModels.isEmpty()) {
             fieldParserModels.stream().map(DbFieldParserModel::getSelectFieldSql).forEach(baseFieldSql::add);
         }
-
-        // 第三步 拼接主表
-        selectSql.append(String.format(DbUtil.SELECT_TEMPLATE, baseFieldSql, getTable(), getAlias()));
+        return template -> SqlExecTemplate.format(template, baseFieldSql, getTable(), getAlias());
     }
+
 
     /**
      * 关联的sql分为两部分
      * <br/>一是 @DbJoinTables注解，二是@DbRelated注解
      * <br/>默认按注解放置顺序载入，优先加载DbJoinTables注解(顺带优先@DbMap的查询字段)
      */
-    private void createSelectRelationSql() {
+    private SqlBuilder createSelectRelationSql() {
 
         StringJoiner baseFieldSql = new StringJoiner(Constants.SEPARATOR_COMMA_2);
 
@@ -130,43 +133,61 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
             relatedParserModels.stream().map(DbRelationParserModel::getSelectFieldSql).forEach(baseFieldSql::add);
         }
 
-        // 第四步 拼接主表
-        selectJoinSql.append(String.format(DbUtil.SELECT_TEMPLATE, baseFieldSql, getTable(), getAlias()));
+        this.createJoinTableSql();
 
-        if (StrUtils.isBlank(joinTableSql)) {
-            // 第五步 拼接以joinTables方式的关联条件
-            if (!joinTableParserModels.isEmpty()) {
-                joinTableParserModels.stream().map(model -> String.format("\n %s", model)).forEach(joinTableSql::append);
-            }
+        return template -> SqlExecTemplate.format(template, baseFieldSql, getTable(), getAlias())
+                .append(joinTableSql);
+    }
 
-            // 第六步 拼接以related方式的关联条件
-            if (!relatedParserModels.isEmpty()) {
-                joinTableSql.append(getRelatedTableSql(relatedParserModels));
-            }
+    /**
+     * 创建关联表SQl(joinTable方式)
+     * @see com.custom.comm.annotations.DbJoinTable
+     * @see com.custom.comm.annotations.DbJoinTables
+     *
+     */
+    private void createJoinTableSql() {
+        if (StrUtils.isNotBlank(joinTableSql)) {
+            return;
         }
-        selectJoinSql.append(joinTableSql);
+        // 第四步 拼接以joinTables方式的关联条件
+        if (!joinTableParserModels.isEmpty()) {
+            joinTableParserModels.stream().map(model -> "\n " + model).forEach(joinTableSql::append);
+        }
+
+        // 第五步 拼接以related方式的关联条件
+        if (!relatedParserModels.isEmpty()) {
+            joinTableSql.append(getRelatedTableSql(relatedParserModels));
+        }
     }
 
     /**
      * 拼接related的表关联
      */
     private String getRelatedTableSql(List<DbRelationParserModel<T>> relatedParserModels) {
-        StringBuilder joinTableSql = new StringBuilder();
         List<String> conditions = new ArrayList<>();
+        List<SqlBuilder> joinSqlBuildList = new ArrayList<>();
+
         for (DbRelationParserModel<T> model : relatedParserModels) {
-            String condition = String.format("%s@%s@%s", model.getJoinTable(), model.getJoinAlias(), model.getCondition());
+
+            // (关联表+关联表别名+关联条件) 作为唯一标识
+            String condition = String.format("%s@%s@%s",
+                    model.getJoinTable(), model.getJoinAlias(), model.getCondition());
+
             if (!conditions.contains(condition)) {
-                joinTableSql.append("\n").append(String.format("%s %s %s on %s", model.getJoinStyle().getStyle(), model.getJoinTable(), model.getJoinAlias(), model.getCondition()));
+                joinSqlBuildList.add((template) -> SqlExecTemplate.format(template,
+                        model.getJoinStyle().getStyle(), model.getJoinTable(), model.getJoinAlias(), model.getCondition())
+                );
                 conditions.add(condition);
             }
         }
-        return joinTableSql.toString();
+        return joinSqlBuildList.stream().map(op -> op.create(SqlExecTemplate.JOIN_TABLE))
+                .collect(Collectors.joining());
     }
 
     /**
      * 自定义查询表列名
      */
-    public String selectColumns(String[] columns) {
+    public SqlBuilder selectColumns(String[] columns) {
         StringJoiner columnStr = new StringJoiner(Constants.SEPARATOR_COMMA_2);
         for (String x : columns) {
             String column = GlobalDataHandler.hasSqlKeyword(x) ? String.format("`%s`", x) : x;
@@ -176,7 +197,10 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
             String field = getColumnMapper().get(column);
             columnStr.add(Objects.isNull(field) ? column : DbUtil.sqlSelectWrapper(column, field));
         }
-        return String.format(DbUtil.SELECT_TEMPLATE, columnStr, getTable(), getAlias()) + joinTableSql;
+
+        this.createJoinTableSql();
+        return template -> SqlExecTemplate.format(template, columnStr, getTable(), getAlias())
+                .append(joinTableSql);
     }
 
     public boolean isExistNeedInjectResult() {
@@ -188,10 +212,13 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
      * 整合条件，获取最终可执行的sql
      */
     protected String selectExecuteSqlBuilder(ConditionWrapper<T> wrapper) throws Exception {
+
         this.primaryTable = wrapper.getPrimaryTable();
         StringBuilder selectSql = new StringBuilder();
+
         if (wrapper.getSelectColumns() != null) {
-            selectSql.append(this.selectColumns(wrapper.getSelectColumns()));
+            SqlBuilder sqlBuilder = this.selectColumns(wrapper.getSelectColumns());
+            selectSql.append(sqlBuilder.create(SqlExecTemplate.SELECT_LIST));
         } else {
             selectSql.append(this.createTargetSql());
         }

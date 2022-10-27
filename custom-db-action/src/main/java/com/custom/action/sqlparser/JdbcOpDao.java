@@ -283,7 +283,7 @@ public class JdbcOpDao {
     /**
      * 删除表
      */
-    public final void dropTables(Class<?>... arr) {
+    public final void dropTables(Class<?>... arr) throws Exception {
         jdbcAction.dropTables(arr);
     }
 

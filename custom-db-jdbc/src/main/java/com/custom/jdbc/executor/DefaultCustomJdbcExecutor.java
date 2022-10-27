@@ -114,8 +114,8 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
 
         SelectExecutorModel<T> executorModel = (SelectExecutorModel<T>) sqlSession.getExecutorModel();
         CustomSqlSessionHandler sessionHandler = new CustomSqlSessionHandler(strategy, sqlSession);
-        List<T> list = new ArrayList<>();
 
+        List<T> list = new ArrayList<>();
         PreparedStatement statement = null;
         ResultSet resultSet = null;
         try {
@@ -126,13 +126,15 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
             resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
-                T t;
-                if (CustomUtil.isBasicClass(executorModel.getEntityClass())) {
-                    t = (T) resultSet.getObject(Constants.DEFAULT_ONE);
-                } else {
-                    throw new UnsupportedOperationException("This [" + executorModel.getEntityClass() + "] of query is not supported");
+                try {
+                    T t = (T) resultSet.getObject(Constants.DEFAULT_ONE);
+                    list.add(t);
+                }catch (ClassCastException e) {
+                    if (!CustomUtil.isBasicClass(executorModel.getEntityClass())) {
+                        throw new UnsupportedOperationException("This [" + executorModel.getEntityClass() + "] of query is not supported");
+                    }
+                    throw e;
                 }
-                list.add(t);
             }
         } catch (SQLException e) {
             SqlOutPrintBuilder
@@ -384,7 +386,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
         if (result.size() == 0) {
             return null;
         }
-        Asserts.illegal(result.size() > 1,
+        Asserts.unSupportOp(result.size() > 1,
                 String.format("只查一条，但查询到%s条结果", result.size()));
         return result.get(0);
     }

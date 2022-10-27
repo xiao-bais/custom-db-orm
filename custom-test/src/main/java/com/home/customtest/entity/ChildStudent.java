@@ -13,9 +13,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @ToString(callSuper = true)
-@DbJoinTables(
-        @DbJoinTable("left join location lo on lo.id = a.area_id")
-)
+@DbJoinTable("left join location lo on lo.id = a.area_id")
 public class ChildStudent extends Student {
 
 
