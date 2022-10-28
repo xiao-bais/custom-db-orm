@@ -7,14 +7,14 @@ package com.custom.comm.utils;
  **/
 public class Constants {
 
-    public final static int DEFAULT_ZERO = 0;//默认0
-    public final static int DEFAULT_ONE = 1;//默认1
+    public final static int DEFAULT_ZERO = 0;
+    public final static int DEFAULT_ONE = 1;
 
-    public final static String SEPARATOR_COMMA_1 = ",";//逗号
-    public final static String SEPARATOR_COMMA_2 = ", ";//逗号(加空格)
+    public final static String SEPARATOR_COMMA_1 = ",";
+    public final static String SEPARATOR_COMMA_2 = ", ";
 
-    public final static String BRACKETS_LEFT = "(";//左括号
-    public final static String BRACKETS_RIGHT = ")";//右括号
+    public final static String BRACKETS_LEFT = "(";
+    public final static String BRACKETS_RIGHT = ")";
 
     // getter/setter
     public final static String GETTER = "get";
@@ -41,20 +41,20 @@ public class Constants {
     public final static String UPDATE = "UPDATE ";
     public final static String WHERE = "\nWHERE ";
     public final static String GROUP_BY = "\nGROUP BY ";
-    public final static String HAVING = "\nhaving ";
+    public final static String HAVING = "\nHAVING ";
     public final static String ORDER_BY = "\nORDER BY ";
 
     /**
      * 符号
      */
-    public final static char UNDERLINE = '_'; //下划线
-    public final static char CENTER_LINE = '-'; //中划线
-    public final static String EMPTY = "";//空字符串
-    public final static String WHITESPACE = " ";//空格
-    public final static String EMPTY_SQL_STR = "''";//空sql字符串
-    public final static String EQUALS = " = ";//等于
-    public final static String QUEST = "?";//占位符
-    public final static String PERCENT = "%";//百分号
+    public final static char UNDERLINE = '_';
+    public final static char CENTER_LINE = '-';
+    public final static String EMPTY = "";
+    public final static String WHITESPACE = " ";
+    public final static String EMPTY_SQL_STR = "''";
+    public final static String EQUALS = " = ";
+    public final static String QUEST = "?";
+    public final static String PERCENT = "%";
 
     /**
      * java关键字

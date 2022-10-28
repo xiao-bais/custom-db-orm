@@ -40,6 +40,12 @@ public class Mysql8Adapter implements DatabaseAdapter {
         return null;
     }
 
+    @Override
+    public String pageHandle(String originSql, long pageIndex, long pageSize) {
+        return originSql + " LIMIT " + Constants.QUEST + Constants.SEPARATOR_COMMA_2 + Constants.QUEST;
+
+    }
+
     public Mysql8Adapter(DbDataSource dbDataSource) {
         this.dbDataSource = dbDataSource;
     }

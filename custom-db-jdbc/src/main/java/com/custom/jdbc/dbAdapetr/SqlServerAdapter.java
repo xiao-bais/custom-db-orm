@@ -34,6 +34,11 @@ public class SqlServerAdapter implements DatabaseAdapter {
         return null;
     }
 
+    @Override
+    public String pageHandle(String originSql, long pageIndex, long pageSize) {
+        return originSql;
+    }
+
     public SqlServerAdapter(DbDataSource dbDataSource) {
         this.dbDataSource = dbDataSource;
     }

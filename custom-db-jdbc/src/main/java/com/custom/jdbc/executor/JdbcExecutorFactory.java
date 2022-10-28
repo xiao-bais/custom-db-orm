@@ -4,10 +4,10 @@ import com.custom.comm.enums.DatabaseType;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.ConvertUtil;
 import com.custom.comm.utils.StrUtils;
-import com.custom.jdbc.configuration.CustomConfigHelper;
 import com.custom.jdbc.condition.BaseExecutorModel;
 import com.custom.jdbc.condition.SaveExecutorModel;
 import com.custom.jdbc.condition.SelectExecutorModel;
+import com.custom.jdbc.configuration.CustomConfigHelper;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.dbAdapetr.Mysql5Adapter;
@@ -39,6 +39,7 @@ public class JdbcExecutorFactory {
     private final CustomJdbcExecutor jdbcExecutor;
     private final DbDataSource dbDataSource;
     private final DbCustomStrategy dbCustomStrategy;
+    private DatabaseAdapter databaseAdapter;
 
     public DbDataSource getDbDataSource() {
         return dbDataSource;
@@ -61,6 +62,7 @@ public class JdbcExecutorFactory {
     public JdbcExecutorFactory(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         this.dbDataSource = dbDataSource;
         this.dbCustomStrategy = dbCustomStrategy;
+        this.jdbcExecutor = new DefaultCustomJdbcExecutor(dbCustomStrategy);
 
         if (StrUtils.isBlank(dbDataSource.getDriver())) {
             if (dbDataSource.getDatabaseType() == null) {
@@ -84,42 +86,42 @@ public class JdbcExecutorFactory {
             }
         }
 
-        DatabaseAdapter databaseAdapter = getDatabaseAdapter();
+        this.createCurrentDbAdapter();
         dbDataSource.setDatabase(databaseAdapter.databaseName());
 
         CustomConfigHelper configHelper = new CustomConfigHelper(dbDataSource, dbCustomStrategy, databaseAdapter);
-        this.jdbcExecutor = new DefaultCustomJdbcExecutor(dbCustomStrategy);
         DbConnGlobal.addDataSource(configHelper);
 
     }
 
 
-    private DatabaseAdapter getDatabaseAdapter() {
+    /**
+     * 创建当前数据库的适配对象
+     */
+    private void createCurrentDbAdapter() {
         DatabaseType type = dbDataSource.getDatabaseType();
         if (type == null) {
             throw new NullPointerException();
         }
-        DatabaseAdapter databaseAdapter;
 
         switch (type) {
 
             default:
             case MYSQL8:
-                databaseAdapter = new Mysql8Adapter(dbDataSource);
+                this.databaseAdapter = new Mysql8Adapter(dbDataSource);
                 break;
 
             case MYSQL5:
-                databaseAdapter = new Mysql5Adapter(dbDataSource);
+                this.databaseAdapter = new Mysql5Adapter(dbDataSource);
                 break;
 
             case ORACLE:
-                databaseAdapter = new OracleAdapter(dbDataSource);
+                this.databaseAdapter = new OracleAdapter(dbDataSource);
                 break;
 
             case SQL_SERVER:
-                databaseAdapter = new SqlServerAdapter(dbDataSource);
+                this.databaseAdapter = new SqlServerAdapter(dbDataSource);
         }
-        return databaseAdapter;
     }
 
 

@@ -1,7 +1,6 @@
 package com.custom.jdbc.dbAdapetr;
 
 import com.custom.comm.enums.DatabaseType;
-import com.custom.comm.utils.Constants;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.interfaces.DatabaseAdapter;
 
@@ -33,6 +32,11 @@ public class OracleAdapter implements DatabaseAdapter {
     @Override
     public String hostName() {
         return null;
+    }
+
+    @Override
+    public String pageHandle(String originSql, long pageIndex, long pageSize) {
+        return originSql;
     }
 
     public OracleAdapter(DbDataSource dbDataSource) {
