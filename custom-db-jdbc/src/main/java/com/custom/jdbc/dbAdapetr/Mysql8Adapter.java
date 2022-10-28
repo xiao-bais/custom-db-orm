@@ -35,6 +35,11 @@ public class Mysql8Adapter implements DatabaseAdapter {
         return DatabaseType.MYSQL8;
     }
 
+    @Override
+    public String hostName() {
+        return null;
+    }
+
     public Mysql8Adapter(DbDataSource dbDataSource) {
         this.dbDataSource = dbDataSource;
     }

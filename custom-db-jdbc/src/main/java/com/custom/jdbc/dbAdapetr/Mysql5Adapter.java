@@ -37,6 +37,11 @@ public class Mysql5Adapter implements DatabaseAdapter {
         return DatabaseType.MYSQL5;
     }
 
+    @Override
+    public String hostName() {
+        return null;
+    }
+
     public Mysql5Adapter(DbDataSource dbDataSource) {
         this.dbDataSource = dbDataSource;
     }

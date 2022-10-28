@@ -52,7 +52,7 @@ public class CustomSqlSessionHelper {
         Connection connection = sqlSession.getConnection();
         BaseExecutorModel executorModel = sqlSession.getExecutorModel();
         String prepareSql = executorModel.getPrepareSql();
-        return connection.prepareStatement(prepareSql, Statement.RETURN_GENERATED_KEYS);
+        return connection.prepareStatement(prepareSql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
     }
 
 

@@ -13,6 +13,7 @@ import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.dbAdapetr.Mysql5Adapter;
 import com.custom.jdbc.dbAdapetr.Mysql8Adapter;
 import com.custom.jdbc.dbAdapetr.OracleAdapter;
+import com.custom.jdbc.dbAdapetr.SqlServerAdapter;
 import com.custom.jdbc.interfaces.DatabaseAdapter;
 import com.custom.jdbc.interfaces.SqlSessionExecutor;
 import com.custom.jdbc.session.CustomSqlSession;
@@ -62,7 +63,6 @@ public class JdbcExecutorFactory {
         this.dbCustomStrategy = dbCustomStrategy;
 
         if (StrUtils.isBlank(dbDataSource.getDriver())) {
-
             if (dbDataSource.getDatabaseType() == null) {
 
                 // 在没有填写驱动类的情况下，使用默认的驱动去尝试加载
@@ -114,6 +114,10 @@ public class JdbcExecutorFactory {
 
             case ORACLE:
                 databaseAdapter = new OracleAdapter(dbDataSource);
+                break;
+
+            case SQL_SERVER:
+                databaseAdapter = new SqlServerAdapter(dbDataSource);
         }
         return databaseAdapter;
     }

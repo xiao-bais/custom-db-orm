@@ -1,33 +1,32 @@
 package com.custom.jdbc.dbAdapetr;
 
 import com.custom.comm.enums.DatabaseType;
-import com.custom.comm.utils.Constants;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.interfaces.DatabaseAdapter;
 
 /**
  * @author Xiao-Bai
- * @date 2022/10/27 18:52
- * @desc
+ * @date 2022/10/28 0028 17:50
  */
-public class OracleAdapter implements DatabaseAdapter {
+public class SqlServerAdapter implements DatabaseAdapter {
 
     private final DbDataSource dbDataSource;
 
     @Override
     public String databaseName() {
         String url = dbDataSource.getUrl();
-        return url.substring(url.lastIndexOf(":"));
+        String key = "DatabaseName";
+        return url.substring(url.lastIndexOf(key) + key.length() + 1);
     }
 
     @Override
     public String driverClassName() {
-        return DatabaseType.ORACLE.getDriverClassName();
+        return DatabaseType.SQL_SERVER.getDriverClassName();
     }
 
     @Override
     public DatabaseType getType() {
-        return DatabaseType.ORACLE;
+        return DatabaseType.SQL_SERVER;
     }
 
     @Override
@@ -35,7 +34,7 @@ public class OracleAdapter implements DatabaseAdapter {
         return null;
     }
 
-    public OracleAdapter(DbDataSource dbDataSource) {
+    public SqlServerAdapter(DbDataSource dbDataSource) {
         this.dbDataSource = dbDataSource;
     }
 }

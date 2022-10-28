@@ -25,6 +25,11 @@ public interface DatabaseAdapter {
      * 获取数据库类型枚举
      */
     DatabaseType getType();
+    
+    /**
+     * 主机地址
+     */
+    String hostName();
 
 
 
