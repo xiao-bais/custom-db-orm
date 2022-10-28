@@ -46,6 +46,16 @@ public class Mysql8Adapter implements DatabaseAdapter {
 
     }
 
+    @Override
+    public boolean existTable(String table) {
+        return false;
+    }
+
+    @Override
+    public boolean existColumn(String table, String column) {
+        return false;
+    }
+
     public Mysql8Adapter(DbDataSource dbDataSource) {
         this.dbDataSource = dbDataSource;
     }

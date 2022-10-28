@@ -43,6 +43,21 @@ public interface DatabaseAdapter {
     String pageHandle(String originSql, long pageIndex, long pageSize);
 
 
+    /**
+     * 数据库是否存在该表
+     * @param table 表名
+     */
+    boolean existTable(String table);
+
+
+    /**
+     * 表中是否存在该字段
+     * @param table 表名称
+     * @param column 查询的表字段
+     */
+    boolean existColumn(String table, String column);
+
+
 
 
 }

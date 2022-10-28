@@ -4,14 +4,11 @@ import com.custom.action.sqlparser.DbFieldParserModel;
 import com.custom.action.sqlparser.DbKeyParserModel;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableParseModel;
-import com.custom.comm.utils.*;
 import com.custom.comm.annotations.DbTable;
-import com.custom.jdbc.condition.SelectExecutorModel;
+import com.custom.comm.utils.*;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
-import com.custom.jdbc.select.CustomSelectJdbcBasic;
 import com.custom.jdbc.transaction.DbConnGlobal;
-import com.custom.jdbc.update.CustomUpdateJdbcBasic;
 import com.custom.springboot.scanner.PackageScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,7 +81,7 @@ public class TableStructsInitializer {
                 createNewColumnSql.add(x);
                 logger.info("Added new column as '{}'\n", x);
             });
-            updateJdbc.execTableInfo(createNewColumnSql.toString());
+            executorFactory.execTable(createNewColumnSql.toString());
         }
 
         if (!waitCreateMapper.isEmpty()) {
@@ -94,7 +91,7 @@ public class TableStructsInitializer {
                 createNewTableSql.add(createTableSql);
                 logger.info("\nCreated new table for '{}' as ===================>\n\n{}\n", table, createTableSql);
             });
-            updateJdbc.execTableInfo(createNewTableSql.toString());
+            executorFactory.execTable(createNewTableSql.toString());
         }
     }
 
@@ -111,7 +108,7 @@ public class TableStructsInitializer {
             String exitsTableSql = DbConnGlobal.exitsTableSql(sqlBuilder.getTable(), dbDataSource);
             String table = waitUpdateSqlBuilder.getTable();
             // 若表已存在，则进行下一步判断表字段是否存在
-            Object exists = selectJdbc.selectObj(new SelectExecutorModel<>(Object.class, exitsTableSql, false));
+            Object exists = executorFactory.selectObjBySql(false, exitsTableSql);
             if (ConvertUtil.conBool(exists)) {
                 buildColumnInfo(waitUpdateSqlBuilder, table);
                 continue;
@@ -168,8 +165,7 @@ public class TableStructsInitializer {
     private void buildColumnInfo(TableParseModel<?> sqlBuilder, String table) throws Exception {
         String selectColumnSql = String.format(SELECT_COLUMN_SQL,
                 sqlBuilder.getTable(), dataBaseName);
-        SelectExecutorModel<String> sqlParamInfo = new SelectExecutorModel<>(String.class, selectColumnSql, false);
-        List<String> columnList = selectJdbc.selectList(sqlParamInfo);
+        List<String> columnList = executorFactory.selectObjsBySql(String.class,false, selectColumnSql);
         List<String> truthColumnList = sqlBuilder.getFieldParserModels().stream()
                 .filter(DbFieldParserModel::isExistsDbField)
                 .map(DbFieldParserModel::getColumn)

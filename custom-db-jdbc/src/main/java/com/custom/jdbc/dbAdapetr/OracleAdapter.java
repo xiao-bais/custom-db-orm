@@ -39,6 +39,16 @@ public class OracleAdapter implements DatabaseAdapter {
         return originSql;
     }
 
+    @Override
+    public boolean existTable(String table) {
+        return false;
+    }
+
+    @Override
+    public boolean existColumn(String table, String column) {
+        return false;
+    }
+
     public OracleAdapter(DbDataSource dbDataSource) {
         this.dbDataSource = dbDataSource;
     }

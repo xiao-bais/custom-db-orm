@@ -1,12 +1,14 @@
 package com.custom.jdbc.transaction;
 
 import com.custom.comm.exceptions.CustomCheckException;
+import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.Constants;
 import com.custom.jdbc.condition.BaseExecutorModel;
 import com.custom.jdbc.configuration.DbConnection;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.configuration.CustomConfigHelper;
 import com.custom.jdbc.configuration.GlobalDataHandler;
+import com.custom.jdbc.interfaces.DatabaseAdapter;
 import com.custom.jdbc.session.CustomSqlSession;
 
 import java.sql.Connection;
@@ -58,10 +60,6 @@ public class DbConnGlobal {
                 "@" + getConnKey(dbDataSource);
     }
 
-    public static String getDataConfigKey(DbDataSource dbDataSource) {
-        return Constants.DATA_CONFIG +
-                "@" + getConnKey(dbDataSource);
-    }
 
     /**
      * 表是否存在
@@ -70,9 +68,17 @@ public class DbConnGlobal {
         if (table.contains(Constants.POINT)) {
             table = table.substring(table.lastIndexOf(Constants.POINT));
         }
+
+        String key = Constants.DATA_CONFIG + "-" + dbDataSource.getOrder();
+        CustomConfigHelper configHelper = (CustomConfigHelper) GlobalDataHandler.readGlobalObject(key);
+
+        Asserts.notNull(configHelper, "未找到当前数据源相关信息");
+        DatabaseAdapter databaseAdapter = configHelper.getDatabaseAdapter();
+
+
         return String.format("SELECT COUNT(1) COUNT ROM " +
                         "`information_schema`.`TABLES` WHERE TABLE_NAME = '%s' AND TABLE_SCHEMA = '%s';",
-                table, DbConnection.getCurrMapData(getDataBaseKey(dbDataSource)));
+                table, databaseAdapter.databaseName());
     }
 
     /**
@@ -86,6 +92,7 @@ public class DbConnGlobal {
 
         // 添加全局数据源配置
         CustomConfigHelper configHelperCache = (CustomConfigHelper) GlobalDataHandler.addGlobalHelper(key, configHelper);
+
         if (configHelperCache != null) {
             DbDataSource dataSourceCache = configHelperCache.getDbDataSource();
             String dataSourceCacheKey = getDataSourceKey(dataSourceCache);
@@ -94,7 +101,9 @@ public class DbConnGlobal {
             if (dataSourceCacheKey.equals(newDataSourceKey)) {
                 throw new CustomCheckException("Duplicate 'order': (%d), " +
                         "In the case of multiple data sources, you need to specify the order in the data source, " +
-                        "and the order cannot have duplicate values", dbDataSource.getOrder());
+                        "and the order cannot have duplicate values",
+                        dbDataSource.getOrder()
+                );
             }
 
         }

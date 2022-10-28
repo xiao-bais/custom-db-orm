@@ -26,9 +26,9 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/6/16 13:18
- * @Desc jdbc条件封装执行
+ * @author Xiao-Bai
+ * @date 2022/6/16 13:18
+ * jdbc条件封装执行
  */
 public class JdbcExecutorFactory {
 
@@ -47,6 +47,10 @@ public class JdbcExecutorFactory {
 
     public DbCustomStrategy getDbCustomStrategy() {
         return dbCustomStrategy;
+    }
+
+    public DatabaseAdapter getDatabaseAdapter() {
+        return databaseAdapter;
     }
 
     /**
@@ -201,10 +205,15 @@ public class JdbcExecutorFactory {
      * 纯sql查询单个字段集合
      */
     public List<Object> selectObjsBySql(String sql, Object... params) throws Exception {
-        SelectExecutorModel<Object> paramInfo = new SelectExecutorModel<>(Object.class, sql, params);
+       return selectObjsBySql(Object.class, true, sql, params);
+    }
+
+    public <T> List<T> selectObjsBySql(Class<T> t, boolean sqlPrintSupport, String sql, Object... params) throws Exception {
+        SelectExecutorModel<T> paramInfo = new SelectExecutorModel<>(t, sql, sqlPrintSupport, params);
         CustomSqlSession sqlSession = this.createSqlSession(paramInfo);
         return jdbcExecutor.selectObjs(sqlSession);
     }
+
 
     /**
      * 纯sql增删改
