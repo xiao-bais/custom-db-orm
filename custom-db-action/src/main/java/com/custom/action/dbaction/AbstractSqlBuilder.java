@@ -1,19 +1,17 @@
 package com.custom.action.dbaction;
 
 import com.custom.action.interfaces.FullSqlConditionExecutor;
-import com.custom.action.sqlparser.*;
+import com.custom.action.sqlparser.DbFieldParserModel;
+import com.custom.action.sqlparser.DbKeyParserModel;
+import com.custom.action.sqlparser.TableInfoCache;
+import com.custom.action.sqlparser.TableParseModel;
 import com.custom.action.util.DbUtil;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.utils.*;
+import com.custom.jdbc.configuration.CustomConfigHelper;
 import com.custom.jdbc.configuration.DbCustomStrategy;
-import com.custom.jdbc.CustomConfigHelper;
-import com.custom.jdbc.CustomSelectJdbcBasicImpl;
-import com.custom.jdbc.CustomUpdateJdbcBasicImpl;
-import com.custom.jdbc.condition.SelectExecutorModel;
-import com.custom.jdbc.select.CustomSelectJdbcBasic;
+import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.jdbc.transaction.DbConnGlobal;
-import com.custom.jdbc.update.CustomUpdateJdbcBasic;
-import com.custom.jdbc.condition.SaveExecutorModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,8 +37,7 @@ public abstract class AbstractSqlBuilder<T> {
     private List<DbFieldParserModel<T>> fieldParserModels;
     private Map<String, String> fieldMapper;
     private Map<String, String> columnMapper;
-    private CustomSelectJdbcBasic selectJdbc;
-    private CustomUpdateJdbcBasic updateJdbc;
+    private JdbcExecutorFactory executorFactory;
     private String logicColumn;
     private Object logicNotDeleteValue;
     /**
@@ -123,14 +120,6 @@ public abstract class AbstractSqlBuilder<T> {
         return this.logicDeleteUpdateSql;
     }
 
-    /**
-     * 直接执行，属于内部执行
-     */
-    public void executeUpdateNotPrintSql(String sql) throws Exception {
-        Asserts.npe(sql);
-        updateJdbc.executeUpdate(new SaveExecutorModel<>(sql, false, null));
-    }
-
 
     /**
      * 由于部分表可能没有逻辑删除字段，所以在每一次执行时，都需检查该表有没有逻辑删除的字段，以保证sql正常执行
@@ -145,7 +134,7 @@ public abstract class AbstractSqlBuilder<T> {
         }
         String existSql = String.format("select count(*) count from information_schema.columns " +
                 "where table_name = '%s' and column_name = '%s'", table, logicColumn);
-        Object obj = selectJdbc.selectObj(new SelectExecutorModel<>(Object.class, existSql, false));
+        Object obj = executorFactory.selectObjBySql(false, existSql);
         boolean conBool = ConvertUtil.conBool(obj);
         TableInfoCache.setTableLogic(table, conBool);
         return conBool;
@@ -205,10 +194,8 @@ public abstract class AbstractSqlBuilder<T> {
         this.initLogic(customStrategy.getDeleteLogicValue(), customStrategy.getNotDeleteLogicValue());
 
         // 设置jdbc执行对象
-        this.selectJdbc = new CustomSelectJdbcBasicImpl(
-                configHelper.getDbDataSource(), customStrategy);
-        this.updateJdbc = new CustomUpdateJdbcBasicImpl(
-                configHelper.getDbDataSource(), customStrategy);
+        this.executorFactory = new JdbcExecutorFactory(configHelper.getDbDataSource(), customStrategy);
+
     }
 
     /**

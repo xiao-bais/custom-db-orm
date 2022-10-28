@@ -8,7 +8,7 @@ import com.custom.comm.utils.Constants;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.jdbc.configuration.DbCustomStrategy;
-import com.custom.jdbc.CustomConfigHelper;
+import com.custom.jdbc.configuration.CustomConfigHelper;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.transaction.DbConnGlobal;
 import org.slf4j.Logger;

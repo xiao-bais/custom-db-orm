@@ -4,13 +4,11 @@ import com.custom.action.sqlparser.DbFieldParserModel;
 import com.custom.action.sqlparser.DbKeyParserModel;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableParseModel;
-import com.custom.comm.utils.ConvertUtil;
-import com.custom.comm.utils.JudgeUtil;
-import com.custom.comm.utils.RexUtil;
-import com.custom.comm.utils.Constants;
+import com.custom.comm.utils.*;
 import com.custom.comm.annotations.DbTable;
 import com.custom.jdbc.condition.SelectExecutorModel;
 import com.custom.jdbc.configuration.DbDataSource;
+import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.jdbc.select.CustomSelectJdbcBasic;
 import com.custom.jdbc.transaction.DbConnGlobal;
 import com.custom.jdbc.update.CustomUpdateJdbcBasic;
@@ -38,8 +36,7 @@ public class TableStructsInitializer {
     /**
      * jdbc执行对象
      */
-    private final CustomSelectJdbcBasic selectJdbc;
-    private final CustomUpdateJdbcBasic updateJdbc;
+    private final JdbcExecutorFactory executorFactory;
 
     /**
      * 连接的数据库
@@ -64,14 +61,14 @@ public class TableStructsInitializer {
 
 
 
-    public TableStructsInitializer(String[] packageScans, CustomSelectJdbcBasic selectJdbc, CustomUpdateJdbcBasic updateJdbc) {
+    public TableStructsInitializer(String[] packageScans, JdbcExecutorFactory executorFactory) {
         this.packageScans = packageScans;
-        this.selectJdbc = selectJdbc;
-        this.updateJdbc = updateJdbc;
-        this.dbDataSource = selectJdbc.getDbDataSource();
+        Asserts.npe(executorFactory);
+        this.executorFactory = executorFactory;
+        this.dbDataSource = executorFactory.getDbDataSource();
         this.addColumnSqlList = new ArrayList<>();
         this.waitCreateMapper = new HashMap<>();
-        this.dataBaseName = updateJdbc.getDataBase();
+        this.dataBaseName = dbDataSource.getDatabase();
     }
 
 

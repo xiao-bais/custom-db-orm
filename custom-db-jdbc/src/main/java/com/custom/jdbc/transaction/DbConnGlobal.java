@@ -5,8 +5,8 @@ import com.custom.comm.utils.Constants;
 import com.custom.jdbc.condition.BaseExecutorModel;
 import com.custom.jdbc.configuration.DbConnection;
 import com.custom.jdbc.configuration.DbDataSource;
-import com.custom.jdbc.CustomConfigHelper;
-import com.custom.jdbc.GlobalDataHandler;
+import com.custom.jdbc.configuration.CustomConfigHelper;
+import com.custom.jdbc.configuration.GlobalDataHandler;
 import com.custom.jdbc.session.CustomSqlSession;
 
 import java.sql.Connection;

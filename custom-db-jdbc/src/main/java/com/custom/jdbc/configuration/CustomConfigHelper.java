@@ -1,4 +1,4 @@
-package com.custom.jdbc;
+package com.custom.jdbc.configuration;
 
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;

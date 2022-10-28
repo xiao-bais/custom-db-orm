@@ -6,9 +6,6 @@ import com.custom.comm.utils.Constants;
 import com.custom.comm.annotations.*;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.ExThrowsUtil;
-import com.custom.jdbc.configuration.DbDataSource;
-import com.custom.jdbc.CustomConfigHelper;
-import com.custom.jdbc.GlobalDataHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +14,6 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @Author Xiao-Bai

@@ -41,12 +41,12 @@ public interface CustomJdbcExecutor {
     /**
      * 查询多条记录映射到Map
      */
-    List<Map<String, Object>> selectListMap(CustomSqlSession sqlSession) throws Exception;
+    <V> List<Map<String, V>> selectListMap(CustomSqlSession sqlSession) throws Exception;
 
     /**
      * 查询一条记录映射到Map
      */
-    Map<String, Object> selectOneMap(CustomSqlSession sqlSession) throws Exception;
+    <V> Map<String, V> selectOneMap(CustomSqlSession sqlSession) throws Exception;
 
     /**
      * 查询多条单次映射关系

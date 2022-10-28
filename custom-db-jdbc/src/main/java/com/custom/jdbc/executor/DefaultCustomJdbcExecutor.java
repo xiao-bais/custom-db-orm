@@ -1,10 +1,9 @@
 package com.custom.jdbc.executor;
 
-import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.utils.CustomUtil;
-import com.custom.jdbc.CustomSqlSessionHelper;
+import com.custom.jdbc.session.CustomSqlSessionHelper;
 import com.custom.jdbc.SqlOutPrintBuilder;
 import com.custom.jdbc.condition.BaseExecutorModel;
 import com.custom.jdbc.condition.SaveExecutorModel;
@@ -157,10 +156,10 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
 
 
     @Override
-    public List<Map<String, Object>> selectListMap(CustomSqlSession sqlSession) throws Exception {
-        Map<String, Object> map;
-        List<Map<String, Object>> list = new ArrayList<>();
-        SelectExecutorModel<Object> executorModel = (SelectExecutorModel<Object>) sqlSession.getExecutorModel();
+    public <V> List<Map<String, V>> selectListMap(CustomSqlSession sqlSession) throws Exception {
+        Map<String, V> map;
+        List<Map<String, V>> list = new ArrayList<>();
+        SelectExecutorModel<V> executorModel = (SelectExecutorModel<V>) sqlSession.getExecutorModel();
         CustomSqlSessionHelper sessionHelper = new CustomSqlSessionHelper(strategy, sqlSession);
 
         PreparedStatement statement = null;
@@ -187,12 +186,13 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
             sessionHelper.closeResources(statement, resultSet);
         }
         return list;
+
     }
 
 
     @Override
-    public Map<String, Object> selectOneMap(CustomSqlSession sqlSession) throws Exception {
-        List<Map<String, Object>> result = selectListMap(sqlSession);
+    public <V> Map<String, V> selectOneMap(CustomSqlSession sqlSession) throws Exception {
+        List<Map<String, V>> result = selectListMap(sqlSession);
         return getOne(result);
     }
 

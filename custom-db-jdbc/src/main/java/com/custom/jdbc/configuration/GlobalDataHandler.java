@@ -1,4 +1,4 @@
-package com.custom.jdbc;
+package com.custom.jdbc.configuration;
 
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.RexUtil;

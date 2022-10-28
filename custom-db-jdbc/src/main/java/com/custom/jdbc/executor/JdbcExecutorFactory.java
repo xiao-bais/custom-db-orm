@@ -4,7 +4,7 @@ import com.custom.comm.enums.DatabaseType;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.ConvertUtil;
 import com.custom.comm.utils.StrUtils;
-import com.custom.jdbc.CustomConfigHelper;
+import com.custom.jdbc.configuration.CustomConfigHelper;
 import com.custom.jdbc.condition.BaseExecutorModel;
 import com.custom.jdbc.condition.SaveExecutorModel;
 import com.custom.jdbc.condition.SelectExecutorModel;
@@ -31,12 +31,21 @@ import java.util.Set;
  */
 public class JdbcExecutorFactory {
 
+
     /**
      * jdbc基础操作对象
      */
-    private final DbDataSource dbDataSource;
     private final CustomJdbcExecutor jdbcExecutor;
+    private final DbDataSource dbDataSource;
+    private final DbCustomStrategy dbCustomStrategy;
 
+    public DbDataSource getDbDataSource() {
+        return dbDataSource;
+    }
+
+    public DbCustomStrategy getDbCustomStrategy() {
+        return dbCustomStrategy;
+    }
 
     /**
      * 创建请求会话
@@ -50,6 +59,7 @@ public class JdbcExecutorFactory {
 
     public JdbcExecutorFactory(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         this.dbDataSource = dbDataSource;
+        this.dbCustomStrategy = dbCustomStrategy;
 
         if (StrUtils.isBlank(dbDataSource.getDriver())) {
 
@@ -150,7 +160,11 @@ public class JdbcExecutorFactory {
      * 纯sql查询单条记录(映射到Map)
      */
     public Map<String, Object> selectMapBySql(String sql, Object... params) throws Exception {
-        SelectExecutorModel<Object> paramInfo = new SelectExecutorModel<>(Object.class, sql, params);
+       return selectMapBySql(Object.class, sql, params);
+    }
+
+    public <V> Map<String, V> selectMapBySql(Class<V> t, String sql, Object... params) throws Exception {
+        SelectExecutorModel<V> paramInfo = new SelectExecutorModel<>(t, sql, params);
         CustomSqlSession sqlSession = this.createSqlSession(paramInfo);
         return jdbcExecutor.selectOneMap(sqlSession);
     }
@@ -168,7 +182,11 @@ public class JdbcExecutorFactory {
      * 纯sql查询单个字段
      */
     public Object selectObjBySql(String sql, Object... params) throws Exception {
-        SelectExecutorModel<Object> paramInfo = new SelectExecutorModel<>(Object.class, sql, params);
+        return selectObjBySql(true, sql, params);
+    }
+
+    public Object selectObjBySql(boolean sqlPrintSupport, String sql, Object... params) throws Exception {
+        SelectExecutorModel<Object> paramInfo = new SelectExecutorModel<>(Object.class, sql, sqlPrintSupport, params);
         CustomSqlSession sqlSession = this.createSqlSession(paramInfo);
         return jdbcExecutor.selectObj(sqlSession);
     }

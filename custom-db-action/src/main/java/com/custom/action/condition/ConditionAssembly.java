@@ -8,7 +8,7 @@ import com.custom.comm.enums.DbSymbol;
 import com.custom.comm.enums.SqlLike;
 import com.custom.comm.enums.SqlOrderBy;
 import com.custom.comm.exceptions.ExThrowsUtil;
-import com.custom.jdbc.GlobalDataHandler;
+import com.custom.jdbc.configuration.GlobalDataHandler;
 
 import java.lang.reflect.Array;
 import java.util.*;

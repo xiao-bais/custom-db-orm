@@ -4,8 +4,7 @@ import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
-import com.custom.jdbc.CustomSelectJdbcBasicImpl;
-import com.custom.jdbc.CustomUpdateJdbcBasicImpl;
+import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.springboot.tableinit.TableStructsInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,8 +41,7 @@ public class CustomBeanInitializer implements InitializingBean, ApplicationConte
         // 表结构初始化
         TableStructsInitializer tableStructsInitializer = new TableStructsInitializer(
                 strategy.getEntityPackageScans(),
-                new CustomSelectJdbcBasicImpl(dataSource, strategy),
-                new CustomUpdateJdbcBasicImpl(dataSource, strategy)
+                new JdbcExecutorFactory(dataSource, strategy)
         );
         tableStructsInitializer.initStart();
     }
