@@ -8,6 +8,7 @@ import com.custom.comm.annotations.DbTable;
 import com.custom.comm.utils.*;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.interfaces.DatabaseAdapter;
 import com.custom.jdbc.transaction.DbConnGlobal;
 import com.custom.springboot.scanner.PackageScanner;
 import org.slf4j.Logger;
@@ -39,8 +40,7 @@ public class TableStructsInitializer {
      * 连接的数据库
      */
     private final String dataBaseName;
-
-    private final DbDataSource dbDataSource;
+    private final DatabaseAdapter databaseAdapter;
 
     /**
      * 需要添加的字段列表
@@ -62,10 +62,10 @@ public class TableStructsInitializer {
         this.packageScans = packageScans;
         Asserts.npe(executorFactory);
         this.executorFactory = executorFactory;
-        this.dbDataSource = executorFactory.getDbDataSource();
+        this.databaseAdapter = executorFactory.getDatabaseAdapter();
         this.addColumnSqlList = new ArrayList<>();
         this.waitCreateMapper = new HashMap<>();
-        this.dataBaseName = dbDataSource.getDatabase();
+        this.dataBaseName = databaseAdapter.databaseName();
     }
 
 
@@ -103,18 +103,17 @@ public class TableStructsInitializer {
             if (!entityClass.isAnnotationPresent(DbTable.class)) {
                 continue;
             }
-            TableParseModel<?> sqlBuilder = TableInfoCache.getTableModel(entityClass);
-            TableParseModel<?> waitUpdateSqlBuilder = sqlBuilder.clone();
-            String exitsTableSql = DbConnGlobal.exitsTableSql(sqlBuilder.getTable(), dbDataSource);
-            String table = waitUpdateSqlBuilder.getTable();
+            TableParseModel<?> tableModel = TableInfoCache.getTableModel(entityClass);
+            TableParseModel<?> waitUpdateSqlBuilder = tableModel.clone();
+
             // 若表已存在，则进行下一步判断表字段是否存在
-            Object exists = executorFactory.selectObjBySql(false, exitsTableSql);
-            if (ConvertUtil.conBool(exists)) {
-                buildColumnInfo(waitUpdateSqlBuilder, table);
+            boolean exists = databaseAdapter.existTable(tableModel.getTable());
+            if (exists) {
+                buildColumnInfo(waitUpdateSqlBuilder, tableModel.getTable());
                 continue;
             }
             // // 若不存在，则加入创建表的对象中，保存待创建的表信息
-            saveWaitCreateTableInfo(waitUpdateSqlBuilder, table);
+            saveWaitCreateTableInfo(waitUpdateSqlBuilder, tableModel.getTable());
         }
     }
 

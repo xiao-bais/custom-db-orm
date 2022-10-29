@@ -2,20 +2,20 @@ package com.custom.jdbc.dbAdapetr;
 
 import com.custom.comm.enums.DatabaseType;
 import com.custom.jdbc.configuration.DbDataSource;
-import com.custom.jdbc.interfaces.DatabaseAdapter;
+import com.custom.jdbc.executor.CustomJdbcExecutor;
 
 /**
  * @author Xiao-Bai
  * @date 2022/10/27 18:52
  * @desc
  */
-public class OracleAdapter implements DatabaseAdapter {
+public class OracleAdapter extends AbstractDbAdapter {
 
-    private final DbDataSource dbDataSource;
+
 
     @Override
     public String databaseName() {
-        String url = dbDataSource.getUrl();
+        String url = getDbDataSource().getUrl();
         return url.substring(url.lastIndexOf(":"));
     }
 
@@ -49,7 +49,7 @@ public class OracleAdapter implements DatabaseAdapter {
         return false;
     }
 
-    public OracleAdapter(DbDataSource dbDataSource) {
-        this.dbDataSource = dbDataSource;
+    public OracleAdapter(DbDataSource dbDataSource, CustomJdbcExecutor jdbcExecutor) {
+        super(dbDataSource, jdbcExecutor);
     }
 }

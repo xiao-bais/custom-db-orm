@@ -1,8 +1,6 @@
 package com.custom.proxy;
 
-import com.custom.jdbc.condition.SaveExecutorModel;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
-import com.custom.jdbc.update.CustomUpdateJdbcBasic;
 
 import java.lang.reflect.Method;
 

@@ -3,6 +3,7 @@ package com.home;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.JdbcOpDao;
 import com.custom.jdbc.condition.SelectMapExecutorModel;
+import com.custom.jdbc.dbAdapetr.Mysql8Adapter;
 import com.custom.jdbc.executor.CustomJdbcExecutor;
 import com.custom.jdbc.executor.DefaultCustomJdbcExecutor;
 import com.custom.jdbc.session.CustomSqlSession;
@@ -31,17 +32,9 @@ public class DoMain {
 
         CustomJdbcExecutor jdbcExecutor = new DefaultCustomJdbcExecutor(jdbcTestBuilder.getDbCustomStrategy());
 
-        Connection connection = DbConnGlobal.getCurrentConnection(jdbcTestBuilder.getDbDataSource());
-
-        String sql = "select age, concat(count(0), '个') num from student group by age";
-
-        SelectMapExecutorModel<Integer, String> selectMapExecutorModel = new SelectMapExecutorModel<>(sql, true, Integer.class, String.class);
-        CustomSqlSession sqlSession = new CustomSqlSession(connection, selectMapExecutorModel);
-
-        Map<Integer, String> maps = jdbcExecutor.selectMap(sqlSession);
-        for (Map.Entry<Integer, String> entry : maps.entrySet()) {
-            System.out.println("年龄为 ==> " + entry.getKey() + " 的数量有 " + entry.getValue());
-        }
+        Mysql8Adapter mysql8Adapter = new Mysql8Adapter(jdbcTestBuilder.getDbDataSource(), jdbcExecutor);
+        boolean student = mysql8Adapter.existColumn("student", "address_one");
+        System.out.println("student = " + student);
 
 
     }

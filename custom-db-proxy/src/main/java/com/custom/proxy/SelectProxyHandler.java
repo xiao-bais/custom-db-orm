@@ -1,10 +1,8 @@
 package com.custom.proxy;
 
-import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.exceptions.ExThrowsUtil;
-import com.custom.jdbc.condition.SelectExecutorModel;
+import com.custom.comm.utils.CustomUtil;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
-import com.custom.jdbc.select.CustomSelectJdbcBasic;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.lang.reflect.Method;

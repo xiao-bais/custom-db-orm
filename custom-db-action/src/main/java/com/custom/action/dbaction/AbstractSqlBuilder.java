@@ -11,6 +11,7 @@ import com.custom.comm.utils.*;
 import com.custom.jdbc.configuration.CustomConfigHelper;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.interfaces.DatabaseAdapter;
 import com.custom.jdbc.transaction.DbConnGlobal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,19 +125,18 @@ public abstract class AbstractSqlBuilder<T> {
     /**
      * 由于部分表可能没有逻辑删除字段，所以在每一次执行时，都需检查该表有没有逻辑删除的字段，以保证sql正常执行
      */
-    public boolean checkLogicFieldIsExist() throws Exception {
+    public boolean checkLogicFieldIsExist() {
         if (CustomUtil.isBlank(logicColumn)) {
             return false;
         }
-        Boolean existsLogic = TableInfoCache.isExistsLogic(table);
+        int order = executorFactory.getDbDataSource().getOrder();
+        Boolean existsLogic = TableInfoCache.isExistsLogic(order, table);
         if (existsLogic != null) {
             return existsLogic;
         }
-        String existSql = String.format("select count(*) count from information_schema.columns " +
-                "where table_name = '%s' and column_name = '%s'", table, logicColumn);
-        Object obj = executorFactory.selectObjBySql(false, existSql);
-        boolean conBool = ConvertUtil.conBool(obj);
-        TableInfoCache.setTableLogic(executorFactory.getDbDataSource().getOrder(), table, conBool);
+        DatabaseAdapter databaseAdapter = executorFactory.getDatabaseAdapter();
+        boolean conBool = databaseAdapter.existColumn(table, logicColumn);
+        TableInfoCache.setTableLogic(order, table, conBool);
         return conBool;
     }
 

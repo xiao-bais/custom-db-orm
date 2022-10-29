@@ -2,6 +2,7 @@ package com.custom.jdbc.dbAdapetr;
 
 import com.custom.comm.enums.DatabaseType;
 import com.custom.jdbc.configuration.DbDataSource;
+import com.custom.jdbc.executor.CustomJdbcExecutor;
 
 /**
  * @author Xiao-Bai
@@ -9,8 +10,6 @@ import com.custom.jdbc.configuration.DbDataSource;
  * @desc
  */
 public class Mysql5Adapter extends Mysql8Adapter {
-
-    private final DbDataSource dbDataSource;
 
 
     @Override
@@ -29,8 +28,7 @@ public class Mysql5Adapter extends Mysql8Adapter {
         return null;
     }
 
-    public Mysql5Adapter(DbDataSource dbDataSource) {
-        super(dbDataSource);
-        this.dbDataSource = dbDataSource;
+    public Mysql5Adapter(DbDataSource dbDataSource, CustomJdbcExecutor jdbcExecutor) {
+        super(dbDataSource, jdbcExecutor);
     }
 }

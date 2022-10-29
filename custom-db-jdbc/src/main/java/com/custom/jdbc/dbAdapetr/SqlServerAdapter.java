@@ -2,19 +2,17 @@ package com.custom.jdbc.dbAdapetr;
 
 import com.custom.comm.enums.DatabaseType;
 import com.custom.jdbc.configuration.DbDataSource;
-import com.custom.jdbc.interfaces.DatabaseAdapter;
+import com.custom.jdbc.executor.CustomJdbcExecutor;
 
 /**
  * @author Xiao-Bai
  * @date 2022/10/28 0028 17:50
  */
-public class SqlServerAdapter implements DatabaseAdapter {
-
-    private final DbDataSource dbDataSource;
+public class SqlServerAdapter extends AbstractDbAdapter {
 
     @Override
     public String databaseName() {
-        String url = dbDataSource.getUrl();
+        String url = getDbDataSource().getUrl();
         String key = "DatabaseName";
         return url.substring(url.lastIndexOf(key) + key.length() + 1);
     }
@@ -49,7 +47,7 @@ public class SqlServerAdapter implements DatabaseAdapter {
         return false;
     }
 
-    public SqlServerAdapter(DbDataSource dbDataSource) {
-        this.dbDataSource = dbDataSource;
+    public SqlServerAdapter(DbDataSource dbDataSource, CustomJdbcExecutor jdbcExecutor) {
+        super(dbDataSource, jdbcExecutor);
     }
 }

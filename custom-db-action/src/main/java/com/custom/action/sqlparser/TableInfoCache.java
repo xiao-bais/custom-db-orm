@@ -64,20 +64,29 @@ public class TableInfoCache {
      * <br/>key-实体全路径名称
      * <br/>value(是否存在逻辑删除字段)-true or false
      */
-    private final static Map<String, Object> TABLE_LOGIC = new ConcurrentHashMap<>();
+    private final static Map<Integer, Map<String, Boolean>> TABLE_LOGIC = new ConcurrentHashMap<>();
 
-    public static void setTableLogic(int order, String key, Object val) {
-        TABLE_LOGIC.put(key, val);
+    public static void setTableLogic(int order, String key, Boolean val) {
+        Map<String, Boolean> tableLogicMap = TABLE_LOGIC.get(order);
+        if (tableLogicMap == null) {
+            tableLogicMap = new ConcurrentHashMap<>();
+            TABLE_LOGIC.put(order, tableLogicMap);
+        }
+        tableLogicMap.put(key, val);
     }
 
-    public static Boolean isExistsLogic(String table) {
-        return (Boolean) TABLE_LOGIC.get(table);
+    public static Boolean isExistsLogic(int order, String table) {
+        Map<String, Boolean> tableLogicMap = TABLE_LOGIC.get(order);
+        if (tableLogicMap == null) {
+            return false;
+        }
+        return tableLogicMap.get(table);
     }
 
     /**
      * sql构造模板缓存
      */
-    private final static Map<String, Object> SQL_BUILDER_TEMPLATE = new ConcurrentHashMap<>();
+    private final static Map<String, SqlBuilderTemplate<?>> SQL_BUILDER_TEMPLATE = new ConcurrentHashMap<>();
 
     protected static <T> SqlBuilderTemplate<T> getSqlBuilderCache(Class<T> entityClass, int order) {
         SqlBuilderTemplate<T> optionalSqlBuilder = (SqlBuilderTemplate<T>)
