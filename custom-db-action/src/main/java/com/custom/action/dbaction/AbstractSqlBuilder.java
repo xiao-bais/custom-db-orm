@@ -136,7 +136,7 @@ public abstract class AbstractSqlBuilder<T> {
                 "where table_name = '%s' and column_name = '%s'", table, logicColumn);
         Object obj = executorFactory.selectObjBySql(false, existSql);
         boolean conBool = ConvertUtil.conBool(obj);
-        TableInfoCache.setTableLogic(table, conBool);
+        TableInfoCache.setTableLogic(executorFactory.getDbDataSource().getOrder(), table, conBool);
         return conBool;
     }
 

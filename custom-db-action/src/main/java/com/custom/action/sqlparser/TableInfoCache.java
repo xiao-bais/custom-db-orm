@@ -5,6 +5,7 @@ import com.custom.comm.utils.Constants;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
@@ -20,7 +21,7 @@ public class TableInfoCache {
      * <br/>key-实体全路径名称
      * <br/>value-实体解析模板 {@link TableParseModel}
      */
-    private final static Map<String, Object> TABLE_MODEL = new CustomLocalCache();
+    private final static Map<String, TableParseModel<?>> TABLE_MODEL = new ConcurrentHashMap<>();
     private static Boolean underlineToCamel = false;
 
     public static <T> TableParseModel<T> getTableModel(Class<T> cls) {
@@ -63,9 +64,9 @@ public class TableInfoCache {
      * <br/>key-实体全路径名称
      * <br/>value(是否存在逻辑删除字段)-true or false
      */
-    private final static Map<String, Object> TABLE_LOGIC = new CustomLocalCache();
+    private final static Map<String, Object> TABLE_LOGIC = new ConcurrentHashMap<>();
 
-    public static void setTableLogic(String key, Object val) {
+    public static void setTableLogic(int order, String key, Object val) {
         TABLE_LOGIC.put(key, val);
     }
 
@@ -76,7 +77,7 @@ public class TableInfoCache {
     /**
      * sql构造模板缓存
      */
-    private final static Map<String, Object> SQL_BUILDER_TEMPLATE = new CustomLocalCache();
+    private final static Map<String, Object> SQL_BUILDER_TEMPLATE = new ConcurrentHashMap<>();
 
     protected static <T> SqlBuilderTemplate<T> getSqlBuilderCache(Class<T> entityClass, int order) {
         SqlBuilderTemplate<T> optionalSqlBuilder = (SqlBuilderTemplate<T>)
