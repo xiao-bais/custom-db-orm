@@ -1,9 +1,8 @@
 package com.custom.jdbc.session;
 
-import com.custom.jdbc.SqlOutPrintBuilder;
+import com.custom.jdbc.sqlprint.SqlOutPrintBuilder;
 import com.custom.jdbc.condition.BaseExecutorModel;
 import com.custom.jdbc.configuration.DbCustomStrategy;
-import com.custom.jdbc.session.CustomSqlSession;
 
 import java.sql.*;
 import java.util.Map;

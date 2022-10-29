@@ -1,4 +1,4 @@
-package com.custom.jdbc;
+package com.custom.jdbc.sqlprint;
 
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.Constants;
