@@ -12,4 +12,11 @@ import java.lang.annotation.*;
 @Documented
 @Inherited
 public @interface SqlMapper {
+
+    /**
+     * 作用与DbDataSource中的属性order一致，以此来确定数据源
+     */
+    int order() default 1;
+
+
 }

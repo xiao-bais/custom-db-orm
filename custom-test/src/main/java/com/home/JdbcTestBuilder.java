@@ -60,10 +60,10 @@ public class JdbcTestBuilder {
         return jdbcDao;
     }
 
-    public <T> T getCustomClassDao(Class<T> entityClass) {
-        InterfacesProxyExecutor proxyExecutor = new InterfacesProxyExecutor(dbDataSource, dbCustomStrategy);
-        return proxyExecutor.createProxy(entityClass);
-    }
+//    public <T> T getCustomClassDao(Class<T> entityClass) {
+//        InterfacesProxyExecutor proxyExecutor = new InterfacesProxyExecutor(dbDataSource, dbCustomStrategy);
+//        return proxyExecutor.createProxy(entityClass);
+//    }
 
     public DbDataSource getDbDataSource() {
         return dbDataSource;

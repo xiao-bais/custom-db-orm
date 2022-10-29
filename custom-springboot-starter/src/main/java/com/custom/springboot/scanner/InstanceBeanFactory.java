@@ -13,17 +13,14 @@ public class InstanceBeanFactory<T> implements FactoryBean<T> {
 
     private final Class<T> interfaceType;
 
-    private final InterfacesProxyExecutor readerExecutorProxy;
-
     @Lazy
-    public InstanceBeanFactory(InterfacesProxyExecutor readerExecutorProxy, Class<T> interfaceType) {
+    public InstanceBeanFactory(Class<T> interfaceType) {
         this.interfaceType = interfaceType;
-        this.readerExecutorProxy = readerExecutorProxy;
     }
 
     @Override
     public T getObject() {
-        return readerExecutorProxy.createProxy(interfaceType);
+        return new InterfacesProxyExecutor().createProxy(interfaceType);
     }
 
     @Override

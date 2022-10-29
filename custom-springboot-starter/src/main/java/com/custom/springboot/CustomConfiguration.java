@@ -36,15 +36,15 @@ public class CustomConfiguration {
         this.dbCustomStrategy = dbCustomStrategy;
     }
 
-    @Bean
-    @ConditionalOnBean(DbDataSource.class)
-    public InterfacesProxyExecutor readerExecutorProxy() {
-        if(isDataSourceEmpty(dbDataSource)) {
-            return null;
-        }
-        logger.info("InterfacesProxyExecutor Initialized Successfully !");
-        return new InterfacesProxyExecutor(dbDataSource, dbCustomStrategy);
-    }
+//    @Bean
+//    @ConditionalOnBean(DbDataSource.class)
+//    public InterfacesProxyExecutor readerExecutorProxy() {
+//        if(isDataSourceEmpty(dbDataSource)) {
+//            return null;
+//        }
+//        logger.info("InterfacesProxyExecutor Initialized Successfully !");
+//        return new InterfacesProxyExecutor(dbDataSource, dbCustomStrategy);
+//    }
 
     @Bean
     @Primary

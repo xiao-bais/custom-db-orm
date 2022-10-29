@@ -8,9 +8,9 @@ import com.custom.comm.annotations.mapper.Update;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.exceptions.ExThrowsUtil;
-import com.custom.jdbc.configuration.DbCustomStrategy;
-import com.custom.jdbc.configuration.DbDataSource;
+import com.custom.jdbc.configuration.CustomConfigHelper;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.transaction.DbConnGlobal;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationHandler;
@@ -30,14 +30,18 @@ public class InterfacesProxyExecutor implements InvocationHandler {
         ClassLoader classLoader = cls.getClassLoader();
         Class<?>[] interfaces = new Class[]{cls};
         targetClassName = cls.getName();
+        SqlMapper sqlMapper = cls.getAnnotation(SqlMapper.class);
+        CustomConfigHelper configHelper = DbConnGlobal.getConfigHelper(sqlMapper.order());
+        this.executorFactory = new JdbcExecutorFactory(configHelper.getDbDataSource(),  configHelper.getDbCustomStrategy());
+
         return (T) Proxy.newProxyInstance(classLoader, interfaces, this);
     }
 
     private String targetClassName;
-    private final JdbcExecutorFactory executorFactory;
+    private JdbcExecutorFactory executorFactory;
 
-    public InterfacesProxyExecutor(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
-        executorFactory = new JdbcExecutorFactory(dbDataSource, dbCustomStrategy);
+    public InterfacesProxyExecutor() {
+
     }
 
 
