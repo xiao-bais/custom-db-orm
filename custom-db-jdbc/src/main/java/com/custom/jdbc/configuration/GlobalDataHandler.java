@@ -95,6 +95,10 @@ public class GlobalDataHandler {
         return GLOBAL_CACHE.get(key);
     }
 
+    public static Set<String> readGlobalKeySet() {
+       return GLOBAL_CACHE.keySet();
+    }
+
 
 
 

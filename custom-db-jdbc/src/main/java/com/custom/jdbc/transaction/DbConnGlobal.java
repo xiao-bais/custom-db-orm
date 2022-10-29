@@ -109,7 +109,7 @@ public class DbConnGlobal {
             String dataSourceCacheKey = getDataSourceKey(dataSourceCache);
 
             // 在多个数据源的情况下，需要指定dataSource中的order属性，并且order不能存在重复值
-            if (dataSourceCacheKey.equals(newDataSourceKey)) {
+            if (!dataSourceCacheKey.equals(newDataSourceKey)) {
                 throw new CustomCheckException("Duplicate 'order': (%d), " +
                         "In the case of multiple data sources, you need to specify the order in the data source, " +
                         "and the order cannot have duplicate values",

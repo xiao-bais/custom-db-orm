@@ -1,5 +1,6 @@
 package com.home;
 
+import com.custom.action.condition.Conditions;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.JdbcOpDao;
 import com.custom.jdbc.condition.SelectMapExecutorModel;
@@ -8,6 +9,8 @@ import com.custom.jdbc.executor.CustomJdbcExecutor;
 import com.custom.jdbc.executor.DefaultCustomJdbcExecutor;
 import com.custom.jdbc.session.CustomSqlSession;
 import com.custom.jdbc.transaction.DbConnGlobal;
+import com.home.customtest.entity.ChildStudent;
+import com.home.customtest.entity.Student;
 
 import java.sql.Connection;
 import java.util.*;
@@ -27,14 +30,18 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-//        ChildStudent childStudent = jdbcDao.selectOne(Conditions.lambdaQuery(ChildStudent.class));
-//        System.out.println("childStudent = " + childStudent);
+        List<ChildStudent> childStudents = jdbcDao.selectList(Conditions.lambdaQuery(ChildStudent.class)
+                .onlyPrimary()
+        );
 
-        CustomJdbcExecutor jdbcExecutor = new DefaultCustomJdbcExecutor(jdbcTestBuilder.getDbCustomStrategy());
+        ChildStudent childStudent = jdbcDao.selectOne(Conditions.lambdaQuery(ChildStudent.class)
+                .eq(ChildStudent::getId, 33).onlyPrimary()
+        );
 
-        Mysql8Adapter mysql8Adapter = new Mysql8Adapter(jdbcTestBuilder.getDbDataSource(), jdbcExecutor);
-        boolean student = mysql8Adapter.existColumn("student", "address_one");
-        System.out.println("student = " + student);
+        Student student = jdbcOpDao.selectByKey(Student.class, 11);
+//        System.out.println("childStudents = " + childStudents);
+
+
 
 
     }

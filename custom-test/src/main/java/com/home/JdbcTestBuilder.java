@@ -34,6 +34,7 @@ public class JdbcTestBuilder {
         dbDataSource2.setUrl("jdbc:mysql://hougu-test.mysql.rds.aliyuncs.com:5678/hm_erp_test3?characterEncoding=utf-8&allowMultiQueries=true&autoreconnect=true");
         dbDataSource2.setUsername("hougu_erp_dev");
         dbDataSource2.setPassword("hougu@123");
+        dbDataSource2.setOrder(2);
 
         // 增删改查映射策略配置
         dbCustomStrategy = new DbCustomStrategy();

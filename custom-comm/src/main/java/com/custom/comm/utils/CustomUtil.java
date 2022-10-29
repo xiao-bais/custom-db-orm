@@ -70,7 +70,6 @@ public class CustomUtil extends StrUtils {
                 || Boolean.class.equals(cls)
                 || Byte.class.equals(cls)
                 || LocalDate.class.equals(cls)
-                || Serializable.class.isAssignableFrom(cls)
                 || BigDecimal.class.equals(cls)
                 || Date.class.equals(cls);
     }

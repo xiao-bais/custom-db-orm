@@ -78,7 +78,7 @@ public class TableInfoCache {
     public static Boolean isExistsLogic(int order, String table) {
         Map<String, Boolean> tableLogicMap = TABLE_LOGIC.get(order);
         if (tableLogicMap == null) {
-            return false;
+            return null;
         }
         return tableLogicMap.get(table);
     }

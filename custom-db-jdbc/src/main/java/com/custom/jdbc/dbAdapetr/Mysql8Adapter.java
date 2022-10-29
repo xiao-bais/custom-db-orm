@@ -20,7 +20,7 @@ public class Mysql8Adapter extends AbstractDbAdapter {
     // 查询该表是否存在
     private final static String TABLE_EXISTS_SQL = "SELECT COUNT(1) COUNT FROM `information_schema`.`TABLES` WHERE TABLE_NAME = '%s' AND TABLE_SCHEMA = '%s'";
     // 查询字段是否存在
-    private final static String COLUMN_EXIST_SQL = "SELECT COUNT(1) COUNT FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '%S' AND COLUMN_NAME = '%S'";
+    private final static String COLUMN_EXIST_SQL = "SELECT COUNT(1) COUNT FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '%s' AND TABLE_NAME = '%s' AND COLUMN_NAME = '%s'";
 
     @Override
     public String databaseName() {
@@ -68,7 +68,7 @@ public class Mysql8Adapter extends AbstractDbAdapter {
 
         Asserts.npe(table);
         Asserts.npe(column);
-        String targetSql = String.format(COLUMN_EXIST_SQL, table, this.databaseName());
+        String targetSql = String.format(COLUMN_EXIST_SQL, this.databaseName(), table, column);
         SelectExecutorModel<Long> selectExecutorModel = new SelectExecutorModel<>(Long.class, targetSql, false);
         return queryBoolean(selectExecutorModel);
     }
