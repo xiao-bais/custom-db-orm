@@ -51,15 +51,6 @@ public class WriteFieldHelper {
     private final static WriteFieldHelper thisHelper = new WriteFieldHelper();
 
 
-//    public WriteFieldHelper(Object writeValue, T waitWriteEntity, String fieldName, Class<?> fieldType) {
-//        Asserts.notNull(waitWriteEntity, "The entity bean cannot be empty");
-//        Asserts.notNull(fieldName, "The fieldName bean cannot be empty");
-//        this.writeValue = writeValue;
-//        this.waitWriteEntity = waitWriteEntity;
-//        this.fieldName = fieldName;
-//        this.fieldType = fieldType;
-//    }
-
     private WriteFieldHelper() {
 
     }
@@ -112,7 +103,6 @@ public class WriteFieldHelper {
     }
 
 
-
     /**
      * 写入
      */
@@ -162,7 +152,7 @@ public class WriteFieldHelper {
                     return true;
                 }
 
-                if (!List.class.isAssignableFrom(setParamType) && !Set.class.isAssignableFrom(setParamType)){
+                if (!List.class.isAssignableFrom(setParamType) && !Set.class.isAssignableFrom(setParamType)) {
                     log.warn("Only 'java.util.List' and 'java.util.Set' settings are supported");
                     return false;
                 }
