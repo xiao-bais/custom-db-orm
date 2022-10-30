@@ -61,21 +61,6 @@ public class DbCustomStrategy {
      */
     private boolean syncEntityEnable = false;
 
-    /**
-     * 是否开启事务
-     */
-    private boolean enableTransaction = false;
-
-    /**
-     * 事务回滚类型
-     */
-    private Rollback rollbackType = Rollback.CURRENT;
-
-    /**
-     * 一次插入记录最大条数，默认1000条，大于该条数则分批插入
-     */
-    private int saveSubSelect = 1000;
-
 
     public String[] getMapperPackageScans() {
         return mapperPackageScans;
@@ -149,27 +134,4 @@ public class DbCustomStrategy {
         this.syncEntityEnable = syncEntityEnable;
     }
 
-    public boolean isEnableTransaction() {
-        return enableTransaction;
-    }
-
-    public void setEnableTransaction(boolean enableTransaction) {
-        this.enableTransaction = enableTransaction;
-    }
-
-    public Rollback getRollbackType() {
-        return rollbackType;
-    }
-
-    public void setRollbackType(Rollback rollback) {
-        this.rollbackType = rollback;
-    }
-
-    public int getSaveSubSelect() {
-        return saveSubSelect;
-    }
-
-    public void setSaveSubSelect(int saveSubSelect) {
-        this.saveSubSelect = saveSubSelect;
-    }
 }
