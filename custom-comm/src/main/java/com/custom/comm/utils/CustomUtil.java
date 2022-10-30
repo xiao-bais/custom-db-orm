@@ -104,22 +104,30 @@ public class CustomUtil extends StrUtils {
      * @return true/false
      * @throws NoSuchFieldException
      */
-    public static <T> boolean writeFieldValue(Object writeValue, T waitWriteEntity, String fieldName, Class<?> fieldType) throws NoSuchFieldException {
-//        WriteFieldHelper<T> readFieldHelper = new WriteFieldHelper<>(writeValue, waitWriteEntity, fieldName, fieldType);
+    public static <T> boolean writeFieldValue(Object writeValue,
+                                              T waitWriteEntity,
+                                              String fieldName,
+                                              Class<?> fieldType) throws NoSuchFieldException {
         return WriteFieldHelper.build()
                 .objType(waitWriteEntity)
                 .value(writeValue)
                 .field(fieldName)
-                .fieldType(fieldType)
-                .writeStart();
+                .fieldType(fieldType).writeStart();
     }
 
     /**
      * 读取对象的属性值
+     * @param entity 目标对象
+     * @param fieldName 目标属性
+     * @param <T>
+     * @return
+     * @throws NoSuchFieldException
      */
     public static <T> Object readFieldValue(T entity, String fieldName) throws NoSuchFieldException {
-        ReadFieldHelper<T, Object> readFieldHelper = new ReadFieldHelper<>(entity, fieldName);
-        return readFieldHelper.readObjectValue();
+        return ReadFieldHelper.build()
+                .objType(entity)
+                .field(fieldName)
+                .readStart().readObjectValue();
     }
 
 
