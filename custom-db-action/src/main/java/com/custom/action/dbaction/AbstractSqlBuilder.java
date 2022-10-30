@@ -198,6 +198,23 @@ public abstract class AbstractSqlBuilder<T> {
 
     }
 
+    protected void injectTableInfo(TableParseModel<T> tableSqlBuilder, JdbcExecutorFactory executorFactory) {
+        this.table = tableSqlBuilder.getTable();
+        this.alias = tableSqlBuilder.getAlias();
+        this.keyParserModel = tableSqlBuilder.getKeyParserModel();
+        this.fieldParserModels = tableSqlBuilder.getFieldParserModels();
+        this.columnMapper = tableSqlBuilder.getColumnMapper();
+        this.fieldMapper = tableSqlBuilder.getFieldMapper();
+        this.entityClass = tableSqlBuilder.getEntityClass();
+        this.executorFactory = executorFactory;
+
+        // 设置逻辑删除字段
+        DbCustomStrategy customStrategy = executorFactory.getDbCustomStrategy();
+        this.logicColumn = customStrategy.getDbFieldDeleteLogic();
+        this.initLogic(customStrategy.getDeleteLogicValue(), customStrategy.getNotDeleteLogicValue());
+
+    }
+
     /**
      * 清空暂存
      */

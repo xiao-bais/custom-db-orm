@@ -105,8 +105,13 @@ public class CustomUtil extends StrUtils {
      * @throws NoSuchFieldException
      */
     public static <T> boolean writeFieldValue(Object writeValue, T waitWriteEntity, String fieldName, Class<?> fieldType) throws NoSuchFieldException {
-        WriteFieldHelper<T> readFieldHelper = new WriteFieldHelper<>(writeValue, waitWriteEntity, fieldName, fieldType);
-        return readFieldHelper.writeValue();
+//        WriteFieldHelper<T> readFieldHelper = new WriteFieldHelper<>(writeValue, waitWriteEntity, fieldName, fieldType);
+        return WriteFieldHelper.build()
+                .objType(waitWriteEntity)
+                .value(writeValue)
+                .field(fieldName)
+                .fieldType(fieldType)
+                .writeStart();
     }
 
     /**

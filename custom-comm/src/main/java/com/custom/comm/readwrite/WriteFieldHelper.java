@@ -7,6 +7,8 @@ import com.custom.comm.utils.ConvertUtil;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.exceptions.ExThrowsUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.beans.IntrospectionException;
@@ -22,7 +24,9 @@ import java.util.*;
  * 将值写入java对象指定属性中
  */
 @Slf4j
-public class WriteFieldHelper<T> {
+public class WriteFieldHelper {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * 写入的值
@@ -32,32 +36,87 @@ public class WriteFieldHelper<T> {
     /**
      * 写入的指定对象
      */
-    private final T waitWriteEntity;
+    private Object waitWriteEntity;
 
     /**
      * 写入对象中的指定属性字段名称
      */
-    private final String fieldName;
+    private String fieldName;
 
     /**
      * 当写入的字段类型为List/Set时, 泛型的类型
      */
-    private final Class<?> fieldType;
+    private Class<?> fieldType;
+
+    private final static WriteFieldHelper thisHelper = new WriteFieldHelper();
 
 
-    public WriteFieldHelper(Object writeValue, T waitWriteEntity, String fieldName, Class<?> fieldType) {
-        Asserts.notNull(waitWriteEntity, "The entity bean cannot be empty");
-        Asserts.notNull(fieldName, "The fieldName bean cannot be empty");
-        this.writeValue = writeValue;
-        this.waitWriteEntity = waitWriteEntity;
-        this.fieldName = fieldName;
-        this.fieldType = fieldType;
+//    public WriteFieldHelper(Object writeValue, T waitWriteEntity, String fieldName, Class<?> fieldType) {
+//        Asserts.notNull(waitWriteEntity, "The entity bean cannot be empty");
+//        Asserts.notNull(fieldName, "The fieldName bean cannot be empty");
+//        this.writeValue = writeValue;
+//        this.waitWriteEntity = waitWriteEntity;
+//        this.fieldName = fieldName;
+//        this.fieldType = fieldType;
+//    }
+
+    private WriteFieldHelper() {
+
     }
+
+    public static WriteFieldHelper build() {
+        thisHelper.clear();
+        return thisHelper;
+    }
+
+
+    /**
+     * 要写入的目标实体对象
+     */
+    public <T> WriteFieldHelper objType(T type) {
+        Asserts.notNull(type, "The entity bean cannot be empty");
+        thisHelper.waitWriteEntity = type;
+        return thisHelper;
+    }
+
+    /**
+     * 要写入的值
+     */
+    public WriteFieldHelper value(Object val) {
+        if (val == null) {
+            logger.warn("write val is null");
+        }
+        thisHelper.writeValue = val;
+        return thisHelper;
+    }
+
+    /**
+     * 要写入到对应的字段属性
+     */
+    public WriteFieldHelper field(String fieldName) {
+        thisHelper.fieldName = fieldName;
+        return thisHelper;
+    }
+
+    public WriteFieldHelper fieldType(Class<?> fieldType) {
+        thisHelper.fieldType = fieldType;
+        return thisHelper;
+    }
+
+    public boolean writeStart() throws NoSuchFieldException {
+        Asserts.notNull(thisHelper.fieldName);
+        Asserts.notNull(thisHelper.waitWriteEntity);
+        boolean success = thisHelper.writeValue();
+        thisHelper.clear();
+        return success;
+    }
+
+
 
     /**
      * 写入
      */
-    public boolean writeValue() throws NoSuchFieldException {
+    private boolean writeValue() throws NoSuchFieldException {
 
         Class<?> waitSetClass = waitWriteEntity.getClass();
         try {
@@ -129,5 +188,13 @@ public class WriteFieldHelper<T> {
             log.error(e.toString(), e);
             throw new NoSuchFieldException(" Field: '" + this.fieldName + "' not found in object " + fieldType);
         }
+    }
+
+
+    private void clear() {
+        this.fieldName = null;
+        this.fieldType = null;
+        this.waitWriteEntity = null;
+        this.writeValue = null;
     }
 }

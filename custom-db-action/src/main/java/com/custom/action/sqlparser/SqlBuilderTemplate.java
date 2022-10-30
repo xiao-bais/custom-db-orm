@@ -1,6 +1,7 @@
 package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractSqlBuilder;
+import com.custom.jdbc.executor.JdbcExecutorFactory;
 
 /**
  * @author Xiao-Bai
@@ -28,12 +29,12 @@ public class SqlBuilderTemplate<T> {
 
     private final AbstractSqlBuilder<T> emptySqlBuilder;
 
-    public SqlBuilderTemplate(Class<T> entityClass, int order) {
-        this.selectSqlBuilder = new HandleSelectSqlBuilder<>(entityClass, order);
-        this.insertSqlBuilder = new HandleInsertSqlBuilder<>(entityClass, order);
-        this.updateSqlBuilder = new HandleUpdateSqlBuilder<>(entityClass, order);
-        this.deleteSqlBuilder = new HandleDeleteSqlBuilder<>(entityClass, order);
-        this.emptySqlBuilder = new EmptySqlBuilder<>(entityClass, order);
+    public SqlBuilderTemplate(Class<T> entityClass, JdbcExecutorFactory executorFactory) {
+        this.selectSqlBuilder = new HandleSelectSqlBuilder<>(entityClass, executorFactory);
+        this.insertSqlBuilder = new HandleInsertSqlBuilder<>(entityClass, executorFactory);
+        this.updateSqlBuilder = new HandleUpdateSqlBuilder<>(entityClass, executorFactory);
+        this.deleteSqlBuilder = new HandleDeleteSqlBuilder<>(entityClass, executorFactory);
+        this.emptySqlBuilder = new EmptySqlBuilder<>(entityClass, executorFactory);
     }
 
     public AbstractSqlBuilder<T> getSelectSqlBuilder() {

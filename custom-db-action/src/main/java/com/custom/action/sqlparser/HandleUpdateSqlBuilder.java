@@ -6,6 +6,7 @@ import com.custom.action.util.DbUtil;
 import com.custom.comm.enums.SqlExecTemplate;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.Constants;
+import com.custom.jdbc.executor.JdbcExecutorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,10 +26,10 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
      */
     private StringJoiner updateSqlColumns;
 
-    public HandleUpdateSqlBuilder(Class<T> entityClass, int order) {
+    public HandleUpdateSqlBuilder(Class<T> entityClass, JdbcExecutorFactory executorFactory) {
         updateSqlColumns = new StringJoiner(Constants.SEPARATOR_COMMA_2);
         TableParseModel<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
-        this.injectTableInfo(tableSqlBuilder, order);
+        this.injectTableInfo(tableSqlBuilder, executorFactory);
     }
 
 

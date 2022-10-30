@@ -7,6 +7,7 @@ import com.custom.action.condition.ConditionWrapper;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.page.DbPageRows;
 import com.custom.jdbc.configuration.DbDataSource;
+import com.custom.jdbc.executor.JdbcExecutorFactory;
 
 import java.io.Serializable;
 import java.util.*;
@@ -73,6 +74,7 @@ public abstract class AbstractSqlExecutor  {
     public abstract void createTables(Class<?>... arr);
     public abstract void dropTables(Class<?>... arr);
     public abstract DbDataSource getDbDataSource();
+    public abstract JdbcExecutorFactory getExecutorFactory();
 
     /**
      * 处理异常抛出, 其实该方法只是做了一个隐式的异常抛出，没有别的作用

@@ -1,6 +1,7 @@
 package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractSqlBuilder;
+import com.custom.jdbc.executor.JdbcExecutorFactory;
 
 /**
  * @author Xiao-Bai
@@ -10,9 +11,9 @@ import com.custom.action.dbaction.AbstractSqlBuilder;
 public class EmptySqlBuilder<T> extends AbstractSqlBuilder<T> {
 
 
-    public EmptySqlBuilder(Class<T> entityClass, int order) {
+    public EmptySqlBuilder(Class<T> entityClass, JdbcExecutorFactory executorFactory) {
         TableParseModel<T> tableModel = TableInfoCache.getTableModel(entityClass);
-        this.injectTableInfo(tableModel, order);
+        this.injectTableInfo(tableModel, executorFactory);
     }
 
     @Override

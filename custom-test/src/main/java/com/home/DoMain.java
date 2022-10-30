@@ -3,6 +3,7 @@ package com.home;
 import com.custom.action.condition.Conditions;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.JdbcOpDao;
+import com.custom.comm.utils.CustomUtil;
 import com.custom.jdbc.condition.SelectMapExecutorModel;
 import com.custom.jdbc.dbAdapetr.Mysql8Adapter;
 import com.custom.jdbc.executor.CustomJdbcExecutor;
@@ -30,18 +31,14 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-        List<ChildStudent> childStudents = jdbcDao.selectList(Conditions.lambdaQuery(ChildStudent.class)
-                .onlyPrimary()
-        );
+        Student student = new Student();
+        student.setName("张丹");
 
-        ChildStudent childStudent = jdbcDao.selectOne(Conditions.lambdaQuery(ChildStudent.class)
-                .eq(ChildStudent::getId, 33).onlyPrimary()
-        );
+        boolean isSuccess = CustomUtil.writeFieldValue("李四", student, "name", String.class);
+        System.out.println("isSuccess = " + isSuccess);
 
-        Student student = jdbcOpDao.selectByKey(Student.class, 11);
-//        System.out.println("childStudents = " + childStudents);
-
-
+        boolean isSucc = CustomUtil.writeFieldValue(23, student, "age", Integer.class);
+        System.out.println("isSucc = " + isSucc);
 
 
     }

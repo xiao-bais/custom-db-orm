@@ -11,6 +11,7 @@ import com.custom.comm.utils.Constants;
 import com.custom.comm.utils.CustomApplicationUtil;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.StrUtils;
+import com.custom.jdbc.executor.JdbcExecutorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,8 +109,8 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
         return autoUpdateFieldSql.toString();
     }
 
-    public HandleDeleteSqlBuilder(Class<T> entityClass, int order) {
+    public HandleDeleteSqlBuilder(Class<T> entityClass, JdbcExecutorFactory executorFactory) {
         TableParseModel<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
-        this.injectTableInfo(tableSqlBuilder, order);
+        this.injectTableInfo(tableSqlBuilder, executorFactory);
     }
 }

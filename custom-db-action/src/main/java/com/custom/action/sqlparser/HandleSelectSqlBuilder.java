@@ -11,6 +11,7 @@ import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.StrUtils;
 import com.custom.jdbc.configuration.GlobalDataHandler;
 import com.custom.comm.utils.Constants;
+import com.custom.jdbc.executor.JdbcExecutorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +48,17 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
         this.existNeedInjectResult = tableSqlBuilder.existNeedInjectResult();
 
         this.injectTableInfo(tableSqlBuilder, order);
+    }
+
+    public HandleSelectSqlBuilder(Class<T> entityClass, JdbcExecutorFactory executorFactory) {
+        TableParseModel<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
+        this.joinTableSql = new StringBuilder();
+        this.relatedParserModels = tableSqlBuilder.getRelatedParserModels();
+        this.joinDbMappers = tableSqlBuilder.getJoinDbMappers();
+        this.joinTableParserModels = tableSqlBuilder.getJoinTableParserModels();
+        this.existNeedInjectResult = tableSqlBuilder.existNeedInjectResult();
+
+        this.injectTableInfo(tableSqlBuilder, executorFactory);
     }
 
 

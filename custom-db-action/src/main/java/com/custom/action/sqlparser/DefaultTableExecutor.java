@@ -23,7 +23,7 @@ import java.util.Map;
  */
 public class DefaultTableExecutor<T, P extends Serializable> implements TableExecutor<T, P> {
 
-    private static final Logger logger = LoggerFactory.getLogger(DefaultTableExecutor.class);
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final AbstractSqlExecutor jdbcAction;
     private final Class<T> entityClass;
@@ -121,9 +121,7 @@ public class DefaultTableExecutor<T, P extends Serializable> implements TableExe
     @Override
     @SuppressWarnings("unchecked")
     public P primaryKeyValue(T entity) {
-        DbDataSource dbDataSource = jdbcAction.getDbDataSource();
-        int order = dbDataSource.getOrder();
-        EmptySqlBuilder<T> emptySqlBuilder = TableInfoCache.getEmptySqlBuilder(entityClass, order);
+        EmptySqlBuilder<T> emptySqlBuilder = TableInfoCache.getEmptySqlBuilder(entityClass, jdbcAction.getExecutorFactory());
         emptySqlBuilder.injectEntity(entity);
         if (emptySqlBuilder.getKeyParserModel() == null) {
             ExThrowsUtil.toCustom("No primary key field specified");

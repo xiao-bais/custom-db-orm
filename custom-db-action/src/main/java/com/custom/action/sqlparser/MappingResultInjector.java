@@ -31,16 +31,10 @@ public class MappingResultInjector<T> {
      */
     private final AbstractSqlExecutor sqlExecutor;
 
-    /**
-     * 数据源序号
-     */
-    private final int order;
-
     public MappingResultInjector(Class<T> thisClass, AbstractSqlExecutor sqlExecutor) {
         this.thisClass = thisClass;
         this.sqlExecutor = sqlExecutor;
         DbDataSource dbDataSource = sqlExecutor.getDbDataSource();
-        this.order = dbDataSource.getOrder();
     }
 
 
@@ -66,7 +60,7 @@ public class MappingResultInjector<T> {
             for (Field waitSetField : oneToManyFieldList) {
                 DbJoinToManyParseModel joinToManyParseModel = new DbJoinToManyParseModel(waitSetField);
                 Class<?> joinTarget = joinToManyParseModel.getJoinTarget();
-                HandleSelectSqlBuilder<?> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(joinTarget, order);
+                HandleSelectSqlBuilder<?> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(joinTarget, sqlExecutor.getExecutorFactory());
                 String condition = joinToManyParseModel.queryCondition();
 
                 for (T entity : entityList) {
@@ -102,7 +96,7 @@ public class MappingResultInjector<T> {
         for (Field waitSetField : oneToOneFieldList) {
             DbJoinToOneParseModel joinToOneParseModel = new DbJoinToOneParseModel(waitSetField);
             Class<?> joinTarget = joinToOneParseModel.getJoinTarget();
-            HandleSelectSqlBuilder<?> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(joinTarget, order);
+            HandleSelectSqlBuilder<?> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(joinTarget, sqlExecutor.getExecutorFactory());
             String condition = joinToOneParseModel.queryCondition();
 
             for (T entity : entityList) {
@@ -115,7 +109,8 @@ public class MappingResultInjector<T> {
                     if (queryResult.get(0) == null) {
                         continue;
                     } else if (queryResult.size() > 1 && joinToOneParseModel.isThrowErr()) {
-                        ExThrowsUtil.toCustom(joinToOneParseModel.getJoinTarget() + "One to one query, but %s results are found", queryResult.size());
+                        ExThrowsUtil.toCustom(joinToOneParseModel.getJoinTarget()
+                                + "One to one query, but %s results are found", queryResult.size());
                     }
                     CustomUtil.writeFieldValue(queryResult.get(0), entity,
                             waitSetField.getName(), joinToOneParseModel.getJoinTarget());
