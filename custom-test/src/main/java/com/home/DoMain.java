@@ -1,6 +1,7 @@
 package com.home;
 
 import com.custom.action.condition.Conditions;
+import com.custom.action.condition.LambdaConditionWrapper;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.action.sqlparser.JdbcOpDao;
 import com.custom.comm.utils.CustomUtil;
@@ -31,14 +32,9 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-        Student student = new Student();
-        student.setName("张丹");
-
-        boolean isSuccess = CustomUtil.writeFieldValue("李四", student, "name", String.class);
-        System.out.println("isSuccess = " + isSuccess);
-
-        boolean isSucc = CustomUtil.writeFieldValue(23, student, "age", Integer.class);
-        System.out.println("isSucc = " + isSucc);
+//        LambdaConditionWrapper<Student> conditionWrapper = Conditions.lambdaQuery(Student.class).eq(Student::getNickName, "aaa").ge(Student::getAge, 22);
+//        String conditional = conditionWrapper.injectParamsConditional();
+//        System.out.println("conditional = " + conditional);
 
 
     }

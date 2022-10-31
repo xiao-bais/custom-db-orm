@@ -226,7 +226,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
         if (JudgeUtil.isNotEmpty(this.groupBy)) {
             handleSqlBuilder.append(Constants.GROUP_BY).append(this.groupBy);
         }
-        if (JudgeUtil.isEmpty(this.having)) {
+        if (JudgeUtil.isNotEmpty(this.having)) {
             handleSqlBuilder.append(Constants.HAVING).append(this.having);
             this.paramValues.addAll(this.havingParams);
         }
