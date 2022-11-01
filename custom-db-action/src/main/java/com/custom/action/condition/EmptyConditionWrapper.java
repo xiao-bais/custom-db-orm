@@ -1,5 +1,7 @@
 package com.custom.action.condition;
 
+import com.custom.action.condition.support.TableSupport;
+
 import java.util.function.Consumer;
 
 /**
@@ -17,6 +19,10 @@ public class EmptyConditionWrapper<T> extends ConditionAdapter<T, EmptyCondition
 
     public EmptyConditionWrapper(Class<T> entityClass) {
         wrapperInitialize(entityClass);
+    }
+
+    public EmptyConditionWrapper(Class<T> entityClass, TableSupport tableSupport) {
+        this.wrapperInitialize(entityClass, tableSupport);
     }
 
     @Override

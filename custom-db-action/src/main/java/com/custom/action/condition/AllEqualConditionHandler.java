@@ -26,7 +26,7 @@ public class AllEqualConditionHandler<T> {
     public AllEqualConditionHandler(T entity, DefaultConditionWrapper<T> conditionWrapper) {
         this.entity = entity;
         this.conditionWrapper = conditionWrapper;
-        this.fieldMapper = conditionWrapper.getTableSqlBuilder().getFieldMapper();
+        this.fieldMapper = conditionWrapper.getTableSupport().fieldMap();
     }
 
     /**

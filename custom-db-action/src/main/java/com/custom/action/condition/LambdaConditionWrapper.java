@@ -1,5 +1,6 @@
 package com.custom.action.condition;
 
+import com.custom.action.condition.support.TableSupport;
 import com.custom.comm.enums.DbSymbol;
 import com.custom.comm.enums.SqlLike;
 
@@ -126,11 +127,15 @@ public class LambdaConditionWrapper<T> extends ConditionAdapter<T, LambdaConditi
      * 转成默认格式的条件构造器
      */
     public DefaultConditionWrapper<T> toDefault() {
-        return new DefaultConditionWrapper<T>(this);
+        return new DefaultConditionWrapper<>(this);
     }
 
     public LambdaConditionWrapper(Class<T> entityClass) {
         wrapperInitialize(entityClass);
+    }
+
+    public LambdaConditionWrapper(Class<T> entityClass, TableSupport tableSupport) {
+        this.wrapperInitialize(entityClass, tableSupport);
     }
 
 
@@ -143,7 +148,6 @@ public class LambdaConditionWrapper<T> extends ConditionAdapter<T, LambdaConditi
         this.addParams(wrapper.getParamValues());
         this.setSelectColumns(wrapper.getSelectColumns());
         this.setPageParams(wrapper.getPageIndex(), wrapper.getPageSize());
-        this.setTableSqlBuilder(wrapper.getTableSqlBuilder());
         this.setPrimaryTable(wrapper.getPrimaryTable());
     }
 

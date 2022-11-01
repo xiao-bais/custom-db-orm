@@ -32,9 +32,11 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-//        LambdaConditionWrapper<Student> conditionWrapper = Conditions.lambdaQuery(Student.class).eq(Student::getNickName, "aaa").ge(Student::getAge, 22);
-//        String conditional = conditionWrapper.injectParamsConditional();
-//        System.out.println("conditional = " + conditional);
+        LambdaConditionWrapper<Student> conditionWrapper = Conditions.lambdaQuery(Student.class).eq(Student::getNickName, "aaa").ge(Student::getAge, 22);
+        String conditional = conditionWrapper.injectParamsConditional();
+        System.out.println("conditional = " + conditional);
+
+        long count = jdbcDao.selectCount(conditionWrapper);
 
 
     }

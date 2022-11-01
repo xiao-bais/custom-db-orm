@@ -103,7 +103,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
             column = GlobalDataHandler.wrapperSqlKeyword(column);
         }
         if(!column.contains(Constants.POINT)) {
-            column = DbUtil.fullSqlColumn(getTableSqlBuilder().getAlias(), column);
+            column = DbUtil.fullSqlColumn(getTableSupport().alias(), column);
         }
         return column;
     }

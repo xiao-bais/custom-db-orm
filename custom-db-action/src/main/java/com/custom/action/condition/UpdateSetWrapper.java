@@ -1,5 +1,6 @@
 package com.custom.action.condition;
 
+import com.custom.action.interfaces.ColumnParseHandler;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.Constants;
@@ -30,7 +31,7 @@ public abstract class UpdateSetWrapper<T> {
     /**
      * SFunction接口实体字段解析对象
      */
-    private final DefaultColumnParseHandler<T> columnParseHandler;
+    private final ColumnParseHandler<T> columnParseHandler;
 
     public List<Object> getSetParams() {
         return setParams;
@@ -47,7 +48,7 @@ public abstract class UpdateSetWrapper<T> {
         return entityClass;
     }
 
-    protected DefaultColumnParseHandler<T> getColumnParseHandler() {
+    protected ColumnParseHandler<T> getColumnParseHandler() {
         return columnParseHandler;
     }
 

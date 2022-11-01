@@ -1,5 +1,6 @@
 package com.custom.action.condition;
 
+import com.custom.action.condition.support.TableSupport;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.enums.DbSymbol;
 import com.custom.comm.enums.SqlLike;
@@ -142,6 +143,10 @@ public class DefaultConditionWrapper<T> extends ConditionAssembly<T, String, Def
         this.wrapperInitialize(entityClass);
     }
 
+    public DefaultConditionWrapper(Class<T> entityClass, TableSupport tableSupport) {
+        this.wrapperInitialize(entityClass, tableSupport);
+    }
+
     DefaultConditionWrapper(ConditionWrapper<T> wrapper) {
         this.dataStructureInit();
         this.setEntityClass(wrapper.getEntityClass());
@@ -151,7 +156,6 @@ public class DefaultConditionWrapper<T> extends ConditionAssembly<T, String, Def
         this.addParams(wrapper.getParamValues());
         this.setSelectColumns(wrapper.getSelectColumns());
         this.setPageParams(wrapper.getPageIndex(), wrapper.getPageSize());
-        this.setTableSqlBuilder(wrapper.getTableSqlBuilder());
         this.setPrimaryTable(wrapper.getPrimaryTable());
     }
 

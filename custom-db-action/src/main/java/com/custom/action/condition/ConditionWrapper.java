@@ -1,5 +1,6 @@
 package com.custom.action.condition;
 
+import com.custom.action.condition.support.TableSupport;
 import com.custom.action.interfaces.ColumnParseHandler;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableParseModel;
@@ -28,9 +29,9 @@ public abstract class ConditionWrapper<T> implements Serializable {
     private String[] selectColumns;
 
     /**
-     * 实体解析模板
+     * 表数据支持
      */
-    private TableParseModel<T> tableSqlBuilder;
+    private TableSupport<T> tableSupport;
 
     /**
      * 实体Class对象
@@ -89,12 +90,8 @@ public abstract class ConditionWrapper<T> implements Serializable {
     private StringBuilder customizeSql;
 
 
-    protected TableParseModel<T> getTableSqlBuilder() {
-        return tableSqlBuilder;
-    }
-
-    protected void setTableSqlBuilder(TableParseModel<T> tableSqlBuilder) {
-        this.tableSqlBuilder = tableSqlBuilder;
+    public TableSupport<T> getTableSupport() {
+        return tableSupport;
     }
 
     public Class<T> getEntityClass() {
@@ -206,9 +203,6 @@ public abstract class ConditionWrapper<T> implements Serializable {
         this.customizeSql.append(Constants.WHITESPACE).append(customizeSql);
     }
 
-    protected TableParseModel<T> getTableParserModelCache(Class<T> key) {
-        return TableInfoCache.getTableModel(key);
-    }
 
     /**
      * 参数注入后的sql条件
@@ -240,12 +234,18 @@ public abstract class ConditionWrapper<T> implements Serializable {
         return hasPageParams;
     }
 
-    protected void wrapperInitialize(Class<T> entityClass) {
+    protected void wrapperInitialize(Class<T> entityClass, TableSupport tableSupport) {
         this.entityClass = entityClass;
-        TableParseModel<T> tableSqlBuilder = getTableParserModelCache(entityClass);
-        setTableSqlBuilder(tableSqlBuilder);
+        if (tableSupport == null) {
+            this.tableSupport = new ConditionTableSupport<>(this.entityClass);
+        }else {
+            this.tableSupport = tableSupport;
+        }
         this.dataStructureInit();
+    }
 
+    protected void wrapperInitialize(Class<T> entityClass) {
+        wrapperInitialize(entityClass, null);
     }
 
     /**
