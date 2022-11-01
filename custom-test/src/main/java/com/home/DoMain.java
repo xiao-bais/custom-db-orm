@@ -26,8 +26,6 @@ public class DoMain {
                 jdbcTestBuilder.getDbCustomStrategy(),
                 Student.class);
 
-        tableExecutor.selectOne()
-
     }
 
 
