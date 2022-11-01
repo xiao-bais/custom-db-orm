@@ -44,7 +44,7 @@ public class DefaultTableExecutor<T, P extends Serializable> implements TableExe
     }
 
     @Override
-    public T selectOneByCondition(ConditionWrapper<T> wrapper) {
+    public T selectOne(ConditionWrapper<T> wrapper) {
         return jdbcAction.selectOne(wrapper);
     }
 
@@ -89,7 +89,7 @@ public class DefaultTableExecutor<T, P extends Serializable> implements TableExe
     }
 
     @Override
-    public int deleteByCondition(ConditionWrapper<T> wrapper) {
+    public int deleteSelective(ConditionWrapper<T> wrapper) {
         return jdbcAction.deleteSelective(wrapper);
     }
 

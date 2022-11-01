@@ -74,7 +74,7 @@ public class OrderByFunc<T> extends AbstractSqlFunc<T, OrderByFunc<T>> {
 
     public OrderByFunc(Class<T> entityClass, SqlOrderBy orderBy) {
         this.orderBy = orderBy.getName();
-        super.init(entityClass);
+        super.initNeed(entityClass);
     }
 
     public String getOrderBy() {

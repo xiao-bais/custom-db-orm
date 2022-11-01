@@ -7,7 +7,7 @@ import java.util.Map;
  * @date 2022/11/1 13:07
  * @desc 用于部分需要表数据支持的对象
  */
-public interface TableSupport<T> {
+public interface TableSupport {
 
     /**
      * 表名
@@ -23,4 +23,9 @@ public interface TableSupport<T> {
      * java字段到sql字段的映射
      */
     Map<String, String> fieldMap();
+
+    /**
+     * sql字段到java字段的映射
+     */
+    Map<String, String> columnMap();
 }

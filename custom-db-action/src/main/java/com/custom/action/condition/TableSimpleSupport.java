@@ -9,12 +9,11 @@ import java.util.Map;
 /**
  * @author Xiao-Bai
  * @date 2022/11/1 12:58
- * @desc 对于条件构造器的表数据支持
+ * @desc 对于条件构造器的相关表数据支持
  */
-public class ConditionTableSupport<T> implements TableSupport<T> {
+public class TableSimpleSupport<T> implements TableSupport {
 
     private final TableParseModel<T> parseModel;
-
 
     @Override
     public String table() {
@@ -31,9 +30,13 @@ public class ConditionTableSupport<T> implements TableSupport<T> {
         return parseModel.getFieldMapper();
     }
 
+    @Override
+    public Map<String, String> columnMap() {
+        return parseModel.getColumnMapper();
+    }
 
 
-    public ConditionTableSupport(Class<T> entityClass) {
+    public TableSimpleSupport(Class<T> entityClass) {
         this.parseModel = TableInfoCache.getTableModel(entityClass);
     }
 }

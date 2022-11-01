@@ -20,7 +20,7 @@ public interface TableExecutor<T, P extends Serializable> {
     /*--------------------------------------- select ---------------------------------------*/
     DbPageRows<T> selectPage(ConditionWrapper<T> wrapper);
     List<T> selectList(ConditionWrapper<T> wrapper);
-    T selectOneByCondition(ConditionWrapper<T> wrapper);
+    T selectOne(ConditionWrapper<T> wrapper);
     long selectCount(ConditionWrapper<T> wrapper);
     Object selectObj(ConditionWrapper<T> wrapper);
     List<Object> selectObjs(ConditionWrapper<T> wrapper);
@@ -31,7 +31,7 @@ public interface TableExecutor<T, P extends Serializable> {
     /*------------------------------------ delete ---------------------------------------*/
     int deleteByKey(P key);
     int deleteBatchKeys(Collection<P> keys);
-    int deleteByCondition(ConditionWrapper<T> wrapper);
+    int deleteSelective(ConditionWrapper<T> wrapper);
 
     /*------------------------------------ insert ---------------------------------------*/
     int insert(T t);

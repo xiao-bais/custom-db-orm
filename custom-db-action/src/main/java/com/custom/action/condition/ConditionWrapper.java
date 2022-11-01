@@ -2,8 +2,6 @@ package com.custom.action.condition;
 
 import com.custom.action.condition.support.TableSupport;
 import com.custom.action.interfaces.ColumnParseHandler;
-import com.custom.action.sqlparser.TableInfoCache;
-import com.custom.action.sqlparser.TableParseModel;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.Constants;
@@ -31,7 +29,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
     /**
      * 表数据支持
      */
-    private TableSupport<T> tableSupport;
+    private TableSupport tableSupport;
 
     /**
      * 实体Class对象
@@ -90,7 +88,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
     private StringBuilder customizeSql;
 
 
-    public TableSupport<T> getTableSupport() {
+    public TableSupport getTableSupport() {
         return tableSupport;
     }
 
@@ -237,7 +235,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
     protected void wrapperInitialize(Class<T> entityClass, TableSupport tableSupport) {
         this.entityClass = entityClass;
         if (tableSupport == null) {
-            this.tableSupport = new ConditionTableSupport<>(this.entityClass);
+            this.tableSupport = new TableSimpleSupport<>(this.entityClass);
         }else {
             this.tableSupport = tableSupport;
         }

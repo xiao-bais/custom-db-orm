@@ -295,8 +295,20 @@ public class JdbcOpDao {
     }
 
     private final AbstractSqlExecutor jdbcAction;
+    private final DbDataSource dbDataSource;
+    private final DbCustomStrategy dbCustomStrategy;
 
     public JdbcOpDao(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
+        this.dbDataSource = dbDataSource;
+        this.dbCustomStrategy = dbCustomStrategy;
         jdbcAction = new JdbcActionProxy(new JdbcAction(), dbDataSource, dbCustomStrategy).createProxy();
+    }
+
+    public DbDataSource getDbDataSource() {
+        return dbDataSource;
+    }
+
+    public DbCustomStrategy getDbCustomStrategy() {
+        return dbCustomStrategy;
     }
 }

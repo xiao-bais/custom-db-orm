@@ -1,8 +1,7 @@
 package com.custom.action.condition;
 
+import com.custom.action.condition.support.TableSupport;
 import com.custom.action.interfaces.ColumnParseHandler;
-import com.custom.action.sqlparser.TableInfoCache;
-import com.custom.action.sqlparser.TableParseModel;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.enums.SqlAggregate;
 
@@ -101,12 +100,12 @@ public abstract class AbstractSqlFunc<T, Children> {
 
 
     // 初始化
-    protected void init(Class<T> cls) {
+    protected void initNeed(Class<T> cls) {
         columnParseHandler = new DefaultColumnParseHandler<>(cls);
-        TableParseModel<T> tableModel = TableInfoCache.getTableModel(cls);
-        fieldMapper = tableModel.getFieldMapper();
-        columnMapper = tableModel.getColumnMapper();
-        alias = tableModel.getAlias();
+        TableSupport tableSupport = new TableSimpleSupport<>(cls);
+        fieldMapper = tableSupport.fieldMap();
+        columnMapper = tableSupport.columnMap();
+        alias = tableSupport.alias();
         sqlFragments = new ArrayList<>();
     }
 
@@ -129,10 +128,10 @@ public abstract class AbstractSqlFunc<T, Children> {
             case MAX:
             case MIN:
             case AVG:
-                template = isNullToZero ? "ifnull(%s(%s), 0) %s" : "%s(%s) %s";
+                template = isNullToZero ? "IFNULL(%s(%s), 0) %s" : "%s(%s) %s";
                 break;
             case COUNT:
-                template = distinct ? "%s(distinct %s) %s" : "%s(%s) %s";
+                template = distinct ? "%s(DISTINCT %s) %s" : "%s(%s) %s";
                 break;
             case IFNULL:
                 template = "%s(%s, %s) %s";

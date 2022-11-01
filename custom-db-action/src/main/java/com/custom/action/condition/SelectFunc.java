@@ -14,7 +14,7 @@ import java.lang.reflect.Field;
 public class SelectFunc<T> extends AbstractSqlFunc<T, SelectFunc<T>> {
 
     public SelectFunc(Class<T> entityClass) {
-        super.init(entityClass);
+        super.initNeed(entityClass);
     }
 
     /**

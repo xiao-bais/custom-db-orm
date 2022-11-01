@@ -46,7 +46,7 @@ public class ActiveModel<T extends ActiveModel<T, P>, P extends Serializable> im
      */
     public boolean delete(ConditionWrapper<T> wrapper) {
         TableExecutor<T, P> activeWrapper = activeWrapper();
-        return ConvertUtil.conBool(activeWrapper.deleteByCondition(wrapper));
+        return ConvertUtil.conBool(activeWrapper.deleteSelective(wrapper));
     }
 
     /**
