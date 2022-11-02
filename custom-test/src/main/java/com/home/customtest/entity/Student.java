@@ -5,16 +5,12 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.custom.action.activerecord.ActiveModel;
 import com.custom.comm.annotations.*;
-import com.custom.comm.enums.DbType;
-import com.custom.comm.enums.KeyStrategy;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Author Xiao-Bai
@@ -80,7 +76,7 @@ public class Student extends ActiveModel<Student, Integer> {
     @DbField(exist = false)
     private String area;
 
-    @DbIgnore
+    @DbNotField
     private List<Street> modelList;
 
     @DbMapper("pv.name")

@@ -65,7 +65,7 @@ public @interface DbField {
 
 
     /**
-     * 是否存在该表字段，作用与{@link DbIgnore}一致
+     * 是否存在该表字段，作用与{@link DbNotField}一致
      */
     boolean exist() default true;
 

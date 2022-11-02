@@ -14,22 +14,22 @@ import lombok.ToString;
 @Data
 @ToString(callSuper = true)
 @DbJoinTable("left join location lo on lo.id = a.area_id")
-@DbTable(table = "student", mergeSuper = false)
+@DbTable(table = "student", mergeSuperJoin = false)
 public class ChildStudent extends Student {
 
 
 
-    @DbIgnore
+    @DbNotField
     private Integer sumAge;
-    @DbIgnore
+    @DbNotField
     private Integer ifNullAge;
-    @DbIgnore
+    @DbNotField
     private Integer countAge;
-    @DbIgnore
+    @DbNotField
     private Integer minAge;
-    @DbIgnore
+    @DbNotField
     private Integer maxAge;
-    @DbIgnore
+    @DbNotField
     private Integer avgAge;
 
 

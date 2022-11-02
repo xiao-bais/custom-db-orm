@@ -57,7 +57,7 @@ public class TableParseModel<T> implements Cloneable {
     /**
      * 当子类跟父类同时标注了@DbJoinTable(s)注解时，是否在查询时向上查找父类的@DbJoinTable(s)注解，且合并关联条件
      */
-    private boolean findUpDbJoinTables;
+    private boolean mergeSuperJoin;
     /**
      * 对于{@link DbKey}注解的解析
      */
@@ -236,7 +236,7 @@ public class TableParseModel<T> implements Cloneable {
         this.alias = annotation.alias();
         this.table = annotation.table();
         this.desc = annotation.desc();
-        this.findUpDbJoinTables = annotation.mergeSuper();
+        this.mergeSuperJoin = annotation.mergeSuperJoin();
         this.underlineToCamel = underlineToCamel;
         this.oneToOneFieldList = new ArrayList<>();
         this.oneToManyFieldList = new ArrayList<>();
@@ -271,7 +271,7 @@ public class TableParseModel<T> implements Cloneable {
 
             } else if (field.isAnnotationPresent(DbMapper.class)) {
 
-                if (findUpDbJoinTables) {
+                if (mergeSuperJoin) {
                     DbJoinTableParserModel<T> joinTableParserModel = new DbJoinTableParserModel<>(this.entityClass, field);
                     joinDbMappers.add(joinTableParserModel);
                 }else {
@@ -283,7 +283,7 @@ public class TableParseModel<T> implements Cloneable {
 
             } else if (field.isAnnotationPresent(DbRelated.class)) {
                 // 若没有向上合并父类的关联条件，则该字段可看做一个普通字段
-                if (findUpDbJoinTables) {
+                if (mergeSuperJoin) {
                     DbRelationParserModel<T> relatedParserModel = new DbRelationParserModel<>(this.entityClass, field,
                             this.table, this.alias, this.underlineToCamel);
                     relatedParserModels.add(relatedParserModel);
@@ -306,7 +306,7 @@ public class TableParseModel<T> implements Cloneable {
      * 若满足条件，则该字段无需解析
      */
     private boolean isNotNeedParseProperty(Field field) {
-        if (field.isAnnotationPresent(DbIgnore.class)) {
+        if (field.isAnnotationPresent(DbNotField.class)) {
             return true;
         }
         // 基础字段或关联字段的java属性类型必须是允许的基本类型
@@ -344,7 +344,7 @@ public class TableParseModel<T> implements Cloneable {
     private List<String> mergeDbJoinTables() {
         Class<?> entityClass = this.entityClass;
 
-        if (this.findUpDbJoinTables) {
+        if (this.mergeSuperJoin) {
 
             // 创建一个二维list
             // 一般按照正常思维，关联的表SQL都是从父类开始进行拼接

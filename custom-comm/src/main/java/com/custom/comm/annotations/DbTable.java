@@ -17,9 +17,6 @@ public @interface DbTable {
 
     /**
      * 表名称
-     * <p>
-     *     若当前类跟父类同时标注了DbTable注解，且对应的table值不一致时，则不会合并父类的属性字段
-     * </p>
      * @return table
      */
     String table();
@@ -40,10 +37,14 @@ public @interface DbTable {
 
 
     /**
-     * 当子类跟父类同时标注了@DbJoinTable(s)注解时，是否在查询时向上查找父类的@DbJoinTable(s)注解，且合并关联条件
-     * @return mergeSuper
+     * 子类是否允许合并父类的关联条件以及映射的关联字段同时标注
+     *  {@link DbJoinTables}, {@link DbJoinTable}, {@link DbRelated}
+     *  <br/> true => 关联顺序按照父类最先关联，一层一层往子类关联
+     *  <br/> false => 不会合并父类的关联条件，并且将{@link DbRelated#field()}, {@link DbMapper} 标注的字段设置为普通字段
+     *  <br/> 普通字段等同于 {@link DbField#exist()} = false 或者 {@link DbNotField}
+     * @return mergeSuperJoin
      */
-    boolean mergeSuper() default true;
+    boolean mergeSuperJoin() default true;
 
 
 }
