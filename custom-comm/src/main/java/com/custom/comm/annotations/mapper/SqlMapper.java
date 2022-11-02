@@ -14,7 +14,7 @@ import java.lang.annotation.*;
 public @interface SqlMapper {
 
     /**
-     * 作用与DbDataSource中的属性order一致，以此来确定数据源
+     * 作用与DbDataSource中的属性order一致，以此来确定数据源，主数据源默认为1
      */
     int order() default 1;
 
