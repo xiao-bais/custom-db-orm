@@ -47,6 +47,9 @@ public class Student extends ActiveModel<Student, Integer> {
 //    @DbIgnore
     private String password;
 
+    @DbRelated(joinTable = "employee", joinAlias = "emp", condition = "emp.id = a.id", field = "emp_name")
+    private String proName;
+
 
     private Integer age;
 

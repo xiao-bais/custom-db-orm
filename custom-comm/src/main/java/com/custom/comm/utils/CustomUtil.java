@@ -140,7 +140,9 @@ public class CustomUtil extends StrUtils {
         Class<?> clz = t;
         DbTable thisDbTable = t.getAnnotation(DbTable.class);
         List<Field> fieldList = new ArrayList<>();
-        while (!clz.equals(Object.class)) {
+        boolean isLooped = true;
+        while (!clz.equals(Object.class) && (!clz.equals(t) || isLooped)) {
+            isLooped = false;
             Arrays.stream(clz.getDeclaredFields()).forEach(field -> {
                 int modifiers = field.getModifiers();
                 if (Modifier.isPrivate(modifiers)
@@ -148,13 +150,9 @@ public class CustomUtil extends StrUtils {
                     fieldList.add(field);
                 }
             });
-            DbTable parentDbTable = clz.getSuperclass().getAnnotation(DbTable.class);
-            if (Objects.isNull(parentDbTable)
-                    || thisDbTable.equals(parentDbTable)) {
-                clz = clz.getSuperclass();
-                if (clz.equals(Object.class)) {
-                    break;
-                }
+            clz = clz.getSuperclass();
+            if (clz.equals(Object.class)) {
+                break;
             }
         }
         if (fieldList.size() == 0 && checkDbField) {

@@ -14,6 +14,7 @@ import lombok.ToString;
 @Data
 @ToString(callSuper = true)
 @DbJoinTable("left join location lo on lo.id = a.area_id")
+@DbTable(table = "student", mergeSuper = false)
 public class ChildStudent extends Student {
 
 
@@ -30,5 +31,8 @@ public class ChildStudent extends Student {
     private Integer maxAge;
     @DbIgnore
     private Integer avgAge;
+
+
+
 
 }

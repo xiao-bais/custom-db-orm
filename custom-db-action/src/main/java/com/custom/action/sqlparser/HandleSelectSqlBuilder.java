@@ -39,17 +39,6 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
     private final List<String> joinTableParserModels;
     private final boolean existNeedInjectResult;
 
-    public HandleSelectSqlBuilder(Class<T> entityClass, int order) {
-        TableParseModel<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
-        this.joinTableSql = new StringBuilder();
-        this.relatedParserModels = tableSqlBuilder.getRelatedParserModels();
-        this.joinDbMappers = tableSqlBuilder.getJoinDbMappers();
-        this.joinTableParserModels = tableSqlBuilder.getJoinTableParserModels();
-        this.existNeedInjectResult = tableSqlBuilder.existNeedInjectResult();
-
-        this.injectTableInfo(tableSqlBuilder, order);
-    }
-
     public HandleSelectSqlBuilder(Class<T> entityClass, JdbcExecutorFactory executorFactory) {
         TableParseModel<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
         this.joinTableSql = new StringBuilder();
@@ -131,7 +120,9 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
         // 第二步 拼接此表的其他字段
         if (!getFieldParserModels().isEmpty()) {
-            getFieldParserModels().stream().map(DbFieldParserModel::getSelectFieldSql).forEach(baseFieldSql::add);
+            getFieldParserModels().stream().filter(DbFieldParserModel::isExistsDbField)
+                    .map(DbFieldParserModel::getSelectFieldSql)
+                    .forEach(baseFieldSql::add);
         }
 
         // 第三步 拼接以joinTables的方式关联的查询字段
