@@ -32,7 +32,7 @@ public class TaskController {
 
     @ApiOperation("主任务列表查询")
     @PostMapping("/query_task_list")
-    public BackResult<DbPageRows<TaskRecordModel>> mainTaskList(TaskRecordRequest request) {
+    public BackResult<DbPageRows<TaskRecordModel>> mainTaskList(@RequestBody TaskRecordRequest request) {
         DbPageRows<TaskRecordModel> pageRows = taskRecordService.taskList(request);
         return BackResult.bySuccess(pageRows);
     }
