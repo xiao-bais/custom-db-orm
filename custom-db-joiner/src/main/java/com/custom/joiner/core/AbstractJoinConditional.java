@@ -8,7 +8,6 @@ import com.custom.action.util.DbUtil;
 import com.custom.action.util.LambdaResolveUtil;
 import com.custom.comm.enums.DbJoinStyle;
 import com.custom.comm.enums.DbSymbol;
-import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.enums.AliasStrategy;
 import com.custom.comm.utils.*;
 import com.custom.joiner.interfaces.DoJoin;
@@ -92,10 +91,10 @@ public abstract class AbstractJoinConditional<T> {
      */
     public String formatJoinSqlAction() {
         if (joinList.isEmpty()) {
-            ExThrowsUtil.toCustom("未指定关联条件");
+            throw new CustomCheckException("未指定关联条件");
         }
         if (StrUtils.isBlank(this.joinTableAlias) || StrUtils.isBlank(this.primaryTableAlias)) {
-            ExThrowsUtil.toUnSupport("Viewing is not supported before the association is completed");
+            throw new UnsupportedOperationException("Viewing is not supported before the association is completed");
         }
         if (JudgeUtil.isEmpty(joinConditional)) {
             StringBuilder sqlJoinAction = new StringBuilder();

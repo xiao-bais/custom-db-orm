@@ -2,6 +2,7 @@ package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractTableModel;
 import com.custom.action.util.DbUtil;
+import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.jdbc.configuration.GlobalDataHandler;
 import com.custom.comm.utils.JudgeUtil;
@@ -9,7 +10,6 @@ import com.custom.comm.utils.Constants;
 import com.custom.comm.annotations.DbKey;
 import com.custom.comm.enums.DbType;
 import com.custom.comm.enums.KeyStrategy;
-import com.custom.comm.exceptions.ExThrowsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,7 +113,7 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
             case INPUT:
                 key = getValue();
                 if(key == null) {
-                    ExThrowsUtil.toCustom("The value of the primary key is empty");
+                    throw new CustomCheckException("The value of the primary key is empty");
                 }
                 break;
         }

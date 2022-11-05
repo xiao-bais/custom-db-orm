@@ -9,7 +9,6 @@ import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.exceptions.CustomCheckException;
-import com.custom.comm.exceptions.ExThrowsUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.invoke.SerializedLambda;
@@ -40,7 +39,7 @@ public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {
         this.columnParseList = tableModel.columnPropertyMaps();
 
         if (JudgeUtil.isEmpty(columnParseList)) {
-            ExThrowsUtil.toCustom("该类找不到可解析的字段：" + this.thisClass);
+            throw new CustomCheckException("该类找不到可解析的字段：" + this.thisClass);
         }
         this.fieldList = Arrays.stream(tableModel.getFields()).collect(Collectors.toList());
     }
@@ -77,7 +76,7 @@ public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {
             columnPropertyMaps.stream()
                     .map(ColumnPropertyMap::getGetMethodName)
                     .forEach(expMethodNames::add);
-            ExThrowsUtil.toCustom("Lambda parsing error, found multiple matching results: " + expMethodNames);
+            throw new CustomCheckException("Lambda parsing error, found multiple matching results: " + expMethodNames);
         }
 
         return columnPropertyMaps.get(0).getPropertyName();

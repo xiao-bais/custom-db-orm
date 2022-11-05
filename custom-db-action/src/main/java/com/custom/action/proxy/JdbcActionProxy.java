@@ -12,7 +12,6 @@ import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.annotations.DbTable;
 import com.custom.comm.annotations.check.CheckExecute;
 import com.custom.comm.enums.ExecuteMethod;
-import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.exceptions.SQLSessionException;
@@ -74,7 +73,7 @@ public class JdbcActionProxy implements MethodInterceptor {
             return methodProxy.invokeSuper(o, objects);
         }
         if(JudgeUtil.isEmpty(objects[0])) {
-            ExThrowsUtil.toNull("Execution parameter cannot be empty");
+            throw new NullPointerException("Execution parameter cannot be empty");
         }
 
         ExecuteMethod target = annotation.target();
@@ -107,7 +106,8 @@ public class JdbcActionProxy implements MethodInterceptor {
             insertParam = ((List<Object>) objects[0]).get(0);
         }
         if(!insertParam.getClass().isAnnotationPresent(DbTable.class)) {
-            ExThrowsUtil.toCustom("@DbTable not found in class " + insertParam.getClass());
+            throw new CustomCheckException("@DbTable not found in class " + insertParam.getClass());
+            
         }
     }
 
@@ -118,19 +118,19 @@ public class JdbcActionProxy implements MethodInterceptor {
         int length = objects.length;
         if(length == 1) {
             if(Objects.isNull(objects[0])) {
-                ExThrowsUtil.toCustom("delete condition cannot be empty");
+                throw new CustomCheckException("delete condition cannot be empty");
             }
             if(objects[0] instanceof ConditionWrapper && JudgeUtil.isEmpty(((ConditionWrapper<?>) objects[0]).getFinalConditional())) {
-                ExThrowsUtil.toCustom("delete condition cannot be empty");
+                throw new CustomCheckException("delete condition cannot be empty");
             }
             return;
         }
         Object deleteParam = objects[1];
         if(!((Class<?>)objects[0]).isAnnotationPresent(DbTable.class)) {
-            ExThrowsUtil.toCustom("@DbTable not found in class "+ objects[0].getClass());
+            throw new CustomCheckException("@DbTable not found in class "+ objects[0].getClass());
         }
         if(JudgeUtil.isEmpty(deleteParam)) {
-            ExThrowsUtil.toCustom("delete condition cannot be empty");
+            throw new CustomCheckException("delete condition cannot be empty");
         }
     }
 
@@ -141,9 +141,9 @@ public class JdbcActionProxy implements MethodInterceptor {
         String methodName = method.getName();
         if(Objects.isNull(objects[0])) {
             if (methodName.equals("updateSelective")) {
-                ExThrowsUtil.toNull("Update setter cannot be empty");
+                throw new NullPointerException("Update setter cannot be empty");
             }
-            ExThrowsUtil.toNull("Update entity cannot be null");
+            throw new NullPointerException("Update entity cannot be null");
         }
         if (methodName.equals("updateSelective")) {
             try {
@@ -151,10 +151,10 @@ public class JdbcActionProxy implements MethodInterceptor {
                 UpdateSetWrapper<?> updateSetWrapper = updateSet.getUpdateSetWrapper();
                 ConditionWrapper<?> conditionWrapper = updateSet.getConditionWrapper();
                 if (updateSetWrapper == null || JudgeUtil.isEmpty(updateSetWrapper.getSqlSetter())) {
-                    ExThrowsUtil.toCustom("Set value cannot be empty");
+                    throw new CustomCheckException("Set value cannot be empty");
                 }
                 if (conditionWrapper == null || JudgeUtil.isEmpty(conditionWrapper.getFinalConditional())) {
-                    ExThrowsUtil.toCustom("Update condition cannot be empty");
+                    throw new CustomCheckException("Update condition cannot be empty");
                 }
             }catch (ClassCastException e) {
                 Object entity = objects[0];
@@ -166,13 +166,13 @@ public class JdbcActionProxy implements MethodInterceptor {
             return;
         }
         if(!objects[0].getClass().isAnnotationPresent(DbTable.class)) {
-            ExThrowsUtil.toCustom("@DbTable not found in class " + objects[0].getClass());
+            throw new CustomCheckException("@DbTable not found in class " + objects[0].getClass());
         }
         if(!DbUtil.hasPriKey(objects[0].getClass()) && methodName.equals("updateByKey")) {
-            ExThrowsUtil.toCustom("@DbKey was not found in class " + objects[0].getClass());
+            throw new CustomCheckException("@DbKey was not found in class " + objects[0].getClass());
         }
         if(methodName.equals("updateByCondition") && (JudgeUtil.isEmpty(objects[1]))) {
-            ExThrowsUtil.toCustom("update condition cannot be empty");
+            throw new CustomCheckException("update condition cannot be empty");
         }
     }
 
@@ -183,7 +183,7 @@ public class JdbcActionProxy implements MethodInterceptor {
 
         if (objects[0] instanceof ConditionWrapper) {
             if (Objects.isNull(((ConditionWrapper<?>) objects[0]).getEntityClass())) {
-                ExThrowsUtil.toCustom("Entity class object cannot be empty");
+                throw new CustomCheckException("Entity class object cannot be empty");
             }
             return;
         }
@@ -192,7 +192,7 @@ public class JdbcActionProxy implements MethodInterceptor {
             targetClass = (Class<?>) objects[0];
         }
         if (!targetClass.isAnnotationPresent(DbTable.class)) {
-            ExThrowsUtil.toCustom("@DbTable not found in " + targetClass);
+            throw new CustomCheckException("@DbTable not found in " + targetClass);
         }
         if(objects.length == 1) {
             return;
@@ -202,14 +202,14 @@ public class JdbcActionProxy implements MethodInterceptor {
             switch (methodName) {
                 case "selectOneByKey":
                 case "selectBatchByKeys":
-                    ExThrowsUtil.toCustom("The value of the primary key is not specified when querying based on the primary key");
+                    throw new CustomCheckException("The value of the primary key is not specified when querying based on the primary key");
 
                 case "selectOneBySql":
                 case "selectBySql":
-                    ExThrowsUtil.toCustom("The Sql to be Not Empty");
+                    throw new CustomCheckException("The Sql to be Not Empty");
 
                 case "selectOne":
-                    ExThrowsUtil.toCustom("condition cannot be empty");
+                    throw new CustomCheckException("condition cannot be empty");
             }
         }
     }

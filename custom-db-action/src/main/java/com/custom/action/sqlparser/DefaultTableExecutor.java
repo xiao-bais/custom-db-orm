@@ -4,7 +4,7 @@ import com.custom.action.dbaction.AbstractSqlExecutor;
 import com.custom.action.interfaces.TableExecutor;
 import com.custom.action.proxy.JdbcActionProxy;
 import com.custom.action.condition.ConditionWrapper;
-import com.custom.comm.exceptions.ExThrowsUtil;
+import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.page.DbPageRows;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
@@ -124,7 +124,7 @@ public class DefaultTableExecutor<T, P extends Serializable> implements TableExe
         EmptySqlBuilder<T> emptySqlBuilder = TableInfoCache.getEmptySqlBuilder(entityClass, jdbcAction.getExecutorFactory());
         emptySqlBuilder.injectEntity(entity);
         if (emptySqlBuilder.getKeyParserModel() == null) {
-            ExThrowsUtil.toCustom("No primary key field specified");
+            throw new CustomCheckException("No primary key field specified");
         }
         DbKeyParserModel<T> keyParserModel = emptySqlBuilder.getKeyParserModel();
         P value = (P) keyParserModel.getValue();

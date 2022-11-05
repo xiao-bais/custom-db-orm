@@ -2,11 +2,11 @@ package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractTableModel;
 import com.custom.action.util.DbUtil;
+import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.jdbc.configuration.GlobalDataHandler;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.annotations.DbMapper;
-import com.custom.comm.exceptions.ExThrowsUtil;
 
 import java.lang.reflect.Field;
 
@@ -66,7 +66,7 @@ public class DbJoinTableParserModel<T> extends AbstractTableModel<T> {
         this.wrapperColumn = dbMap.wrapperColumn();
         this.isNullToEmpty = dbMap.isNullToEmpty();
         if(!joinName.contains(Constants.POINT)) {
-            ExThrowsUtil.toCustom("%s.[%s] 在DBMapper注解上未指定关联表的别名", this.entityClass, this.fieldName);
+            throw new CustomCheckException("%s.[%s] 在DBMapper注解上未指定关联表的别名", this.entityClass, this.fieldName);
         }
         int pointIndex = joinName.indexOf(Constants.POINT);
         String fieldPrefix = joinName.substring(0, pointIndex);

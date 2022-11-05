@@ -7,7 +7,6 @@ import com.custom.comm.annotations.mapper.SqlPath;
 import com.custom.comm.annotations.mapper.Update;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.CustomCheckException;
-import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.jdbc.configuration.CustomConfigHelper;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.jdbc.transaction.DbConnGlobal;
@@ -72,7 +71,7 @@ public class InterfacesProxyExecutor implements InvocationHandler {
         AbstractProxyHandler proxyHandler = null;
         Class<?> execClass = method.getDeclaringClass();
         if (!BasicDao.class.isAssignableFrom(execClass) && !execClass.isAnnotationPresent(SqlMapper.class)) {
-            ExThrowsUtil.toCustom("Execution error, possibly because '%s' does not inherit com.custom.comm.BasicDao or this interface is not annotated with @SqlMapper", targetClassName);
+            throw new CustomCheckException("Execution error, possibly because '%s' does not inherit com.custom.comm.BasicDao or this interface is not annotated with @SqlMapper", targetClassName);
         }
 
         // do Query
@@ -101,10 +100,10 @@ public class InterfacesProxyExecutor implements InvocationHandler {
                 proxyHandler = new UpdateProxyHandler(executorFactory, args, sql, method);
             }
         } else
-            ExThrowsUtil.toCustom("The '@Update' or '@Query' or '@SqlPath' annotation was not found on the method : %s.%s()", targetClassName, method.getName());
+            throw new CustomCheckException("The '@Update' or '@Query' or '@SqlPath' annotation was not found on the method : %s.%s()", targetClassName, method.getName());
 
         if (proxyHandler == null) {
-            ExThrowsUtil.toCustom("未知的执行类型");
+            throw new CustomCheckException("未知的执行类型");
         }
         proxyHandler.prepareParamsParsing();
         return proxyHandler.execute();

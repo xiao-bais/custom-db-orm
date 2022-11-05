@@ -3,7 +3,7 @@ package com.custom.action.sqlparser;
 import com.custom.action.dbaction.AbstractJoinToResult;
 import com.custom.action.util.DbUtil;
 import com.custom.comm.annotations.DbOneToOne;
-import com.custom.comm.exceptions.ExThrowsUtil;
+import com.custom.comm.exceptions.CustomCheckException;
 
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -43,7 +43,7 @@ public class DbJoinToOneParseModel extends AbstractJoinToResult {
             // 否则取关联字段的类型
             Class<?> joinTarget = joinToOneField.getType();
             if (Object.class.equals(joinTarget) || Map.class.isAssignableFrom(joinTarget)) {
-                ExThrowsUtil.toCustom("The entity type associated in %s DbOneToOne.joinTarget() is not specified"
+                throw new CustomCheckException("The entity type associated in %s DbOneToOne.joinTarget() is not specified"
                         , joinToOneField.getDeclaringClass());
             }
             setJoinTarget(joinTarget);

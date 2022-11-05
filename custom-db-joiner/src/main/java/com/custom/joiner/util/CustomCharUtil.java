@@ -1,7 +1,7 @@
 package com.custom.joiner.util;
 
+import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.CustomUtil;
-import com.custom.comm.exceptions.ExThrowsUtil;
 
 import java.util.Random;
 
@@ -50,7 +50,7 @@ public class CustomCharUtil {
      */
     public static String nextStr(int size) {
         if (size < 6) {
-            ExThrowsUtil.toCustom("size must not be less than 6");
+            throw new CustomCheckException("size must not be less than 6");
         }
 
         // 中间特殊符号的位置

@@ -6,7 +6,6 @@ import com.custom.action.condition.ConditionWrapper;
 import com.custom.comm.utils.ConvertUtil;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.exceptions.CustomCheckException;
-import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.CustomConfigHelper;
 import com.custom.jdbc.configuration.DbDataSource;
@@ -64,7 +63,7 @@ public class ActiveModel<T extends ActiveModel<T, P>, P extends Serializable> im
         TableExecutor<T, P> activeWrapper = activeWrapper();
         P primaryKeyValue = activeWrapper.primaryKeyValue((T) this);
         if (primaryKeyValue == null) {
-            ExThrowsUtil.toCustom("Value of primary key not specified");
+            throw new CustomCheckException("Value of primary key not specified");
         }
         return ConvertUtil.conBool(activeWrapper.deleteByKey(primaryKeyValue));
     }

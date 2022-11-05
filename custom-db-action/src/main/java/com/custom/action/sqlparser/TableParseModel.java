@@ -1,11 +1,11 @@
 package com.custom.action.sqlparser;
 
+import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.annotations.*;
 import com.custom.comm.enums.ExecuteMethod;
-import com.custom.comm.exceptions.ExThrowsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -228,10 +228,10 @@ public class TableParseModel<T> implements Cloneable {
         this.entityClass = cls;
         DbTable annotation = cls.getAnnotation(DbTable.class);
         if (Objects.isNull(annotation)) {
-            ExThrowsUtil.toCustom(cls.getName() + " 未标注@DbTable注解");
+            throw new CustomCheckException(cls.getName() + " 未标注@DbTable注解");
         }
         if (JudgeUtil.isEmpty(annotation.table())) {
-            ExThrowsUtil.toCustom(cls.getName() + " 未指定@DbTable注解上实体映射的表名");
+            throw new CustomCheckException(cls.getName() + " 未指定@DbTable注解上实体映射的表名");
         }
         this.alias = annotation.alias();
         this.table = annotation.table();
@@ -324,15 +324,16 @@ public class TableParseModel<T> implements Cloneable {
     private void handleMoreResultField(Field field, Class<?> fieldType) {
         if (field.isAnnotationPresent(DbOneToOne.class)) {
             if (Collection.class.isAssignableFrom(fieldType)) {
-                ExThrowsUtil.toIllegal("Annotation DbOneToOne does not support acting on properties of " + fieldType.getName());
+                throw new UnsupportedOperationException("Annotation DbOneToOne does not support acting on properties of " + fieldType.getName());
             }
             this.oneToOneFieldList.add(field);
         }
+
         if (field.isAnnotationPresent(DbOneToMany.class)) {
             if (Collection.class.isAssignableFrom(fieldType) || Object.class.equals(fieldType)) {
                 this.oneToManyFieldList.add(field);
             } else if (Map.class.isAssignableFrom(fieldType)) {
-                ExThrowsUtil.toIllegal("Annotation DbOneToMany does not support acting on properties of " + fieldType.getName());
+                throw new UnsupportedOperationException("Annotation DbOneToMany does not support acting on properties of " + fieldType.getName());
             }
         }
     }

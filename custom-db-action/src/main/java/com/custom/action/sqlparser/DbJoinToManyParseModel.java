@@ -2,12 +2,12 @@ package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractJoinToResult;
 import com.custom.action.util.DbUtil;
+import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.StrUtils;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.annotations.DbKey;
 import com.custom.comm.annotations.DbOneToMany;
-import com.custom.comm.exceptions.ExThrowsUtil;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.lang.reflect.Field;
@@ -52,8 +52,8 @@ public class DbJoinToManyParseModel extends AbstractJoinToResult {
 
         if (Map.class.isAssignableFrom(oneToMany.joinTarget())
                 || Map.class.isAssignableFrom(joinToManyField.getType())) {
-            ExThrowsUtil.toUnSupport("In '%s', @DbOneToMany.joinTarget() or field type does not support working on java.util.Map"
-                    , joinToManyField.toString());
+            throw new UnsupportedOperationException(String.format("In '%s', @DbOneToMany.joinTarget() or field type does not support working on java.util.Map",
+                    joinToManyField));
         }
 
         // 主表
@@ -66,18 +66,18 @@ public class DbJoinToManyParseModel extends AbstractJoinToResult {
             // 否则取关联字段的类型
             Class<?> joinCollectionType = joinToManyField.getType();
             if (!Collection.class.isAssignableFrom(joinCollectionType)) {
-                ExThrowsUtil.toUnSupport("@DbOneToMany is not allowed to act on properties of non collection type : " + joinToManyField);
+                throw new IllegalArgumentException("@DbOneToMany is not allowed to act on properties of non collection type : " + joinToManyField);
             }
             ParameterizedTypeImpl genericType = (ParameterizedTypeImpl) joinToManyField.getGenericType();
             Type[] actualTypeArguments = genericType.getActualTypeArguments();
             if (actualTypeArguments.length == 0 || CustomUtil.isNotAllowedGenericType((Class<?>) actualTypeArguments[0])) {
-                ExThrowsUtil.toCustom("@DbOneToMany does not support acting on Java property with generic type %s in Field : %s"
+                throw new CustomCheckException("@DbOneToMany does not support acting on Java property with generic type %s in Field : %s"
                         , actualTypeArguments[0], joinToManyField);
             }
             Class<?> joinTarget = (Class<?>) actualTypeArguments[0];
 
             if (Object.class.equals(joinTarget)) {
-                ExThrowsUtil.toCustom("The entity type associated in %s DbOneToOne.joinTarget() is not specified"
+                throw new CustomCheckException("The entity type associated in %s DbOneToOne.joinTarget() is not specified"
                         , joinToManyField.getDeclaringClass());
             }
             setJoinTarget(joinTarget);

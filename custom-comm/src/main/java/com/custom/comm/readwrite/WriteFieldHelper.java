@@ -1,11 +1,10 @@
 package com.custom.comm.readwrite;
 
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.ConvertUtil;
 import com.custom.comm.utils.CustomUtil;
-import com.custom.comm.exceptions.ExThrowsUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -135,7 +134,7 @@ public class WriteFieldHelper {
                 if (actualTypeArguments.length == 0
                         || (CustomUtil.isNotAllowedGenericType((Class<?>) actualTypeArguments[0])
                         && Object.class.equals(this.fieldType))) {
-                    ExThrowsUtil.toCustom("Field is inconsistent with parameter type of set method: " + writeMethod.toGenericString());
+                    throw new CustomCheckException("Field is inconsistent with parameter type of set method: " + writeMethod.toGenericString());
                 }
 
                 // 如果是集合类型的话，获取到集合中的泛型类型

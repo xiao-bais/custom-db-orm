@@ -1,7 +1,7 @@
 package com.custom.action.condition;
 
+import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.CustomUtil;
-import com.custom.comm.exceptions.ExThrowsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +38,7 @@ public class AllEqualConditionHandler<T> {
             parseMap = CustomUtil.beanToMap(entity);
         } catch (IntrospectionException e) {
             logger.error("There is a problem with the current entity, please check");
-            ExThrowsUtil.toCustom(e.getMessage());
+            throw new CustomCheckException(e.getMessage());
         }
         parseMap.forEach((key, value) -> {
             if (fieldMapper.containsKey(key) && Objects.nonNull(value)) {

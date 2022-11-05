@@ -2,12 +2,12 @@ package com.custom.action.sqlparser;
 
 import com.custom.action.condition.*;
 import com.custom.action.dbaction.AbstractSqlExecutor;
+import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.comm.annotations.check.CheckExecute;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.enums.SqlExecTemplate;
-import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.comm.page.DbPageRows;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.CustomUtil;
@@ -181,7 +181,7 @@ public class JdbcAction extends AbstractSqlExecutor {
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> DbPageRows<T> selectPage(ConditionWrapper<T> wrapper) {
         if(!wrapper.hasPageParams()) {
-            ExThrowsUtil.toCustom("Missing paging parameter：pageIndex：%s, pageSize：%s", wrapper.getPageIndex(), wrapper.getPageSize());
+            throw new CustomCheckException("Missing paging parameter：pageIndex：%s, pageSize：%s", wrapper.getPageIndex(), wrapper.getPageSize());
         }
         DbPageRows<T> dbPageRows = new DbPageRows<>(wrapper.getPageIndex(), wrapper.getPageSize());
         try {
@@ -295,7 +295,7 @@ public class JdbcAction extends AbstractSqlExecutor {
     @Override
     public <T> DbPageRows<Map<String, Object>> selectPageMaps(ConditionWrapper<T> wrapper) {
         if(!wrapper.hasPageParams()) {
-            ExThrowsUtil.toCustom("Missing paging parameter：pageIndex：%s, pageSize：%s", wrapper.getPageIndex(), wrapper.getPageSize());
+            throw new CustomCheckException("Missing paging parameter：pageIndex：%s, pageSize：%s", wrapper.getPageIndex(), wrapper.getPageSize());
         }
 
         DbPageRows<Map<String, Object>> dbPageRows = new DbPageRows<>(wrapper.getPageIndex(), wrapper.getPageSize());
@@ -428,7 +428,7 @@ public class JdbcAction extends AbstractSqlExecutor {
     @CheckExecute(target = ExecuteMethod.UPDATE)
     public <T> int updateByCondition(T entity, String condition, Object... params) {
         if (JudgeUtil.isEmpty(condition)) {
-            ExThrowsUtil.toNull("修改条件不能为空");
+            throw new NullPointerException("修改条件不能为空");
         }
         try {
             // 创建update sql创建对象

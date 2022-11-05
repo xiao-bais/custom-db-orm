@@ -1,8 +1,8 @@
 package com.custom.action.fieldfill;
 
+import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.CustomApplicationUtil;
 import com.custom.comm.utils.RexUtil;
-import com.custom.comm.exceptions.ExThrowsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -52,7 +52,7 @@ public class ColumnAutoFillHandleUtils {
         if(Objects.isNull(propertyValue)) {
             String error = String.format("%s中未找到属性：%s的指定填充值", t, proName);
             if(fillObject.getNotFoundFieldThrowException()) {
-                ExThrowsUtil.toCustom(error);
+                throw new CustomCheckException(error);
             }
             logger.error(error);
         }

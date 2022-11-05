@@ -1,7 +1,7 @@
 package com.custom.proxy;
 
+import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.CustomUtil;
-import com.custom.comm.exceptions.ExThrowsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +39,7 @@ public class ParsingObjectStruts {
             } else if (value instanceof Set) {
                 parseSet(name, value);
             } else {
-                ExThrowsUtil.toCustom("Unsupported data type: " + value.getClass());
+                throw new CustomCheckException("Unsupported data type: " + value.getClass());
             }
         }else if (value instanceof Map) {
             parseMap(name, value);
@@ -57,7 +57,7 @@ public class ParsingObjectStruts {
 
 
         Field[] fields = CustomUtil.loadFields(value.getClass(), false);
-        if (fields.length == 0) ExThrowsUtil.toCustom("In %s, no available attributes were resolved", value.getClass());
+        if (fields.length == 0) throw new CustomCheckException("In %s, no available attributes were resolved", value.getClass());
         for (Field field : fields) {
             String fieldName = formatMapperKey(name, field.getName());
             Object fieldValue = null;
@@ -79,7 +79,7 @@ public class ParsingObjectStruts {
                 } else if (Set.class.isAssignableFrom(fieldType)) {
                     parseSet(fieldName, fieldValue);
                 }else {
-                    ExThrowsUtil.toCustom("Unsupported data type: " + fieldValue.getClass());
+                    throw new CustomCheckException("Unsupported data type: " + fieldValue.getClass());
                 }
             } else if (Map.class.isAssignableFrom(fieldType)) {
                 parseMap(fieldName, fieldValue);
@@ -126,7 +126,7 @@ public class ParsingObjectStruts {
                 } else if (val instanceof Set) {
                     parseSet(tempName, val);
                 } else {
-                    ExThrowsUtil.toCustom("Unsupported data type: " + val.getClass());
+                    throw new CustomCheckException("Unsupported data type: " + val.getClass());
                 }
             } else {
                 parseObject(tempName, val);

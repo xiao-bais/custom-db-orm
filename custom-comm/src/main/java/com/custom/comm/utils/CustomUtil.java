@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.custom.comm.annotations.DbTable;
-import com.custom.comm.exceptions.ExThrowsUtil;
+import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.readwrite.ReadFieldHelper;
 import com.custom.comm.readwrite.WriteFieldHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -18,12 +18,10 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.Serializable;
 import java.lang.reflect.*;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -86,9 +84,8 @@ public class CustomUtil extends StrUtils {
     * 是否是主键的允许类型
     */
     public static boolean isKeyAllowType(Class<?> type, Object val) {
-        if(!isBasicType(val)) {
-            ExThrowsUtil.toCustom("不允许的主键类型：" + val.getClass());
-        }
+        Asserts.illegal(isBasicType(val),
+                "不允许的主键类型：" + val.getClass());
         return CharSequence.class.isAssignableFrom(type)
                 || Long.class.isAssignableFrom(type)
                 || Integer.class.isAssignableFrom(type);
@@ -156,7 +153,7 @@ public class CustomUtil extends StrUtils {
             }
         }
         if (fieldList.size() == 0 && checkDbField) {
-            ExThrowsUtil.toCustom("@DbField not found inD " + t);
+            throw new CustomCheckException("@DbField not found inD " + t);
         }
         return fieldList.toArray(new Field[0]);
     }
@@ -249,21 +246,15 @@ public class CustomUtil extends StrUtils {
         if (addVal instanceof Set) {
             return thisParams.addAll((Set<Object>) addVal);
         }
-        ExThrowsUtil.toUnSupport(String.format("Adding parameters of '%s' type is not supported", addVal.getClass()));
-        return false;
+        throw new UnsupportedOperationException(String.format("Adding parameters of '%s' type is not supported", addVal.getClass()));
     }
 
     /**
      * 是否是不允许的泛型类型
      */
     public static boolean isNotAllowedGenericType(Class<?> genericType) {
-       if (Object.class.equals(genericType)) {
-           return true;
-       }
-       if (Collection.class.isAssignableFrom(genericType)) {
-           return true;
-       }
-       if (Map.class.isAssignableFrom(genericType)) {
+       if (Object.class.equals(genericType) || Collection.class.isAssignableFrom(genericType)
+            || Map.class.isAssignableFrom(genericType)) {
            return true;
        }
        return isBasicClass(genericType);

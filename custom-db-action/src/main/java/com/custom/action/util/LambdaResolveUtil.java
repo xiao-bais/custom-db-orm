@@ -1,7 +1,7 @@
 package com.custom.action.util;
 
 import com.custom.action.condition.SFunction;
-import com.custom.comm.exceptions.ExThrowsUtil;
+import com.custom.comm.exceptions.CustomCheckException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.invoke.SerializedLambda;
@@ -42,7 +42,7 @@ public final class LambdaResolveUtil {
         }
 
         if (Objects.isNull(serializedLambda)) {
-            ExThrowsUtil.toCustom("Unable to parse：" + function);
+            throw new CustomCheckException("Unable to parse：" + function);
         }
 
         return serializedLambda;

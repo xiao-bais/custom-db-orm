@@ -1,7 +1,7 @@
 package com.custom.proxy;
 
 import com.custom.comm.annotations.mapper.DbParam;
-import com.custom.comm.exceptions.ExThrowsUtil;
+import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
@@ -139,13 +139,13 @@ public abstract class AbstractProxyHandler {
                     .findFirst();
             if (!findSqlParam.isPresent()) {
                 logger.error("\nSQL ERROR ==>\n{}\n", prepareSql);
-                ExThrowsUtil.toCustom(String.format("Parameter '%s' not found", setExParam));
+                throw new CustomCheckException(String.format("Parameter '%s' not found", setExParam));
             }
             Map.Entry<String, Object> entryParam = findSqlParam.get();
             Object value = entryParam.getValue();
             if (Objects.isNull(value)) {
                 logger.error("\nSQL ERROR ==>\n{}\n", prepareSql);
-                ExThrowsUtil.toNull(String.format("Parameter %s is null", entryParam.getKey()));
+                throw new NullPointerException(String.format("Parameter %s is null", entryParam.getKey()));
             }
 
             if (CustomUtil.isBasicType(value)) {
@@ -204,7 +204,7 @@ public abstract class AbstractProxyHandler {
             }
 
             if (Objects.isNull(prepareParam)) {
-                ExThrowsUtil.toNull(parameterName + " is null");
+                throw new NullPointerException(parameterName + " is null");
             }
             ParsingObjectStruts parsingObject = new ParsingObjectStruts();
             parsingObject.parser(parameterName, prepareParam);

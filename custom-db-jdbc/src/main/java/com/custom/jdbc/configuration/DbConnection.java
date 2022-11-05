@@ -2,9 +2,6 @@ package com.custom.jdbc.configuration;
 
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.custom.comm.utils.CustomUtil;
-import com.custom.comm.utils.JudgeUtil;
-import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.jdbc.transaction.DbConnGlobal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,13 +30,8 @@ public class DbConnection {
      * @param dbDataSource
      */
     public DbConnection(DbDataSource dbDataSource) {
-        try {
-            this.dbDataSource = dbDataSource;
-            this.datasourceInitialize();
-        }catch (Exception e) {
-            logger.error("不存在mysql驱动：" + CUSTOM_DRIVER);
-            ExThrowsUtil.toCustom(e.toString());
-        }
+        this.dbDataSource = dbDataSource;
+        this.datasourceInitialize();
     }
 
 

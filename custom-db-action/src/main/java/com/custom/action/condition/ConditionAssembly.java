@@ -1,13 +1,13 @@
 package com.custom.action.condition;
 
 import com.custom.action.util.DbUtil;
+import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.enums.DbSymbol;
 import com.custom.comm.enums.SqlLike;
 import com.custom.comm.enums.SqlOrderBy;
-import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.jdbc.configuration.GlobalDataHandler;
 
 import java.lang.reflect.Array;
@@ -97,7 +97,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
 
     private String checkedColumn(DbSymbol dbSymbol, String column) {
         if(CustomUtil.isBlank(column) && !ALLOW_NOT_ALIAS.contains(dbSymbol)) {
-            ExThrowsUtil.toCustom("column cannot be empty");
+            throw new CustomCheckException("column cannot be empty");
         }
         if (GlobalDataHandler.hasSqlKeyword(column)) {
             column = GlobalDataHandler.wrapperSqlKeyword(column);
@@ -353,7 +353,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
     @Override
     public Children pageParams(boolean condition, Integer pageIndex, Integer pageSize) {
         if((Objects.isNull(pageIndex) || Objects.isNull(pageSize))) {
-            ExThrowsUtil.toCustom("Missing paging parameter：pageIndex：%s, pageSize：%s", pageIndex, pageSize);
+            throw new CustomCheckException("Missing paging parameter：pageIndex：%s, pageSize：%s", pageIndex, pageSize);
         }
         setPageParams(pageIndex, pageSize);
         return childrenClass;

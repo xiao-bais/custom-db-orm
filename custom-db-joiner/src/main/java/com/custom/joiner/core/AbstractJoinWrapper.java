@@ -4,10 +4,10 @@ import com.custom.action.condition.DefaultColumnParseHandler;
 import com.custom.action.interfaces.ColumnParseHandler;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableParseModel;
+import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.enums.DbJoinStyle;
-import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.joiner.core.condition.LambdaJoinConditionWrapper;
 import com.custom.comm.enums.AliasStrategy;
 
@@ -68,7 +68,7 @@ public class AbstractJoinWrapper<T> extends LambdaJoinConditionWrapper<T> {
 
     private <R> void aliasDefine(DbJoinStyle joinStyle, AbstractJoinConditional<R> joinConditional) {
         if (aliasList.contains(joinConditional.getJoinTableAlias())) {
-            ExThrowsUtil.toCustom("不允许存在相同的关联表别名: " + joinConditional.getJoinTableAlias());
+            throw new CustomCheckException("不允许存在相同的关联表别名: " + joinConditional.getJoinTableAlias());
         }
 
         String primaryAlias;

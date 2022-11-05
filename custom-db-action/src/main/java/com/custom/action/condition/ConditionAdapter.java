@@ -1,9 +1,9 @@
 package com.custom.action.condition;
 
+import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.enums.DbSymbol;
 import com.custom.comm.enums.SqlOrderBy;
-import com.custom.comm.exceptions.ExThrowsUtil;
 
 import java.util.Arrays;
 import java.util.function.Consumer;
@@ -119,7 +119,7 @@ public class ConditionAdapter<T, Children> extends ConditionAssembly<T, SFunctio
     @Override
     public Children orderByAsc(boolean condition, OrderByFunc<T> orderByFunc) {
         if (!orderByFunc.getOrderBy().equals(Constants.ASC)) {
-            ExThrowsUtil.toCustom("order by type is mismatch, should be entered '%s', current entered '%s'",
+            throw new CustomCheckException("order by type is mismatch, should be entered '%s', current entered '%s'",
                     Constants.ASC, Constants.DESC);
         }
         return adapter(DbSymbol.ORDER_BY_ASC, condition, orderByFunc.getColumns());
@@ -133,7 +133,7 @@ public class ConditionAdapter<T, Children> extends ConditionAssembly<T, SFunctio
     @Override
     public Children orderByDesc(boolean condition, OrderByFunc<T> orderByFunc) {
         if (!orderByFunc.getOrderBy().equals(Constants.DESC)) {
-            ExThrowsUtil.toCustom("order by type is mismatch, should be entered '%s', current entered '%s'",
+            throw new CustomCheckException("order by type is mismatch, should be entered '%s', current entered '%s'",
                     Constants.DESC, Constants.ASC);
         }
         return adapter(DbSymbol.ORDER_BY_DESC, condition, orderByFunc.getColumns());

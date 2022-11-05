@@ -1,5 +1,6 @@
 package com.custom.generator.core;
 
+import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.comm.date.DateTimeUtils;
 import com.custom.generator.config.GlobalConfig;
@@ -12,7 +13,6 @@ import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.enums.DbType;
-import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
 import org.slf4j.Logger;
@@ -37,7 +37,7 @@ public class GenerateCodeExecutor {
 
     public GenerateCodeExecutor(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         if (Objects.isNull(dbDataSource)) {
-            ExThrowsUtil.toCustom("未配置数据源");
+            throw new CustomCheckException("未配置数据源");
         }
         if(Objects.isNull(dbCustomStrategy)) {
             dbCustomStrategy = new DbCustomStrategy();
@@ -50,7 +50,7 @@ public class GenerateCodeExecutor {
     public void start() {
 
         if(JudgeUtil.isEmpty(tables)) {
-            ExThrowsUtil.toCustom("未指定表名");
+            throw new CustomCheckException("未指定表名");
         }
 
         // 构建表实体结构信息
@@ -106,7 +106,7 @@ public class GenerateCodeExecutor {
 
         handleTruthTables(tableStr);
         if(tableStructModels.isEmpty()) {
-            ExThrowsUtil.toCustom("表名皆不存在");
+            throw new CustomCheckException("表名皆不存在");
         }
 
         String selectTableSql = String.format(CustomUtil.loadFiles("/sql/queryTableColumnStruct.sql"), tableStr, DATA_BASE);

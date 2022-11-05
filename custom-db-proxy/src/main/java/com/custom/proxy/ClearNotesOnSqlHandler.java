@@ -2,7 +2,6 @@ package com.custom.proxy;
 
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.Constants;
-import com.custom.comm.exceptions.ExThrowsUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -45,7 +44,7 @@ public class ClearNotesOnSqlHandler {
     public String loadSql() {
         String res = Constants.EMPTY;
         if(JudgeUtil.isEmpty(filePath)){
-            ExThrowsUtil.toNull("filepath is null");
+            throw new NullPointerException("filepath is null");
         }
         try {
             Resource resource = new ClassPathResource(filePath);

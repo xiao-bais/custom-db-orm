@@ -1,8 +1,8 @@
 package com.custom.jdbc.sqlprint;
 
+import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.Constants;
-import com.custom.comm.exceptions.ExThrowsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,7 +122,7 @@ public class SqlOutPrintBuilder implements Serializable {
         int symbolSize = CustomUtil.countStr(sql, Constants.QUEST);
         if(symbolSize != params.length) {
             this.printError();
-            ExThrowsUtil.toCustom(String.format("参数数量与需要设置的参数数量不对等，需设置参数数量：%s, 实际参数数量：%s", symbolSize, params.length));
+            throw new CustomCheckException(String.format("参数数量与需要设置的参数数量不对等，需设置参数数量：%s, 实际参数数量：%s", symbolSize, params.length));
         }
         sql = CustomUtil.handleExecuteSql(sql, params);
     }

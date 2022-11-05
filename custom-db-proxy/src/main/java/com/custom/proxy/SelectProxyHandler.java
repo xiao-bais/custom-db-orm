@@ -1,6 +1,6 @@
 package com.custom.proxy;
 
-import com.custom.comm.exceptions.ExThrowsUtil;
+import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
@@ -56,7 +56,7 @@ public class SelectProxyHandler extends AbstractProxyHandler {
                     return executorFactory.selectSetBySql(genericType, readyExecuteSql, sqlParams);
                 }
                 // if not list or set, then throws error...
-                ExThrowsUtil.toCustom("返回的列表类型暂时只支持List以及Set");
+                throw new CustomCheckException("返回的列表类型暂时只支持List以及Set");
             }
 
             // do Map

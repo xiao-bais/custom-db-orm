@@ -2,9 +2,9 @@ package com.custom.action.sqlparser;
 
 import com.custom.action.dbaction.AbstractSqlExecutor;
 import com.custom.action.interfaces.FullSqlConditionExecutor;
+import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
-import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.jdbc.configuration.DbDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,7 +109,7 @@ public class MappingResultInjector<T> {
                     if (queryResult.get(0) == null) {
                         continue;
                     } else if (queryResult.size() > 1 && joinToOneParseModel.isThrowErr()) {
-                        ExThrowsUtil.toCustom(joinToOneParseModel.getJoinTarget()
+                        throw new CustomCheckException(joinToOneParseModel.getJoinTarget()
                                 + "One to one query, but %s results are found", queryResult.size());
                     }
                     CustomUtil.writeFieldValue(queryResult.get(0), entity,

@@ -5,7 +5,6 @@ import com.custom.action.dbaction.AbstractSqlExecutor;
 import com.custom.action.sqlparser.JdbcAction;
 import com.custom.action.sqlparser.JdbcDao;
 import com.custom.comm.exceptions.CustomCheckException;
-import com.custom.comm.exceptions.ExThrowsUtil;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
 
@@ -84,7 +83,7 @@ public class JdbcDaoProxy implements InvocationHandler, Serializable {
             return typeCache.invoke(sqlExecutor, args);
         }catch (Exception t) {
             if (t instanceof CustomCheckException) {
-                ExThrowsUtil.toCustom(t.getMessage());
+                throw new CustomCheckException(t.getMessage());
             }
             throw t;
         }

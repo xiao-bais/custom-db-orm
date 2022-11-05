@@ -6,7 +6,7 @@ import com.custom.action.sqlparser.DbKeyParserModel;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableParseModel;
 import com.custom.action.util.DbUtil;
-import com.custom.comm.exceptions.ExThrowsUtil;
+import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.*;
 import com.custom.jdbc.configuration.CustomConfigHelper;
 import com.custom.jdbc.configuration.DbCustomStrategy;
@@ -302,11 +302,11 @@ public abstract class AbstractSqlBuilder<T> {
      */
     private void checkParams(Collection<? extends Serializable> keys) {
         if (JudgeUtil.isEmpty(keyParserModel)) {
-            ExThrowsUtil.toCustom("%s 中未找到 @DbKey注解, 猜测该类或父类不存在主键字段，或没有标注@DbKey注解来表示主键", entityClass);
+            throw new CustomCheckException("%s 中未找到 @DbKey注解, 猜测该类或父类不存在主键字段，或没有标注@DbKey注解来表示主键", entityClass);
         }
 
         if (keys.stream().noneMatch(x -> CustomUtil.isKeyAllowType(keyParserModel.getType(), x))) {
-            ExThrowsUtil.toCustom("不允许的主键参数: " + keys);
+            throw new CustomCheckException("不允许的主键参数: " + keys);
         }
     }
 

@@ -6,7 +6,7 @@ import com.custom.action.fieldfill.TableFillObject;
 import com.custom.action.util.DbUtil;
 import com.custom.comm.enums.FillStrategy;
 import com.custom.comm.enums.SqlExecTemplate;
-import com.custom.comm.exceptions.ExThrowsUtil;
+import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.utils.CustomApplicationUtil;
 import com.custom.comm.utils.JudgeUtil;
@@ -96,7 +96,7 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
         for (String fieldName : tableFillObjects.keySet()) {
             String column = fieldMapper.get(fieldName);
             if (JudgeUtil.isEmpty(column)) {
-                ExThrowsUtil.toCustom("未找到可匹配的java属性字段");
+                throw new CustomCheckException("未找到可匹配的java属性字段");
             }
 
             Object fieldVal = tableFillObjects.get(fieldName);

@@ -2,10 +2,10 @@ package com.custom.action.condition;
 
 import com.custom.action.condition.support.TableSupport;
 import com.custom.action.interfaces.ColumnParseHandler;
+import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.Constants;
-import com.custom.comm.exceptions.ExThrowsUtil;
 
 import java.io.Serializable;
 import java.util.*;
@@ -97,9 +97,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
     }
 
     public ConditionWrapper<T> setEntityClass(Class<T> entityClass) {
-        if(Objects.isNull(entityClass)) {
-            ExThrowsUtil.toNull("映射实体Class对象缺失");
-        }
+        Asserts.notNull(entityClass, "映射实体Class对象缺失");
         this.entityClass = entityClass;
         return this;
     }
