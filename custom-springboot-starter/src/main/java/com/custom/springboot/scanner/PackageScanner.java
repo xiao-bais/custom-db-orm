@@ -1,11 +1,10 @@
 package com.custom.springboot.scanner;
 
-import com.custom.comm.BasicDao;
-import com.custom.comm.utils.JudgeUtil;
-import com.custom.comm.utils.Constants;
 import com.custom.comm.annotations.DbTable;
 import com.custom.comm.annotations.mapper.SqlMapper;
 import com.custom.comm.exceptions.CustomCheckException;
+import com.custom.comm.utils.Constants;
+import com.custom.comm.utils.JudgeUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -112,9 +111,7 @@ public class PackageScanner {
                     } catch (ClassNotFoundException e) {
                         e.printStackTrace();
                     }
-                    if (clazz != null && (
-                            BasicDao.class.isAssignableFrom(clazz)
-                            || clazz.isAnnotationPresent(SqlMapper.class)
+                    if (clazz != null && (clazz.isAnnotationPresent(SqlMapper.class)
                             || clazz.isAnnotationPresent(DbTable.class))
                     ) beanRegisterSet.add(clazz);
 
@@ -164,9 +161,7 @@ public class PackageScanner {
                         } catch (ClassNotFoundException e) {
                             e.printStackTrace();
                         }
-                        if (beanClass != null && (
-                                BasicDao.class.isAssignableFrom(beanClass)
-                                        || beanClass.isAnnotationPresent(SqlMapper.class)
+                        if (beanClass != null && (beanClass.isAnnotationPresent(SqlMapper.class)
                                         || beanClass.isAnnotationPresent(DbTable.class))
                         ) beanRegisterSet.add(beanClass);
 

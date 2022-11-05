@@ -9,6 +9,7 @@ import com.custom.action.util.LambdaResolveUtil;
 import com.custom.comm.enums.DbJoinStyle;
 import com.custom.comm.enums.DbSymbol;
 import com.custom.comm.enums.AliasStrategy;
+import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.*;
 import com.custom.joiner.interfaces.DoJoin;
 import com.custom.joiner.util.CustomCharUtil;
@@ -93,9 +94,12 @@ public abstract class AbstractJoinConditional<T> {
         if (joinList.isEmpty()) {
             throw new CustomCheckException("未指定关联条件");
         }
-        if (StrUtils.isBlank(this.joinTableAlias) || StrUtils.isBlank(this.primaryTableAlias)) {
+
+        if (StrUtils.isBlank(this.joinTableAlias)
+                || StrUtils.isBlank(this.primaryTableAlias)) {
             throw new UnsupportedOperationException("Viewing is not supported before the association is completed");
         }
+
         if (JudgeUtil.isEmpty(joinConditional)) {
             StringBuilder sqlJoinAction = new StringBuilder();
             this.joinList.forEach(join -> sqlJoinAction.append(join.action()));
@@ -124,6 +128,7 @@ public abstract class AbstractJoinConditional<T> {
         Class<A> implClass = LambdaResolveUtil.getImplClass(aColumn);
         String aMethodName = LambdaResolveUtil.getImplMethodName(aColumn);
         ColumnPropertyMap<?> aColumnPropertyMap = ColumnPropertyMap.parse2Map(implClass, aMethodName);
+
         if (primaryPropertyMap == null) {
             this.primaryPropertyMap = aColumnPropertyMap;
         }
@@ -146,7 +151,10 @@ public abstract class AbstractJoinConditional<T> {
             case LESS_THAN_EQUALS:
             case GREATER_THAN:
             case GREATER_THAN_EQUALS:
-                doJoin = () -> String.format(" and %s %s ?", ConditionColumn, dbSymbol.getSymbol(), Constants.QUEST);
+                doJoin = () -> {
+
+                    return String.format(" and %s %s ?", ConditionColumn, dbSymbol.getSymbol(), Constants.QUEST);
+                };
                 break;
             case IN:
                 StringJoiner addSymbol = new StringJoiner(Constants.SEPARATOR_COMMA_2);

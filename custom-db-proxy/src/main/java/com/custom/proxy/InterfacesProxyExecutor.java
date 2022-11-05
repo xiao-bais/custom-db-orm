@@ -1,6 +1,5 @@
 package com.custom.proxy;
 
-import com.custom.comm.BasicDao;
 import com.custom.comm.annotations.mapper.Query;
 import com.custom.comm.annotations.mapper.SqlMapper;
 import com.custom.comm.annotations.mapper.SqlPath;
@@ -70,7 +69,7 @@ public class InterfacesProxyExecutor implements InvocationHandler {
 
         AbstractProxyHandler proxyHandler = null;
         Class<?> execClass = method.getDeclaringClass();
-        if (!BasicDao.class.isAssignableFrom(execClass) && !execClass.isAnnotationPresent(SqlMapper.class)) {
+        if (!execClass.isAnnotationPresent(SqlMapper.class)) {
             throw new CustomCheckException("Execution error, possibly because '%s' does not inherit com.custom.comm.BasicDao or this interface is not annotated with @SqlMapper", targetClassName);
         }
 
