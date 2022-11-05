@@ -152,15 +152,16 @@ public abstract class AbstractJoinConditional<T> {
             case GREATER_THAN:
             case GREATER_THAN_EQUALS:
                 doJoin = () -> {
-
-                    return String.format(" and %s %s ?", ConditionColumn, dbSymbol.getSymbol(), Constants.QUEST);
+                    return String.format(" AND %s %s ?", ConditionColumn, dbSymbol.getSymbol(), Constants.QUEST);
                 };
                 break;
             case IN:
                 StringJoiner addSymbol = new StringJoiner(Constants.SEPARATOR_COMMA_2);
                 if (param instanceof Collection) {
                     ((Collection<Object>) param).forEach(op -> addSymbol.add(Constants.QUEST));
-                    doJoin = () -> String.format(" and %s %s (%s)", ConditionColumn, dbSymbol.getSymbol(), addSymbol);
+                    doJoin = () -> {
+                        return String.format(" AND %s %s (%s)", ConditionColumn, dbSymbol.getSymbol(), addSymbol);
+                    };
                 }
                 break;
             default:
