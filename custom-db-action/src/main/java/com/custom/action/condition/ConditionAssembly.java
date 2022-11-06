@@ -29,7 +29,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
 
 
     /**
-     * 适用（orderBy, is null, is not null,）
+     * 适用（order by, is null, is not null, group by）
      */
     protected abstract Children adapter(DbSymbol dbSymbol, boolean condition, R column);
     /**
