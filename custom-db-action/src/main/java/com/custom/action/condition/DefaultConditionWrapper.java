@@ -138,6 +138,18 @@ public class DefaultConditionWrapper<T> extends ConditionAssembly<T, String, Def
         return adapter(DbSymbol.ORDER_BY, condition, orderBy);
     }
 
+    @Override
+    public DefaultConditionWrapper<T> orderByAsc(boolean condition, String column) {
+        String field = orderByField(column, SqlOrderBy.DESC);
+        return adapter(DbSymbol.ORDER_BY, condition, field);
+    }
+
+    @Override
+    public DefaultConditionWrapper<T> orderByDesc(boolean condition, String column) {
+        String field = orderByField(column, SqlOrderBy.ASC);
+        return adapter(DbSymbol.ORDER_BY, condition, field);
+    }
+
 
     public DefaultConditionWrapper(Class<T> entityClass) {
         this.wrapperInitialize(entityClass);

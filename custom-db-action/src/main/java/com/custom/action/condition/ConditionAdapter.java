@@ -157,6 +157,18 @@ public class ConditionAdapter<T, Children> extends ConditionAssembly<T, SFunctio
         return childrenClass;
     }
 
+    @Override
+    public Children orderByAsc(boolean condition, SFunction<T, ?> column) {
+        String field = orderByField(parseColumn(column), SqlOrderBy.DESC);
+        return adapter(DbSymbol.ORDER_BY, condition, field);
+    }
+
+    @Override
+    public Children orderByDesc(boolean condition, SFunction<T, ?> column) {
+        String field = orderByField(parseColumn(column), SqlOrderBy.ASC);
+        return adapter(DbSymbol.ORDER_BY, condition, field);
+    }
+
     /**
      * sql排序函数执行方法
      */

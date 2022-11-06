@@ -84,7 +84,7 @@ public class CustomUtil extends StrUtils {
     * 是否是主键的允许类型
     */
     public static boolean isKeyAllowType(Class<?> type, Object val) {
-        Asserts.illegal(isBasicType(val),
+        Asserts.illegal(!isBasicType(val),
                 "不允许的主键类型：" + val.getClass());
         return CharSequence.class.isAssignableFrom(type)
                 || Long.class.isAssignableFrom(type)

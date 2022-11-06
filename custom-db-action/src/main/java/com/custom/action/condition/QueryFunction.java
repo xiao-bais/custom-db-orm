@@ -100,4 +100,16 @@ public interface QueryFunction<Children, T, Param> {
         return orderByDesc(true, columns);
     }
 
+
+
+    Children orderByAsc(boolean condition, Param column);
+    default Children orderByAsc(Param column) {
+        return orderByAsc(true, column);
+    }
+
+    Children orderByDesc(boolean condition, Param column);
+    default Children orderByDesc(Param column) {
+        return orderByDesc(true, column);
+    }
+
 }
