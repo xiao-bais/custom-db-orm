@@ -14,6 +14,7 @@ import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * @Author Xiao-Bai
@@ -184,22 +185,22 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
     /**
      * in 、not in的条件组装
      */
-    private void ConditionOnInsqlAssembly(DbSymbol dbSymbol, String column, Object val1) {
+    private void ConditionOnInsqlAssembly(DbSymbol dbSymbol, String column, Object val) {
         StringJoiner symbol = new StringJoiner(Constants.SEPARATOR_COMMA_2);
-        if (CustomUtil.isBasicType(val1)) {
-            addParams(val1);
+        if (CustomUtil.isBasicType(val)) {
+            addParams(val);
 
-        } else if (val1.getClass().isArray()) {
-            int len = Array.getLength(val1);
+        } else if (val.getClass().isArray()) {
+            int len = Array.getLength(val);
             for (int i = 0; i < len; i++) {
                 symbol.add(Constants.QUEST);
-                addParams(Array.get(val1, i));
+                addParams(Array.get(val, i));
             }
 
-        } else if (val1 instanceof Collection) {
-            Collection<?> objects = (Collection<?>) val1;
+        } else if (val instanceof Collection) {
+            Collection<?> objects = (Collection<?>) val;
             addParams(objects);
-            objects.forEach(x -> symbol.add(Constants.QUEST));
+            IntStream.range(0, objects.size()).forEach(x -> symbol.add(Constants.QUEST));
         }
         setLastCondition(DbUtil.applyInCondition(appendSybmol, column, dbSymbol.getSymbol(), symbol.toString()));
     }
@@ -207,7 +208,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
     /**
      * 拼接下一段大条件
      */
-    protected void append(DbSymbol prefix, String condition) {
+    protected void appendMaxCond(DbSymbol prefix, String condition) {
         addCondition(String.format(" %s (%s)", prefix.getSymbol(), DbUtil.trimSqlCondition(condition)));
     }
 
@@ -220,25 +221,6 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
         if (params.length > 0) {
             addParams(params);
         }
-    }
-
-    /**
-     * sql模糊查询条件拼接
-     */
-    protected String sqlConcat(SqlLike sqlLike, Object val) {
-        String sql = Constants.EMPTY;
-        switch (sqlLike) {
-            case LEFT:
-                sql = Constants.PERCENT + val;
-                break;
-            case RIGHT:
-                sql = val + Constants.PERCENT;
-                break;
-            case LIKE:
-                sql = Constants.PERCENT + val + Constants.PERCENT;
-                break;
-        }
-        return sql;
     }
 
     /**
@@ -311,7 +293,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
      * 合并后：name = 'aaa' and (age > 22)
      */
     private void mergeCondition(boolean spliceType, ConditionWrapper<T> conditionEntity) {
-        append(spliceType ? DbSymbol.AND : DbSymbol.OR, conditionEntity.getFinalConditional());
+        appendMaxCond(spliceType ? DbSymbol.AND : DbSymbol.OR, conditionEntity.getFinalConditional());
         addParams(conditionEntity.getParamValues());
     }
 
@@ -370,7 +352,9 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
 
     protected final Children childrenClass = (Children) this;
     protected static String appendSybmol = Constants.AND;
-    // 允许不包含别名的sql条件
+    /**
+     * 允许不包含别名的sql条件
+     */
     private final static List<DbSymbol> ALLOW_NOT_ALIAS = Arrays.asList(DbSymbol.EXISTS, DbSymbol.NOT_EXISTS);
     /**
      * 拼接and or 方法时，对于后面sql条件的拼接做处理
