@@ -65,17 +65,17 @@ public class DefaultTableExecutor<T, P extends Serializable> implements TableExe
 
     @Override
     public Map<String, Object> selectMap(ConditionWrapper<T> wrapper) {
-        return jdbcAction.selectMap(wrapper);
+        return jdbcAction.selectOneMap(wrapper);
     }
 
     @Override
     public List<Map<String, Object>> selectMaps(ConditionWrapper<T> wrapper) {
-        return jdbcAction.selectMaps(wrapper);
+        return jdbcAction.selectListMap(wrapper);
     }
 
     @Override
     public DbPageRows<Map<String, Object>> selectPageMaps(ConditionWrapper<T> wrapper) {
-        return jdbcAction.selectPageMaps(wrapper);
+        return jdbcAction.selectPageMap(wrapper);
     }
 
     @Override

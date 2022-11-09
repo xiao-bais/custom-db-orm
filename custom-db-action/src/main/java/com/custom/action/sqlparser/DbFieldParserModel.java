@@ -86,13 +86,16 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     private boolean isNull;
 
     /**
-     * 是否标注了@DbField注解
+     * 是否标注了DbField注解
      */
     private final boolean existsDbField;
 
     /**
-     * 存在@DbField注解下的属性解析
+     * 是否是表字段
      */
+    private final boolean isDbField;
+
+
     public DbFieldParserModel(Field field, String table, String alias, boolean underlineToCamel, boolean existsDbField) {
         if (GlobalDataHandler.hasSqlKeyword(field.getName())) {
             this.fieldName =  GlobalDataHandler.wrapperSqlKeyword(field.getName());
@@ -103,27 +106,38 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
         this.type = field.getType();
         this.field = field;
         this.existsDbField = existsDbField;
-        if (!existsDbField) {
-            this.noneAnnotationParser(table, alias, underlineToCamel);
-            return;
-        }
-        DbField annotation = field.getAnnotation(DbField.class);
-        if (JudgeUtil.isEmpty(annotation.value())) {
-            this.column = underlineToCamel ? CustomUtil.camelToUnderline(this.fieldName) : this.fieldName;
+        this.isDbField = true;
+
+        if (existsDbField) {
+            DbField annotation = field.getAnnotation(DbField.class);
+            if (JudgeUtil.isEmpty(annotation.value())) {
+                this.column = underlineToCamel ? CustomUtil.camelToUnderline(this.fieldName) : this.fieldName;
+            }else {
+                this.column = annotation.value();
+            }
+            this.wrapperColumn = annotation.wrapperColumn();
+            this.isNullToEmpty = annotation.isNullToEmpty();
+            this.isNull = annotation.isNull();
+            this.desc = annotation.desc();
+            this.dbType = annotation.dataType() == DbType.DbVarchar ? DbType.getDbMediaType(field.getType()) : annotation.dataType();
+            this.length = this.dbType.getLength();
         }else {
-            this.column = annotation.value();
+            this.column = underlineToCamel ? CustomUtil.camelToUnderline(this.fieldName) : this.fieldName;
         }
+
         if(GlobalDataHandler.hasSqlKeyword(column)) {
             this.column = GlobalDataHandler.wrapperSqlKeyword(column);
         }
-        this.wrapperColumn = annotation.wrapperColumn();
-        this.isNullToEmpty = annotation.isNullToEmpty();
-        this.isNull = annotation.isNull();
-        this.desc = annotation.desc();
-        this.dbType = annotation.dataType() == DbType.DbVarchar ? DbType.getDbMediaType(field.getType()) : annotation.dataType();
-        this.length = this.dbType.getLength();
         super.setTable(table);
         super.setAlias(alias);
+    }
+
+    public DbFieldParserModel(Field field) {
+        this.fieldName = field.getName();
+        this.type = field.getType();
+        this.field = field;
+        this.existsDbField = false;
+        this.isDbField = false;
     }
 
     /**
@@ -162,14 +176,16 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
         this.entity = entity;
     }
 
-
+    public boolean isDbField() {
+        return isDbField;
+    }
 
     /**
      * 构建创建表的sql语句
      */
     @Override
     public String createTableSql() {
-        if (!existsDbField) {
+        if (!isDbField) {
             return Constants.EMPTY;
         }
         StringBuilder createSql = new StringBuilder(this.column).append(" ");
@@ -199,11 +215,17 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
 
     @Override
     public String getFieldSql() {
+        if (!isDbField) {
+            return Constants.EMPTY;
+        }
         return DbUtil.fullSqlColumn(this.getAlias(), this.column);
     }
 
     @Override
     public String getSelectFieldSql() {
+        if (!isDbField) {
+            return Constants.EMPTY;
+        }
         if (JudgeUtil.isNotEmpty(this.wrapperColumn)) {
             return DbUtil.wrapperSqlColumn(this.wrapperColumn, this.fieldName, this.isNullToEmpty);
         }

@@ -1,11 +1,10 @@
 package com.custom.action.sqlparser;
 
+import com.custom.comm.annotations.*;
 import com.custom.comm.exceptions.CustomCheckException;
+import com.custom.comm.utils.Constants;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
-import com.custom.comm.utils.Constants;
-import com.custom.comm.annotations.*;
-import com.custom.comm.enums.ExecuteMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +46,7 @@ public class TableParseModel<T> implements Cloneable {
     /**
      * 表与实体对应的字段
      */
-    private Field[] fields;
+    private final Field[] fields;
 
     /**
      * 驼峰转下划线
@@ -87,11 +86,6 @@ public class TableParseModel<T> implements Cloneable {
      * 对于表字段到java属性字段的映射关系
      */
     private final Map<String, String> columnMapper = new HashMap<>();
-
-    /**
-     * 所有关联语句
-     */
-    private final List<String> joinSqlConditionList = new ArrayList<>();
 
     /**
      * 一对一字段
@@ -170,53 +164,25 @@ public class TableParseModel<T> implements Cloneable {
     }
 
     /**
-     * 初始化
-     */
-    void initTableBuild(ExecuteMethod method) {
-        switch (method) {
-            case NONE:
-                break;
-            case SELECT:
-                buildSelectModels();
-                break;
-            case UPDATE:
-                buildUpdateModels(true);
-            case INSERT:
-                buildUpdateModels(false);
-                break;
-            case DELETE:
-                buildDeleteModels();
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + method);
-        }
-    }
-
-    /**
      * 默认构造方法为查询
      */
     TableParseModel(Class<T> cls, boolean underlineToCamel) {
-        this(cls, ExecuteMethod.SELECT, underlineToCamel);
-    }
-
-    TableParseModel(Class<T> cls, ExecuteMethod method, boolean underlineToCamel) {
         // 初始化本对象属性
         initLocalProperty(cls, underlineToCamel);
 
-        if (method != ExecuteMethod.NONE) {
-            this.fields =  CustomUtil.loadFields(this.entityClass);
+        // 加载所有字段
+        this.fields =  CustomUtil.loadFields(this.entityClass);
 
-            // 构建字段解析模板
-            this.initTableBuild(method);
+        // 构建字段解析模板
+        this.buildFieldModels();
 
-            // 创建字段属性映射
-            try {
-                this.createColumnPropertyMaps();
-            } catch (IntrospectionException e) {
-                logger.error(e.toString(), e);
-            }
-
+        // 创建字段属性映射
+        try {
+            this.createColumnPropertyMaps();
+        } catch (IntrospectionException e) {
+            logger.error(e.toString(), e);
         }
+
         // 构建字段映射缓存
         this.buildMapper();
     }
@@ -246,7 +212,7 @@ public class TableParseModel<T> implements Cloneable {
     /**
      * 构造查询模板
      */
-    private void buildSelectModels() {
+    private void buildFieldModels() {
         // 解析@DbJoinTables注解
         List<String> joinTables = this.mergeDbJoinTables();
         this.joinTableParserModels.addAll(joinTables);
@@ -261,37 +227,46 @@ public class TableParseModel<T> implements Cloneable {
                 keyParserModel = new DbKeyParserModel<>(field, this.table, this.alias, this.underlineToCamel);
 
             } else if (field.isAnnotationPresent(DbField.class)) {
+
                 DbField dbField = field.getAnnotation(DbField.class);
-                if (!dbField.exist()) {
-                    continue;
+                DbFieldParserModel<T> fieldParserModel;
+
+                if (dbField.exist()) {
+                    fieldParserModel  = new DbFieldParserModel<>(field, this.table, this.alias,
+                            this.underlineToCamel, true);
+                }else {
+                    fieldParserModel = new DbFieldParserModel<>(field);
                 }
-                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias,
-                        this.underlineToCamel, true);
+
                 fieldParserModels.add(fieldParserModel);
 
             } else if (field.isAnnotationPresent(DbMapper.class)) {
 
+                // 若没有向上合并父类的关联条件，则该字段可看做一个普通字段
                 if (mergeSuperJoin) {
                     DbJoinTableParserModel<T> joinTableParserModel = new DbJoinTableParserModel<>(this.entityClass, field);
                     joinDbMappers.add(joinTableParserModel);
                 }else {
-                    DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias,
-                            this.underlineToCamel, false);
+                    DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field);
                     fieldParserModels.add(fieldParserModel);
                 }
 
 
             } else if (field.isAnnotationPresent(DbRelated.class)) {
+
                 // 若没有向上合并父类的关联条件，则该字段可看做一个普通字段
                 if (mergeSuperJoin) {
                     DbRelationParserModel<T> relatedParserModel = new DbRelationParserModel<>(this.entityClass, field,
                             this.table, this.alias, this.underlineToCamel);
                     relatedParserModels.add(relatedParserModel);
                 }else {
-                    DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias,
-                            this.underlineToCamel, false);
+                    DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field);
                     fieldParserModels.add(fieldParserModel);
                 }
+
+            } else if (field.isAnnotationPresent(DbNotField.class)) {
+                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field);
+                fieldParserModels.add(fieldParserModel);
 
             } else {
                 DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias,
@@ -306,9 +281,6 @@ public class TableParseModel<T> implements Cloneable {
      * 若满足条件，则该字段无需解析
      */
     private boolean isNotNeedParseProperty(Field field) {
-        if (field.isAnnotationPresent(DbNotField.class)) {
-            return true;
-        }
         // 基础字段或关联字段的java属性类型必须是允许的基本类型
         Class<?> fieldType = field.getType();
         if (!CustomUtil.isBasicClass(fieldType)) {
@@ -407,45 +379,6 @@ public class TableParseModel<T> implements Cloneable {
     }
 
 
-    /**
-     * 构造增改模板
-     */
-    private void buildUpdateModels(boolean isBuildUpdateModels) {
-        for (Field field : fields) {
-
-            if (this.isNotNeedParseProperty(field)) {
-                continue;
-            }
-
-            if (field.isAnnotationPresent(DbKey.class)
-                    && !field.isAnnotationPresent(DbField.class)
-                    && Objects.isNull(keyParserModel)) {
-                keyParserModel = new DbKeyParserModel<>(field, this.table, this.alias, this.underlineToCamel);
-
-            } else if (field.isAnnotationPresent(DbField.class) && isBuildUpdateModels) {
-                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias, this.underlineToCamel, true);
-                fieldParserModels.add(fieldParserModel);
-
-            } else if (field.isAnnotationPresent(DbField.class)) {
-                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias, this.underlineToCamel, true);
-                fieldParserModels.add(fieldParserModel);
-
-            } else {
-                DbFieldParserModel<T> fieldParserModel = new DbFieldParserModel<>(field, this.table, this.alias, this.underlineToCamel, false);
-                fieldParserModels.add(fieldParserModel);
-            }
-        }
-    }
-
-    /**
-     * 构造删除模板
-     */
-    private void buildDeleteModels() {
-        Optional<Field> fieldOptional = Arrays.stream(fields).filter(x -> x.isAnnotationPresent(DbKey.class) && !x.isAnnotationPresent(DbField.class)).findFirst();
-        fieldOptional.ifPresent(field -> keyParserModel = new DbKeyParserModel<>(field, this.table, this.alias, this.underlineToCamel));
-    }
-
-
     public List<DbRelationParserModel<T>> getRelatedParserModels() {
         return relatedParserModels;
     }
@@ -508,10 +441,6 @@ public class TableParseModel<T> implements Cloneable {
 
     public List<Field> getOneToManyFieldList() {
         return oneToManyFieldList;
-    }
-
-    public List<String> getJoinSqlConditionList() {
-        return joinSqlConditionList;
     }
 
     public List<ColumnPropertyMap<T>> columnPropertyMaps() {

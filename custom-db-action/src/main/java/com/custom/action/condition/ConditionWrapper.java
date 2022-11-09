@@ -237,6 +237,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
         }else {
             this.tableSupport = tableSupport;
         }
+        this.columnParseHandler = new DefaultColumnParseHandler<>(entityClass);
         this.dataStructureInit();
     }
 
@@ -268,14 +269,14 @@ public abstract class ConditionWrapper<T> implements Serializable {
      */
     @SafeVarargs
     protected final String[] parseColumn(SFunction<T, ?>... func) {
-        return getColumnParseHandler().parseToColumns(Arrays.asList(func)).toArray(new String[0]);
+        return columnParseHandler.parseToColumns(Arrays.asList(func)).toArray(new String[0]);
     }
 
     /**
      * 解析函数后，得到java属性字段对应的表字段名称
      */
     protected String parseColumn(SFunction<T, ?> func) {
-        return getColumnParseHandler().parseToColumn(func);
+        return columnParseHandler.parseToColumn(func);
     }
 
     public abstract T getThisEntity();
@@ -293,9 +294,6 @@ public abstract class ConditionWrapper<T> implements Serializable {
     }
 
     protected ColumnParseHandler<T> getColumnParseHandler() {
-        if (Objects.isNull(columnParseHandler)) {
-            this.columnParseHandler = new DefaultColumnParseHandler<>(entityClass);
-        }
         return columnParseHandler;
     }
 

@@ -53,7 +53,49 @@ public interface JdbcDao {
     /**
      * 纯sql查询单个值
      */
-    Object selectObjBySql(String sql, Object... params) throws Exception;
+    Object selectObjBySql(String sql, Object... params);
+
+    /**
+     * 查询多条单次映射关系
+     * 该方法与 {@link #selectOneMap} 略有不同，该方法返回的map内只有一个键值对的映射
+     * <br/> 可用于一些聚合查询后的结果映射
+     * 1.例如: 查询每个名字的使用数量 结果如下
+     * <tr>
+     *     <th>name</th>
+     *     <th>count</th>
+     * </tr>
+     * <tr>
+     *     <td>zhangsan</td>
+     *     <td>999</td>
+     * </tr>
+     * <tr>
+     *     <td>lisi</td>
+     *     <td>888</td>
+     * </tr>
+     * <br/> key即为<b>[zhangsan]</b>, value为<b>[999]</b>
+     *
+     * <br/><p></p>
+     * 2.例如: 查询每个班的平均分
+     * <tr>
+     *     <th>class</th>
+     *     <th>avgScore</th>
+     * </tr>
+     * <tr>
+     *     <td>c01</td>
+     *     <td>78.5</td>
+     * </tr>
+     * <tr>
+     *     <td>c02</td>
+     *     <td>86.5</td>
+     * </tr>
+     * <br/> key即为<b>[c01]</b>, value为<b>[78.5]</b>
+     * <p></p>
+     * @param kClass key的类型
+     * @param vClass value的类型
+     * @param sql 执行的sql
+     * @param params 参数
+     */
+    <K, V> Map<K, V> selectMap(Class<K> kClass, Class<V> vClass, String sql, Object... params);
 
     /**
      * 根据条件查询一条记录
@@ -61,6 +103,9 @@ public interface JdbcDao {
      * @param params "zhangsan"
      */
     <T> T selectOne(Class<T> t, String condition, Object... params);
+
+
+    /************************************************  条件构造器  *****************************************************/
 
     /**
      * 条件构造器查询-分页查询
@@ -95,17 +140,23 @@ public interface JdbcDao {
     /**
      * 查询单条记录映射到Map
      */
-    <T> Map<String, Object> selectMap(ConditionWrapper<T> wrapper);
+    <T> Map<String, Object> selectOneMap(ConditionWrapper<T> wrapper);
 
     /**
      * 查询多条记录映射到Map
      */
-    <T> List<Map<String, Object>> selectMaps(ConditionWrapper<T> wrapper);
+    <T> List<Map<String, Object>> selectListMap(ConditionWrapper<T> wrapper);
 
     /**
      * 查询多条记录映射到Map并分页
      */
-    <T> DbPageRows<Map<String, Object>> selectPageMaps(ConditionWrapper<T> wrapper);
+    <T> DbPageRows<Map<String, Object>> selectPageMap(ConditionWrapper<T> wrapper);
+
+    /**
+     * 查询双列结果映射到map的K与V
+     * @see #selectMap(Class, Class, String, Object...)
+     */
+    <T, K, V> Map<K, V> selectMap(ConditionWrapper<T> wrapper, Class<K> kClass, Class<V> vClass);
 
     /**
      * 查询数组（t只支持基础类型对应的引用类型）
@@ -132,6 +183,7 @@ public interface JdbcDao {
      * 查询多条记录并分页，!= null 的实体属性即为条件(全等查询)
      */
     <T> DbPageRows<T> selectPage(T entity, DbPageRows<T> pageRows);
+
 
     /* ----------------------------------------------------------------delete---------------------------------------------------------------- */
 

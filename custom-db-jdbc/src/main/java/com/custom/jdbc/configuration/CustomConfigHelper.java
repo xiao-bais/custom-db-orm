@@ -1,7 +1,5 @@
 package com.custom.jdbc.configuration;
 
-import com.custom.jdbc.configuration.DbCustomStrategy;
-import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.interfaces.DatabaseAdapter;
 
 /**

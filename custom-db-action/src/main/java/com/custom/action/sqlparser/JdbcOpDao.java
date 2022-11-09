@@ -72,6 +72,51 @@ public class JdbcOpDao {
     }
 
     /**
+     * 查询多条单次映射关系
+     * 该方法与 {@link #selectOneMap} 略有不同，该方法返回的map内只有一个键值对的映射
+     * <br/> 可用于一些聚合查询后的结果映射
+     * 1.例如: 查询每个名字的使用数量 结果如下
+     * <tr>
+     *     <th>name</th>
+     *     <th>count</th>
+     * </tr>
+     * <tr>
+     *     <td>zhangsan</td>
+     *     <td>999</td>
+     * </tr>
+     * <tr>
+     *     <td>lisi</td>
+     *     <td>888</td>
+     * </tr>
+     * <br/> key即为<b>[zhangsan]</b>, value为<b>[999]</b>
+     *
+     * <br/><p></p>
+     * 2.例如: 查询每个班的平均分
+     * <tr>
+     *     <th>class</th>
+     *     <th>avgScore</th>
+     * </tr>
+     * <tr>
+     *     <td>c01</td>
+     *     <td>78.5</td>
+     * </tr>
+     * <tr>
+     *     <td>c02</td>
+     *     <td>86.5</td>
+     * </tr>
+     * <br/> key即为<b>[c01]</b>, value为<b>[78.5]</b>
+     * <p></p>
+     * @param kClass key的类型
+     * @param vClass value的类型
+     * @param sql 执行的sql
+     * @param params 参数
+     */
+    public <K, V> Map<K, V> selectMap(Class<K> kClass, Class<V> vClass, String sql, Object... params) {
+        return jdbcAction.selectMap(kClass, vClass, sql, params);
+    }
+
+
+    /**
      * 根据条件查询一条记录
      * @param condition and a.name = ?
      * @param params "zhangsan"
@@ -124,22 +169,30 @@ public class JdbcOpDao {
     /**
      * 查询单条记录映射到Map
      */
-    public <T> Map<String, Object> selectMap(ConditionWrapper<T> wrapper) {
-        return jdbcAction.selectMap(wrapper);
+    public <T> Map<String, Object> selectOneMap(ConditionWrapper<T> wrapper) {
+        return jdbcAction.selectOneMap(wrapper);
     }
 
     /**
      * 查询多条记录映射到Map
      */
-    public <T> List<Map<String, Object>> selectMaps(ConditionWrapper<T> wrapper) {
-        return jdbcAction.selectMaps(wrapper);
+    public <T> List<Map<String, Object>> selectListMap(ConditionWrapper<T> wrapper) {
+        return jdbcAction.selectListMap(wrapper);
     }
 
     /**
      * 查询多条记录映射到Map
      */
-    public <T> DbPageRows<Map<String, Object>> selectPageMaps(ConditionWrapper<T> wrapper) {
-        return jdbcAction.selectPageMaps(wrapper);
+    public <T> DbPageRows<Map<String, Object>> selectPageMap(ConditionWrapper<T> wrapper) {
+        return jdbcAction.selectPageMap(wrapper);
+    }
+
+    /**
+     * 查询双列结果映射到map的K与V
+     * @see #selectMap(Class, Class, String, Object...)
+     */
+    public <T, K, V> Map<K, V> selectMap(ConditionWrapper<T> wrapper, Class<K> kClass, Class<V> vClass) {
+        return jdbcAction.selectMap(wrapper, kClass, vClass);
     }
 
     /**

@@ -98,7 +98,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
         List<DbFieldParserModel<T>> fieldParserModels = getFieldParserModels();
         // 第二步 拼接此表的其他字段
         if (!fieldParserModels.isEmpty()) {
-            fieldParserModels.stream().map(DbFieldParserModel::getSelectFieldSql).forEach(baseFieldSql::add);
+            fieldParserModels.stream().filter(DbFieldParserModel::isDbField).map(DbFieldParserModel::getSelectFieldSql).forEach(baseFieldSql::add);
         }
         return template -> SqlExecTemplate.format(template, baseFieldSql, getTable(), getAlias());
     }
@@ -120,7 +120,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
         // 第二步 拼接此表的其他字段
         if (!getFieldParserModels().isEmpty()) {
-            getFieldParserModels().stream().filter(DbFieldParserModel::isExistsDbField)
+            getFieldParserModels().stream().filter(DbFieldParserModel::isDbField)
                     .map(DbFieldParserModel::getSelectFieldSql)
                     .forEach(baseFieldSql::add);
         }

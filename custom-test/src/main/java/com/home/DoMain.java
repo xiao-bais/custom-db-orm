@@ -10,6 +10,7 @@ import com.home.customtest.entity.ChildStudent;
 import com.home.customtest.entity.Student;
 
 import java.lang.reflect.Field;
+import java.util.Map;
 
 /**
  * @Author Xiao-Bai
@@ -34,9 +35,13 @@ public class DoMain {
         tableExecutor.selectCount(Conditions.lambdaQuery(ChildStudent.class));
 
 
-//        Field[] fields = CustomUtil.loadFields(ChildStudent.class);
-//        for (Field field : fields) {
-//            System.out.println("field => " + field.getName() + " , fieldClass => " + field.getDeclaringClass());
+//        Map<Integer, String> selectMap = jdbcDao.selectMap(Conditions.lambdaQuery(ChildStudent.class)
+//                        .groupBy(ChildStudent::getAge),
+//                Integer.class, String.class
+//        );
+
+//        for (Map.Entry<Integer, String> entry : selectMap.entrySet()) {
+//            System.out.println("key = " + entry.getKey() + ", value = " + entry.getValue());
 //        }
 
 

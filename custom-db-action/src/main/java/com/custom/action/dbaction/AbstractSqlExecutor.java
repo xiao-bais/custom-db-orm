@@ -30,8 +30,9 @@ public abstract class AbstractSqlExecutor  {
     public abstract <T> T selectOne(T entity);
     public abstract <T> List<T> selectList(T entity);
     public abstract <T> DbPageRows<T> selectPage(T entity, DbPageRows<T> pageRows);
-    public abstract <T> T[] selectArrays(Class<T> t, String sql, Object... params) throws Exception;
-    public abstract Object selectObjBySql(String sql, Object... params) throws Exception;
+    public abstract <T> T[] selectArrays(Class<T> t, String sql, Object... params);
+    public abstract Object selectObjBySql(String sql, Object... params);
+    public abstract <K, V> Map<K, V> selectMap(Class<K> kClass, Class<V> vClass, String sql, Object... params);
 
 
     /**
@@ -43,9 +44,10 @@ public abstract class AbstractSqlExecutor  {
     public abstract <T> long selectCount(ConditionWrapper<T> wrapper);
     public abstract <T> Object selectObj(ConditionWrapper<T> wrapper);
     public abstract <T> List<Object> selectObjs(ConditionWrapper<T> wrapper);
-    public abstract <T> Map<String, Object> selectMap(ConditionWrapper<T> wrapper);
-    public abstract <T> List<Map<String, Object>> selectMaps(ConditionWrapper<T> wrapper);
-    public abstract <T> DbPageRows<Map<String, Object>> selectPageMaps(ConditionWrapper<T> wrapper);
+    public abstract <T> Map<String, Object> selectOneMap(ConditionWrapper<T> wrapper);
+    public abstract <T> List<Map<String, Object>> selectListMap(ConditionWrapper<T> wrapper);
+    public abstract <T> DbPageRows<Map<String, Object>> selectPageMap(ConditionWrapper<T> wrapper);
+    public abstract <T, K, V> Map<K, V> selectMap(ConditionWrapper<T> wrapper, Class<K> kClass, Class<V> vClass);
 
 
     /*--------------------------------------- delete ---------------------------------------*/
@@ -79,7 +81,7 @@ public abstract class AbstractSqlExecutor  {
     /**
      * 处理异常抛出, 其实该方法只是做了一个隐式的异常抛出，没有别的作用
      */
-    public void throwsException(Exception e) {
+    public void handleExceptions(Exception e) {
         if (e instanceof CustomCheckException) {
             throw (CustomCheckException) e;
         }

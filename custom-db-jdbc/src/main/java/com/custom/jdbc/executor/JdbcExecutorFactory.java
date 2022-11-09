@@ -7,6 +7,7 @@ import com.custom.comm.utils.StrUtils;
 import com.custom.jdbc.condition.BaseExecutorModel;
 import com.custom.jdbc.condition.SaveExecutorModel;
 import com.custom.jdbc.condition.SelectExecutorModel;
+import com.custom.jdbc.condition.SelectMapExecutorModel;
 import com.custom.jdbc.configuration.CustomConfigHelper;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
@@ -214,6 +215,14 @@ public class JdbcExecutorFactory {
         return jdbcExecutor.selectObjs(sqlSession);
     }
 
+    /**
+     * 查询映射列表，一般用于聚合查询，并仅限于查询两列
+     */
+    public <K, V> Map<K, V> selectMap(Class<K> kClass, Class<V> vClass, String sql, Object... params) throws Exception {
+        SelectMapExecutorModel<K, V> selectMapExecutorModel = new SelectMapExecutorModel<>(sql, true, params, kClass, vClass);
+        CustomSqlSession sqlSession = this.createSqlSession(selectMapExecutorModel);
+        return jdbcExecutor.selectMap(sqlSession);
+    }
 
     /**
      * 纯sql增删改
