@@ -48,6 +48,7 @@ public abstract class AbstractSqlExecutor  {
     public abstract <T> List<Map<String, Object>> selectListMap(ConditionWrapper<T> wrapper);
     public abstract <T> DbPageRows<Map<String, Object>> selectPageMap(ConditionWrapper<T> wrapper);
     public abstract <T, K, V> Map<K, V> selectMap(ConditionWrapper<T> wrapper, Class<K> kClass, Class<V> vClass);
+    public abstract <T, K, V> Map<K, V> selectMap(ConditionWrapper<T> wrapper);
 
 
     /*--------------------------------------- delete ---------------------------------------*/

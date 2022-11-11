@@ -356,6 +356,18 @@ public class JdbcAction extends AbstractSqlExecutor {
         }
     }
 
+    @Override
+    public <T, K, V> Map<K, V> selectMap(ConditionWrapper<T> wrapper) {
+        try {
+            HandleSelectSqlBuilder<T> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(wrapper.getEntityClass(), executorFactory);
+            String selectSql = sqlBuilder.executeSqlBuilder(wrapper);
+            return executorFactory.selectMap(null, null, selectSql, wrapper.getParamValues().toArray());
+        }catch (Exception e) {
+            this.handleExceptions(e);
+            return null;
+        }
+    }
+
 
     @Override
     @CheckExecute(target = ExecuteMethod.DELETE)
