@@ -51,7 +51,7 @@ public class ReadFieldHelper {
 
     public ReadFieldHelper field(String field) {
         Asserts.notNull(field);
-        thisHelper.fieldName = fieldName;
+        thisHelper.fieldName = field;
         return thisHelper;
     }
 

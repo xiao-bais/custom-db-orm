@@ -1,6 +1,7 @@
 package com.home;
 
 import com.custom.action.condition.Conditions;
+import com.custom.action.condition.SelectFunc;
 import com.custom.action.interfaces.TableExecutor;
 import com.custom.action.sqlparser.DefaultTableExecutor;
 import com.custom.action.sqlparser.JdbcDao;
@@ -27,12 +28,18 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-        TableExecutor<ChildStudent, Integer> tableExecutor = new DefaultTableExecutor<>(
-                jdbcTestBuilder.getDbDataSource(),
-                jdbcTestBuilder.getDbCustomStrategy(),
-                ChildStudent.class);
 
-        tableExecutor.selectCount(Conditions.lambdaQuery(ChildStudent.class));
+        Map<Integer, Integer> selectMap = jdbcDao.selectMap(Conditions.lambdaQuery(ChildStudent.class)
+                .select(ChildStudent::getAge)
+                .select(new SelectFunc<>(ChildStudent.class).count(ChildStudent::getAge, ChildStudent::getCountAge))
+                .like(ChildStudent::getName, "78").or().gt(ChildStudent::getMoney, 5678)
+                .addCutsomizeSql("and exists (select 1)")
+                .or(false).like(ChildStudent::getName, "99")
+                .or().like(ChildStudent::getName, "131")
+//                .or(x -> x.like(ChildStudent::getName, "123"))
+                        .groupBy(ChildStudent::getAge),
+                Integer.class, Integer.class
+        );
 
 
 //        Map<Integer, String> selectMap = jdbcDao.selectMap(Conditions.lambdaQuery(ChildStudent.class)
@@ -40,9 +47,9 @@ public class DoMain {
 //                Integer.class, String.class
 //        );
 
-//        for (Map.Entry<Integer, String> entry : selectMap.entrySet()) {
-//            System.out.println("key = " + entry.getKey() + ", value = " + entry.getValue());
-//        }
+        for (Map.Entry<Integer, Integer> entry : selectMap.entrySet()) {
+            System.out.println("key = " + entry.getKey() + ", value = " + entry.getValue());
+        }
 
 
     }

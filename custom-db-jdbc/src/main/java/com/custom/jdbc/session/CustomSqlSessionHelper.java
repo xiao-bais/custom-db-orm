@@ -65,11 +65,15 @@ public class CustomSqlSessionHelper {
         return rowsCount;
     }
 
+    public void handleExecuteBefore(PreparedStatement statement) throws SQLException {
+        this.handleExecuteBefore(statement, true);
+    }
 
     /**
      * 查询之前的处理
+     * @param query 是否执行查询
      */
-    public void handleExecuteBefore(PreparedStatement statement) throws SQLException {
+    public void handleExecuteBefore(PreparedStatement statement,boolean query) throws SQLException {
 
         BaseExecutorModel executorModel = sqlSession.getExecutorModel();
         Object[] sqlParams = executorModel.getSqlParams();
@@ -82,9 +86,12 @@ public class CustomSqlSessionHelper {
         }
         // sql打印
         if (strategy.isSqlOutPrinting() && sqlPrintSupport) {
-            SqlOutPrintBuilder
-                    .build(prepareSql, sqlParams, strategy.isSqlOutPrintExecute())
-                    .sqlInfoQueryPrint();
+            SqlOutPrintBuilder builder = SqlOutPrintBuilder.build(prepareSql, sqlParams, strategy.isSqlOutPrintExecute());
+            if (query) {
+                builder.sqlInfoQueryPrint();
+            } else {
+                builder.sqlInfoUpdatePrint();
+            }
         }
     }
 

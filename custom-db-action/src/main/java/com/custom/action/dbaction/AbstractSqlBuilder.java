@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -202,7 +203,7 @@ public abstract class AbstractSqlBuilder<T> {
         this.table = tableSqlBuilder.getTable();
         this.alias = tableSqlBuilder.getAlias();
         this.keyParserModel = tableSqlBuilder.getKeyParserModel();
-        this.fieldParserModels = tableSqlBuilder.getFieldParserModels();
+        this.fieldParserModels = tableSqlBuilder.getFieldParserModels().stream().filter(DbFieldParserModel::isDbField).collect(Collectors.toList());
         this.columnMapper = tableSqlBuilder.getColumnMapper();
         this.fieldMapper = tableSqlBuilder.getFieldMapper();
         this.entityClass = tableSqlBuilder.getEntityClass();
@@ -320,10 +321,11 @@ public abstract class AbstractSqlBuilder<T> {
             if (StrUtils.isBlank(condition)) {
                 return isExist ? Constants.WHERE + getLogicDeleteQuerySql() : Constants.EMPTY;
             }
+            String finalCondition = "(" + DbUtil.trimSqlCondition(condition) + ")";
             if (isExist) {
-                return Constants.WHERE + getLogicDeleteQuerySql() + condition.trim();
+                return Constants.WHERE + getLogicDeleteQuerySql() + Constants.AND + " " + finalCondition;
             }
-            return Constants.WHERE + DbUtil.trimSqlCondition(condition);
+            return Constants.WHERE + finalCondition;
         };
     }
 
