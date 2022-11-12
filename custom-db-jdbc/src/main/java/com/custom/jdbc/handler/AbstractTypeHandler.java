@@ -1,9 +1,11 @@
 package com.custom.jdbc.handler;
 
 import com.custom.comm.exceptions.CustomCheckException;
+import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.StrUtils;
+import lombok.val;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,17 +23,23 @@ public abstract class AbstractTypeHandler<T> implements TypeHandler<T>  {
      * 是否下划线转驼峰
      */
     private boolean isUnderlineToCamel = false;
-    private Object val;
 
     public void setUnderlineToCamel(boolean underlineToCamel) {
         isUnderlineToCamel = underlineToCamel;
     }
 
-    public AbstractTypeHandler(Object val) {
-        this.val = val;
+    /**
+     * 转换成数字类型
+     */
+    public Number castNumber(Object val) {
+        Asserts.allowed(val instanceof Number, "Cannot convert to numeric type");
+        return (Number) val;
     }
 
-    public boolean thisValIsNull() {
+    /**
+     * 是否为null
+     */
+    public boolean thisValIsEmpty(Object val) {
         if (val == null) {
             return true;
         }
@@ -41,11 +49,6 @@ public abstract class AbstractTypeHandler<T> implements TypeHandler<T>  {
         return JudgeUtil.isEmpty(val);
     }
 
-    public Object thisVal() {
-        return val;
-    }
-
-    public AbstractTypeHandler(){}
 
     public T getTypeValue(ResultSet rs, String column) throws SQLException {
         if (isUnderlineToCamel) {

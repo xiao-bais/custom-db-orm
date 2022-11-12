@@ -14,7 +14,7 @@ public interface TypeHandler<T> {
     /**
      * 获取本类型的值
      */
-    T getTypeValue();
+    T getTypeValue(Object val);
 
 
     /**
@@ -38,13 +38,7 @@ public interface TypeHandler<T> {
     /**
      * 获取本类型的值，并且不为空
      */
-    T getTypeNoNullValue();
-
-
-    /**
-     * 转成该类型的值
-     */
-    T castTypeValue(Object obj);
+    T getTypeNoNullValue(Object val);
 
 
 

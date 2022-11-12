@@ -1,5 +1,9 @@
 package com.custom.comm.utils;
 
+import com.custom.comm.exceptions.CustomCheckException;
+
+import java.util.IllegalFormatCodePointException;
+
 /**
  * @Author Xiao-Bai
  * @Date 2022/7/21 23:58
@@ -65,6 +69,12 @@ public final class Asserts {
     public static void unSupportOp(boolean bool, String message) {
         if (bool) {
             throw new UnsupportedOperationException(message);
+        }
+    }
+
+    public static void allowed(boolean bool, String message) {
+        if (!bool) {
+            throw new IllegalArgumentException(message);
         }
     }
 

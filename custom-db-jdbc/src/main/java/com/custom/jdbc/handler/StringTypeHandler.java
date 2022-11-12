@@ -12,9 +12,13 @@ import java.sql.SQLException;
  */
 public class StringTypeHandler extends AbstractTypeHandler<String> {
 
+
     @Override
-    public String getTypeValue() {
-        return String.valueOf(thisVal());
+    public String getTypeValue(Object val) {
+        if (val == null) {
+            return null;
+        }
+        return String.valueOf(val);
     }
 
     @Override
@@ -23,28 +27,8 @@ public class StringTypeHandler extends AbstractTypeHandler<String> {
     }
 
     @Override
-    public String getTypeNoNullValue() {
-        return thisValIsNull() ? Constants.EMPTY : String.valueOf(thisVal());
-    }
-
-    @Override
-    public String castTypeValue(Object obj) {
-        if (obj == null) {
-            return Constants.EMPTY;
-        }
-        if (obj instanceof CharSequence) {
-            return String.valueOf(obj);
-        }
-        return null;
-    }
-
-
-    public StringTypeHandler() {
-        super();
-    }
-
-    public StringTypeHandler(Object val) {
-        super(val);
+    public String getTypeNoNullValue(Object val) {
+        return thisValIsEmpty(val) ? Constants.EMPTY : String.valueOf(val);
     }
 
 
