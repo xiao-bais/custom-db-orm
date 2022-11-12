@@ -20,17 +20,4 @@ public class LongTypeHandler extends AbstractTypeHandler<Long> {
     public Long getTypeValue(ResultSet rs, int index) throws SQLException {
         return rs.getLong(index);
     }
-
-    @Override
-    public Long getTypeNoNullValue(Object val) {
-        if (val == null) {
-            return 0L;
-        }
-        try {
-            Number number = castNumber(val);
-            return number.longValue();
-        } catch (IllegalArgumentException e) {
-            return 0L;
-        }
-    }
 }

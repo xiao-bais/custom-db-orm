@@ -28,16 +28,19 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-        Map<Integer, String> selectMap = jdbcDao.selectMap(Conditions.lambdaQuery(ChildStudent.class)
-                .select(ChildStudent::getAge)
-                .select(x -> x.count(ChildStudent::getAge, ChildStudent::getIfNullAge))
-                        .groupBy(ChildStudent::getAge),
-                Integer.class, String.class
-        );
+//        Map<Integer, String> selectMap = jdbcDao.selectMap(Conditions.lambdaQuery(ChildStudent.class)
+//                .select(ChildStudent::getAge)
+//                .select(x -> x.count(ChildStudent::getAge, ChildStudent::getIfNullAge))
+//                        .groupBy(ChildStudent::getAge),
+//                Integer.class, String.class
+//        );
+//
+//        for (Map.Entry<Integer, String> entry : selectMap.entrySet()) {
+//            System.out.println("key = " + entry.getKey() + ", value = " + entry.getValue());
+//        }
 
-        for (Map.Entry<Integer, String> entry : selectMap.entrySet()) {
-            System.out.println("key = " + entry.getKey() + ", value = " + entry.getValue());
-        }
+        Student student = Student.class.newInstance();
+        System.out.println("student = " + student);
 
 
     }

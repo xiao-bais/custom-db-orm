@@ -24,17 +24,4 @@ public class IntegerTypeHandler extends AbstractTypeHandler<Integer> {
     public Integer getTypeValue(ResultSet rs, int index) throws SQLException {
         return rs.getInt(index);
     }
-
-    @Override
-    public Integer getTypeNoNullValue(Object val) {
-        if (val == null) {
-            return 0;
-        }
-        try {
-            Number number = castNumber(val);
-            return number.intValue();
-        } catch (IllegalArgumentException e) {
-            return 0;
-        }
-    }
 }

@@ -32,7 +32,11 @@ public class ChildStudent extends Student {
     @DbNotField
     private Integer avgAge;
 
+    private ChildStudent(){}
 
+    public ChildStudent(int age) {
+        this.avgAge = age;
+    }
 
 
 }
