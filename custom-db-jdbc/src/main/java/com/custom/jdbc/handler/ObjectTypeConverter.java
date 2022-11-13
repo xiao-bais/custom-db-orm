@@ -1,5 +1,7 @@
 package com.custom.jdbc.handler;
 
+import com.custom.comm.exceptions.CustomCheckException;
+
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,7 +21,7 @@ public class ObjectTypeConverter<T> {
      * 获取值
      */
     public T getValue() {
-        if (Object.class.equals(val)) {
+        if (Object.class.equals(val.getClass())) {
             return (T) val;
         }
         TypeHandler<?> typeHandler = ALL_TYPE_HANDLER_CACHE.get(toTypeClass);
@@ -30,7 +32,7 @@ public class ObjectTypeConverter<T> {
      * 获取不为空的值
      */
     public T getNonNullValue() {
-        if (Object.class.equals(val)) {
+        if (Object.class.equals(val.getClass())) {
             return (T) val;
         }
         TypeHandler<?> typeHandler = ALL_TYPE_HANDLER_CACHE.get(toTypeClass);
@@ -42,6 +44,9 @@ public class ObjectTypeConverter<T> {
      */
     public T getRsValue(ResultSet rs, String column) throws SQLException {
         TypeHandler<?> typeHandler = ALL_TYPE_HANDLER_CACHE.get(toTypeClass);
+        if (typeHandler == null) {
+            return (T) rs.getObject(column);
+        }
         return (T) typeHandler.getTypeValue(rs, column);
     }
 
@@ -50,6 +55,9 @@ public class ObjectTypeConverter<T> {
      */
     public T getRsValue(ResultSet rs, int index) throws SQLException {
         TypeHandler<?> typeHandler = ALL_TYPE_HANDLER_CACHE.get(toTypeClass);
+        if (typeHandler == null) {
+            return (T) rs.getObject(index);
+        }
         return (T) typeHandler.getTypeValue(rs, index);
     }
 
@@ -57,12 +65,12 @@ public class ObjectTypeConverter<T> {
     /**
      * 需转换的类型
      */
-    private final Class<T> toTypeClass;
+    private Class<T> toTypeClass;
 
     /**
      * 待转换的值
      */
-    private final Object val;
+    private Object val;
 
     /**
      * 类型转换寄存
@@ -91,6 +99,29 @@ public class ObjectTypeConverter<T> {
     public ObjectTypeConverter(Class<T> toTypeClass, Object val) {
         this.toTypeClass = toTypeClass;
         this.val = val;
+    }
+
+    public ObjectTypeConverter(Class<T> toTypeClass) {
+        this.toTypeClass = toTypeClass;
+    }
+
+    public ObjectTypeConverter() {
+    }
+
+    public TypeHandler<T> getThisTypeHandler() {
+        TypeHandler<T> typeHandler = (TypeHandler<T>) ALL_TYPE_HANDLER_CACHE.get(toTypeClass);
+        if (typeHandler == null) {
+            throw new UnsupportedOperationException("This type of conversion processing is not supported temporarily");
+        }
+        return typeHandler;
+    }
+
+    public TypeHandler<?> getTargetTypeHandler(Class<?> targetCls) {
+        TypeHandler<?> typeHandler = ALL_TYPE_HANDLER_CACHE.get(targetCls);
+        if (typeHandler == null) {
+            throw new UnsupportedOperationException("This type of conversion processing is not supported temporarily");
+        }
+        return typeHandler;
     }
 
     public static void main(String[] args) {

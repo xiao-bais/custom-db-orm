@@ -135,11 +135,8 @@ public class CustomUtil extends StrUtils {
     */
     public static <T> Field[] loadFields(Class<T> t, boolean checkDbField) {
         Class<?> clz = t;
-        DbTable thisDbTable = t.getAnnotation(DbTable.class);
         List<Field> fieldList = new ArrayList<>();
-        boolean isLooped = true;
-        while (!clz.equals(Object.class) && (!clz.equals(t) || isLooped)) {
-            isLooped = false;
+        while (clz != null) {
             Arrays.stream(clz.getDeclaredFields()).forEach(field -> {
                 int modifiers = field.getModifiers();
                 if (Modifier.isPrivate(modifiers)
@@ -148,9 +145,6 @@ public class CustomUtil extends StrUtils {
                 }
             });
             clz = clz.getSuperclass();
-            if (clz.equals(Object.class)) {
-                break;
-            }
         }
         if (fieldList.size() == 0 && checkDbField) {
             throw new CustomCheckException("@DbField not found inD " + t);
