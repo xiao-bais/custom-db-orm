@@ -145,9 +145,7 @@ public class TableStructsInitializer {
 
 
     private void addColumnInfos(TableParseModel<?> waitUpdateSqlBuilder, Set<ColumnCreateInfo> buildColumnSqls) {
-        List<? extends DbFieldParserModel<?>> fieldParserModels = waitUpdateSqlBuilder.getFieldParserModels().stream()
-                .filter(DbFieldParserModel::isExistsDbField)
-                .collect(Collectors.toList());
+        List<? extends DbFieldParserModel<?>> fieldParserModels = waitUpdateSqlBuilder.getDbFieldParseModels();
         for (DbFieldParserModel<?> fieldParserModel : fieldParserModels) {
             ColumnCreateInfo columnCreateInfo = new ColumnCreateInfo();
             columnCreateInfo.setColumn(fieldParserModel.getColumn());
@@ -165,8 +163,7 @@ public class TableStructsInitializer {
         String selectColumnSql = String.format(SELECT_COLUMN_SQL,
                 sqlBuilder.getTable(), dataBaseName);
         List<String> columnList = executorFactory.selectObjsBySql(String.class,false, selectColumnSql);
-        List<String> truthColumnList = sqlBuilder.getFieldParserModels().stream()
-                .filter(DbFieldParserModel::isExistsDbField)
+        List<String> truthColumnList = sqlBuilder.getDbFieldParseModels().stream()
                 .map(DbFieldParserModel::getColumn)
                 .collect(Collectors.toList());
         int size = truthColumnList.size();
@@ -178,7 +175,7 @@ public class TableStructsInitializer {
             if (columnList.contains(currColumn)) {
                 continue;
             }
-            List<? extends DbFieldParserModel<?>> fieldParserModels = sqlBuilder.getFieldParserModels();
+            List<? extends DbFieldParserModel<?>> fieldParserModels = sqlBuilder.getDbFieldParseModels();
             DbFieldParserModel<?> fieldParserModel = fieldParserModels.get(i);
             String addColumnSql;
             if (i == 0) {

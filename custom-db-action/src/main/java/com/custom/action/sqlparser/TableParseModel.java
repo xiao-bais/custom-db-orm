@@ -2,9 +2,12 @@ package com.custom.action.sqlparser;
 
 import com.custom.comm.annotations.*;
 import com.custom.comm.exceptions.CustomCheckException;
+import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
+import com.custom.jdbc.configuration.CustomConfigHelper;
+import com.custom.jdbc.transaction.DbConnGlobal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +16,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @Author Xiao-Bai
@@ -143,18 +147,24 @@ public class TableParseModel<T> implements Cloneable {
             columnMapper.put(keyParserModel.getFieldSql(), keyParserModel.getKey());
             fieldMapper.put(keyParserModel.getKey(), keyParserModel.getFieldSql());
         }
-        if (!fieldParserModels.isEmpty()) {
-            fieldParserModels.forEach(x -> {
+
+        List<DbFieldParserModel<T>> dbFieldParseModels = getDbFieldParseModels();
+        if (!dbFieldParseModels.isEmpty()) {
+            // 基础字段
+            dbFieldParseModels.forEach(x -> {
                 columnMapper.put(x.getFieldSql(), x.getFieldName());
                 fieldMapper.put(x.getFieldName(), x.getFieldSql());
             });
         }
+        // 关联字段1
         if (!joinDbMappers.isEmpty()) {
             joinDbMappers.forEach(x -> {
                 columnMapper.put(x.getJoinName(), x.getFieldName());
                 fieldMapper.put(x.getFieldName(), x.getJoinName());
             });
         }
+
+        // 关联字段2
         if (!relatedParserModels.isEmpty()) {
             relatedParserModels.forEach(x -> {
                 columnMapper.put(x.getFieldSql(), x.getFieldName());
@@ -166,9 +176,9 @@ public class TableParseModel<T> implements Cloneable {
     /**
      * 默认构造方法为查询
      */
-    TableParseModel(Class<T> cls, boolean underlineToCamel) {
+    TableParseModel(Class<T> cls) {
         // 初始化本对象属性
-        initLocalProperty(cls, underlineToCamel);
+        initLocalProperty(cls);
 
         // 加载所有字段
         this.fields =  CustomUtil.loadFields(this.entityClass);
@@ -190,7 +200,7 @@ public class TableParseModel<T> implements Cloneable {
     /**
      * 初始化本对象属性
      */
-    private void initLocalProperty(Class<T> cls, boolean underlineToCamel) {
+    private void initLocalProperty(Class<T> cls) {
         this.entityClass = cls;
         DbTable annotation = cls.getAnnotation(DbTable.class);
         if (Objects.isNull(annotation)) {
@@ -199,11 +209,16 @@ public class TableParseModel<T> implements Cloneable {
         if (JudgeUtil.isEmpty(annotation.table())) {
             throw new CustomCheckException(cls.getName() + " 未指定@DbTable注解上实体映射的表名");
         }
+
         this.alias = annotation.alias();
         this.table = annotation.table();
         this.desc = annotation.desc();
         this.mergeSuperJoin = annotation.mergeSuperJoin();
-        this.underlineToCamel = underlineToCamel;
+        int order = annotation.order();
+        CustomConfigHelper configHelper = DbConnGlobal.getConfigHelper(order);
+        Asserts.notNull(configHelper, JdbcOpDao.class.getName() +"实例化之前，不允许构造实体解析模板");
+
+        this.underlineToCamel = configHelper.getDbCustomStrategy().isUnderlineToCamel();
         this.oneToOneFieldList = new ArrayList<>();
         this.oneToManyFieldList = new ArrayList<>();
         this.columnPropertyMaps = new ArrayList<>();
@@ -417,6 +432,10 @@ public class TableParseModel<T> implements Cloneable {
 
     public List<DbFieldParserModel<T>> getFieldParserModels() {
         return fieldParserModels;
+    }
+
+    public List<DbFieldParserModel<T>> getDbFieldParseModels() {
+        return fieldParserModels.stream().filter(DbFieldParserModel::isDbField).collect(Collectors.toList());
     }
 
     public Field[] getFields() {

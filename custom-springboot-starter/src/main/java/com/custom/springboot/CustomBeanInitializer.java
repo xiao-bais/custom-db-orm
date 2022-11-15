@@ -30,7 +30,6 @@ public class CustomBeanInitializer implements InitializingBean, ApplicationConte
     public void afterPropertiesSet() throws Exception {
         DbCustomStrategy strategy = applicationContext.getBean(DbCustomStrategy.class);
         DbDataSource dataSource = applicationContext.getBean(DbDataSource.class);
-        TableInfoCache.setUnderlineToCamel(strategy.isUnderlineToCamel());
         if (!strategy.isSyncEntityEnable()) {
             return;
         }

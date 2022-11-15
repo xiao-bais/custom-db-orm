@@ -49,15 +49,11 @@ public class JdbcTestBuilder {
     }
 
     public JdbcOpDao getJdbcOpDao() {
-        JdbcOpDao jdbcDao = new JdbcOpDao(dbDataSource2, dbCustomStrategy);
-        TableInfoCache.setUnderlineToCamel(true);
-        return jdbcDao;
+        return new JdbcOpDao(dbDataSource2, dbCustomStrategy);
     }
 
     public JdbcDao getJdbcDao() {
-        JdbcDao jdbcDao = new JdbcDaoProxy(dbDataSource, dbCustomStrategy).createProxy();
-        TableInfoCache.setUnderlineToCamel(true);
-        return jdbcDao;
+        return new JdbcDaoProxy(dbDataSource, dbCustomStrategy).createProxy();
     }
 
 //    public <T> T getCustomClassDao(Class<T> entityClass) {

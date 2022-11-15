@@ -8,11 +8,9 @@ import com.custom.action.sqlparser.TableParseModel;
 import com.custom.action.util.DbUtil;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.*;
-import com.custom.jdbc.configuration.CustomConfigHelper;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.jdbc.interfaces.DatabaseAdapter;
-import com.custom.jdbc.transaction.DbConnGlobal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -172,38 +170,11 @@ public abstract class AbstractSqlBuilder<T> {
         this.sqlParams.add(val);
     }
 
-    /**
-     * 注入基础表字段数据
-     * @param tableSqlBuilder 表解析对象
-     * @param order 数据源序号
-     */
-    protected void injectTableInfo(TableParseModel<T> tableSqlBuilder, int order) {
-        this.table = tableSqlBuilder.getTable();
-        this.alias = tableSqlBuilder.getAlias();
-        this.keyParserModel = tableSqlBuilder.getKeyParserModel();
-        this.fieldParserModels = tableSqlBuilder.getFieldParserModels();
-        this.columnMapper = tableSqlBuilder.getColumnMapper();
-        this.fieldMapper = tableSqlBuilder.getFieldMapper();
-        this.entityClass = tableSqlBuilder.getEntityClass();
-
-        CustomConfigHelper configHelper = DbConnGlobal.getConfigHelper(order);
-        Asserts.npe(configHelper, "未找到可用的数据源");
-        DbCustomStrategy customStrategy = configHelper.getDbCustomStrategy();
-
-        // 设置逻辑删除字段
-        this.logicColumn = customStrategy.getDbFieldDeleteLogic();
-        this.initLogic(customStrategy.getDeleteLogicValue(), customStrategy.getNotDeleteLogicValue());
-
-        // 设置jdbc执行对象
-        this.executorFactory = new JdbcExecutorFactory(configHelper.getDbDataSource(), customStrategy);
-
-    }
-
     protected void injectTableInfo(TableParseModel<T> tableSqlBuilder, JdbcExecutorFactory executorFactory) {
         this.table = tableSqlBuilder.getTable();
         this.alias = tableSqlBuilder.getAlias();
         this.keyParserModel = tableSqlBuilder.getKeyParserModel();
-        this.fieldParserModels = tableSqlBuilder.getFieldParserModels().stream().filter(DbFieldParserModel::isDbField).collect(Collectors.toList());
+        this.fieldParserModels = tableSqlBuilder.getDbFieldParseModels();
         this.columnMapper = tableSqlBuilder.getColumnMapper();
         this.fieldMapper = tableSqlBuilder.getFieldMapper();
         this.entityClass = tableSqlBuilder.getEntityClass();
@@ -212,7 +183,7 @@ public abstract class AbstractSqlBuilder<T> {
         // 设置逻辑删除字段
         DbCustomStrategy customStrategy = executorFactory.getDbCustomStrategy();
         this.logicColumn = customStrategy.getDbFieldDeleteLogic();
-        this.initLogic(customStrategy.getDeleteLogicValue(), customStrategy.getNotDeleteLogicValue());
+        this.logicSqlInitialize(customStrategy.getDeleteLogicValue(), customStrategy.getNotDeleteLogicValue());
 
     }
 
@@ -240,7 +211,7 @@ public abstract class AbstractSqlBuilder<T> {
     /**
      * 初始化逻辑删除
      */
-    public void initLogic(Object logicDeleteValue, Object logicNotDeleteValue) {
+    public void logicSqlInitialize(Object logicDeleteValue, Object logicNotDeleteValue) {
         if (logicDeleteValue instanceof CharSequence) {
             logicDeleteValue = String.format("'%s'", logicDeleteValue);
         }

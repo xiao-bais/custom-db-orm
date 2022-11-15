@@ -96,7 +96,7 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
         if (tableSqlBuilder.getKeyParserModel() != null) {
             this.insertSuffix.add(Constants.QUEST);
         }
-        int fieldSize = tableSqlBuilder.getFieldParserModels().size();
+        int fieldSize = getFieldParserModels().size();
         for (int i = 0; i < fieldSize; i++) {
             this.insertSuffix.add(Constants.QUEST);
         }

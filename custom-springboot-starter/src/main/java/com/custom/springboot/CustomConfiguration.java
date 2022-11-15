@@ -53,7 +53,6 @@ public class CustomConfiguration {
         if(isDataSourceEmpty(dbDataSource)) {
             return null;
         }
-        TableInfoCache.setUnderlineToCamel(dbCustomStrategy.isUnderlineToCamel());
         JdbcOpDao jdbcOpDao = new JdbcOpDao(dbDataSource, dbCustomStrategy);
         logger.info("JdbcOpDao Initialized Successfully !");
         return jdbcOpDao;
@@ -66,7 +65,6 @@ public class CustomConfiguration {
         if(isDataSourceEmpty(dbDataSource)) {
             return null;
         }
-        TableInfoCache.setUnderlineToCamel(dbCustomStrategy.isUnderlineToCamel());
         JdbcDao jdbcDao = new JdbcDaoProxy(dbDataSource, dbCustomStrategy).createProxy();
         logger.info("JdbcDao Initialized Successfully !");
         return jdbcDao;

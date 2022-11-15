@@ -23,18 +23,14 @@ public class TableInfoCache {
      * <br/>value-实体解析模板 {@link TableParseModel}
      */
     private final static Map<String, TableParseModel<?>> TABLE_MODEL = new ConcurrentHashMap<>();
-    private static Boolean underlineToCamel = false;
 
     public static <T> TableParseModel<T> getTableModel(Class<T> cls) {
         TableParseModel<T> tableSqlBuilder = (TableParseModel<T>) TABLE_MODEL.get(cls.getName());
         if(Objects.isNull(tableSqlBuilder)) {
-            tableSqlBuilder = new TableParseModel<>(cls, underlineToCamel);
+            tableSqlBuilder = new TableParseModel<>(cls);
             TABLE_MODEL.put(cls.getName(), tableSqlBuilder);
         }
         return tableSqlBuilder;
-    }
-    public static void setUnderlineToCamel(boolean underlineToCamel) {
-        TableInfoCache.underlineToCamel = underlineToCamel;
     }
 
 
