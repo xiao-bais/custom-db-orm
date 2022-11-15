@@ -247,5 +247,43 @@ public class StrUtils {
         return num;
     }
 
+    /**
+     * 判断是否以指定字符串开头
+     */
+    public static boolean startWith(CharSequence str, CharSequence prefix, boolean isIgnoreCase) {
+        if (null != str && null != prefix) {
+            return isIgnoreCase ? str.toString().toLowerCase().startsWith(prefix.toString().toLowerCase()) : str.toString().startsWith(prefix.toString());
+        } else {
+            return null == str && null == prefix;
+        }
+    }
+
+    /**
+     * 判断是否以指定字符串开头(忽略大小写)
+     */
+    public static boolean startWithIgnoreCase(CharSequence str, CharSequence prefix) {
+        return startWith(str, prefix, true);
+    }
+
+
+    /**
+     * 判断是否以指定字符串结尾
+     */
+    public static boolean endWith(CharSequence str, CharSequence suffix, boolean isIgnoreCase) {
+        if (null != str && null != suffix) {
+            return isIgnoreCase ? str.toString().toLowerCase().endsWith(suffix.toString().toLowerCase()) : str.toString().endsWith(suffix.toString());
+        } else {
+            return null == str && null == suffix;
+        }
+    }
+
+    /**
+     * 判断是否以指定字符串结尾(忽略大小写)
+     */
+    public static boolean endWithIgnoreCase(CharSequence str, CharSequence suffix) {
+        return endWith(str, suffix, true);
+    }
+
+
 
 }

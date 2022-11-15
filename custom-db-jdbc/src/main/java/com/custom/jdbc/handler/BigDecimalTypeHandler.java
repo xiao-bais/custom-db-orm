@@ -17,12 +17,26 @@ public class BigDecimalTypeHandler extends AbstractTypeHandler<BigDecimal> {
         if (val == null) {
             return null;
         }
+        else if (val instanceof Boolean) {
+            return (boolean) val ? BigDecimal.ONE : BigDecimal.ZERO;
+        }
         return (BigDecimal) castNumber(val);
     }
 
     @Override
     public BigDecimal getTypeValue(ResultSet rs, int index) throws SQLException {
         return rs.getBigDecimal(index);
+    }
+
+    @Override
+    public BigDecimalTypeHandler clone() {
+        BigDecimalTypeHandler builder = null;
+        try {
+            builder = (BigDecimalTypeHandler) super.clone();
+        } catch (CloneNotSupportedException e) {
+            log().error(e.toString(), e);
+        }
+        return builder;
     }
 
 

@@ -19,9 +19,13 @@ import java.util.*;
  * @desc
  */
 @SuppressWarnings("unchecked")
-public abstract class AbstractTypeHandler<T> implements TypeHandler<T>, NonNullableTypeHandler<T> {
+public abstract class AbstractTypeHandler<T> implements TypeHandler<T>, NonNullableTypeHandler<T>, Cloneable {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    public Logger log() {
+        return logger;
+    }
 
     /**
      * 是否下划线转驼峰
@@ -62,7 +66,7 @@ public abstract class AbstractTypeHandler<T> implements TypeHandler<T>, NonNulla
             val =  '\u0000';
         }
 
-        // 数组类型
+        // 数字类型
         else if (Number.class.isAssignableFrom(targetClass)) {
             if (targetClass.equals(Integer.class)) {
                 val = 0;
@@ -166,6 +170,9 @@ public abstract class AbstractTypeHandler<T> implements TypeHandler<T>, NonNulla
         }
         return getTypeValue(val);
     }
+
+
+
 
 
 }

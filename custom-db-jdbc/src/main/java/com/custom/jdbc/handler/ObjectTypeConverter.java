@@ -1,7 +1,5 @@
 package com.custom.jdbc.handler;
 
-import com.custom.comm.exceptions.CustomCheckException;
-
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -89,6 +87,7 @@ public class ObjectTypeConverter<T> {
         registerType(String.class, new StringTypeHandler());
         registerType(BigDecimal.class, new BigDecimalTypeHandler());
         registerType(Date.class, new DateTypeHandler());
+        registerType(Object.class, new UnknownTypeHandler());
     }
 
 
@@ -111,7 +110,7 @@ public class ObjectTypeConverter<T> {
     public TypeHandler<T> getThisTypeHandler() {
         TypeHandler<T> typeHandler = (TypeHandler<T>) ALL_TYPE_HANDLER_CACHE.get(toTypeClass);
         if (typeHandler == null) {
-            throw new UnsupportedOperationException("This type of conversion processing is not supported temporarily");
+            typeHandler = (TypeHandler<T>) ALL_TYPE_HANDLER_CACHE.get(Object.class);
         }
         return typeHandler;
     }
@@ -119,7 +118,7 @@ public class ObjectTypeConverter<T> {
     public TypeHandler<?> getTargetTypeHandler(Class<?> targetCls) {
         TypeHandler<?> typeHandler = ALL_TYPE_HANDLER_CACHE.get(targetCls);
         if (typeHandler == null) {
-            throw new UnsupportedOperationException("This type of conversion processing is not supported temporarily");
+            typeHandler =  ALL_TYPE_HANDLER_CACHE.get(Object.class);
         }
         return typeHandler;
     }

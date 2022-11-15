@@ -73,7 +73,7 @@ public class CustomSqlSessionHelper {
      * 查询之前的处理
      * @param query 是否执行查询
      */
-    public void handleExecuteBefore(PreparedStatement statement,boolean query) throws SQLException {
+    public void handleExecuteBefore(PreparedStatement statement, boolean query) throws SQLException {
 
         BaseExecutorModel executorModel = sqlSession.getExecutorModel();
         Object[] sqlParams = executorModel.getSqlParams();

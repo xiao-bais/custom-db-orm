@@ -1,7 +1,6 @@
 package com.custom.jdbc.handler;
 
 import com.custom.comm.utils.Constants;
-import com.custom.comm.utils.ConvertUtil;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
@@ -41,6 +40,17 @@ public class BooleanTypeHandler extends AbstractTypeHandler<Boolean> {
     @Override
     public Boolean getTypeValue(ResultSet rs, int index) throws SQLException {
         return rs.getBoolean(index);
+    }
+
+    @Override
+    public BooleanTypeHandler clone() {
+        BooleanTypeHandler builder = null;
+        try {
+            builder = (BooleanTypeHandler) super.clone();
+        } catch (CloneNotSupportedException e) {
+            log().error(e.toString(), e);
+        }
+        return builder;
     }
 
 }

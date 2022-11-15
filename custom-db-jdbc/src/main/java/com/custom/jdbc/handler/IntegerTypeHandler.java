@@ -17,11 +17,25 @@ public class IntegerTypeHandler extends AbstractTypeHandler<Integer> {
         if (val == null) {
             return null;
         }
+        else if (val instanceof Boolean) {
+            return (boolean) val ? 1 : 0;
+        }
         return castNumber(val).intValue();
     }
 
     @Override
     public Integer getTypeValue(ResultSet rs, int index) throws SQLException {
         return rs.getInt(index);
+    }
+
+    @Override
+    public IntegerTypeHandler clone() {
+        IntegerTypeHandler builder = null;
+        try {
+            builder = (IntegerTypeHandler) super.clone();
+        } catch (CloneNotSupportedException e) {
+            log().error(e.toString(), e);
+        }
+        return builder;
     }
 }

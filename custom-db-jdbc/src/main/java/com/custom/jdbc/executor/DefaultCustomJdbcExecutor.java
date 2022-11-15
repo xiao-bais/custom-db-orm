@@ -3,6 +3,7 @@ package com.custom.jdbc.executor;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.utils.CustomUtil;
+import com.custom.jdbc.handler.ResultSetTypeMappedHandler;
 import com.custom.jdbc.session.CustomSqlSessionHelper;
 import com.custom.jdbc.sqlprint.SqlOutPrintBuilder;
 import com.custom.jdbc.condition.BaseExecutorModel;
@@ -27,8 +28,8 @@ import java.util.*;
 @SuppressWarnings("unchecked")
 public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
 
-    private final DbCustomStrategy strategy;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final DbCustomStrategy strategy;
 
     public DefaultCustomJdbcExecutor(DbCustomStrategy strategy) {
         this.strategy = strategy;
@@ -36,10 +37,11 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
 
     @Override
     public <T> List<T> selectList(CustomSqlSession sqlSession) throws Exception {
-        Map<String, Object> map;
+
         List<T> list = new ArrayList<>();
         SelectExecutorModel<T> executorModel = (SelectExecutorModel<T>) sqlSession.getExecutorModel();
         CustomSqlSessionHelper sessionHelper = new CustomSqlSessionHelper(strategy, sqlSession);
+        ResultSetTypeMappedHandler<T> typeConverter = new ResultSetTypeMappedHandler<>(executorModel.getEntityClass(), strategy.isUnderlineToCamel());
 
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -49,16 +51,14 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
             // 处理预编译以及sql打印
             sessionHelper.handleExecuteBefore(statement);
             resultSet = statement.executeQuery();
-            ResultSetMetaData metaData = resultSet.getMetaData();
 
             while (resultSet.next()) {
                 T t;
                 if (CustomUtil.isBasicClass(executorModel.getEntityClass())) {
-                    t = (T) resultSet.getObject(Constants.DEFAULT_ONE);
+                    Object value = resultSet.getObject(Constants.DEFAULT_ONE);
+                    t = typeConverter.getTargetValue(value);
                 } else {
-                    map = new HashMap<>();
-                    sessionHelper.handleResultMapper(map, resultSet, metaData);
-                    t = CustomUtil.convertBean(map, executorModel.getEntityClass());
+                    t = typeConverter.getTargetObject(resultSet);
                 }
                 list.add(t);
             }

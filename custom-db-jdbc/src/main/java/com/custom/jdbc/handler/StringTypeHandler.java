@@ -31,6 +31,17 @@ public class StringTypeHandler extends AbstractTypeHandler<String> {
         return thisValIsEmpty(val) ? Constants.EMPTY : String.valueOf(val);
     }
 
+    @Override
+    public StringTypeHandler clone() {
+        StringTypeHandler builder = null;
+        try {
+            builder = (StringTypeHandler) super.clone();
+        } catch (CloneNotSupportedException e) {
+            log().error(e.toString(), e);
+        }
+        return builder;
+    }
+
 
 
 }

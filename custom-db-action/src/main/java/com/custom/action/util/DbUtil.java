@@ -6,6 +6,7 @@ import com.custom.comm.enums.SqlExecTemplate;
 import com.custom.comm.utils.RexUtil;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.enums.SqlLike;
+import com.custom.comm.utils.StrUtils;
 
 /**
  * @author Xiao-Bai
@@ -118,11 +119,11 @@ public class DbUtil {
      * 消除sql条件中的第一个and/or
      */
     public static String trimSqlCondition(String condition) {
-        String finalCondition = condition;
-        if(condition.trim().startsWith(Constants.AND)) {
-            finalCondition = condition.replaceFirst(Constants.AND, Constants.EMPTY);
-        }else if(condition.trim().startsWith(Constants.OR)) {
-            finalCondition = condition.replaceFirst(Constants.OR, Constants.EMPTY);
+        String finalCondition = condition.trim();
+        if(StrUtils.startWithIgnoreCase(finalCondition, Constants.AND)) {
+            finalCondition = condition.substring(3);
+        }else if(StrUtils.startWithIgnoreCase(finalCondition, Constants.OR)) {
+            finalCondition = condition.substring(2);
         }
         return finalCondition.trim();
     }

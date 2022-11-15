@@ -14,11 +14,25 @@ public class FloatTypeHandler extends AbstractTypeHandler<Float> {
         if (val == null) {
             return null;
         }
+        else if (val instanceof Boolean) {
+            return (boolean) val ? 1.0F : 0;
+        }
         return castNumber(val).floatValue();
     }
 
     @Override
     public Float getTypeValue(ResultSet rs, int index) throws SQLException {
         return rs.getFloat(index);
+    }
+
+    @Override
+    public FloatTypeHandler clone() {
+        FloatTypeHandler builder = null;
+        try {
+            builder = (FloatTypeHandler) super.clone();
+        } catch (CloneNotSupportedException e) {
+            log().error(e.toString(), e);
+        }
+        return builder;
     }
 }
