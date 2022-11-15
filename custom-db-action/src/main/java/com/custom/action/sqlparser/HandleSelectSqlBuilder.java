@@ -139,6 +139,8 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
         return template -> SqlExecTemplate.format(template, baseFieldSql, getTable(), getAlias()) + joinTableSql;
     }
 
+
+
     /**
      * 创建关联表SQl(joinTable方式)
      * @see com.custom.comm.annotations.DbJoinTable
@@ -159,6 +161,8 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
             joinTableSql.append(getRelatedTableSql(relatedParserModels));
         }
     }
+
+
 
     /**
      * 拼接related的表关联
