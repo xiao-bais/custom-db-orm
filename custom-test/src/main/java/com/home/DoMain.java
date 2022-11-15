@@ -28,14 +28,8 @@ public class DoMain {
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
 
-        TableParseModel<ChildStudent> tableModel = TableInfoCache.getTableModel(ChildStudent.class);
-        List<DbFieldParserModel<ChildStudent>> fieldParserModels = tableModel.getDbFieldParseModels();
-        for (DbFieldParserModel<ChildStudent> fieldParserModel : fieldParserModels) {
-            boolean dbField = fieldParserModel.isDbField();
-            String fieldName = fieldParserModel.getFieldName();
-            String column = fieldParserModel.getColumn();
-            System.out.println("fieldName = " + fieldName + ", column = " + column + ", isDbField = " + dbField);
-        }
+        Student student = jdbcDao.selectOne(Conditions.lambdaQuery(Student.class));
+        System.out.println("student = " + student);
 
 
     }

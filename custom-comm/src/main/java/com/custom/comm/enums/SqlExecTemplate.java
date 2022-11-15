@@ -11,7 +11,7 @@ public enum SqlExecTemplate {
 
     SELECT_COUNT("查询记录总数量", "SELECT COUNT(0) FROM (\n%s\n) xxx"),
 
-    JOIN_TABLE("关联表的SQL", "\n%s %s %s ON %s"),
+    JOIN_TABLE("关联表的SQL", "\n %s %s %s ON %s"),
 
     INSERT_DATA("插入记录", "INSERT INTO %s(%s) VALUES"),
 
