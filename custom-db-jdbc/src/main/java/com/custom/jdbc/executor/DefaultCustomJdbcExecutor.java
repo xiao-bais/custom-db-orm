@@ -3,6 +3,7 @@ package com.custom.jdbc.executor;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.utils.CustomUtil;
+import com.custom.comm.utils.ReflectUtil;
 import com.custom.jdbc.handler.ResultSetTypeMappedHandler;
 import com.custom.jdbc.session.CustomSqlSessionHelper;
 import com.custom.jdbc.sqlprint.SqlOutPrintBuilder;
@@ -327,7 +328,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
                 Object newKey = resultSet.getObject(1);
                 T entity = dataList.get(count);
                 // 新的ID写入到实体
-                CustomUtil.writeFieldValue(newKey, entity, keyField.getName(), keyField.getType());
+                ReflectUtil.writeFieldValue(newKey, entity, keyField.getName(), keyField.getType());
                 count++;
             }
             return res;

@@ -2,6 +2,7 @@ package com.custom.proxy;
 
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.CustomUtil;
+import com.custom.comm.utils.ReflectUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,32 +57,43 @@ public class ParsingObjectStruts {
         }
 
 
-        Field[] fields = CustomUtil.loadFields(value.getClass(), false);
-        if (fields.length == 0) throw new CustomCheckException("In %s, no available attributes were resolved", value.getClass());
-        for (Field field : fields) {
+        List<Field> fieldList = ReflectUtil.loadFields(value.getClass(), false);
+        if (fieldList.isEmpty()) throw new CustomCheckException("In %s, no available attributes were resolved", value.getClass());
+
+        for (Field field : fieldList) {
             String fieldName = formatMapperKey(name, field.getName());
             Object fieldValue = null;
+
             try {
-                fieldValue = CustomUtil.readFieldValue(value, field.getName());
+                fieldValue = ReflectUtil.readFieldValue(value, field.getName());
             } catch (Exception e) {
                 logger.error(e.toString(), e);
             }
+
             if (Objects.isNull(fieldValue)) {
                 paramsMap.put(fieldName, null);
                 continue;
             }
+
             Class<?> fieldType = field.getType();
             if (CustomUtil.isBasicClass(fieldType)) {
                 paramsMap.put(fieldName, fieldValue);
-            } else if (Collection.class.isAssignableFrom(fieldType)) {
+            }
+
+            else if (Collection.class.isAssignableFrom(fieldType)) {
+
                 if (List.class.isAssignableFrom(fieldType)) {
                     parseList(fieldName, fieldValue);
-                } else if (Set.class.isAssignableFrom(fieldType)) {
+                }
+                else if (Set.class.isAssignableFrom(fieldType)) {
                     parseSet(fieldName, fieldValue);
-                }else {
+                }
+                else {
                     throw new CustomCheckException("Unsupported data type: " + fieldValue.getClass());
                 }
-            } else if (Map.class.isAssignableFrom(fieldType)) {
+            }
+
+            else if (Map.class.isAssignableFrom(fieldType)) {
                 parseMap(fieldName, fieldValue);
             }
         }
@@ -118,14 +130,19 @@ public class ParsingObjectStruts {
             String tempName = formatMapperKey(name, key);
             if (CustomUtil.isBasicType(val)) {
                 paramsMap.put(tempName, val);
-            } else if (val instanceof Collection) {
+            }
+            else if (val instanceof Collection) {
+
                 if (val instanceof Map) {
                     parseMap(tempName, val);
-                } else if (val instanceof List) {
+                }
+                else if (val instanceof List) {
                     parseList(tempName, val);
-                } else if (val instanceof Set) {
+                }
+                else if (val instanceof Set) {
                     parseSet(tempName, val);
-                } else {
+                }
+                else {
                     throw new CustomCheckException("Unsupported data type: " + val.getClass());
                 }
             } else {
@@ -142,8 +159,10 @@ public class ParsingObjectStruts {
         if (Objects.isNull(value)) {
             return;
         }
+
         List<Object> list = new ArrayList<>();
         int length = Array.getLength(value);
+
         for (int i = 0; i < length; i++) {
             list.add(Array.get(value, i));
         }

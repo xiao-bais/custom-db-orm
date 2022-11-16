@@ -41,7 +41,7 @@ public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {
         if (JudgeUtil.isEmpty(columnParseList)) {
             throw new CustomCheckException("该类找不到可解析的字段：" + this.thisClass);
         }
-        this.fieldList = Arrays.stream(tableModel.getFields()).collect(Collectors.toList());
+        this.fieldList = tableModel.getFields();
     }
 
     @Override

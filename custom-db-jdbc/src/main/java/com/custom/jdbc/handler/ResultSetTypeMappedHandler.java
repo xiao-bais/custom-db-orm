@@ -70,16 +70,19 @@ public class ResultSetTypeMappedHandler<T> {
                 label = CustomUtil.underlineToCamel(label);
             }
             Object value = entry.getValue();
-            MappedTargetCache.FieldCache fieldCache = mappedTargetCache.findForName(label);
+            if (value != null) {
+                MappedTargetCache.FieldCache fieldCache = mappedTargetCache.findForName(label);
 
-            if (fieldCache != null) {
-                TypeHandler<?> typeHandler = fieldCache.getTypeHandler();
-                // 映射时，最终的格式或类型转换
-                Object newValue = typeHandler.getTypeValue(value);
-                PropertyDescriptor descriptor = fieldCache.getDescriptor();
-                Method writeMethod = descriptor.getWriteMethod();
-                writeMethod.invoke(instance, newValue);
+                if (fieldCache != null) {
+                    TypeHandler<?> typeHandler = fieldCache.getTypeHandler();
+                    // 映射时，最终的格式或类型转换
+                    Object newValue = typeHandler.getTypeValue(value);
+                    PropertyDescriptor descriptor = fieldCache.getDescriptor();
+                    Method writeMethod = descriptor.getWriteMethod();
+                    writeMethod.invoke(instance, newValue);
+                }
             }
+
         }
 
         return instance;

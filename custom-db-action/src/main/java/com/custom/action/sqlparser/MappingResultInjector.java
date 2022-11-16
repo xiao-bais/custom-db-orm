@@ -5,6 +5,7 @@ import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
+import com.custom.comm.utils.ReflectUtil;
 import com.custom.jdbc.configuration.DbDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +74,7 @@ public class MappingResultInjector<T> {
                         continue;
                     }
                     if (JudgeUtil.isNotEmpty(queryResult)) {
-                        CustomUtil.writeFieldValue(queryResult, entity,
+                        ReflectUtil.writeFieldValue(queryResult, entity,
                                 waitSetField.getName(), joinToManyParseModel.getJoinTarget());
                     }
                 }
@@ -112,8 +113,12 @@ public class MappingResultInjector<T> {
                         throw new CustomCheckException(joinToOneParseModel.getJoinTarget()
                                 + "One to one query, but %s results are found", queryResult.size());
                     }
-                    CustomUtil.writeFieldValue(queryResult.get(0), entity,
-                            waitSetField.getName(), joinToOneParseModel.getJoinTarget());
+                    ReflectUtil.writeFieldValue(
+                            queryResult.get(0),
+                            entity,
+                            waitSetField.getName(),
+                            joinToOneParseModel.getJoinTarget()
+                    );
                 }
             }
         }
@@ -132,7 +137,7 @@ public class MappingResultInjector<T> {
      */
     private List<?> queryResult(T entity, String thisField, String condition, Class<?> joinTarget, HandleSelectSqlBuilder<?> sqlBuilder) throws Exception {
         try {
-            Object queryValue = CustomUtil.readFieldValue(entity, thisField);
+            Object queryValue = ReflectUtil.readFieldValue(entity, thisField);
             if (queryValue == null) {
                 return null;
             }

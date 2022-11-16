@@ -40,7 +40,7 @@ public class Conditions {
     public static <T> DefaultConditionWrapper<T> allEqQuery(T entity) {
         DefaultConditionWrapper<T> conditionWrapper = new DefaultConditionWrapper<>((Class<T>) entity.getClass());
         AllEqualConditionHandler<T> equalConditionHandler = new AllEqualConditionHandler<>(entity, conditionWrapper);
-        equalConditionHandler.allEqCondition();
+        equalConditionHandler.allExecEqCondition();
         return conditionWrapper;
     }
 

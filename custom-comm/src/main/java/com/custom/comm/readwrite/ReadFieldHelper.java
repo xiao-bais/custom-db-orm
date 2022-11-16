@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
+import com.custom.comm.utils.ReflectUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.beans.IntrospectionException;
@@ -87,7 +88,7 @@ public class ReadFieldHelper {
             if (waitReadEntity instanceof Map) {
                 objectMap = (Map<String, Object>) waitReadEntity;
             } else {
-                objectMap = CustomUtil.beanToMap(waitReadEntity);
+                objectMap = ReflectUtil.beanToMap(waitReadEntity);
             }
             if (objectMap.containsKey(fieldName)) {
                 this.readValue = objectMap.get(fieldName);

@@ -93,71 +93,6 @@ public class CustomUtil extends StrUtils {
                 || Integer.class.isAssignableFrom(type);
     }
 
-    /**
-     * 将值写入指定对象中
-     * @param writeValue 待写入的值
-     * @param waitWriteEntity 写入的目标对象
-     * @param fieldName 写入的目标属性
-     * @param fieldType 写入的目标属性类型(若类型为Collection、则传入泛型的类型即可)
-     * @param <T>
-     * @return true/false
-     * @throws NoSuchFieldException
-     */
-    public static <T> boolean writeFieldValue(Object writeValue,
-                                              T waitWriteEntity,
-                                              String fieldName,
-                                              Class<?> fieldType) throws NoSuchFieldException {
-        return WriteFieldHelper.build()
-                .objType(waitWriteEntity)
-                .value(writeValue)
-                .field(fieldName)
-                .fieldType(fieldType).writeStart();
-    }
-
-    /**
-     * 读取对象的属性值
-     * @param entity 目标对象
-     * @param fieldName 目标属性
-     * @param <T>
-     * @return
-     * @throws NoSuchFieldException
-     */
-    public static <T> Object readFieldValue(T entity, String fieldName) throws NoSuchFieldException {
-        return ReadFieldHelper.build()
-                .objType(entity)
-                .field(fieldName)
-                .readStart().readObjectValue();
-    }
-
-
-
-
-    /**
-    * 获取一个类的所有属性（包括父类）
-    */
-    public static <T> Field[] loadFields(Class<T> t, boolean checkDbField) {
-        Class<?> clz = t;
-        List<Field> fieldList = new ArrayList<>();
-        while (clz != null) {
-            Arrays.stream(clz.getDeclaredFields()).forEach(field -> {
-                int modifiers = field.getModifiers();
-                if (Modifier.isPrivate(modifiers)
-                        && !Modifier.isStatic(modifiers) && !Modifier.isFinal(modifiers)) {
-                    fieldList.add(field);
-                }
-            });
-            clz = clz.getSuperclass();
-        }
-        if (fieldList.size() == 0 && checkDbField) {
-            throw new CustomCheckException("@DbField not found inD " + t);
-        }
-        return fieldList.toArray(new Field[0]);
-    }
-
-    public static <T> Field[] loadFields(Class<T> t){
-        return loadFields(t, true);
-    }
-
 
     /**
     * 加载指定路径中文件的内容
@@ -203,30 +138,6 @@ public class CustomUtil extends StrUtils {
         return sql;
     }
 
-    /**
-     * 对象转map
-     */
-    public static Map<String, Object> beanToMap(Object bean) throws IntrospectionException {
-        Class<?> thisClass = bean.getClass();
-        Map<String, Object> resMap = new HashMap<>();
-        BeanInfo beanInfo = Introspector.getBeanInfo(thisClass);
-        PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-        for (PropertyDescriptor property : propertyDescriptors) {
-            String propertyName = property.getName();
-            if (propertyName.equals("class")) {
-                continue;
-            }
-            Method readMethod = property.getReadMethod();
-            try {
-                Object proValue = readMethod.invoke(bean);
-                resMap.put(propertyName, proValue);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
-            }
-        }
-        return resMap;
-    }
-
 
     public static boolean addParams(List<Object> thisParams, Object addVal) {
         Asserts.notNull(addVal);
@@ -257,26 +168,6 @@ public class CustomUtil extends StrUtils {
     }
 
     /**
-     * map转bean(jdbc查询版)
-     */
-    public static <T> T convertBean(Map<String, Object> map, Class<T> t) {
-        if (map.isEmpty()) {
-            return null;
-        }
-        return JSONObject.parseObject(JSONObject.toJSONString(map), t);
-    }
-
-    /**
-     * map转json字符串
-     */
-    public static String mapStrToJsonString(Map<String, Object> map) {
-        return JSON.toJSONString(map);
-    }
-    public static String mapToJsonString(Map<Object, Object> map) {
-        return JSON.toJSONString(map);
-    }
-
-    /**
      * 任意对象转json字符串
      */
     public static String objToJsonString(Object obj) {
@@ -288,13 +179,6 @@ public class CustomUtil extends StrUtils {
      */
     public static <T> T jsonParseToObject(String json, Class<T> type) {
         return JSON.parseObject(json, new TypeReference<T>(type){});
-    }
-
-    /**
-     * 反序列化实例化泛型对象(双泛型)
-     */
-    public static <K, V> Map<K, V> jsonParseToMap(String json, Class<K> keyType, Class<V> valueType) {
-        return JSON.parseObject(json, new TypeReference<Map<K, V>>(keyType, valueType){});
     }
 
 

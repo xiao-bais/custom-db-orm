@@ -195,7 +195,8 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
         StringJoiner columnStr = new StringJoiner(Constants.SEPARATOR_COMMA_2);
         for (String x : columns) {
             String column = GlobalDataHandler.hasSqlKeyword(x) ? String.format("`%s`", x) : x;
-            if (Objects.nonNull(column) && !column.contains(Constants.POINT)) {
+            if (Objects.nonNull(column) && !column.contains(Constants.POINT)
+                && !column.contains(Constants.BRACKETS_LEFT) && !column.contains(Constants.BRACKETS_RIGHT)) {
                 column = getAlias() + Constants.POINT + column;
             }
             String field = getColumnMapper().get(column);

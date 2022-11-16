@@ -2,10 +2,7 @@ package com.custom.action.sqlparser;
 
 import com.custom.comm.annotations.*;
 import com.custom.comm.exceptions.CustomCheckException;
-import com.custom.comm.utils.Asserts;
-import com.custom.comm.utils.Constants;
-import com.custom.comm.utils.CustomUtil;
-import com.custom.comm.utils.JudgeUtil;
+import com.custom.comm.utils.*;
 import com.custom.jdbc.configuration.CustomConfigHelper;
 import com.custom.jdbc.transaction.DbConnGlobal;
 import org.slf4j.Logger;
@@ -50,7 +47,7 @@ public class TableParseModel<T> implements Cloneable {
     /**
      * 表与实体对应的字段
      */
-    private final Field[] fields;
+    private final List<Field> fields;
 
     /**
      * 驼峰转下划线
@@ -181,7 +178,7 @@ public class TableParseModel<T> implements Cloneable {
         initLocalProperty(cls);
 
         // 加载所有字段
-        this.fields =  CustomUtil.loadFields(this.entityClass);
+        this.fields =  ReflectUtil.loadFields(this.entityClass);
 
         // 构建字段解析模板
         this.buildFieldModels();
@@ -438,7 +435,7 @@ public class TableParseModel<T> implements Cloneable {
         return fieldParserModels.stream().filter(DbFieldParserModel::isDbField).collect(Collectors.toList());
     }
 
-    public Field[] getFields() {
+    public List<Field> getFields() {
         return fields;
     }
 

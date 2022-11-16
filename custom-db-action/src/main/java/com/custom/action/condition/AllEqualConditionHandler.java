@@ -2,6 +2,7 @@ package com.custom.action.condition;
 
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.CustomUtil;
+import com.custom.comm.utils.ReflectUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,19 +33,18 @@ public class AllEqualConditionHandler<T> {
     /**
      * 条件拼接
      */
-    public void allEqCondition() {
-        Map<String, Object> parseMap = new HashMap<>();
+    public void allExecEqCondition() {
         try {
-            parseMap = CustomUtil.beanToMap(entity);
+            Map<String, Object> parseMap = ReflectUtil.beanToMap(entity);
+            parseMap.forEach((key, value) -> {
+                if (fieldMapper.containsKey(key) && Objects.nonNull(value)) {
+                    conditionWrapper.eq(fieldMapper.get(key), value);
+                }
+            });
         } catch (IntrospectionException e) {
             logger.error("There is a problem with the current entity, please check");
             throw new CustomCheckException(e.getMessage());
         }
-        parseMap.forEach((key, value) -> {
-            if (fieldMapper.containsKey(key) && Objects.nonNull(value)) {
-                conditionWrapper.eq(fieldMapper.get(key), value);
-            }
-        });
     }
 
 

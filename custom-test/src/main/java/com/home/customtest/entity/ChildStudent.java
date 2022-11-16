@@ -9,7 +9,8 @@ import lombok.*;
  * @desc:
  */
 @EqualsAndHashCode(callSuper = true)
-@Data
+@Getter
+@Setter
 @ToString(callSuper = true)
 @DbJoinTable("left join location lo on lo.id = a.area_id")
 @DbTable(table = "student", mergeSuperJoin = false)
@@ -30,7 +31,9 @@ public class ChildStudent extends Student {
     @DbNotField
     private Integer avgAge;
 
-    public ChildStudent(){}
+    private ChildStudent(){
+        super();
+    }
 
     public ChildStudent(int age) {
         this.avgAge = age;

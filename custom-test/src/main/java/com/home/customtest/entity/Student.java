@@ -17,6 +17,7 @@ import java.util.List;
  * @Date 2022/3/10 10:00
  * @Desc：
  **/
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @DbTable(table = "student", desc = "学生信息表")
@@ -34,13 +35,12 @@ public class Student extends ActiveModel<Student, Integer> {
 
     private String name;
 
-//    @DbOneToOne(thisField = "proId")
-//    private Province province;
+    @DbOneToOne(thisField = "proId")
+    private Province province;
 
     @DbField("nick_code")
     private String nickName;
 
-//    @DbIgnore
     private String password;
 
     @DbRelated(joinTable = "employee", joinAlias = "emp", condition = "emp.id = a.id", field = "emp_name")

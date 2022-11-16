@@ -2,6 +2,7 @@ package com.custom.action.interfaces;
 
 import com.custom.action.condition.SFunction;
 import com.custom.comm.utils.CustomUtil;
+import com.custom.comm.utils.ReflectUtil;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -30,8 +31,7 @@ public interface ColumnParseHandler<T> {
      */
    default List<Field> loadFields() {
        Class<T> thisClass = getThisClass();
-       Field[] loadFields = CustomUtil.loadFields(thisClass, false);
-       return Arrays.stream(loadFields).collect(Collectors.toList());
+       return ReflectUtil.loadFields(thisClass, false);
    }
 
     /**

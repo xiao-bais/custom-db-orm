@@ -1,16 +1,10 @@
 package com.home;
 
-import com.custom.action.condition.Conditions;
-import com.custom.action.condition.SelectFunc;
-import com.custom.action.interfaces.TableExecutor;
 import com.custom.action.sqlparser.*;
-import com.custom.comm.utils.CustomUtil;
 import com.home.customtest.entity.ChildStudent;
-import com.home.customtest.entity.Student;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.Constructor;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Author Xiao-Bai

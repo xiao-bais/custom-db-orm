@@ -3,6 +3,7 @@ package com.custom.action.dbaction;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
+import com.custom.comm.utils.ReflectUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +52,7 @@ public abstract class AbstractTableModel<T> {
      */
     protected Object getFieldValue(T x, String fieldName)
             throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, NoSuchFieldException {
-        return CustomUtil.readFieldValue(x, fieldName);
+        return ReflectUtil.readFieldValue(x, fieldName);
     }
 
     /**
@@ -60,7 +61,7 @@ public abstract class AbstractTableModel<T> {
     protected void setFieldValue(T entity, Field field, Object value) {
         Asserts.npe(entity);
         try {
-            CustomUtil.writeFieldValue(value, entity, field.getName(), field.getType());
+            ReflectUtil.writeFieldValue(value, entity, field.getName(), field.getType());
         }catch (NoSuchFieldException e) {
             logger.error(e.toString(), e);
         }
