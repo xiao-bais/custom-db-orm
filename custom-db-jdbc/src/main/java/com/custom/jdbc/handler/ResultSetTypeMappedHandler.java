@@ -2,35 +2,85 @@ package com.custom.jdbc.handler;
 
 import com.custom.comm.utils.CustomUtil;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Array;
-import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Xiao-Bai
  * @date 2022/11/13 22:08
  * @desc
  */
-public class ResultSetTypeConverter<T> {
+@SuppressWarnings("unchecked")
+public class ResultSetTypeMappedHandler<T> {
 
-
+    private static final Map<String, MappedTargetCache<?>> OBJECT_HANDLE_CACHE = new ConcurrentHashMap<>();
 
     /**
-     * 将rs中的结果写入自定义对象
+     * 返回结果集中该行映射的对象
      * @param rs jdbc结果集对象
      * @return this type value
      */
-    public T writeInCustomType(ResultSet rs) throws SQLException, InstantiationException, IllegalAccessException {
-        ObjectTypeConverter<T> otc = new ObjectTypeConverter<>();
+    public T getTargetObject(ResultSet rs)
+            throws SQLException, InstantiationException, IllegalAccessException, InvocationTargetException {
+
+        ResultSetMetaData rsMetaData = rs.getMetaData();
+        Map<String, Object> resMap = new HashMap<>();
+        // 循环取值
+        for (int i = 0; i < rsMetaData.getColumnCount(); i++) {
+            // 查询的列名
+            String label = rsMetaData.getColumnLabel(i + 1);
+            // 列名对应的值
+            Object value = rs.getObject(label);
+
+            resMap.put(label, value);
+        }
+
+        return this.mappingTargetObject(resMap);
+    }
+
+
+    /**
+     * 将map映射到目标类，并返回该类型的实例对象
+     */
+    private T mappingTargetObject(Map<String, Object> resultMap)
+            throws InstantiationException, IllegalAccessException, InvocationTargetException {
+
         // 实例化该对象，前提是需要存在无参构造，否则可能抛出异常
         T instance = resClass.newInstance();
-        List<Field> loadFields = Arrays.stream(CustomUtil.loadFields(resClass)).collect(Collectors.toList());
 
-        Map<String, Object> resMap = new HashMap<>();
+        MappedTargetCache<T> mappedTargetCache = (MappedTargetCache<T>) OBJECT_HANDLE_CACHE.get(resClass.getName());
+        if (mappedTargetCache == null) {
+            mappedTargetCache = new MappedTargetCache<>(resClass);
+            OBJECT_HANDLE_CACHE.putIfAbsent(resClass.getName(), mappedTargetCache);
+        }
+
+        for (Map.Entry<String, Object> entry : resultMap.entrySet()) {
+
+            String label = entry.getKey();
+            if (isUnderlineToCamel) {
+                label = CustomUtil.underlineToCamel(label);
+            }
+            Object value = entry.getValue();
+            MappedTargetCache.FieldCache fieldCache = mappedTargetCache.findForName(label);
+
+            if (fieldCache != null) {
+                TypeHandler<?> typeHandler = fieldCache.getTypeHandler();
+                // 映射时，最终的格式或类型转换
+                Object newValue = typeHandler.getTypeValue(value);
+                PropertyDescriptor descriptor = fieldCache.getDescriptor();
+                Method writeMethod = descriptor.getWriteMethod();
+                writeMethod.invoke(instance, newValue);
+            }
+        }
 
         return instance;
     }
@@ -102,14 +152,9 @@ public class ResultSetTypeConverter<T> {
 
 
     private final Class<T> resClass;
+    private final boolean isUnderlineToCamel;
 
-    private boolean isUnderlineToCamel;
-
-    public ResultSetTypeConverter(Class<T> resClass) {
-        this.resClass = resClass;
-    }
-
-    public ResultSetTypeConverter(Class<T> resClass, boolean isUnderlineToCamel) {
+    public ResultSetTypeMappedHandler(Class<T> resClass, boolean isUnderlineToCamel) {
         this.resClass = resClass;
         this.isUnderlineToCamel = isUnderlineToCamel;
     }

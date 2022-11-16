@@ -14,8 +14,11 @@ public class CharacterTypeHandler extends AbstractTypeHandler<Character> {
         if (val == null) {
             return null;
         }
-        if (val instanceof Character) {
+        else if (val instanceof Character) {
             return (Character) val;
+        }
+        else if (val instanceof Boolean) {
+            return (char) ((boolean) val ? 1 : 0);
         }
         return null;
     }
@@ -27,6 +30,17 @@ public class CharacterTypeHandler extends AbstractTypeHandler<Character> {
             return res.charAt(0);
         }
         return null;
+    }
+
+    @Override
+    public CharacterTypeHandler clone() {
+        CharacterTypeHandler builder = null;
+        try {
+            builder = (CharacterTypeHandler) super.clone();
+        } catch (CloneNotSupportedException e) {
+            log().error(e.toString(), e);
+        }
+        return builder;
     }
 
 }

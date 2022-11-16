@@ -13,11 +13,25 @@ public class LongTypeHandler extends AbstractTypeHandler<Long> {
         if (val == null) {
             return null;
         }
+        else if (val instanceof Boolean) {
+            return (boolean) val ? 1L : 0;
+        }
         return castNumber(val).longValue();
     }
 
     @Override
     public Long getTypeValue(ResultSet rs, int index) throws SQLException {
         return rs.getLong(index);
+    }
+
+    @Override
+    public LongTypeHandler clone() {
+        LongTypeHandler builder = null;
+        try {
+            builder = (LongTypeHandler) super.clone();
+        } catch (CloneNotSupportedException e) {
+            log().error(e.toString(), e);
+        }
+        return builder;
     }
 }

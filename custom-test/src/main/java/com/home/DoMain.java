@@ -28,11 +28,8 @@ public class DoMain {
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
 
-        List<ChildStudent> student = jdbcDao.selectList(Conditions.query(ChildStudent.class).select("age")
-                .toLambda().select(x -> x.countOne(ChildStudent::getCountAge))
-                .toDefault()
-            .groupBy("age")
-        );
+        List<ChildStudent> student = jdbcDao.selectList(ChildStudent.class, "and a.name = ? or a.nick_code = ?", "宋希于", "jiangyun");
+        List<ChildStudent> student2 = jdbcDao.selectList(ChildStudent.class, "and a.name = ? or a.nick_code = ?", "宋希于", "jiangyun");
         System.out.println("student = " + student);
 
 

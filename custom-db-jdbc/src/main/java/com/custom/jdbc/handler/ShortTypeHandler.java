@@ -21,4 +21,15 @@ public class ShortTypeHandler extends AbstractTypeHandler<Short>{
     public Short getTypeValue(ResultSet rs, int index) throws SQLException {
         return rs.getShort(index);
     }
+
+    @Override
+    public ShortTypeHandler clone() {
+        ShortTypeHandler builder = null;
+        try {
+            builder = (ShortTypeHandler) super.clone();
+        } catch (CloneNotSupportedException e) {
+            log().error(e.toString(), e);
+        }
+        return builder;
+    }
 }

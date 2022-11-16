@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.lang.reflect.*;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.*;
@@ -68,6 +69,7 @@ public class CustomUtil extends StrUtils {
                 || Boolean.class.equals(cls)
                 || Byte.class.equals(cls)
                 || LocalDate.class.equals(cls)
+                || BigInteger.class.equals(cls)
                 || BigDecimal.class.equals(cls)
                 || Date.class.equals(cls);
     }

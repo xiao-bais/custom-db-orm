@@ -70,4 +70,15 @@ public class DateTypeHandler extends AbstractTypeHandler<Date>{
     public Date getTypeValue(ResultSet rs, int index) throws SQLException {
         return rs.getDate(index);
     }
+
+    @Override
+    public DateTypeHandler clone() {
+        DateTypeHandler builder = null;
+        try {
+            builder = (DateTypeHandler) super.clone();
+        } catch (CloneNotSupportedException e) {
+            log().error(e.toString(), e);
+        }
+        return builder;
+    }
 }

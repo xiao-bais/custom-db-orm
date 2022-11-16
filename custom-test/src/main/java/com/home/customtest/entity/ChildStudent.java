@@ -1,9 +1,7 @@
 package com.home.customtest.entity;
 
 import com.custom.comm.annotations.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 
 /**
  * @author Xiao-Bai
@@ -32,7 +30,7 @@ public class ChildStudent extends Student {
     @DbNotField
     private Integer avgAge;
 
-    private ChildStudent(){}
+    public ChildStudent(){}
 
     public ChildStudent(int age) {
         this.avgAge = age;
