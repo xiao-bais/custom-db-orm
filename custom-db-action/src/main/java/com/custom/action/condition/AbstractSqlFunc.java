@@ -27,6 +27,7 @@ public abstract class AbstractSqlFunc<T, Children> {
     public abstract Children sum(SFunction<T, ?> column);
     public abstract Children sum(boolean isNullToZero, SFunction<T, ?> column);
 
+
     /**
      * sql sum函数
      * 例：x -> x.avg(Student::getAge)
@@ -35,6 +36,7 @@ public abstract class AbstractSqlFunc<T, Children> {
      */
     public abstract Children avg(SFunction<T, ?> column);
     public abstract Children avg(boolean isNullToZero, SFunction<T, ?> column);
+
 
     /**
      * sql count函数
@@ -48,6 +50,7 @@ public abstract class AbstractSqlFunc<T, Children> {
     }
     public abstract Children count(SFunction<T, ?> column, boolean distinct);
 
+
     /**
      * sql ifnull函数
      * 例：x -> x.ifNull(Student::getAge, 0)
@@ -57,6 +60,7 @@ public abstract class AbstractSqlFunc<T, Children> {
      */
     public abstract Children ifNull(SFunction<T, ?> column, Object elseVal);
 
+
     /**
      * sql max函数
      * 例：x -> x.max(Student::getAge)
@@ -65,6 +69,7 @@ public abstract class AbstractSqlFunc<T, Children> {
      */
     public abstract Children max(SFunction<T, ?> column);
     public abstract Children max(boolean isNullToZero, SFunction<T, ?> column);
+
 
     /**
      * sql min函数
@@ -160,7 +165,7 @@ public abstract class AbstractSqlFunc<T, Children> {
         return sqlFragments.stream().collect(Collectors.joining(String.valueOf(Constants.CENTER_LINE)));
     }
 
-    protected ColumnParseHandler<T> getColumnParseHandler() {
+    protected ColumnParseHandler<T> columnParseHandler() {
         return columnParseHandler;
     }
 

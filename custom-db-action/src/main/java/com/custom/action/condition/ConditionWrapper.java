@@ -301,6 +301,10 @@ public abstract class ConditionWrapper<T> implements Serializable {
         this.columnParseHandler = columnParseHandler;
     }
 
+    public void setTableSupport(TableSupport tableSupport) {
+        this.tableSupport = tableSupport;
+    }
+
     /**
      * 合并查询列(数组合并)
      */

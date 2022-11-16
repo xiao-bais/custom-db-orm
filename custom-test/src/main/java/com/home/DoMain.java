@@ -28,8 +28,9 @@ public class DoMain {
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
 
-        List<ChildStudent> student = jdbcDao.selectList(Conditions.query(ChildStudent.class).select("age", "MIN(a.age) minAge")
-                .select(x -> x.avg(ChildStudent::getIfNullAge, ChildStudent::getMaxAge))
+        List<ChildStudent> student = jdbcDao.selectList(Conditions.query(ChildStudent.class).select("age")
+                .toLambda().select(x -> x.countOne(ChildStudent::getCountAge))
+                .toDefault()
             .groupBy("age")
         );
         System.out.println("student = " + student);

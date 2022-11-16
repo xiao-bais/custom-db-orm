@@ -1,5 +1,7 @@
 package com.custom.comm.enums;
 
+import com.sun.org.apache.bcel.internal.generic.IFNULL;
+
 /**
  * @Author Xiao-Bai
  * @Date 2022/3/15 17:34
@@ -12,26 +14,32 @@ public enum SqlAggregate {
      * 求和
      */
     SUM,
+
     /**
      * 最小值
      */
     MIN,
+
     /**
      * 最大值
      */
     MAX,
+
     /**
      * 平均值
      */
     AVG,
+
     /**
      * 总数量
      */
     COUNT,
+
     /**
      * 如果空
      */
     IFNULL
+
 
 
 }

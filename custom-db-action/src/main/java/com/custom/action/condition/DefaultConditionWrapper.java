@@ -163,6 +163,7 @@ public class DefaultConditionWrapper<T> extends ConditionAssembly<T, String, Def
         this.dataStructureInit();
         this.setEntityClass(wrapper.getEntityClass());
         this.setColumnParseHandler(wrapper.getColumnParseHandler());
+        this.setTableSupport(wrapper.getTableSupport());
         this.setLastCondition(wrapper.getLastCondition());
         this.addCondition(wrapper.getFinalConditional());
         this.addParams(wrapper.getParamValues());
