@@ -95,7 +95,7 @@ public class ResultSetTypeMappedHandler<T> {
      * @param res 待写入的数组
      * @param rs jdbc结果集对象
      */
-    public void writeInArrays(Object res, ResultSet rs) throws SQLException {
+    public void writeForArrays(Object res, ResultSet rs) throws SQLException {
         ObjectTypeConverter<T> otc = new ObjectTypeConverter<>(resClass);
         // 只取每一行的第一列
         int len = 0;
@@ -112,7 +112,7 @@ public class ResultSetTypeMappedHandler<T> {
      * @param map 待写入的map
      * @param rs jdbc结果集对象
      */
-    public void writeInMap(Map<String, T> map, ResultSet rs) throws SQLException {
+    public void writeForMap(Map<String, T> map, ResultSet rs) throws SQLException {
         ObjectTypeConverter<T> otc = new ObjectTypeConverter<>(resClass);
         ResultSetMetaData rsMetaData = rs.getMetaData();
         // 该类型的转换处理
@@ -135,7 +135,7 @@ public class ResultSetTypeMappedHandler<T> {
      * @param coll 待写入的list
      * @param rs jdbc结果集对象
      */
-    public void writeInCollection(Collection<T> coll, ResultSet rs) throws SQLException {
+    public void writeForCollection(Collection<T> coll, ResultSet rs) throws SQLException {
         ObjectTypeConverter<T> otc = new ObjectTypeConverter<>(resClass);
         // 只取每一行的第一列
         while (rs.next()) {
