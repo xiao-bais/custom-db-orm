@@ -2,8 +2,10 @@ package com.home;
 
 import com.custom.action.sqlparser.*;
 import com.home.customtest.entity.ChildStudent;
+import com.home.customtest.entity.Employee;
 
 import java.lang.reflect.Constructor;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -22,9 +24,8 @@ public class DoMain {
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
 
-        List<ChildStudent> student = jdbcDao.selectList(ChildStudent.class, "and a.name = ? or a.nick_code = ?", "宋希于", "jiangyun");
-        List<ChildStudent> student2 = jdbcDao.selectList(ChildStudent.class, "and a.name = ? or a.nick_code = ?", "宋希于", "jiangyun");
-        System.out.println("student = " + student);
+        String[] employees = jdbcDao.selectArrays(String.class, "select birthday from employee");
+        System.out.println(Arrays.toString(employees));
 
 
     }

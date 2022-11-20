@@ -71,7 +71,7 @@ public class MappedTargetCache<T> {
             this.fieldName = descriptor.getName();
             Class<?> fieldType = descriptor.getPropertyType();
             this.baseType = CustomUtil.isBasicClass(fieldType);
-            this.typeHandler = new ObjectTypeConverter<>().getTargetTypeHandler(fieldType);
+            this.typeHandler = ResultSetTypeMappedHandler.getTargetTypeHandler(fieldType);
         }
 
 

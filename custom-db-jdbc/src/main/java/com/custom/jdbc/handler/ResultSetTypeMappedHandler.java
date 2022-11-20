@@ -7,10 +7,12 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,7 +25,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @SuppressWarnings("unchecked")
 public class ResultSetTypeMappedHandler<T> {
 
-    private static final Map<String, MappedTargetCache<?>> OBJECT_HANDLE_CACHE = new ConcurrentHashMap<>();
 
     /**
      * 返回结果集中该行映射的对象
@@ -97,11 +98,10 @@ public class ResultSetTypeMappedHandler<T> {
      * @param rs jdbc结果集对象
      */
     public void writeForArrays(Object res, ResultSet rs) throws SQLException {
-        ObjectTypeConverter<T> otc = new ObjectTypeConverter<>(resClass);
         // 只取每一行的第一列
         int len = 0;
         while (rs.next()) {
-            T value = otc.getRsValue(rs, 1);
+            T value = this.getRsValue(rs, 1);
             Array.set(res, len, value);
             len ++;
         }
@@ -114,10 +114,9 @@ public class ResultSetTypeMappedHandler<T> {
      * @param rs jdbc结果集对象
      */
     public void writeForMap(Map<String, T> map, ResultSet rs) throws SQLException {
-        ObjectTypeConverter<T> otc = new ObjectTypeConverter<>(resClass);
         ResultSetMetaData rsMetaData = rs.getMetaData();
         // 该类型的转换处理
-        AbstractTypeHandler<T> thisTypeHandler = ((AbstractTypeHandler<T>) otc.getThisTypeHandler()).getClone();
+        AbstractTypeHandler<T> thisTypeHandler = ((AbstractTypeHandler<T>) this.getThisTypeHandler()).getClone();
         thisTypeHandler.setUnderlineToCamel(isUnderlineToCamel);
 
         // 循环取值
@@ -137,11 +136,16 @@ public class ResultSetTypeMappedHandler<T> {
      * @param rs jdbc结果集对象
      */
     public void writeForCollection(Collection<T> coll, ResultSet rs) throws SQLException {
-        ObjectTypeConverter<T> otc = new ObjectTypeConverter<>(resClass);
+        TypeHandler<T> typeHandler = (TypeHandler<T>) ALL_TYPE_HANDLER_CACHE.get(resClass);
         // 只取每一行的第一列
         while (rs.next()) {
-            T value = otc.getRsValue(rs, 1);
-            coll.add(value);
+            T val;
+            if (typeHandler == null) {
+                val = (T) rs.getObject(1);
+            } else {
+                val = typeHandler.getTypeValue(rs, 1);
+            }
+            coll.add(val);
         }
     }
 
@@ -150,13 +154,16 @@ public class ResultSetTypeMappedHandler<T> {
      * 转换基础类型
      */
     public T getTargetValue(Object val) {
-        ObjectTypeConverter<T> otc = new ObjectTypeConverter<>(resClass, val);
-        return otc.getValue();
+        TypeHandler<T> typeHandler = (TypeHandler<T>) ALL_TYPE_HANDLER_CACHE.get(resClass);
+        return typeHandler.getTypeValue(val);
     }
 
     public T getTargetValue(ResultSet rs, int index) throws SQLException {
-        ObjectTypeConverter<T> otc = new ObjectTypeConverter<>(resClass);
-        return otc.getRsValue(rs, index);
+        TypeHandler<T> typeHandler = (TypeHandler<T>) ALL_TYPE_HANDLER_CACHE.get(resClass);
+        if (typeHandler == null) {
+            return (T) rs.getObject(index);
+        }
+        return (T) typeHandler.getTypeValue(rs, index);
     }
 
 
@@ -166,5 +173,73 @@ public class ResultSetTypeMappedHandler<T> {
     public ResultSetTypeMappedHandler(Class<T> resClass, boolean isUnderlineToCamel) {
         this.resClass = resClass;
         this.isUnderlineToCamel = isUnderlineToCamel;
+    }
+
+
+    /**
+     * 类型转换寄存
+     */
+    private final static Map<Class<?>, TypeHandler<?>> ALL_TYPE_HANDLER_CACHE = new ConcurrentHashMap<>();
+    /**
+     * 映射对象缓存
+     */
+    private static final Map<String, MappedTargetCache<?>> OBJECT_HANDLE_CACHE = new ConcurrentHashMap<>();
+
+
+    static {
+        registerType(Integer.class, new IntegerTypeHandler());
+        registerType(Long.class, new LongTypeHandler());
+        registerType(Double.class, new DoubleTypeHandler());
+        registerType(Float.class, new FloatTypeHandler());
+        registerType(Character.class, new CharacterTypeHandler());
+        registerType(Short.class, new ShortTypeHandler());
+        registerType(Boolean.class, new BooleanTypeHandler());
+        registerType(String.class, new StringTypeHandler());
+        registerType(BigDecimal.class, new BigDecimalTypeHandler());
+        registerType(Date.class, new DateTypeHandler());
+        registerType(Object.class, new UnknownTypeHandler());
+    }
+
+
+    private static void registerType(Class<?> cls, TypeHandler<?> typeHandler) {
+        ALL_TYPE_HANDLER_CACHE.put(cls, typeHandler);
+    }
+
+    public TypeHandler<T> getThisTypeHandler() {
+        TypeHandler<T> typeHandler = (TypeHandler<T>) ALL_TYPE_HANDLER_CACHE.get(resClass);
+        if (typeHandler == null) {
+            typeHandler = (TypeHandler<T>) ALL_TYPE_HANDLER_CACHE.get(Object.class);
+        }
+        return typeHandler;
+    }
+
+    public static TypeHandler<?> getTargetTypeHandler(Class<?> targetCls) {
+        TypeHandler<?> typeHandler = ALL_TYPE_HANDLER_CACHE.get(targetCls);
+        if (typeHandler == null) {
+            typeHandler =  ALL_TYPE_HANDLER_CACHE.get(Object.class);
+        }
+        return typeHandler;
+    }
+
+    /**
+     * 获取结果集中的值
+     */
+    public T getRsValue(ResultSet rs, String column) throws SQLException {
+        TypeHandler<?> typeHandler = ALL_TYPE_HANDLER_CACHE.get(resClass);
+        if (typeHandler == null) {
+            return (T) rs.getObject(column);
+        }
+        return (T) typeHandler.getTypeValue(rs, column);
+    }
+
+    /**
+     * 获取结果集中的值
+     */
+    public T getRsValue(ResultSet rs, int index) throws SQLException {
+        TypeHandler<?> typeHandler = ALL_TYPE_HANDLER_CACHE.get(resClass);
+        if (typeHandler == null) {
+            return (T) rs.getObject(index);
+        }
+        return (T) typeHandler.getTypeValue(rs, index);
     }
 }
