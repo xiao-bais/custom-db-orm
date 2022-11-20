@@ -1,9 +1,11 @@
 package com.custom.action.sqlparser;
 
+import com.custom.action.condition.Conditions;
 import com.custom.action.dbaction.AbstractJoinToResult;
 import com.custom.action.util.DbUtil;
 import com.custom.comm.annotations.DbOneToOne;
 import com.custom.comm.exceptions.CustomCheckException;
+import com.custom.comm.utils.Constants;
 
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -57,7 +59,12 @@ public class DbJoinToOneParseModel extends AbstractJoinToResult {
     }
 
     @Override
-    public String queryCondition() {
+    public String queryCondPrefix() {
         return DbUtil.formatSqlAndCondition(getJoinAlias(), getJoinColumn());
+    }
+
+    @Override
+    public String queryCondSuffix() {
+        return Constants.EMPTY;
     }
 }

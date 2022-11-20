@@ -176,9 +176,8 @@ public abstract class AbstractTypeHandler<T> implements TypeHandler<T>, NonNulla
         return getTypeValue(val);
     }
 
-    public AbstractTypeHandler<T> clone() {
-        throw new UnsupportedOperationException();
-    }
+
+    public abstract AbstractTypeHandler<T> getClone();
 
 
 

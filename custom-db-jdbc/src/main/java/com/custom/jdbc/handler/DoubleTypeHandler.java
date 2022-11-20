@@ -1,5 +1,6 @@
 package com.custom.jdbc.handler;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -33,6 +34,11 @@ public class DoubleTypeHandler extends AbstractTypeHandler<Double> {
             log().error(e.toString(), e);
         }
         return builder;
+    }
+
+    @Override
+    public AbstractTypeHandler<Double> getClone() {
+        return clone();
     }
 
 }

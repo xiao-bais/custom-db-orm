@@ -127,7 +127,7 @@ public class ReflectUtil {
      */
     public static <T> T getInstance(Class<T> t)
             throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        Constructor<T> constructor = t.getConstructor();
+        Constructor<T> constructor = t.getDeclaredConstructor();
         constructor.setAccessible(true);
         return constructor.newInstance();
     }
@@ -147,9 +147,7 @@ public class ReflectUtil {
         });
         return methodList.stream()
                 .filter(x -> x.getName().equals(methodName)).findFirst()
-                .orElseThrow(() -> {
-                    throw new CustomCheckException(String.format("%s method not found in %s", methodName, t));
-                });
+                .orElseThrow(() -> new CustomCheckException(String.format("%s method not found in %s", methodName, t)));
     }
 
 

@@ -86,10 +86,16 @@ public class DbJoinToManyParseModel extends AbstractJoinToResult {
 
     }
 
+
+    public String queryCondPrefix() {
+        return DbUtil.formatSqlAndCondition(getJoinAlias(), getJoinColumn()) + " " + this.fillSuffix;
+    }
+
+
     /**
      * 排序规则
      */
-    private String orderByField() {
+    public String queryCondSuffix() {
         if (StrUtils.isBlank(sortField.trim())) {
             return "";
         }
@@ -97,11 +103,5 @@ public class DbJoinToManyParseModel extends AbstractJoinToResult {
         return Constants.ORDER_BY
                 + tableModel.getFieldMapper().get(sortField) + " "
                 + (orderByAsc ? Constants.ASC : Constants.DESC);
-    }
-
-    @Override
-    public String queryCondition() {
-        String addCondition = this.fillSuffix + orderByField();
-        return DbUtil.formatSqlAndCondition(getJoinAlias(), getJoinColumn()) + addCondition;
     }
 }

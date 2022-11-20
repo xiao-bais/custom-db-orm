@@ -62,14 +62,15 @@ public class MappingResultInjector<T> {
                 DbJoinToManyParseModel joinToManyParseModel = new DbJoinToManyParseModel(waitSetField);
                 Class<?> joinTarget = joinToManyParseModel.getJoinTarget();
                 HandleSelectSqlBuilder<?> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(joinTarget, sqlExecutor.getExecutorFactory());
-                String condition = joinToManyParseModel.queryCondition();
+                String condPrefix = joinToManyParseModel.queryCondPrefix();
+                String condSuffix = joinToManyParseModel.queryCondSuffix();
 
                 for (T entity : entityList) {
                     if (entity == null) {
                         continue;
                     }
-                    List<?> queryResult = this.queryResult(entity, joinToManyParseModel.getThisField(), condition,
-                            joinTarget, sqlBuilder);
+                    List<?> queryResult = this.queryResult(entity, joinToManyParseModel.getThisField(), condPrefix,
+                            condSuffix, joinTarget, sqlBuilder);
                     if (queryResult == null) {
                         continue;
                     }
@@ -98,14 +99,15 @@ public class MappingResultInjector<T> {
             DbJoinToOneParseModel joinToOneParseModel = new DbJoinToOneParseModel(waitSetField);
             Class<?> joinTarget = joinToOneParseModel.getJoinTarget();
             HandleSelectSqlBuilder<?> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(joinTarget, sqlExecutor.getExecutorFactory());
-            String condition = joinToOneParseModel.queryCondition();
+            String condPrefix = joinToOneParseModel.queryCondPrefix();
+            String condSuffix = joinToOneParseModel.queryCondSuffix();
 
             for (T entity : entityList) {
                 if (entity == null) {
                     continue;
                 }
-                List<?> queryResult = this.queryResult(entity, joinToOneParseModel.getThisField(), condition,
-                        joinTarget, sqlBuilder);
+                List<?> queryResult = this.queryResult(entity, joinToOneParseModel.getThisField(), condPrefix,
+                        condSuffix, joinTarget, sqlBuilder);
                 if (JudgeUtil.isNotEmpty(queryResult)) {
                     if (queryResult.get(0) == null) {
                         continue;
@@ -129,13 +131,15 @@ public class MappingResultInjector<T> {
      * 查询结果
      * @param entity 当前待注入的实体对象
      * @param thisField 查询的关联java字段
-     * @param condition 查询的条件
+     * @param condPrefix 查询的前置条件(where之后， group by 之前)
+     * @param condSuffix 查询的后置条件(group by之后)
      * @param joinTarget 查询的对象
      * @param sqlBuilder 查询的sql创建对象
      * @return Lists
      * @throws Exception
      */
-    private List<?> queryResult(T entity, String thisField, String condition, Class<?> joinTarget, HandleSelectSqlBuilder<?> sqlBuilder) throws Exception {
+    private List<?> queryResult(T entity, String thisField, String condPrefix,
+                                String condSuffix, Class<?> joinTarget, HandleSelectSqlBuilder<?> sqlBuilder) throws Exception {
         try {
             Object queryValue = ReflectUtil.readFieldValue(entity, thisField);
             if (queryValue == null) {
@@ -143,9 +147,9 @@ public class MappingResultInjector<T> {
             }
 
             // 若该表存在逻辑删除的字段，则处理逻辑删除条件
-            FullSqlConditionExecutor conditionExecutor = sqlBuilder.addLogicCondition(condition);
+            FullSqlConditionExecutor conditionExecutor = sqlBuilder.addLogicCondition(condPrefix);
 
-            String selectSql = sqlBuilder.createTargetSql() + conditionExecutor.execute();
+            String selectSql = sqlBuilder.createTargetSql() + conditionExecutor.execute() + condSuffix;
             return sqlExecutor.selectListBySql(joinTarget, selectSql, queryValue);
 
         }catch (NoSuchFieldException e) {

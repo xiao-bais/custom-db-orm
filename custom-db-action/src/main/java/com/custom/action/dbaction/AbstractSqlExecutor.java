@@ -95,7 +95,7 @@ public abstract class AbstractSqlExecutor  {
         else if (e instanceof IllegalArgumentException) {
             throw (IllegalArgumentException) e;
         }
-        throw new RuntimeException(e.toString(), e);
+        throw new RuntimeException(e.getMessage(), e.getCause());
     }
 
 

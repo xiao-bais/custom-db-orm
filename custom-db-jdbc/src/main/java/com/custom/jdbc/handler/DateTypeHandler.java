@@ -2,6 +2,7 @@ package com.custom.jdbc.handler;
 
 import com.custom.comm.exceptions.CustomCheckException;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -80,5 +81,11 @@ public class DateTypeHandler extends AbstractTypeHandler<Date>{
             log().error(e.toString(), e);
         }
         return builder;
+    }
+
+
+    @Override
+    public AbstractTypeHandler<Date> getClone() {
+        return clone();
     }
 }

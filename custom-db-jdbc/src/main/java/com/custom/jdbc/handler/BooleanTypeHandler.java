@@ -53,4 +53,9 @@ public class BooleanTypeHandler extends AbstractTypeHandler<Boolean> {
         return builder;
     }
 
+    @Override
+    public AbstractTypeHandler<Boolean> getClone() {
+        return clone();
+    }
+
 }

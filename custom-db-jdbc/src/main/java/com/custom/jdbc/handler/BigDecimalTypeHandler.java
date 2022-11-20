@@ -40,4 +40,8 @@ public class BigDecimalTypeHandler extends AbstractTypeHandler<BigDecimal> {
     }
 
 
+    @Override
+    public AbstractTypeHandler<BigDecimal> getClone() {
+        return clone();
+    }
 }

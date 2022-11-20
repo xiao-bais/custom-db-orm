@@ -3,6 +3,7 @@ package com.custom.action.dbaction;
 import com.custom.action.sqlparser.DbKeyParserModel;
 import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.action.sqlparser.TableParseModel;
+import com.custom.action.util.DbUtil;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.annotations.DbKey;
@@ -97,7 +98,7 @@ public abstract class AbstractJoinToResult {
                     .getColumn();
         }
 
-        // 若多个对象之间存在循环引用一对一注解的关系，则抛出异常
+        // 若多个对象之间存在循环引用一对一(多)注解的关系，则抛出异常
         Asserts.illegal(this.existCrossReference(),
                 String.format("Wrong reference. One to one annotation is not allowed to act on the mutual reference relationship between two objects in [%s] and [%s.%s] ",
                 this.joinTarget, this.thisClass, errField)
@@ -171,8 +172,8 @@ public abstract class AbstractJoinToResult {
     /**
      * 查询条件实现
      */
-    public abstract String queryCondition();
-
+    public abstract String queryCondPrefix();
+    public abstract String queryCondSuffix();
 
 
     /**

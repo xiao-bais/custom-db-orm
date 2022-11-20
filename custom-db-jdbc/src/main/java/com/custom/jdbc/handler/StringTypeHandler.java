@@ -2,6 +2,7 @@ package com.custom.jdbc.handler;
 
 import com.custom.comm.utils.Constants;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -40,6 +41,11 @@ public class StringTypeHandler extends AbstractTypeHandler<String> {
             log().error(e.toString(), e);
         }
         return builder;
+    }
+
+    @Override
+    public AbstractTypeHandler<String> getClone() {
+        return clone();
     }
 
 

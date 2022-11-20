@@ -117,7 +117,7 @@ public class ResultSetTypeMappedHandler<T> {
         ObjectTypeConverter<T> otc = new ObjectTypeConverter<>(resClass);
         ResultSetMetaData rsMetaData = rs.getMetaData();
         // 该类型的转换处理
-        AbstractTypeHandler<T> thisTypeHandler = ((AbstractTypeHandler<T>) otc.getThisTypeHandler()).clone();
+        AbstractTypeHandler<T> thisTypeHandler = ((AbstractTypeHandler<T>) otc.getThisTypeHandler()).getClone();
         thisTypeHandler.setUnderlineToCamel(isUnderlineToCamel);
 
         // 循环取值

@@ -1,5 +1,6 @@
 package com.custom.jdbc.handler;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -37,5 +38,10 @@ public class IntegerTypeHandler extends AbstractTypeHandler<Integer> {
             log().error(e.toString(), e);
         }
         return builder;
+    }
+
+    @Override
+    public AbstractTypeHandler<Integer> getClone() {
+        return clone();
     }
 }

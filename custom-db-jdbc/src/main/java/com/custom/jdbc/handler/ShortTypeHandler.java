@@ -32,4 +32,9 @@ public class ShortTypeHandler extends AbstractTypeHandler<Short>{
         }
         return builder;
     }
+
+    @Override
+    public AbstractTypeHandler<Short> getClone() {
+        return clone();
+    }
 }
