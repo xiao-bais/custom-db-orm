@@ -1,6 +1,7 @@
 package com.custom.jdbc.handler;
 
 import com.custom.comm.utils.CustomUtil;
+import com.custom.comm.utils.ReflectUtil;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Array;
@@ -30,7 +31,7 @@ public class ResultSetTypeMappedHandler<T> {
      * @return this type value
      */
     public T getTargetObject(ResultSet rs)
-            throws SQLException, InstantiationException, IllegalAccessException, InvocationTargetException {
+            throws SQLException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         ResultSetMetaData rsMetaData = rs.getMetaData();
         Map<String, Object> resMap = new HashMap<>();
@@ -52,10 +53,10 @@ public class ResultSetTypeMappedHandler<T> {
      * 将map映射到目标类，并返回该类型的实例对象
      */
     private T mappingTargetObject(Map<String, Object> resultMap)
-            throws InstantiationException, IllegalAccessException, InvocationTargetException {
+            throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         // 实例化该对象，前提是需要存在无参构造，否则可能抛出异常
-        T instance = resClass.newInstance();
+        T instance = ReflectUtil.getInstance(resClass);
 
         MappedTargetCache<T> mappedTargetCache = (MappedTargetCache<T>) OBJECT_HANDLE_CACHE.get(resClass.getName());
         if (mappedTargetCache == null) {
@@ -116,7 +117,7 @@ public class ResultSetTypeMappedHandler<T> {
         ObjectTypeConverter<T> otc = new ObjectTypeConverter<>(resClass);
         ResultSetMetaData rsMetaData = rs.getMetaData();
         // 该类型的转换处理
-        AbstractTypeHandler<T> thisTypeHandler = (AbstractTypeHandler<T>) otc.getThisTypeHandler();
+        AbstractTypeHandler<T> thisTypeHandler = ((AbstractTypeHandler<T>) otc.getThisTypeHandler()).clone();
         thisTypeHandler.setUnderlineToCamel(isUnderlineToCamel);
 
         // 循环取值
@@ -151,6 +152,11 @@ public class ResultSetTypeMappedHandler<T> {
     public T getTargetValue(Object val) {
         ObjectTypeConverter<T> otc = new ObjectTypeConverter<>(resClass, val);
         return otc.getValue();
+    }
+
+    public T getTargetValue(ResultSet rs, int index) throws SQLException {
+        ObjectTypeConverter<T> otc = new ObjectTypeConverter<>(resClass);
+        return otc.getRsValue(rs, index);
     }
 
 

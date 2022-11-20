@@ -8,10 +8,7 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -96,6 +93,7 @@ public class ReflectUtil {
      * 获取该类所有属性描述对象
      */
     public static <T> List<PropertyDescriptor> getProperties(Class<T> cls) throws IntrospectionException {
+        Asserts.npe(cls);
         BeanInfo beanInfo = Introspector.getBeanInfo(cls);
         PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
         return Arrays.stream(propertyDescriptors).filter(x -> !x.getName().equals("class")).collect(Collectors.toList());
@@ -121,6 +119,44 @@ public class ReflectUtil {
         }
         return resMap;
     }
+
+
+
+    /**
+     * 实例化该对象
+     */
+    public static <T> T getInstance(Class<T> t)
+            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        Constructor<T> constructor = t.getConstructor();
+        constructor.setAccessible(true);
+        return constructor.newInstance();
+    }
+
+
+    /**
+     * 获取get/set方法
+     */
+    public static <T> Method getMethod(Class<T> t, String methodName) throws IntrospectionException {
+
+        Asserts.npe(methodName);
+        List<PropertyDescriptor> propertyDescriptors = getProperties(t);
+        List<Method> methodList = new ArrayList<>();
+        propertyDescriptors.forEach(op -> {
+            methodList.add(op.getReadMethod());
+            methodList.add(op.getWriteMethod());
+        });
+        return methodList.stream()
+                .filter(x -> x.getName().equals(methodName)).findFirst()
+                .orElseThrow(() -> {
+                    throw new CustomCheckException(String.format("%s method not found in %s", methodName, t));
+                });
+    }
+
+
+
+
+
+
 
 
 }

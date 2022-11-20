@@ -42,7 +42,8 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
         List<T> list = new ArrayList<>();
         SelectExecutorModel<T> executorModel = (SelectExecutorModel<T>) sqlSession.getExecutorModel();
         CustomSqlSessionHelper sessionHelper = new CustomSqlSessionHelper(strategy, sqlSession);
-        ResultSetTypeMappedHandler<T> typeConverter = new ResultSetTypeMappedHandler<>(executorModel.getEntityClass(), strategy.isUnderlineToCamel());
+        Class<T> entityClass = executorModel.getEntityClass();
+        ResultSetTypeMappedHandler<T> typeMappedHandler = new ResultSetTypeMappedHandler<>(entityClass, strategy.isUnderlineToCamel());
 
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -55,11 +56,10 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
 
             while (resultSet.next()) {
                 T t;
-                if (CustomUtil.isBasicClass(executorModel.getEntityClass())) {
-                    Object value = resultSet.getObject(Constants.DEFAULT_ONE);
-                    t = typeConverter.getTargetValue(value);
+                if (CustomUtil.isBasicClass(entityClass)) {
+                    t = typeMappedHandler.getTargetValue(resultSet, Constants.DEFAULT_ONE);
                 } else {
-                    t = typeConverter.getTargetObject(resultSet);
+                    t = typeMappedHandler.getTargetObject(resultSet);
                 }
                 list.add(t);
             }
@@ -82,33 +82,8 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
 
     @Override
     public <T> Set<T> selectSet(CustomSqlSession sqlSession) throws Exception {
-        Set<T> resSet = new HashSet<>();
-        SelectExecutorModel<T> executorModel = (SelectExecutorModel<T>) sqlSession.getExecutorModel();
-        CustomSqlSessionHelper sessionHelper = new CustomSqlSessionHelper(strategy, sqlSession);
-
-        PreparedStatement statement = null;
-        ResultSet resultSet = null;
-        try {
-            // 执行
-            statement = sessionHelper.defaultPreparedStatement();
-            // 处理预编译以及sql打印
-            sessionHelper.handleExecuteBefore(statement);
-            resultSet = statement.executeQuery();
-
-            while (resultSet.next()) {
-                T object = (T) resultSet.getObject(Constants.DEFAULT_ONE);
-                resSet.add(object);
-            }
-
-        } catch (SQLException e) {
-            SqlOutPrintBuilder
-                    .build(executorModel.getPrepareSql(), executorModel.getSqlParams(), strategy.isSqlOutPrintExecute())
-                    .sqlErrPrint();
-            throw e;
-        } finally {
-            sessionHelper.closeResources(statement, resultSet);
-        }
-        return resSet;
+        List<T> selectObjs = selectObjs(sqlSession);
+        return new HashSet<>(selectObjs);
     }
 
     @Override
@@ -116,6 +91,8 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
 
         SelectExecutorModel<T> executorModel = (SelectExecutorModel<T>) sqlSession.getExecutorModel();
         CustomSqlSessionHelper sessionHelper = new CustomSqlSessionHelper(strategy, sqlSession);
+        Class<T> entityClass = executorModel.getEntityClass();
+        ResultSetTypeMappedHandler<T> typeMappedHandler = new ResultSetTypeMappedHandler<>(entityClass, false);
 
         List<T> list = new ArrayList<>();
         PreparedStatement statement = null;
@@ -129,11 +106,10 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
 
             while (resultSet.next()) {
                 try {
-                    T t = (T) resultSet.getObject(Constants.DEFAULT_ONE);
-                    list.add(t);
+                    typeMappedHandler.writeForCollection(list, resultSet);
                 } catch (ClassCastException e) {
-                    if (!CustomUtil.isBasicClass(executorModel.getEntityClass())) {
-                        throw new UnsupportedOperationException("This [" + executorModel.getEntityClass() + "] of query is not supported");
+                    if (!CustomUtil.isBasicClass(entityClass)) {
+                        throw new UnsupportedOperationException("This [" + entityClass + "] of query is not supported");
                     }
                     throw e;
                 }
@@ -162,6 +138,8 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
         List<Map<String, V>> list = new ArrayList<>();
         SelectExecutorModel<V> executorModel = (SelectExecutorModel<V>) sqlSession.getExecutorModel();
         CustomSqlSessionHelper sessionHelper = new CustomSqlSessionHelper(strategy, sqlSession);
+        Class<V> entityClass = executorModel.getEntityClass();
+        ResultSetTypeMappedHandler<V> typeMappedHandler = new ResultSetTypeMappedHandler<>(entityClass, strategy.isUnderlineToCamel());
 
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -171,11 +149,10 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
             // 处理预编译以及sql打印
             sessionHelper.handleExecuteBefore(statement);
             resultSet = statement.executeQuery();
-            ResultSetMetaData metaData = resultSet.getMetaData();
 
             while (resultSet.next()) {
                 map = new HashMap<>();
-                sessionHelper.handleResultMapper(map, resultSet, metaData);
+                typeMappedHandler.writeForMap(map, resultSet);
                 list.add(map);
             }
         } catch (SQLException e) {
@@ -203,6 +180,11 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
 
         SelectMapExecutorModel<K, V> executorModel = (SelectMapExecutorModel<K, V>) sqlSession.getExecutorModel();
         CustomSqlSessionHelper sessionHelper = new CustomSqlSessionHelper(strategy, sqlSession);
+        Class<K> keyType = executorModel.getKeyType();
+        Class<V> valueType = executorModel.getValueType();
+        ResultSetTypeMappedHandler<K> keyTypeMappedHandler = new ResultSetTypeMappedHandler<>(keyType, strategy.isUnderlineToCamel());
+        ResultSetTypeMappedHandler<V> valTypeMappedHandler = new ResultSetTypeMappedHandler<>(valueType, strategy.isUnderlineToCamel());
+
 
         Map<K, V> map = new HashMap<>();
         PreparedStatement statement = null;
@@ -225,8 +207,8 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
 
                 try {
                     // 映射键值对
-                    K key = (K) resultSet.getObject(1);
-                    V value = (V) resultSet.getObject(2);
+                    K key = keyTypeMappedHandler.getTargetValue(resultSet, 1);
+                    V value = valTypeMappedHandler.getTargetValue(resultSet, 2);
                     map.put(key, value);
                 } catch (NumberFormatException e) {
                     // 可能错误: 查询结果中出现给定泛型之外的类型
@@ -251,6 +233,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
 
         CustomSqlSessionHelper sessionHelper = new CustomSqlSessionHelper(strategy, sqlSession);
         SelectExecutorModel<T> executorModel = (SelectExecutorModel<T>) sqlSession.getExecutorModel();
+        ResultSetTypeMappedHandler<T> typeMappedHandler = new ResultSetTypeMappedHandler<>(executorModel.getEntityClass(), false);
         PreparedStatement statement = null;
         ResultSet resultSet = null;
 
@@ -263,13 +246,9 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
             // 返回的数组长度
             int rowsCount = sessionHelper.getRowsCount(resultSet);
             Object res = Array.newInstance(executorModel.getEntityClass(), rowsCount);
-            int len = 0;
 
-            while (resultSet.next()) {
-                T val = (T) resultSet.getObject(Constants.DEFAULT_ONE);
-                Array.set(res, len, val);
-                len++;
-            }
+            // 写入数组
+            typeMappedHandler.writeForArrays(res, resultSet);
 
             return (T[]) res;
         } catch (Exception e) {
@@ -284,7 +263,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
 
 
     @Override
-    public <T> int executeUpdate(CustomSqlSession sqlSession) throws Exception {
+    public int executeUpdate(CustomSqlSession sqlSession) throws Exception {
 
         CustomSqlSessionHelper sessionHelper = new CustomSqlSessionHelper(strategy, sqlSession);
         BaseExecutorModel executorModel = sqlSession.getExecutorModel();

@@ -124,8 +124,13 @@ public abstract class AbstractTypeHandler<T> implements TypeHandler<T>, NonNulla
             }
             else {
                 try {
-                    val = targetClass.newInstance();
-                } catch (InstantiationException | IllegalAccessException e) {
+
+                    // 自定义类型的实例化
+                    val = ReflectUtil.getInstance(targetClass);
+
+                } catch (NoSuchMethodException | InvocationTargetException
+                        | InstantiationException | IllegalAccessException e) {
+
                     throw new CustomCheckException(e.getMessage(), e);
                 }
             }
@@ -169,6 +174,10 @@ public abstract class AbstractTypeHandler<T> implements TypeHandler<T>, NonNulla
             return getTargetInstance();
         }
         return getTypeValue(val);
+    }
+
+    public AbstractTypeHandler<T> clone() {
+        throw new UnsupportedOperationException();
     }
 
 
