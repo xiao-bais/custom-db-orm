@@ -14,6 +14,7 @@ import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
+import com.custom.jdbc.interfaces.DatabaseAdapter;
 import com.custom.jdbc.transaction.DbConnGlobal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -356,18 +357,6 @@ public class JdbcAction extends AbstractSqlExecutor {
         }
     }
 
-    @Override
-    public <T, K, V> Map<K, V> selectMap(ConditionWrapper<T> wrapper) {
-        try {
-            HandleSelectSqlBuilder<T> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(wrapper.getEntityClass(), executorFactory);
-            String selectSql = sqlBuilder.executeSqlBuilder(wrapper);
-            return executorFactory.selectMap(null, null, selectSql, wrapper.getParamValues().toArray());
-        }catch (Exception e) {
-            this.handleExceptions(e);
-            return null;
-        }
-    }
-
 
     @Override
     @CheckExecute(target = ExecuteMethod.DELETE)
@@ -595,10 +584,9 @@ public class JdbcAction extends AbstractSqlExecutor {
         long count = (long) executorFactory.selectObjBySql(selectCountSql, params);
 
         if (count > 0) {
-            selectSql = dbPageRows.getPageIndex() == 1 ?
-                    String.format("%s \nLIMIT %s", selectSql, dbPageRows.getPageSize())
-                    : String.format("%s \nLIMIT %s, %s", selectSql, (dbPageRows.getPageIndex() - 1) * dbPageRows.getPageSize(), dbPageRows.getPageSize());
-            dataList = executorFactory.selectBySql(t, selectSql, params);
+            DatabaseAdapter databaseAdapter = executorFactory.getDatabaseAdapter();
+            selectSql = databaseAdapter.handlePage(selectSql, dbPageRows.getPageIndex(), dbPageRows.getPageSize());
+            dataList = this.executorFactory.selectBySql(t, selectSql, params);
         }
         dbPageRows.setTotal(count).setData(dataList);
     }

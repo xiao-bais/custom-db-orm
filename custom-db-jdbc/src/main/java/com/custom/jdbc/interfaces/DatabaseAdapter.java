@@ -40,7 +40,7 @@ public interface DatabaseAdapter {
      * @param pageSize 查询每页大小
      * @return 分页后的SQL
      */
-    String pageHandle(String originSql, long pageIndex, long pageSize);
+    String handlePage(String originSql, long pageIndex, long pageSize);
 
 
     /**

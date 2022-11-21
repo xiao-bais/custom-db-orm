@@ -151,6 +151,30 @@ public class ReflectUtil {
     }
 
 
+    /**
+     * 获取方法中返回类型中的泛型
+     */
+    public static Type[] getGenericTypes(Method method) {
+        if (method == null) {
+            return null;
+        }
+        ParameterizedType returnType = (ParameterizedType) method.getGenericReturnType();
+        return returnType.getActualTypeArguments();
+    }
+
+    private Map<String, Integer> getInfo() {
+        return new HashMap<>();
+    }
+
+    public static void main(String[] args) throws NoSuchMethodException {
+        Method method = ReflectUtil.class.getDeclaredMethod("getInfo");
+        Type[] genericType = getGenericTypes(method);
+        System.out.println("genericType = " + Arrays.toString(genericType));
+    }
+
+
+
+
 
 
 

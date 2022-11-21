@@ -121,9 +121,9 @@ public class DbUtil {
     public static String trimSqlCondition(String condition) {
         String finalCondition = condition.trim();
         if(StrUtils.startWithIgnoreCase(finalCondition, Constants.AND)) {
-            finalCondition = condition.substring(3);
+            finalCondition = finalCondition.substring(3);
         }else if(StrUtils.startWithIgnoreCase(finalCondition, Constants.OR)) {
-            finalCondition = condition.substring(2);
+            finalCondition = finalCondition.substring(2);
         }
         return finalCondition.trim();
     }

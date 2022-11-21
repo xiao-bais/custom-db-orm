@@ -157,7 +157,6 @@ public interface JdbcDao {
      * @see #selectMap(Class, Class, String, Object...)
      */
     <T, K, V> Map<K, V> selectMap(ConditionWrapper<T> wrapper, Class<K> kClass, Class<V> vClass);
-    <T, K, V> Map<K, V> selectMap(ConditionWrapper<T> wrapper);
 
     /**
      * 查询数组（t只支持基础类型对应的引用类型）

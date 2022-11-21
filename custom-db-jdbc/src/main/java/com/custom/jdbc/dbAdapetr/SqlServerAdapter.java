@@ -33,7 +33,7 @@ public class SqlServerAdapter extends AbstractDbAdapter {
     }
 
     @Override
-    public String pageHandle(String originSql, long pageIndex, long pageSize) {
+    public String handlePage(String originSql, long pageIndex, long pageSize) {
         return originSql;
     }
 

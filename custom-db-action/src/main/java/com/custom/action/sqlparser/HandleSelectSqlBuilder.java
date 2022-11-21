@@ -203,8 +203,15 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
             columnStr.add(Objects.isNull(field) ? column : DbUtil.sqlSelectWrapper(column, field));
         }
 
-        this.createJoinTableSql();
-        return template -> SqlExecTemplate.format(template, columnStr, getTable(), getAlias()) + joinTableSql;
+        String suffix;
+        if (primaryTable) {
+            suffix = Constants.EMPTY;
+        }else {
+            this.createJoinTableSql();
+            suffix = String.valueOf(this.joinTableSql);
+        }
+
+        return template -> SqlExecTemplate.format(template, columnStr, getTable(), getAlias()) + suffix;
     }
 
     public boolean isExistNeedInjectResult() {
@@ -246,6 +253,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
         if (!wrapper.getHavingParams().isEmpty()) {
             wrapper.getParamValues().addAll(wrapper.getHavingParams());
         }
+        this.primaryTable = false;
         return selectSql.toString();
     }
 
@@ -256,7 +264,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
      */
     public String createSelectCountSql(ConditionWrapper<T> wrapper) throws Exception {
         String selectSql = this.executeSqlBuilder(wrapper);
-       return SqlExecTemplate.format(SqlExecTemplate.SELECT_COUNT, selectSql).toString();
+       return SqlExecTemplate.format(SqlExecTemplate.SELECT_COUNT, selectSql);
     }
 
 

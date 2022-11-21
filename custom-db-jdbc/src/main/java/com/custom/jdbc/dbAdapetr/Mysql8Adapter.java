@@ -1,6 +1,7 @@
 package com.custom.jdbc.dbAdapetr;
 
 import com.custom.comm.enums.DatabaseType;
+import com.custom.comm.page.DbPageRows;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.Constants;
 import com.custom.jdbc.condition.SelectExecutorModel;
@@ -49,8 +50,11 @@ public class Mysql8Adapter extends AbstractDbAdapter {
     }
 
     @Override
-    public String pageHandle(String originSql, long pageIndex, long pageSize) {
-        return originSql + " LIMIT " + Constants.QUEST + Constants.SEPARATOR_COMMA_2 + Constants.QUEST;
+    public String handlePage(String originSql, long pageIndex, long pageSize) {
+        if (pageIndex == 1) {
+            return String.format("%s \nLIMIT %s", originSql, pageSize);
+        }
+        return String.format("%s \nLIMIT %s, %s", originSql, (pageIndex - 1) * pageSize, pageSize);
     }
 
     @Override

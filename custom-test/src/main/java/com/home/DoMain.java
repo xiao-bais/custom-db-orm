@@ -1,12 +1,17 @@
 package com.home;
 
+import com.custom.action.condition.ConditionWrapper;
+import com.custom.action.condition.Conditions;
+import com.custom.action.condition.LambdaConditionWrapper;
 import com.custom.action.sqlparser.*;
 import com.home.customtest.entity.ChildStudent;
 import com.home.customtest.entity.Employee;
+import com.home.customtest.entity.Student;
 
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author Xiao-Bai
@@ -23,9 +28,25 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
+//        jdbcDao.selectOne(new LambdaConditionWrapper<>(Student.class).eq(Student::getNickName, "zhangsan").onlyPrimary());
 
-        String[] employees = jdbcDao.selectArrays(String.class, "select birthday from employee");
-        System.out.println(Arrays.toString(employees));
+
+        Map<Integer, Integer> objectMap = jdbcDao.selectMap(Conditions.query(Employee.class)
+                .select("age", "count(a.age)")
+                .groupBy("a.age")
+                .onlyPrimary(),
+                Integer.class, Integer.class
+        );
+
+//        Map<Integer, Integer> objectMap1 = jdbcDao.selectMap(Conditions.query(Employee.class)
+//                        .select("age", "count(a.age)")
+//                        .groupBy("a.age"),
+//                Integer.class, Integer.class
+//        );
+
+        Employee employee = jdbcDao.selectByKey(Employee.class, 12);
+
+        System.out.println(objectMap.toString());
 
 
     }
