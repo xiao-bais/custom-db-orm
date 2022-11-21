@@ -38,7 +38,7 @@ public class Employee {
     private String address;
 
     @DbField
-    private Date birthday;
+    private String birthday;
 
     @DbField
     private Integer deptId;

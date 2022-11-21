@@ -1,6 +1,7 @@
 package com.custom.jdbc.handler;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -20,6 +21,10 @@ public class IntegerTypeHandler extends AbstractTypeHandler<Integer> {
         }
         else if (val instanceof Boolean) {
             return (boolean) val ? 1 : 0;
+        }else if (val instanceof CharSequence) {
+            return Integer.parseInt(String.valueOf(val));
+        }else if (val instanceof Date) {
+            return (int) (((Date) val).getTime() / 1000);
         }
         return castNumber(val).intValue();
     }

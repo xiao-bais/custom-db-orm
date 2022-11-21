@@ -177,9 +177,6 @@ public abstract class AbstractTypeHandler<T> implements TypeHandler<T>, NonNulla
     }
 
 
-    public abstract AbstractTypeHandler<T> getClone();
-
-
 
 
 

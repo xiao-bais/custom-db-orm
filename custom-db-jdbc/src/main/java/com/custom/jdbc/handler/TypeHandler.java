@@ -39,6 +39,11 @@ public interface TypeHandler<T> {
      */
     T getTypeNoNullValue(Object val);
 
+    /**
+     * 获取克隆对象
+     */
+    TypeHandler<T> getClone();
+
 
 
 

@@ -31,12 +31,12 @@ public class DoMain {
 //        jdbcDao.selectOne(new LambdaConditionWrapper<>(Student.class).eq(Student::getNickName, "zhangsan").onlyPrimary());
 
 
-        Map<Integer, Integer> objectMap = jdbcDao.selectMap(Conditions.query(Employee.class)
-                .select("age", "count(a.age)")
-                .groupBy("a.age")
-                .onlyPrimary(),
-                Integer.class, Integer.class
-        );
+//        Map<Integer, Integer> objectMap = jdbcDao.selectMap(Conditions.query(Employee.class)
+//                .select("age", "count(a.age)")
+//                .groupBy("a.age")
+//                .onlyPrimary(),
+//                Integer.class, Integer.class
+//        );
 
 //        Map<Integer, Integer> objectMap1 = jdbcDao.selectMap(Conditions.query(Employee.class)
 //                        .select("age", "count(a.age)")
@@ -46,7 +46,7 @@ public class DoMain {
 
         Employee employee = jdbcDao.selectByKey(Employee.class, 12);
 
-        System.out.println(objectMap.toString());
+//        System.out.println(objectMap.toString());
 
 
     }

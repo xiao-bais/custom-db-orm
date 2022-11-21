@@ -4,6 +4,7 @@ import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.ReflectUtil;
 
 import java.beans.PropertyDescriptor;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -11,10 +12,7 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -58,12 +56,7 @@ public class ResultSetTypeMappedHandler<T> {
 
         // 实例化该对象，前提是需要存在无参构造，否则可能抛出异常
         T instance = ReflectUtil.getInstance(resClass);
-
-        MappedTargetCache<T> mappedTargetCache = (MappedTargetCache<T>) OBJECT_HANDLE_CACHE.get(resClass.getName());
-        if (mappedTargetCache == null) {
-            mappedTargetCache = new MappedTargetCache<>(resClass);
-            OBJECT_HANDLE_CACHE.putIfAbsent(resClass.getName(), mappedTargetCache);
-        }
+        MappedTargetCache<T> mappedTargetCache = getMappedTargetCache(resClass);
 
         for (Map.Entry<String, Object> entry : resultMap.entrySet()) {
 
@@ -90,6 +83,15 @@ public class ResultSetTypeMappedHandler<T> {
         return instance;
     }
 
+    private static <T> MappedTargetCache<T> getMappedTargetCache(Class<T> targetClass) {
+        WeakReference<MappedTargetCache<?>> weakTargetCache = OBJECT_HANDLE_CACHE.get(targetClass);
+        if (weakTargetCache == null || weakTargetCache.get() == null) {
+            MappedTargetCache<T> mappedTargetCache = new MappedTargetCache<>(targetClass);
+            OBJECT_HANDLE_CACHE.put(targetClass, new WeakReference<>(mappedTargetCache));
+            return mappedTargetCache;
+        }
+        return (MappedTargetCache<T>) weakTargetCache.get();
+    }
 
 
     /**
@@ -116,7 +118,7 @@ public class ResultSetTypeMappedHandler<T> {
     public void writeForMap(Map<String, T> map, ResultSet rs) throws SQLException {
         ResultSetMetaData rsMetaData = rs.getMetaData();
         // 该类型的转换处理
-        AbstractTypeHandler<T> thisTypeHandler = ((AbstractTypeHandler<T>) this.getThisTypeHandler()).getClone();
+        AbstractTypeHandler<T> thisTypeHandler = (AbstractTypeHandler<T>) this.getThisTypeHandler().getClone();
         thisTypeHandler.setUnderlineToCamel(isUnderlineToCamel);
 
         // 循环取值
@@ -183,7 +185,7 @@ public class ResultSetTypeMappedHandler<T> {
     /**
      * 映射对象缓存
      */
-    private static final Map<String, MappedTargetCache<?>> OBJECT_HANDLE_CACHE = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, WeakReference<MappedTargetCache<?>>> OBJECT_HANDLE_CACHE = new ConcurrentHashMap<>();
 
 
     static {

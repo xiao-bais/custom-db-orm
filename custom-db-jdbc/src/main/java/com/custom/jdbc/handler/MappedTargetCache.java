@@ -20,12 +20,9 @@ public class MappedTargetCache<T> {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final Class<T> targetClass;
     private final Set<FieldCache> fieldSet;
 
-
     public MappedTargetCache(Class<T> targetClass) {
-        this.targetClass = targetClass;
         this.fieldSet = new HashSet<>();
 
         try {
@@ -48,12 +45,6 @@ public class MappedTargetCache<T> {
         return fieldSet.stream().filter(op -> fieldName.equals(op.fieldName)).findFirst().orElse(null);
     }
 
-    public Class<T> getTargetClass() {
-        return targetClass;
-    }
-
-
-
 
 
     /**
@@ -71,7 +62,7 @@ public class MappedTargetCache<T> {
             this.fieldName = descriptor.getName();
             Class<?> fieldType = descriptor.getPropertyType();
             this.baseType = CustomUtil.isBasicClass(fieldType);
-            this.typeHandler = ResultSetTypeMappedHandler.getTargetTypeHandler(fieldType);
+            this.typeHandler = ResultSetTypeMappedHandler.getTargetTypeHandler(fieldType).getClone();
         }
 
 

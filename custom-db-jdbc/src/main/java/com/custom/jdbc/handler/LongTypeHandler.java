@@ -1,6 +1,7 @@
 package com.custom.jdbc.handler;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -16,6 +17,10 @@ public class LongTypeHandler extends AbstractTypeHandler<Long> {
         }
         else if (val instanceof Boolean) {
             return (boolean) val ? 1L : 0;
+        }else if (val instanceof CharSequence) {
+            return Long.parseLong(String.valueOf(val));
+        }else if (val instanceof Date) {
+            return ((Date) val).getTime();
         }
         return castNumber(val).longValue();
     }
