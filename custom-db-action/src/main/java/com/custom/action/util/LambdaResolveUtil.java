@@ -34,10 +34,7 @@ public final class LambdaResolveUtil {
             serializedLambda = (SerializedLambda) writeMethod.invoke(function);
             writeMethod.setAccessible(false);
         }
-        catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-        catch (IllegalAccessException | InvocationTargetException e) {
+        catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
 
@@ -85,6 +82,10 @@ public final class LambdaResolveUtil {
     public static <T> Class<?> getImplFuncType(SFunction<T, ?> function) {
         SerializedLambda serializedLambda = resolve(function);
         String implMethodSignature = serializedLambda.getImplMethodSignature();
+        if (implMethodSignature.length() <= 5 && !implMethodSignature.contains("/")) {
+            String implMethodName = serializedLambda.getImplMethodName();
+            log.error(implMethodName + " ==> 该方法或方法对应的属性使用了基础类型，会造成无法解析，请将属性或方法的返回值换成基础类型对应的包装类");
+        }
         implMethodSignature = implMethodSignature.substring(3, implMethodSignature.indexOf(";"));
         try {
             return Class.forName(implMethodSignature.replace('/', '.'));
