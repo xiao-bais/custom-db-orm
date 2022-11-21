@@ -15,11 +15,6 @@ public class CustomConfigHelper {
 
     private DatabaseAdapter databaseAdapter;
 
-    public CustomConfigHelper(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
-        this.dbDataSource = dbDataSource;
-        this.dbCustomStrategy = dbCustomStrategy;
-    }
-
     public CustomConfigHelper(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy, DatabaseAdapter databaseAdapter) {
         this.dbDataSource = dbDataSource;
         this.dbCustomStrategy = dbCustomStrategy;
