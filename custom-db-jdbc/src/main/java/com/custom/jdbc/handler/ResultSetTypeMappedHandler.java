@@ -86,6 +86,12 @@ public class ResultSetTypeMappedHandler<T> {
     private static <T> MappedTargetCache<T> getMappedTargetCache(Class<T> targetClass) {
         WeakReference<MappedTargetCache<?>> weakTargetCache = OBJECT_HANDLE_CACHE.get(targetClass);
         if (weakTargetCache == null || weakTargetCache.get() == null) {
+            if(weakTargetCache == null) {
+                System.out.println("aaa");
+            }else if(weakTargetCache.get() == null) {
+                System.out.println("bbb");
+            }
+
             MappedTargetCache<T> mappedTargetCache = new MappedTargetCache<>(targetClass);
             OBJECT_HANDLE_CACHE.put(targetClass, new WeakReference<>(mappedTargetCache));
             return mappedTargetCache;

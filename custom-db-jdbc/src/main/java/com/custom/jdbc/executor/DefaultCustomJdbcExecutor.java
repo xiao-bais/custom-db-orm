@@ -297,7 +297,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
         try {
             statement = sessionHelper.generateKeysStatement();
             // 处理预编译以及sql打印
-            sessionHelper.handleExecuteBefore(statement);
+            sessionHelper.handleExecuteBefore(statement, false);
             int res = statement.executeUpdate();
             // 若是自增，则返回生成的新ID
             resultSet = statement.getGeneratedKeys();
@@ -308,7 +308,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
                 T entity = dataList.get(count);
                 // 新的ID写入到实体
                 ReflectUtil.writeFieldValue(newKey, entity, keyField.getName(), keyField.getType());
-                count++;
+                count ++;
             }
             return res;
         } catch (SQLException e) {

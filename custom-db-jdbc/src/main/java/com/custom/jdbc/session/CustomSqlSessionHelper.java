@@ -96,18 +96,6 @@ public class CustomSqlSessionHelper {
     }
 
     /**
-     * 处理结果集对象映射
-     */
-    @SuppressWarnings("unchecked")
-    public <V> void handleResultMapper(Map<String, V> map, ResultSet resultSet,  ResultSetMetaData metaData) throws SQLException {
-        for (int i = 0; i < metaData.getColumnCount(); i++) {
-            String columnName = metaData.getColumnLabel(i + 1);
-            V object = (V) resultSet.getObject(i + 1);
-            map.put(columnName, object);
-        }
-    }
-
-    /**
      * 关闭资源
      */
     public void closeResources(Statement statement, ResultSet resultSet) throws SQLException {

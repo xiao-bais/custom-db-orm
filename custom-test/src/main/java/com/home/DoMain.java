@@ -45,10 +45,18 @@ public class DoMain {
 //        );
 
         Employee employee = jdbcDao.selectByKey(Employee.class, 12);
+        add(jdbcDao);
+        Employee employee2 = jdbcDao.selectByKey(Employee.class, 13);
 
 //        System.out.println(objectMap.toString());
 
 
+    }
+
+    private static void add(JdbcDao jdbcDao) {
+        Student student = jdbcDao.selectByKey(Student.class, 123);
+        student.setName("我的一切");
+        jdbcDao.updateByKey(student);
     }
 
 
