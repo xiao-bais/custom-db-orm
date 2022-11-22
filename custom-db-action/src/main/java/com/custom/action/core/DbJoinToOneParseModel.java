@@ -1,6 +1,5 @@
-package com.custom.action.sqlparser;
+package com.custom.action.core;
 
-import com.custom.action.condition.Conditions;
 import com.custom.action.dbaction.AbstractJoinToResult;
 import com.custom.action.util.DbUtil;
 import com.custom.comm.annotations.DbOneToOne;

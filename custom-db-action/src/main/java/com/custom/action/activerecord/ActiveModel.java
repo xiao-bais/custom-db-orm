@@ -1,7 +1,7 @@
 package com.custom.action.activerecord;
 
 import com.custom.action.interfaces.TableExecutor;
-import com.custom.action.sqlparser.DefaultTableExecutor;
+import com.custom.action.core.DefaultTableExecutor;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.comm.utils.ConvertUtil;
 import com.custom.comm.utils.Constants;

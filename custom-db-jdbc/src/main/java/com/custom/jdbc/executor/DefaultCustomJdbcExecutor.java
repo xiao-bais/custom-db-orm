@@ -98,21 +98,18 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
         PreparedStatement statement = null;
         ResultSet resultSet = null;
         try {
-
             statement = sessionHelper.defaultPreparedStatement();
             // 处理预编译以及sql打印
             sessionHelper.handleExecuteBefore(statement);
             resultSet = statement.executeQuery();
 
-            while (resultSet.next()) {
-                try {
-                    typeMappedHandler.writeForCollection(list, resultSet);
-                } catch (ClassCastException e) {
-                    if (!CustomUtil.isBasicClass(entityClass)) {
-                        throw new UnsupportedOperationException("This [" + entityClass + "] of query is not supported");
-                    }
-                    throw e;
+            try {
+                typeMappedHandler.writeForCollection(list, resultSet);
+            } catch (ClassCastException e) {
+                if (!CustomUtil.isBasicClass(entityClass)) {
+                    throw new UnsupportedOperationException("This [" + entityClass + "] of query is not supported");
                 }
+                throw e;
             }
         } catch (SQLException e) {
             SqlOutPrintBuilder
@@ -271,7 +268,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
         try {
             statement = sessionHelper.defaultPreparedStatement();
             // 处理预编译以及sql打印
-            sessionHelper.handleExecuteBefore(statement);
+            sessionHelper.handleExecuteBefore(statement, false);
             return statement.executeUpdate();
         } catch (SQLException e) {
             SqlOutPrintBuilder

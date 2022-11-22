@@ -1,10 +1,10 @@
 package com.custom.action.dbaction;
 
 import com.custom.action.interfaces.FullSqlConditionExecutor;
-import com.custom.action.sqlparser.DbFieldParserModel;
-import com.custom.action.sqlparser.DbKeyParserModel;
-import com.custom.action.sqlparser.TableInfoCache;
-import com.custom.action.sqlparser.TableParseModel;
+import com.custom.action.core.DbFieldParserModel;
+import com.custom.action.core.DbKeyParserModel;
+import com.custom.action.core.TableInfoCache;
+import com.custom.action.core.TableParseModel;
 import com.custom.action.util.DbUtil;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.*;
@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**

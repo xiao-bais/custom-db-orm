@@ -1,15 +1,13 @@
 package com.custom.springboot.tableinit;
 
-import com.custom.action.sqlparser.DbFieldParserModel;
-import com.custom.action.sqlparser.DbKeyParserModel;
-import com.custom.action.sqlparser.TableInfoCache;
-import com.custom.action.sqlparser.TableParseModel;
+import com.custom.action.core.DbFieldParserModel;
+import com.custom.action.core.DbKeyParserModel;
+import com.custom.action.core.TableInfoCache;
+import com.custom.action.core.TableParseModel;
 import com.custom.comm.annotations.DbTable;
 import com.custom.comm.utils.*;
-import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.jdbc.interfaces.DatabaseAdapter;
-import com.custom.jdbc.transaction.DbConnGlobal;
 import com.custom.springboot.scanner.PackageScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

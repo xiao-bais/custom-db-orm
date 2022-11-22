@@ -1,17 +1,9 @@
 package com.home;
 
-import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.condition.Conditions;
-import com.custom.action.condition.LambdaConditionWrapper;
-import com.custom.action.sqlparser.*;
-import com.home.customtest.entity.ChildStudent;
+import com.custom.action.core.*;
 import com.home.customtest.entity.Employee;
 import com.home.customtest.entity.Student;
-
-import java.lang.reflect.Constructor;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @Author Xiao-Bai
@@ -28,36 +20,10 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-//        jdbcDao.selectOne(new LambdaConditionWrapper<>(Student.class).eq(Student::getNickName, "zhangsan").onlyPrimary());
-
-
-//        Map<Integer, Integer> objectMap = jdbcDao.selectMap(Conditions.query(Employee.class)
-//                .select("age", "count(a.age)")
-//                .groupBy("a.age")
-//                .onlyPrimary(),
-//                Integer.class, Integer.class
-//        );
-
-//        Map<Integer, Integer> objectMap1 = jdbcDao.selectMap(Conditions.query(Employee.class)
-//                        .select("age", "count(a.age)")
-//                        .groupBy("a.age"),
-//                Integer.class, Integer.class
-//        );
-
-        Employee employee = jdbcDao.selectByKey(Employee.class, 12);
-        add(jdbcDao);
-        Employee employee2 = jdbcDao.selectByKey(Employee.class, 13);
-
-//        System.out.println(objectMap.toString());
-
-
+        jdbcDao.selectPage(Conditions.query(Student.class).eq("name", "11111").orderByAsc("age").pageParams(1, 2));
     }
 
-    private static void add(JdbcDao jdbcDao) {
-        Student student = jdbcDao.selectByKey(Student.class, 123);
-        student.setName("我的一切");
-        jdbcDao.updateByKey(student);
-    }
+
 
 
 

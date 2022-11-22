@@ -1,15 +1,13 @@
-package com.custom.action.sqlparser;
+package com.custom.action.core;
 
 import com.custom.action.condition.AbstractUpdateSet;
 import com.custom.action.condition.ConditionWrapper;
-import com.custom.action.condition.SFunction;
 import com.custom.comm.page.DbPageRows;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 /**
  * @Author Xiao-Bai

@@ -1,9 +1,9 @@
 package com.custom.action.condition;
 
 import com.custom.action.interfaces.ColumnParseHandler;
-import com.custom.action.sqlparser.ColumnPropertyMap;
-import com.custom.action.sqlparser.TableInfoCache;
-import com.custom.action.sqlparser.TableParseModel;
+import com.custom.action.core.ColumnPropertyMap;
+import com.custom.action.core.TableInfoCache;
+import com.custom.action.core.TableParseModel;
 import com.custom.action.util.LambdaResolveUtil;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.JudgeUtil;

@@ -2,8 +2,8 @@ package com.custom.action.proxy;
 
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.dbaction.AbstractSqlExecutor;
-import com.custom.action.sqlparser.JdbcAction;
-import com.custom.action.sqlparser.JdbcDao;
+import com.custom.action.core.JdbcAction;
+import com.custom.action.core.JdbcDao;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;

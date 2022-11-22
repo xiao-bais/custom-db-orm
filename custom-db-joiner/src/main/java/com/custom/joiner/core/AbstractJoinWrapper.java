@@ -2,8 +2,8 @@ package com.custom.joiner.core;
 
 import com.custom.action.condition.DefaultColumnParseHandler;
 import com.custom.action.interfaces.ColumnParseHandler;
-import com.custom.action.sqlparser.TableInfoCache;
-import com.custom.action.sqlparser.TableParseModel;
+import com.custom.action.core.TableInfoCache;
+import com.custom.action.core.TableParseModel;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.JudgeUtil;

@@ -1,7 +1,7 @@
 package com.custom.taskmanager.service.impl;
 
 import com.custom.action.condition.Conditions;
-import com.custom.action.sqlparser.JdbcDao;
+import com.custom.action.core.JdbcDao;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;

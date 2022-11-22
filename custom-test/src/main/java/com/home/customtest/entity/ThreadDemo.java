@@ -1,6 +1,6 @@
 package com.home.customtest.entity;
 
-import com.custom.action.sqlparser.JdbcDao;
+import com.custom.action.core.JdbcDao;
 import com.custom.jdbc.back.BackResult;
 
 /**

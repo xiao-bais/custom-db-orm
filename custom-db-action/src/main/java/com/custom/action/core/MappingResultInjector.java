@@ -1,9 +1,8 @@
-package com.custom.action.sqlparser;
+package com.custom.action.core;
 
 import com.custom.action.dbaction.AbstractSqlExecutor;
 import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.comm.exceptions.CustomCheckException;
-import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.ReflectUtil;
 import com.custom.jdbc.configuration.DbDataSource;

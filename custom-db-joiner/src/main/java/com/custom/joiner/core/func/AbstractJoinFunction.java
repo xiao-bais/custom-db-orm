@@ -1,7 +1,7 @@
 package com.custom.joiner.core.func;
 
 import com.custom.action.condition.SFunction;
-import com.custom.action.sqlparser.ColumnPropertyMap;
+import com.custom.action.core.ColumnPropertyMap;
 import com.custom.joiner.interfaces.DoSelecting;
 
 import java.util.ArrayList;

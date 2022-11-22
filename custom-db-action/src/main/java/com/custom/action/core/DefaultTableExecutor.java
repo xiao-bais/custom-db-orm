@@ -1,4 +1,4 @@
-package com.custom.action.sqlparser;
+package com.custom.action.core;
 
 import com.custom.action.dbaction.AbstractSqlExecutor;
 import com.custom.action.interfaces.TableExecutor;

@@ -1,8 +1,8 @@
 package com.custom.action.condition;
 
 import com.custom.action.condition.support.TableSupport;
-import com.custom.action.sqlparser.TableInfoCache;
-import com.custom.action.sqlparser.TableParseModel;
+import com.custom.action.core.TableInfoCache;
+import com.custom.action.core.TableParseModel;
 
 import java.util.Map;
 

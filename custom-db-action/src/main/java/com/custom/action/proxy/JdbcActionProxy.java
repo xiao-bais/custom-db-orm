@@ -3,7 +3,7 @@ package com.custom.action.proxy;
 import com.custom.action.condition.AbstractUpdateSet;
 import com.custom.action.condition.UpdateSetWrapper;
 import com.custom.action.dbaction.AbstractSqlExecutor;
-import com.custom.action.sqlparser.JdbcAction;
+import com.custom.action.core.JdbcAction;
 import com.custom.action.util.DbUtil;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.comm.exceptions.CustomCheckException;

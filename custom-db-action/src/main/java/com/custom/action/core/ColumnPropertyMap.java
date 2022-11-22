@@ -1,4 +1,4 @@
-package com.custom.action.sqlparser;
+package com.custom.action.core;
 
 import java.io.Serializable;
 

@@ -1,6 +1,5 @@
 package com.custom.springboot;
 
-import com.custom.action.sqlparser.TableInfoCache;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;

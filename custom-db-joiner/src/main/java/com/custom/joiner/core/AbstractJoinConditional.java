@@ -3,7 +3,7 @@ package com.custom.joiner.core;
 import com.custom.action.condition.DefaultColumnParseHandler;
 import com.custom.action.condition.SFunction;
 import com.custom.action.interfaces.ColumnParseHandler;
-import com.custom.action.sqlparser.ColumnPropertyMap;
+import com.custom.action.core.ColumnPropertyMap;
 import com.custom.action.util.DbUtil;
 import com.custom.action.util.LambdaResolveUtil;
 import com.custom.comm.enums.DbJoinStyle;

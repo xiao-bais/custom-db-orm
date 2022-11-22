@@ -1,13 +1,11 @@
 package com.custom.springboot;
 
 import com.custom.action.proxy.JdbcDaoProxy;
-import com.custom.action.sqlparser.JdbcDao;
-import com.custom.action.sqlparser.JdbcOpDao;
-import com.custom.action.sqlparser.TableInfoCache;
+import com.custom.action.core.JdbcDao;
+import com.custom.action.core.JdbcOpDao;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
-import com.custom.proxy.InterfacesProxyExecutor;
 import com.custom.springboot.scanner.RegisterBeanExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,11 +1,9 @@
 package com.custom.action.util;
 
-import com.custom.action.sqlparser.DbKeyParserModel;
-import com.custom.action.sqlparser.TableInfoCache;
-import com.custom.comm.enums.SqlExecTemplate;
+import com.custom.action.core.DbKeyParserModel;
+import com.custom.action.core.TableInfoCache;
 import com.custom.comm.utils.RexUtil;
 import com.custom.comm.utils.Constants;
-import com.custom.comm.enums.SqlLike;
 import com.custom.comm.utils.StrUtils;
 
 /**
