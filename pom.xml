@@ -26,6 +26,7 @@
         <module>custom-db-proxy</module>
         <module>custom-springboot-starter</module>
         <module>custom-test</module>
+        <module>custom-tools</module>
     </modules>
 
     <properties>

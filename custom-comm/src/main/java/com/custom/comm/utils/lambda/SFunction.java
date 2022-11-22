@@ -1,4 +1,4 @@
-package com.custom.action.condition;
+package com.custom.comm.utils.lambda;
 
 import java.io.Serializable;
 import java.util.function.Function;

@@ -1,5 +1,7 @@
 package com.custom.action.condition;
 
+import com.custom.comm.utils.lambda.SFunction;
+
 import java.util.function.Consumer;
 
 /**

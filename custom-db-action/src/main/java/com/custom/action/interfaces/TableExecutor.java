@@ -1,14 +1,12 @@
 package com.custom.action.interfaces;
 
 import com.custom.action.condition.ConditionWrapper;
-import com.custom.action.condition.SFunction;
 import com.custom.comm.page.DbPageRows;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 /**
  * @Author Xiao-Bai

@@ -3,6 +3,7 @@ package com.custom.action.condition;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.enums.SqlAggregate;
 import com.custom.comm.exceptions.CustomCheckException;
+import com.custom.comm.utils.lambda.SFunction;
 
 import java.lang.reflect.Field;
 

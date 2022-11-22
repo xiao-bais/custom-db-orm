@@ -1,14 +1,11 @@
 package com.custom.action.interfaces;
 
-import com.custom.action.condition.SFunction;
-import com.custom.comm.utils.CustomUtil;
+import com.custom.comm.utils.lambda.SFunction;
 import com.custom.comm.utils.ReflectUtil;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @Author Xiao-Bai

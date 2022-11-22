@@ -3,6 +3,7 @@ package com.custom.action.condition;
 import com.custom.action.condition.support.TableSupport;
 import com.custom.comm.enums.DbSymbol;
 import com.custom.comm.enums.SqlLike;
+import com.custom.comm.utils.lambda.SFunction;
 
 import java.util.Collection;
 

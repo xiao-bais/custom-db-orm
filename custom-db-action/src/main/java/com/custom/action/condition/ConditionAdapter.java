@@ -4,6 +4,7 @@ import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.enums.DbSymbol;
 import com.custom.comm.enums.SqlOrderBy;
+import com.custom.comm.utils.lambda.SFunction;
 
 import java.util.Arrays;
 import java.util.function.Consumer;

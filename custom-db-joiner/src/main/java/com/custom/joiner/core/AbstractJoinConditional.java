@@ -1,11 +1,11 @@
 package com.custom.joiner.core;
 
 import com.custom.action.condition.DefaultColumnParseHandler;
-import com.custom.action.condition.SFunction;
+import com.custom.comm.utils.lambda.SFunction;
 import com.custom.action.interfaces.ColumnParseHandler;
 import com.custom.action.core.ColumnPropertyMap;
 import com.custom.action.util.DbUtil;
-import com.custom.action.util.LambdaResolveUtil;
+import com.custom.comm.utils.lambda.LambdaUtil;
 import com.custom.comm.enums.DbJoinStyle;
 import com.custom.comm.enums.DbSymbol;
 import com.custom.comm.enums.AliasStrategy;
@@ -117,7 +117,7 @@ public abstract class AbstractJoinConditional<T> {
      */
     protected <A> void resloveColumn(SFunction<T, ?> joinColumn, SFunction<A, ?> aColumn) {
         Asserts.notNull(joinColumn);
-        String joinMethodName = LambdaResolveUtil.getImplMethodName(joinColumn);
+        String joinMethodName = LambdaUtil.getImplMethodName(joinColumn);
         ColumnPropertyMap<T> tColumnPropertyMap = (ColumnPropertyMap<T>) ColumnPropertyMap.parse2Map(this.joinClass, joinMethodName);
 
         if (joinPropertyMap == null) {
@@ -125,8 +125,8 @@ public abstract class AbstractJoinConditional<T> {
         }
 
         Asserts.notNull(aColumn);
-        Class<A> implClass = LambdaResolveUtil.getImplClass(aColumn);
-        String aMethodName = LambdaResolveUtil.getImplMethodName(aColumn);
+        Class<A> implClass = LambdaUtil.getImplClass(aColumn);
+        String aMethodName = LambdaUtil.getImplMethodName(aColumn);
         ColumnPropertyMap<?> aColumnPropertyMap = ColumnPropertyMap.parse2Map(implClass, aMethodName);
 
         if (primaryPropertyMap == null) {
@@ -140,7 +140,7 @@ public abstract class AbstractJoinConditional<T> {
     }
 
     protected LambdaJoinConditional<T> addCondition(SFunction<T, ?> column, DbSymbol dbSymbol, Object param) {
-        String implMethodName = LambdaResolveUtil.getImplMethodName(column);
+        String implMethodName = LambdaUtil.getImplMethodName(column);
         ColumnPropertyMap<T> tColumnPropertyMap = (ColumnPropertyMap<T>) ColumnPropertyMap.parse2Map(this.joinClass, implMethodName);
         String ConditionColumn = DbUtil.fullSqlColumn(this.joinTableAlias, tColumnPropertyMap.getColumn());
 

@@ -1,6 +1,6 @@
 package com.custom.joiner.core;
 
-import com.custom.action.condition.SFunction;
+import com.custom.comm.utils.lambda.SFunction;
 import com.custom.comm.enums.AliasStrategy;
 
 import java.util.function.Consumer;

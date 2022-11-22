@@ -4,11 +4,12 @@ import com.custom.action.interfaces.ColumnParseHandler;
 import com.custom.action.core.ColumnPropertyMap;
 import com.custom.action.core.TableInfoCache;
 import com.custom.action.core.TableParseModel;
-import com.custom.action.util.LambdaResolveUtil;
+import com.custom.comm.utils.lambda.LambdaUtil;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.exceptions.CustomCheckException;
+import com.custom.comm.utils.lambda.SFunction;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.invoke.SerializedLambda;
@@ -60,7 +61,7 @@ public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {
     @Override
     public String parseToField(SFunction<T, ?> func) {
         Asserts.notNull(func);
-        SerializedLambda serializedLambda = LambdaResolveUtil.resolve(func);
+        SerializedLambda serializedLambda = LambdaUtil.resolve(func);
         String implMethodName = serializedLambda.getImplMethodName();
 
         List<ColumnPropertyMap<T>> columnPropertyMaps = columnParseList.stream()
@@ -98,7 +99,7 @@ public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {
 
     @Override
     public String parseToNormalColumn(SFunction<T, ?> func) {
-        SerializedLambda serializedLambda = LambdaResolveUtil.resolve(func);
+        SerializedLambda serializedLambda = LambdaUtil.resolve(func);
         String implMethodName = serializedLambda.getImplMethodName();
         return ColumnPropertyMap.parse2Column(thisClass, implMethodName);
     }

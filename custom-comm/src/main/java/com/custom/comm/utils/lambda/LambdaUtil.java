@@ -1,6 +1,5 @@
-package com.custom.action.util;
+package com.custom.comm.utils.lambda;
 
-import com.custom.action.condition.SFunction;
 import com.custom.comm.exceptions.CustomCheckException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,7 +14,7 @@ import java.util.Objects;
  * @desc lambda 表达式解析
  */
 @Slf4j
-public final class LambdaResolveUtil {
+public final class LambdaUtil {
 
     /**
      * 解析 Lambda 表达式, 从SFunction中获取序列化的信息

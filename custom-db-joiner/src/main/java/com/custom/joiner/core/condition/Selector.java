@@ -1,7 +1,6 @@
 package com.custom.joiner.core.condition;
 
-import com.custom.action.condition.OrderByFunc;
-import com.custom.action.condition.SFunction;
+import com.custom.comm.utils.lambda.SFunction;
 import com.custom.action.condition.SelectFunc;
 
 import java.util.function.Consumer;

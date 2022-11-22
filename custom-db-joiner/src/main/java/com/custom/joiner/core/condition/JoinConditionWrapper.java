@@ -1,6 +1,6 @@
 package com.custom.joiner.core.condition;
 
-import com.custom.action.condition.SFunction;
+import com.custom.comm.utils.lambda.SFunction;
 
 import java.util.Arrays;
 import java.util.Collection;

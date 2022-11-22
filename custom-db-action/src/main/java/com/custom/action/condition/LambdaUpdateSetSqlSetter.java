@@ -1,5 +1,7 @@
 package com.custom.action.condition;
 
+import com.custom.comm.utils.lambda.SFunction;
+
 /**
  * @Author Xiao-Bai
  * @Date 2022/6/27 0027 11:59
