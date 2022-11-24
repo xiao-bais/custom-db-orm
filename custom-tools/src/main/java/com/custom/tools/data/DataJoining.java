@@ -10,7 +10,6 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -27,19 +26,19 @@ public class DataJoining<T> {
     /**
      * 主集合
      */
-    private List<T> primaryList;
+    private final List<T> primaryList;
     /**
      * 待合并的集合
      */
-    private List<T> otherList;
+    private final List<T> otherList;
     /**
      * 合并的条件
      */
-    private JoinCondition<T> condition;
+    private final JoinCondition<T> condition;
     /**
      * 属性描述信息
      */
-    private List<PropertyDescriptor> properties;
+    private final List<PropertyDescriptor> properties;
 
     public DataJoining(Class<T> targetClass, List<T> primaryList, List<T> otherList, JoinCondition<T> condition) throws IntrospectionException {
         this.primaryList = primaryList;
