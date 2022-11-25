@@ -27,7 +27,7 @@ public class DataJoining<T> {
     /**
      * 主集合
      */
-    private List<T> primaryList;
+    private final List<T> primaryList;
     /**
      * 待合并的集合
      */
@@ -35,7 +35,7 @@ public class DataJoining<T> {
     /**
      * 合并的条件
      */
-    private JoinCondition<T> condition;
+    private final JoinCondition<T> condition;
     /**
      * 属性描述信息
      */
@@ -49,12 +49,16 @@ public class DataJoining<T> {
         this.properties = ReflectUtil.getProperties(targetClass);
     }
 
+    public void setOtherList(Class<T> targetClass, List<T> otherList) throws IntrospectionException {
+        this.properties = ReflectUtil.getProperties(targetClass);
+        this.otherList = otherList;
+    }
 
     /**
      * 获取合并后的结果
      * @param fields 指定要合并的字段(java属性)
      */
-    public List<T> getResult(String... fields) {
+    public List<T> getResult(String... fields) throws InvocationTargetException, IllegalAccessException {
 
         List<T> result = new ArrayList<>();
 
@@ -82,12 +86,8 @@ public class DataJoining<T> {
                             .orElse(null);
 
                     if (property != null) {
-                        try {
-                            Object targetVal = property.getReadMethod().invoke(target);
-                            property.getWriteMethod().invoke(currObj, targetVal);
-                        } catch (IllegalAccessException | InvocationTargetException e) {
-                            e.printStackTrace();
-                        }
+                        Object targetVal = property.getReadMethod().invoke(target);
+                        property.getWriteMethod().invoke(currObj, targetVal);
                     }
 
                 }
@@ -107,7 +107,7 @@ public class DataJoining<T> {
      * 获取合并后的结果
      * @param fields 指定要合并的字段(java属性对应的Function)
      */
-    public List<T> getResult(SFunction<T, ?>... fields) {
+    public List<T> getResult(SFunction<T, ?>... fields) throws InvocationTargetException, IllegalAccessException {
 
         List<String> fieldList = new ArrayList<>();
         for (SFunction<T, ?> field : fields) {
