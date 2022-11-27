@@ -30,7 +30,7 @@ public class DataJoining<T> {
     /**
      * 待合并的集合
      */
-    private final List<T> otherList;
+    private List<T> otherList;
     /**
      * 合并的条件
      */
@@ -38,7 +38,7 @@ public class DataJoining<T> {
     /**
      * 属性描述信息
      */
-    private final List<PropertyDescriptor> properties;
+    private List<PropertyDescriptor> properties;
 
     public DataJoining(Class<T> targetClass, List<T> primaryList, List<T> otherList, JoinCondition<T> condition) throws IntrospectionException {
         this.primaryList = primaryList;
