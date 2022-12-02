@@ -53,6 +53,11 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
         return deleteSql;
     }
 
+    @Override
+    public String createTargetSql(Object obj) {
+        return null;
+    }
+
 
     /**
      * 在删除数据时，若是有逻辑删除，则在逻辑删除前，进行固定字段的自动填充

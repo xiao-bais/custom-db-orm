@@ -62,8 +62,9 @@ public abstract class AbstractSqlExecutor  {
 
     /*--------------------------------------- update ---------------------------------------*/
     public abstract <T> int updateByKey(T entity);
+    public abstract <T> int updateByKeySelective(T entity);
     public abstract <T> int updateSelective(T entity, ConditionWrapper<T> wrapper);
-    public abstract <T> int updateByCondition(T entity, String condition, Object... params);
+    public abstract <T> int updateByCondition(T entity, boolean addNullField, String condition, Object... params);
 
     /**
      * updateSet sql set设置器

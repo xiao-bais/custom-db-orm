@@ -51,6 +51,11 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
         return insertPrefix + insertSqlField;
     }
 
+    @Override
+    public String createTargetSql(Object obj) {
+        return null;
+    }
+
 
     /**
      * 获取字段的值

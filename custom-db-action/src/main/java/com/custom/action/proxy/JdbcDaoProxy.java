@@ -44,49 +44,42 @@ public class JdbcDaoProxy implements InvocationHandler, Serializable {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Exception {
-        try {
-            if (Object.class.equals(method.getDeclaringClass())) {
-                return method.invoke(this, args);
-            }
-            String methodName = method.getName();
-            Method typeCache = CUSTOMIZE_METHOD_CACHES.stream()
-                    .filter(op -> op.getName().equals(methodName))
-                    .filter(op -> {
-                        Class<?>[] parameterTypes = op.getParameterTypes();
-                        if (args.length != parameterTypes.length) {
-                            return false;
-                        }
-                        // 判断两者的参数类型一一对应
-                        int targetIndex = 0;
-                        int len = parameterTypes.length;
-                        for (int i = 0; i < len; i++) {
-                            Class<?> targetClass = parameterTypes[i];
-                            Class<?> thisClass;
-                            if (args[i] == null) {
-                                thisClass = targetClass;
-                            }else {
-                                thisClass = args[i].getClass();
-                            }
-                            if (ConditionWrapper.class.isAssignableFrom(thisClass)) {
-                                return !Object.class.equals(targetClass);
-                            }
-                            if (targetClass.isAssignableFrom(thisClass)) {
-                                targetIndex++;
-                            }
-                        }
-                        return targetIndex == len;
-                    })
-                    .findFirst().orElseThrow(() ->
-                            new CustomCheckException("Unknown execution method : " + methodName)
-                    );
-
-            return typeCache.invoke(sqlExecutor, args);
-        }catch (Exception t) {
-            if (t instanceof CustomCheckException) {
-                throw new CustomCheckException(t.getMessage());
-            }
-            throw t;
+        if (Object.class.equals(method.getDeclaringClass())) {
+            return method.invoke(this, args);
         }
+        String methodName = method.getName();
+        Method typeCache = CUSTOMIZE_METHOD_CACHES.stream()
+                .filter(op -> op.getName().equals(methodName))
+                .filter(op -> {
+                    Class<?>[] parameterTypes = op.getParameterTypes();
+                    if (args.length != parameterTypes.length) {
+                        return false;
+                    }
+                    // 判断两者的参数类型一一对应
+                    int targetIndex = 0;
+                    int len = parameterTypes.length;
+                    for (int i = 0; i < len; i++) {
+                        Class<?> targetClass = parameterTypes[i];
+                        Class<?> thisClass;
+                        if (args[i] == null) {
+                            thisClass = targetClass;
+                        }else {
+                            thisClass = args[i].getClass();
+                        }
+                        if (ConditionWrapper.class.isAssignableFrom(thisClass)) {
+                            return !Object.class.equals(targetClass);
+                        }
+                        if (targetClass.isAssignableFrom(thisClass)) {
+                            targetIndex++;
+                        }
+                    }
+                    return targetIndex == len;
+                })
+                .findFirst().orElseThrow(() ->
+                        new CustomCheckException("Unknown execution method : " + methodName)
+                );
+
+        return typeCache.invoke(sqlExecutor, args);
     }
 
 }

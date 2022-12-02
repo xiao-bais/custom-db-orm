@@ -442,24 +442,38 @@ public class JdbcAction extends AbstractSqlExecutor {
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
     public <T> int updateByKey(T entity) {
+        return innerUpdateByKey(entity, true);
+    }
+
+    private <T> int innerUpdateByKey(T entity, boolean addNullField) {
         Class<T> targetClass = (Class<T>) entity.getClass();
         HandleUpdateSqlBuilder<T> sqlBuilder = TableInfoCache.getUpdateSqlBuilderCache(targetClass, executorFactory);
         DbKeyParserModel<T> keyParserModel = sqlBuilder.getKeyParserModel();
         Serializable value = (Serializable) keyParserModel.getValue(entity);
         String condition = sqlBuilder.createKeyCondition(value);
-        return this.updateByCondition(entity, condition, value);
+        return this.updateByCondition(entity, addNullField, condition, value);
+    }
+
+    @Override
+    public <T> int updateByKeySelective(T entity) {
+        return innerUpdateByKey(entity, false);
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
     public <T> int updateSelective(T entity, ConditionWrapper<T> wrapper) {
-        return this.updateByCondition(entity, wrapper.getFinalConditional(),
+        return this.updateByCondition(entity, false, wrapper.getFinalConditional(),
                 wrapper.getParamValues().toArray());
+    }
+
+    public <T> int updateByCondition(T entity, String condition, Object... params) {
+        System.out.println("aaa");
+        return updateByCondition(entity, true, condition, params);
     }
 
     @Override
     @CheckExecute(target = ExecuteMethod.UPDATE)
-    public <T> int updateByCondition(T entity, String condition, Object... params) {
+    public <T> int updateByCondition(T entity, boolean addNullField, String condition, Object... params) {
         if (JudgeUtil.isEmpty(condition)) {
             throw new NullPointerException("修改条件不能为空");
         }
@@ -470,7 +484,7 @@ public class JdbcAction extends AbstractSqlExecutor {
             sqlBuilder.injectEntity(entity);
 
             // 创建update sql
-            String updateSql = sqlBuilder.createTargetSql();
+            String updateSql = sqlBuilder.createTargetSql(addNullField);
             List<Object> sqlParamList = new ArrayList<>(sqlBuilder.getSqlParamList());
             CustomUtil.addParams(sqlParamList, params);
 

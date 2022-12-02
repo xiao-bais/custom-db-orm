@@ -26,6 +26,8 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
      */
     private StringJoiner updateSqlColumns;
 
+
+
     public HandleUpdateSqlBuilder(Class<T> entityClass, JdbcExecutorFactory executorFactory) {
         updateSqlColumns = new StringJoiner(Constants.SEPARATOR_COMMA_2);
         TableParseModel<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
@@ -38,9 +40,17 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
      */
     @Override
     public String createTargetSql() {
+        return createTargetSql(false);
+    }
+
+    @Override
+    public String createTargetSql(Object obj) {
+
+        // 在执行修改时，是否允许添加null值的字段
+         boolean addNullField = (Boolean) obj;
 
         // 创建需要set的sql字段
-        this.createUpdateSetColumn();
+        this.createUpdateSetColumn(addNullField);
         Asserts.notEmpty(updateSqlColumns, "update set column segment cannot be empty");
 
         return SqlExecTemplate.format(SqlExecTemplate.UPDATE_DATA, getTable(), getAlias(),
@@ -56,8 +66,9 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
     /**
      * 修改字段构建（set之后 where之前）
+     * @param addNullField 是否允许添加=null的字段
      */
-    private void createUpdateSetColumn() {
+    private void createUpdateSetColumn(boolean addNullField) {
         for (DbFieldParserModel<T> field : getFieldParserModels()) {
             Object value = field.getValue();
             if (Objects.isNull(value)) {
@@ -69,11 +80,10 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
                     value = fillValue;
                 }
             }
-            if (Objects.nonNull(value)) {
+            if (Objects.nonNull(value) || addNullField) {
                 updateSqlColumns.add(DbUtil.formatSqlCondition(field.getFieldSql()));
                 this.addParams(value);
             }
         }
     }
-
 }

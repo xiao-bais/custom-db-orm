@@ -65,6 +65,11 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
         }
     }
 
+    @Override
+    public String createTargetSql(Object obj) {
+        return null;
+    }
+
     /**
      * 获取查询sql（主动指定是否需要拼接表连接的sql）
      * @param isRelated 是否需要关联的sql

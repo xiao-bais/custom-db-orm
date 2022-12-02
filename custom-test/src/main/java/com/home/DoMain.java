@@ -20,7 +20,13 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-        jdbcDao.selectPage(Conditions.query(Student.class).eq("name", "11111").orderByAsc("age").pageParams(1, 2));
+        Student student = jdbcDao.selectByKey(Student.class, 13);
+
+        student.setPassword("qweqwe");
+        student.setNickName(null);
+        jdbcDao.updateByCondition(student, "a.id = ?", student.getId());
+
+
     }
 
 

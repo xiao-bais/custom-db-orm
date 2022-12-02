@@ -53,6 +53,7 @@ public abstract class AbstractSqlBuilder<T> {
      * 创建对应的sql
      */
     public abstract String createTargetSql();
+    public abstract String createTargetSql(Object obj);
 
     public String getTable() {
         return table;

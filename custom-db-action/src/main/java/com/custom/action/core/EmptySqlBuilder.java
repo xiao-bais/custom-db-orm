@@ -20,4 +20,9 @@ public class EmptySqlBuilder<T> extends AbstractSqlBuilder<T> {
     public String createTargetSql() {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public String createTargetSql(Object obj) {
+        return null;
+    }
 }
