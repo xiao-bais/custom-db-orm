@@ -230,17 +230,17 @@ public interface JdbcDao {
     <T> int updateByKeySelective(T entity);
 
     /**
-     * 根据条件修改一条记录(主键不会被修改)
+     * 根据条件修改一条记录
      */
     <T> int updateSelective(T entity, ConditionWrapper<T> wrapper);
 
     /**
-     * 根据条件修改一条记录(只修改entity中属性值 !=null 的字段，主键不会被修改)
+     * 根据条件修改一条记录(只修改entity中属性值 !=null 的字段)
      */
     <T> int updateByCondition(T entity, String condition, Object... params);
 
     /**
-     * 根据条件修改一条记录(主键不会被修改)
+     * 根据条件修改一条记录
      * @param addNullField 是否允许修改值=null的字段
      */
     <T> int updateByCondition(T entity, boolean addNullField, String condition, Object... params);

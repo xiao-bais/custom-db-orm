@@ -22,9 +22,9 @@ public class DoMain {
 
         Student student = jdbcDao.selectByKey(Student.class, 13);
 
-        student.setPassword("qweqwe");
+        student.setPassword("aaaaaa");
         student.setNickName(null);
-        jdbcDao.updateByCondition(student, "a.id = ?", student.getId());
+        jdbcDao.updateByCondition(student, true, "a.id = ?", student.getId());
 
 
     }

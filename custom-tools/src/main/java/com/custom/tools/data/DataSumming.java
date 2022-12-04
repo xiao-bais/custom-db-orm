@@ -10,7 +10,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author Xiao-Bai
@@ -86,6 +85,8 @@ public class DataSumming<T> {
                     else if (Double.class.isAssignableFrom(implFuncType)) {
                         method.invoke(total, thisVal.doubleValue());
                     }
+
+                    // do other ignore...
 
                 }
             }

@@ -12,9 +12,7 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * @Author Xiao-Bai
@@ -31,6 +29,7 @@ public class JdbcDaoProxy implements InvocationHandler, Serializable {
 
     private final AbstractSqlExecutor sqlExecutor;
     private final static List<Method> CUSTOMIZE_METHOD_CACHES;
+    private final static Map<Class<?>, Class<?>> PRIMITIVE_MAPPED;
 
     public JdbcDaoProxy(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         sqlExecutor = new JdbcActionProxy(new JdbcAction(), dbDataSource, dbCustomStrategy).createProxy();
@@ -39,7 +38,19 @@ public class JdbcDaoProxy implements InvocationHandler, Serializable {
     static {
         Method[] declaredMethods = JdbcAction.class.getDeclaredMethods();
         CUSTOMIZE_METHOD_CACHES = new ArrayList<>((Arrays.asList(declaredMethods)));
+        PRIMITIVE_MAPPED = new HashMap<>(8);
+        PRIMITIVE_MAPPED.put(Integer.TYPE, Integer.class);
+        PRIMITIVE_MAPPED.put(Long.TYPE, Long.class);
+        PRIMITIVE_MAPPED.put(Short.TYPE, Short.class);
+        PRIMITIVE_MAPPED.put(Double.TYPE, Double.class);
+        PRIMITIVE_MAPPED.put(Float.TYPE, Float.class);
+        PRIMITIVE_MAPPED.put(Byte.TYPE, Byte.class);
+        PRIMITIVE_MAPPED.put(Character.TYPE, Character.class);
+        PRIMITIVE_MAPPED.put(Boolean.TYPE, Boolean.class);
+
     }
+
+
 
 
     @Override
@@ -69,8 +80,15 @@ public class JdbcDaoProxy implements InvocationHandler, Serializable {
                         if (ConditionWrapper.class.isAssignableFrom(thisClass)) {
                             return !Object.class.equals(targetClass);
                         }
+                        // target 目标参数类型
+                        // this 本次传递的参数类型
                         if (targetClass.isAssignableFrom(thisClass)) {
                             targetIndex++;
+                        }else if (targetClass.isPrimitive()) {
+                            Class<?> primitiveClass = PRIMITIVE_MAPPED.get(targetClass);
+                            if (thisClass.equals(primitiveClass)) {
+                                targetIndex++;
+                            }
                         }
                     }
                     return targetIndex == len;

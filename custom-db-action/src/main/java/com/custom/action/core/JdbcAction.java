@@ -467,8 +467,7 @@ public class JdbcAction extends AbstractSqlExecutor {
     }
 
     public <T> int updateByCondition(T entity, String condition, Object... params) {
-        System.out.println("aaa");
-        return updateByCondition(entity, true, condition, params);
+        return updateByCondition(entity, false, condition, params);
     }
 
     @Override
