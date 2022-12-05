@@ -1,7 +1,7 @@
 package com.custom.action.proxy;
 
 import com.custom.action.condition.AbstractUpdateSet;
-import com.custom.action.condition.UpdateSetWrapper;
+import com.custom.action.condition.AbstractUpdateSetWrapper;
 import com.custom.action.dbaction.AbstractSqlExecutor;
 import com.custom.action.core.JdbcAction;
 import com.custom.action.util.DbUtil;
@@ -148,7 +148,7 @@ public class JdbcActionProxy implements MethodInterceptor {
         if (methodName.equals("updateSelective")) {
             try {
                 AbstractUpdateSet<?> updateSet = (AbstractUpdateSet<?>) objects[0];
-                UpdateSetWrapper<?> updateSetWrapper = updateSet.getUpdateSetWrapper();
+                AbstractUpdateSetWrapper<?> updateSetWrapper = updateSet.getUpdateSetWrapper();
                 ConditionWrapper<?> conditionWrapper = updateSet.getConditionWrapper();
                 if (updateSetWrapper == null || JudgeUtil.isEmpty(updateSetWrapper.getSqlSetter())) {
                     throw new CustomCheckException("Set value cannot be empty");

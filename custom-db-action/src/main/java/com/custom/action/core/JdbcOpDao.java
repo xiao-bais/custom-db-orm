@@ -286,17 +286,17 @@ public class JdbcOpDao {
     }
 
     /**
+     * 根据主键修改一条记录(只修改entity中属性值 !=null 的字段)
+     */
+    public <T> int updateByKeySelective(T entity) {
+        return jdbcAction.updateByKeySelective(entity);
+    }
+
+    /**
      * 根据条件修改一条记录
      */
     public <T> int updateSelective(T entity, ConditionWrapper<T> wrapper) {
         return jdbcAction.updateSelective(entity, wrapper);
-    }
-
-    /**
-     * 根据主键修改一条记录(只修改entity中属性值 !=null 的字段)
-     */
-    public <T> int updateByKeySelective(T entity) {
-        return jdbcAction.updateByKey(entity);
     }
 
     /**
@@ -308,7 +308,7 @@ public class JdbcOpDao {
 
     public <T> int updateByCondition(T entity, boolean addNullField, String condition, Object... params) {
         return jdbcAction.updateByCondition(entity, addNullField, condition, params);
-    }
+    } 
 
     /**
      * 根据sql set设置器修改n条记录，

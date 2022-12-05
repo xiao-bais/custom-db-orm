@@ -506,7 +506,7 @@ public class JdbcAction extends AbstractSqlExecutor {
     public <T> int updateSelective(AbstractUpdateSet<T> updateSet) {
         Class<T> entityClass = updateSet.thisEntityClass();
         HandleUpdateSqlBuilder<T> sqlBuilder = TableInfoCache.getUpdateSqlBuilderCache(entityClass, executorFactory);
-        UpdateSetWrapper<T> updateSetWrapper = updateSet.getUpdateSetWrapper();
+        AbstractUpdateSetWrapper<T> updateSetWrapper = updateSet.getUpdateSetWrapper();
         ConditionWrapper<T> conditionWrapper = updateSet.getConditionWrapper();
 
         try {
