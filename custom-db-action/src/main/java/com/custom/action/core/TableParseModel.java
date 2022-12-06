@@ -1,5 +1,6 @@
 package com.custom.action.core;
 
+import com.custom.action.condition.DefaultColumnParseHandler;
 import com.custom.comm.annotations.*;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.*;
@@ -103,6 +104,8 @@ public class TableParseModel<T> implements Cloneable {
      */
     private List<ColumnPropertyMap<T>> columnPropertyMaps;
 
+    private List<PropertyDescriptor> propertyList;
+
 
     /**
      * 创建表结构
@@ -184,14 +187,15 @@ public class TableParseModel<T> implements Cloneable {
         this.buildFieldModels();
 
         // 创建字段属性映射
-        try {
-            this.createColumnPropertyMaps();
-        } catch (IntrospectionException e) {
-            logger.error(e.toString(), e);
-        }
+        this.createColumnPropertyMaps();
 
         // 构建字段映射缓存
         this.buildMapper();
+        // 创建字段描述信息
+        this.createProperty();
+        // 创建Lambda解析缓存
+        DefaultColumnParseHandler.createColumnCache(this);
+
     }
 
     /**
@@ -219,6 +223,7 @@ public class TableParseModel<T> implements Cloneable {
         this.oneToOneFieldList = new ArrayList<>();
         this.oneToManyFieldList = new ArrayList<>();
         this.columnPropertyMaps = new ArrayList<>();
+        this.propertyList = new ArrayList<>();
     }
 
     /**
@@ -403,6 +408,10 @@ public class TableParseModel<T> implements Cloneable {
         return joinTableParserModels;
     }
 
+    public List<PropertyDescriptor> getPropertyList() {
+        return propertyList;
+    }
+
     /**
      * 是否存在一对一，一对多的结果注入
      */
@@ -484,7 +493,7 @@ public class TableParseModel<T> implements Cloneable {
      * <li>此方法与{@link #buildMapper()} 的字段映射缓存不同，可以说是{@link #buildMapper()}的一个升级版</li>
      * <li>创建此对象并不会让{@link #buildMapper()}受到任何影响，两者均可正常使用</li>
      */
-    private void createColumnPropertyMaps() throws IntrospectionException {
+    private void createColumnPropertyMaps() {
         boolean isKeyProperty = true;
         // 全部字段
         for (Field field : this.fields) {
@@ -501,7 +510,13 @@ public class TableParseModel<T> implements Cloneable {
             cpMap.setPropertyType(fieldType);
             cpMap.setTargetClass(this.entityClass);
 
-            PropertyDescriptor descriptor = new PropertyDescriptor(fieldName, this.entityClass);
+            PropertyDescriptor descriptor = null;
+            try {
+                descriptor = new PropertyDescriptor(fieldName, this.entityClass);
+            } catch (IntrospectionException e) {
+                logger.error(e.toString(), e);
+                return;
+            }
             Method readMethod = descriptor.getReadMethod();
             cpMap.setGetMethodName(readMethod.getName());
 
@@ -530,6 +545,18 @@ public class TableParseModel<T> implements Cloneable {
             this.columnPropertyMaps.add(cpMap);
         }
 
+    }
+
+
+    /**
+     * 初始化所有字段描述信息
+     */
+    private void createProperty() {
+        try {
+            this.propertyList = ReflectUtil.getProperties(this.entityClass);
+        } catch (IntrospectionException e) {
+            logger.error(e.toString(), e);
+        }
     }
 
 

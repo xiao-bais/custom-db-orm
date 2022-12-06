@@ -8,6 +8,7 @@ import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.annotations.DbMapper;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 
 /**

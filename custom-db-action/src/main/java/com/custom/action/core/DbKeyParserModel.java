@@ -13,6 +13,7 @@ import com.custom.comm.enums.KeyStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
@@ -100,9 +101,9 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
         Object key = null;
         switch (strategy) {
             case AUTO:
-                if(type.equals(Integer.class) || type.equals(int.class)) {
+                if(type.equals(Integer.class) || type.equals(Integer.TYPE)) {
                     key = 0;
-                }else if(type.equals(Long.class) || type.equals(long.class)) {
+                }else if(type.equals(Long.class) || type.equals(Long.TYPE)) {
                     key = 0L;
                 }
                 break;

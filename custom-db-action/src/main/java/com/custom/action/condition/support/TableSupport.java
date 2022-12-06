@@ -1,5 +1,7 @@
 package com.custom.action.condition.support;
 
+import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,4 +30,9 @@ public interface TableSupport {
      * sql字段到java字段的映射
      */
     Map<String, String> columnMap();
+
+    /**
+     * 所有字段
+     */
+    List<Field> fields();
 }

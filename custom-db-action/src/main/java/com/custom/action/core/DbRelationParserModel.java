@@ -8,6 +8,7 @@ import com.custom.comm.annotations.DbRelated;
 import com.custom.comm.annotations.DbTable;
 import com.custom.comm.enums.DbJoinStyle;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 
 /**

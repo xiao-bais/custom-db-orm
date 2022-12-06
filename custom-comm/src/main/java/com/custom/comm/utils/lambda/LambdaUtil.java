@@ -4,9 +4,13 @@ import com.custom.comm.exceptions.CustomCheckException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.invoke.SerializedLambda;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Xiao-Bai
@@ -17,15 +21,34 @@ import java.util.Objects;
 public final class LambdaUtil {
 
     /**
+     * FUNCTION 函数的缓存
+     */
+    private final static Map<String, WeakReference<SerializedLambda>> FUNCTION_CACHE = new ConcurrentHashMap<>();
+
+    /**
      * 解析 Lambda 表达式, 从SFunction中获取序列化的信息
      * @param function 表达式
      * @param <T> 对象类型
      * @return {@link SerializedLambda}
      */
     public static <T> SerializedLambda resolve(SFunction<T, ?> function) {
-        Method writeMethod;
-        SerializedLambda serializedLambda = null;
+        Class<?> aClass = function.getClass();
+        String canonicalName = aClass.getCanonicalName();
+        return Optional.ofNullable(FUNCTION_CACHE.get(canonicalName))
+                .map(WeakReference::get)
+                .orElseGet(() -> {
+                    SerializedLambda serializedLambda = startParse(function);
+                    FUNCTION_CACHE.put(canonicalName, new WeakReference<>(serializedLambda));
+                    return serializedLambda;
+                });
+    }
 
+    /**
+     * 解析函数
+     */
+    private static <T> SerializedLambda startParse(SFunction<T, ?> function) {
+        SerializedLambda serializedLambda = null;
+        Method writeMethod;
         try {
             // 从function中取出序列化方法
             writeMethod = function.getClass().getDeclaredMethod("writeReplace");
@@ -40,7 +63,6 @@ public final class LambdaUtil {
         if (Objects.isNull(serializedLambda)) {
             throw new CustomCheckException("Unable to parse：" + function);
         }
-
         return serializedLambda;
     }
 

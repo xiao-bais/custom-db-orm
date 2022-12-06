@@ -4,6 +4,8 @@ import com.custom.action.condition.support.TableSupport;
 import com.custom.action.core.TableInfoCache;
 import com.custom.action.core.TableParseModel;
 
+import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,6 +35,11 @@ public class TableSimpleSupport<T> implements TableSupport {
     @Override
     public Map<String, String> columnMap() {
         return parseModel.getColumnMapper();
+    }
+
+    @Override
+    public List<Field> fields() {
+        return parseModel.getFields();
     }
 
 

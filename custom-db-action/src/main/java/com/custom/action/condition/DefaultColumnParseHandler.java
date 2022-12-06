@@ -1,9 +1,12 @@
 package com.custom.action.condition;
 
+import com.custom.action.condition.support.TableSupport;
+import com.custom.action.core.DbKeyParserModel;
 import com.custom.action.interfaces.ColumnParseHandler;
 import com.custom.action.core.ColumnPropertyMap;
 import com.custom.action.core.TableInfoCache;
 import com.custom.action.core.TableParseModel;
+import com.custom.comm.utils.ReflectUtil;
 import com.custom.comm.utils.lambda.LambdaUtil;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.JudgeUtil;
@@ -12,9 +15,13 @@ import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.lambda.SFunction;
 import lombok.extern.slf4j.Slf4j;
 
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
 import java.lang.invoke.SerializedLambda;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -31,7 +38,19 @@ public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {
     /**
      * 每个对象的Function函数，java属性，以及sql字段名称缓存
      */
-    private final List<ColumnPropertyMap<T>> columnParseList;
+    private List<ColumnPropertyMap<T>> columnParseList;
+
+    /**
+     * 表中对字段的映射
+     */
+    private final static Map<String, Map<String, ColumnFieldCache>> COLUMN_CACHE = new ConcurrentHashMap<>();
+
+    public DefaultColumnParseHandler(Class<T> thisClass, TableSupport tableSupport) {
+        this.thisClass = thisClass;
+        this.fieldMapper = tableSupport.fieldMap();
+        this.fieldList = tableSupport.fields();
+
+    }
 
     public DefaultColumnParseHandler(Class<T> thisClass) {
         this.thisClass = thisClass;
@@ -44,6 +63,25 @@ public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {
         }
         this.fieldList = tableModel.getFields();
     }
+
+
+    /**
+     * 创建表与字段的映射缓存
+     */
+    public static <T> Map<String, ColumnFieldCache> createColumnCache(TableParseModel<T> tableModel) {
+        Map<String, ColumnFieldCache> cacheMap = new HashMap<>();
+        List<PropertyDescriptor> properties = tableModel.getPropertyList();
+        for (PropertyDescriptor property : properties) {
+            String getter = property.getReadMethod().getName();
+            String field = property.getName();
+            String column = tableModel.getFieldMapper().get(field);
+            ColumnFieldCache fieldCache = new ColumnFieldCache(field, getter, column);
+            cacheMap.put(property.getReadMethod().getName(), fieldCache);
+        }
+        COLUMN_CACHE.put(tableModel.getEntityClass().getName(), cacheMap);
+        return cacheMap;
+    }
+
 
     @Override
     public Class<T> getThisClass() {
@@ -64,23 +102,14 @@ public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {
         SerializedLambda serializedLambda = LambdaUtil.resolve(func);
         String implMethodName = serializedLambda.getImplMethodName();
 
-        List<ColumnPropertyMap<T>> columnPropertyMaps = columnParseList.stream()
-                .filter(op -> op.getGetMethodName().equals(implMethodName))
-                .collect(Collectors.toList());
+        Map<String, ColumnFieldCache> fieldCacheMap = Optional.ofNullable(COLUMN_CACHE.get(thisClass.getName()))
+                .orElseGet(() -> createColumnCache(TableInfoCache.getTableModel(thisClass)));
 
-        if (JudgeUtil.isEmpty(columnPropertyMaps)) {
+        ColumnFieldCache fieldCache = fieldCacheMap.get(implMethodName);
+        if (fieldCache == null) {
             throw new CustomCheckException("Cannot find a matching property with method name: '%s'", implMethodName);
         }
-
-        else if (columnPropertyMaps.size() > 1) {
-            StringJoiner expMethodNames = new StringJoiner(Constants.SEPARATOR_COMMA_2);
-            columnPropertyMaps.stream()
-                    .map(ColumnPropertyMap::getGetMethodName)
-                    .forEach(expMethodNames::add);
-            throw new CustomCheckException("Lambda parsing error, found multiple matching results: " + expMethodNames);
-        }
-
-        return columnPropertyMaps.get(0).getPropertyName();
+        return fieldCache.getField();
     }
 
 
