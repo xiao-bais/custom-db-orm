@@ -1,5 +1,6 @@
 package com.custom.action.condition;
 
+import com.custom.action.core.TableSimpleSupport;
 import com.custom.action.interfaces.ColumnParseHandler;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.CustomUtil;
@@ -41,7 +42,8 @@ public abstract class UpdateSetWrapper<T> {
         this.sqlSetter = new StringJoiner(Constants.SEPARATOR_COMMA_2);
         this.setParams = new ArrayList<>();
         this.entityClass = entityClass;
-        this.columnParseHandler = new DefaultColumnParseHandler<>(entityClass);
+        TableSimpleSupport<T> simpleSupport = new TableSimpleSupport<>(entityClass);
+        this.columnParseHandler = new DefaultColumnParseHandler<>(entityClass, simpleSupport);
     }
 
     public Class<T> thisEntityClass() {

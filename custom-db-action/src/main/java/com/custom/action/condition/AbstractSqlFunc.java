@@ -108,8 +108,8 @@ public abstract class AbstractSqlFunc<T, Children> {
 
     // 初始化
     protected void initNeed(Class<T> cls) {
-        columnParseHandler = new DefaultColumnParseHandler<>(cls);
         TableSupport tableSupport = new TableSimpleSupport<>(cls);
+        columnParseHandler = new DefaultColumnParseHandler<>(cls, tableSupport);
         fieldMapper = tableSupport.fieldMap();
         columnMapper = tableSupport.columnMap();
         alias = tableSupport.alias();

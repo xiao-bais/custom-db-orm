@@ -35,10 +35,6 @@ public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {
     private final Class<T> thisClass;
     private final List<Field> fieldList;
     private final Map<String, String> fieldMapper;
-    /**
-     * 每个对象的Function函数，java属性，以及sql字段名称缓存
-     */
-    private List<ColumnPropertyMap<T>> columnParseList;
 
     /**
      * 表中对字段的映射
@@ -49,20 +45,8 @@ public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {
         this.thisClass = thisClass;
         this.fieldMapper = tableSupport.fieldMap();
         this.fieldList = tableSupport.fields();
-
     }
 
-    public DefaultColumnParseHandler(Class<T> thisClass) {
-        this.thisClass = thisClass;
-        TableParseModel<T> tableModel = TableInfoCache.getTableModel(thisClass);
-        this.fieldMapper = TableInfoCache.getFieldMap(thisClass);
-        this.columnParseList = tableModel.columnPropertyMaps();
-
-        if (JudgeUtil.isEmpty(columnParseList)) {
-            throw new CustomCheckException("该类找不到可解析的字段：" + this.thisClass);
-        }
-        this.fieldList = tableModel.getFields();
-    }
 
 
     /**
@@ -132,4 +116,6 @@ public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {
         String implMethodName = serializedLambda.getImplMethodName();
         return ColumnPropertyMap.parse2Column(thisClass, implMethodName);
     }
+
+
 }

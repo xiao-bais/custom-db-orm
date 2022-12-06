@@ -233,7 +233,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
         }else {
             this.tableSupport = tableSupport;
         }
-        this.columnParseHandler = new DefaultColumnParseHandler<>(entityClass);
+        this.columnParseHandler = new DefaultColumnParseHandler<>(entityClass, this.tableSupport);
         this.dataStructureInit();
     }
 

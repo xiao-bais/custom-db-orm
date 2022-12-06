@@ -1,6 +1,8 @@
 package com.custom.joiner.core;
 
 import com.custom.action.condition.DefaultColumnParseHandler;
+import com.custom.action.condition.support.TableSupport;
+import com.custom.action.core.TableSimpleSupport;
 import com.custom.comm.utils.lambda.SFunction;
 import com.custom.action.interfaces.ColumnParseHandler;
 import com.custom.action.core.ColumnPropertyMap;
@@ -187,7 +189,8 @@ public abstract class AbstractJoinConditional<T> {
         this.joinParamList = new ArrayList<>();
         this.joinList = new ArrayList<>();
         this.joinClass = joinClass;
-        this.joinParserHandler = new DefaultColumnParseHandler<>(joinClass);
+        TableSupport tableSupport = new TableSimpleSupport<>(joinClass);
+        this.joinParserHandler = new DefaultColumnParseHandler<>(joinClass, tableSupport);
     }
 
     public Class<T> getJoinClass() {

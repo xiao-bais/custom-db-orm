@@ -1,6 +1,8 @@
 package com.custom.joiner.core;
 
 import com.custom.action.condition.DefaultColumnParseHandler;
+import com.custom.action.condition.support.TableSupport;
+import com.custom.action.core.TableSimpleSupport;
 import com.custom.action.interfaces.ColumnParseHandler;
 import com.custom.action.core.TableInfoCache;
 import com.custom.action.core.TableParseModel;
@@ -37,10 +39,10 @@ public class AbstractJoinWrapper<T> extends LambdaJoinConditionWrapper<T> {
 
     protected AbstractJoinWrapper(Class<T> thisClass) {
         this.thisClass = thisClass;
-        this.thisColumnParseHandler = new DefaultColumnParseHandler<>(thisClass);
-        TableParseModel<T> tableModel = TableInfoCache.getTableModel(this.thisClass);
+        TableSupport tableSupport = new TableSimpleSupport<>(thisClass);
+        this.thisColumnParseHandler = new DefaultColumnParseHandler<>(thisClass, tableSupport);
 //        this.primaryTableName = tableModel.getTable();
-        this.primaryTableAlias = tableModel.getAlias();
+        this.primaryTableAlias = tableSupport.alias();
         this.joinTableList = new ArrayList<>();
         this.aliasList = new ArrayList<>();
     }
