@@ -3,6 +3,7 @@ package com.custom.action.condition;
 import com.custom.action.condition.support.TableSupport;
 import com.custom.action.core.TableSimpleSupport;
 import com.custom.action.interfaces.ColumnParseHandler;
+import com.custom.action.util.DbUtil;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
@@ -11,6 +12,7 @@ import com.custom.comm.utils.lambda.SFunction;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Xiao-Bai
@@ -321,6 +323,75 @@ public abstract class ConditionWrapper<T> implements Serializable {
             }
         }
         setSelectColumns(newSelectColumns);
+    }
+
+    /**
+     * 返回一个可执行的对象
+     */
+    public ThisQuery getThisQuery() {
+        StringBuilder selectSql = new StringBuilder();
+        String format = "SELECT %s FROM %s %s";
+        StringJoiner selectColumnSql = new StringJoiner(", ");
+        if (this.selectColumns != null) {
+            for (String column : selectColumns) {
+                String aColumn = column;
+                if (Objects.nonNull(column) && !column.contains(Constants.POINT)
+                        && !column.contains(Constants.BRACKETS_LEFT) && !column.contains(Constants.BRACKETS_RIGHT)) {
+                    aColumn = tableSupport.alias() + Constants.POINT + column;
+                }
+                String field = tableSupport.columnMap().get(aColumn);
+                selectColumnSql.add(field == null ? aColumn : String.format("%s %s", aColumn, field));
+            }
+
+        }else {
+            tableSupport.columnMap().forEach((key, val) -> {
+                selectColumnSql.add(String.format("%s %s", key, val));
+            });
+        }
+        selectSql.append(String.format(format, selectColumnSql, tableSupport.table(), tableSupport.alias()));
+
+        // 拼接条件
+        if (JudgeUtil.isNotEmpty(finalConditional)) {
+            String finalConditional = getFinalConditional();
+            selectSql.append(String.format(" WHERE (%s) ", DbUtil.trimSqlCondition(finalConditional)));
+        }
+
+        List<Object> params = new ArrayList<>(paramValues);
+
+        // 收集剩余参数以及sql
+        collectParams(selectSql, params);
+
+        // 分页
+        if (hasPageParams()) {
+            selectSql.append(String.format("%s \nLIMIT %s, %s", selectSql, (pageIndex - 1) * pageSize, pageSize));
+        }
+
+        ThisQuery thisQuery = new ThisQuery();
+        thisQuery.setSelectSql(selectSql.toString());
+        thisQuery.setParams(params);
+        return thisQuery;
+    }
+
+    /**
+     * 收集所有参数
+     */
+    private void collectParams(StringBuilder selectSql, List<Object> params) {
+        // group by
+        if (JudgeUtil.isNotEmpty(groupBy)) {
+            selectSql.append(Constants.GROUP_BY).append(groupBy);
+        }
+        // having
+        if (JudgeUtil.isNotEmpty(having)) {
+            selectSql.append(Constants.HAVING).append(having);
+        }
+        // order by
+        if (JudgeUtil.isNotEmpty(orderBy)) {
+            selectSql.append(Constants.ORDER_BY).append(orderBy);
+        }
+        // having params
+        if (!JudgeUtil.isNotEmpty(havingParams)) {
+            params.addAll(havingParams);
+        }
     }
 
 
