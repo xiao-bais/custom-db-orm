@@ -1,4 +1,4 @@
-package com.custom.action.condition;
+package com.custom.action.core;
 
 import com.custom.action.condition.support.TableSupport;
 import com.custom.action.core.TableInfoCache;

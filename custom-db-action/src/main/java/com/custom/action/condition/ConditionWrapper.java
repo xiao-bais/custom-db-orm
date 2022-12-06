@@ -1,6 +1,7 @@
 package com.custom.action.condition;
 
 import com.custom.action.condition.support.TableSupport;
+import com.custom.action.core.TableSimpleSupport;
 import com.custom.action.interfaces.ColumnParseHandler;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.CustomUtil;
