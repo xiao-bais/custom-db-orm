@@ -109,12 +109,8 @@ public abstract class ConditionWrapper<T> implements Serializable {
     }
 
     protected void addParams(Object param) {
-        if (param instanceof List) {
-            addParams((List<Object>) param);
-            return;
-        }
-        if (param instanceof Set) {
-            addParams((Set<Object>) param);
+        if (param instanceof Collection) {
+            this.paramValues.addAll((Collection<?>) param);
             return;
         }
         this.paramValues.add(param);
@@ -125,10 +121,6 @@ public abstract class ConditionWrapper<T> implements Serializable {
     }
 
     protected void addParams(List<Object> params) {
-        this.paramValues.addAll(params);
-    }
-
-    protected void addParams(Set<Object> params) {
         this.paramValues.addAll(params);
     }
 
