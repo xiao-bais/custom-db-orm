@@ -1,8 +1,8 @@
 package com.custom.jdbc.dbAdapetr;
 
 import com.custom.comm.utils.ConvertUtil;
-import com.custom.jdbc.condition.BaseExecutorModel;
-import com.custom.jdbc.condition.SelectExecutorModel;
+import com.custom.jdbc.condition.BaseExecutorBody;
+import com.custom.jdbc.condition.SelectExecutorBody;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.executor.CustomJdbcExecutor;
 import com.custom.jdbc.interfaces.DatabaseAdapter;
@@ -24,14 +24,14 @@ public abstract class AbstractDbAdapter implements DatabaseAdapter {
     /**
      * 创建SQL请求
      */
-    protected CustomSqlSession createSqlSession(BaseExecutorModel model) {
+    protected CustomSqlSession createSqlSession(BaseExecutorBody model) {
         SqlSessionExecutor sessionExecutor = (connection) -> new CustomSqlSession(connection, model);
         Connection connection = DbConnGlobal.getCurrentConnection(dbDataSource);
         return sessionExecutor.createSession(connection);
     }
 
-    protected boolean queryBoolean(SelectExecutorModel<Long> selectExecutorModel) {
-        CustomSqlSession sqlSession = this.createSqlSession(selectExecutorModel);
+    protected boolean queryBoolean(SelectExecutorBody<Long> selectExecutorBody) {
+        CustomSqlSession sqlSession = this.createSqlSession(selectExecutorBody);
         CustomJdbcExecutor jdbcExecutor = getJdbcExecutor();
 
         Object res;

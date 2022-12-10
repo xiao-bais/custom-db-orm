@@ -2,7 +2,7 @@ package com.custom.action.dbaction;
 
 import com.custom.action.condition.AbstractUpdateSet;
 import com.custom.action.core.HandleSelectSqlBuilder;
-import com.custom.action.core.MappingResultInjector;
+import com.custom.action.core.MultiResultInjector;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.page.DbPageRows;
@@ -104,7 +104,7 @@ public abstract class AbstractSqlExecutor  {
      */
     protected <T> void injectOtherResult(Class<T> entityClass, HandleSelectSqlBuilder<T> sqlBuilder, T result) throws Exception {
         if (sqlBuilder.isExistNeedInjectResult() && result != null) {
-            MappingResultInjector<T> resultInjector = new MappingResultInjector<>(entityClass, this);
+            MultiResultInjector<T> resultInjector = new MultiResultInjector<>(entityClass, this);
             resultInjector.injectorValue(Collections.singletonList(result));
         }
     }
@@ -114,7 +114,7 @@ public abstract class AbstractSqlExecutor  {
      */
     protected <T> void injectOtherResult(Class<T> entityClass, HandleSelectSqlBuilder<T> sqlBuilder, List<T> result) throws Exception {
         if (sqlBuilder.isExistNeedInjectResult()) {
-            MappingResultInjector<T> resultInjector = new MappingResultInjector<>(entityClass, this);
+            MultiResultInjector<T> resultInjector = new MultiResultInjector<>(entityClass, this);
             resultInjector.injectorValue(result);
         }
     }

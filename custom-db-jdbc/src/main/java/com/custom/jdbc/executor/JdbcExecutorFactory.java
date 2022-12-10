@@ -4,10 +4,10 @@ import com.custom.comm.enums.DatabaseType;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.ConvertUtil;
 import com.custom.comm.utils.StrUtils;
-import com.custom.jdbc.condition.BaseExecutorModel;
-import com.custom.jdbc.condition.SaveExecutorModel;
-import com.custom.jdbc.condition.SelectExecutorModel;
-import com.custom.jdbc.condition.SelectMapExecutorModel;
+import com.custom.jdbc.condition.BaseExecutorBody;
+import com.custom.jdbc.condition.SaveExecutorBody;
+import com.custom.jdbc.condition.SelectExecutorBody;
+import com.custom.jdbc.condition.SelectMapExecutorBody;
 import com.custom.jdbc.configuration.CustomConfigHelper;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
@@ -57,7 +57,7 @@ public class JdbcExecutorFactory {
     /**
      * 创建请求会话
      */
-    private CustomSqlSession createSqlSession(BaseExecutorModel paramInfo) {
+    private CustomSqlSession createSqlSession(BaseExecutorBody paramInfo) {
         SqlSessionExecutor sessionExecutor = (connection) -> new CustomSqlSession(connection, paramInfo);
         Connection connection = DbConnGlobal.getCurrentConnection(dbDataSource);
         return sessionExecutor.createSession(connection);
@@ -134,7 +134,7 @@ public class JdbcExecutorFactory {
      * 查询数组
      */
     public <T> T[] selectArrays(Class<T> t, String sql, Object... params) throws Exception {
-        SelectExecutorModel<T> paramInfo = new SelectExecutorModel<>(t, sql, params);
+        SelectExecutorBody<T> paramInfo = new SelectExecutorBody<>(t, sql, params);
         CustomSqlSession sqlSession = this.createSqlSession(paramInfo);
         return jdbcExecutor.selectArrays(sqlSession);
     }
@@ -144,7 +144,7 @@ public class JdbcExecutorFactory {
      * 纯sql查询集合
      */
     public <T> List<T> selectBySql(Class<T> t, String sql, Object... params) throws Exception {
-        SelectExecutorModel<T> paramInfo = new SelectExecutorModel<>(t, sql, params);
+        SelectExecutorBody<T> paramInfo = new SelectExecutorBody<>(t, sql, params);
         CustomSqlSession sqlSession = this.createSqlSession(paramInfo);
         return jdbcExecutor.selectList(sqlSession);
     }
@@ -153,7 +153,7 @@ public class JdbcExecutorFactory {
      * 查询单列的Set集合
      */
     public <T> Set<T> selectSetBySql(Class<T> t, String sql, Object... params) throws Exception {
-        SelectExecutorModel<T> paramInfo = new SelectExecutorModel<>(t, sql, params);
+        SelectExecutorBody<T> paramInfo = new SelectExecutorBody<>(t, sql, params);
         CustomSqlSession sqlSession = this.createSqlSession(paramInfo);
         return jdbcExecutor.selectSet(sqlSession);
     }
@@ -162,7 +162,7 @@ public class JdbcExecutorFactory {
      * 纯sql查询单条记录
      */
     public <T> T selectOneSql(Class<T> t, String sql, Object... params) throws Exception {
-        SelectExecutorModel<T> paramInfo = new SelectExecutorModel<>(t, sql, params);
+        SelectExecutorBody<T> paramInfo = new SelectExecutorBody<>(t, sql, params);
         CustomSqlSession sqlSession = this.createSqlSession(paramInfo);
         return jdbcExecutor.selectOne(sqlSession);
     }
@@ -175,7 +175,7 @@ public class JdbcExecutorFactory {
     }
 
     public <V> Map<String, V> selectMapBySql(Class<V> t, String sql, Object... params) throws Exception {
-        SelectExecutorModel<V> paramInfo = new SelectExecutorModel<>(t, sql, params);
+        SelectExecutorBody<V> paramInfo = new SelectExecutorBody<>(t, sql, params);
         CustomSqlSession sqlSession = this.createSqlSession(paramInfo);
         return jdbcExecutor.selectOneMap(sqlSession);
     }
@@ -184,7 +184,7 @@ public class JdbcExecutorFactory {
      * 纯sql查询多条记录(映射到Map)
      */
     public List<Map<String, Object>> selectMapsBySql(String sql, Object... params) throws Exception {
-        SelectExecutorModel<Object> paramInfo = new SelectExecutorModel<>(Object.class, sql, params);
+        SelectExecutorBody<Object> paramInfo = new SelectExecutorBody<>(Object.class, sql, params);
         CustomSqlSession sqlSession = this.createSqlSession(paramInfo);
         return jdbcExecutor.selectListMap(sqlSession);
     }
@@ -197,7 +197,7 @@ public class JdbcExecutorFactory {
     }
 
     public Object selectObjBySql(boolean sqlPrintSupport, String sql, Object... params) throws Exception {
-        SelectExecutorModel<Object> paramInfo = new SelectExecutorModel<>(Object.class, sql, sqlPrintSupport, params);
+        SelectExecutorBody<Object> paramInfo = new SelectExecutorBody<>(Object.class, sql, sqlPrintSupport, params);
         CustomSqlSession sqlSession = this.createSqlSession(paramInfo);
         return jdbcExecutor.selectObj(sqlSession);
     }
@@ -210,7 +210,7 @@ public class JdbcExecutorFactory {
     }
 
     public <T> List<T> selectObjsBySql(Class<T> t, boolean sqlPrintSupport, String sql, Object... params) throws Exception {
-        SelectExecutorModel<T> paramInfo = new SelectExecutorModel<>(t, sql, sqlPrintSupport, params);
+        SelectExecutorBody<T> paramInfo = new SelectExecutorBody<>(t, sql, sqlPrintSupport, params);
         CustomSqlSession sqlSession = this.createSqlSession(paramInfo);
         return jdbcExecutor.selectObjs(sqlSession);
     }
@@ -219,7 +219,7 @@ public class JdbcExecutorFactory {
      * 查询映射列表，一般用于聚合查询，并仅限于查询两列
      */
     public <K, V> Map<K, V> selectMap(Class<K> kClass, Class<V> vClass, String sql, Object... params) throws Exception {
-        SelectMapExecutorModel<K, V> selectMapExecutorModel = new SelectMapExecutorModel<>(sql, true, params, kClass, vClass);
+        SelectMapExecutorBody<K, V> selectMapExecutorModel = new SelectMapExecutorBody<>(sql, true, params, kClass, vClass);
         CustomSqlSession sqlSession = this.createSqlSession(selectMapExecutorModel);
         return jdbcExecutor.selectMap(sqlSession);
     }
@@ -228,7 +228,7 @@ public class JdbcExecutorFactory {
      * 纯sql增删改
      */
     public int executeAnySql(String sql, Object... params) throws Exception {
-        SaveExecutorModel<Object> paramInfo = new SaveExecutorModel<>(sql, true, params);
+        SaveExecutorBody<Object> paramInfo = new SaveExecutorBody<>(sql, true, params);
         CustomSqlSession sqlSession = this.createSqlSession(paramInfo);
         return jdbcExecutor.executeUpdate(sqlSession);
     }
@@ -237,7 +237,7 @@ public class JdbcExecutorFactory {
      * 直接执行查询，属于内部执行
      */
     public <T> List<T> executeQueryNotPrintSql(Class<T> t, String sql, Object... params) throws Exception {
-        SelectExecutorModel<T> paramInfo = new SelectExecutorModel<>(t, sql, false, params);
+        SelectExecutorBody<T> paramInfo = new SelectExecutorBody<>(t, sql, false, params);
         CustomSqlSession sqlSession = this.createSqlSession(paramInfo);
         return jdbcExecutor.selectList(sqlSession);
     }
@@ -246,7 +246,7 @@ public class JdbcExecutorFactory {
      * 创建/删除表
      */
     public void execTable(String sql) throws Exception {
-        BaseExecutorModel paramInfo = new BaseExecutorModel(sql, false, new Object[]{});
+        BaseExecutorBody paramInfo = new BaseExecutorBody(sql, false, new Object[]{});
         CustomSqlSession sqlSession = this.createSqlSession(paramInfo);
         jdbcExecutor.execTableInfo(sqlSession);
     }
@@ -255,7 +255,7 @@ public class JdbcExecutorFactory {
      * 查询该表是否存在
      */
     public boolean hasTableInfo(String sql) throws Exception {
-        BaseExecutorModel paramInfo = new BaseExecutorModel(sql, false, new Object[]{});
+        BaseExecutorBody paramInfo = new BaseExecutorBody(sql, false, new Object[]{});
         CustomSqlSession sqlSession = this.createSqlSession(paramInfo);
         Object obj = jdbcExecutor.selectObj(sqlSession);
         return ConvertUtil.conBool(obj);
@@ -265,7 +265,7 @@ public class JdbcExecutorFactory {
      * 添加
      */
     public <T> int executeInsert(String sql, List<T> obj, Field keyField, Object... params) throws Exception {
-        SaveExecutorModel<T> paramInfo = new SaveExecutorModel<>(obj, keyField, sql, true, params);
+        SaveExecutorBody<T> paramInfo = new SaveExecutorBody<>(obj, keyField, sql, true, params);
         CustomSqlSession sqlSession = this.createSqlSession(paramInfo);
         return jdbcExecutor.executeSave(sqlSession);
     }

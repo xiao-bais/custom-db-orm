@@ -17,9 +17,9 @@ import java.util.List;
  * @date 2022/8/22 18:16
  * @desc 一对一，一对多 value注入
  */
-public class MappingResultInjector<T> {
+public class MultiResultInjector<T> {
 
-    private final Logger logger = LoggerFactory.getLogger(MappingResultInjector.class);
+    private final Logger logger = LoggerFactory.getLogger(MultiResultInjector.class);
 
     /**
      * 主表的对象
@@ -31,10 +31,9 @@ public class MappingResultInjector<T> {
      */
     private final AbstractSqlExecutor sqlExecutor;
 
-    public MappingResultInjector(Class<T> thisClass, AbstractSqlExecutor sqlExecutor) {
+    public MultiResultInjector(Class<T> thisClass, AbstractSqlExecutor sqlExecutor) {
         this.thisClass = thisClass;
         this.sqlExecutor = sqlExecutor;
-        DbDataSource dbDataSource = sqlExecutor.getDbDataSource();
     }
 
 
@@ -58,24 +57,22 @@ public class MappingResultInjector<T> {
         List<Field> oneToManyFieldList = tableModel.getOneToManyFieldList();
         if (JudgeUtil.isNotEmpty(oneToManyFieldList)) {
             for (Field waitSetField : oneToManyFieldList) {
+
                 DbJoinToManyParseModel joinToManyParseModel = new DbJoinToManyParseModel(waitSetField);
                 Class<?> joinTarget = joinToManyParseModel.getJoinTarget();
+
                 HandleSelectSqlBuilder<?> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(joinTarget, sqlExecutor.getExecutorFactory());
                 String condPrefix = joinToManyParseModel.queryCondPrefix();
                 String condSuffix = joinToManyParseModel.queryCondSuffix();
 
                 for (T entity : entityList) {
-                    if (entity == null) {
-                        continue;
-                    }
-                    List<?> queryResult = this.queryResult(entity, joinToManyParseModel.getThisField(), condPrefix,
-                            condSuffix, joinTarget, sqlBuilder);
-                    if (queryResult == null) {
-                        continue;
-                    }
-                    if (JudgeUtil.isNotEmpty(queryResult)) {
-                        ReflectUtil.writeFieldValue(queryResult, entity,
-                                waitSetField.getName(), joinToManyParseModel.getJoinTarget());
+                    if (entity != null) {
+                        List<?> queryResult = this.queryResult(entity, joinToManyParseModel.getThisField(), condPrefix,
+                                condSuffix, joinTarget, sqlBuilder);
+                        if (JudgeUtil.isNotEmpty(queryResult)) {
+                            ReflectUtil.writeFieldValue(queryResult, entity,
+                                    waitSetField.getName(), joinToManyParseModel.getJoinTarget());
+                        }
                     }
                 }
             }
@@ -102,25 +99,26 @@ public class MappingResultInjector<T> {
             String condSuffix = joinToOneParseModel.queryCondSuffix();
 
             for (T entity : entityList) {
-                if (entity == null) {
-                    continue;
-                }
-                List<?> queryResult = this.queryResult(entity, joinToOneParseModel.getThisField(), condPrefix,
-                        condSuffix, joinTarget, sqlBuilder);
-                if (JudgeUtil.isNotEmpty(queryResult)) {
-                    if (queryResult.get(0) == null) {
-                        continue;
-                    } else if (queryResult.size() > 1 && joinToOneParseModel.isThrowErr()) {
-                        throw new CustomCheckException(joinToOneParseModel.getJoinTarget()
-                                + "One to one query, but %s results are found", queryResult.size());
+                if (entity != null) {
+                    List<?> queryResult = this.queryResult(entity, joinToOneParseModel.getThisField(), condPrefix,
+                            condSuffix, joinTarget, sqlBuilder);
+                    if (JudgeUtil.isNotEmpty(queryResult)) {
+                        if (queryResult.get(0) == null) {
+                            continue;
+                        } else if (queryResult.size() > 1 && joinToOneParseModel.isThrowErr()) {
+                            throw new CustomCheckException(joinToOneParseModel.getJoinTarget()
+                                    + "One to one query, but %s results are found", queryResult.size());
+                        }
+                        ReflectUtil.writeFieldValue(
+                                queryResult.get(0),
+                                entity,
+                                waitSetField.getName(),
+                                joinToOneParseModel.getJoinTarget()
+                        );
                     }
-                    ReflectUtil.writeFieldValue(
-                            queryResult.get(0),
-                            entity,
-                            waitSetField.getName(),
-                            joinToOneParseModel.getJoinTarget()
-                    );
                 }
+
+
             }
         }
     }

@@ -8,7 +8,7 @@ import java.util.List;
  * @Date 2022/6/17 21:50
  * @Desc
  */
-public class SaveExecutorModel<T> extends BaseExecutorModel {
+public class SaveExecutorBody<T> extends BaseExecutorBody {
 
     /**
      * 要插入的数据
@@ -20,17 +20,17 @@ public class SaveExecutorModel<T> extends BaseExecutorModel {
      */
     private Field keyField;
 
-    public SaveExecutorModel(List<T> dataList, Field keyField, String prepareSql, boolean sqlPrintSupport, Object[] sqlParams) {
+    public SaveExecutorBody(List<T> dataList, Field keyField, String prepareSql, boolean sqlPrintSupport, Object[] sqlParams) {
         super(prepareSql, sqlPrintSupport, sqlParams);
         this.dataList = dataList;
         this.keyField = keyField;
     }
 
-    public SaveExecutorModel(String prepareSql, boolean sqlPrintSupport, Object[] sqlParams) {
+    public SaveExecutorBody(String prepareSql, boolean sqlPrintSupport, Object[] sqlParams) {
         super(prepareSql, sqlPrintSupport, sqlParams);
     }
 
-    public SaveExecutorModel(String prepareSql, Object[] sqlParams) {
+    public SaveExecutorBody(String prepareSql, Object[] sqlParams) {
         super(prepareSql, true, sqlParams);
     }
 

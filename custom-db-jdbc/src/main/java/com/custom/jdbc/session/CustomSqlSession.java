@@ -1,7 +1,7 @@
 package com.custom.jdbc.session;
 
 import com.custom.jdbc.exceptions.SQLSessionException;
-import com.custom.jdbc.condition.BaseExecutorModel;
+import com.custom.jdbc.condition.BaseExecutorBody;
 import com.custom.jdbc.transaction.DbTransaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,7 @@ public class CustomSqlSession implements DbTransaction {
     /**
      * 执行体
      */
-    private final BaseExecutorModel executorModel;
+    private final BaseExecutorBody executorModel;
 
     /**
      * 数据源
@@ -35,11 +35,11 @@ public class CustomSqlSession implements DbTransaction {
     private DataSource dataSource;
     private boolean autoCommit = true;
 
-    public BaseExecutorModel getExecutorModel() {
+    public BaseExecutorBody getExecutorModel() {
         return executorModel;
     }
 
-    public CustomSqlSession(Connection currentConn, BaseExecutorModel executorModel) {
+    public CustomSqlSession(Connection currentConn, BaseExecutorBody executorModel) {
         if (currentConn == null) {
             throw new SQLSessionException("No JDBC connection obtained");
         }
@@ -47,7 +47,7 @@ public class CustomSqlSession implements DbTransaction {
         this.executorModel = executorModel;
     }
 
-    public CustomSqlSession(BaseExecutorModel executorModel, DataSource dataSource, boolean autoCommit) {
+    public CustomSqlSession(BaseExecutorBody executorModel, DataSource dataSource, boolean autoCommit) {
         this.executorModel = executorModel;
         this.dataSource = dataSource;
         this.autoCommit = autoCommit;

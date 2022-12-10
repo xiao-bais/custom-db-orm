@@ -1,10 +1,9 @@
 package com.custom.jdbc.dbAdapetr;
 
 import com.custom.comm.enums.DatabaseType;
-import com.custom.comm.page.DbPageRows;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.Constants;
-import com.custom.jdbc.condition.SelectExecutorModel;
+import com.custom.jdbc.condition.SelectExecutorBody;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.executor.CustomJdbcExecutor;
 
@@ -62,8 +61,8 @@ public class Mysql8Adapter extends AbstractDbAdapter {
 
         Asserts.npe(table);
         String targetSql = String.format(TABLE_EXISTS_SQL, table, this.databaseName());
-        SelectExecutorModel<Long> selectExecutorModel = new SelectExecutorModel<>(Long.class, targetSql, false);
-        return queryBoolean(selectExecutorModel);
+        SelectExecutorBody<Long> selectExecutorBody = new SelectExecutorBody<>(Long.class, targetSql, false);
+        return queryBoolean(selectExecutorBody);
     }
 
 
@@ -73,8 +72,8 @@ public class Mysql8Adapter extends AbstractDbAdapter {
         Asserts.npe(table);
         Asserts.npe(column);
         String targetSql = String.format(COLUMN_EXIST_SQL, this.databaseName(), table, column);
-        SelectExecutorModel<Long> selectExecutorModel = new SelectExecutorModel<>(Long.class, targetSql, false);
-        return queryBoolean(selectExecutorModel);
+        SelectExecutorBody<Long> selectExecutorBody = new SelectExecutorBody<>(Long.class, targetSql, false);
+        return queryBoolean(selectExecutorBody);
     }
 
     public Mysql8Adapter(DbDataSource dbDataSource, CustomJdbcExecutor jdbcExecutor) {

@@ -4,7 +4,7 @@ import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.utils.StrUtils;
-import com.custom.jdbc.condition.BaseExecutorModel;
+import com.custom.jdbc.condition.BaseExecutorBody;
 import com.custom.jdbc.configuration.DbConnection;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.configuration.CustomConfigHelper;
@@ -145,7 +145,7 @@ public class DbConnGlobal {
     /**
      * 创建jdbc请求会话
      */
-    private static CustomSqlSession createSqlSession(Connection connection, BaseExecutorModel executorModel) {
+    private static CustomSqlSession createSqlSession(Connection connection, BaseExecutorBody executorModel) {
         return new CustomSqlSession(connection, executorModel);
     }
 

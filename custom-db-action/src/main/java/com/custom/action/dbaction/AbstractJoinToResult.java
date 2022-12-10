@@ -187,6 +187,7 @@ public abstract class AbstractJoinToResult {
     protected boolean existCrossReference() {
         String crossKey = this.thisClass.getName();
 
+        //todo 一对一(多)的引用情况，允许不抛出异常，改为每个对象只引用一次即可
         Set<Class<?>> crossReferenceSet = CROSS_REFERENCE.get(crossKey);
         if (JudgeUtil.isEmpty(crossReferenceSet)) {
             crossReferenceSet = new CopyOnWriteArraySet<>();

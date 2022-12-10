@@ -9,7 +9,7 @@ import java.util.Objects;
  * @Date 2022/6/17 21:50
  * @Desc
  */
-public class BaseExecutorModel {
+public class BaseExecutorBody {
 
     /**
      * 待执行的sql
@@ -25,7 +25,7 @@ public class BaseExecutorModel {
      */
     private final Object[] sqlParams;
 
-    public BaseExecutorModel(String prepareSql, boolean sqlPrintSupport, Object[] sqlParams) {
+    public BaseExecutorBody(String prepareSql, boolean sqlPrintSupport, Object[] sqlParams) {
         Asserts.notEmpty(prepareSql, "The Sql to be Not Empty");
         this.prepareSql = prepareSql;
         this.sqlPrintSupport = sqlPrintSupport;
