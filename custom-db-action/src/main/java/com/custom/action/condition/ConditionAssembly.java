@@ -227,9 +227,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
     * 排序字段整合
     */
     protected String orderByField(String column, SqlOrderBy orderBy) {
-        return DbUtil.sqlSelectWrapper(column,
-                orderBy == SqlOrderBy.ASC ?
-                        SqlOrderBy.ASC.getName() : SqlOrderBy.DESC.getName());
+        return DbUtil.sqlSelectWrapper(column, orderBy.getName());
     }
 
 
@@ -309,7 +307,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
         if (JudgeUtil.isEmpty(getHaving()) && JudgeUtil.isNotEmpty(conditionEntity.getHaving())) {
             getHaving().append(conditionEntity.getHaving());
         } else if (JudgeUtil.isNotEmpty(getHaving()) && JudgeUtil.isNotEmpty(conditionEntity.getHaving())) {
-            getHaving().append(String.format(" and %s ", conditionEntity.getHaving()));
+            getHaving().append(String.format(" AND %s ", conditionEntity.getHaving()));
         }
     }
 
