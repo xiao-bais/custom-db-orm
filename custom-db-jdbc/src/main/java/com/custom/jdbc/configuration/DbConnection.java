@@ -10,7 +10,9 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * @Author Xiao-Bai
@@ -61,16 +63,20 @@ public class DbConnection {
         currMap.put(DbConnGlobal.getDataSourceKey(dbDataSource), druidDataSource);
     }
 
-    //线程隔离
+
     private final ThreadLocal<Connection> CONN_LOCAL = new ThreadLocal<>();
+    private final static Set<Connection> connectionSet = new CopyOnWriteArraySet<>();
 
     public Connection createConnection() {
         Connection connection = null;
         try {
             connection = CONN_LOCAL.get();
             if (connection == null) {
-                DataSource dataSource = (DataSource) currMap.get(DbConnGlobal.getDataSourceKey(dbDataSource));
+                String dataSourceKey = DbConnGlobal.getDataSourceKey(dbDataSource);
+                System.out.println("dataSourceKey = " + dataSourceKey);
+                DataSource dataSource = (DataSource) currMap.get(dataSourceKey);
                 connection = dataSource.getConnection();
+                connectionSet.add(connection);
                 CONN_LOCAL.set(connection);
             }
 
@@ -78,11 +84,6 @@ public class DbConnection {
             logger.error(e.toString(), e);
         }
         return connection;
-    }
-
-    public String getDataBase() {
-        String dataBaseKey = DbConnGlobal.getDataBaseKey(dbDataSource);
-        return currMap.get(dataBaseKey).toString();
     }
 
     public static Object getCurrMapData(String key) {

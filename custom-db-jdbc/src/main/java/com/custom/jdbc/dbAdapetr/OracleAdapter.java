@@ -3,6 +3,7 @@ package com.custom.jdbc.dbAdapetr;
 import com.custom.comm.enums.DatabaseType;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.executor.CustomJdbcExecutor;
+import com.custom.jdbc.executor.JdbcExecutorFactory;
 
 /**
  * @author Xiao-Bai
@@ -15,7 +16,7 @@ public class OracleAdapter extends AbstractDbAdapter {
 
     @Override
     public String databaseName() {
-        String url = getDbDataSource().getUrl();
+        String url = getExecutorFactory().getDbDataSource().getUrl();
         return url.substring(url.lastIndexOf(":"));
     }
 
@@ -49,7 +50,7 @@ public class OracleAdapter extends AbstractDbAdapter {
         return false;
     }
 
-    public OracleAdapter(DbDataSource dbDataSource, CustomJdbcExecutor jdbcExecutor) {
-        super(dbDataSource, jdbcExecutor);
+    public OracleAdapter(JdbcExecutorFactory executorFactory) {
+        super(executorFactory);
     }
 }

@@ -6,6 +6,7 @@ import com.custom.comm.utils.Constants;
 import com.custom.jdbc.condition.SelectExecutorBody;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.executor.CustomJdbcExecutor;
+import com.custom.jdbc.executor.JdbcExecutorFactory;
 
 /**
  * @author Xiao-Bai
@@ -24,7 +25,7 @@ public class Mysql8Adapter extends AbstractDbAdapter {
 
     @Override
     public String databaseName() {
-        String url = getDbDataSource().getUrl();
+        String url = getExecutorFactory().getDbDataSource().getUrl();
         int lastIndex = url.lastIndexOf("/");
         boolean is = url.indexOf("?") > 0;
         if (is) {
@@ -58,25 +59,22 @@ public class Mysql8Adapter extends AbstractDbAdapter {
 
     @Override
     public boolean existTable(String table) {
-
         Asserts.npe(table);
         String targetSql = String.format(TABLE_EXISTS_SQL, table, this.databaseName());
         SelectExecutorBody<Long> selectExecutorBody = new SelectExecutorBody<>(Long.class, targetSql, false);
-        return queryBoolean(selectExecutorBody);
+        return queryBoolean(targetSql);
     }
 
 
     @Override
     public boolean existColumn(String table, String column) {
-
         Asserts.npe(table);
         Asserts.npe(column);
         String targetSql = String.format(COLUMN_EXIST_SQL, this.databaseName(), table, column);
-        SelectExecutorBody<Long> selectExecutorBody = new SelectExecutorBody<>(Long.class, targetSql, false);
-        return queryBoolean(selectExecutorBody);
+        return queryBoolean(targetSql);
     }
 
-    public Mysql8Adapter(DbDataSource dbDataSource, CustomJdbcExecutor jdbcExecutor) {
-        super(dbDataSource, jdbcExecutor);
+    public Mysql8Adapter(JdbcExecutorFactory executorFactory) {
+        super(executorFactory);
     }
 }

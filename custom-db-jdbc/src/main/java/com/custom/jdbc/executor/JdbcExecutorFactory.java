@@ -113,19 +113,19 @@ public class JdbcExecutorFactory {
 
             default:
             case MYSQL8:
-                this.databaseAdapter = new Mysql8Adapter(dbDataSource, jdbcExecutor);
+                this.databaseAdapter = new Mysql8Adapter(this);
                 break;
 
             case MYSQL5:
-                this.databaseAdapter = new Mysql5Adapter(dbDataSource, jdbcExecutor);
+                this.databaseAdapter = new Mysql5Adapter(this);
                 break;
 
             case ORACLE:
-                this.databaseAdapter = new OracleAdapter(dbDataSource, jdbcExecutor);
+                this.databaseAdapter = new OracleAdapter(this);
                 break;
 
             case SQL_SERVER:
-                this.databaseAdapter = new SqlServerAdapter(dbDataSource, jdbcExecutor);
+                this.databaseAdapter = new SqlServerAdapter(this);
         }
     }
 

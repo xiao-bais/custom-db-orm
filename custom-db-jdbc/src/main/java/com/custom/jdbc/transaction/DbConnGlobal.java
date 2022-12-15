@@ -39,7 +39,9 @@ public class DbConnGlobal {
      */
     public static Connection getCurrentConnection(DbDataSource dbDataSource) {
         DbConnection dbConnection = new DbConnection(dbDataSource);
-        return dbConnection.createConnection();
+        Connection connection = dbConnection.createConnection();
+//        System.out.println("connection = " + connection);
+        return connection;
     }
 
     public static String getConnKey(DbDataSource dbDataSource) {

@@ -3,6 +3,7 @@ package com.custom.jdbc.dbAdapetr;
 import com.custom.comm.enums.DatabaseType;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.executor.CustomJdbcExecutor;
+import com.custom.jdbc.executor.JdbcExecutorFactory;
 
 /**
  * @author Xiao-Bai
@@ -28,7 +29,7 @@ public class Mysql5Adapter extends Mysql8Adapter {
         return null;
     }
 
-    public Mysql5Adapter(DbDataSource dbDataSource, CustomJdbcExecutor jdbcExecutor) {
-        super(dbDataSource, jdbcExecutor);
+    public Mysql5Adapter(JdbcExecutorFactory executorFactory) {
+        super(executorFactory);
     }
 }

@@ -106,6 +106,7 @@ public class CustomSqlSessionHelper {
             statement.close();
         }
         if (sqlSession != null && sqlSession.isAutoCommit()) {
+//            System.out.println("sqlSession.getConnection() = " + sqlSession.getConnection());
             sqlSession.closeResources();
         }
     }

@@ -17,8 +17,6 @@ import java.sql.SQLException;
  */
 public class CustomSqlSession implements DbTransaction {
 
-    private static final Logger logger = LoggerFactory.getLogger(CustomSqlSession.class);
-
     /**
      * 当前连接
      */
@@ -89,7 +87,10 @@ public class CustomSqlSession implements DbTransaction {
         }
     }
 
-    public boolean isAutoCommit() {
+    public boolean isAutoCommit() throws SQLException {
+        if (currentConn != null) {
+            return currentConn.getAutoCommit();
+        }
         return autoCommit;
     }
 }

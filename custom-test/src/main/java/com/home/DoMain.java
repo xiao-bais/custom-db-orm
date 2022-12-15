@@ -1,6 +1,8 @@
 package com.home;
 
 import com.custom.action.core.*;
+import com.custom.jdbc.back.BackResult;
+import com.home.customtest.entity.Student;
 
 /**
  * @Author Xiao-Bai
@@ -18,6 +20,20 @@ public class DoMain {
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
         // 开始
+
+        BackResult.execCall(it -> {
+            Student student = jdbcDao.selectByKey(Student.class, 13);
+            student.setNickName("2222");
+            jdbcDao.updateByKey(student);
+
+//            int a = 1/0;
+
+            student.setNickName("333333");
+            jdbcDao.updateByKey(student);
+
+
+
+        });
 
 
 

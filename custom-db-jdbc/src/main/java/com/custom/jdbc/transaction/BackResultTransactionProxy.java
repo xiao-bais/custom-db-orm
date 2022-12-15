@@ -36,10 +36,11 @@ public class BackResultTransactionProxy<T> implements InvocationHandler {
         }
 
         Connection connection = DbConnGlobal.getCurrentConnection();
-        GlobalDataHandler.addGlobalHelper(Constants.TRANS_CURSOR, Boolean.TRUE);
         Asserts.notNull(connection, "未能获取到可用的连接");
         try {
             if (connection.getAutoCommit()) {
+//                System.out.println("connection1 = " + connection);
+//                System.out.println("设置自动提交为false");
                 connection.setAutoCommit(false);
             }
             BackResult<T> result = null;
@@ -48,11 +49,13 @@ public class BackResultTransactionProxy<T> implements InvocationHandler {
             }
             back.execCall(result);
             connection = DbConnGlobal.getCurrentConnection();
+//            System.out.println("connection2 = " + connection);
             if (!connection.getAutoCommit()) {
                 connection.commit();
                 connection.setAutoCommit(true);
             }
         } catch (Exception e) {
+//            System.out.println("connection3 = " + connection);
             connection.rollback();
             throw e;
         } finally {
@@ -61,8 +64,6 @@ public class BackResultTransactionProxy<T> implements InvocationHandler {
                     connection.close();
                 } catch (Exception e) {
                     logger.error(e.toString(), e);
-                } finally {
-                    GlobalDataHandler.addGlobalHelper(Constants.TRANS_CURSOR, Boolean.FALSE);
                 }
             }
         }
