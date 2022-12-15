@@ -17,7 +17,7 @@ public class DoMain {
 
         JdbcTestBuilder jdbcTestBuilder = JdbcTestBuilder.builder();
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
-        JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
+//        JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
         // 开始
 

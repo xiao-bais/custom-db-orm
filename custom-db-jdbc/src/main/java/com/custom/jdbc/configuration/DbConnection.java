@@ -65,7 +65,6 @@ public class DbConnection {
 
 
     private final ThreadLocal<Connection> CONN_LOCAL = new ThreadLocal<>();
-    private final static Set<Connection> connectionSet = new CopyOnWriteArraySet<>();
 
     public Connection createConnection() {
         Connection connection = null;
@@ -73,10 +72,9 @@ public class DbConnection {
             connection = CONN_LOCAL.get();
             if (connection == null) {
                 String dataSourceKey = DbConnGlobal.getDataSourceKey(dbDataSource);
-                System.out.println("dataSourceKey = " + dataSourceKey);
                 DataSource dataSource = (DataSource) currMap.get(dataSourceKey);
                 connection = dataSource.getConnection();
-                connectionSet.add(connection);
+                System.out.println("connection = " + connection);
                 CONN_LOCAL.set(connection);
             }
 

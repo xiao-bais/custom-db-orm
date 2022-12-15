@@ -39,9 +39,7 @@ public class DbConnGlobal {
      */
     public static Connection getCurrentConnection(DbDataSource dbDataSource) {
         DbConnection dbConnection = new DbConnection(dbDataSource);
-        Connection connection = dbConnection.createConnection();
-//        System.out.println("connection = " + connection);
-        return connection;
+        return dbConnection.createConnection();
     }
 
     public static String getConnKey(DbDataSource dbDataSource) {
@@ -141,14 +139,6 @@ public class DbConnGlobal {
 
     public static CustomConfigHelper getConfigHelper() {
         return getConfigHelper(Constants.DEFAULT_ONE);
-    }
-
-
-    /**
-     * 创建jdbc请求会话
-     */
-    private static CustomSqlSession createSqlSession(Connection connection, BaseExecutorBody executorModel) {
-        return new CustomSqlSession(connection, executorModel);
     }
 
 
