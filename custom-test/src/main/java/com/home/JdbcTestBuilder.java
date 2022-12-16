@@ -29,7 +29,7 @@ public class JdbcTestBuilder {
         dbDataSource.setPassword("xh@Mysql1524");
 
         dbDataSource2 = new DbDataSource();
-        dbDataSource2.setUrl("jdbc:mysql://hougu-test.mysql.rds.aliyuncs.com:5678/hm_erp_test3?characterEncoding=utf-8&allowMultiQueries=true&autoreconnect=true");
+        dbDataSource2.setUrl("jdbc:mysql://hougu-prod.mysql.rds.aliyuncs.com:2345/hm_erp_test?characterEncoding=utf-8&allowMultiQueries=true&autoreconnect=true");
         dbDataSource2.setUsername("hougu_erp_dev");
         dbDataSource2.setPassword("hougu@123");
         dbDataSource2.setOrder(2);
@@ -47,7 +47,7 @@ public class JdbcTestBuilder {
     }
 
     public JdbcOpDao getJdbcOpDao() {
-        return new JdbcOpDao(dbDataSource, dbCustomStrategy);
+        return new JdbcOpDao(dbDataSource2, dbCustomStrategy);
     }
 
     public JdbcDao getJdbcDao() {

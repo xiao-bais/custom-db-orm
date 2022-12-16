@@ -98,10 +98,10 @@ public abstract class AbstractJoinToResult {
         }
 
         // 若多个对象之间存在循环引用一对一(多)注解的关系，则抛出异常
-        Asserts.illegal(this.existCrossReference(),
-                String.format("Wrong reference. One to one annotation is not allowed to act on the mutual reference relationship between two objects in [%s] and [%s.%s] ",
-                this.joinTarget, this.thisClass, errField)
-        );
+//        Asserts.illegal(this.existCrossReference(),
+//                String.format("Wrong reference. One to one annotation is not allowed to act on the mutual reference relationship between two objects in [%s] and [%s.%s] ",
+//                this.joinTarget, this.thisClass, errField)
+//        );
 
 
     }

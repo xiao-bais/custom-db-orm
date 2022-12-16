@@ -1,7 +1,6 @@
 package com.home.customtest.mapper;
 
 import com.home.customtest.entity.Province;
-import com.home.customtest.entity.Student;
 
 import java.util.List;
 

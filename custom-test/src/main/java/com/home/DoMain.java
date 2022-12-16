@@ -1,8 +1,10 @@
 package com.home;
 
-import com.custom.action.core.*;
-import com.custom.jdbc.back.BackResult;
-import com.home.customtest.entity.Student;
+import com.custom.action.core.JdbcDao;
+import com.custom.action.core.JdbcOpDao;
+import com.home.customtest.entity.Province;
+
+import java.util.List;
 
 /**
  * @Author Xiao-Bai
@@ -17,25 +19,10 @@ public class DoMain {
 
         JdbcTestBuilder jdbcTestBuilder = JdbcTestBuilder.builder();
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
-//        JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
+        JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-        // 开始
-
-        BackResult.execCall(it -> {
-            Student student = jdbcDao.selectByKey(Student.class, 13);
-            student.setNickName("2222");
-            jdbcDao.updateByKey(student);
-
-//            int a = 1/0;
-
-            student.setNickName("333333");
-            jdbcDao.updateByKey(student);
-
-
-
-        });
-
-
+        List<Province> provinces = jdbcDao.selectList(Province.class, "");
+        System.out.println("provinces = " + provinces);
 
 
     }

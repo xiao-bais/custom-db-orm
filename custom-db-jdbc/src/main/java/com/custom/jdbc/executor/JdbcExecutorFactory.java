@@ -143,7 +143,7 @@ public class JdbcExecutorFactory {
     /**
      * 纯sql查询集合
      */
-    public <T> List<T> selectBySql(Class<T> t, String sql, Object... params) throws Exception {
+    public <T> List<T> selectListBySql(Class<T> t, String sql, Object... params) throws Exception {
         SelectExecutorBody<T> paramInfo = new SelectExecutorBody<>(t, sql, params);
         CustomSqlSession sqlSession = this.createSqlSession(paramInfo);
         return jdbcExecutor.selectList(sqlSession);

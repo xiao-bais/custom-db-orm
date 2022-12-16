@@ -50,7 +50,7 @@ public class SelectProxyHandler extends AbstractProxyHandler {
                 genericType = (Class<?>) pt.getActualTypeArguments()[0];
 
                 if (List.class.isAssignableFrom(truthResType)) {
-                    return executorFactory.selectBySql(genericType, readyExecuteSql, sqlParams);
+                    return executorFactory.selectListBySql(genericType, readyExecuteSql, sqlParams);
 
                 }else if (Set.class.isAssignableFrom(truthResType)) {
                     return executorFactory.selectSetBySql(genericType, readyExecuteSql, sqlParams);

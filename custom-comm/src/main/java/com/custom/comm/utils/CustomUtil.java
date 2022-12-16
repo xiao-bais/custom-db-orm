@@ -109,7 +109,7 @@ public class CustomUtil extends StrUtils {
             StringBuilder sb = new StringBuilder();
             String str;
             while((str=br.readLine())!=null) {
-                sb.append(str);
+                sb.append("\t").append(str);
             }
             res = sb.toString();
         } catch (Exception e) {

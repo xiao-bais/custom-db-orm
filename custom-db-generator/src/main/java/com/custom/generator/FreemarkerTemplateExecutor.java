@@ -35,7 +35,7 @@ public class FreemarkerTemplateExecutor {
         try {
             // 配置模板路径
             configuration.setTagSyntax(Configuration.AUTO_DETECT_TAG_SYNTAX);
-//            configuration.setDirectoryForTemplateLoading(new File(basePath + "\\custom-db-generator\\" + TEMPLATE_PATH));
+            configuration.setDirectoryForTemplateLoading(new File(basePath + "\\custom-db-generator\\" + TEMPLATE_PATH));
             Template template = configuration.getTemplate("EntityTemplate.ftl");
 
             File parentPackage = new File(basePath + Constants.FILE_SEPARATOR + tableStructModel.getEntityClassPath());

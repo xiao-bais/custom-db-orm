@@ -52,7 +52,7 @@ public class JdbcAction extends AbstractSqlExecutor {
 
             // 封装结果
             String selectSql = sqlBuilder.createTargetSql() + executor.execute();
-            List<T> result = executorFactory.selectBySql(entityClass, selectSql, params);
+            List<T> result = executorFactory.selectListBySql(entityClass, selectSql, params);
             this.injectOtherResult(entityClass, sqlBuilder, result);
 
             // 清除暂存
@@ -67,10 +67,7 @@ public class JdbcAction extends AbstractSqlExecutor {
     @Override
     public <T> List<T> selectListBySql(Class<T> entityClass, String sql, Object... params) {
         try {
-            HandleSelectSqlBuilder<T> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(entityClass, executorFactory);
-            List<T> result = executorFactory.selectBySql(entityClass, sql, params);
-            this.injectOtherResult(entityClass, sqlBuilder, result);
-            return result;
+            return executorFactory.selectListBySql(entityClass, sql, params);
         }catch (Exception e) {
             this.handleExceptions(e);
             return new ArrayList<>();
@@ -222,7 +219,7 @@ public class JdbcAction extends AbstractSqlExecutor {
         try {
             HandleSelectSqlBuilder<T> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(wrapper.getEntityClass(), executorFactory);
             String selectSql = sqlBuilder.executeSqlBuilder(wrapper);
-            List<T> result = executorFactory.selectBySql(wrapper.getEntityClass(), selectSql, wrapper.getParamValues().toArray());
+            List<T> result = executorFactory.selectListBySql(wrapper.getEntityClass(), selectSql, wrapper.getParamValues().toArray());
             this.injectOtherResult(wrapper.getEntityClass(), sqlBuilder, result);
             return result;
         }catch (Exception e) {
@@ -599,7 +596,7 @@ public class JdbcAction extends AbstractSqlExecutor {
         if (count > 0) {
             DatabaseAdapter databaseAdapter = executorFactory.getDatabaseAdapter();
             selectSql = databaseAdapter.handlePage(selectSql, dbPageRows.getPageIndex(), dbPageRows.getPageSize());
-            dataList = this.executorFactory.selectBySql(t, selectSql, params);
+            dataList = this.executorFactory.selectListBySql(t, selectSql, params);
         }
         dbPageRows.setTotal(count).setData(dataList);
     }

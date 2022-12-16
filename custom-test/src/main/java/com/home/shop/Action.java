@@ -76,8 +76,8 @@ public class Action {
         List<TableStructModel> tableStructModels = gce.getTableStructModels();
         for (TableStructModel tableStructModel : tableStructModels) {
             structs.buildEntity(tableStructModel);
-            structs.buildService(tableStructModel.getServiceStructModel());
-            structs.buildServiceImpl(tableStructModel.getServiceStructModel());
+//            structs.buildService(tableStructModel.getServiceStructModel());
+//            structs.buildServiceImpl(tableStructModel.getServiceStructModel());
         }
     }
 }

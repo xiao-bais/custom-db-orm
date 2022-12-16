@@ -2,7 +2,6 @@ package com.home.customtest.dao;
 
 import com.custom.comm.annotations.mapper.Query;
 import com.custom.comm.annotations.mapper.SqlMapper;
-import com.home.customtest.entity.Student;
 
 import java.util.Map;
 

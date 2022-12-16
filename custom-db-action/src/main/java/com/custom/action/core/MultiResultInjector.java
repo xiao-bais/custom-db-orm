@@ -6,6 +6,7 @@ import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.ReflectUtil;
 import com.custom.jdbc.configuration.DbDataSource;
+import com.custom.jdbc.executor.JdbcExecutorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,10 +31,12 @@ public class MultiResultInjector<T> {
      * select 查询对象
      */
     private final AbstractSqlExecutor sqlExecutor;
+    private final JdbcExecutorFactory executorFactory;
 
     public MultiResultInjector(Class<T> thisClass, AbstractSqlExecutor sqlExecutor) {
         this.thisClass = thisClass;
         this.sqlExecutor = sqlExecutor;
+        this.executorFactory = sqlExecutor.getExecutorFactory();
     }
 
 
@@ -61,7 +64,7 @@ public class MultiResultInjector<T> {
                 DbJoinToManyParseModel joinToManyParseModel = new DbJoinToManyParseModel(waitSetField);
                 Class<?> joinTarget = joinToManyParseModel.getJoinTarget();
 
-                HandleSelectSqlBuilder<?> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(joinTarget, sqlExecutor.getExecutorFactory());
+                HandleSelectSqlBuilder<?> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(joinTarget, executorFactory);
                 String condPrefix = joinToManyParseModel.queryCondPrefix();
                 String condSuffix = joinToManyParseModel.queryCondSuffix();
 
@@ -94,7 +97,7 @@ public class MultiResultInjector<T> {
         for (Field waitSetField : oneToOneFieldList) {
             DbJoinToOneParseModel joinToOneParseModel = new DbJoinToOneParseModel(waitSetField);
             Class<?> joinTarget = joinToOneParseModel.getJoinTarget();
-            HandleSelectSqlBuilder<?> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(joinTarget, sqlExecutor.getExecutorFactory());
+            HandleSelectSqlBuilder<?> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(joinTarget, executorFactory);
             String condPrefix = joinToOneParseModel.queryCondPrefix();
             String condSuffix = joinToOneParseModel.queryCondSuffix();
 
@@ -145,9 +148,8 @@ public class MultiResultInjector<T> {
 
             // 若该表存在逻辑删除的字段，则处理逻辑删除条件
             FullSqlConditionExecutor conditionExecutor = sqlBuilder.addLogicCondition(condPrefix);
-
             String selectSql = sqlBuilder.createTargetSql() + conditionExecutor.execute() + condSuffix;
-            return sqlExecutor.selectListBySql(joinTarget, selectSql, queryValue);
+            return executorFactory.selectListBySql(joinTarget, selectSql, queryValue);
 
         }catch (NoSuchFieldException e) {
             logger.error(e.getMessage(), e);

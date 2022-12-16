@@ -17,7 +17,13 @@ import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -76,7 +82,7 @@ public class GenerateCodeExecutor {
 
         // 设置导入的包
         List<String> importPackages = Stream.of(
-                "import com.custom.action.sqlparser.JdbcDao;",
+                "import com.custom.action.core.JdbcDao;",
                 "import org.springframework.stereotype.Service;",
                 "import org.springframework.beans.factory.annotation.Autowired;"
         ).collect(Collectors.toList());
@@ -296,7 +302,6 @@ public class GenerateCodeExecutor {
             logger.error(e.toString(), e);
         }
     }
-
 
 
     /**
