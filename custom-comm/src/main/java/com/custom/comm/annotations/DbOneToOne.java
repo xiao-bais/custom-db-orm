@@ -1,6 +1,7 @@
 package com.custom.comm.annotations;
 
 
+import com.custom.comm.enums.ForeignStrategy;
 import com.custom.comm.utils.Constants;
 
 import java.lang.annotation.*;
@@ -21,7 +22,7 @@ public @interface DbOneToOne {
 
     /**
      * 一对一关联的实体对象
-     * <br/> 若不填，则默认取被该注解标注的类型对象
+     * <br/> 若不填，则默认取被该注解标注的属性类型
      * <br/> 注意: 该注解不可作用在java自带的类型下({@link Object}, {@link java.util.Map} 类除外)，否则在查询时会抛错
      */
     Class<?> joinTarget() default Object.class;
@@ -44,6 +45,11 @@ public @interface DbOneToOne {
      * <br/> false - 否，取多条中的第一条
      */
     boolean isThrowErr() default true;
+
+    /**
+     * 查询策略，默认不开启
+     */
+    ForeignStrategy strategy() default ForeignStrategy.NONE;
 
 
 }

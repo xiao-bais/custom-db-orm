@@ -1,5 +1,7 @@
 package com.custom.comm.annotations;
 
+import com.custom.comm.enums.ForeignStrategy;
+
 import java.lang.annotation.*;
 
 /**
@@ -53,5 +55,10 @@ public @interface DbOneToMany {
      * 指定排序的字段，同时对上面的orderByAsc起作用(java属性即可)
      */
     String sortField() default "";
+
+    /**
+     * 查询策略，默认不开启
+     */
+    ForeignStrategy strategy() default ForeignStrategy.NONE;
 
 }

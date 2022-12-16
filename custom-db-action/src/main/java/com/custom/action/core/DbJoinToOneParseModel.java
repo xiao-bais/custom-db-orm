@@ -49,7 +49,7 @@ public class DbJoinToOneParseModel extends AbstractJoinToResult {
             }
             setJoinTarget(joinTarget);
         }
-        super.initJoinProperty(joinToOneField.getName());
+        super.initJoinProperty(joinToOneField.getName(), oneToOne.strategy());
 
     }
 

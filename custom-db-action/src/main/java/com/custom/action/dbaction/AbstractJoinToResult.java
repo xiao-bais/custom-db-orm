@@ -3,6 +3,7 @@ package com.custom.action.dbaction;
 import com.custom.action.core.DbKeyParserModel;
 import com.custom.action.core.TableInfoCache;
 import com.custom.action.core.TableParseModel;
+import com.custom.comm.enums.ForeignStrategy;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.annotations.DbKey;
@@ -60,10 +61,16 @@ public abstract class AbstractJoinToResult {
     private String joinAlias;
 
     /**
+     * 查询策略
+     */
+    private ForeignStrategy strategy;
+
+    /**
      * 初始化剩余字段
      * @param errField 若出现循环引用，目标循环引用的字段
      */
-    protected void initJoinProperty(String errField) {
+    protected void initJoinProperty(String errField, ForeignStrategy strategy) {
+        this.strategy = strategy;
 
         // 初始化主表的字段
         TableParseModel<?> thisTableModel = TableInfoCache.getTableModel(thisClass);
@@ -98,10 +105,10 @@ public abstract class AbstractJoinToResult {
         }
 
         // 若多个对象之间存在循环引用一对一(多)注解的关系，则抛出异常
-//        Asserts.illegal(this.existCrossReference(),
-//                String.format("Wrong reference. One to one annotation is not allowed to act on the mutual reference relationship between two objects in [%s] and [%s.%s] ",
-//                this.joinTarget, this.thisClass, errField)
-//        );
+        Asserts.illegal(this.existCrossReference(),
+                String.format("Wrong reference. One to one annotation is not allowed to act on the mutual reference relationship between two objects in [%s] and [%s.%s] ",
+                this.joinTarget, this.thisClass, errField)
+        );
 
 
     }
@@ -168,6 +175,10 @@ public abstract class AbstractJoinToResult {
         this.thisClass = thisClass;
     }
 
+    public ForeignStrategy getStrategy() {
+        return strategy;
+    }
+
     /**
      * 查询条件实现
      */
@@ -186,8 +197,6 @@ public abstract class AbstractJoinToResult {
      */
     protected boolean existCrossReference() {
         String crossKey = this.thisClass.getName();
-
-        //todo 一对一(多)的引用情况，允许不抛出异常，改为每个对象只引用一次即可
         Set<Class<?>> crossReferenceSet = CROSS_REFERENCE.get(crossKey);
         if (JudgeUtil.isEmpty(crossReferenceSet)) {
             crossReferenceSet = new CopyOnWriteArraySet<>();

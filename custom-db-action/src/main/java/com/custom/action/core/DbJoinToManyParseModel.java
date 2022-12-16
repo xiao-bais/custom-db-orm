@@ -82,7 +82,7 @@ public class DbJoinToManyParseModel extends AbstractJoinToResult {
             }
             setJoinTarget(joinTarget);
         }
-        super.initJoinProperty(joinToManyField.getName());
+        super.initJoinProperty(joinToManyField.getName(), oneToMany.strategy());
 
     }
 
