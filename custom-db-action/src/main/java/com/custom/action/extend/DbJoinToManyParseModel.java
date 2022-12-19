@@ -1,5 +1,7 @@
-package com.custom.action.core;
+package com.custom.action.extend;
 
+import com.custom.action.core.TableInfoCache;
+import com.custom.action.core.TableParseModel;
 import com.custom.action.dbaction.AbstractJoinToResult;
 import com.custom.action.util.DbUtil;
 import com.custom.comm.exceptions.CustomCheckException;
@@ -42,7 +44,7 @@ public class DbJoinToManyParseModel extends AbstractJoinToResult {
     private final String fillSuffix;
 
 
-    public DbJoinToManyParseModel(Field joinToManyField) {
+    public DbJoinToManyParseModel(Field joinToManyField, Class<?> topNode) {
         DbOneToMany oneToMany = joinToManyField.getAnnotation(DbOneToMany.class);
         this.orderByAsc = oneToMany.orderByAsc();
         this.sortField = oneToMany.sortField();
@@ -82,7 +84,7 @@ public class DbJoinToManyParseModel extends AbstractJoinToResult {
             }
             setJoinTarget(joinTarget);
         }
-        super.initJoinProperty(joinToManyField.getName(), oneToMany.strategy());
+        super.initJoinProperty(joinToManyField.getName(), oneToMany.strategy(), topNode);
 
     }
 

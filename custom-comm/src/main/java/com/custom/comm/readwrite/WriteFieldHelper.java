@@ -121,7 +121,8 @@ public class WriteFieldHelper {
             }
 
             Class<?> setParamType = parameterTypes[0];
-            if (Object.class.equals(setParamType)) {
+
+            if (Object.class.equals(setParamType) || setParamType.equals(this.writeValue.getClass())) {
                 writeMethod.invoke(waitWriteEntity, writeValue);
                 return true;
             }

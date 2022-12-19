@@ -92,7 +92,7 @@ public class TableInfoCache {
         return optionalSqlBuilder;
     }
 
-    protected static <T> HandleSelectSqlBuilder<T> getSelectSqlBuilderCache(Class<T> entityClass, JdbcExecutorFactory executorFactory) {
+    public static <T> HandleSelectSqlBuilder<T> getSelectSqlBuilderCache(Class<T> entityClass, JdbcExecutorFactory executorFactory) {
         SqlBuilderTemplate<T> sqlBuilderCache = getSqlBuilderCache(entityClass, executorFactory);
         return (HandleSelectSqlBuilder<T>) sqlBuilderCache.getSelectSqlBuilder();
     }

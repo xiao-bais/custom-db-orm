@@ -1,4 +1,4 @@
-package com.custom.action.core;
+package com.custom.action.extend;
 
 import com.custom.action.dbaction.AbstractJoinToResult;
 import com.custom.action.util.DbUtil;
@@ -27,7 +27,7 @@ public class DbJoinToOneParseModel extends AbstractJoinToResult {
      * 构造方法
      * @param joinToOneField 一对一的字段
      */
-    public DbJoinToOneParseModel(Field joinToOneField) {
+    public DbJoinToOneParseModel(Field joinToOneField, Class<?> topNode) {
 
         DbOneToOne oneToOne = joinToOneField.getAnnotation(DbOneToOne.class);
         this.isThrowErr = oneToOne.isThrowErr();
@@ -49,7 +49,7 @@ public class DbJoinToOneParseModel extends AbstractJoinToResult {
             }
             setJoinTarget(joinTarget);
         }
-        super.initJoinProperty(joinToOneField.getName(), oneToOne.strategy());
+        super.initJoinProperty(joinToOneField.getName(), oneToOne.strategy(), topNode);
 
     }
 

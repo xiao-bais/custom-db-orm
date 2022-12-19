@@ -66,12 +66,27 @@ public class JdbcAction extends AbstractSqlExecutor {
 
     @Override
     public <T> List<T> selectListBySql(Class<T> entityClass, String sql, Object... params) {
+        return selectListBySqlIfNeedInject(entityClass, null, false, sql, params);
+    }
+
+
+    private <T, TOP> List<T> selectListBySqlIfNeedInject(Class<T> entityClass, Class<TOP> topNode, boolean needInject, String sql, Object... params) {
         try {
-            return executorFactory.selectListBySql(entityClass, sql, params);
+            List<T> result = executorFactory.selectListBySql(entityClass, sql, params);
+            if (needInject) {
+                HandleSelectSqlBuilder<T> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(entityClass, executorFactory);
+                this.injectOtherResult(entityClass, topNode, sqlBuilder, result);
+            }
+            return result;
         }catch (Exception e) {
             this.handleExceptions(e);
             return new ArrayList<>();
         }
+    }
+
+    @Override
+    public <T, TOP> List<T> selectListBySqlAndInject(Class<T> entityClass, Class<TOP> topNode, String sql, Object... params) {
+        return selectListBySqlIfNeedInject(entityClass, topNode, true, sql, params);
     }
 
     @Override

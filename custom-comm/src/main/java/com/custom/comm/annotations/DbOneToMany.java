@@ -1,6 +1,6 @@
 package com.custom.comm.annotations;
 
-import com.custom.comm.enums.ForeignStrategy;
+import com.custom.comm.enums.MultiStrategy;
 
 import java.lang.annotation.*;
 
@@ -59,6 +59,6 @@ public @interface DbOneToMany {
     /**
      * 查询策略，默认不开启
      */
-    ForeignStrategy strategy() default ForeignStrategy.NONE;
+    MultiStrategy strategy() default MultiStrategy.NONE;
 
 }

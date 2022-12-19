@@ -3,7 +3,8 @@ package com.custom.action.dbaction;
 import com.custom.action.core.DbKeyParserModel;
 import com.custom.action.core.TableInfoCache;
 import com.custom.action.core.TableParseModel;
-import com.custom.comm.enums.ForeignStrategy;
+import com.custom.action.exceptions.QueryMultiException;
+import com.custom.comm.enums.MultiStrategy;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.annotations.DbKey;
@@ -63,13 +64,16 @@ public abstract class AbstractJoinToResult {
     /**
      * 查询策略
      */
-    private ForeignStrategy strategy;
+    private MultiStrategy strategy;
 
     /**
      * 初始化剩余字段
-     * @param errField 若出现循环引用，目标循环引用的字段
+     * @param setFieldName 若出现循环引用，目标循环引用的字段
+     * @param strategy 策略
+     * @param topNode 最顶级的父节点
      */
-    protected void initJoinProperty(String errField, ForeignStrategy strategy) {
+    protected void initJoinProperty(String setFieldName, MultiStrategy strategy, Class<?> topNode) {
+        System.out.println("setFieldName = " + setFieldName);
         this.strategy = strategy;
 
         // 初始化主表的字段
@@ -105,11 +109,11 @@ public abstract class AbstractJoinToResult {
         }
 
         // 若多个对象之间存在循环引用一对一(多)注解的关系，则抛出异常
-        Asserts.illegal(this.existCrossReference(),
-                String.format("Wrong reference. One to one annotation is not allowed to act on the mutual reference relationship between two objects in [%s] and [%s.%s] ",
-                this.joinTarget, this.thisClass, errField)
-        );
-
+        if(this.existCrossReference(topNode, setFieldName) && this.strategy != MultiStrategy.NONE) {
+            String exInfo = String.format("Wrong reference. One to one annotation is not allowed to act on the mutual reference relationship between two objects in [%s] and [%s.%s] ",
+                    this.joinTarget, this.thisClass, setFieldName);
+            throw new QueryMultiException(this.strategy, exInfo);
+        }
 
     }
 
@@ -175,7 +179,7 @@ public abstract class AbstractJoinToResult {
         this.thisClass = thisClass;
     }
 
-    public ForeignStrategy getStrategy() {
+    public MultiStrategy getStrategy() {
         return strategy;
     }
 
@@ -189,24 +193,25 @@ public abstract class AbstractJoinToResult {
     /**
      * 存储实体一对一，一对多的引用情况
      */
-    private final static Map<String, Set<Class<?>>> CROSS_REFERENCE = new ConcurrentHashMap<>();
+    private final static Map<String, Set<String>> CROSS_REFERENCE = new ConcurrentHashMap<>();
 
 
     /**
      * 实体查询时，是否存在相互引用的情况
      */
-    protected boolean existCrossReference() {
-        String crossKey = this.thisClass.getName();
-        Set<Class<?>> crossReferenceSet = CROSS_REFERENCE.get(crossKey);
+    protected boolean existCrossReference(Class<?> topNode, String setFieldName) {
+        String crossKey = topNode.getName();
+        String refValue = this.joinTarget.getName() + "." + setFieldName;
+        Set<String> crossReferenceSet = CROSS_REFERENCE.get(crossKey);
         if (JudgeUtil.isEmpty(crossReferenceSet)) {
             crossReferenceSet = new CopyOnWriteArraySet<>();
-            crossReferenceSet.add(this.joinTarget);
+            crossReferenceSet.add(refValue);
             CROSS_REFERENCE.put(crossKey, crossReferenceSet);
             return false;
         }
-        boolean exists = crossReferenceSet.stream().anyMatch(op -> op.isAssignableFrom(this.joinTarget));
+        boolean exists = crossReferenceSet.contains(refValue);
         if (exists == false) {
-            crossReferenceSet.add(this.joinTarget);
+            crossReferenceSet.add(refValue);
             CROSS_REFERENCE.put(crossKey, crossReferenceSet);
         }
         return exists;

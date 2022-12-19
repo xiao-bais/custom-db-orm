@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.custom.action.activerecord.ActiveModel;
 import com.custom.comm.annotations.*;
+import com.custom.comm.enums.MultiStrategy;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -35,7 +36,7 @@ public class Student extends ActiveModel<Student, Integer> {
 
     private String name;
 
-    @DbOneToOne(thisField = "proId")
+    @DbOneToOne(thisField = "proId", strategy = MultiStrategy.RECURSION)
     private Province province;
 
     @DbField("nick_code")

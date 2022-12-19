@@ -178,7 +178,7 @@ public class CustomUtil extends StrUtils {
      * 反序列化实例化泛型对象(单泛型)
      */
     public static <T> T jsonParseToObject(String json, Class<T> type) {
-        return JSON.parseObject(json, new TypeReference<T>(type){});
+        return JSON.parseObject(json, type);
     }
 
 

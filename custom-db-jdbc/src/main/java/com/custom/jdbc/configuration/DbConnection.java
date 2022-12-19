@@ -74,7 +74,6 @@ public class DbConnection {
                 String dataSourceKey = DbConnGlobal.getDataSourceKey(dbDataSource);
                 DataSource dataSource = (DataSource) currMap.get(dataSourceKey);
                 connection = dataSource.getConnection();
-                System.out.println("connection = " + connection);
                 CONN_LOCAL.set(connection);
             }
 

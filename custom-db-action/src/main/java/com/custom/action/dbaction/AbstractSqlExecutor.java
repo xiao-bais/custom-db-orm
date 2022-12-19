@@ -2,7 +2,7 @@ package com.custom.action.dbaction;
 
 import com.custom.action.condition.AbstractUpdateSet;
 import com.custom.action.core.HandleSelectSqlBuilder;
-import com.custom.action.core.MultiResultInjector;
+import com.custom.action.extend.MultiResultInjector;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.page.DbPageRows;
@@ -22,6 +22,7 @@ public abstract class AbstractSqlExecutor  {
     /*--------------------------------------- select ---------------------------------------*/
     public abstract <T> List<T> selectList(Class<T> entityClass, String condition, Object... params);
     public abstract <T> List<T> selectListBySql(Class<T> entityClass, String sql, Object... params);
+    public abstract <T, TOP> List<T> selectListBySqlAndInject(Class<T> entityClass, Class<TOP> topNode, String sql, Object... params);
     public abstract <T> DbPageRows<T> selectPage(Class<T> entityClass, String condition, DbPageRows<T> dbPageRows, Object... params);
     public abstract <T> T selectByKey(Class<T> entityClass, Serializable key);
     public abstract <T> List<T> selectBatchKeys(Class<T> entityClass, Collection<? extends Serializable> keys);
@@ -103,8 +104,23 @@ public abstract class AbstractSqlExecutor  {
      * 查询后一对一结果注入
      */
     protected <T> void injectOtherResult(Class<T> entityClass, HandleSelectSqlBuilder<T> sqlBuilder, T result) throws Exception {
+        this.injectOtherResult(entityClass, entityClass, sqlBuilder, result);
+    }
+
+    /**
+     * 查询后一对多结果注入
+     */
+    protected <T> void injectOtherResult(Class<T> entityClass, HandleSelectSqlBuilder<T> sqlBuilder, List<T> result) throws Exception {
+        this.injectOtherResult(entityClass, entityClass, sqlBuilder, result);
+    }
+
+
+    /**
+     * 查询后一对一结果注入
+     */
+    protected <T, TOP> void injectOtherResult(Class<T> entityClass, Class<TOP> topNode, HandleSelectSqlBuilder<T> sqlBuilder, T result) throws Exception {
         if (sqlBuilder.isExistNeedInjectResult() && result != null) {
-            MultiResultInjector<T> resultInjector = new MultiResultInjector<>(entityClass, this);
+            MultiResultInjector<T> resultInjector = new MultiResultInjector<>(entityClass, this, topNode);
             resultInjector.injectorValue(Collections.singletonList(result));
         }
     }
@@ -112,9 +128,9 @@ public abstract class AbstractSqlExecutor  {
     /**
      * 查询后一对多结果注入
      */
-    protected <T> void injectOtherResult(Class<T> entityClass, HandleSelectSqlBuilder<T> sqlBuilder, List<T> result) throws Exception {
+    protected <T, TOP> void injectOtherResult(Class<T> entityClass, Class<TOP> topNode, HandleSelectSqlBuilder<T> sqlBuilder, List<T> result) throws Exception {
         if (sqlBuilder.isExistNeedInjectResult()) {
-            MultiResultInjector<T> resultInjector = new MultiResultInjector<>(entityClass, this);
+            MultiResultInjector<T> resultInjector = new MultiResultInjector<>(entityClass, this, topNode);
             resultInjector.injectorValue(result);
         }
     }
