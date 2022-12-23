@@ -115,13 +115,12 @@ public class MultiResultInjector<T> {
         }
         for (Field waitSetField : oneToOneFieldList) {
 
-            // todo 若使用缓存，则会变成死循环，但是又需要类的缓存，保证下一次循环时能够不做重复的检查
-            // todo 办法一，生成一个秘钥，用于
+            // todo 若使用缓存，则会变成死循环，但是又需要类的缓存，保证下一次循环时能够不做重复的检查0
             String key = waitSetField.getDeclaringClass().getName() + "." + waitSetField.getName();
             DbJoinToOneParseModel joinToOneParseModel = ONE_MODEL_CACHE.get(key);
             if (joinToOneParseModel == null) {
                 joinToOneParseModel = new DbJoinToOneParseModel(waitSetField, topNode);
-                ONE_MODEL_CACHE.putIfAbsent(key, joinToOneParseModel);
+                ONE_MODEL_CACHE.put(key, joinToOneParseModel);
             }
             Class<?> joinTarget = joinToOneParseModel.getJoinTarget();
             HandleSelectSqlBuilder<?> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(joinTarget, executorFactory);
@@ -189,11 +188,13 @@ public class MultiResultInjector<T> {
                 return sqlExecutor.selectListBySqlAndInject(joinTarget, topNode, selectSql, queryValue);
             } catch (Exception e) {
                 QueryMultiException childQme = null;
+
                 if (e instanceof QueryMultiException) {
                     childQme = (QueryMultiException) e;
                 } else if (e.getCause() instanceof QueryMultiException) {
                     childQme = (QueryMultiException) e.getCause();
                 }
+
                 if (childQme != null) {
                     // 若子节点是抛错，且父节点也是抛错，则往外抛出
                     if (childQme.getStrategy() == MultiStrategy.ERROR) {
