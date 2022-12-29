@@ -9,7 +9,9 @@ import java.util.function.Predicate;
  */
 public interface JoinCondition<T> {
 
-    // 关联的条件
+    /**
+     * 关联的条件
+     */
     Predicate<T> doJoin(T obj);
 
 }

@@ -4,6 +4,8 @@ import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.ReflectUtil;
 import com.custom.comm.utils.lambda.LambdaUtil;
 import com.custom.comm.utils.lambda.SFunction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -23,6 +25,10 @@ import java.util.function.Predicate;
  */
 public class DataJoining<T> {
 
+    private final Logger log = LoggerFactory.getLogger(DataJoining.class);
+
+
+    private final Class<T> targetClass;
     /**
      * 主集合
      */
@@ -40,15 +46,20 @@ public class DataJoining<T> {
      */
     private List<PropertyDescriptor> properties;
 
-    public DataJoining(Class<T> targetClass, List<T> primaryList, List<T> otherList, JoinCondition<T> condition) throws IntrospectionException {
+    public DataJoining(Class<T> targetClass, List<T> primaryList, List<T> otherList, JoinCondition<T> condition) {
+        this.targetClass = targetClass;
         this.primaryList = primaryList;
         this.otherList = otherList;
         Asserts.notNull(condition, "合并条件不允许为空");
         this.condition = condition;
-        this.properties = ReflectUtil.getProperties(targetClass);
+        try {
+            this.properties = ReflectUtil.getProperties(targetClass);
+        } catch (IntrospectionException e) {
+            log.error(e.toString(), e);
+        }
     }
 
-    public void setOtherList(Class<T> targetClass, List<T> otherList) throws IntrospectionException {
+    public void setOtherList(List<T> otherList) throws IntrospectionException {
         this.properties = ReflectUtil.getProperties(targetClass);
         this.otherList = otherList;
     }
@@ -57,20 +68,16 @@ public class DataJoining<T> {
      * 获取合并后的结果
      * @param fields 指定要合并的字段(java属性)
      */
-    public List<T> getResult(String... fields) throws InvocationTargetException, IllegalAccessException {
-
-        List<T> result = new ArrayList<>();
+    public void joinStart(String... fields) {
 
         if (primaryList == null) {
-            if (otherList == null) {
-                return result;
-            } else return otherList;
+            return;
         } else if (otherList == null) {
-            return result;
+            return;
         }
 
         // 复制一份
-        List<T> copyList = new ArrayList<>(primaryList);
+        List<T> copyList = new ArrayList<>(otherList);
 
         for (T currObj : primaryList) {
 
@@ -85,20 +92,29 @@ public class DataJoining<T> {
                             .orElse(null);
 
                     if (property != null) {
-                        Object targetVal = property.getReadMethod().invoke(target);
-                        property.getWriteMethod().invoke(currObj, targetVal);
+                        Object targetVal = null;
+                        try {
+                            targetVal = property.getReadMethod().invoke(target);
+                        } catch (IllegalAccessException | InvocationTargetException e) {
+                            log.error(e.toString(), e);
+                        }
+                        if (targetVal != null) {
+                            try {
+                                property.getWriteMethod().invoke(currObj, targetVal);
+                            } catch (IllegalAccessException | InvocationTargetException e) {
+                                log.error(e.toString(), e);
+                            }
+                        }
                     }
 
                 }
                 copyList.remove(target);
             }
-            result.add(currObj);
         }
 
         if (!copyList.isEmpty()) {
-            result.addAll(copyList);
+            primaryList.addAll(copyList);
         }
-        return result;
     }
 
 
@@ -106,19 +122,19 @@ public class DataJoining<T> {
      * 获取合并后的结果
      * @param fields 指定要合并的字段(java属性对应的Function)
      */
-    public List<T> getResult(SFunction<T, ?>... fields) throws InvocationTargetException, IllegalAccessException {
+    @SafeVarargs
+    public final void joinStart(SFunction<T, ?>... fields) {
 
         List<String> fieldList = new ArrayList<>();
         for (SFunction<T, ?> field : fields) {
             String targetGetter = LambdaUtil.getImplMethodName(field);
 
             properties.stream()
-                    .map(PropertyDescriptor::getReadMethod)
-                    .map(Method::getName)
-                    .filter(t -> t.equals(targetGetter)).findFirst().ifPresent(fieldList::add);
-
+                    .filter(op -> op.getReadMethod().getName().equals(targetGetter))
+                    .map(PropertyDescriptor::getName)
+                    .findFirst().ifPresent(fieldList::add);
         }
-        return getResult(fieldList.toArray(new String[0]));
+        joinStart(fieldList.toArray(new String[0]));
     }
 
 

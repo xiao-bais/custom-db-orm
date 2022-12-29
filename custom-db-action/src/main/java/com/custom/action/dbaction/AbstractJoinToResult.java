@@ -73,7 +73,6 @@ public abstract class AbstractJoinToResult {
      * @param topNode 最顶级的父节点
      */
     protected void initJoinProperty(String setFieldName, MultiStrategy strategy, Class<?> topNode) {
-        System.out.println("setFieldName = " + setFieldName);
         this.strategy = strategy;
 
         // 初始化主表的字段
