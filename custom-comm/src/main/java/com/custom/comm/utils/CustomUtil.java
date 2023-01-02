@@ -1,24 +1,14 @@
 
 package com.custom.comm.utils;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.TypeReference;
-import com.custom.comm.annotations.DbTable;
-import com.custom.comm.exceptions.CustomCheckException;
-import com.custom.comm.readwrite.ReadFieldHelper;
-import com.custom.comm.readwrite.WriteFieldHelper;
+
+import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.lang.reflect.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;

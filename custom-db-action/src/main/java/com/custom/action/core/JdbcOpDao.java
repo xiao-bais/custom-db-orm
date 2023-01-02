@@ -25,42 +25,42 @@ public class JdbcOpDao {
     /**
      * 根据条件查询多条记录: 例（and a.name = ?）
      */
-    public <T> List<T> selectList(Class<T> t, String condition, Object... params) {
+    public <T> List<T> selectList(Class<T> t, String condition, Object... params) throws Exception {
         return jdbcAction.selectList(t, condition, params);
     }
 
     /**
      * 根据多个主键查询多条记录
      */
-    public <T> List<T> selectBatchKeys(Class<T> t, Collection<? extends Serializable> keys) {
+    public <T> List<T> selectBatchKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception {
         return jdbcAction.selectBatchKeys(t, keys);
     }
 
     /**
      * 根据sql查询多条记录: 例（select * from table ）
      */
-    public <T> List<T> selectListBySql(Class<T> t, String sql, Object... params) {
+    public <T> List<T> selectListBySql(Class<T> t, String sql, Object... params) throws Exception {
         return jdbcAction.selectListBySql(t, sql, params);
     }
 
     /**
      * 根据条件进行分页查询: 例（and a.name = ?）
      */
-    public <T> DbPageRows<T> selectPage(Class<T> t, String condition, DbPageRows<T> dbPageRows, Object... params) {
+    public <T> DbPageRows<T> selectPage(Class<T> t, String condition, DbPageRows<T> dbPageRows, Object... params) throws Exception {
         return jdbcAction.selectPage(t, condition, null, dbPageRows, params);
     }
 
     /**
      * 根据主键查询一条记录
      */
-    public <T> T selectByKey(Class<T> t, Serializable key) {
+    public <T> T selectByKey(Class<T> t, Serializable key) throws Exception {
         return jdbcAction.selectByKey(t, key);
     }
 
     /**
      * 纯sql查询一条记录
      */
-    public <T> T selectOneBySql(Class<T> t, String sql, Object... params) {
+    public <T> T selectOneBySql(Class<T> t, String sql, Object... params) throws Exception {
         return jdbcAction.selectOneBySql(t, sql, params);
     }
 
@@ -111,7 +111,7 @@ public class JdbcOpDao {
      * @param sql 执行的sql
      * @param params 参数
      */
-    public <K, V> Map<K, V> selectMap(Class<K> kClass, Class<V> vClass, String sql, Object... params) {
+    public <K, V> Map<K, V> selectMap(Class<K> kClass, Class<V> vClass, String sql, Object... params) throws Exception {
         return jdbcAction.selectMap(kClass, vClass, sql, params);
     }
 
@@ -121,14 +121,14 @@ public class JdbcOpDao {
      * @param condition and a.name = ?
      * @param params "zhangsan"
      */
-    public <T> T selectOne(Class<T> t, String condition, Object... params) {
+    public <T> T selectOne(Class<T> t, String condition, Object... params) throws Exception {
         return jdbcAction.selectOne(t, condition, params);
     }
 
     /**
      * 条件构造器查询-分页查询
      */
-    public <T> DbPageRows<T> selectPage(ConditionWrapper<T> wrapper) {
+    public <T> DbPageRows<T> selectPage(ConditionWrapper<T> wrapper) throws Exception {
         return jdbcAction.selectPage(wrapper);
     }
 
@@ -142,48 +142,48 @@ public class JdbcOpDao {
     /**
      * 条件构造器查询-查询单个对象
      */
-    public <T> T selectOne(ConditionWrapper<T> wrapper) {
+    public <T> T selectOne(ConditionWrapper<T> wrapper) throws Exception {
         return jdbcAction.selectOne(wrapper);
     }
 
     /**
      * 条件构造器查询-查询数量
      */
-    public <T> long selectCount(ConditionWrapper<T> wrapper) {
+    public <T> long selectCount(ConditionWrapper<T> wrapper) throws Exception {
         return jdbcAction.selectCount(wrapper);
     }
 
     /**
      * 条件构造器查询单个属性值（若有多个值满足条件，默认返回第一条记录的第一个值）
      */
-    public <T> Object selectObj(ConditionWrapper<T> wrapper) {
+    public <T> Object selectObj(ConditionWrapper<T> wrapper) throws Exception {
         return jdbcAction.selectObj(wrapper);
     }
     /**
      * 条件构造器查询多个单值（若有多条记录满足条件，默认返回所有记录的第一个字段）
      */
-    public <T> List<Object> selectObjs(ConditionWrapper<T> wrapper) {
+    public <T> List<Object> selectObjs(ConditionWrapper<T> wrapper) throws Exception {
         return jdbcAction.selectObjs(wrapper);
     }
 
     /**
      * 查询单条记录映射到Map
      */
-    public <T> Map<String, Object> selectOneMap(ConditionWrapper<T> wrapper) {
+    public <T> Map<String, Object> selectOneMap(ConditionWrapper<T> wrapper) throws Exception {
         return jdbcAction.selectOneMap(wrapper);
     }
 
     /**
      * 查询多条记录映射到Map
      */
-    public <T> List<Map<String, Object>> selectListMap(ConditionWrapper<T> wrapper) {
+    public <T> List<Map<String, Object>> selectListMap(ConditionWrapper<T> wrapper) throws Exception {
         return jdbcAction.selectListMap(wrapper);
     }
 
     /**
      * 查询多条记录映射到Map
      */
-    public <T> DbPageRows<Map<String, Object>> selectPageMap(ConditionWrapper<T> wrapper) {
+    public <T> DbPageRows<Map<String, Object>> selectPageMap(ConditionWrapper<T> wrapper) throws Exception {
         return jdbcAction.selectPageMap(wrapper);
     }
 
@@ -191,7 +191,7 @@ public class JdbcOpDao {
      * 查询双列结果映射到map的K与V
      * @see #selectMap(Class, Class, String, Object...)
      */
-    public <T, K, V> Map<K, V> selectMap(ConditionWrapper<T> wrapper, Class<K> kClass, Class<V> vClass) {
+    public <T, K, V> Map<K, V> selectMap(ConditionWrapper<T> wrapper, Class<K> kClass, Class<V> vClass) throws Exception {
         return jdbcAction.selectMap(wrapper, kClass, vClass);
     }
 
@@ -211,21 +211,21 @@ public class JdbcOpDao {
     /**
      * 查询单条记录，!= null 的实体属性即为条件(全等查询)
      */
-    public <T> T selectOne(T entity) {
+    public <T> T selectOne(T entity) throws Exception {
         return jdbcAction.selectOne(entity);
     }
 
     /**
      * 查询多条记录，!= null 的实体属性即为条件(全等查询)
      */
-    public <T> List<T> selectList(T entity) {
+    public <T> List<T> selectList(T entity) throws Exception {
         return jdbcAction.selectList(entity);
     }
 
     /**
      * 查询多条记录并分页，!= null 的实体属性即为条件(全等查询)
      */
-    public <T> DbPageRows<T> selectPage(T entity, DbPageRows<T> pageRows) {
+    public <T> DbPageRows<T> selectPage(T entity, DbPageRows<T> pageRows) throws Exception {
         return jdbcAction.selectPage(entity, pageRows);
     }
 
@@ -234,28 +234,28 @@ public class JdbcOpDao {
     /**
      * 根据主键删除一条记录
      */
-    public <T> int deleteByKey(Class<T> t, Serializable key) {
+    public <T> int deleteByKey(Class<T> t, Serializable key) throws Exception {
         return jdbcAction.deleteByKey(t, key);
     }
 
     /**
      * 根据主键删除多条记录
      */
-    public <T> int deleteBatchKeys(Class<T> t, Collection<? extends Serializable> keys) {
+    public <T> int deleteBatchKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception {
         return jdbcAction.deleteBatchKeys(t, keys);
     }
 
     /**
      * 根据条件删除记录
      */
-    public <T> int deleteByCondition(Class<T> t, String condition, Object... params) {
+    public <T> int deleteByCondition(Class<T> t, String condition, Object... params) throws Exception {
         return jdbcAction.deleteByCondition(t, condition, params);
     }
 
     /**
      * 根据条件删除记录
      */
-    public <T> int deleteSelective(ConditionWrapper<T> wrapper) {
+    public <T> int deleteSelective(ConditionWrapper<T> wrapper) throws Exception {
         return jdbcAction.deleteSelective(wrapper);
     }
 
@@ -264,14 +264,14 @@ public class JdbcOpDao {
     /**
      * 插入一条记录(默认在实体中set新的主键)
      */
-    public <T> long insert(T entity) {
+    public <T> long insert(T entity) throws Exception {
         return jdbcAction.insert(entity);
     }
 
     /**
      * 插入多条记录(默认在实体中set新的主键)
      */
-    public <T> int insertBatch(List<T> entityList) {
+    public <T> int insertBatch(List<T> entityList) throws Exception {
         return jdbcAction.insertBatch(entityList);
     }
 
@@ -281,32 +281,32 @@ public class JdbcOpDao {
     /**
      * 根据主键修改一条记录
      */
-    public <T> int updateByKey(T entity) {
+    public <T> int updateByKey(T entity) throws Exception {
         return jdbcAction.updateByKey(entity);
     }
 
     /**
      * 根据主键修改一条记录(只修改entity中属性值 !=null 的字段)
      */
-    public <T> int updateByKeySelective(T entity) {
+    public <T> int updateByKeySelective(T entity) throws Exception {
         return jdbcAction.updateByKeySelective(entity);
     }
 
     /**
      * 根据条件修改一条记录
      */
-    public <T> int updateSelective(T entity, ConditionWrapper<T> wrapper) {
+    public <T> int updateSelective(T entity, ConditionWrapper<T> wrapper) throws Exception {
         return jdbcAction.updateSelective(entity, wrapper);
     }
 
     /**
      * 根据条件修改一条记录
      */
-    public <T> int updateByCondition(T entity, String condition, Object... params) {
+    public <T> int updateByCondition(T entity, String condition, Object... params) throws Exception {
         return jdbcAction.updateByCondition(entity, false, condition, params);
     }
 
-    public <T> int updateByCondition(T entity, boolean addNullField, String condition, Object... params) {
+    public <T> int updateByCondition(T entity, boolean addNullField, String condition, Object... params) throws Exception {
         return jdbcAction.updateByCondition(entity, addNullField, condition, params);
     } 
 
@@ -324,7 +324,7 @@ public class JdbcOpDao {
      * 注意：在同一条链式调用中，setter方法以及where方法若存在多次调用，则以最后一个为准.
      * 因为储存的对象只存在一个，不会累加上一次的结果，只会被覆盖
      */
-    public <T> int updateSelective(AbstractUpdateSet<T> updateSet) {
+    public <T> int updateSelective(AbstractUpdateSet<T> updateSet) throws Exception {
         return jdbcAction.updateSelective(updateSet);
     }
 
@@ -333,14 +333,14 @@ public class JdbcOpDao {
     /**
      * 保存一条记录（根据主键添加或修改）
      */
-    public <T> int save(T entity) {
+    public <T> int save(T entity) throws Exception {
         return jdbcAction.save(entity);
     }
 
     /**
      * 执行一条sql（增删改）
      */
-    public <T> int executeSql(String sql, Object... params) {
+    public <T> int executeSql(String sql, Object... params) throws Exception {
         return jdbcAction.executeSql(sql, params);
     }
 
@@ -354,7 +354,7 @@ public class JdbcOpDao {
     /**
      * 创建表
      */
-    public final void createTables(Class<?>... arr) {
+    public final void createTables(Class<?>... arr) throws Exception {
         jdbcAction.createTables(arr);
     }
 

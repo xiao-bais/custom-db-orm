@@ -20,84 +20,65 @@ import java.util.*;
 public abstract class AbstractSqlExecutor  {
 
     /*--------------------------------------- select ---------------------------------------*/
-    public abstract <T> List<T> selectList(Class<T> entityClass, String condition, Object... params);
-    public abstract <T> List<T> selectListBySql(Class<T> entityClass, String sql, Object... params);
-    public abstract <T, TOP> List<T> selectListBySqlAndInject(Class<T> entityClass, Class<TOP> topNode, String sql, Object... params);
-    public abstract <T> DbPageRows<T> selectPage(Class<T> entityClass, String condition, DbPageRows<T> dbPageRows, Object... params);
-    public abstract <T> T selectByKey(Class<T> entityClass, Serializable key);
-    public abstract <T> List<T> selectBatchKeys(Class<T> entityClass, Collection<? extends Serializable> keys);
-    public abstract <T> T selectOne(Class<T> entityClass, String condition, Object... params);
-    public abstract <T> T selectOneBySql(Class<T> entityClass, String sql, Object... params);
-    public abstract <T> T selectOne(T entity);
-    public abstract <T> List<T> selectList(T entity);
-    public abstract <T> DbPageRows<T> selectPage(T entity, DbPageRows<T> pageRows);
-    public abstract <T> T[] selectArrays(Class<T> t, String sql, Object... params);
-    public abstract Object selectObjBySql(String sql, Object... params);
-    public abstract <K, V> Map<K, V> selectMap(Class<K> kClass, Class<V> vClass, String sql, Object... params);
+    public abstract <T> List<T> selectList(Class<T> entityClass, String condition, Object... params) throws Exception;
+    public abstract <T> List<T> selectListBySql(Class<T> entityClass, String sql, Object... params) throws Exception;
+    public abstract <T, TOP> List<T> selectListBySqlAndInject(Class<T> entityClass, Class<TOP> topNode, String sql, Object... params) throws Exception;
+    public abstract <T> DbPageRows<T> selectPage(Class<T> entityClass, String condition, DbPageRows<T> dbPageRows, Object... params) throws Exception;
+    public abstract <T> T selectByKey(Class<T> entityClass, Serializable key) throws Exception;
+    public abstract <T> List<T> selectBatchKeys(Class<T> entityClass, Collection<? extends Serializable> keys) throws Exception;
+    public abstract <T> T selectOne(Class<T> entityClass, String condition, Object... params) throws Exception;
+    public abstract <T> T selectOneBySql(Class<T> entityClass, String sql, Object... params) throws Exception;
+    public abstract <T> T selectOne(T entity) throws Exception;
+    public abstract <T> List<T> selectList(T entity) throws Exception;
+    public abstract <T> DbPageRows<T> selectPage(T entity, DbPageRows<T> pageRows) throws Exception;
+    public abstract <T> T[] selectArrays(Class<T> t, String sql, Object... params) throws Exception;
+    public abstract Object selectObjBySql(String sql, Object... params) throws Exception;
+    public abstract <K, V> Map<K, V> selectMap(Class<K> kClass, Class<V> vClass, String sql, Object... params) throws Exception;
 
 
     /**
      * ConditionWrapper(条件构造器)
      */
-    public abstract <T> DbPageRows<T> selectPage(ConditionWrapper<T> wrapper);
-    public abstract <T> List<T> selectList(ConditionWrapper<T> wrapper);
-    public abstract <T> T selectOne(ConditionWrapper<T> wrapper);
-    public abstract <T> long selectCount(ConditionWrapper<T> wrapper);
-    public abstract <T> Object selectObj(ConditionWrapper<T> wrapper);
-    public abstract <T> List<Object> selectObjs(ConditionWrapper<T> wrapper);
-    public abstract <T> Map<String, Object> selectOneMap(ConditionWrapper<T> wrapper);
-    public abstract <T> List<Map<String, Object>> selectListMap(ConditionWrapper<T> wrapper);
-    public abstract <T> DbPageRows<Map<String, Object>> selectPageMap(ConditionWrapper<T> wrapper);
-    public abstract <T, K, V> Map<K, V> selectMap(ConditionWrapper<T> wrapper, Class<K> kClass, Class<V> vClass);
+    public abstract <T> DbPageRows<T> selectPage(ConditionWrapper<T> wrapper) throws Exception;
+    public abstract <T> List<T> selectList(ConditionWrapper<T> wrapper) throws Exception;
+    public abstract <T> T selectOne(ConditionWrapper<T> wrapper) throws Exception;
+    public abstract <T> long selectCount(ConditionWrapper<T> wrapper) throws Exception;
+    public abstract <T> Object selectObj(ConditionWrapper<T> wrapper) throws Exception;
+    public abstract <T> List<Object> selectObjs(ConditionWrapper<T> wrapper) throws Exception;
+    public abstract <T> Map<String, Object> selectOneMap(ConditionWrapper<T> wrapper) throws Exception;
+    public abstract <T> List<Map<String, Object>> selectListMap(ConditionWrapper<T> wrapper) throws Exception;
+    public abstract <T> DbPageRows<Map<String, Object>> selectPageMap(ConditionWrapper<T> wrapper) throws Exception;
+    public abstract <T, K, V> Map<K, V> selectMap(ConditionWrapper<T> wrapper, Class<K> kClass, Class<V> vClass) throws Exception;
 
 
     /*--------------------------------------- delete ---------------------------------------*/
-    public abstract <T> int deleteByKey(Class<T> entityClass, Serializable key);
-    public abstract <T> int deleteBatchKeys(Class<T> entityClass, Collection<? extends Serializable> keys);
-    public abstract <T> int deleteByCondition(Class<T> entityClass, String condition, Object... params);
-    public abstract <T> int deleteSelective(ConditionWrapper<T> wrapper);
+    public abstract <T> int deleteByKey(Class<T> entityClass, Serializable key) throws Exception;
+    public abstract <T> int deleteBatchKeys(Class<T> entityClass, Collection<? extends Serializable> keys) throws Exception;
+    public abstract <T> int deleteByCondition(Class<T> entityClass, String condition, Object... params) throws Exception;
+    public abstract <T> int deleteSelective(ConditionWrapper<T> wrapper) throws Exception;
 
     /*--------------------------------------- insert ---------------------------------------*/
-    public abstract <T> int insert(T entity);
-    public abstract <T> int insertBatch(List<T> tList);
+    public abstract <T> int insert(T entity) throws Exception;
+    public abstract <T> int insertBatch(List<T> tList) throws Exception;
 
     /*--------------------------------------- update ---------------------------------------*/
-    public abstract <T> int updateByKey(T entity);
-    public abstract <T> int updateByKeySelective(T entity);
-    public abstract <T> int updateSelective(T entity, ConditionWrapper<T> wrapper);
-    public abstract <T> int updateByCondition(T entity, boolean addNullField, String condition, Object... params);
+    public abstract <T> int updateByKey(T entity) throws Exception;
+    public abstract <T> int updateByKeySelective(T entity) throws Exception;
+    public abstract <T> int updateSelective(T entity, ConditionWrapper<T> wrapper) throws Exception;
+    public abstract <T> int updateByCondition(T entity, boolean addNullField, String condition, Object... params) throws Exception;
 
     /**
      * updateSet sql set设置器
      */
-    public abstract <T> int updateSelective(AbstractUpdateSet<T> updateSet);
+    public abstract <T> int updateSelective(AbstractUpdateSet<T> updateSet) throws Exception;
 
     /*--------------------------------------- comm ---------------------------------------*/
-    public abstract <T> int save(T entity);
-    public abstract int executeSql(String sql, Object... params);
-    public abstract void createTables(Class<?>... arr);
-    public abstract void dropTables(Class<?>... arr);
+    public abstract <T> int save(T entity) throws Exception;
+    public abstract int executeSql(String sql, Object... params) throws Exception;
+    public abstract void createTables(Class<?>... arr) throws Exception;
+    public abstract void dropTables(Class<?>... arr) throws Exception;
     public abstract DbDataSource getDbDataSource();
     public abstract JdbcExecutorFactory getExecutorFactory();
-
-    /**
-     * 处理异常抛出, 其实该方法只是做了一个隐式的异常抛出，没有别的作用
-     */
-    public void handleExceptions(Exception e) {
-        if (e instanceof CustomCheckException) {
-            throw (CustomCheckException) e;
-        }
-        else if (e instanceof NullPointerException) {
-            throw (NullPointerException) e;
-        }
-        else if (e instanceof UnsupportedOperationException) {
-            throw (UnsupportedOperationException) e;
-        }
-        else if (e instanceof IllegalArgumentException) {
-            throw (IllegalArgumentException) e;
-        }
-        throw new RuntimeException(e.getMessage(), e.getCause());
-    }
 
 
     /**

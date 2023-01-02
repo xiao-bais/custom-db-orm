@@ -1,6 +1,5 @@
 package com.custom.comm.readwrite;
 
-import com.alibaba.fastjson.JSONObject;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;

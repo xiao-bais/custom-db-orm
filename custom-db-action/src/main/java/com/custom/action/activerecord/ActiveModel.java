@@ -34,7 +34,7 @@ public class ActiveModel<T extends ActiveModel<T, P>, P extends Serializable> im
     /**
      * 根据主键删除多条记录
      */
-    public boolean delete(List<P> keys) {
+    public boolean delete(List<P> keys) throws Exception {
         TableExecutor<T, P> activeWrapper = activeWrapper();
         return ConvertUtil.conBool(activeWrapper.deleteBatchKeys(keys));
     }
@@ -43,7 +43,7 @@ public class ActiveModel<T extends ActiveModel<T, P>, P extends Serializable> im
     /**
      * 根据条件删除记录
      */
-    public boolean delete(ConditionWrapper<T> wrapper) {
+    public boolean delete(ConditionWrapper<T> wrapper) throws Exception {
         TableExecutor<T, P> activeWrapper = activeWrapper();
         return ConvertUtil.conBool(activeWrapper.deleteSelective(wrapper));
     }
@@ -51,7 +51,7 @@ public class ActiveModel<T extends ActiveModel<T, P>, P extends Serializable> im
     /**
      * 根据主键删除一条记录
      */
-    public boolean delete(P key) {
+    public boolean delete(P key) throws Exception {
         TableExecutor<T, P> activeWrapper = activeWrapper();
         return ConvertUtil.conBool(activeWrapper.deleteByKey(key));
     }
@@ -59,7 +59,7 @@ public class ActiveModel<T extends ActiveModel<T, P>, P extends Serializable> im
     /**
      * 删除此记录
      */
-    public boolean delete() {
+    public boolean delete() throws Exception {
         TableExecutor<T, P> activeWrapper = activeWrapper();
         P primaryKeyValue = activeWrapper.primaryKeyValue((T) this);
         if (primaryKeyValue == null) {
@@ -71,7 +71,7 @@ public class ActiveModel<T extends ActiveModel<T, P>, P extends Serializable> im
     /**
      * 根据主键修改
      */
-    public boolean update() {
+    public boolean update() throws Exception {
         TableExecutor<T, P> activeWrapper = activeWrapper();
         return ConvertUtil.conBool(activeWrapper.updateByKey((T) this));
     }
@@ -79,7 +79,7 @@ public class ActiveModel<T extends ActiveModel<T, P>, P extends Serializable> im
     /**
      * 根据主键是否为空自行插入或修改一条记录
      */
-    public boolean save() {
+    public boolean save() throws Exception {
         TableExecutor<T, P> activeWrapper = activeWrapper();
         return ConvertUtil.conBool(activeWrapper.save((T) this));
     }
@@ -87,7 +87,7 @@ public class ActiveModel<T extends ActiveModel<T, P>, P extends Serializable> im
     /**
      * 插入一条记录
      */
-    public boolean insert() {
+    public boolean insert() throws Exception {
         TableExecutor<T, P> activeWrapper = activeWrapper();
         if (activeWrapper.primaryKeyValue((T) this) != null) {
             return false;
@@ -98,7 +98,7 @@ public class ActiveModel<T extends ActiveModel<T, P>, P extends Serializable> im
     /**
      * 插入多条记录
      */
-    public boolean insert(List<T> tList) {
+    public boolean insert(List<T> tList) throws Exception {
         TableExecutor<T, P> activeWrapper = activeWrapper();
         return ConvertUtil.conBool(activeWrapper.insert(tList));
     }

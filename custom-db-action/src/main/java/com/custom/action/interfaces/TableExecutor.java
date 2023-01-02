@@ -16,31 +16,31 @@ import java.util.Map;
 public interface TableExecutor<T, P extends Serializable> {
 
     /*--------------------------------------- select ---------------------------------------*/
-    DbPageRows<T> selectPage(ConditionWrapper<T> wrapper);
-    List<T> selectList(ConditionWrapper<T> wrapper);
-    T selectOne(ConditionWrapper<T> wrapper);
-    long selectCount(ConditionWrapper<T> wrapper);
-    Object selectObj(ConditionWrapper<T> wrapper);
-    List<Object> selectObjs(ConditionWrapper<T> wrapper);
-    Map<String, Object> selectMap(ConditionWrapper<T> wrapper);
-    List<Map<String, Object>> selectMaps(ConditionWrapper<T> wrapper);
-    DbPageRows<Map<String, Object>> selectPageMaps(ConditionWrapper<T> wrapper);
+    DbPageRows<T> selectPage(ConditionWrapper<T> wrapper) throws Exception;
+    List<T> selectList(ConditionWrapper<T> wrapper) throws Exception;
+    T selectOne(ConditionWrapper<T> wrapper) throws Exception;
+    long selectCount(ConditionWrapper<T> wrapper) throws Exception;
+    Object selectObj(ConditionWrapper<T> wrapper) throws Exception;
+    List<Object> selectObjs(ConditionWrapper<T> wrapper) throws Exception;
+    Map<String, Object> selectMap(ConditionWrapper<T> wrapper) throws Exception;
+    List<Map<String, Object>> selectMaps(ConditionWrapper<T> wrapper) throws Exception;
+    DbPageRows<Map<String, Object>> selectPageMaps(ConditionWrapper<T> wrapper) throws Exception;
 
     /*------------------------------------ delete ---------------------------------------*/
-    int deleteByKey(P key);
-    int deleteBatchKeys(Collection<P> keys);
-    int deleteSelective(ConditionWrapper<T> wrapper);
+    int deleteByKey(P key) throws Exception;
+    int deleteBatchKeys(Collection<P> keys) throws Exception;
+    int deleteSelective(ConditionWrapper<T> wrapper) throws Exception;
 
     /*------------------------------------ insert ---------------------------------------*/
-    int insert(T t);
-    int insert(List<T> tList);
+    int insert(T t) throws Exception;
+    int insert(List<T> tList) throws Exception;
 
     /*------------------------------------ update ---------------------------------------*/
-    int updateByKey(T t);
-    int updateSelective(T t, ConditionWrapper<T> wrapper);
+    int updateByKey(T t) throws Exception;
+    int updateSelective(T t, ConditionWrapper<T> wrapper) throws Exception;
 
     /*------------------------------------ comm ---------------------------------------*/
-    int save(T t);
+    int save(T t) throws Exception;
     P primaryKeyValue(T entity);
 
 

@@ -55,7 +55,7 @@ public class IndexControl {
 
 
     @GetMapping("/comTime")
-    public BackResult<List<Province>> getComTime() {
+    public BackResult<List<Province>> getComTime() throws Exception {
 
         List<Province> provinces = jdbcDao.selectList(new Province());
         long t1 = System.currentTimeMillis();

@@ -1,6 +1,7 @@
 package com.custom.comm.readwrite;
 
-import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.ConvertUtil;
@@ -158,7 +159,9 @@ public class WriteFieldHelper {
                 }
 
                 String valueStr = JSONArray.toJSONString(this.writeValue);
-                this.writeValue = JSONArray.parseArray(valueStr, genericType);
+                JSONArray jsonArray = JSON.parseArray(valueStr);
+                this.writeValue = jsonArray.toList(genericType);
+
                 if (Set.class.isAssignableFrom(setParamType)) {
                     this.writeValue = new HashSet<>((ArrayList<?>) this.writeValue);
                 }
