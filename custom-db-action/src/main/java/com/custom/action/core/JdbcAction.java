@@ -2,6 +2,8 @@ package com.custom.action.core;
 
 import com.custom.action.condition.*;
 import com.custom.action.dbaction.AbstractSqlExecutor;
+import com.custom.action.extend.MultiResultInjector;
+import com.custom.action.interfaces.SqlQueryAfter;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.action.interfaces.FullSqlConditionExecutor;
@@ -28,7 +30,7 @@ import java.util.*;
  * @desc:
  */
 @SuppressWarnings("unchecked")
-public class JdbcAction extends AbstractSqlExecutor {
+public class JdbcAction extends AbstractSqlExecutor implements SqlQueryAfter {
 
     private static final Logger logger = LoggerFactory.getLogger(JdbcAction.class);
     private DbDataSource dbDataSource;
@@ -52,7 +54,7 @@ public class JdbcAction extends AbstractSqlExecutor {
         // 封装结果
         String selectSql = sqlBuilder.createTargetSql() + executor.execute();
         List<T> result = executorFactory.selectListBySql(entityClass, selectSql, params);
-        this.injectOtherResult(entityClass, sqlBuilder, result);
+        this.handle(entityClass, result);
 
         // 清除暂存
         sqlBuilder.clear();
@@ -61,23 +63,9 @@ public class JdbcAction extends AbstractSqlExecutor {
 
     @Override
     public <T> List<T> selectListBySql(Class<T> entityClass, String sql, Object... params) throws Exception {
-        return selectListBySqlIfNeedInject(entityClass, null, false, sql, params);
+        return executorFactory.selectListBySql(entityClass, sql, params);
     }
 
-
-    private <T, TOP> List<T> selectListBySqlIfNeedInject(Class<T> entityClass, Class<TOP> topNode, boolean needInject, String sql, Object... params) throws Exception {
-        List<T> result = executorFactory.selectListBySql(entityClass, sql, params);
-        if (needInject) {
-            HandleSelectSqlBuilder<T> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(entityClass, executorFactory);
-            this.injectOtherResult(entityClass, topNode, sqlBuilder, result);
-        }
-        return result;
-    }
-
-    @Override
-    public <T, TOP> List<T> selectListBySqlAndInject(Class<T> entityClass, Class<TOP> topNode, String sql, Object... params) throws Exception {
-        return selectListBySqlIfNeedInject(entityClass, topNode, true, sql, params);
-    }
 
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
@@ -93,7 +81,7 @@ public class JdbcAction extends AbstractSqlExecutor {
         this.buildPageResult(entityClass, selectSql, dbPageRows, params);
 
         // 注入一对一，一对多
-        this.injectOtherResult(entityClass, sqlBuilder, dbPageRows.getData());
+        this.handle(entityClass, dbPageRows.getData());
 
         // 清除暂存
         sqlBuilder.clear();
@@ -125,7 +113,7 @@ public class JdbcAction extends AbstractSqlExecutor {
         String selectSql = sqlBuilder.createTargetSql() + executor.execute();
         T result = selectOneBySql(entityClass, selectSql, params);
 
-        this.injectOtherResult(entityClass, sqlBuilder, result);
+        this.handle(entityClass, Collections.singletonList(result));
         sqlBuilder.clear();
         return result;
     }
@@ -185,7 +173,7 @@ public class JdbcAction extends AbstractSqlExecutor {
         String selectSql = sqlBuilder.executeSqlBuilder(wrapper);
 
         this.buildPageResult(wrapper.getEntityClass(), selectSql, dbPageRows, wrapper.getParamValues().toArray());
-        this.injectOtherResult(wrapper.getEntityClass(), sqlBuilder, dbPageRows.getData());
+        this.handle(wrapper.getEntityClass(), dbPageRows.getData());
 
         return dbPageRows;
     }
@@ -197,7 +185,7 @@ public class JdbcAction extends AbstractSqlExecutor {
         String selectSql = sqlBuilder.executeSqlBuilder(wrapper);
 
         List<T> result = executorFactory.selectListBySql(wrapper.getEntityClass(), selectSql, wrapper.getParamValues().toArray());
-        this.injectOtherResult(wrapper.getEntityClass(), sqlBuilder, result);
+        this.handle(wrapper.getEntityClass(), result);
         return result;
     }
 
@@ -208,7 +196,7 @@ public class JdbcAction extends AbstractSqlExecutor {
         String selectSql = sqlBuilder.executeSqlBuilder(wrapper);
 
         T result = selectOneBySql(wrapper.getEntityClass(), selectSql, wrapper.getParamValues().toArray());
-        this.injectOtherResult(wrapper.getEntityClass(), sqlBuilder, result);
+        this.handle(wrapper.getEntityClass(), Collections.singletonList(result));
 
         return result;
     }
@@ -503,4 +491,12 @@ public class JdbcAction extends AbstractSqlExecutor {
     }
 
 
+    @Override
+    public <T> void handle(Class<T> target, List<T> result) throws Exception {
+        HandleSelectSqlBuilder<T> selectSqlBuilder = TableInfoCache.getSelectSqlBuilderCache(target, executorFactory);
+        if (selectSqlBuilder.isExistNeedInjectResult() && result != null) {
+            MultiResultInjector<T> resultInjector = new MultiResultInjector<>(target, this, target);
+            resultInjector.injectorValue(result);
+        }
+    }
 }
