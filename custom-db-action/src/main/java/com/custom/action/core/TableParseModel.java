@@ -250,7 +250,7 @@ public class TableParseModel<T> implements Cloneable {
                 }
                 fieldParserModels.add(fieldParserModel);
 
-            } else if (field.isAnnotationPresent(DbMapper.class)) {
+            } else if (field.isAnnotationPresent(DbJoinField.class)) {
 
                 // 若当前是本类时，则注解生效，否则不视为表字段
                 if (field.getDeclaringClass().equals(this.entityClass)) {

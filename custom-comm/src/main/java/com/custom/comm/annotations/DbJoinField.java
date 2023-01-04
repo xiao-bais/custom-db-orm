@@ -12,7 +12,7 @@ import java.lang.annotation.*;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface DbMapper {
+public @interface DbJoinField {
 
     /**
      * 关联表映射的字段 例如：example：‘left join employee emp on emp.id = a.emp_id’

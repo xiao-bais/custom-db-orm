@@ -39,7 +39,7 @@ public class ChildStudent extends Student {
         this.avgAge = age;
     }
 
-    @DbMapper("lo.`name`")
+    @DbJoinField("lo.`name`")
     private String cityName;
 
 

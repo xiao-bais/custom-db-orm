@@ -6,8 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-
 /**
  * @Author Xiao-Bai
  * @Date 2021/11/27 15:37
@@ -52,7 +50,7 @@ public class Employee {
     @DbField
     private int state;
 
-    @DbMapper(value = "dept.name")
+    @DbJoinField(value = "dept.name")
     private String deptName;
 
 

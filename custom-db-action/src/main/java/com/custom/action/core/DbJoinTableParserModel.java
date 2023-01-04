@@ -6,9 +6,8 @@ import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.jdbc.configuration.GlobalDataHandler;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.Constants;
-import com.custom.comm.annotations.DbMapper;
+import com.custom.comm.annotations.DbJoinField;
 
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 
 /**
@@ -62,10 +61,10 @@ public class DbJoinTableParserModel<T> extends AbstractTableModel<T> {
     }
 
     private void initJoinName(Field field) {
-        DbMapper dbMap = field.getAnnotation(DbMapper.class);
-        this.joinName = JudgeUtil.isEmpty(dbMap.value()) ? this.fieldName : dbMap.value();
-        this.wrapperColumn = dbMap.wrapperColumn();
-        this.isNullToEmpty = dbMap.isNullToEmpty();
+        DbJoinField joinField = field.getAnnotation(DbJoinField.class);
+        this.joinName = JudgeUtil.isEmpty(joinField.value()) ? this.fieldName : joinField.value();
+        this.wrapperColumn = joinField.wrapperColumn();
+        this.isNullToEmpty = joinField.isNullToEmpty();
         if(!joinName.contains(Constants.POINT)) {
             throw new CustomCheckException("%s.[%s] 在DBMapper注解上未指定关联表的别名", this.entityClass, this.fieldName);
         }
