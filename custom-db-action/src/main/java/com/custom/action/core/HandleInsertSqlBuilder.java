@@ -18,6 +18,7 @@ import java.util.StringJoiner;
  * @date 2022/4/3 17:26
  * @desc:提供一系列新增记录的sql构建
  */
+@SuppressWarnings("unchecked")
 public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
     /**
@@ -34,34 +35,43 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
     @Override
     public String createTargetSql() {
-
-        StringJoiner insertSqlField = new StringJoiner(Constants.SEPARATOR_COMMA_1);
-        List<T> saveList = getEntityList();
-        Asserts.notEmpty(saveList, "未找到待新增的数据");
-
-        if (saveList.size() == 1) {
-            this.extractParams(saveList.get(0));
-            return this.insertPrefix + insertSuffix;
-        }
-
-        saveList.forEach(op -> {
-            this.extractParams(op);
-            insertSqlField.add(insertSuffix.toString());
-        });
-        return insertPrefix + insertSqlField;
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public String createTargetSql(Object obj) {
-        return null;
+    public String createTargetSql(boolean primaryTable) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String createTargetSql(Object obj, List<Object> sqlParams) {
+
+        if (obj instanceof List) {
+            List<T> saveList = (List<T>) obj;
+            StringJoiner insertSqlField = new StringJoiner(Constants.SEPARATOR_COMMA_1);
+
+            Asserts.notEmpty(saveList, "未找到待新增的数据");
+
+            if (saveList.size() == 1) {
+                this.extractParams(saveList.get(0), sqlParams);
+                return this.insertPrefix + insertSuffix;
+            }
+
+            saveList.forEach(op -> {
+                this.extractParams(op, sqlParams);
+                insertSqlField.add(insertSuffix.toString());
+            });
+            return insertPrefix + insertSqlField;
+        }
+        return "";
     }
 
 
     /**
      * 获取字段的值
      */
-    private Object getFieldValue(DbFieldParserModel<T> fieldModel) {
-        Object fieldValue = fieldModel.getValue();
+    private Object getFieldValue(DbFieldParserModel<T> fieldModel, T entity) {
+        Object fieldValue = fieldModel.getValue(entity);
         try {
             // 若存在自动填充的字段，则在添加的时候，进行字段值的自动填充
             if (ColumnAutoFillHandleUtils.exists(getEntityClass(), fieldModel.getFieldName())
@@ -122,20 +132,19 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
      * 提取字段值
      * @param currEntity
      */
-    private void extractParams(T currEntity) {
+    private void extractParams(T currEntity, List<Object> sqlParams) {
         Asserts.npe(currEntity);
-        injectEntity(currEntity);
         DbKeyParserModel<T> keyParserModel = getKeyParserModel();
 
         // 读取
         if (keyParserModel != null) {
             Object keyValue = keyParserModel.generateKey();
-            this.addParams(keyValue);
+            this.addParams(keyValue, sqlParams);
         }
         List<DbFieldParserModel<T>> fieldParserModels = getFieldParserModels();
         for (DbFieldParserModel<T> model : fieldParserModels) {
-            Object fieldValue = getFieldValue(model);
-            this.addParams(fieldValue);
+            Object fieldValue = getFieldValue(model, currEntity);
+            this.addParams(fieldValue, sqlParams);
         }
     }
 

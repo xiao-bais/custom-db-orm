@@ -78,6 +78,13 @@ public class TaskController {
         return BackResult.bySuccess();
     }
 
+    @ApiOperation("添加任务")
+    @PostMapping("add_task")
+    public BackResult addTask(@RequestBody TaskRecordModel model) {
+        taskRecordService.addTask(model);
+        return BackResult.bySuccess();
+    }
+
 
 
 

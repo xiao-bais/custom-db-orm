@@ -286,13 +286,6 @@ public class JdbcOpDao {
     }
 
     /**
-     * 根据主键修改一条记录(只修改entity中属性值 !=null 的字段)
-     */
-    public <T> int updateByKeySelective(T entity) throws Exception {
-        return jdbcAction.updateByKeySelective(entity);
-    }
-
-    /**
      * 根据条件修改一条记录
      */
     public <T> int updateSelective(T entity, ConditionWrapper<T> wrapper) throws Exception {
@@ -303,12 +296,8 @@ public class JdbcOpDao {
      * 根据条件修改一条记录
      */
     public <T> int updateByCondition(T entity, String condition, Object... params) throws Exception {
-        return jdbcAction.updateByCondition(entity, false, condition, params);
+        return jdbcAction.updateByCondition(entity, condition, params);
     }
-
-    public <T> int updateByCondition(T entity, boolean addNullField, String condition, Object... params) throws Exception {
-        return jdbcAction.updateByCondition(entity, addNullField, condition, params);
-    } 
 
     /**
      * 根据sql set设置器修改n条记录，

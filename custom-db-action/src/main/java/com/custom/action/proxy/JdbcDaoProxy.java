@@ -96,7 +96,6 @@ public class JdbcDaoProxy implements InvocationHandler, Serializable {
                 .findFirst().orElseThrow(() ->
                         new CustomCheckException("Unknown execution method : " + methodName)
                 );
-
         return typeCache.invoke(sqlExecutor, args);
     }
 

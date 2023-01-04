@@ -53,7 +53,8 @@ public abstract class AbstractSqlBuilder<T> {
      * 创建对应的sql
      */
     public abstract String createTargetSql();
-    public abstract String createTargetSql(Object obj);
+    public abstract String createTargetSql(boolean primaryTable);
+    public abstract String createTargetSql(Object obj, List<Object> sqlParams);
 
     public String getTable() {
         return table;
@@ -139,35 +140,17 @@ public abstract class AbstractSqlBuilder<T> {
         return conBool;
     }
 
-
-    /**
-     * 获取sql参数值列表
-     */
-    public Object[] getSqlParams() {
-        if (Objects.isNull(sqlParams)) {
-            return new Object[]{};
-        }
-        return sqlParams.toArray();
-    }
-
-    /**
-     * 获取sql参数值列表
-     */
-    public List<Object> getSqlParamList() {
-       return sqlParams;
-    }
-
     /**
      * 添加参数值
      */
-    public void addParams(Object val) {
+    public void addParams(Object val, List<Object> sqlParams) {
         if (Objects.isNull(sqlParams)) {
             sqlParams = new ArrayList<>();
         }
         if (val instanceof List) {
-            this.sqlParams.addAll((List<Object>) val);
+            sqlParams.addAll((List<Object>) val);
         }
-        this.sqlParams.add(val);
+        sqlParams.add(val);
     }
 
     protected void injectTableInfo(TableParseModel<T> tableSqlBuilder, JdbcExecutorFactory executorFactory) {
@@ -188,24 +171,13 @@ public abstract class AbstractSqlBuilder<T> {
     }
 
     /**
-     * 清空暂存
-     */
-    public void clear() {
-        this.entityList = new ArrayList<>();
-        this.sqlParams = new ArrayList<>();
-        this.injectEntity(null);
-    }
-
-    /**
      * 获取主键的值
      */
-    public Object primaryKeyVal() {
+    public Object primaryKeyVal(T currEntity) {
         if (keyParserModel == null) {
             return null;
         }
-        Object value = keyParserModel.getValue();
-        this.clear();
-        return value;
+        return keyParserModel.getValue(currEntity);
     }
 
     /**

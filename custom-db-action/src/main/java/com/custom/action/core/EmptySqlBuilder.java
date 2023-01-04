@@ -3,6 +3,8 @@ package com.custom.action.core;
 import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 
+import java.util.List;
+
 /**
  * @author Xiao-Bai
  * @date 2022/10/1 22:53
@@ -22,7 +24,12 @@ public class EmptySqlBuilder<T> extends AbstractSqlBuilder<T> {
     }
 
     @Override
-    public String createTargetSql(Object obj) {
+    public String createTargetSql(boolean primaryTable) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String createTargetSql(Object obj, List<Object> sqlParams) {
         return null;
     }
 }

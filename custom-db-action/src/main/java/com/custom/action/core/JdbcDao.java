@@ -210,7 +210,7 @@ public interface JdbcDao {
     /**
      * 插入一条记录(默认在实体中set新的主键)
      */
-    <T> long insert(T entity);
+    <T> int insert(T entity);
 
     /**
      * 插入多条记录(默认在实体中set新的主键)
@@ -225,11 +225,6 @@ public interface JdbcDao {
     <T> int updateByKey(T entity);
 
     /**
-     * 根据主键修改一条记录(只修改entity中属性值 !=null 的字段)
-     */
-    <T> int updateByKeySelective(T entity);
-
-    /**
      * 根据条件修改一条记录
      */
     <T> int updateSelective(T entity, ConditionWrapper<T> wrapper);
@@ -238,12 +233,6 @@ public interface JdbcDao {
      * 根据条件修改一条记录(只修改entity中属性值 !=null 的字段)
      */
     <T> int updateByCondition(T entity, String condition, Object... params);
-
-    /**
-     * 根据条件修改一条记录
-     * @param addNullField 是否允许修改值=null的字段
-     */
-    <T> int updateByCondition(T entity, boolean addNullField, String condition, Object... params);
 
     /**
      * 根据sql set设置器修改n条记录，

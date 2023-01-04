@@ -22,10 +22,11 @@ import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/4/1 17:22
- * @Desc：针对select查询做sql的构建
+ * @author Xiao-Bai
+ * @date 2022/4/1 17:22
+ * 针对select查询做sql的构建
  **/
+@SuppressWarnings("unchecked")
 public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -33,7 +34,6 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
     private SqlBuilder selectSqlBuilder = null;
     private SqlBuilder selectJoinSqlBuilder = null;
     private final StringBuilder joinTableSql;
-    private boolean primaryTable = false;
     private final List<DbRelationParserModel<T>> relatedParserModels;
     private final List<DbJoinTableParserModel<T>> joinDbMappers;
     private final List<String> joinTableParserModels;
@@ -55,19 +55,24 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
      * 获取查询sql（代码自行判定是否需要拼接表连接的sql）
      */
     @Override
+    public String createTargetSql(Object obj, List<Object> sqlParams) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public String createTargetSql() {
+        return createTargetSql(false);
+    }
+
+    @Override
+    public String createTargetSql(boolean primaryTable) {
         try {
-            return this.build(!this.primaryTable)
+            return this.build(!primaryTable)
                     .create(SqlExecTemplate.SELECT_LIST);
         } catch (Exception e) {
             logger.error(e.toString(), e);
             return Constants.EMPTY;
         }
-    }
-
-    @Override
-    public String createTargetSql(Object obj) {
-        return null;
     }
 
     /**
@@ -196,7 +201,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
     /**
      * 自定义查询表列名
      */
-    public SqlBuilder selectColumns(String[] columns) {
+    public SqlBuilder selectColumns(String[] columns, Boolean primaryTable) {
         StringJoiner columnStr = new StringJoiner(Constants.SEPARATOR_COMMA_2);
         for (String x : columns) {
             String column = GlobalDataHandler.hasSqlKeyword(x) ? String.format("`%s`", x) : x;
@@ -229,14 +234,14 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
      */
     protected String executeSqlBuilder(ConditionWrapper<T> wrapper) throws Exception {
 
-        this.primaryTable = wrapper.getPrimaryTable();
         StringBuilder selectSql = new StringBuilder();
+        Boolean primaryTable = wrapper.getPrimaryTable();
 
         if (wrapper.getSelectColumns() != null) {
-            SqlBuilder sqlBuilder = this.selectColumns(wrapper.getSelectColumns());
+            SqlBuilder sqlBuilder = this.selectColumns(wrapper.getSelectColumns(), primaryTable);
             selectSql.append(sqlBuilder.create(SqlExecTemplate.SELECT_LIST));
         } else {
-            selectSql.append(this.createTargetSql());
+            selectSql.append(this.createTargetSql(primaryTable));
         }
 
         FullSqlConditionExecutor finalCondition = this.addLogicCondition(wrapper.getFinalConditional());
@@ -258,7 +263,6 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
         if (!wrapper.getHavingParams().isEmpty()) {
             wrapper.getParamValues().addAll(wrapper.getHavingParams());
         }
-        this.primaryTable = false;
         return selectSql.toString();
     }
 

@@ -54,8 +54,13 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
     }
 
     @Override
-    public String createTargetSql(Object obj) {
-        return null;
+    public String createTargetSql(boolean primaryTable) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String createTargetSql(Object obj, List<Object> sqlParams) {
+        throw new UnsupportedOperationException();
     }
 
 

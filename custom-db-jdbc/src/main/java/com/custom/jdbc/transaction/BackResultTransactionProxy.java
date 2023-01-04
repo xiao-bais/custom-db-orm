@@ -49,7 +49,6 @@ public class BackResultTransactionProxy<T> implements InvocationHandler {
             }
             back.execCall(result);
             connection = DbConnGlobal.getCurrentConnection();
-            System.out.println("connection2 = " + connection);
             if (!connection.getAutoCommit()) {
                 connection.commit();
                 connection.setAutoCommit(true);

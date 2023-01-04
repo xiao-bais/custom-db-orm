@@ -122,14 +122,11 @@ public class DefaultTableExecutor<T, P extends Serializable> implements TableExe
     @SuppressWarnings("unchecked")
     public P primaryKeyValue(T entity) {
         EmptySqlBuilder<T> emptySqlBuilder = TableInfoCache.getEmptySqlBuilder(entityClass, jdbcAction.getExecutorFactory());
-        emptySqlBuilder.injectEntity(entity);
         if (emptySqlBuilder.getKeyParserModel() == null) {
             throw new CustomCheckException("No primary key field specified");
         }
         DbKeyParserModel<T> keyParserModel = emptySqlBuilder.getKeyParserModel();
-        P value = (P) keyParserModel.getValue();
-        emptySqlBuilder.clear();
-        return value;
+        return (P) keyParserModel.getValue(entity);
     }
 
 

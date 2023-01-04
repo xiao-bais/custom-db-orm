@@ -3,6 +3,7 @@ package com.custom.action.core;
 import com.custom.action.dbaction.AbstractTableModel;
 import com.custom.action.util.DbUtil;
 import com.custom.comm.exceptions.CustomCheckException;
+import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.jdbc.configuration.GlobalDataHandler;
 import com.custom.comm.utils.JudgeUtil;
@@ -83,7 +84,8 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
     }
 
     @Override
-    protected Object getValue(T t) {
+    public Object getValue(T t) {
+        Asserts.npe(t);
         try {
             this.value = getFieldValue(t, key);
         }catch (InvocationTargetException | IllegalAccessException

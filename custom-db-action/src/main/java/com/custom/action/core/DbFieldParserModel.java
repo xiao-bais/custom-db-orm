@@ -203,15 +203,20 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     }
 
     @Override
-    protected Object getValue(T x) {
+    protected Object getValue(T currEntity) {
+        Object val;
         try {
-            value = getFieldValue(x, fieldName);
+            String readValueField = fieldName;
+            if (GlobalDataHandler.isSqlKeywordWrapping(fieldName)) {
+                readValueField = GlobalDataHandler.removeSqlKeywordWrapper(fieldName);
+            }
+            val = getFieldValue(currEntity, readValueField);
         }catch (InvocationTargetException | IllegalAccessException
                 | NoSuchMethodException | NoSuchFieldException e) {
             logger.error(e.getMessage(), e);
             return null;
         }
-        return value;
+        return val;
     }
 
     @Override
@@ -233,21 +238,6 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
         String selectColumn = DbUtil.fullSqlColumn(this.getAlias(), this.column);
         String column = this.isNullToEmpty ? DbUtil.ifNull(selectColumn) : selectColumn;
         return DbUtil.sqlSelectWrapper(column, this.fieldName);
-    }
-
-    public Object getValue() {
-        try {
-            String readValueField = fieldName;
-            if (GlobalDataHandler.isSqlKeywordWrapping(fieldName)) {
-                readValueField = GlobalDataHandler.removeSqlKeywordWrapper(fieldName);
-            }
-            value = getFieldValue(entity, readValueField);
-        }catch (InvocationTargetException | IllegalAccessException
-                | NoSuchMethodException | NoSuchFieldException e) {
-            logger.error(e.getMessage(), e);
-            return null;
-        }
-        return value;
     }
 
     protected void setValue(Object value) {
