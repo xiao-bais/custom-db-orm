@@ -12,8 +12,8 @@ import lombok.*;
 @Getter
 @Setter
 @ToString(callSuper = true)
-@DbJoinTable("left join location lo on lo.id = a.area_id")
-@DbTable(table = "student", mergeSuperJoin = false)
+@DbJoinTable("left join city lo on lo.id = a.area_id")
+@DbTable(table = "student")
 public class ChildStudent extends Student {
 
 
@@ -38,6 +38,9 @@ public class ChildStudent extends Student {
     public ChildStudent(int age) {
         this.avgAge = age;
     }
+
+    @DbMapper("lo.`name`")
+    private String cityName;
 
 
 }

@@ -180,36 +180,7 @@ public class MultiResultInjector<T> {
         // 若该表存在逻辑删除的字段，则处理逻辑删除条件
         FullSqlConditionExecutor conditionExecutor = sqlBuilder.addLogicCondition(condPrefix);
         String selectSql = sqlBuilder.createTargetSql() + conditionExecutor.execute() + condSuffix;
-
-        if (thisNodeResult.getStrategy() == MultiStrategy.NONE) {
-            return executorFactory.selectListBySql(joinTarget, selectSql, queryValue);
-        } else {
-            try {
-                return sqlExecutor.selectListBySqlAndInject(joinTarget, topNode, selectSql, queryValue);
-            } catch (Exception e) {
-                QueryMultiException childQme = null;
-
-                if (e instanceof QueryMultiException) {
-                    childQme = (QueryMultiException) e;
-                } else if (e.getCause() instanceof QueryMultiException) {
-                    childQme = (QueryMultiException) e.getCause();
-                }
-
-                if (childQme != null) {
-                    // 若子节点是抛错，且父节点也是抛错，则往外抛出
-                    if (childQme.getStrategy() == MultiStrategy.ERROR) {
-                        if (thisNodeResult.getStrategy() == MultiStrategy.ERROR) {
-                            throw e;
-                        }else {
-                            logger.warn(e.getMessage());
-                            return null;
-                        }
-                    }
-                    return null;
-                }
-                throw e;
-            }
-        }
+        return executorFactory.selectListBySql(joinTarget, selectSql, queryValue);
     }
 
 

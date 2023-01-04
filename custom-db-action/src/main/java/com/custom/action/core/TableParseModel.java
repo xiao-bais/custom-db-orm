@@ -54,11 +54,6 @@ public class TableParseModel<T> implements Cloneable {
      * 驼峰转下划线
      */
     private boolean underlineToCamel;
-
-    /**
-     * 当子类跟父类同时标注了@DbJoinTable(s)注解时，是否在查询时向上查找父类的@DbJoinTable(s)注解，且合并关联条件
-     */
-    private boolean mergeSuperJoin;
     /**
      * 对于{@link DbKey}注解的解析
      */
@@ -214,7 +209,6 @@ public class TableParseModel<T> implements Cloneable {
         this.alias = annotation.alias();
         this.table = annotation.table();
         this.desc = annotation.desc();
-        this.mergeSuperJoin = annotation.mergeSuperJoin();
         int order = annotation.order();
         CustomConfigHelper configHelper = DbConnGlobal.getConfigHelper(order);
         Asserts.notNull(configHelper, JdbcOpDao.class.getName() +"实例化之前，不允许构造实体解析模板");
@@ -231,7 +225,7 @@ public class TableParseModel<T> implements Cloneable {
      */
     private void buildFieldModels() {
         // 解析@DbJoinTables注解
-        List<String> joinTables = this.mergeDbJoinTables();
+        List<String> joinTables = this.buildDbJoinTables();
         this.joinTableParserModels.addAll(joinTables);
 
         for (Field field : fields) {
@@ -254,13 +248,12 @@ public class TableParseModel<T> implements Cloneable {
                 }else {
                     fieldParserModel = new DbFieldParserModel<>(field);
                 }
-
                 fieldParserModels.add(fieldParserModel);
 
             } else if (field.isAnnotationPresent(DbMapper.class)) {
 
-                // 若没有向上合并父类的关联条件，则该字段可看做一个普通字段
-                if (mergeSuperJoin) {
+                // 若当前是本类时，则注解生效，否则不视为表字段
+                if (field.getDeclaringClass().equals(this.entityClass)) {
                     DbJoinTableParserModel<T> joinTableParserModel = new DbJoinTableParserModel<>(this.entityClass, field);
                     joinDbMappers.add(joinTableParserModel);
                 }else {
@@ -271,8 +264,8 @@ public class TableParseModel<T> implements Cloneable {
 
             } else if (field.isAnnotationPresent(DbRelated.class)) {
 
-                // 若没有向上合并父类的关联条件，则该字段可看做一个普通字段
-                if (mergeSuperJoin) {
+                // 若当前是本类时，则注解生效，否则不视为表字段
+                if (field.getDeclaringClass().equals(this.entityClass)) {
                     DbRelationParserModel<T> relatedParserModel = new DbRelationParserModel<>(this.entityClass, field,
                             this.table, this.alias, this.underlineToCamel);
                     relatedParserModels.add(relatedParserModel);
@@ -327,53 +320,10 @@ public class TableParseModel<T> implements Cloneable {
         }
     }
 
-
-    /**
-     * 向上查找@DbjoinTables注解
-     */
-    private List<String> mergeDbJoinTables() {
-        Class<?> entityClass = this.entityClass;
-
-        if (this.mergeSuperJoin) {
-
-            // 创建一个二维list
-            // 一般按照正常思维，关联的表SQL都是从父类开始进行拼接
-            // 然后开始拼接子类的关联，拼接完成后，则继续拼接子类的子类关联表，一层层地循环下去
-            List<List<String>> joinTwoList = new ArrayList<>();
-            List<String> joinResult = new ArrayList<>();
-
-            while (!entityClass.equals(Object.class)) {
-                List<String> currClassJoinList = this.buildDbJoinTables(entityClass);
-                joinTwoList.add(currClassJoinList);
-                entityClass = entityClass.getSuperclass();
-            }
-
-            for (int i = joinTwoList.size() - 1; i >= 0; i--) {
-
-                List<String> currJoins = joinTwoList.get(i);
-                if (currJoins.isEmpty()) {
-                    continue;
-                }
-
-                // 各层级子类的关联表SQL
-                for (String join : currJoins) {
-                    // 去除首尾空格
-                    String joinSql = join.trim();
-                    if (!joinResult.contains(joinSql)) {
-                        joinResult.add(joinSql);
-                    }
-                }
-            }
-
-            return joinResult;
-        }
-        return this.buildDbJoinTables(entityClass);
-    }
-
     /**
      * 解析@DbJoinTable(s)
      */
-    private List<String> buildDbJoinTables(Class<?> entityClass) {
+    private List<String> buildDbJoinTables() {
 
         List<String> joinList = new ArrayList<>();
         DbJoinTables joinTables = entityClass.getAnnotation(DbJoinTables.class);
@@ -389,8 +339,6 @@ public class TableParseModel<T> implements Cloneable {
                 joinList.add(joinTable.value());
             }
         }
-
-
 
         return joinList;
     }

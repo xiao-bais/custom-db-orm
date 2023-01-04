@@ -1,6 +1,6 @@
 package com.custom.comm.http;
 
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson2.JSON;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.Constants;
 import org.slf4j.Logger;

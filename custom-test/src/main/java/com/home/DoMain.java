@@ -3,10 +3,7 @@ package com.home;
 import com.custom.action.core.*;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.jdbc.back.BackResult;
-import com.home.customtest.entity.City;
-import com.home.customtest.entity.Province;
-import com.home.customtest.entity.Student;
-import com.home.customtest.entity.TempOrderInfo;
+import com.home.customtest.entity.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,7 +24,7 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-        Student student = jdbcDao.selectByKey(Student.class, 13);
+        Student student = jdbcDao.selectByKey(ChildStudent.class, 13);
         System.out.println("student = " + student);
 
 
