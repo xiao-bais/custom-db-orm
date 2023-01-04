@@ -7,11 +7,10 @@ import com.custom.action.core.JdbcDao;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
+import org.springframework.util.ReflectionUtils;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
+import java.lang.reflect.*;
 import java.util.*;
 
 /**
@@ -54,7 +53,7 @@ public class JdbcDaoProxy implements InvocationHandler, Serializable {
 
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Exception {
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (Object.class.equals(method.getDeclaringClass())) {
             return method.invoke(this, args);
         }
@@ -96,7 +95,11 @@ public class JdbcDaoProxy implements InvocationHandler, Serializable {
                 .findFirst().orElseThrow(() ->
                         new CustomCheckException("Unknown execution method : " + methodName)
                 );
-        return typeCache.invoke(sqlExecutor, args);
+        try {
+            return typeCache.invoke(sqlExecutor, args);
+        } catch (InvocationTargetException e) {
+            throw e.getCause();
+        }
     }
 
 }

@@ -47,7 +47,7 @@ public class JdbcTestBuilder {
     }
 
     public JdbcOpDao getJdbcOpDao() {
-        return new JdbcOpDao(dbDataSource2, dbCustomStrategy);
+        return new JdbcOpDao(dbDataSource, dbCustomStrategy);
     }
 
     public JdbcDao getJdbcDao() {

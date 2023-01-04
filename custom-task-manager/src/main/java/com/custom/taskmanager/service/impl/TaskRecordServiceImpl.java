@@ -197,17 +197,20 @@ public class TaskRecordServiceImpl implements TaskRecordService {
 
     @Override
     public void addTask(TaskRecordModel model) {
-        long count = jdbcDao.selectCount(Conditions.lambdaQuery(TaskRecordModel.class)
-                .eq(TaskRecordModel::getTaskTitle, model.getTaskTitle())
-        );
-        if (count > 0) {
-            throw new BException(String.format("已存在标题为[%s]的任务", model.getTaskTitle()));
-        }
-        model.setTaskCode(CustomUtil.getUUID());
-        jdbcDao.insert(model);
+//        long count = jdbcDao.selectCount(Conditions.lambdaQuery(TaskRecordModel.class)
+//                .eq(TaskRecordModel::getTaskTitle, model.getTaskTitle())
+//        );
+//        if (count > 0) {
+//            throw new BException(String.format("已存在标题为[%s]的任务", model.getTaskTitle()));
+//        }
+//        model.setTaskCode(CustomUtil.getUUID());
+//        jdbcDao.insert(model);
 
         if (!model.getTaskImgs().isEmpty()) {
-            jdbcDao.insertBatch(model.getTaskImgs());
+            for (TaskImgPath taskImg : model.getTaskImgs()) {
+                taskImg.setTaskCode(model.getTaskCode());
+                jdbcDao.insert(taskImg);
+            }
         }
     }
 
