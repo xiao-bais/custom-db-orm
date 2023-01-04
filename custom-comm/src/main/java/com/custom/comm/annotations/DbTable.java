@@ -42,15 +42,4 @@ public @interface DbTable {
     int order() default 1;
 
 
-    /**
-     * 子类是否允许合并父类的关联条件以及映射的关联字段同时标注
-     *  {@link DbJoinTables}, {@link DbJoinTable}, {@link DbRelated}
-     *  <br/> true => 关联顺序按照父类最先关联，一层一层往子类关联
-     *  <br/> false => 不会合并父类的关联条件，并且将{@link DbRelated#field()}, {@link DbMapper} 标注的字段设置为普通字段
-     *  <br/> 普通字段等同于 {@link DbField#exist()} = false 或者 {@link DbNotField}
-     * @return mergeSuperJoin
-     */
-    boolean mergeSuperJoin() default true;
-
-
 }

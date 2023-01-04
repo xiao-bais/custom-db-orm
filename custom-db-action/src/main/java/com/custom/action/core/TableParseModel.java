@@ -118,10 +118,10 @@ public class TableParseModel<T> implements Cloneable {
                     .map(dbFieldParserModel -> dbFieldParserModel.createTableSql() + "\n").forEach(fieldSql::add);
         }
 
-        createTableSql.append(String.format("create table `%s` (\n%s)", this.table, fieldSql));
+        createTableSql.append(String.format("CREATE TABLE `%s` (\n%s)", this.table, fieldSql));
 
         if (JudgeUtil.isNotEmpty(this.desc)) {
-            createTableSql.append(String.format(" comment = '%s'", this.desc));
+            createTableSql.append(String.format(" COMMENT = '%s'", this.desc));
         }
         return createTableSql.toString();
     }
@@ -211,7 +211,7 @@ public class TableParseModel<T> implements Cloneable {
         this.desc = annotation.desc();
         int order = annotation.order();
         CustomConfigHelper configHelper = DbConnGlobal.getConfigHelper(order);
-        Asserts.notNull(configHelper, JdbcOpDao.class.getName() +"实例化之前，不允许构造实体解析模板");
+        Asserts.notNull(configHelper, JdbcAction.class.getName() +"实例化之前，不允许构造实体解析模板");
 
         this.underlineToCamel = configHelper.getDbCustomStrategy().isUnderlineToCamel();
         this.oneToOneFieldList = new ArrayList<>();
