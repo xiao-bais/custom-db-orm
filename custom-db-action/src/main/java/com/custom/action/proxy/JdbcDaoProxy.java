@@ -5,6 +5,7 @@ import com.custom.action.dbaction.AbstractSqlExecutor;
 import com.custom.action.core.JdbcAction;
 import com.custom.action.core.JdbcDao;
 import com.custom.comm.exceptions.CustomCheckException;
+import com.custom.jdbc.back.BackResult;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
 import org.springframework.util.ReflectionUtils;
@@ -73,7 +74,7 @@ public class JdbcDaoProxy implements InvocationHandler, Serializable {
                         Class<?> thisClass;
                         if (args[i] == null) {
                             thisClass = targetClass;
-                        }else {
+                        } else {
                             thisClass = args[i].getClass();
                         }
                         if (ConditionWrapper.class.isAssignableFrom(thisClass)) {
@@ -83,7 +84,7 @@ public class JdbcDaoProxy implements InvocationHandler, Serializable {
                         // this 本次传递的参数类型
                         if (targetClass.isAssignableFrom(thisClass)) {
                             targetIndex++;
-                        }else if (targetClass.isPrimitive()) {
+                        } else if (targetClass.isPrimitive()) {
                             Class<?> primitiveClass = PRIMITIVE_MAPPED.get(targetClass);
                             if (thisClass.equals(primitiveClass)) {
                                 targetIndex++;
@@ -97,8 +98,15 @@ public class JdbcDaoProxy implements InvocationHandler, Serializable {
                 );
         try {
             return typeCache.invoke(sqlExecutor, args);
-        } catch (InvocationTargetException e) {
-            throw e.getCause();
+        }catch (InvocationTargetException e) {
+            Throwable te = e.getTargetException();
+            if (te instanceof InvocationTargetException) {
+                throw e.getTargetException();
+            }else if (te instanceof UndeclaredThrowableException) {
+                Throwable undeclaredThrowable = ((UndeclaredThrowableException) te).getUndeclaredThrowable();
+                throw undeclaredThrowable.getCause();
+            }
+            throw te;
         }
     }
 

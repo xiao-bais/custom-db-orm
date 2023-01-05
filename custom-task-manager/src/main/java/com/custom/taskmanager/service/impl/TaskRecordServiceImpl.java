@@ -21,6 +21,7 @@ import com.custom.taskmanager.view.TaskRecordModel;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.sql.SQLSyntaxErrorException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -197,14 +198,14 @@ public class TaskRecordServiceImpl implements TaskRecordService {
 
     @Override
     public void addTask(TaskRecordModel model) {
-//        long count = jdbcDao.selectCount(Conditions.lambdaQuery(TaskRecordModel.class)
-//                .eq(TaskRecordModel::getTaskTitle, model.getTaskTitle())
-//        );
-//        if (count > 0) {
-//            throw new BException(String.format("已存在标题为[%s]的任务", model.getTaskTitle()));
-//        }
-//        model.setTaskCode(CustomUtil.getUUID());
-//        jdbcDao.insert(model);
+        long count = jdbcDao.selectCount(Conditions.lambdaQuery(TaskRecordModel.class)
+                .eq(TaskRecordModel::getTaskTitle, model.getTaskTitle())
+        );
+        if (count > 0) {
+            throw new BException(String.format("已存在标题为[%s]的任务", model.getTaskTitle()));
+        }
+        model.setTaskCode(CustomUtil.getUUID());
+        jdbcDao.insert(model);
 
         if (!model.getTaskImgs().isEmpty()) {
             for (TaskImgPath taskImg : model.getTaskImgs()) {
