@@ -295,7 +295,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
         this.columnParseHandler = columnParseHandler;
     }
 
-    public void setTableSupport(TableSupport tableSupport) {
+    protected void setTableSupport(TableSupport tableSupport) {
         this.tableSupport = tableSupport;
     }
 

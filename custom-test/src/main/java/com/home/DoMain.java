@@ -27,16 +27,20 @@ public class DoMain {
 
         List<ChildStudent> studentList = jdbcDao.selectList(Conditions.lambdaQuery(ChildStudent.class)
                 .eq(Student::getAge, 13)
-                .or(op -> op.notBetween(ChildStudent::getAge, 10, 20))
+                .or(op -> op.notBetween(ChildStudent::getAge, 10, Arrays.asList(11,12,13)))
                 .or(op -> op.like(Student::getNickName, "小风"))
                 .pageParams(1, 10)
-                .toDefault().select("a.sex", "ifnull(max(a.age), 0) maxAge")
+                .toDefault().select("a.sex money", "ifnull(max(a.age), 0) maxAge")
                 .toLambda().groupBy(ChildStudent::getSex)
         );
         System.out.println("studentList.size() = " + studentList.size());
 
 
+
+
     }
+
+
 
 
 

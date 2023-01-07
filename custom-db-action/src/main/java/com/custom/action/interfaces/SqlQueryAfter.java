@@ -1,7 +1,5 @@
 package com.custom.action.interfaces;
 
-import com.custom.jdbc.executor.JdbcExecutorFactory;
-
 import java.util.List;
 
 /**
