@@ -7,6 +7,7 @@ import com.custom.action.condition.ConditionWrapper;
 import com.custom.comm.page.DbPageRows;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
+import com.custom.jdbc.interfaces.TransactionWrapper;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -345,6 +346,10 @@ public class JdbcOpDao {
      */
     public final void createTables(Class<?>... arr) throws Exception {
         jdbcAction.createTables(arr);
+    }
+
+    public final void execTrans(TransactionWrapper wrapper) throws Exception {
+        jdbcAction.execTrans(wrapper);
     }
 
     private final AbstractSqlExecutor jdbcAction;

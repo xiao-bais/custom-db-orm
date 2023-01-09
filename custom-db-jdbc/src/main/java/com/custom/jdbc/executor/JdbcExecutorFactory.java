@@ -2,6 +2,7 @@ package com.custom.jdbc.executor;
 
 import com.custom.comm.enums.DatabaseType;
 import com.custom.comm.exceptions.CustomCheckException;
+import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.ConvertUtil;
 import com.custom.comm.utils.StrUtils;
 import com.custom.jdbc.condition.BaseExecutorBody;
@@ -17,11 +18,15 @@ import com.custom.jdbc.dbAdapetr.OracleAdapter;
 import com.custom.jdbc.dbAdapetr.SqlServerAdapter;
 import com.custom.jdbc.interfaces.DatabaseAdapter;
 import com.custom.jdbc.interfaces.SqlSessionExecutor;
+import com.custom.jdbc.interfaces.TransactionWrapper;
 import com.custom.jdbc.session.CustomSqlSession;
 import com.custom.jdbc.transaction.DbConnGlobal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,6 +38,7 @@ import java.util.Set;
  */
 public class JdbcExecutorFactory {
 
+    private final static Logger log = LoggerFactory.getLogger(JdbcExecutorFactory.class);
 
     /**
      * jdbc基础操作对象
@@ -230,6 +236,7 @@ public class JdbcExecutorFactory {
     public int executeAnySql(String sql, Object... params) throws Exception {
         SaveExecutorBody<Object> paramInfo = new SaveExecutorBody<>(sql, true, params);
         CustomSqlSession sqlSession = this.createSqlSession(paramInfo);
+        System.out.println("sqlSession.getConnection() = " + sqlSession.getConnection());
         return jdbcExecutor.executeUpdate(sqlSession);
     }
 
@@ -269,5 +276,35 @@ public class JdbcExecutorFactory {
         CustomSqlSession sqlSession = this.createSqlSession(paramInfo);
         return jdbcExecutor.executeSave(sqlSession);
     }
+
+    public void handleTransaction(TransactionWrapper wrapper) throws Exception {
+        Connection connection = DbConnGlobal.getCurrentConnection();
+        System.out.println("connection1 = " + connection);
+        Asserts.notNull(connection, "未能获取到可用的连接");
+        try {
+            if (connection.getAutoCommit()) {
+                connection.setAutoCommit(false);
+            }
+            wrapper.doing();
+            connection = DbConnGlobal.getCurrentConnection();
+            System.out.println("connection2 = " + connection);
+            if (!connection.getAutoCommit()) {
+                connection.commit();
+                connection.setAutoCommit(true);
+            }
+        } catch (Exception e) {
+            connection.rollback();
+            throw e;
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (Exception e) {
+                    log.error(e.toString(), e);
+                }
+            }
+        }
+    }
+
 
 }

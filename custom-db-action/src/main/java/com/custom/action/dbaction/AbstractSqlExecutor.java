@@ -8,6 +8,7 @@ import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.page.DbPageRows;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.interfaces.TransactionWrapper;
 
 import java.io.Serializable;
 import java.util.*;
@@ -77,6 +78,7 @@ public abstract class AbstractSqlExecutor  {
     public abstract void dropTables(Class<?>... arr) throws Exception;
     public abstract DbDataSource getDbDataSource();
     public abstract JdbcExecutorFactory getExecutorFactory();
+    public abstract void execTrans(TransactionWrapper wrapper) throws Exception;
 
 
 }

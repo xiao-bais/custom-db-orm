@@ -4,6 +4,7 @@ import com.custom.action.condition.Conditions;
 import com.custom.action.core.*;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.jdbc.back.BackResult;
+import com.custom.jdbc.interfaces.TransactionWrapper;
 import com.home.customtest.entity.*;
 
 import java.util.*;
@@ -25,16 +26,25 @@ public class DoMain {
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 
-        List<ChildStudent> studentList = jdbcDao.selectList(Conditions.lambdaQuery(ChildStudent.class)
-                .eq(Student::getAge, 13)
-                .or(op -> op.notBetween(ChildStudent::getAge, 10, Arrays.asList(11,12,13)))
-                .or(op -> op.like(Student::getNickName, "小风"))
-                .pageParams(1, 10)
-                .toDefault().select("a.sex money", "ifnull(max(a.age), 0) maxAge")
-                .toLambda().groupBy(ChildStudent::getSex)
-        );
-        System.out.println("studentList.size() = " + studentList.size());
+//        List<ChildStudent> studentList = jdbcDao.selectList(Conditions.lambdaQuery(ChildStudent.class)
+//                .eq(Student::getAge, 13)
+//                .or(op -> op.notBetween(ChildStudent::getAge, 10, Arrays.asList(11,12,13)))
+//                .or(op -> op.like(Student::getNickName, "小风"))
+//                .pageParams(1, 10)
+//                .toDefault().select("a.sex money", "ifnull(max(a.age), 0) maxAge")
+//                .toLambda().groupBy(ChildStudent::getSex)
+//        );
+//        System.out.println("studentList.size() = " + studentList.size());
 
+        jdbcOpDao.execTrans(() -> {
+            Employee employee = jdbcOpDao.selectByKey(Employee.class, 10);
+            employee.setEmpName("李小宝");
+            jdbcOpDao.updateByKey(employee);
+            int a = 1/0;
+            employee.setEmpName("李大宝");
+            jdbcOpDao.updateByKey(employee);
+
+        });
 
 
 

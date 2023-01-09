@@ -18,6 +18,7 @@ import com.custom.comm.utils.JudgeUtil;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.interfaces.DatabaseAdapter;
+import com.custom.jdbc.interfaces.TransactionWrapper;
 import com.custom.jdbc.transaction.DbConnGlobal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -441,6 +442,11 @@ public class JdbcAction extends AbstractSqlExecutor implements SqlQueryAfter {
     @Override
     public JdbcExecutorFactory getExecutorFactory() {
         return this.executorFactory;
+    }
+
+    @Override
+    public void execTrans(TransactionWrapper wrapper) throws Exception {
+        executorFactory.handleTransaction(wrapper);
     }
 
     /**
