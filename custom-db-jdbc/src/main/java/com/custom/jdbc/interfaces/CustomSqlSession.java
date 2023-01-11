@@ -1,4 +1,6 @@
-package com.custom.jdbc.transaction;
+package com.custom.jdbc.interfaces;
+
+import com.custom.jdbc.condition.BaseExecutorBody;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -8,12 +10,17 @@ import java.sql.SQLException;
  * @date 2022/10/23 22:37
  * @desc
  */
-public interface DbTransaction {
+public interface CustomSqlSession {
 
     /**
      * 获取当前连接对象
      */
     Connection getConnection() throws SQLException;
+
+    /**
+     * 开启事务
+     */
+    void openTrans() throws SQLException;
 
     /**
      * 提交事务
@@ -29,5 +36,20 @@ public interface DbTransaction {
      * 关闭资源
      */
     void closeResources() throws SQLException;
+
+    /**
+     * 是否为自动提交
+     */
+    boolean isAutoCommit() throws SQLException;
+
+    /**
+     * 执行体
+     */
+    BaseExecutorBody getBody();
+
+    /**
+     * 设置执行体
+     */
+    void setBody(BaseExecutorBody body);
 
 }

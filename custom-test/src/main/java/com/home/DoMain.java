@@ -36,14 +36,13 @@ public class DoMain {
 //        );
 //        System.out.println("studentList.size() = " + studentList.size());
 
-        jdbcOpDao.execTrans(() -> {
+        jdbcOpDao.execTrans((conn) -> {
             Employee employee = jdbcOpDao.selectByKey(Employee.class, 10);
             employee.setEmpName("李小宝");
             jdbcOpDao.updateByKey(employee);
             int a = 1/0;
             employee.setEmpName("李大宝");
             jdbcOpDao.updateByKey(employee);
-
         });
 
 

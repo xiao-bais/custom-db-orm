@@ -10,9 +10,9 @@ import com.custom.jdbc.sqlprint.SqlOutPrintBuilder;
 import com.custom.jdbc.condition.BaseExecutorBody;
 import com.custom.jdbc.condition.SaveExecutorBody;
 import com.custom.jdbc.condition.SelectMapExecutorBody;
-import com.custom.jdbc.session.CustomSqlSession;
 import com.custom.jdbc.condition.SelectExecutorBody;
 import com.custom.jdbc.configuration.DbCustomStrategy;
+import com.custom.jdbc.interfaces.CustomSqlSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +40,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
     public <T> List<T> selectList(CustomSqlSession sqlSession) throws Exception {
 
         List<T> list = new ArrayList<>();
-        SelectExecutorBody<T> executorModel = (SelectExecutorBody<T>) sqlSession.getExecutorModel();
+        SelectExecutorBody<T> executorModel = (SelectExecutorBody<T>) sqlSession.getBody();
         CustomSqlSessionHelper sessionHelper = new CustomSqlSessionHelper(strategy, sqlSession);
         Class<T> entityClass = executorModel.getEntityClass();
         ResultSetTypeMappedHandler<T> typeMappedHandler = new ResultSetTypeMappedHandler<>(entityClass, strategy.isUnderlineToCamel());
@@ -89,7 +89,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
     @Override
     public <T> List<T> selectObjs(CustomSqlSession sqlSession) throws Exception {
 
-        SelectExecutorBody<T> executorModel = (SelectExecutorBody<T>) sqlSession.getExecutorModel();
+        SelectExecutorBody<T> executorModel = (SelectExecutorBody<T>) sqlSession.getBody();
         CustomSqlSessionHelper sessionHelper = new CustomSqlSessionHelper(strategy, sqlSession);
         Class<T> entityClass = executorModel.getEntityClass();
         ResultSetTypeMappedHandler<T> typeMappedHandler = new ResultSetTypeMappedHandler<>(entityClass, false);
@@ -133,7 +133,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
     public <V> List<Map<String, V>> selectListMap(CustomSqlSession sqlSession) throws Exception {
         Map<String, V> map;
         List<Map<String, V>> list = new ArrayList<>();
-        SelectExecutorBody<V> executorModel = (SelectExecutorBody<V>) sqlSession.getExecutorModel();
+        SelectExecutorBody<V> executorModel = (SelectExecutorBody<V>) sqlSession.getBody();
         CustomSqlSessionHelper sessionHelper = new CustomSqlSessionHelper(strategy, sqlSession);
         Class<V> entityClass = executorModel.getEntityClass();
         ResultSetTypeMappedHandler<V> typeMappedHandler = new ResultSetTypeMappedHandler<>(entityClass, strategy.isUnderlineToCamel());
@@ -175,7 +175,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
     @Override
     public <K, V> Map<K, V> selectMap(CustomSqlSession sqlSession) throws Exception {
 
-        SelectMapExecutorBody<K, V> executorModel = (SelectMapExecutorBody<K, V>) sqlSession.getExecutorModel();
+        SelectMapExecutorBody<K, V> executorModel = (SelectMapExecutorBody<K, V>) sqlSession.getBody();
         CustomSqlSessionHelper sessionHelper = new CustomSqlSessionHelper(strategy, sqlSession);
         Class<K> keyType = executorModel.getKeyType();
         Class<V> valueType = executorModel.getValueType();
@@ -229,7 +229,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
     public <T> T[] selectArrays(CustomSqlSession sqlSession) throws Exception {
 
         CustomSqlSessionHelper sessionHelper = new CustomSqlSessionHelper(strategy, sqlSession);
-        SelectExecutorBody<T> executorModel = (SelectExecutorBody<T>) sqlSession.getExecutorModel();
+        SelectExecutorBody<T> executorModel = (SelectExecutorBody<T>) sqlSession.getBody();
         ResultSetTypeMappedHandler<T> typeMappedHandler = new ResultSetTypeMappedHandler<>(executorModel.getEntityClass(), false);
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -263,7 +263,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
     public int executeUpdate(CustomSqlSession sqlSession) throws Exception {
 
         CustomSqlSessionHelper sessionHelper = new CustomSqlSessionHelper(strategy, sqlSession);
-        BaseExecutorBody executorModel = sqlSession.getExecutorModel();
+        BaseExecutorBody executorModel = sqlSession.getBody();
         PreparedStatement statement = null;
         try {
             statement = sessionHelper.defaultPreparedStatement();
@@ -285,7 +285,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
     public <T> int executeSave(CustomSqlSession sqlSession) throws Exception {
 
         CustomSqlSessionHelper sessionHelper = new CustomSqlSessionHelper(strategy, sqlSession);
-        SaveExecutorBody<T> executorModel = (SaveExecutorBody<T>) sqlSession.getExecutorModel();
+        SaveExecutorBody<T> executorModel = (SaveExecutorBody<T>) sqlSession.getBody();
 
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -322,7 +322,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
     @Override
     public void execTableInfo(CustomSqlSession sqlSession) throws Exception {
 
-        BaseExecutorBody executorModel = sqlSession.getExecutorModel();
+        BaseExecutorBody executorModel = sqlSession.getBody();
         String prepareSql = executorModel.getPrepareSql();
         CustomSqlSessionHelper sessionHelper = new CustomSqlSessionHelper(strategy, sqlSession);
         Statement statement = null;

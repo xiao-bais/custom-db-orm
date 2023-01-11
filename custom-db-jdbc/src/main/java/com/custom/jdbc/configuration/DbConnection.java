@@ -2,7 +2,7 @@ package com.custom.jdbc.configuration;
 
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.custom.jdbc.transaction.DbConnGlobal;
+import com.custom.jdbc.utils.DbConnGlobal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,9 +10,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * @Author Xiao-Bai
@@ -80,6 +78,7 @@ public class DbConnection {
         }catch (SQLException e) {
             logger.error(e.toString(), e);
         }
+        System.out.println("connection = " + connection);
         return connection;
     }
 

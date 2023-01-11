@@ -5,7 +5,7 @@ import com.custom.comm.annotations.*;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.*;
 import com.custom.jdbc.configuration.CustomConfigHelper;
-import com.custom.jdbc.transaction.DbConnGlobal;
+import com.custom.jdbc.utils.DbConnGlobal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

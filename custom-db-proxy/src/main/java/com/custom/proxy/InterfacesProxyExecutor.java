@@ -8,7 +8,7 @@ import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.jdbc.configuration.CustomConfigHelper;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
-import com.custom.jdbc.transaction.DbConnGlobal;
+import com.custom.jdbc.utils.DbConnGlobal;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationHandler;

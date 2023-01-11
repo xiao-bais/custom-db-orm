@@ -1,16 +1,14 @@
-package com.custom.jdbc.transaction;
+package com.custom.jdbc.utils;
 
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.utils.StrUtils;
-import com.custom.jdbc.condition.BaseExecutorBody;
 import com.custom.jdbc.configuration.DbConnection;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.configuration.CustomConfigHelper;
 import com.custom.jdbc.configuration.GlobalDataHandler;
 import com.custom.jdbc.interfaces.DatabaseAdapter;
-import com.custom.jdbc.session.CustomSqlSession;
 
 import java.sql.Connection;
 

@@ -1,5 +1,6 @@
 package com.custom.jdbc.session;
 
+import com.custom.jdbc.interfaces.CustomSqlSession;
 import com.custom.jdbc.sqlprint.SqlOutPrintBuilder;
 import com.custom.jdbc.condition.BaseExecutorBody;
 import com.custom.jdbc.configuration.DbCustomStrategy;
@@ -26,7 +27,7 @@ public class CustomSqlSessionHelper {
      */
     public PreparedStatement defaultPreparedStatement() throws Exception {
         Connection connection = sqlSession.getConnection();
-        BaseExecutorBody executorModel = sqlSession.getExecutorModel();
+        BaseExecutorBody executorModel = sqlSession.getBody();
         String prepareSql = executorModel.getPrepareSql();
         return connection.prepareStatement(prepareSql);
     }
@@ -37,7 +38,7 @@ public class CustomSqlSessionHelper {
      */
     public PreparedStatement generateKeysStatement() throws Exception {
         Connection connection = sqlSession.getConnection();
-        BaseExecutorBody executorModel = sqlSession.getExecutorModel();
+        BaseExecutorBody executorModel = sqlSession.getBody();
         String prepareSql = executorModel.getPrepareSql();
         return connection.prepareStatement(prepareSql, Statement.RETURN_GENERATED_KEYS);
     }
@@ -48,7 +49,7 @@ public class CustomSqlSessionHelper {
      */
     public PreparedStatement resultRowsStatement() throws Exception {
         Connection connection = sqlSession.getConnection();
-        BaseExecutorBody executorModel = sqlSession.getExecutorModel();
+        BaseExecutorBody executorModel = sqlSession.getBody();
         String prepareSql = executorModel.getPrepareSql();
         return connection.prepareStatement(prepareSql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
     }
@@ -74,7 +75,7 @@ public class CustomSqlSessionHelper {
      */
     public void handleExecuteBefore(PreparedStatement statement, boolean query) throws SQLException {
 
-        BaseExecutorBody executorModel = sqlSession.getExecutorModel();
+        BaseExecutorBody executorModel = sqlSession.getBody();
         Object[] sqlParams = executorModel.getSqlParams();
         boolean sqlPrintSupport = executorModel.isSqlPrintSupport();
         String prepareSql = executorModel.getPrepareSql();

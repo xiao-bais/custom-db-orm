@@ -1,6 +1,6 @@
 package com.custom.jdbc.executor;
 
-import com.custom.jdbc.session.CustomSqlSession;
+import com.custom.jdbc.interfaces.CustomSqlSession;
 
 import java.util.List;
 import java.util.Map;

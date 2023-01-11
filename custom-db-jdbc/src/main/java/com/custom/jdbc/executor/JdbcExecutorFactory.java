@@ -17,16 +17,15 @@ import com.custom.jdbc.dbAdapetr.Mysql8Adapter;
 import com.custom.jdbc.dbAdapetr.OracleAdapter;
 import com.custom.jdbc.dbAdapetr.SqlServerAdapter;
 import com.custom.jdbc.interfaces.DatabaseAdapter;
-import com.custom.jdbc.interfaces.SqlSessionExecutor;
 import com.custom.jdbc.interfaces.TransactionWrapper;
-import com.custom.jdbc.session.CustomSqlSession;
-import com.custom.jdbc.transaction.DbConnGlobal;
+import com.custom.jdbc.session.DefaultSqlSession;
+import com.custom.jdbc.utils.DbConnGlobal;
+import com.custom.jdbc.interfaces.CustomSqlSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -64,9 +63,12 @@ public class JdbcExecutorFactory {
      * 创建请求会话
      */
     private CustomSqlSession createSqlSession(BaseExecutorBody paramInfo) {
-        SqlSessionExecutor sessionExecutor = (connection) -> new CustomSqlSession(connection, paramInfo);
         Connection connection = DbConnGlobal.getCurrentConnection(dbDataSource);
-        return sessionExecutor.createSession(connection);
+        return new DefaultSqlSession(connection, paramInfo);
+    }
+
+    public CustomSqlSession createSqlSession() {
+        return createSqlSession(null);
     }
 
 
@@ -236,7 +238,6 @@ public class JdbcExecutorFactory {
     public int executeAnySql(String sql, Object... params) throws Exception {
         SaveExecutorBody<Object> paramInfo = new SaveExecutorBody<>(sql, true, params);
         CustomSqlSession sqlSession = this.createSqlSession(paramInfo);
-        System.out.println("sqlSession.getConnection() = " + sqlSession.getConnection());
         return jdbcExecutor.executeUpdate(sqlSession);
     }
 
@@ -278,33 +279,19 @@ public class JdbcExecutorFactory {
     }
 
     public void handleTransaction(TransactionWrapper wrapper) throws Exception {
-        Connection connection = DbConnGlobal.getCurrentConnection();
-        System.out.println("connection1 = " + connection);
-        Asserts.notNull(connection, "未能获取到可用的连接");
+        CustomSqlSession sqlSession = createSqlSession();
         try {
-            if (connection.getAutoCommit()) {
-                connection.setAutoCommit(false);
-            }
+            sqlSession.openTrans();
             wrapper.doing();
-            connection = DbConnGlobal.getCurrentConnection();
-            System.out.println("connection2 = " + connection);
-            if (!connection.getAutoCommit()) {
-                connection.commit();
-                connection.setAutoCommit(true);
-            }
+            sqlSession.commit();
         } catch (Exception e) {
-            connection.rollback();
+            sqlSession.rollback();
             throw e;
         } finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (Exception e) {
-                    log.error(e.toString(), e);
-                }
-            }
+            sqlSession.closeResources();
         }
     }
+
 
 
 }
