@@ -1,6 +1,6 @@
 package com.custom.taskmanager.config;
 
-import com.custom.jdbc.back.BackResult;
+import com.custom.comm.utils.back.BackResult;
 import com.custom.taskmanager.exception.BException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,8 +10,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.UndeclaredThrowableException;
 import java.util.List;
 import java.util.StringJoiner;
 

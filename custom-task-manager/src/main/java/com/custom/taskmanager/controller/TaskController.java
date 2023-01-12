@@ -1,7 +1,7 @@
 package com.custom.taskmanager.controller;
 
-import com.custom.jdbc.back.BackResult;
 import com.custom.comm.page.DbPageRows;
+import com.custom.comm.utils.back.BackResult;
 import com.custom.taskmanager.enums.TaskDifficultyEnum;
 import com.custom.taskmanager.enums.TaskPriorityEnum;
 import com.custom.taskmanager.enums.TaskProgressEnum;

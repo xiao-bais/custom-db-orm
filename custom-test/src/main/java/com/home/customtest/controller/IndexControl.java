@@ -1,11 +1,13 @@
 package com.home.customtest.controller;
 
 import com.custom.action.core.JdbcOpDao;
-import com.custom.jdbc.back.BackResult;
+import com.custom.comm.utils.back.BackResult;
 import com.home.customtest.entity.Province;
 import com.home.customtest.mapper.StudentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 

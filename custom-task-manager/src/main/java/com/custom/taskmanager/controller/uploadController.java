@@ -4,7 +4,7 @@ import com.custom.aliyun.oss.AliyunOssConfig;
 import com.custom.aliyun.oss.CustomOSSClient;
 import com.custom.aliyun.oss.OssPolicyResult;
 import com.custom.comm.date.DateTimeUtils;
-import com.custom.jdbc.back.BackResult;
+import com.custom.comm.utils.back.BackResult;
 import com.custom.taskmanager.config.AliyunOss;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

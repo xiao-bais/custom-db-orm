@@ -2,11 +2,13 @@ package com.custom.jdbc.handler;
 
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.*;
-import com.custom.jdbc.back.BackResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.ResultSet;
