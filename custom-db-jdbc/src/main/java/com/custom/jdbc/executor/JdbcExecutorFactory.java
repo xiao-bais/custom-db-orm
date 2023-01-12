@@ -2,7 +2,6 @@ package com.custom.jdbc.executor;
 
 import com.custom.comm.enums.DatabaseType;
 import com.custom.comm.exceptions.CustomCheckException;
-import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.ConvertUtil;
 import com.custom.comm.utils.StrUtils;
 import com.custom.jdbc.condition.BaseExecutorBody;
@@ -17,7 +16,7 @@ import com.custom.jdbc.dbAdapetr.Mysql8Adapter;
 import com.custom.jdbc.dbAdapetr.OracleAdapter;
 import com.custom.jdbc.dbAdapetr.SqlServerAdapter;
 import com.custom.jdbc.interfaces.DatabaseAdapter;
-import com.custom.jdbc.interfaces.TransactionWrapper;
+import com.custom.jdbc.interfaces.TransactionExecutor;
 import com.custom.jdbc.session.DefaultSqlSession;
 import com.custom.jdbc.utils.DbConnGlobal;
 import com.custom.jdbc.interfaces.CustomSqlSession;
@@ -278,12 +277,19 @@ public class JdbcExecutorFactory {
         return jdbcExecutor.executeSave(sqlSession);
     }
 
-    public void handleTransaction(TransactionWrapper wrapper) throws Exception {
+
+    /**
+     * 处理事务
+     */
+    public void handleTransaction(TransactionExecutor executor) throws Exception {
         CustomSqlSession sqlSession = createSqlSession();
         try {
-            sqlSession.openTrans();
-            wrapper.doing();
+            sqlSession.checkConnState(dbDataSource);
+            sqlSession.openSession();
+            executor.doing();
+            sqlSession.checkConnState(dbDataSource);
             sqlSession.commit();
+            sqlSession.closeSession();
         } catch (Exception e) {
             sqlSession.rollback();
             throw e;

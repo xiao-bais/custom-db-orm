@@ -23,7 +23,7 @@ public class DbConnection {
 
     private DbDataSource dbDataSource = null;
     private static final String CUSTOM_DRIVER = "com.mysql.cj.jdbc.Driver";
-    private static Map<String, Object> currMap  = new ConcurrentHashMap<>();
+    private static final Map<String, Object> currMap  = new ConcurrentHashMap<>();
 
     /**
      * 获取连接
@@ -62,13 +62,13 @@ public class DbConnection {
     }
 
 
-    private final ThreadLocal<Connection> CONN_LOCAL = new ThreadLocal<>();
+    private static final ThreadLocal<Connection> CONN_LOCAL = new ThreadLocal<>();
 
     public Connection createConnection() {
         Connection connection = null;
         try {
             connection = CONN_LOCAL.get();
-            if (connection == null) {
+            if (connection == null || connection.isClosed()) {
                 String dataSourceKey = DbConnGlobal.getDataSourceKey(dbDataSource);
                 DataSource dataSource = (DataSource) currMap.get(dataSourceKey);
                 connection = dataSource.getConnection();

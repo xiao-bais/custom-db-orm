@@ -1,25 +1,13 @@
 package com.custom.action.dbaction;
 
 import com.custom.action.condition.AbstractUpdateSet;
-import com.custom.action.core.HandleSelectSqlBuilder;
-import com.custom.action.core.JdbcOpDao;
-import com.custom.action.extend.MultiResultInjector;
 import com.custom.action.condition.ConditionWrapper;
-import com.custom.action.interfaces.CustomTransactionHandler;
-import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.page.DbPageRows;
-import com.custom.comm.utils.ConvertUtil;
-import com.custom.jdbc.condition.BaseExecutorBody;
-import com.custom.jdbc.condition.SaveExecutorBody;
-import com.custom.jdbc.condition.SelectExecutorBody;
-import com.custom.jdbc.condition.SelectMapExecutorBody;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
-import com.custom.jdbc.interfaces.CustomSqlSession;
-import com.custom.jdbc.interfaces.TransactionWrapper;
+import com.custom.jdbc.interfaces.TransactionExecutor;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.*;
 
 /**
@@ -87,7 +75,7 @@ public abstract class AbstractSqlExecutor  {
     public abstract void dropTables(Class<?>... arr) throws Exception;
     public abstract DbDataSource getDbDataSource();
     public abstract JdbcExecutorFactory getExecutorFactory();
-    public abstract void execTrans(TransactionWrapper wrapper) throws Exception;
+    public abstract void execTrans(TransactionExecutor wrapper) throws Exception;
 
 
 

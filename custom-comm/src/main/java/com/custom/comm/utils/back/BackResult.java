@@ -1,6 +1,5 @@
-package com.custom.jdbc.back;
+package com.custom.comm.utils.back;
 
-import com.custom.jdbc.utils.BackResultTransactionProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -173,9 +172,7 @@ public class BackResult<T> {
     public static <T> BackResult<T> execCall(Back<T> back) {
         BackResult<T> backResult = new BackResult<>();
         try {
-            BackResultTransactionProxy<T> transactionProxy = new BackResultTransactionProxy<>(back);
-            Back<T> proxyBack = transactionProxy.getProxyBack();
-            proxyBack.execCall(backResult);
+            back.execCall(backResult);
         }catch (Exception e) {
             logger.error(e.getMessage(), e);
             backResult = new BackResult<>(ResultStatus.error.getCode(), e.getMessage());

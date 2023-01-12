@@ -1,15 +1,10 @@
 package com.home;
 
-import com.custom.action.condition.Conditions;
 import com.custom.action.core.*;
-import com.custom.comm.utils.CustomUtil;
 import com.custom.jdbc.back.BackResult;
-import com.custom.jdbc.interfaces.TransactionWrapper;
 import com.home.customtest.entity.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @Author Xiao-Bai
@@ -36,7 +31,9 @@ public class DoMain {
 //        );
 //        System.out.println("studentList.size() = " + studentList.size());
 
-        jdbcOpDao.execTrans((conn) -> {
+        List<Student> studentList = jdbcDao.selectList(Student.class, "and a.name = ? ", "李雨");
+
+        jdbcOpDao.execTrans(() -> {
             Employee employee = jdbcOpDao.selectByKey(Employee.class, 10);
             employee.setEmpName("李小宝");
             jdbcOpDao.updateByKey(employee);

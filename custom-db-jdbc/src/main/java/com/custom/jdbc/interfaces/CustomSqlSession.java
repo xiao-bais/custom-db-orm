@@ -1,6 +1,7 @@
 package com.custom.jdbc.interfaces;
 
 import com.custom.jdbc.condition.BaseExecutorBody;
+import com.custom.jdbc.configuration.DbDataSource;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -18,9 +19,19 @@ public interface CustomSqlSession {
     Connection getConnection() throws SQLException;
 
     /**
-     * 开启事务
+     * 连接连接状态
      */
-    void openTrans() throws SQLException;
+    void checkConnState(DbDataSource dbDataSource) throws SQLException;
+
+    /**
+     * 开启会话
+     */
+    void openSession() throws SQLException;
+
+    /**
+     * 关闭会话
+     */
+    void closeSession() throws SQLException;
 
     /**
      * 提交事务

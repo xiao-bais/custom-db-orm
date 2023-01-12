@@ -4,7 +4,6 @@ import com.custom.action.condition.*;
 import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.dbaction.AbstractSqlExecutor;
 import com.custom.action.extend.MultiResultInjector;
-import com.custom.action.interfaces.CustomTransactionHandler;
 import com.custom.action.interfaces.SqlQueryAfter;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.jdbc.executor.CustomJdbcExecutor;
@@ -20,7 +19,7 @@ import com.custom.comm.utils.JudgeUtil;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.interfaces.DatabaseAdapter;
-import com.custom.jdbc.interfaces.TransactionWrapper;
+import com.custom.jdbc.interfaces.TransactionExecutor;
 import com.custom.jdbc.utils.DbConnGlobal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -448,8 +447,8 @@ public class JdbcAction extends AbstractSqlExecutor implements SqlQueryAfter {
     }
 
     @Override
-    public void execTrans(TransactionWrapper wrapper) throws Exception {
-        executorFactory.handleTransaction(wrapper);
+    public void execTrans(TransactionExecutor executor) throws Exception {
+        executorFactory.handleTransaction(executor);
     }
 
     /**

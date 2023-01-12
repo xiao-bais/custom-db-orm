@@ -1,7 +1,6 @@
 package com.custom.action.interfaces;
 
 import com.custom.action.core.JdbcOpDao;
-import com.custom.jdbc.interfaces.TransactionWrapper;
 
 /**
  * @author Xiao-Bai

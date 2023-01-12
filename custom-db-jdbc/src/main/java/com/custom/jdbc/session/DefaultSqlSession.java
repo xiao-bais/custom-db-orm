@@ -1,8 +1,10 @@
 package com.custom.jdbc.session;
 
+import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.exceptions.SQLSessionException;
 import com.custom.jdbc.condition.BaseExecutorBody;
 import com.custom.jdbc.interfaces.CustomSqlSession;
+import com.custom.jdbc.utils.DbConnGlobal;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -23,7 +25,6 @@ public class DefaultSqlSession implements CustomSqlSession {
      * 执行体
      */
     private BaseExecutorBody executorBody;
-    private boolean autoCommit = true;
 
     public BaseExecutorBody getExecutorBody() {
         return executorBody;
@@ -37,10 +38,8 @@ public class DefaultSqlSession implements CustomSqlSession {
         this.executorBody = executorBody;
     }
 
-
-    public DefaultSqlSession(Connection connection, BaseExecutorBody executorBody, boolean autoCommit) {
-        this.executorBody = executorBody;
-        this.autoCommit = autoCommit;
+    public DefaultSqlSession(Connection currentConn) {
+        this.currentConn = currentConn;
     }
 
     @Override
@@ -49,17 +48,29 @@ public class DefaultSqlSession implements CustomSqlSession {
     }
 
     @Override
-    public void openTrans() throws SQLException {
+    public void checkConnState(DbDataSource dbDataSource) throws SQLException {
+        if (currentConn == null || currentConn.isClosed()) {
+            currentConn = DbConnGlobal.getCurrentConnection(dbDataSource);
+        }
+    }
+
+    @Override
+    public void openSession() throws SQLException {
         if (currentConn != null && currentConn.getAutoCommit()) {
-            System.out.println("开启连接:" + currentConn);
             currentConn.setAutoCommit(false);
+        }
+    }
+
+    @Override
+    public void closeSession() throws SQLException {
+        if (currentConn != null && !currentConn.getAutoCommit()) {
+            currentConn.setAutoCommit(true);
         }
     }
 
     @Override
     public void commit() throws SQLException {
         if (currentConn != null && !currentConn.getAutoCommit()) {
-            System.out.println("连接提交:" + currentConn);
             currentConn.commit();
         }
     }
@@ -67,7 +78,6 @@ public class DefaultSqlSession implements CustomSqlSession {
     @Override
     public void rollback() throws SQLException {
         if (currentConn != null && !currentConn.getAutoCommit()) {
-            System.out.println("连接事务回滚:" + currentConn);
             currentConn.rollback();
         }
     }
@@ -75,7 +85,6 @@ public class DefaultSqlSession implements CustomSqlSession {
     @Override
     public void closeResources() throws SQLException {
         if (currentConn != null) {
-            System.out.println("连接关闭:" + currentConn);
             currentConn.close();
         }
     }
@@ -94,6 +103,6 @@ public class DefaultSqlSession implements CustomSqlSession {
         if (currentConn != null) {
             return currentConn.getAutoCommit();
         }
-        return autoCommit;
+        return true;
     }
 }

@@ -2,13 +2,12 @@ package com.custom.action.core;
 
 import com.custom.action.condition.AbstractUpdateSet;
 import com.custom.action.dbaction.AbstractSqlExecutor;
-import com.custom.action.interfaces.CustomTransactionHandler;
 import com.custom.action.proxy.JdbcActionProxy;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.comm.page.DbPageRows;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
-import com.custom.jdbc.interfaces.TransactionWrapper;
+import com.custom.jdbc.interfaces.TransactionExecutor;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -349,8 +348,11 @@ public class JdbcOpDao {
         sqlExecutor.createTables(arr);
     }
 
-    public void execTrans(TransactionWrapper wrapper) throws Exception {
-        sqlExecutor.execTrans(wrapper);
+    /**
+     * 执行事务
+     */
+    public void execTrans(TransactionExecutor executor) throws Exception {
+        sqlExecutor.execTrans(executor);
     }
 
     private final AbstractSqlExecutor sqlExecutor;
