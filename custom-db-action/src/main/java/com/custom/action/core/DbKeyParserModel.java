@@ -99,7 +99,7 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
     /**
     * 生成主键
     */
-    protected Object generateKey() {
+    protected Object generateKey(T currEntity) {
         Object key = null;
         switch (strategy) {
             case AUTO:
@@ -114,7 +114,7 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
                 this.setValue(key);
                 break;
             case INPUT:
-                key = getValue();
+                key = getValue(currEntity);
                 if(key == null) {
                     throw new CustomCheckException("The value of the primary key is empty");
                 }

@@ -20,15 +20,15 @@ public class DbRelationParserModel<T> extends AbstractTableModel<T> {
 
     private Class<T> cls;
 
-    private String joinTable;
+    private final String joinTable;
 
-    private String joinAlias;
+    private final String joinAlias;
 
-    private Field field;
+    private final Field field;
 
     private String condition;
 
-    private DbJoinStyle joinStyle;
+    private final DbJoinStyle joinStyle;
 
     private String fieldName;
 
@@ -51,13 +51,6 @@ public class DbRelationParserModel<T> extends AbstractTableModel<T> {
         this.joinAlias = annotation.joinAlias();
         this.joinStyle = annotation.joinStyle();
         this.condition = annotation.condition();
-    }
-
-    public DbRelationParserModel(Class<T> cls) {
-        this.cls = cls;
-        DbTable annotation = cls.getAnnotation(DbTable.class);
-        this.setTable(annotation.table());
-        this.setAlias(annotation.alias());
     }
 
 

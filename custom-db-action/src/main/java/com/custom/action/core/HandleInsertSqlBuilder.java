@@ -138,7 +138,7 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
         // 读取
         if (keyParserModel != null) {
-            Object keyValue = keyParserModel.generateKey();
+            Object keyValue = keyParserModel.generateKey(currEntity);
             this.addParams(keyValue, sqlParams);
         }
         List<DbFieldParserModel<T>> fieldParserModels = getFieldParserModels();

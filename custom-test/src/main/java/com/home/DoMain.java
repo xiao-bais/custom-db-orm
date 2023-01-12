@@ -20,7 +20,6 @@ public class DoMain {
 
     public static void main(String[] args) throws Exception {
 
-
         JdbcTestBuilder jdbcTestBuilder = JdbcTestBuilder.builder();
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
