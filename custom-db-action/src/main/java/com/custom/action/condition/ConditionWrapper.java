@@ -11,6 +11,8 @@ import com.custom.comm.utils.lambda.SFunction;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Xiao-Bai
@@ -78,6 +80,11 @@ public abstract class ConditionWrapper<T> implements Serializable {
     private Integer pageIndex;
     private Integer pageSize;
     private Boolean hasPageParams = false;
+
+    /**
+     * 是否启用别名
+     */
+    private boolean enableAlias = true;
 
     /**
      * 函数式接口序列化解析对象
@@ -239,6 +246,11 @@ public abstract class ConditionWrapper<T> implements Serializable {
         wrapperInitialize(entityClass, null);
     }
 
+    protected void wrapperInitialize(Class<T> entityClass, boolean enableAlias) {
+        wrapperInitialize(entityClass);
+        this.enableAlias = enableAlias;
+    }
+
     /**
      * 结构初始化
      */
@@ -263,14 +275,17 @@ public abstract class ConditionWrapper<T> implements Serializable {
      */
     @SafeVarargs
     protected final String[] parseColumn(SFunction<T, ?>... func) {
-        return columnParseHandler.parseToColumns(Arrays.asList(func)).toArray(new String[0]);
+        if (enableAlias) {
+            return columnParseHandler.parseToColumns(Arrays.asList(func)).toArray(new String[0]);
+        }
+        return Stream.of(func).map(fun -> columnParseHandler.parseToNormalColumn(fun)).toArray(String[]::new);
     }
 
     /**
      * 解析函数后，得到java属性字段对应的表字段名称
      */
     protected String parseColumn(SFunction<T, ?> func) {
-        return columnParseHandler.parseToColumn(func);
+        return enableAlias ? columnParseHandler.parseToColumn(func) : columnParseHandler.parseToNormalColumn(func);
     }
 
     public abstract T getThisEntity();
@@ -324,4 +339,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
     }
 
 
+    public boolean isEnableAlias() {
+        return enableAlias;
+    }
 }

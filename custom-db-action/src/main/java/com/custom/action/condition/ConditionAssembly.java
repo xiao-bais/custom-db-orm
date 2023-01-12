@@ -1,6 +1,7 @@
 package com.custom.action.condition;
 
 import com.custom.action.util.DbUtil;
+import com.custom.comm.enums.SqlExecTemplate;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
@@ -103,7 +104,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
         if (GlobalDataHandler.hasSqlKeyword(column)) {
             column = GlobalDataHandler.wrapperSqlKeyword(column);
         }
-        if(!column.contains(Constants.POINT)) {
+        if(!column.contains(Constants.POINT) && isEnableAlias()) {
             column = DbUtil.fullSqlColumn(getTableSupport().alias(), column);
         }
         return column;
@@ -166,6 +167,29 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
                 getHavingParams().addAll((List<Object>) val1);
                 break;
         }
+    }
+
+    /**
+     * 添加existsSql
+     */
+    protected <E> void addExistsSql(DbSymbol dbSymbol, LambdaExistsWrapper<T, E> existsWrapper) {
+        LambdaConditionWrapper<E> lambdaConditionWrapper = existsWrapper.getWrapper();
+        String table = lambdaConditionWrapper.getTableSupport().table();
+
+        // exists 解析
+        String existColumn = DbUtil.fullSqlColumn(table, existsWrapper.getExistColumn());
+        String parseColumn = parseColumn(existsWrapper.getProColumn());
+        String existsCodition = DbUtil.formatMapperSqlCondition(parseColumn, existColumn);
+
+        String condition = existsCodition + lambdaConditionWrapper.getFinalConditional();
+        String selectExistsSql = SqlExecTemplate.format(SqlExecTemplate.SELECT_EXISTS, table, condition);
+
+        List<Object> paramValues = lambdaConditionWrapper.getParamValues();
+
+        selectExistsSql = DbUtil.applyExistsCondition(appendSybmol, dbSymbol.getSymbol(), selectExistsSql);
+
+        addCondition(selectExistsSql);
+        addParams(paramValues);
     }
 
     /**

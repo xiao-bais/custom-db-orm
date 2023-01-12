@@ -6,6 +6,7 @@ import com.custom.comm.enums.SqlLike;
 import com.custom.comm.utils.lambda.SFunction;
 
 import java.util.Collection;
+import java.util.function.Consumer;
 
 /**
  * @Author Xiao-Bai
@@ -124,6 +125,32 @@ public class LambdaConditionWrapper<T> extends ConditionAdapter<T, LambdaConditi
         return adapter(DbSymbol.IS_NOT_NULL, condition, column);
     }
 
+
+    public <E> LambdaConditionWrapper<T> exists(ExistsWrapper<T, E> existsWrapper) {
+        return exists(true, existsWrapper);
+    }
+
+    public <E> LambdaConditionWrapper<T> exists(boolean condition, ExistsWrapper<T, E> existsWrapper) {
+        if (condition) {
+            LambdaExistsWrapper<T, E> conditionWrapper = (LambdaExistsWrapper<T, E>) existsWrapper;
+            addExistsSql(DbSymbol.EXISTS, conditionWrapper);
+        }
+        return childrenClass;
+    }
+
+    public <E> LambdaConditionWrapper<T> exists(Class<E> existClass, Consumer<ExistsWrapper<T, E>> existWrapper) {
+        return exists(true, existClass, existWrapper);
+    }
+    public <E> LambdaConditionWrapper<T> exists(boolean condition, Class<E> existClass, Consumer<ExistsWrapper<T, E>> existWrapper) {
+        if (condition) {
+            LambdaExistsWrapper<T, E> existConditionWrapper = new LambdaExistsWrapper<>(existClass);
+            existWrapper.accept(existConditionWrapper);
+            addExistsSql(DbSymbol.EXISTS, existConditionWrapper);
+        }
+        return childrenClass;
+    }
+
+
     /**
      * 转成默认格式的条件构造器
      */
@@ -133,6 +160,10 @@ public class LambdaConditionWrapper<T> extends ConditionAdapter<T, LambdaConditi
 
     public LambdaConditionWrapper(Class<T> entityClass) {
         wrapperInitialize(entityClass);
+    }
+
+    protected LambdaConditionWrapper(Class<T> entityClass, boolean enableAlias) {
+        wrapperInitialize(entityClass, enableAlias);
     }
 
     public LambdaConditionWrapper(Class<T> entityClass, TableSupport tableSupport) {

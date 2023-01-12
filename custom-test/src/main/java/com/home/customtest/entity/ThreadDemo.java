@@ -1,7 +1,7 @@
 package com.home.customtest.entity;
 
 import com.custom.action.core.JdbcDao;
-import com.custom.jdbc.back.BackResult;
+import com.custom.comm.utils.back.BackResult;
 
 /**
  * @author Xiao-Bai

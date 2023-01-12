@@ -115,7 +115,7 @@ public class ColumnPropertyMap<T> implements Serializable {
         if (parse2Map != null) {
             return parse2Map.column;
         }
-        return null;
+        return "";
     }
 
     public static String parse2AliasColumn(Class<?> targetClass, String implMethod) {

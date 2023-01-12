@@ -78,7 +78,6 @@ public class DbConnection {
         }catch (SQLException e) {
             logger.error(e.toString(), e);
         }
-        System.out.println("connection = " + connection);
         return connection;
     }
 
