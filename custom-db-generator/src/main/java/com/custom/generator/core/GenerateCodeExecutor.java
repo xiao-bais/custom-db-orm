@@ -37,7 +37,7 @@ public class GenerateCodeExecutor {
 
     private static final Logger logger = LoggerFactory.getLogger(GenerateCodeExecutor.class);
 
-    private static String DATA_BASE;
+    private final String DATA_BASE;
     private List<TableStructModel> tableStructModels;
     private final JdbcExecutorFactory executorFactory;
 
