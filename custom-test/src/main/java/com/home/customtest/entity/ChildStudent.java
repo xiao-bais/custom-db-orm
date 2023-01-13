@@ -30,6 +30,8 @@ public class ChildStudent extends Student {
     private Integer maxAge;
     @DbNotField
     private Integer avgAge;
+    @DbNotField
+    private String caseAge;
 
     private ChildStudent(){
         super();

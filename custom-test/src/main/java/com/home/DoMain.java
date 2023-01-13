@@ -26,15 +26,14 @@ public class DoMain {
 
         List<ChildStudent> studentList = jdbcDao.selectList(Conditions.lambdaQuery(ChildStudent.class)
                 .eq(Student::getAge, 13)
-                .or(op -> op.notBetween(ChildStudent::getAge, 10, 24))
-                .or(op -> op.like(Student::getNickName, "小风"))
-                .pageParams(1, 10)
-                .exists(Employee.class, x -> x.apply(ChildStudent::getNickName, Employee::getEmpName)
-                        .ge(Employee::getAge, 22)
-                        .eq(Employee::getState, 0)
-                )
-                .toDefault().select("a.sex money", "ifnull(max(a.age), 0) maxAge")
-                .toLambda().groupBy(ChildStudent::getSex)
+                .eq(Student::getNickName, "aaaa")
+                .ge(Student::getAge, 22)
+                .between(Student::getAge, 24, 30)
+                .or(x -> x.eq(Student::getAddress, "湖南长沙"))
+                .toDefault()
+                .select("case when a.sex = 1 then '男' else '女' end caseAge")
+                .toLambda()
+                .orderByAsc(Student::getMoney)
         );
         System.out.println("studentList.size() = " + studentList.size());
 

@@ -264,11 +264,11 @@ public abstract class AbstractSqlBuilder<T> {
             if (StrUtils.isBlank(condition)) {
                 return isExist ? Constants.WHERE + getLogicDeleteQuerySql() : Constants.EMPTY;
             }
-            String finalCondition = "(" + DbUtil.trimSqlCondition(condition) + ")";
             if (isExist) {
+                String finalCondition = "(" + DbUtil.trimSqlCondition(condition) + ")";
                 return Constants.WHERE + getLogicDeleteQuerySql() + Constants.AND + " " + finalCondition;
             }
-            return Constants.WHERE + finalCondition;
+            return Constants.WHERE + DbUtil.trimSqlCondition(condition);
         };
     }
 
