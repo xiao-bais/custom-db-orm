@@ -1,11 +1,9 @@
 package com.custom.jdbc.interfaces;
 
-import java.sql.Connection;
-
 /**
  * @author Xiao-Bai
  * @date 2023/1/7 14:55
- * 对于事务的执行包装
+ * 若涉及事务操作，可在该接口中完成
  */
 public interface TransactionExecutor {
 

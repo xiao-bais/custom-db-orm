@@ -48,7 +48,7 @@ public class JdbcOpDao {
      * 根据条件进行分页查询: 例（and a.name = ?）
      */
     public <T> DbPageRows<T> selectPage(Class<T> t, String condition, DbPageRows<T> dbPageRows, Object... params) throws Exception {
-        return sqlExecutor.selectPage(t, condition, null, dbPageRows, params);
+        return sqlExecutor.selectPage(t, condition, dbPageRows, params);
     }
 
     /**

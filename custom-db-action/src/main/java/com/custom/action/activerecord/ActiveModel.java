@@ -1,15 +1,12 @@
 package com.custom.action.activerecord;
 
+import com.custom.action.core.TableInfoCache;
 import com.custom.action.interfaces.TableExecutor;
-import com.custom.action.core.DefaultTableExecutor;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.comm.utils.ConvertUtil;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.exceptions.CustomCheckException;
-import com.custom.jdbc.configuration.DbCustomStrategy;
-import com.custom.jdbc.configuration.CustomConfigHelper;
 import com.custom.jdbc.configuration.DbDataSource;
-import com.custom.jdbc.utils.DbConnGlobal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,12 +28,13 @@ public class ActiveModel<T extends ActiveModel<T, P>, P extends Serializable> im
 
     private static final Logger logger = LoggerFactory.getLogger(ActiveModel.class);
 
+
     /**
      * 根据主键删除多条记录
      */
     public boolean delete(List<P> keys) throws Exception {
-        TableExecutor<T, P> activeWrapper = activeWrapper();
-        return ConvertUtil.conBool(activeWrapper.deleteBatchKeys(keys));
+        TableExecutor<T, P> tableExecutor = thisExecutor();
+        return ConvertUtil.conBool(tableExecutor.deleteBatchKeys(keys));
     }
 
 
@@ -44,83 +42,76 @@ public class ActiveModel<T extends ActiveModel<T, P>, P extends Serializable> im
      * 根据条件删除记录
      */
     public boolean delete(ConditionWrapper<T> wrapper) throws Exception {
-        TableExecutor<T, P> activeWrapper = activeWrapper();
-        return ConvertUtil.conBool(activeWrapper.deleteSelective(wrapper));
+        TableExecutor<T, P> tableExecutor = thisExecutor();
+        return ConvertUtil.conBool(tableExecutor.deleteSelective(wrapper));
     }
 
     /**
      * 根据主键删除一条记录
      */
     public boolean delete(P key) throws Exception {
-        TableExecutor<T, P> activeWrapper = activeWrapper();
-        return ConvertUtil.conBool(activeWrapper.deleteByKey(key));
+        TableExecutor<T, P> tableExecutor = thisExecutor();
+        return ConvertUtil.conBool(tableExecutor.deleteByKey(key));
     }
 
     /**
      * 删除此记录
      */
     public boolean delete() throws Exception {
-        TableExecutor<T, P> activeWrapper = activeWrapper();
-        P primaryKeyValue = activeWrapper.primaryKeyValue((T) this);
+        TableExecutor<T, P> tableExecutor = thisExecutor();
+        P primaryKeyValue = tableExecutor.primaryKeyValue((T) this);
         if (primaryKeyValue == null) {
             throw new CustomCheckException("Value of primary key not specified");
         }
-        return ConvertUtil.conBool(activeWrapper.deleteByKey(primaryKeyValue));
+        return ConvertUtil.conBool(tableExecutor.deleteByKey(primaryKeyValue));
     }
 
     /**
      * 根据主键修改
      */
     public boolean update() throws Exception {
-        TableExecutor<T, P> activeWrapper = activeWrapper();
-        return ConvertUtil.conBool(activeWrapper.updateByKey((T) this));
+        TableExecutor<T, P> tableExecutor = thisExecutor();
+        return ConvertUtil.conBool(tableExecutor.updateByKey((T) this));
     }
 
     /**
      * 根据主键是否为空自行插入或修改一条记录
      */
     public boolean save() throws Exception {
-        TableExecutor<T, P> activeWrapper = activeWrapper();
-        return ConvertUtil.conBool(activeWrapper.save((T) this));
+        TableExecutor<T, P> tableExecutor = thisExecutor();
+        return ConvertUtil.conBool(tableExecutor.save((T) this));
     }
 
     /**
      * 插入一条记录
      */
     public boolean insert() throws Exception {
-        TableExecutor<T, P> activeWrapper = activeWrapper();
-        if (activeWrapper.primaryKeyValue((T) this) != null) {
+        TableExecutor<T, P> tableExecutor = thisExecutor();
+        if (tableExecutor.primaryKeyValue((T) this) != null) {
             return false;
         }
-        return ConvertUtil.conBool(activeWrapper.insert((T) this));
+        return ConvertUtil.conBool(tableExecutor.insert((T) this));
+    }
+
+
+    /**
+     * 获取表操作对象
+     */
+    private TableExecutor<T, P> thisExecutor() {
+        return TableInfoCache.getTableExecutor(order(), target());
     }
 
     /**
      * 插入多条记录
      */
     public boolean insert(List<T> tList) throws Exception {
-        TableExecutor<T, P> activeWrapper = activeWrapper();
-        return ConvertUtil.conBool(activeWrapper.insert(tList));
-    }
-
-
-    private TableExecutor<T, P> activeWrapper() {
-        CustomConfigHelper configHelper = DbConnGlobal.getConfigHelper(order());
-        if (configHelper == null) {
-            throw new CustomCheckException("No data source configured");
-        }
-        if (configHelper.getDbDataSource() == null) {
-            throw new CustomCheckException("No matching data source found");
-        }
-        if (configHelper.getDbCustomStrategy() == null) {
-            configHelper.setDbCustomStrategy(new DbCustomStrategy());
-        }
-        return new DefaultTableExecutor<>(configHelper.getDbDataSource(),configHelper.getDbCustomStrategy(), entityClass());
+        TableExecutor<T, P> tableExecutor = thisExecutor();
+        return ConvertUtil.conBool(tableExecutor.insert(tList));
     }
 
 
     @SuppressWarnings("unchecked")
-    public Class<T> entityClass() {
+    private Class<T> target() {
         try {
             ParameterizedType genericSuperclass = (ParameterizedType) this.getClass().getGenericSuperclass();
             Type[] actualTypeArguments = genericSuperclass.getActualTypeArguments();
@@ -131,7 +122,7 @@ public class ActiveModel<T extends ActiveModel<T, P>, P extends Serializable> im
         }
 
     }
-    
+
     /**
      * @see DbDataSource#getOrder()
      * 多个数据源的情况下，可由此指定数据源
@@ -140,4 +131,5 @@ public class ActiveModel<T extends ActiveModel<T, P>, P extends Serializable> im
     public int order() {
         return Constants.DEFAULT_ONE;
     }
+
 }

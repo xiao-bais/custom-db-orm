@@ -19,7 +19,7 @@ public interface CustomSqlSession {
     Connection getConnection() throws SQLException;
 
     /**
-     * 连接连接状态
+     * 检查连接状态
      */
     void checkConnState(DbDataSource dbDataSource) throws SQLException;
 

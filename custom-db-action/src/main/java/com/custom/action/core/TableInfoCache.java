@@ -1,9 +1,16 @@
 package com.custom.action.core;
 
+import com.custom.action.interfaces.TableExecutor;
+import com.custom.comm.exceptions.CustomCheckException;
+import com.custom.jdbc.configuration.CustomConfigHelper;
+import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.utils.DbConnGlobal;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -115,6 +122,29 @@ public class TableInfoCache {
     protected static <T> EmptySqlBuilder<T> getEmptySqlBuilder(Class<T> entityClass, JdbcExecutorFactory executorFactory) {
         SqlBuilderTemplate<T> sqlBuilderCache = getSqlBuilderCache(entityClass, executorFactory);
         return (EmptySqlBuilder<T>) sqlBuilderCache.getEmptySqlBuilder();
+    }
+
+
+
+    private final static Map<Class<?>, TableExecutor<?, ?>> TABLE_EXEC_CACHE = new ConcurrentHashMap<>();
+
+    public static <T, P extends Serializable> TableExecutor<T, P> getTableExecutor(int order, Class<T> target) {
+        CustomConfigHelper configHelper = DbConnGlobal.getConfigHelper(order);
+        if (configHelper == null) {
+            throw new CustomCheckException("No data source configured");
+        }
+        if (configHelper.getDbDataSource() == null) {
+            throw new CustomCheckException("No matching data source found");
+        }
+        if (configHelper.getDbCustomStrategy() == null) {
+            configHelper.setDbCustomStrategy(new DbCustomStrategy());
+        }
+        TableExecutor<T, P> tableExecutor = (TableExecutor<T, P>) TABLE_EXEC_CACHE.get(target);
+        if (tableExecutor == null) {
+            tableExecutor = new DefaultTableExecutor<>(configHelper.getDbDataSource(), configHelper.getDbCustomStrategy(), target);
+            TABLE_EXEC_CACHE.put(target, tableExecutor);
+        }
+        return tableExecutor;
     }
 
 
