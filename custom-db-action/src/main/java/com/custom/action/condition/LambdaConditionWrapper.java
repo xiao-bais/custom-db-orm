@@ -76,12 +76,12 @@ public class LambdaConditionWrapper<T> extends ConditionAdapter<T, LambdaConditi
 
     @Override
     public LambdaConditionWrapper<T> exists(boolean condition, String existsSql) {
-        return adapter(DbSymbol.EXISTS, condition, null, existsSql);
+        return adapter(DbSymbol.EXISTS, condition, existsSql);
     }
 
     @Override
     public LambdaConditionWrapper<T> notExists(boolean condition, String notExistsSql) {
-        return adapter(DbSymbol.NOT_EXISTS, condition, null, notExistsSql);
+        return adapter(DbSymbol.NOT_EXISTS, condition, notExistsSql);
     }
 
     @Override
@@ -141,11 +141,37 @@ public class LambdaConditionWrapper<T> extends ConditionAdapter<T, LambdaConditi
     public <E> LambdaConditionWrapper<T> exists(Class<E> existClass, Consumer<ExistsWrapper<T, E>> existWrapper) {
         return exists(true, existClass, existWrapper);
     }
+
     public <E> LambdaConditionWrapper<T> exists(boolean condition, Class<E> existClass, Consumer<ExistsWrapper<T, E>> existWrapper) {
         if (condition) {
             LambdaExistsWrapper<T, E> existConditionWrapper = new LambdaExistsWrapper<>(existClass);
             existWrapper.accept(existConditionWrapper);
             addExistsSql(DbSymbol.EXISTS, existConditionWrapper);
+        }
+        return childrenClass;
+    }
+
+    public <E> LambdaConditionWrapper<T> notExists(ExistsWrapper<T, E> existsWrapper) {
+        return exists(true, existsWrapper);
+    }
+
+    public <E> LambdaConditionWrapper<T> notExists(boolean condition, ExistsWrapper<T, E> existsWrapper) {
+        if (condition) {
+            LambdaExistsWrapper<T, E> conditionWrapper = (LambdaExistsWrapper<T, E>) existsWrapper;
+            addExistsSql(DbSymbol.NOT_EXISTS, conditionWrapper);
+        }
+        return childrenClass;
+    }
+
+    public <E> LambdaConditionWrapper<T> notExists(Class<E> existClass, Consumer<ExistsWrapper<T, E>> existWrapper) {
+        return exists(true, existClass, existWrapper);
+    }
+
+    public <E> LambdaConditionWrapper<T> notExists(boolean condition, Class<E> existClass, Consumer<ExistsWrapper<T, E>> existWrapper) {
+        if (condition) {
+            LambdaExistsWrapper<T, E> existConditionWrapper = new LambdaExistsWrapper<>(existClass);
+            existWrapper.accept(existConditionWrapper);
+            addExistsSql(DbSymbol.NOT_EXISTS, existConditionWrapper);
         }
         return childrenClass;
     }

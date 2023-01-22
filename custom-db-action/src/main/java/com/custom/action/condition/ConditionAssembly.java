@@ -258,10 +258,13 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
 
     /**
      * 拼接大条件
+     * @param condition 是否拼接
+     * @param condStyle true: 条件前缀为AND, false: 条件前缀为OR
+     * @param wrapper 拼接的条件
      */
-    protected Children spliceCondition(boolean condition, boolean spliceType, ConditionWrapper<T> wrapper) {
+    protected Children spliceCondition(boolean condition, boolean condStyle, ConditionWrapper<T> wrapper) {
         if(condition && Objects.nonNull(wrapper)) {
-            this.mergeConditionWrapper(spliceType, wrapper);
+            this.mergeConditionWrapper(condStyle, wrapper);
         }
         appendState = true;
         return childrenClass;

@@ -125,8 +125,6 @@ public class SqlOutPrintBuilder implements Serializable {
             this.printError();
             throw new CustomCheckException(String.format("参数数量与需要设置的参数数量不对等，需设置参数数量：%s, 实际参数数量：%s", symbolSize, params.length));
         }
-        String formatMySql = SQLUtils.formatMySql(sql);
-        System.out.println("formatMySql = " + formatMySql);
         sql = CustomUtil.handleExecuteSql(sql, params);
     }
 

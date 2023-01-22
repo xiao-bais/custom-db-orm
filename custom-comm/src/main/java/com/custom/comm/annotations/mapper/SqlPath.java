@@ -24,12 +24,5 @@ public @interface SqlPath {
     * 执行的类型（增，删，改，查）
     */
     ExecuteMethod method() default ExecuteMethod.SELECT;
-
-    /**
-     * <li>true：参数以放置顺序来匹配sql中'?'的位置</li>
-     * <li>false: 以参数的名称来替换sql中对应的参数名称(例如：以 name 将 #{name} 替换成 '?')</li>
-     * <li>两者不可同时作用在一条sql上</li>
-     */
-    boolean order() default false;
     
 }
