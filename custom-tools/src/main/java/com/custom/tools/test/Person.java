@@ -20,5 +20,13 @@ public class Person {
 
     private Boolean sex;
 
-
+    @Override
+    public String toString() {
+        return "Person{" +
+                "name='" + name + '\'' +
+                ", nickName='" + nickName + '\'' +
+                ", age=" + age +
+                ", sex=" + sex +
+                '}';
+    }
 }
