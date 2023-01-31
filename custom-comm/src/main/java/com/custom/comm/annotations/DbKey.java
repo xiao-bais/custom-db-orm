@@ -23,7 +23,7 @@ public @interface DbKey {
     String value() default "";
 
     /**
-     * 主键的增值类型
+     * 主键的增值策略
      * @return
      */
     KeyStrategy strategy() default KeyStrategy.AUTO;
@@ -36,7 +36,7 @@ public @interface DbKey {
 
 
     /**
-     * 主键说明
+     * 主键说明(primary key)
      * @return
      */
     String desc() default "主键";

@@ -46,6 +46,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.xb-custom</groupId>
+            <artifactId>custom-tools</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
             <version>2.4.0</version>

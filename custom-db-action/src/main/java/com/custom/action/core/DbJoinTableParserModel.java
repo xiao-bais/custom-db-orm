@@ -21,28 +21,14 @@ public class DbJoinTableParserModel<T> extends AbstractTableModel<T> {
      * 关联字段属性
      */
     private Field field;
-
     /**
      * 关联表的查询字段
      */
     private String joinName;
-
     /**
      * 关联字段属性名称
      */
     private String fieldName;
-
-    /**
-     * 查询时，指定查询字段的包装
-     * 例：concat('user-', a.name) columnName
-     */
-    private String wrapperColumn;
-
-    /**
-     * 查询时若当前字段为字符串类型，是否null转为空字符串
-     */
-    private Boolean isNullToEmpty = false;
-
     /**
      * 当初查询实体的Class对象
      */
@@ -63,8 +49,6 @@ public class DbJoinTableParserModel<T> extends AbstractTableModel<T> {
     private void initJoinName(Field field) {
         DbJoinField joinField = field.getAnnotation(DbJoinField.class);
         this.joinName = JudgeUtil.isEmpty(joinField.value()) ? this.fieldName : joinField.value();
-        this.wrapperColumn = joinField.wrapperColumn();
-        this.isNullToEmpty = joinField.isNullToEmpty();
         if(!joinName.contains(Constants.POINT)) {
             throw new CustomCheckException("%s.[%s] 在DBMapper注解上未指定关联表的别名", this.entityClass, this.fieldName);
         }
@@ -123,9 +107,6 @@ public class DbJoinTableParserModel<T> extends AbstractTableModel<T> {
 
     @Override
     protected String getSelectFieldSql() {
-        if (JudgeUtil.isNotEmpty(this.wrapperColumn)) {
-            return DbUtil.wrapperSqlColumn(this.wrapperColumn, this.fieldName, this.isNullToEmpty);
-        }
         return DbUtil.sqlSelectWrapper(joinName, fieldName);
     }
 }

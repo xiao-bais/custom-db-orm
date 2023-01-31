@@ -37,21 +37,6 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     private String column;
 
     /**
-     * 查询时，指定查询字段的包装
-     * 例：concat('user-', a.name) columnName
-     * <p>
-     *     当设置了默认值后，查询时若值为null，则set默认值
-     *     ifnull(a.name, '默认值') AS 映射字段
-     * </p>
-     */
-    private String wrapperColumn;
-
-    /**
-     * 查询时若当前字段为字符串类型，是否null转为空字符串
-     */
-    private boolean isNullToEmpty;
-
-    /**
     * sql字段类型
     */
     private DbType dbType;
@@ -59,7 +44,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     /**
     * java字段类型
     */
-    private Class<?> type;
+    private final Class<?> type;
 
     /**
      * 字段属性
@@ -116,8 +101,6 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
             }else {
                 this.column = annotation.value();
             }
-            this.wrapperColumn = annotation.wrapperColumn();
-            this.isNullToEmpty = annotation.isNullToEmpty();
             this.isNull = annotation.isNull();
             this.desc = annotation.desc();
             this.dbType = annotation.dataType() == DbType.DbVarchar ? DbType.getDbMediaType(field.getType()) : annotation.dataType();
@@ -232,11 +215,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
         if (!isDbField) {
             return Constants.EMPTY;
         }
-        if (JudgeUtil.isNotEmpty(this.wrapperColumn)) {
-            return DbUtil.wrapperSqlColumn(this.wrapperColumn, this.fieldName, this.isNullToEmpty);
-        }
-        String selectColumn = DbUtil.fullSqlColumn(this.getAlias(), this.column);
-        String column = this.isNullToEmpty ? DbUtil.ifNull(selectColumn) : selectColumn;
+        String column = DbUtil.fullSqlColumn(this.getAlias(), this.column);
         return DbUtil.sqlSelectWrapper(column, this.fieldName);
     }
 
@@ -250,10 +229,6 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
 
     public Class<?> getType() {
         return type;
-    }
-
-    public void setType(Class<?> type) {
-        this.type = type;
     }
 
     public boolean isExistsDbField() {

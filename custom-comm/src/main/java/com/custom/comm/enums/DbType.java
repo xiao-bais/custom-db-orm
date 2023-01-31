@@ -23,7 +23,7 @@ public enum DbType {
 
     DbFloat("float", Float.class, Float.TYPE,  "11", 0.0F),
 
-    DbDecimal("decimal", BigDecimal.class, null, "10,2", BigDecimal.ZERO),
+    DbDecimal("decimal", BigDecimal.class, null, "12,4", BigDecimal.ZERO),
 
     DbDouble("double", Double.class, Double.TYPE, "5,2", 0.0D),
 
