@@ -276,7 +276,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
     protected Children doSelectSqlFunc(Consumer<SelectFunc<T>> consumer) {
         SelectFunc<T> sqlFunc = new SelectFunc<>(getEntityClass());
         consumer.accept(sqlFunc);
-        this.mergeSelect(sqlFunc.getColumns().split(String.valueOf(Constants.CENTER_LINE)));
+        addSelectColumns(sqlFunc.getSqlFragments());
         return childrenClass;
     }
 
@@ -288,7 +288,7 @@ public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper
 
         // 1. 合并查询列-select
         if (Objects.nonNull(conditionEntity.getSelectColumns())) {
-            mergeSelect(conditionEntity.getSelectColumns());
+            addSelectColumns(conditionEntity.getSelectColumns());
         }
         // 2. 合并添加条件-condition
         if (JudgeUtil.isNotEmpty(conditionEntity.getFinalConditional())) {

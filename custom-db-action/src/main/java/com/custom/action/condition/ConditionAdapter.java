@@ -8,6 +8,7 @@ import com.custom.comm.utils.lambda.SFunction;
 
 import java.util.Arrays;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * @Author Xiao-Bai
@@ -89,7 +90,7 @@ public class ConditionAdapter<T, Children> extends ConditionAssembly<T, SFunctio
     @SafeVarargs
     @Override
     public final Children select(SFunction<T, ?>... columns) {
-        setSelectColumns(parseColumn(columns));
+        setSelectColumns(Arrays.stream(parseColumn(columns)).collect(Collectors.toList()));
         return childrenClass;
     }
 
@@ -100,7 +101,7 @@ public class ConditionAdapter<T, Children> extends ConditionAssembly<T, SFunctio
 
     @Override
     public Children select(SelectFunc<T> selectFunc) {
-        mergeSelect(selectFunc.getColumns().split(String.valueOf(Constants.CENTER_LINE)));
+        addSelectColumns(selectFunc.getSqlFragments());
         return childrenClass;
     }
 

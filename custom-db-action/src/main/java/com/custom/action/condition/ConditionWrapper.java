@@ -28,7 +28,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
      * 若是查询单表（查询的实体中(包括父类)没有@DbRelated,@DbJoinTables之类的关联注解）则column为表字段，例如 name, age
      * 若是查询关联表字段，则需附带关联表别名，例如：tp.name, tp.age
      */
-    private String[] selectColumns;
+    private List<String> selectColumns;
 
     /**
      * 表数据支持
@@ -154,12 +154,22 @@ public abstract class ConditionWrapper<T> implements Serializable {
         this.lastCondition = lastCondition;
     }
 
-    public String[] getSelectColumns() {
+    public List<String> getSelectColumns() {
         return selectColumns;
     }
 
-    protected void setSelectColumns(String[] selectColumns) {
+    protected void setSelectColumns(List<String> selectColumns) {
         this.selectColumns = selectColumns;
+    }
+
+    public void addSelectColumns(List<String> columns) {
+        if (columns == null) {
+            return;
+        }
+        if (this.selectColumns == null) {
+            this.selectColumns = new ArrayList<>();
+        }
+        this.selectColumns.addAll(columns);
     }
 
     public StringJoiner getOrderBy() {
@@ -313,31 +323,6 @@ public abstract class ConditionWrapper<T> implements Serializable {
     protected void setTableSupport(TableSupport tableSupport) {
         this.tableSupport = tableSupport;
     }
-
-    /**
-     * 合并查询列(数组合并)
-     */
-    protected void mergeSelect(String[] selectColumns) {
-        if(Objects.isNull(selectColumns)) {
-            return;
-        }
-        if(Objects.isNull(getSelectColumns())) {
-            setSelectColumns(selectColumns);
-            return;
-        }
-        int thisLen = getSelectColumns().length;
-        int addLen = selectColumns.length;
-        String[] newSelectColumns = new String[thisLen + addLen];
-        for (int i = 0; i < newSelectColumns.length; i++) {
-            if(i <= thisLen - 1) {
-                newSelectColumns[i] = getSelectColumns()[i];
-            }else {
-                newSelectColumns[i] = selectColumns[i - thisLen];
-            }
-        }
-        setSelectColumns(newSelectColumns);
-    }
-
 
     public boolean isEnableAlias() {
         return enableAlias;

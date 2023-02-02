@@ -201,7 +201,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
     /**
      * 自定义查询表列名
      */
-    public SqlBuilder selectColumns(String[] columns, Boolean primaryTable) {
+    public SqlBuilder selectColumns(List<String> columns, Boolean primaryTable) {
         StringJoiner columnStr = new StringJoiner(Constants.SEPARATOR_COMMA_2);
         for (String x : columns) {
             String column = GlobalDataHandler.hasSqlKeyword(x) ? String.format("`%s`", x) : x;

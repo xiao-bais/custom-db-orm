@@ -8,8 +8,10 @@ import com.custom.comm.enums.SqlOrderBy;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @Author Xiao-Bai
@@ -236,7 +238,7 @@ public class DefaultConditionWrapper<T> extends ConditionAssembly<T, String, Def
      */
     @Override
     public DefaultConditionWrapper<T> select(String... columns) {
-        setSelectColumns(columns);
+        addSelectColumns(Stream.of(columns).collect(Collectors.toList()));
         return childrenClass;
     }
 
