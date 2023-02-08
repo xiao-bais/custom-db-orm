@@ -5,7 +5,7 @@
 custom-springboot-starter
 
 ### 简介
-简易ORM操作工具，纯原生JDBC+阿里的Druid连接池，集成Mybatis-Plus的条件构造器，在此之上添加了多表连接的条件构造，使增删改查变得更容易，支持ActiveRecord以及链式查询。
+简易ORM操作工具，纯原生JDBC+阿里的Druid连接池，集成Mybatis-Plus的条件构造器，在此之上添加了```多表连接```的条件构造，使增删改查变得更容易，支持```ActiveRecord```以及```链式查询```。
 ### 说明：
 - ```com.custom.action.core.JdbcDao```，该类提供了多种增删改查方法以供用户自定义使用，使用时只需要在service或controller注入该对象即可，只需要编写部分的条件```sql```，即可完成单表的大部分增删改查操作。
 - 只需要创建实体类，并添加上自定义的几个注解，即可生成对应的表结构。
@@ -303,16 +303,5 @@ public class Student {
 
 ```java
 JdbcDao.createTables(Student.class);
-```
-
-- service层的扩展，```com.custom.action.service.DbServiceHelper```, service类继承该对象，即可获得最简易的增删改查的操作方法
-
-```java
-@Service
-public class MyServiceImpl extends DbServiceHelper<Student> implements MyService {
-
-//... 业务代码 <Student> 为指定的单表操作实体类
-
-}
 ```
 
