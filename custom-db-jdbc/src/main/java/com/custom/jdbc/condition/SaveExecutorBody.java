@@ -4,9 +4,9 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/6/17 21:50
- * @Desc
+ * @author Xiao-Bai
+ * @date 2022/6/17 21:50
+ * 执行增删改操作的执行体
  */
 public class SaveExecutorBody<T> extends BaseExecutorBody {
 

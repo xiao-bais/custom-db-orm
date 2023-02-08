@@ -1,5 +1,6 @@
 package com.custom.action.core;
 
+import com.custom.action.condition.AbstractUpdateSet;
 import com.custom.action.dbaction.AbstractSqlExecutor;
 import com.custom.action.interfaces.TableExecutor;
 import com.custom.action.proxy.JdbcActionProxy;
@@ -23,7 +24,7 @@ import java.util.Map;
  */
 public class DefaultTableExecutor<T, P extends Serializable> implements TableExecutor<T, P> {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+//    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final AbstractSqlExecutor jdbcAction;
     private final Class<T> entityClass;
@@ -31,6 +32,16 @@ public class DefaultTableExecutor<T, P extends Serializable> implements TableExe
     public DefaultTableExecutor(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy, Class<T> entityClass) {
         this.entityClass = entityClass;
         this.jdbcAction = new JdbcActionProxy(new JdbcAction(), dbDataSource, dbCustomStrategy).createProxy();
+    }
+
+    @Override
+    public List<T> selectByKeys(Collection<P> keys) throws Exception {
+        return jdbcAction.selectBatchKeys(entityClass, keys);
+    }
+
+    @Override
+    public T selectByKey(P key) throws Exception {
+        return jdbcAction.selectByKey(entityClass, key);
     }
 
     @Override
@@ -111,6 +122,11 @@ public class DefaultTableExecutor<T, P extends Serializable> implements TableExe
     @Override
     public int updateSelective(T t, ConditionWrapper<T> wrapper) throws Exception {
         return jdbcAction.updateSelective(t, wrapper);
+    }
+
+    @Override
+    public int updateSelective(AbstractUpdateSet<T> updateSet) throws Exception {
+        return jdbcAction.updateSelective(updateSet);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.custom.action.interfaces;
 
+import com.custom.action.condition.AbstractUpdateSet;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.comm.page.DbPageRows;
 
@@ -16,6 +17,8 @@ import java.util.Map;
 public interface TableExecutor<T, P extends Serializable> {
 
     /*--------------------------------------- select ---------------------------------------*/
+    List<T> selectByKeys(Collection<P> keys) throws Exception;
+    T selectByKey(P key) throws Exception;
     DbPageRows<T> selectPage(ConditionWrapper<T> wrapper) throws Exception;
     List<T> selectList(ConditionWrapper<T> wrapper) throws Exception;
     T selectOne(ConditionWrapper<T> wrapper) throws Exception;
@@ -38,6 +41,7 @@ public interface TableExecutor<T, P extends Serializable> {
     /*------------------------------------ update ---------------------------------------*/
     int updateByKey(T t) throws Exception;
     int updateSelective(T t, ConditionWrapper<T> wrapper) throws Exception;
+    int updateSelective(AbstractUpdateSet<T> updateSet) throws Exception;
 
     /*------------------------------------ comm ---------------------------------------*/
     int save(T t) throws Exception;

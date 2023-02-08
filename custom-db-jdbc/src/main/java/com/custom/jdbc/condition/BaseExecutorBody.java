@@ -5,9 +5,8 @@ import com.custom.comm.utils.Asserts;
 import java.util.Objects;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/6/17 21:50
- * @Desc
+ * @author Xiao-Bai
+ * @date 2022/6/17 21:50
  */
 public class BaseExecutorBody {
 

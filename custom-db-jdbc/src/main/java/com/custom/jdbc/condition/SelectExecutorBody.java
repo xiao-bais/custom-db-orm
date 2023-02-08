@@ -1,8 +1,8 @@
 package com.custom.jdbc.condition;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/6/17 0:57
+ * @author Xiao-Bai
+ * @date 2022/6/17 0:57
  * @Desc sql参数对象
  */
 public class SelectExecutorBody<T> extends BaseExecutorBody {

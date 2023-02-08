@@ -6,6 +6,7 @@ import com.custom.action.condition.ConditionWrapper;
 import com.custom.comm.utils.ConvertUtil;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.exceptions.CustomCheckException;
+import com.custom.comm.utils.ReflectUtil;
 import com.custom.jdbc.configuration.DbDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +26,6 @@ import java.util.List;
  */
 @SuppressWarnings("unchecked")
 public class ActiveModel<T extends ActiveModel<T, P>, P extends Serializable> implements Serializable {
-
-    private static final Logger logger = LoggerFactory.getLogger(ActiveModel.class);
 
 
     /**
@@ -112,15 +111,7 @@ public class ActiveModel<T extends ActiveModel<T, P>, P extends Serializable> im
 
     @SuppressWarnings("unchecked")
     private Class<T> target() {
-        try {
-            ParameterizedType genericSuperclass = (ParameterizedType) this.getClass().getGenericSuperclass();
-            Type[] actualTypeArguments = genericSuperclass.getActualTypeArguments();
-            return (Class<T>) actualTypeArguments[0];
-        }catch (ClassCastException e) {
-            logger.error("Valid generics are missing, and entity objects only support direct inheritance from 'ActiveModel'");
-            throw e;
-        }
-
+       return ReflectUtil.getThisGenericType(ActiveModel.class);
     }
 
     /**

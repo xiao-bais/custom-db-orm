@@ -3,6 +3,8 @@ package com.custom.comm.utils;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.readwrite.ReadFieldHelper;
 import com.custom.comm.readwrite.WriteFieldHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -18,6 +20,8 @@ import java.util.stream.Collectors;
  * 反射工具类
  */
 public class ReflectUtil {
+
+    private static final Logger logger = LoggerFactory.getLogger(ReflectUtil.class);
 
 
     /**
@@ -136,7 +140,7 @@ public class ReflectUtil {
     /**
      * 获取get/set方法
      */
-    public static <T> Method getMethod(Class<T> t, String methodName) throws IntrospectionException {
+    public static <T> Method getPropertyMethod(Class<T> t, String methodName) throws IntrospectionException {
 
         Asserts.npe(methodName);
         List<PropertyDescriptor> propertyDescriptors = getProperties(t);
@@ -160,6 +164,21 @@ public class ReflectUtil {
         }
         ParameterizedType returnType = (ParameterizedType) method.getGenericReturnType();
         return returnType.getActualTypeArguments();
+    }
+
+    /**
+     * 获取类上的泛型类型，默认第一个泛型
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> Class<T> getThisGenericType(Class<?> t) {
+        try {
+            ParameterizedType genericSuperclass = (ParameterizedType) t.getGenericSuperclass();
+            Type[] types = genericSuperclass.getActualTypeArguments();
+            return types != null && types.length > 0 ? (Class<T>) types[0] : null;
+        }catch (ClassCastException e) {
+            logger.error("Valid generics are missing, and entity objects only support direct inheritance from 'ActiveModel'");
+            throw e;
+        }
     }
 
     private Map<String, Integer> getInfo() {

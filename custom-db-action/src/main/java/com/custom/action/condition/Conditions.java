@@ -8,6 +8,9 @@ package com.custom.action.condition;
 @SuppressWarnings("unchecked")
 public class Conditions {
 
+    private Conditions() {
+    }
+
     /**
      * 以lambda表达式的方式去进行sql的条件构造
      */
