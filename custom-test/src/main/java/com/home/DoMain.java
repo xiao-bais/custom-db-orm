@@ -18,7 +18,8 @@ public class DoMain {
         JdbcTestBuilder jdbcTestBuilder = JdbcTestBuilder.builder();
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
-        DbServiceHelper<Student> helper = new MyService();
+        DbServiceHelper<Student> helper = new MyServiceImpl();
+
 
 
 

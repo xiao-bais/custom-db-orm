@@ -1,13 +1,8 @@
 package com.home;
 
-import com.custom.action.service.DbServiceHelper;
-import com.home.customtest.entity.Student;
-
 /**
  * @author Xiao-Bai
- * @date 2023/2/8 18:02
+ * @date 2023/2/8 18:53
  */
-public class MyService extends DbServiceHelper<Student> {
-
-
+public interface MyService {
 }

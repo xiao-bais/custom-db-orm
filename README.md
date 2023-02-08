@@ -5,11 +5,11 @@
 custom-springboot-starter
 
 ### 简介
-custom-db-action为自定义的一款集成数据源```ORM```操作工具，底层为最原始的```JDBC```，使用阿里的druid作为连接池，将```JDBC```进行了一些封装，将之变成一款可极大简化操作数据的轻量级第三方```ORM```工具，集成了```Mybatis-Plus```的条件构造器，在此之上添加了 **多表连接查询** 的条件构造，使增删改查变得更容易。
+简易ORM操作工具，纯原生JDBC+阿里的Druid连接池，集成Mybatis-Plus的条件构造器，在此之上添加了多表连接的条件构造，使增删改查变得更容易，支持ActiveRecord以及链式查询。
 ### 说明：
-- ```com.custom.sqlparser.JdbcDao```，该类提供了多种增删改查方法以供用户自定义使用，使用时只需要在service或controller注入该对象即可，只需要编写部分的条件```sql```，即可完成单表的大部分增删改查操作。
+- ```com.custom.action.core.JdbcDao```，该类提供了多种增删改查方法以供用户自定义使用，使用时只需要在service或controller注入该对象即可，只需要编写部分的条件```sql```，即可完成单表的大部分增删改查操作。
 - 只需要创建实体类，并添加上自定义的几个注解，即可生成对应的表结构。
-- 暂时只支持mysql
+- 暂时只支持Mysql
 - 支持可配置的表关联查询以及逻辑删除，```sql```语句打印输出，下划线转驼峰等功能。
 - 该工具已完成```springboot```的自动配置,在```springboot```项目中引入该依赖即可，无需另外配置，轻松便捷。
 
@@ -17,13 +17,26 @@ custom-db-action为自定义的一款集成数据源```ORM```操作工具，底�
 目前依赖还未部署在maven中央仓库，所以需借助aliyun的私服进行管理，使用前，需将【[maven下的settings.xml文件](http://39.108.225.176/downloads/settings.xml)】替换。
 #### 安装依赖
 
+##### SpringBoot-自动配置
+
 ```xml
          <dependency>
-            <groupId>com.custom</groupId>
+            <groupId>com.xb-custom</groupId>
             <artifactId>custom-springboot-starter</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 ```
+
+纯依赖-手动配置
+
+```xml
+         <dependency>
+            <groupId>com.xb-custom</groupId>
+            <artifactId>custom-db-action</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+```
+
 
 
 #### 配置数据源
@@ -79,12 +92,14 @@ custom.db.datasource.password=123456
 
   `selectList(查询多条)`
 
+  `selectCount(查询记录数)`
+
   `selectOne(查询单条记录)`
 
   `selectObj(查询单列字段，并且只有一个值，若有多个，只返回第一个满足条件的值)`
 
   `selectObjs(同上，但允许会返回多个值)`
-
+  
   ```java
   public <T> DbPageRows<T> selectPageRows(ConditionWrapper<T> wrapper) throws Exception;
   public <T> List<T> selectList(ConditionWrapper<T> wrapper) throws Exception;
@@ -95,38 +110,38 @@ custom.db.datasource.password=123456
   ```
 
   **使用方法**
-
+  
   ```java
   1: 一般字段构造
       
-      ConditionEntity<ChildStudent> cond = new ConditionEntity<>(ChildStudent.class);
-      cond.eq("name", "张三").select("id", "name", "age").limit(1, 10);
-      DbPageRows<ChildStudent> dbPageRows = jdbcDao.selectPageRows(cond);
+      DefaultConditionWrapper<Student> wrapper = new DefaultConditionWrapper<>(Student.class);
+      wrapper.eq("name", "张三").select("id", "name", "age").pageParams(1, 10);
+      DbPageRows<Student> dbPageRows = jdbcDao.selectPageRows(wrapper);
   
   2: lambda表达式构造
       
-     	LambdaConditionEntity<ChildStudent> cond = new LambdaConditionEntity<>(ChildStudent.class);
-     	cond.eq(ChildStudent::getName, "张三")
-          .select(ChildStudent::getName, ChildStudent::getId, ChildStudent::getAge)
-          .limit(1, 10);
-      DbPageRows<ChildStudent> dbPageRows = jdbcDao.selectPageRows(cond);
+     	LambdaConditionWrapper<Student> wrapper = new LambdaConditionWrapper<>(Student.class);
+     	wrapper.eq(Student::getName, "张三")
+          .select(Student::getName, Student::getId, Student::getAge)
+          .pageParams(1, 10);
+      DbPageRows<Student> dbPageRows = jdbcDao.selectPageRows(wrapper);
   
   3: 使用静态方法实例化
-      DbPageRows<ChildStudent> dbPageRows = jdbcDao.selectPageRows(Conditions.lambdaQuery(ChildStudent.class)
-                  .eq(ChildStudent::getName, "张三")
-                  .select(ChildStudent::getName, ChildStudent::getId, ChildStudent::getAge)
-                  .limit(1, 10)
+      DbPageRows<ChildStudent> dbPageRows = jdbcDao.selectPageRows(Conditions.lambdaQuery(Student.class)
+                  .eq(Student::getName, "张三")
+                  .select(Student::getName, Student::getId, Student::getAge)
+                  .pageParams(1, 10)
      );
   
   额外说明：
       1. 使用onlyPrimary()方法时，可使本次查询只查询主表数据.
       2. 使用select方法时，可使用部分sql函数(仅支持sum、max、min、ifnull、count、avg)，例如：
-      List<ChildStudent> childStudents = jdbcDao.selectList(Conditions.lambdaQuery(ChildStudent.class)
-                  .eq(ChildStudent::getName, "张三")
-                  .between(ChildStudent::getAge, 20, 25)
-                  .select(ChildStudent::getAge)
-                  .select(x -> x.sum(ChildStudent::getAge, ChildStudent::getSumAge))
-                  .groupBy(ChildStudent::getAge)
+      List<Student> students = jdbcDao.selectList(Conditions.lambdaQuery(Student.class)
+                  .eq(Student::getName, "张三")
+                  .between(Student::getAge, 20, 25)
+                  .select(Student::getAge)
+                  .select(x -> x.sum(Student::getAge, Student::getSumAge))
+                  .groupBy(Student::getAge)
           );
   ```
 
@@ -143,17 +158,23 @@ custom.db.datasource.password=123456
 
     根据条件删除记录
     public <T> int deleteByCondition(Class<T> t, String condition, Object... params) throws Exception;
+
+    根据条件删除记录
+    public <T> int deleteSelective(ConditionWrapper<T> wrapper);
 ```
 
 
 - 修改
 
 ```java
-    根据主键修改一条记录(updateColumns：指定要修改的表字段  为空则按主键修改全部[不为空]字段)
-    public final <T> int updateByKey(T t, SFunction<T, ?>... updateColumns) throws Exception;
-
     根据主键修改一条记录
-    public <T> int updateByKey(T t) throws Exception;
+    public <T> int updateByKey(T entity) throws Exception;
+
+    根据条件修改一条记录(只修改entity中属性值 !=null 的字段)
+    public <T> int updateByCondition(T entity, String condition, Object... params);
+
+    根据sql set设置器修改n条记录
+	public <T> int updateSelective(AbstractUpdateSet<T> updateSet);
 ```
 
 - 添加
@@ -165,6 +186,33 @@ custom.db.datasource.password=123456
     插入多条记录
     public <T> int insert(List<T> tList) throws Exception;
 ```
+- 公共方法
+
+  ```java
+  保存一条记录(根据主键添加或修改)
+  public <T> int save(T entity) throws Exception;
+  
+   执行一条sql（增删改）
+   public <T> int executeSql(String sql, Object... params) throws Exception;
+  
+   删除表
+   public void dropTables(Class<?>... arr) throws Exception;
+  
+   创建表
+   public void createTables(Class<?>... arr) throws Exception;
+  ```
+  
+  
+  
+- 事务执行
+
+  ```java
+  事务执行方法
+  public void execTrans(TransactionExecutor executor);
+  ```
+  
+  
+  
 - 实体注解介绍
 
   
@@ -210,22 +258,19 @@ custom.db.datasource.password=123456
   | @DbJoinTable | @DbJoinTables中内部注解，该注解仅用于配置表关联条件，例如：left join teacher tea on a.tea_id = tea.id |
   | @DbMapper    | 配合@DbJoinTable一起使用，value值必须带上关联表的别名，例如：tea.teacher_name |
 
-  [^@DbJoinTable(s)注解,可支持父子类一起合并使用]: 
-
   
 
   表注解：**@DbTable**（仅可标注在java类上)
 
-  | 注解属性               | 说明                                                         |
-  | ---------------------- | ------------------------------------------------------------ |
-  | table                  | 表名                                                         |
-  | alias                  | 别名                                                         |
-  | desc                   | 表说明                                                       |
-  | mergeSuperDbJoinTables | 默认为true，当子类跟父类同时标注了@DbJoinTable(s)注解时，是否在查询时向上查找父类的@DbJoinTable(s)注解，且合并关联条件 |
-
+  | 注解属性 | 说明   |
+  | -------- | ------ |
+  | table    | 表名   |
+  | alias    | 别名   |
+  | desc     | 表说明 |
   
-
-- 示例
+  
+  
+- 注解使用示例
 
 ```java
 @Data
@@ -259,3 +304,15 @@ public class Student {
 ```java
 JdbcDao.createTables(Student.class);
 ```
+
+- service层的扩展，```com.custom.action.service.DbServiceHelper```, service类继承该对象，即可获得最简易的增删改查的操作方法
+
+```java
+@Service
+public class MyServiceImpl extends DbServiceHelper<Student> implements MyService {
+
+//... 业务代码 <Student> 为指定的单表操作实体类
+
+}
+```
+
