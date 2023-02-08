@@ -11,7 +11,7 @@ public enum SqlExecTemplate {
 
     SELECT_EXISTS("查询条件是否存在", "SELECT 1 FROM %s WHERE %s"),
 
-    SELECT_COUNT("查询记录总数量", "SELECT COUNT(0) FROM (\n%s\n) xxx"),
+    SELECT_COUNT("查询记录总数量", "SELECT COUNT(0) FROM (\n%s\n) tab_xxx"),
 
     JOIN_TABLE("关联表的SQL", "\n %s %s %s ON %s"),
 

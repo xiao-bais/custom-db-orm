@@ -2,6 +2,8 @@ package com.home;
 
 import com.custom.action.core.JdbcDao;
 import com.custom.action.core.JdbcOpDao;
+import com.custom.action.service.DbServiceHelper;
+import com.home.customtest.entity.Student;
 
 /**
  * @Author Xiao-Bai
@@ -16,6 +18,9 @@ public class DoMain {
         JdbcTestBuilder jdbcTestBuilder = JdbcTestBuilder.builder();
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
+        DbServiceHelper<Student> helper = new MyService();
+
+
 
 
 

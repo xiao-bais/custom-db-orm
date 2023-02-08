@@ -1,6 +1,5 @@
 package com.custom.action.service;
 
-import com.custom.action.activerecord.ActiveModel;
 import com.custom.action.condition.*;
 import com.custom.action.core.TableInfoCache;
 import com.custom.action.interfaces.TableExecutor;
@@ -21,6 +20,7 @@ import java.util.stream.Stream;
 /**
  * @author Xiao-Bai
  * @date 2023/2/6 22:26
+ * 继承该类，即可拥有增删改查功能
  */
 @SuppressWarnings("unchecked")
 public abstract class DbServiceHelper<T> {
@@ -73,41 +73,41 @@ public abstract class DbServiceHelper<T> {
         return actuator().selectByKey(key);
     }
 
-    public T getByKeyOpt(Serializable key, Supplier<T> supplier) throws Exception {
+    public T getByKey(Serializable key, Supplier<T> supplier) throws Exception {
         return Optional.ofNullable(getByKey(key)).orElseGet(supplier);
     }
 
     /**
      * 普通查询1
      */
-    public DbQueryWrapper<T> get(DefaultConditionWrapper<T> wrapper) {
-        return DbQueryWrapper.build(wrapper, actuator());
+    public DoTargetWrapper<T> where(DefaultConditionWrapper<T> wrapper) {
+        return DoTargetWrapper.build(wrapper, actuator());
     }
 
     /**
      * 普通查询2
      */
-    public DbQueryWrapper<T> get(Consumer<DefaultConditionWrapper<T>> consumer) {
+    public DoTargetWrapper<T> where(Consumer<DefaultConditionWrapper<T>> consumer) {
         DefaultConditionWrapper<T> wrapper = Conditions.query(target());
         consumer.accept(wrapper);
-        return DbQueryWrapper.build(wrapper, actuator());
+        return DoTargetWrapper.build(wrapper, actuator());
     }
 
 
     /**
      * lambda表达式查询1
      */
-    public DbQueryWrapper<T> getLambda(LambdaConditionWrapper<T> wrapper) {
-        return DbQueryWrapper.build(wrapper, actuator());
+    public DoTargetWrapper<T> whereLambda(LambdaConditionWrapper<T> wrapper) {
+        return DoTargetWrapper.build(wrapper, actuator());
     }
 
     /**
      * lambda表达式查询2
      */
-    public DbQueryWrapper<T> getLambda(Consumer<LambdaConditionWrapper<T>> consumer) {
+    public DoTargetWrapper<T> whereLambda(Consumer<LambdaConditionWrapper<T>> consumer) {
         LambdaConditionWrapper<T> wrapper = Conditions.lambdaQuery(target());
         consumer.accept(wrapper);
-        return DbQueryWrapper.build(wrapper, actuator());
+        return DoTargetWrapper.build(wrapper, actuator());
     }
 
     /**
@@ -132,13 +132,6 @@ public abstract class DbServiceHelper<T> {
     }
 
     /**
-     * sql set 设置器
-     */
-    public boolean update(AbstractUpdateSet<T> updateSet) throws Exception {
-        return actuator().updateSelective(updateSet) > 0;
-    }
-
-    /**
      * 存在主键则修改，不存在则插入
      */
     public boolean save(T entity) throws Exception {
@@ -158,44 +151,7 @@ public abstract class DbServiceHelper<T> {
     public boolean deleteBatchKeys(Collection<Serializable> keys) throws Exception {
         return actuator().deleteBatchKeys(keys) > 0;
     }
-
-    /**
-     * 根据条件删除
-     */
-    public boolean delete(DefaultConditionWrapper<T> wrapper) throws Exception {
-        return actuator().deleteSelective(wrapper) > 0;
-    }
-
-    /**
-     * 根据条件删除
-     */
-    public boolean delete(Consumer<ConditionWrapper<T>> consumer) throws Exception {
-        DefaultConditionWrapper<T> wrapper = Conditions.query(target());
-        consumer.accept(wrapper);
-        return actuator().deleteSelective(wrapper) > 0;
-    }
-
-    /**
-     * 根据条件删除
-     */
-    public boolean deleteLambda(LambdaConditionWrapper<T> wrapper) throws Exception {
-        return actuator().deleteSelective(wrapper) > 0;
-    }
-
-    /**
-     * 根据条件删除
-     */
-    public boolean deleteLambda(Consumer<LambdaConditionWrapper<T>> consumer) throws Exception {
-        LambdaConditionWrapper<T> wrapper = Conditions.lambdaQuery(target());
-        consumer.accept(wrapper);
-        return actuator().deleteSelective(wrapper) > 0;
-    }
     
-
-
-
-
-
 
 
 
