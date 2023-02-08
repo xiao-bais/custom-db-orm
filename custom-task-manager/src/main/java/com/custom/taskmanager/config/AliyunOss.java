@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
  * @desc
  */
 @Data
-@Component
-@ConfigurationProperties(prefix = "aliyun.oss")
+//@Component
+//@ConfigurationProperties(prefix = "aliyun.oss")
 public class AliyunOss {
 
     private String accessKeyId;

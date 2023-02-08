@@ -19,13 +19,5 @@ custom:
 #      sync-entity-enable: true
       sql-out-printing: true
 
-# aliyun oss
-aliyun:
-  oss:
-    accessKeyId: LTAI5tF2Kcnn8MvzCWRhXSch
-    accessKeySecret: 3GeMcnsE2UFLOVdFE5CS6soothVj6N
-    endpoint: oss-cn-beijing.aliyuncs.com
-    bucket: xb-custom
-    dirPrefix: tasking/
 
 
