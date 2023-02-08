@@ -14,7 +14,7 @@ custom-springboot-starter
 - 该工具已完成```springboot```的自动配置,在```springboot```项目中引入该依赖即可，无需另外配置，轻松便捷。
 
 ### 注意
-目前依赖还未部署在maven中央仓库，所以需借助aliyun的私服进行管理，使用前，需将【[maven下的settings.xml文件](http://39.108.225.176/downloads/settings.xml)】替换。
+目前依赖还未部署在maven中央仓库，所以需要手动将该项目打包后，加入本地的maven仓库中方才能使用
 #### 安装依赖
 
 ##### SpringBoot-自动配置
