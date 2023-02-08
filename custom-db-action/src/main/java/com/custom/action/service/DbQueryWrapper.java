@@ -46,7 +46,7 @@ public class DbQueryWrapper<T> {
     }
 
 
-    public T getOneOpt(Supplier<T> supplier) throws Exception {
+    public T getOne(Supplier<T> supplier) throws Exception {
         return Optional.ofNullable(getOne()).orElseGet(supplier);
     }
 
@@ -61,7 +61,7 @@ public class DbQueryWrapper<T> {
     }
 
 
-    public Object getObjOpt(Supplier<T> supplier) throws Exception {
+    public Object getObj(Supplier<T> supplier) throws Exception {
         return Optional.ofNullable(getObj()).orElseGet(supplier);
     }
 
