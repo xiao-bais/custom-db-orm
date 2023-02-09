@@ -14,9 +14,10 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/5/16 15:02
- * @Desc：自定义的bean初始化
+ * 自定义的bean初始化
+ * @author Xiao-Bai
+ * @date 2022/5/16 15:02
+ *
  **/
 @Component
 public class CustomBeanInitializer implements InitializingBean, ApplicationContextAware {

@@ -1,8 +1,8 @@
 package com.custom.springboot;
 
-import com.custom.action.proxy.JdbcDaoProxy;
 import com.custom.action.core.JdbcDao;
 import com.custom.action.core.JdbcOpDao;
+import com.custom.action.proxy.JdbcDaoProxy;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
@@ -14,9 +14,8 @@ import org.springframework.context.annotation.*;
 
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/11/23 17:47
- * @Desc：
+ * @author Xiao-Bai
+ * @date 2021/11/23 17:47
  **/
 @Configuration
 @ComponentScan("com.custom")
@@ -33,16 +32,6 @@ public class CustomConfiguration {
         this.dbDataSource = dbDataSource;
         this.dbCustomStrategy = dbCustomStrategy;
     }
-
-//    @Bean
-//    @ConditionalOnBean(DbDataSource.class)
-//    public InterfacesProxyExecutor readerExecutorProxy() {
-//        if(isDataSourceEmpty(dbDataSource)) {
-//            return null;
-//        }
-//        logger.info("InterfacesProxyExecutor Initialized Successfully !");
-//        return new InterfacesProxyExecutor(dbDataSource, dbCustomStrategy);
-//    }
 
     @Bean
     @Primary
