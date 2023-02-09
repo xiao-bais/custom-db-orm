@@ -14,7 +14,6 @@ import com.custom.jdbc.configuration.DbDataSource;
 public class JdbcTestBuilder {
 
     private final DbDataSource dbDataSource;
-    private final DbDataSource dbDataSource2;
     private final DbCustomStrategy dbCustomStrategy;
 
     public static JdbcTestBuilder builder() {
@@ -27,12 +26,6 @@ public class JdbcTestBuilder {
         dbDataSource.setUrl("jdbc:mysql://39.108.225.176:3306/hos?characterEncoding=utf-8&allowMultiQueries=true&autoreconnect=true&serverTimezone=UTC");
         dbDataSource.setUsername("root");
         dbDataSource.setPassword("xh@Mysql1524");
-
-        dbDataSource2 = new DbDataSource();
-        dbDataSource2.setUrl("jdbc:mysql://hougu-prod.mysql.rds.aliyuncs.com:2345/hm_erp_test?characterEncoding=utf-8&allowMultiQueries=true&autoreconnect=true");
-        dbDataSource2.setUsername("hougu_erp_dev");
-        dbDataSource2.setPassword("hougu@123");
-        dbDataSource2.setOrder(2);
 
         // 增删改查映射策略配置
         dbCustomStrategy = new DbCustomStrategy();
@@ -61,10 +54,6 @@ public class JdbcTestBuilder {
 
     public DbDataSource getDbDataSource() {
         return dbDataSource;
-    }
-
-    public DbDataSource getDbDataSource2() {
-        return dbDataSource2;
     }
 
     public DbCustomStrategy getDbCustomStrategy() {
