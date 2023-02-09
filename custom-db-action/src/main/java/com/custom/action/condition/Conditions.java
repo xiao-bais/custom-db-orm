@@ -1,9 +1,9 @@
 package com.custom.action.condition;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/3/15 14:41
- * @Desc：静态条件构造器
+ * 静态条件构造工具类
+ * @author  Xiao-Bai
+ * @since  2022/3/15 14:41
  **/
 @SuppressWarnings("unchecked")
 public class Conditions {

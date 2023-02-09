@@ -4,9 +4,9 @@ import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 
 /**
- * @author Xiao-Bai
- * @date 2022/9/22 1:15
- * @desc
+ * SQL构建模板
+ * @author  Xiao-Bai
+ * @since  2022/9/22 1:15
  */
 public class SqlBuilderTemplate<T> {
 

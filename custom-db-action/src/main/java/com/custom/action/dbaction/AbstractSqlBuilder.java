@@ -19,9 +19,9 @@ import java.util.*;
 import java.util.stream.IntStream;
 
 /**
- * @author Xiao-Bai
- * @date 2022/4/3 17:33
- * @desc: sql操作模板父类
+ * sql操作模板父类
+ * @author  Xiao-Bai
+ * @since  2022/4/3 17:33
  */
 @SuppressWarnings("unchecked")
 public abstract class AbstractSqlBuilder<T> {
@@ -30,7 +30,6 @@ public abstract class AbstractSqlBuilder<T> {
 
     private String table;
     private String alias;
-    private List<T> entityList;
     private Class<T> entityClass;
     private DbKeyParserModel<T> keyParserModel;
     private List<DbFieldParserModel<T>> fieldParserModels;
@@ -47,7 +46,6 @@ public abstract class AbstractSqlBuilder<T> {
      * 逻辑删除的修改条件
      */
     private String logicDeleteUpdateSql;
-    private List<Object> sqlParams = new ArrayList<>();
 
     /**
      * 创建对应的sql
@@ -71,14 +69,6 @@ public abstract class AbstractSqlBuilder<T> {
         if (!fieldParserModels.isEmpty()) {
             fieldParserModels.forEach(x -> x.setEntity(entity));
         }
-    }
-
-    public List<T> getEntityList() {
-        return entityList;
-    }
-
-    public void setEntityList(List<T> entityList) {
-        this.entityList = entityList;
     }
 
     public Class<T> getEntityClass() {

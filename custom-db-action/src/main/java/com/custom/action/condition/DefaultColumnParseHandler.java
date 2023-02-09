@@ -25,9 +25,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/3/3 14:45
- * @Desc：解析Function函数中字段名称
+ * 解析Function函数中字段名称
+ * @author  Xiao-Bai
+ * @since  2022/3/3 14:45
  **/
 @Slf4j
 public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {

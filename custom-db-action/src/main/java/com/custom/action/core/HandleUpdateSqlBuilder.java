@@ -13,9 +13,9 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 /**
- * @author Xiao-Bai
- * @date 2022/4/10 15:01
- * @desc:构建修改sql
+ * 提供一系列修改记录的sql构建
+ * @author  Xiao-Bai
+ * @since  2022/4/10 15:01
  */
 @SuppressWarnings("unchecked")
 public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {

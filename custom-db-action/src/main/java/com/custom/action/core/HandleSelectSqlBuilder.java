@@ -22,9 +22,9 @@ import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 /**
- * @author Xiao-Bai
- * @date 2022/4/1 17:22
- * 针对select查询做sql的构建
+ * 提供一系列查询记录的sql构建
+ * @author  Xiao-Bai
+ * @since  2022/4/1 17:22
  **/
 @SuppressWarnings("unchecked")
 public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {

@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/3/21 14:47
- * @Desc：自动填充对象
+ * 自动填充对象
+ * @author  Xiao-Bai
+ * @since  2022/3/21 14:47
  **/
 public class TableFillObject {
 

@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author Xiao-Bai
- * @Date 2022/7/20 0020 14:43
- * @Desc 最终对外的JDBC基础操作对象
+ * JDBC万能操作接口
+ * @author  Xiao-Bai
+ * @since  2022/7/20 0020 14:43
  */
 public interface JdbcDao {
 

@@ -16,9 +16,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
- * @author Xiao-Bai
- * @date 2022/8/21 2:00
- * @desc 一对一，一对多注解的解析对象公共抽象父类
+ * 一对一，一对多注解的解析对象公共抽象父类
+ * @author  Xiao-Bai
+ * @since  2022/8/21 2:00
  */
 public abstract class AbstractJoinToResult {
 

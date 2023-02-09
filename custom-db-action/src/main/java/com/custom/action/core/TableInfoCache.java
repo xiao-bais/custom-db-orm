@@ -14,9 +14,9 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/2/24 11:14
- * @Desc：实体解析模板缓存
+ * 实体解析模板缓存
+ * @author  Xiao-Bai
+ * @since  2022/2/24 11:14
  **/
 @SuppressWarnings("unchecked")
 public class TableInfoCache {

@@ -3,9 +3,9 @@ package com.custom.action.core;
 import java.io.Serializable;
 
 /**
- * @author Xiao-Bai
- * @date 2022/8/25 12:45
- * @desc 字段属性关联
+ * 字段属性关联
+ * @author  Xiao-Bai
+ * @since  2022/8/25 12:45
  */
 public class ColumnPropertyMap<T> implements Serializable {
 

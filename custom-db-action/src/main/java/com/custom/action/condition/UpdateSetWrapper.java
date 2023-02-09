@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.StringJoiner;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/8/6 17:45
- * @Desc
+ * update set 包装类
+ * @author  Xiao-Bai
+ * @since  2022/8/6 17:45
  */
 public abstract class UpdateSetWrapper<T> {
 

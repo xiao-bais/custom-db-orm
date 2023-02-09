@@ -3,9 +3,9 @@ package com.custom.action.interfaces;
 import com.custom.comm.enums.SqlExecTemplate;
 
 /**
- * @author Xiao-Bai
- * @date 2022/10/27 12:41
- * 创建sql的接口
+ * sql构建的接口
+ * @author  Xiao-Bai
+ * @since  2022/10/27 12:41
  */
 public interface SqlBuilder {
 

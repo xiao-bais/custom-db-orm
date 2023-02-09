@@ -18,12 +18,12 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/12/13 9:23
- * @Desc：条件适配处理
- * T：实体类型
- * R：字段类型（字段类型为String是为字符串、lambda时为SFunction函数接口）
- * Children：为继承该抽象类的子类类型
+ * 条件适配处理对象
+ * @param <T> 实体类型
+ * @param <R> 字段类型（字段类型为String是为字符串、lambda时为SFunction函数接口）
+ * @param <Children> 继承该抽象类的子类类型
+ * @author  Xiao-Bai
+ * @since  2021/12/13 9:23
  **/
 @SuppressWarnings("all")
 public abstract class ConditionAssembly<T, R, Children> extends ConditionWrapper<T>

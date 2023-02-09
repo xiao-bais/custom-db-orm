@@ -6,10 +6,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/2/16 14:01
- * @Desc：顶级条件构造器
- * column: 表字段
+ * 条件包装
+ * @param <Param> 字段类型
+ * @param <Result> 返回结果类型
+ * @author  Xiao-Bai
+ * @since  2022/2/16 14:01
  **/
 @SuppressWarnings("all")
 public interface Wrapper<Param, Result>  {

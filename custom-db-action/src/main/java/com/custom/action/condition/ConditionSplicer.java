@@ -3,9 +3,9 @@ package com.custom.action.condition;
 import java.util.function.Consumer;
 
 /**
- * @author Xiao-Bai
- * @date 2022/3/13 23:43
- * @desc:大条件拼接组装
+ * 新条件拼接组装
+ * @author  Xiao-Bai
+ * @since  2022/3/13 23:43
  */
 public interface ConditionSplicer<Children> {
 

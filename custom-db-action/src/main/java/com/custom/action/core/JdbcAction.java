@@ -2,11 +2,9 @@ package com.custom.action.core;
 
 import com.custom.action.condition.*;
 import com.custom.action.dbaction.AbstractSqlBuilder;
-import com.custom.action.dbaction.AbstractSqlExecutor;
 import com.custom.action.extend.MultiResultInjector;
 import com.custom.action.interfaces.SqlQueryAfter;
 import com.custom.comm.exceptions.CustomCheckException;
-import com.custom.jdbc.executor.CustomJdbcExecutor;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.comm.annotations.check.CheckExecute;
@@ -28,17 +26,16 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * @author Xiao-Bai
- * @date 2022/4/13 20:49
- * @desc:
+ * jdbc操作对象
+ * @author  Xiao-Bai
+ * @since  2022/4/13 20:49
  */
 @SuppressWarnings("unchecked")
-public class JdbcAction extends AbstractSqlExecutor implements SqlQueryAfter {
+public class JdbcAction implements SqlExecutor, SqlQueryAfter {
 
     private static final Logger logger = LoggerFactory.getLogger(JdbcAction.class);
     private DbDataSource dbDataSource;
     private JdbcExecutorFactory executorFactory;
-    private CustomJdbcExecutor jdbcExecutor;
 
     public JdbcAction(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         // 创建sql执行器

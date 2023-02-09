@@ -5,9 +5,9 @@ import com.custom.comm.enums.SqlOrderBy;
 import com.custom.comm.utils.lambda.SFunction;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/3/19 17:27
- * @Desc：排序函数式接口方法
+ * 排序的函数式接口对象
+ * @author  Xiao-Bai
+ * @since  2022/3/19 17:27
  **/
 public class OrderByFunc<T> extends AbstractSqlFunc<T, OrderByFunc<T>> {
 

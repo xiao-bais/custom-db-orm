@@ -13,9 +13,9 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/3/29 15:29
- * @Desc：对于字段自动填充的工具处理
+ * 对于字段自动填充的工具处理
+ * @author  Xiao-Bai
+ * @since  2022/3/29 15:29
  **/
 public class ColumnAutoFillHandleUtils {
 

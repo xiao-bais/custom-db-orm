@@ -16,9 +16,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * @author Xiao-Bai
- * @date 2021/12/1 23:39
- * @desc:对于@DbField注解的解析
+ * 对于@DbField注解的解析
+ * @author  Xiao-Bai
+ * @since  2021/12/1 23:39
  */
 public class DbFieldParserModel<T> extends AbstractTableModel<T> {
 

@@ -3,8 +3,9 @@ package com.custom.action.condition;
 import java.io.Serializable;
 
 /**
- * @author Xiao-Bai
- * @date 2022/12/6 0006 13:59
+ * 属性、sql字段缓存对象
+ * @author  Xiao-Bai
+ * @since  2022/12/6 0006 13:59
  */
 public class ColumnFieldCache implements Serializable {
 

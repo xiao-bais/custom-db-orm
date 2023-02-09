@@ -14,9 +14,9 @@ import java.util.Objects;
 import java.util.StringJoiner;
 
 /**
- * @author Xiao-Bai
- * @date 2022/4/3 17:26
- * @desc:提供一系列新增记录的sql构建
+ * 提供一系列新增记录的sql构建
+ * @author  Xiao-Bai
+ * @since  2022/4/3 17:26
  */
 @SuppressWarnings("unchecked")
 public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {

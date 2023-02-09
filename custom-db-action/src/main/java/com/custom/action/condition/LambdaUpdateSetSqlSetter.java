@@ -3,9 +3,9 @@ package com.custom.action.condition;
 import com.custom.comm.utils.lambda.SFunction;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/6/27 0027 11:59
- * @Desc lambda表达式的sql设置器
+ * lambda表达式的sql设置器
+ * @author  Xiao-Bai
+ * @since  2022/6/27 0027 11:59
  */
 public class LambdaUpdateSetSqlSetter<T> extends AbstractUpdateSetSqlSetter<T, LambdaUpdateSetSqlSetter<T>>
         implements UpdateSqlSet<SFunction<T, ?>, LambdaUpdateSetSqlSetter<T>> {

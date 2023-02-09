@@ -3,9 +3,9 @@ package com.custom.action.interfaces;
 import java.util.List;
 
 /**
- * @author Xiao-Bai
- * @date 2023/1/2 15:38
  * 查询结果后，做一些数据的补充
+ * @author  Xiao-Bai
+ * @since  2023/1/2 15:38
  */
 public interface SqlQueryAfter {
 

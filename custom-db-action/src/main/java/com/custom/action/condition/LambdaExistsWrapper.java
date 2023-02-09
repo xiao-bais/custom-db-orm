@@ -4,8 +4,9 @@ import com.custom.action.interfaces.ColumnParseHandler;
 import com.custom.comm.utils.lambda.SFunction;
 
 /**
- * @author Xiao-Bai
- * @date 2023/1/12 0012 13:53
+ * lambda格式的exists条件包装对象
+ * @author  Xiao-Bai
+ * @since  2023/1/12 0012 13:53
  */
 public class LambdaExistsWrapper<P, E> implements ExistsWrapper<P, E> {
 

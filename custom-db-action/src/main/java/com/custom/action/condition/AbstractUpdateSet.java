@@ -1,9 +1,9 @@
 package com.custom.action.condition;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/8/6 23:43
- * @Desc
+ * @author  Xiao-Bai
+ * @since  2022/8/6 23:43
+ * 
  */
 public abstract class AbstractUpdateSet<T> {
 

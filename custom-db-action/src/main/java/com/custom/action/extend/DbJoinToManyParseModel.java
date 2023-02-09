@@ -18,9 +18,9 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * @author Xiao-Bai
- * @date 2022/8/22 1:18
- * @desc
+ * 一对多注解{@link DbOneToMany}解析对象
+ * @author  Xiao-Bai
+ * @since  2022/8/22 1:18
  */
 public class DbJoinToManyParseModel extends AbstractJoinToResult {
 

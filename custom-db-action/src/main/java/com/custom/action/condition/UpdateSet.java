@@ -3,12 +3,12 @@ package com.custom.action.condition;
 import java.util.function.Consumer;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/8/6 16:28
- * @Desc sql set修改器
- * Children - 子类实例类型
- * Setter - sql set 设置器类型
- * Wrapper - 条件构造器类型
+ * sql set 设置器
+ * @param <Children> 子类实例类型
+ * @param <Setter> sql set 设置器类型
+ * @param <Wrapper> 条件构造器类型
+ * @author  Xiao-Bai
+ * @since  2022/8/6 16:28
  */
 public interface UpdateSet<Children, Setter, Wrapper> {
 

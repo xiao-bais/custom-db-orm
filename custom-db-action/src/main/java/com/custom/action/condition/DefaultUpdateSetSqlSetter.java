@@ -1,9 +1,9 @@
 package com.custom.action.condition;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/6/27 0027 11:59
- * @Desc 默认的sql设置器
+ * 默认的sql设置器
+ * @author  Xiao-Bai
+ * @since  2022/6/27 0027 11:59
  */
 public class DefaultUpdateSetSqlSetter<T> extends AbstractUpdateSetSqlSetter<T, DefaultUpdateSetSqlSetter<T>>
         implements UpdateSqlSet<String, DefaultUpdateSetSqlSetter<T>> {

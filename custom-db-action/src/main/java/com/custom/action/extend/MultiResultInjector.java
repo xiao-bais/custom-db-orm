@@ -4,10 +4,8 @@ import com.custom.action.core.HandleSelectSqlBuilder;
 import com.custom.action.core.TableInfoCache;
 import com.custom.action.core.TableParseModel;
 import com.custom.action.dbaction.AbstractJoinToResult;
-import com.custom.action.dbaction.AbstractSqlExecutor;
-import com.custom.action.exceptions.QueryMultiException;
+import com.custom.action.core.SqlExecutor;
 import com.custom.action.interfaces.FullSqlConditionExecutor;
-import com.custom.comm.enums.MultiStrategy;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.ReflectUtil;
@@ -21,9 +19,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @author Xiao-Bai
- * @date 2022/8/22 18:16
- * @desc 一对一，一对多 value注入
+ * 一对一，一对多 value注入
+ * @author  Xiao-Bai
+ * @since  2022/8/22 18:16
  */
 public class MultiResultInjector<T> {
 
@@ -38,11 +36,11 @@ public class MultiResultInjector<T> {
     /**
      * select 查询对象
      */
-    private final AbstractSqlExecutor sqlExecutor;
+    private final SqlExecutor sqlExecutor;
     private final JdbcExecutorFactory executorFactory;
 
 
-    public MultiResultInjector(Class<T> thisClass, AbstractSqlExecutor sqlExecutor, Class<?> topNode) {
+    public MultiResultInjector(Class<T> thisClass, SqlExecutor sqlExecutor, Class<?> topNode) {
         this.thisClass = thisClass;
         this.sqlExecutor = sqlExecutor;
         this.executorFactory = sqlExecutor.getExecutorFactory();

@@ -15,9 +15,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * @author Xiao-Bai
- * @date 2022/3/5 23:07
- * @desc:查询条件储存
+ * 查询条件储存
+ * @author  Xiao-Bai
+ * @since  2022/3/5 23:07
  */
 @SuppressWarnings("unchecked")
 public abstract class ConditionWrapper<T> implements Serializable {

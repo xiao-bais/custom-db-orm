@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author Xiao-Bai
- * @date 2022/11/1 12:58
- * @desc 对于条件构造器的相关表数据支持
+ * 对于条件构造器的相关表数据支持
+ * @author  Xiao-Bai
+ * @since  2022/11/1 12:58
  */
 public class TableSimpleSupport<T> implements TableSupport {
 

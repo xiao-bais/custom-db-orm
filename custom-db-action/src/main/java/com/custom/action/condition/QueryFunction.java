@@ -3,9 +3,9 @@ package com.custom.action.condition;
 import java.util.function.Consumer;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/3/15 15:43
- * @Desc：查询函数接口
+ * 查询函数接口
+ * @author  Xiao-Bai
+ * @since  2022/3/15 15:43
  **/
 @SuppressWarnings("all")
 public interface QueryFunction<Children, T, Param> {

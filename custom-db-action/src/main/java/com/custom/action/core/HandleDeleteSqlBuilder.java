@@ -18,9 +18,9 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 /**
- * @author Xiao-Bai
- * @date 2022/4/10 15:07
- * @desc:构建删除sql
+ * 提供一系列删除记录的sql构建
+ * @author  Xiao-Bai
+ * @since  2022/4/10 15:07
  */
 public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
 

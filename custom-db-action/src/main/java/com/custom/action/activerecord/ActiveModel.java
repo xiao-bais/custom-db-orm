@@ -17,12 +17,13 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 /**
- * @author Xiao-Bai
- * @date 2022/7/15 0015 14:47
- * ActiveRecord装配模式的父类，继承该类即可获得crud功能（对象需要直接继承该类，否则子类的子类调用会报错）
+ ActiveRecord装配模式的父类，继承该类即可获得crud功能（对象需要直接继承该类，否则子类的子类调用会报错）
  * 多数据源下，可通过重写{@link #order()}方法来指定不同数据源
- * T 实体对象类型
- * P 主键类型
+ * @param <T> 实体对象类型
+ * @param <P> 主键类型
+ * @author  Xiao-Bai
+ * @since  2022/7/15 0015 14:47
+ *
  */
 @SuppressWarnings("unchecked")
 public class ActiveModel<T extends ActiveModel<T, P>, P extends Serializable> implements Serializable {

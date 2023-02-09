@@ -11,9 +11,9 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/5/19 16:10
- * @Desc：中间层条件适配器
+ * 中间层条件适配器
+ * @author  Xiao-Bai
+ * @since  2022/5/19 16:10
  **/
 @SuppressWarnings("unchecked")
 public class ConditionAdapter<T, Children> extends ConditionAssembly<T, SFunction<T, ?>, Children> {

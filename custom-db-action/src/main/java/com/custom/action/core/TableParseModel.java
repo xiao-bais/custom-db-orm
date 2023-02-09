@@ -17,11 +17,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/12/2 14:10
- * @Desc：构建实体表的基础模板，以及提供一系列的sql语句或字段
+ * 实体类的解析对象
+ * @author  Xiao-Bai
+ * @since  2021/12/2 14:10
  **/
-public class TableParseModel<T> implements Cloneable {
+public class TableParseModel<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(TableParseModel.class);
 
@@ -418,20 +418,6 @@ public class TableParseModel<T> implements Cloneable {
 
     public List<ColumnPropertyMap<T>> columnPropertyMaps() {
         return this.columnPropertyMaps;
-    }
-
-
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public TableParseModel<T> clone() {
-        TableParseModel<T> builder = null;
-        try {
-            builder = (TableParseModel<T>) super.clone();
-        } catch (CloneNotSupportedException e) {
-            logger.error(e.toString(), e);
-        }
-        return builder;
     }
 
 

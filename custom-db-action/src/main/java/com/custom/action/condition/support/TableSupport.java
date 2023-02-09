@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author Xiao-Bai
- * @date 2022/11/1 13:07
- * @desc 用于部分需要表数据支持的对象
+ * 用于部分需要表数据支持的对象
+ * @author  Xiao-Bai
+ * @since  2022/11/1 13:07
  */
 public interface TableSupport {
 

@@ -8,9 +8,9 @@ import com.custom.comm.utils.lambda.SFunction;
 import java.lang.reflect.Field;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/3/15 19:55
- * @Desc：sql查询函数，方法中，column参数的字段必须要标注Db*注解，alias可不带
+ * sql查询函数，方法中，column参数的字段必须要标注Db*注解，alias可不带
+ * @author  Xiao-Bai
+ * @since  2022/3/15 19:55
  **/
 public class SelectFunc<T> extends AbstractSqlFunc<T, SelectFunc<T>> {
 

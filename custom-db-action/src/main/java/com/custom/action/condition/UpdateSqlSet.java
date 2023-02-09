@@ -1,9 +1,9 @@
 package com.custom.action.condition;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/8/2 22:36
- * @Desc
+ * update set
+ * @author  Xiao-Bai
+ * @since  2022/8/2 22:36
  */
 public interface UpdateSqlSet<Param, Children> {
 

@@ -1,7 +1,6 @@
 package com.custom.action.core;
 
 import com.custom.action.condition.AbstractUpdateSet;
-import com.custom.action.dbaction.AbstractSqlExecutor;
 import com.custom.action.proxy.JdbcActionProxy;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.comm.page.DbPageRows;
@@ -15,9 +14,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author Xiao-Bai
- * @date 2022/4/17 21:31
- * @desc: 最终对外的JDBC基础操作对象
+ * 最终对外的JDBC基础操作对象
+ * @author  Xiao-Bai
+ * @since  2022/4/17 21:31
  */
 public class JdbcOpDao {
 
@@ -355,7 +354,7 @@ public class JdbcOpDao {
         sqlExecutor.execTrans(executor);
     }
 
-    private final AbstractSqlExecutor sqlExecutor;
+    private final SqlExecutor sqlExecutor;
     private final DbDataSource dbDataSource;
     private final DbCustomStrategy dbCustomStrategy;
 

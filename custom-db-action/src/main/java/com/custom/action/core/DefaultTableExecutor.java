@@ -1,7 +1,6 @@
 package com.custom.action.core;
 
 import com.custom.action.condition.AbstractUpdateSet;
-import com.custom.action.dbaction.AbstractSqlExecutor;
 import com.custom.action.interfaces.TableExecutor;
 import com.custom.action.proxy.JdbcActionProxy;
 import com.custom.action.condition.ConditionWrapper;
@@ -9,8 +8,6 @@ import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.page.DbPageRows;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -18,15 +15,15 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author Xiao-Bai
- * @date 2022/7/15 0015 16:11
  * 指定单表的专属DAO
+ * @author  Xiao-Bai
+ * @since  2022/7/15 0015 16:11
  */
 public class DefaultTableExecutor<T, P extends Serializable> implements TableExecutor<T, P> {
 
 //    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final AbstractSqlExecutor jdbcAction;
+    private final SqlExecutor jdbcAction;
     private final Class<T> entityClass;
 
     public DefaultTableExecutor(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy, Class<T> entityClass) {

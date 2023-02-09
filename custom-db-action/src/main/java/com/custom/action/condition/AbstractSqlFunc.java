@@ -13,9 +13,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/3/19 17:28
- * @Desc：sql函数方法
+ * sql函数方法
+ * @author  Xiao-Bai
+ * @since  2022/3/19 17:28
  **/
 @SuppressWarnings("all")
 public abstract class AbstractSqlFunc<T, Children> {

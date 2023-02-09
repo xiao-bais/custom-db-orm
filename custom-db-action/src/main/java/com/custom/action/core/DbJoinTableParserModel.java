@@ -11,9 +11,9 @@ import com.custom.comm.annotations.DbJoinField;
 import java.lang.reflect.Field;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/3/7 14:40
- * @Desc：
+ * 对于{@link com.custom.comm.annotations.DbJoinTable}的解析对象
+ * @author  Xiao-Bai
+ * @since  2022/3/7 14:40
  **/
 public class DbJoinTableParserModel<T> extends AbstractTableModel<T> {
 

@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 
 /**
  * 继承该类，即可拥有增删改查功能
- * @author Xiao-Bai
+ * @author  Xiao-Bai
  * @since 2023/2/6 22:26
  * @param <T> 实体类映射对象
  */

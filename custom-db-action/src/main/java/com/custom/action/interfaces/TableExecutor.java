@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/7/15 0015 16:51
- * @Desc
+ * 单表的执行器
+ * @author  Xiao-Bai
+ * @since  2022/7/15 0015 16:51
  */
 public interface TableExecutor<T, P extends Serializable> {
 

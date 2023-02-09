@@ -10,9 +10,10 @@ import java.lang.reflect.Field;
 import java.util.Map;
 
 /**
- * @author Xiao-Bai
- * @date 2022/8/21 2:00
- * @desc 用于DbOneToOne注解的解析对象
+ * 用于{@link DbOneToOne}注解的解析对象
+ * @author  Xiao-Bai
+ * @since  2022/8/21 2:00
+ *
  */
 public class DbJoinToOneParseModel extends AbstractJoinToResult {
 

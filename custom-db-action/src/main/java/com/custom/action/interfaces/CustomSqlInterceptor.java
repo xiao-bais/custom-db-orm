@@ -3,8 +3,9 @@ package com.custom.action.interfaces;
 import com.custom.jdbc.condition.BaseExecutorBody;
 
 /**
- * @author Xiao-Bai
- * @date 2023/2/7 22:13
+ * sql 拦截器
+ * @author  Xiao-Bai
+ * @since  2023/2/7 22:13
  */
 public interface CustomSqlInterceptor {
 

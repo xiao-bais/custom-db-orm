@@ -19,9 +19,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * @author Xiao-Bai
- * @date 2021/12/2 0:44
- * @desc: 对于@DbKey的字段解析
+ * 对于@DbKey的字段解析
+ * @author  Xiao-Bai
+ * @since  2021/12/2 0:44
  */
 public class DbKeyParserModel<T> extends AbstractTableModel<T> {
 

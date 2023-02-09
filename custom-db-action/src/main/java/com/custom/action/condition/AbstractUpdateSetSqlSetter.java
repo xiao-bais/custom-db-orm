@@ -9,11 +9,11 @@ import com.custom.comm.utils.lambda.SFunction;
 import java.util.function.Consumer;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/6/27 0027 12:01
- * @Desc 修改操作的sqlSet实体
- * T - 实体类型
- * Children - 子类类型
+ * 修改操作的sqlSet实体
+ * @param <T> 实体类型
+ * @param <Children> 子类类型
+ * @author  Xiao-Bai
+ * @since  2022/6/27 0027 12:01
  */
 public abstract class AbstractUpdateSetSqlSetter<T, Children> extends UpdateSetWrapper<T> {
 

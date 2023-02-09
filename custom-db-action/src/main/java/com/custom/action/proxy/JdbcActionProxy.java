@@ -4,7 +4,7 @@ import com.custom.action.condition.AbstractUpdateSet;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.condition.UpdateSetWrapper;
 import com.custom.action.core.JdbcAction;
-import com.custom.action.dbaction.AbstractSqlExecutor;
+import com.custom.action.core.SqlExecutor;
 import com.custom.action.util.DbUtil;
 import com.custom.comm.annotations.DbTable;
 import com.custom.comm.annotations.check.CheckExecute;
@@ -19,26 +19,25 @@ import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;
 import org.springframework.cglib.proxy.MethodProxy;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Objects;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/11/17 9:55
- * @Desc：在执行之前做一些必要的检查，以减少异常的出现
+ * 在执行之前做一些必要的检查，以减少异常的出现
+ * @author  Xiao-Bai
+ * @since  2021/11/17 9:55
  **/
 @SuppressWarnings("unchecked")
 public class JdbcActionProxy implements MethodInterceptor {
 
-    private final AbstractSqlExecutor sqlExecutor;
+    private final SqlExecutor sqlExecutor;
 
     private final DbDataSource dbDataSource;
 
     private final DbCustomStrategy dbCustomStrategy;
 
-    public JdbcActionProxy(AbstractSqlExecutor sqlExecutor, DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
+    public JdbcActionProxy(SqlExecutor sqlExecutor, DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
         this.sqlExecutor = sqlExecutor;
         this.dbDataSource = dbDataSource;
         this.dbCustomStrategy = dbCustomStrategy;

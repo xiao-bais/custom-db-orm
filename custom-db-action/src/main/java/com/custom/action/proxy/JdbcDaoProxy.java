@@ -3,7 +3,7 @@ package com.custom.action.proxy;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.core.JdbcAction;
 import com.custom.action.core.JdbcDao;
-import com.custom.action.dbaction.AbstractSqlExecutor;
+import com.custom.action.core.SqlExecutor;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
@@ -13,9 +13,9 @@ import java.lang.reflect.*;
 import java.util.*;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/7/19 18:53
- * @Desc JdbcDao的接口代理
+ * JdbcDao的接口代理
+ * @author  Xiao-Bai
+ * @since  2022/7/19 18:53
  */
 public class JdbcDaoProxy implements InvocationHandler, Serializable {
 
@@ -25,7 +25,7 @@ public class JdbcDaoProxy implements InvocationHandler, Serializable {
         return (JdbcDao) Proxy.newProxyInstance(classLoader, interfaces, this);
     }
 
-    private final AbstractSqlExecutor sqlExecutor;
+    private final SqlExecutor sqlExecutor;
     private final static List<Method> CUSTOMIZE_METHOD_CACHES;
     private final static Map<Class<?>, Class<?>> PRIMITIVE_MAPPED;
 

@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/8/11 2:07
- * @Desc 用于条件构造器中的字段解析接口定义
+ * 用于条件构造器中的字段解析接口定义
+ * @author  Xiao-Bai
+ * @since  2022/8/11 2:07
  */
 public interface ColumnParseHandler<T> {
 

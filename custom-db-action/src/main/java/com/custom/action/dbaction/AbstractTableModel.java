@@ -12,9 +12,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * @author Xiao-Bai
- * @date 2021/12/1 23:44
- * @desc:
+ * 顶级表解析模板对象
+ * @author  Xiao-Bai
+ * @since  2021/12/1 23:44
  */
 public abstract class AbstractTableModel<T> {
 

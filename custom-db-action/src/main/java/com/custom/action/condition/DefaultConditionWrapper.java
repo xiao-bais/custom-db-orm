@@ -14,9 +14,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/2/16 14:11
- * @Desc：默认条件构造实例对象
+ * 默认条件构造实例对象
+ * @author  Xiao-Bai
+ * @since  2022/2/16 14:11
  **/
 public class DefaultConditionWrapper<T> extends ConditionAssembly<T, String, DefaultConditionWrapper<T>>
         implements Wrapper<String, DefaultConditionWrapper<T>> {

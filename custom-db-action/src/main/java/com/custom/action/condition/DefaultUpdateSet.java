@@ -3,9 +3,9 @@ package com.custom.action.condition;
 import java.util.function.Consumer;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/8/6 18:06
- * @Desc
+ * 默认的update编辑对象
+ * @author  Xiao-Bai
+ * @since  2022/8/6 18:06
  */
 public class DefaultUpdateSet<T> extends AbstractUpdateSet<T>
         implements UpdateSet<DefaultUpdateSet<T>, UpdateSqlSet<String, DefaultUpdateSetSqlSetter<T>>, DefaultConditionWrapper<T>> {

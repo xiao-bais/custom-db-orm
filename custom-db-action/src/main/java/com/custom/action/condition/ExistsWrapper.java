@@ -3,8 +3,9 @@ package com.custom.action.condition;
 import com.custom.comm.utils.lambda.SFunction;
 
 /**
- * @author Xiao-Bai
- * @date 2023/1/12 0012 10:58
+ * 对于exists条件的包装对象
+ * @author  Xiao-Bai
+ * @since  2023/1/12 0012 10:58
  */
 public interface ExistsWrapper<P, E> {
 
