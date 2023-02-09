@@ -19,9 +19,10 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 /**
- * @author Xiao-Bai
- * @date 2022/8/24 0:24
  * 将值写入java对象指定属性中
+ * @author Xiao-Bai
+ * @since 2022/8/24 0:24
+ *
  */
 @Slf4j
 public class WriteFieldHelper {

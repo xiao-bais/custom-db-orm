@@ -3,9 +3,9 @@ package com.custom.comm.enums;
 import com.custom.comm.utils.Constants;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/12/11 13:30
- * @Desc：sql的条件符号
+ * sql的条件符号
+ * @author Xiao-Bai
+ * @since 2021/12/11 13:30
  **/
 public enum DbSymbol {
 

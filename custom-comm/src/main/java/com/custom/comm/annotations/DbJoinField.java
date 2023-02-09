@@ -1,13 +1,11 @@
 package com.custom.comm.annotations;
 
-import com.custom.comm.utils.Constants;
-
 import java.lang.annotation.*;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/10/20
- * @Description
+ * 表关联映射字段注解
+ * @author Xiao-Bai
+ * @since 2021/10/20
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)

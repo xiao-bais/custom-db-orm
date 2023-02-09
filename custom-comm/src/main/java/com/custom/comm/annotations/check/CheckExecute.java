@@ -5,14 +5,13 @@ import com.custom.comm.enums.ExecuteMethod;
 import java.lang.annotation.*;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/11/17 10:08
- * @Desc：在被注解的方法执行前，进行一系列的参数检查，例如不规范，不合法的参数，或者null
+ * 在被注解的方法执行前，进行一系列的参数检查，例如不规范，不合法的参数，或者null
+ * @author Xiao-Bai
+ * @since 2021/11/17 10:08
  **/
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Inherited
 public @interface CheckExecute {
 
     /**

@@ -3,9 +3,9 @@ package com.custom.comm.annotations.mapper;
 import java.lang.annotation.*;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/11/19 16:51
- * @Desc：适用于dao层动态代理方法上使用
+ * 适用于dao层动态代理方法上使用
+ * @author Xiao-Bai
+ * @since 2021/11/19 16:51
  **/
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

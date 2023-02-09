@@ -1,8 +1,6 @@
 package com.custom.jdbc.dbAdapetr;
 
-import com.custom.comm.enums.DatabaseType;
-import com.custom.jdbc.configuration.DbDataSource;
-import com.custom.jdbc.executor.CustomJdbcExecutor;
+import com.custom.comm.enums.DatabaseDialect;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 
 /**
@@ -15,13 +13,13 @@ public class Mysql5Adapter extends Mysql8Adapter {
 
     @Override
     public String driverClassName() {
-        return DatabaseType.MYSQL5.getDriverClassName();
+        return DatabaseDialect.MYSQL5.getDriverClassName();
     }
 
 
     @Override
-    public DatabaseType getType() {
-        return DatabaseType.MYSQL5;
+    public DatabaseDialect getType() {
+        return DatabaseDialect.MYSQL5;
     }
 
     @Override

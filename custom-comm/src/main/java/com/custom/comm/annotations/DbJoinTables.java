@@ -3,9 +3,8 @@ package com.custom.comm.annotations;
 import java.lang.annotation.*;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/10/19 14:59
- * @Desc：
+ * @author Xiao-Bai
+ * @since 2021/10/19 14:59
  **/
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

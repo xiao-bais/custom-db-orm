@@ -1,8 +1,6 @@
 package com.custom.jdbc.dbAdapetr;
 
-import com.custom.comm.enums.DatabaseType;
-import com.custom.jdbc.configuration.DbDataSource;
-import com.custom.jdbc.executor.CustomJdbcExecutor;
+import com.custom.comm.enums.DatabaseDialect;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 
 /**
@@ -20,12 +18,12 @@ public class SqlServerAdapter extends AbstractDbAdapter {
 
     @Override
     public String driverClassName() {
-        return DatabaseType.SQL_SERVER.getDriverClassName();
+        return DatabaseDialect.SQL_SERVER.getDriverClassName();
     }
 
     @Override
-    public DatabaseType getType() {
-        return DatabaseType.SQL_SERVER;
+    public DatabaseDialect getType() {
+        return DatabaseDialect.SQL_SERVER;
     }
 
     @Override

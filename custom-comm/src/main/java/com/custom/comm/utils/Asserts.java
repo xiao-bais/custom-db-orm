@@ -1,13 +1,9 @@
 package com.custom.comm.utils;
 
-import com.custom.comm.exceptions.CustomCheckException;
-
-import java.util.IllegalFormatCodePointException;
-
 /**
- * @Author Xiao-Bai
- * @Date 2022/7/21 23:58
- * @Desc 断言工具类
+ * 断言工具类
+ * @author  Xiao-Bai
+ * @since  2022/7/21 23:58
  */
 public final class Asserts {
 

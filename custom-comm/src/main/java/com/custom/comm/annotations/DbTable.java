@@ -5,9 +5,9 @@ import com.custom.comm.utils.Constants;
 import java.lang.annotation.*;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/6/28
- * @Description
+ * 表注解，表示这是一个表对应的实体
+ * @author Xiao-Bai
+ * @since 2021/6/28
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

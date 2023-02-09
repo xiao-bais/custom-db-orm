@@ -8,8 +8,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/3/11 0011 20:55
+ * 结果返回对象
+ * @author  Xiao-Bai
+ * @since 2021/3/11 0011 20:55
  */
 public class BackResult<T> {
 

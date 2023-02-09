@@ -16,8 +16,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
+ * 执行目标包装类，传入查询，删除，修改的条件(wrapper)后，执行指定的操作
  * @author Xiao-Bai
- * @date 2023/2/8 13:21
+ * @since 2023/2/8 13:21
  */
 public class DoTargetWrapper<T> {
 

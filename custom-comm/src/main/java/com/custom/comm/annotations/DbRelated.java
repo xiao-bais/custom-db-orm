@@ -6,10 +6,9 @@ import com.custom.comm.enums.DbJoinStyle;
 import java.lang.annotation.*;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/1/17 0017 17:35
- * @Version 1.0
- * @Description DbRelation
+ * 表关联注解，用于在属性上标明
+ * @author Xiao-Bai
+ * @since 2021/1/17 0017 17:35
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)

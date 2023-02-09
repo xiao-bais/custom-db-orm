@@ -1,9 +1,9 @@
 package com.custom.comm.utils;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/10/6 17:37
- * @Desc：简短符号常量类
+ * @author  Xiao-Bai
+ * @since  2021/10/6 17:37
+ * 简短符号常量类
  **/
 public class Constants {
 

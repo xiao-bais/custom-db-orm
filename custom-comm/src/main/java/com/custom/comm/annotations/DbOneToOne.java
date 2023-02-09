@@ -7,12 +7,13 @@ import com.custom.comm.utils.Constants;
 import java.lang.annotation.*;
 
 /**
- * @author Xiao-Bai
- * @date 2022/8/21 0:55
- * @desc 一对一映射注解，在查询的时候，若存在一对一的关系对象，则可启用该注解
- * <p>
+ * 一对一映射注解，在查询的时候，若存在一对一的关系对象，则可启用该注解
+ *  <p>
  *     注意: 该注解只对查询生效
- * </p>
+ *  </p>
+ * @author Xiao-Bai
+ * @since 2022/8/21 0:55
+ *
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)

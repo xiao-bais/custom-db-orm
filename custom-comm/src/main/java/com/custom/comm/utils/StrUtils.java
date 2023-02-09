@@ -4,9 +4,9 @@ import java.util.Locale;
 import java.util.UUID;
 
 /**
- * @author Xiao-Bai
- * @date 2022/9/2 0:44
- * @desc
+ * 字符串工具类
+ * @author  Xiao-Bai
+ * @since  2022/9/2 0:44
  */
 public class StrUtils {
 

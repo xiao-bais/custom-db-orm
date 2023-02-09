@@ -1,8 +1,9 @@
 package com.custom.comm.utils.back;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/3/11 20:43
+ * 返回结果状态
+ * @author   Xiao-Bai
+ * @since  2021/3/11 20:43
  */
 public enum ResultStatus {
     success(2000,"success"),

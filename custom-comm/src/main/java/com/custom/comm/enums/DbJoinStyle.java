@@ -1,9 +1,9 @@
 package com.custom.comm.enums;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/3/10 18:01
- * @Desc：
+ * 表连接方式
+ * @author Xiao-Bai
+ * @since 2022/3/10 18:01
  **/
 public enum DbJoinStyle {
 

@@ -3,9 +3,9 @@ package com.custom.comm.enums;
 import com.custom.comm.utils.Constants;
 
 /**
+ * sql排序枚举
  * @author Xiao-Bai
- * @date 2022/3/5 22:53
- * @desc:sql排序枚举
+ * @since 2022/3/5 22:53
  */
 public enum SqlOrderBy {
 

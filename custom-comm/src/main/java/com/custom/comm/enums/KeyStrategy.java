@@ -1,10 +1,9 @@
 package com.custom.comm.enums;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/1/10 0010 16:27
- * @Version 1.0
- * @Description 主键增值类型
+ * 主键增值类型
+ * @author Xiao-Bai
+ * @since 2021/1/10 0010 16:27
  */
 public enum KeyStrategy {
 

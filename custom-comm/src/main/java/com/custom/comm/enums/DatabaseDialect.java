@@ -1,11 +1,11 @@
 package com.custom.comm.enums;
 
 /**
+ * 数据库方言类型
  * @author Xiao-Bai
- * @date 2022/10/27 17:51
- * 数据库类型
+ * @since 2022/10/27 17:51
  */
-public enum DatabaseType {
+public enum DatabaseDialect {
 
     DEFAULT("默认", "MYSQL8.0+ 数据库", "com.mysql.cj.jdbc.Driver"),
 
@@ -25,7 +25,7 @@ public enum DatabaseType {
     private final String desc;
     private final String driverClassName;
 
-    DatabaseType(String name, String desc, String driverClassName) {
+    DatabaseDialect(String name, String desc, String driverClassName) {
         this.name = name;
         this.desc = desc;
         this.driverClassName = driverClassName;
@@ -43,9 +43,9 @@ public enum DatabaseType {
         return driverClassName;
     }
 
-    public static DatabaseType findTypeByDriver(String driverClassName) {
-        DatabaseType[] databaseTypes = values();
-        for (DatabaseType databaseType : databaseTypes) {
+    public static DatabaseDialect findTypeByDriver(String driverClassName) {
+        DatabaseDialect[] databaseTypes = values();
+        for (DatabaseDialect databaseType : databaseTypes) {
             if (databaseType.driverClassName.equals(driverClassName)) {
                 return databaseType;
             }

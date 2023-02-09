@@ -2,7 +2,7 @@ package com.custom.comm.enums;
 
 /**
  * @author Xiao-Bai
- * @date 2022/12/16 0016 17:01
+ * @since 2022/12/16 0016 17:01
  */
 public enum MultiStrategy {
 

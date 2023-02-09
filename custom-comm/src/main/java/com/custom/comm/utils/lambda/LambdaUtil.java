@@ -13,9 +13,9 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @author Xiao-Bai
- * @date 2022/8/26 23:58
- * @desc lambda 表达式解析
+ * lambda 表达式解析
+ * @author   Xiao-Bai
+ * @since  2022/8/26 23:58
  */
 @Slf4j
 public final class LambdaUtil {

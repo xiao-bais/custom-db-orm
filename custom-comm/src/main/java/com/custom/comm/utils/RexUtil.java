@@ -4,9 +4,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/4/8 15:02
- * @Desc：
+ * 正则工具类
+ * @author  Xiao-Bai
+ * @since  2022/4/8 15:02
  **/
 public class RexUtil {
 

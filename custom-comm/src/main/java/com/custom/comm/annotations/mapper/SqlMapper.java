@@ -3,9 +3,9 @@ package com.custom.comm.annotations.mapper;
 import java.lang.annotation.*;
 
 /**
+ * 作用与继承BasicDao相同，两者选其一
  * @author Xiao-Bai
- * @date 2021/12/1 23:23
- * @desc: 作用与继承BasicDao相同，两者选其一
+ * @since 2021/12/1 23:23
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

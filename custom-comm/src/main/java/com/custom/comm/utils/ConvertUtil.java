@@ -11,9 +11,9 @@ import java.util.Date;
 import java.util.Objects;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/3/29 19:02
- * @Desc：类型转换工具
+ * 类型转换工具
+ * @author  Xiao-Bai
+ * @since  2022/3/29 19:02
  **/
 @SuppressWarnings("unchecked")
 public class ConvertUtil {

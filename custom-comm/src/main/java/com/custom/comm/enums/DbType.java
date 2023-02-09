@@ -8,10 +8,9 @@ import java.util.Date;
 import java.util.Objects;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/1/10 0010 21:36
- * @Version 1.0
- * @Description DbMediaType
+ * sql数据类型
+ * @author Xiao-Bai
+ * @since 2021/1/10 0010 21:36
  */
 public enum DbType {
 
@@ -40,7 +39,7 @@ public enum DbType {
     DbDateTime("datetime", Date.class, null, "0", null);
 
     /**
-     * 数据库类型
+     * 数据库字段类型
      */
     private final String type;
     /**

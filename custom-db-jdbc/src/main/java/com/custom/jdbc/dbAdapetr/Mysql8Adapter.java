@@ -1,11 +1,9 @@
 package com.custom.jdbc.dbAdapetr;
 
-import com.custom.comm.enums.DatabaseType;
+import com.custom.comm.enums.DatabaseDialect;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.Constants;
 import com.custom.jdbc.condition.SelectExecutorBody;
-import com.custom.jdbc.configuration.DbDataSource;
-import com.custom.jdbc.executor.CustomJdbcExecutor;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 
 /**
@@ -36,12 +34,12 @@ public class Mysql8Adapter extends AbstractDbAdapter {
 
     @Override
     public String driverClassName() {
-        return DatabaseType.MYSQL8.getDriverClassName();
+        return DatabaseDialect.MYSQL8.getDriverClassName();
     }
 
     @Override
-    public DatabaseType getType() {
-        return DatabaseType.MYSQL8;
+    public DatabaseDialect getType() {
+        return DatabaseDialect.MYSQL8;
     }
 
     @Override

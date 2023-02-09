@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @Author Xiao-Bai
+ * @author Xiao-Bai
  * @Date 2022/7/20 0020 14:43
  * @Desc 最终对外的JDBC基础操作对象
  */

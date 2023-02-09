@@ -6,9 +6,9 @@ import com.custom.comm.enums.DbType;
 import java.lang.annotation.*;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/6/30
- * @Description
+ * sql字段
+ * @author Xiao-Bai
+ * @since 2021/6/30
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)

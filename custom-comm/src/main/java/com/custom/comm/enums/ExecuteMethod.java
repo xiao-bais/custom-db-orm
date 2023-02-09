@@ -1,9 +1,9 @@
 package com.custom.comm.enums;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/11/17 10:20
- * @Desc：定义方法执行的种类：增，删，改，查
+ * 定义方法执行的种类：增，删，改，查
+ * @author Xiao-Bai
+ * @since 2021/11/17 10:20
  **/
 public enum ExecuteMethod {
 

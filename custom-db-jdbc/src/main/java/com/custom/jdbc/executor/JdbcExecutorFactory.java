@@ -1,6 +1,6 @@
 package com.custom.jdbc.executor;
 
-import com.custom.comm.enums.DatabaseType;
+import com.custom.comm.enums.DatabaseDialect;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.ConvertUtil;
 import com.custom.comm.utils.StrUtils;
@@ -81,19 +81,19 @@ public class JdbcExecutorFactory {
 
                 // 在没有填写驱动类的情况下，使用默认的驱动去尝试加载
                 try {
-                    Class.forName(DatabaseType.DEFAULT.getDriverClassName());
-                    dbDataSource.setDatabaseType(DatabaseType.DEFAULT);
+                    Class.forName(DatabaseDialect.DEFAULT.getDriverClassName());
+                    dbDataSource.setDatabaseType(DatabaseDialect.DEFAULT);
                 } catch (ClassNotFoundException e) {
                     throw new CustomCheckException("未指定连接的数据库驱动");
                 }
             }
 
-            DatabaseType databaseType = dbDataSource.getDatabaseType();
+            DatabaseDialect databaseType = dbDataSource.getDatabaseType();
             dbDataSource.setDriver(databaseType.getDriverClassName());
 
         } else {
             if (dbDataSource.getDatabaseType() == null) {
-                DatabaseType databaseType = DatabaseType.findTypeByDriver(dbDataSource.getDriver());
+                DatabaseDialect databaseType = DatabaseDialect.findTypeByDriver(dbDataSource.getDriver());
                 dbDataSource.setDatabaseType(databaseType);
             }
         }
@@ -111,7 +111,7 @@ public class JdbcExecutorFactory {
      * 创建当前数据库的适配对象
      */
     private void createCurrentDbAdapter() {
-        DatabaseType type = dbDataSource.getDatabaseType();
+        DatabaseDialect type = dbDataSource.getDatabaseType();
         if (type == null) {
             throw new NullPointerException();
         }

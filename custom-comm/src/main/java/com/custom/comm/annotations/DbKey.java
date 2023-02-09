@@ -6,10 +6,9 @@ import com.custom.comm.enums.KeyStrategy;
 import java.lang.annotation.*;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/1/10 0010 16:25
- * @Version 1.0
- * @Description DbKey
+ * 主键注解
+ * @author Xiao-Bai
+ * @since 2021/1/10 0010 16:25
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)

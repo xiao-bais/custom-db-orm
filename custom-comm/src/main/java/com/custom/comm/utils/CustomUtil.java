@@ -16,10 +16,8 @@ import java.time.LocalDate;
 import java.util.*;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/1/12 0012 22:07
- * @Version 1.0
- * @Description CommUtils
+ * @author  Xiao-Bai
+ * @since  2021/1/12 0012 22:07
  */
 @Slf4j
 @SuppressWarnings("unchecked")

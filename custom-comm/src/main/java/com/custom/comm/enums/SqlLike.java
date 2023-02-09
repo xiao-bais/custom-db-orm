@@ -3,9 +3,9 @@ package com.custom.comm.enums;
 import com.custom.comm.utils.Constants;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/2/16 18:05
- * @Desc：模糊查询枚举
+ * 模糊查询枚举
+ * @author Xiao-Bai
+ * @since 2022/2/16 18:05
  **/
 public enum SqlLike {
 

@@ -8,9 +8,9 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/10/15
- * @Description 时间跟日期处理工具类
+ * 时间跟日期处理工具类
+ * @author Xiao-Bai
+ * @since 2021/10/15
  */
 public class DateTimeUtils {
 

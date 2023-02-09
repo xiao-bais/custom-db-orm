@@ -18,9 +18,10 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
- * @author Xiao-Bai
- * @date 2023/2/6 22:26
  * 继承该类，即可拥有增删改查功能
+ * @author Xiao-Bai
+ * @since 2023/2/6 22:26
+ * @param <T> 实体类映射对象
  */
 @SuppressWarnings("unchecked")
 public abstract class DbServiceHelper<T> {
@@ -125,7 +126,7 @@ public abstract class DbServiceHelper<T> {
     }
 
     /**
-     * 根据键修改不为null的字段
+     * 根据主键修改不为null的字段
      */
     public boolean update(T entity) throws Exception {
         return actuator().updateByKey(entity) > 0;

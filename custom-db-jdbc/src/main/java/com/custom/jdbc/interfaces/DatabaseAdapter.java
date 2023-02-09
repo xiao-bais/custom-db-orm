@@ -1,6 +1,6 @@
 package com.custom.jdbc.interfaces;
 
-import com.custom.comm.enums.DatabaseType;
+import com.custom.comm.enums.DatabaseDialect;
 
 /**
  * @author Xiao-Bai
@@ -24,7 +24,7 @@ public interface DatabaseAdapter {
     /**
      * 获取数据库类型枚举
      */
-    DatabaseType getType();
+    DatabaseDialect getType();
 
 
     /**

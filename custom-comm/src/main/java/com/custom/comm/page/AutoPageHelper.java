@@ -5,9 +5,9 @@ import com.custom.comm.utils.Constants;
 import java.util.List;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/10/15
- * @Description
+ * 分页辅助对象
+ * @author Xiao-Bai
+ * @since 2021/10/15
  */
 public class AutoPageHelper<T> extends DbPageRows<T> {
 

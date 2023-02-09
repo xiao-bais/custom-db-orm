@@ -3,9 +3,9 @@ package com.custom.comm.annotations;
 import java.lang.annotation.*;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/10/19
- * @Description
+ * 表关联条件注解
+ * @author Xiao-Bai
+ * @since 2021/10/19
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

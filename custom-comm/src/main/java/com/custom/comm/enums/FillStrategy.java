@@ -1,10 +1,9 @@
 package com.custom.comm.enums;
 
 /**
+ * 增删改时做字段填充
  * @author Xiao-Bai
- * @date 2021/11/2 13:24
- * @desc: 增删改时做字段填充
- *
+ * @since 2021/11/2 13:24
  */
 public enum FillStrategy {
 

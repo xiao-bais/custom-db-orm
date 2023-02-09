@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 import java.util.Objects;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/3/28 15:01
- * @Desc：从spring容器中获取实例bean的工具类
+ * 从spring容器中获取实例bean的工具类
+ * @author  Xiao-Bai
+ * @since  2022/3/28 15:01
  **/
 @Slf4j
 @Component

@@ -5,10 +5,9 @@ import com.custom.comm.utils.Constants;
 import java.util.List;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/1/9 0009 15:09
- * @Version 1.0
- * @Description DbPageUtils
+ * 分页对象
+ * @author Xiao-Bai
+ * @since 2021/1/9 0009 15:09
  */
 public class DbPageRows<T> {
 

@@ -15,9 +15,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * @author Xiao-Bai
- * @date 2022/11/16 0016 17:00
  * 反射工具类
+ * @author  Xiao-Bai
+ * @since  2022/11/16 0016 17:00
  */
 public class ReflectUtil {
 
