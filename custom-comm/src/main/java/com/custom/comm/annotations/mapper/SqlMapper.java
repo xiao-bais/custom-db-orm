@@ -4,7 +4,7 @@ import java.lang.annotation.*;
 
 /**
  * 作用与继承BasicDao相同，两者选其一
- * @author Xiao-Bai
+ * @author  Xiao-Bai
  * @since 2021/12/1 23:23
  */
 @Target(ElementType.TYPE)

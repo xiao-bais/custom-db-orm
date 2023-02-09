@@ -4,8 +4,8 @@ import com.custom.comm.enums.DatabaseDialect;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 
 /**
- * @author Xiao-Bai
- * @date 2022/10/28 0028 17:50
+ * @author  Xiao-Bai
+ * @since  2022/10/28 0028 17:50
  */
 public class SqlServerAdapter extends AbstractDbAdapter {
 

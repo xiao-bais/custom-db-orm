@@ -4,7 +4,7 @@ import java.util.function.Consumer;
 
 /**
  * 新条件拼接组装
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/3/13 23:43
  */
 public interface ConditionSplicer<Children> {

@@ -1,8 +1,8 @@
 package ${sourcePackage};
 
 /**
-* @Author ${author}
-* @Date ${createDate}
+* @author  ${author}
+* @since  ${createDate}
 */
 
 public interface ${serviceName} {

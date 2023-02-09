@@ -7,8 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/11/27 15:37
+ * @author  Xiao-Bai
+ * @since  2021/11/27 15:37
  * @Desc：
  **/
 @DbTable(table = "employee")

@@ -2,7 +2,7 @@ package com.custom.comm.utils;
 
 /**
  * 断言工具类
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/7/21 23:58
  */
 public final class Asserts {

@@ -18,7 +18,7 @@ import java.util.StringJoiner;
 
 /**
  * 发送请求工具类
- * @author Xiao-Bai
+ * @author  Xiao-Bai
  * @since 2021/10/27 10:57
  **/
 public class HttpRequest {

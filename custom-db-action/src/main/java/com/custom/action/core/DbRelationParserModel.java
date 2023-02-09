@@ -13,7 +13,7 @@ import java.lang.reflect.Field;
 
 /**
  * 对于@DbRelated注解的解析
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2021/12/2 16:34
  **/
 public class DbRelationParserModel<T> extends AbstractTableModel<T> {

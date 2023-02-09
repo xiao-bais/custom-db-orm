@@ -5,7 +5,7 @@ import java.util.UUID;
 
 /**
  * 字符串工具类
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/9/2 0:44
  */
 public class StrUtils {

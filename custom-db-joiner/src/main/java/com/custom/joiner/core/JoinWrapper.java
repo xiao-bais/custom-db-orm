@@ -6,7 +6,7 @@ import com.custom.comm.enums.AliasStrategy;
 import java.util.function.Consumer;
 
 /**
- * @author Xiao-Bai
+ * @author  Xiao-Bai
  * <li>基础条件查询构造器，单表，多表关联查询皆可</li>
  * <li>T - 主表对应的实体类</li>
  * <li>A - 主表或者说是已关联的表对应的实体类</li>

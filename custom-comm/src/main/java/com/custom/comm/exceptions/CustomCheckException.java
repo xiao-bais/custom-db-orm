@@ -1,7 +1,7 @@
 package com.custom.comm.exceptions;
 
 /**
- * @author Xiao-Bai
+ * @author  Xiao-Bai
  * @since 2021/7/8
  */
 public class CustomCheckException extends RuntimeException {

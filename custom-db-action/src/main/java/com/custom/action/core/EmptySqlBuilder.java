@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * 该类暂时只做一些判断时使用，不做任何sql构建或增删改查操作
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/10/1 22:53
  */
 public class EmptySqlBuilder<T> extends AbstractSqlBuilder<T> {

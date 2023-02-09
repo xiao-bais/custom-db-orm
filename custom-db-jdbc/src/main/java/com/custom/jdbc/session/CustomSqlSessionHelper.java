@@ -8,9 +8,9 @@ import com.custom.jdbc.configuration.DbCustomStrategy;
 import java.sql.*;
 
 /**
- * @author Xiao-Bai
- * @date 2022/10/23 19:08
- * @desc
+ * sql 会话辅助对象
+ * @author  Xiao-Bai
+ * @since  2022/10/23 19:08
  */
 public class CustomSqlSessionHelper {
 

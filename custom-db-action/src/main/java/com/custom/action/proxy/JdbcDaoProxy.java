@@ -14,7 +14,7 @@ import java.util.*;
 
 /**
  * JdbcDao的接口代理
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/7/19 18:53
  */
 public class JdbcDaoProxy implements InvocationHandler, Serializable {

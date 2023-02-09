@@ -7,9 +7,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- * @author Xiao-Bai
- * @date 2022/10/23 22:37
- * @desc
+ * 自定义sql会话接口
+ * @author  Xiao-Bai
+ * @since  2022/10/23 22:37
  */
 public interface CustomSqlSession {
 

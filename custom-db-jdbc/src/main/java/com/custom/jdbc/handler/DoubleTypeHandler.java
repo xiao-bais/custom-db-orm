@@ -5,8 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * @author Xiao-Bai
- * @date 2022/11/12 0012 15:34
+ * @author  Xiao-Bai
+ * @since  2022/11/12 0012 15:34
  */
 public class DoubleTypeHandler extends AbstractTypeHandler<Double> {
     @Override

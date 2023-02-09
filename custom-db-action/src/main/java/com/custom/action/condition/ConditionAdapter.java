@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 /**
  * 中间层条件适配器
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/5/19 16:10
  **/
 @SuppressWarnings("unchecked")

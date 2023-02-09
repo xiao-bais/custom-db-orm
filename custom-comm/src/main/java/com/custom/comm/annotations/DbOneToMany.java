@@ -5,7 +5,7 @@ import com.custom.comm.enums.MultiStrategy;
 import java.lang.annotation.*;
 
 /**
- * @author Xiao-Bai
+ * @author  Xiao-Bai
  * @since 2022/8/21 0:55
  * @desc 一对多映射注解，在查询的时候，若存在一对多的关系对象，则可启用该注解
  * <p>

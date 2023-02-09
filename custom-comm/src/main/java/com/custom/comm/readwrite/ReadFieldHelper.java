@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 /**
  * 读取对象中指定属性的值
- * @author Xiao-Bai
+ * @author  Xiao-Bai
  * @since 2022/8/24 1:07
  */
 @Slf4j

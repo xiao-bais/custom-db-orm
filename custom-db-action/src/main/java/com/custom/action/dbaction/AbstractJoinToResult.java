@@ -17,7 +17,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * 一对一，一对多注解的解析对象公共抽象父类
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/8/21 2:00
  */
 public abstract class AbstractJoinToResult {

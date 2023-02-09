@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/9/1 0001 11:05
+ * @author  Xiao-Bai
+ * @since  2022/9/1 0001 11:05
  * 常用sql函数
  */
 public abstract class AbstractJoinFunction<Children extends AbstractJoinFunction<Children>> {

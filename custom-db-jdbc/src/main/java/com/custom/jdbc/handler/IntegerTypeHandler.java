@@ -8,8 +8,8 @@ import java.sql.SQLException;
 import static sun.security.krb5.Confounder.intValue;
 
 /**
- * @author Xiao-Bai
- * @date 2022/11/12 0012 14:33
+ * @author  Xiao-Bai
+ * @since  2022/11/12 0012 14:33
  */
 public class IntegerTypeHandler extends AbstractTypeHandler<Integer> {
 

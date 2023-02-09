@@ -10,9 +10,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- * @author Xiao-Bai
- * @date 2022/10/22 20:17
- * @desc
+ * sql 会话默认实现类
+ * @author  Xiao-Bai
+ * @since  2022/10/22 20:17
  */
 public class DefaultSqlSession implements CustomSqlSession {
 

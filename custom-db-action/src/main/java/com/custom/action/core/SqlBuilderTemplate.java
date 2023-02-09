@@ -5,7 +5,7 @@ import com.custom.jdbc.executor.JdbcExecutorFactory;
 
 /**
  * SQL构建模板
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/9/22 1:15
  */
 public class SqlBuilderTemplate<T> {

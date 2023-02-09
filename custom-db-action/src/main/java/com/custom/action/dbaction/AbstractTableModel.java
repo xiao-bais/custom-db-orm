@@ -13,7 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 
 /**
  * 顶级表解析模板对象
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2021/12/1 23:44
  */
 public abstract class AbstractTableModel<T> {

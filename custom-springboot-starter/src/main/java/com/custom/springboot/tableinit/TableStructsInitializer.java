@@ -16,8 +16,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/5/16 15:41
+ * @author  Xiao-Bai
+ * @since  2022/5/16 15:41
  * @Desc：表结构初始化
  **/
 public class TableStructsInitializer {

@@ -3,8 +3,8 @@ package com.custom.generator.config;
 import java.util.Objects;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/4/19 11:23
+ * @author  Xiao-Bai
+ * @since  2022/4/19 11:23
  * @Desc：包的生成配置
  **/
 public class PackageConfig {

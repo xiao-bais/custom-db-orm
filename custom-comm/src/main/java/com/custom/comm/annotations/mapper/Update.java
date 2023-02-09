@@ -3,7 +3,7 @@ package com.custom.comm.annotations.mapper;
 import java.lang.annotation.*;
 
 /**
- * @author Xiao-Bai
+ * @author  Xiao-Bai
  * @since 2021/11/19 16:52
  * @Desc：适用于dao层动态代理方法上使用
  **/

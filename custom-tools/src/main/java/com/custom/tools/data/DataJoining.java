@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.function.Predicate;
 
 /**
- * @author Xiao-Bai
- * @date 2022/11/23 0:33
+ * @author  Xiao-Bai
+ * @since  2022/11/23 0:33
  * 数据合并工具
  * list1 与 list2 中存在可关联的值时
  * 可用此类，将两个集合合并成一个集合.

@@ -30,9 +30,9 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author Xiao-Bai
- * @date 2022/6/16 13:18
- * jdbc条件封装执行
+ * jdbc执行对象创建工厂
+ * @author  Xiao-Bai
+ * @since  2022/6/16 13:18
  */
 public class JdbcExecutorFactory {
 

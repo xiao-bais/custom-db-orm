@@ -7,8 +7,8 @@ import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/7/8 0008 17:10
+ * @author  Xiao-Bai
+ * @since  2022/7/8 0008 17:10
  * @Desc
  */
 public class JdbcTestBuilder {

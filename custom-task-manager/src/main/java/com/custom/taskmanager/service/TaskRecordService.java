@@ -5,8 +5,8 @@ import com.custom.taskmanager.params.TaskRecordRequest;
 import com.custom.taskmanager.view.TaskRecordModel;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/7/10 1:34
+ * @author  Xiao-Bai
+ * @since  2022/7/10 1:34
  * @Desc
  */
 public interface TaskRecordService {

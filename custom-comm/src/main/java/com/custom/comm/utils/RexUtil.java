@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 /**
  * 正则工具类
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/4/8 15:02
  **/
 public class RexUtil {

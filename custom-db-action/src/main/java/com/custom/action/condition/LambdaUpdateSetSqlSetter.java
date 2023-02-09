@@ -4,7 +4,7 @@ import com.custom.comm.utils.lambda.SFunction;
 
 /**
  * lambda表达式的sql设置器
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/6/27 0027 11:59
  */
 public class LambdaUpdateSetSqlSetter<T> extends AbstractUpdateSetSqlSetter<T, LambdaUpdateSetSqlSetter<T>>

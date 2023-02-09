@@ -1,8 +1,8 @@
 package com.custom.taskmanager.enums;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/7/10 19:12
+ * @author  Xiao-Bai
+ * @since  2022/7/10 19:12
  * @Desc
  */
 public enum TaskImgTypeEnum {

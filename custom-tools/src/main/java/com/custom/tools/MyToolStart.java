@@ -4,8 +4,8 @@ import com.custom.tools.objects.ObjBuilder;
 import com.custom.tools.test.Person;
 
 /**
- * @author Xiao-Bai
- * @date 2022/11/23 0:28
+ * @author  Xiao-Bai
+ * @since  2022/11/23 0:28
  * 工具类的一些测试类
  */
 public class MyToolStart {

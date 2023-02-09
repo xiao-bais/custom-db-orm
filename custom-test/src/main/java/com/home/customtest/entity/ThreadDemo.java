@@ -4,8 +4,8 @@ import com.custom.action.core.JdbcDao;
 import com.custom.comm.utils.back.BackResult;
 
 /**
- * @author Xiao-Bai
- * @date 2022/10/13 0:13
+ * @author  Xiao-Bai
+ * @since  2022/10/13 0:13
  * @desc
  */
 public class ThreadDemo implements Runnable {

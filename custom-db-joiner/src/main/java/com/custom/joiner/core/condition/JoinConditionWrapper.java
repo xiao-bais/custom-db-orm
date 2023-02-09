@@ -8,8 +8,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * @author Xiao-Bai
- * @date 2022/8/31 23:46
+ * @author  Xiao-Bai
+ * @since  2022/8/31 23:46
  * @desc
  */
 public interface JoinConditionWrapper<Result> {

@@ -20,7 +20,7 @@ import java.util.*;
 
 /**
  * 将值写入java对象指定属性中
- * @author Xiao-Bai
+ * @author  Xiao-Bai
  * @since 2022/8/24 0:24
  *
  */

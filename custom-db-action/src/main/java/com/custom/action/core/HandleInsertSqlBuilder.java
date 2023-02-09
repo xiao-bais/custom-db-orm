@@ -15,7 +15,7 @@ import java.util.StringJoiner;
 
 /**
  * 提供一系列新增记录的sql构建
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/4/3 17:26
  */
 @SuppressWarnings("unchecked")

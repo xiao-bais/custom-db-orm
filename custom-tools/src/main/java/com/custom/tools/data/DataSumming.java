@@ -12,8 +12,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * @author Xiao-Bai
- * @date 2022/11/25 0025 16:31
+ * @author  Xiao-Bai
+ * @since  2022/11/25 0025 16:31
  */
 @SuppressWarnings("unchecked")
 public class DataSumming<T> {

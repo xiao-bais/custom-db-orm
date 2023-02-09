@@ -5,9 +5,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * @author Xiao-Bai
- * @date 2022/11/16 0:24
- * @desc
+ * @author  Xiao-Bai
+ * @since  2022/11/16 0:24
+ * 
  */
 public class UnknownTypeHandler extends AbstractTypeHandler<Object> {
     @Override

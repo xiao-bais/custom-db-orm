@@ -16,8 +16,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/11/19 16:45
+ * @author  Xiao-Bai
+ * @since  2021/11/19 16:45
  * @Desc 用于读取接口上的注解，并生成代理类去执行路径中（文件中）的内容
  **/
 @SuppressWarnings("unchecked")

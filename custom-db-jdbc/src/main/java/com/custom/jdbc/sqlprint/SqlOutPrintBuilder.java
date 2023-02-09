@@ -1,9 +1,8 @@
 package com.custom.jdbc.sqlprint;
 
-import com.alibaba.druid.sql.SQLUtils;
 import com.custom.comm.exceptions.CustomCheckException;
-import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.Constants;
+import com.custom.comm.utils.CustomUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,9 +10,9 @@ import java.io.Serializable;
 import java.util.StringJoiner;
 
 /**
- * @author Xiao-Bai
- * @date 2021/11/5 22:46
- * @desc: sql打印输出处理
+ * sql打印输出处理
+ * @author  Xiao-Bai
+ * @since  2021/11/5 22:46
  */
 public class SqlOutPrintBuilder implements Serializable {
 

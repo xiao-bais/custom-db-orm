@@ -1,8 +1,8 @@
 package com.custom.aliyun.oss;
 
 /**
- * @author Xiao-Bai
- * @date 2022/10/7 22:05
+ * @author  Xiao-Bai
+ * @since  2022/10/7 22:05
  * 开启oss的授权对象
  */
 public class AliyunOssConfig {

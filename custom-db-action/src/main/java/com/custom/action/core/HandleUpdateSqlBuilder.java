@@ -14,7 +14,7 @@ import java.util.*;
 
 /**
  * 提供一系列修改记录的sql构建
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/4/10 15:01
  */
 @SuppressWarnings("unchecked")

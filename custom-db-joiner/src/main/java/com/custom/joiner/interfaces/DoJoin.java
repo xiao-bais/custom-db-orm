@@ -1,8 +1,8 @@
 package com.custom.joiner.interfaces;
 
 /**
- * @author Xiao-Bai
- * @date 2022/8/29 14:01
+ * @author  Xiao-Bai
+ * @since  2022/8/29 14:01
  * @desc
  */
 @FunctionalInterface

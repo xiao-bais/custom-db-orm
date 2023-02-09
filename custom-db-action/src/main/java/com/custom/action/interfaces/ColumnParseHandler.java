@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * 用于条件构造器中的字段解析接口定义
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/8/11 2:07
  */
 public interface ColumnParseHandler<T> {

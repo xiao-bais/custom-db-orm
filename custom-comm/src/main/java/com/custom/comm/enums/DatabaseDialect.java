@@ -2,7 +2,7 @@ package com.custom.comm.enums;
 
 /**
  * 数据库方言类型
- * @author Xiao-Bai
+ * @author  Xiao-Bai
  * @since 2022/10/27 17:51
  */
 public enum DatabaseDialect {

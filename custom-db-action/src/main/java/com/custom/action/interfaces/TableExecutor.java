@@ -11,7 +11,7 @@ import java.util.Map;
 
 /**
  * 单表的执行器
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/7/15 0015 16:51
  */
 public interface TableExecutor<T, P extends Serializable> {

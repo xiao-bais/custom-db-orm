@@ -19,8 +19,8 @@ import com.custom.joiner.util.CustomCharUtil;
 import java.util.*;
 
 /**
- * @author Xiao-Bai
- * @date 2022/8/29 13:50
+ * @author  Xiao-Bai
+ * @since  2022/8/29 13:50
  * @desc
  */
 @SuppressWarnings("all")

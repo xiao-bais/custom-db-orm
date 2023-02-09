@@ -6,7 +6,7 @@ import java.lang.annotation.*;
 
 /**
  * 表注解，表示这是一个表对应的实体
- * @author Xiao-Bai
+ * @author  Xiao-Bai
  * @since 2021/6/28
  */
 @Target(ElementType.TYPE)

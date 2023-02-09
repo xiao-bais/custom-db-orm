@@ -10,9 +10,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * @author Xiao-Bai
- * @date 2022/11/13 1:24
- * @desc
+ * @author  Xiao-Bai
+ * @since  2022/11/13 1:24
+ * 
  */
 public class DateTypeHandler extends AbstractTypeHandler<Date>{
 

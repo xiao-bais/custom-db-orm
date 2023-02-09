@@ -4,9 +4,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * @author Xiao-Bai
- * @date 2022/11/13 1:59
- * @desc
+ * @author  Xiao-Bai
+ * @since  2022/11/13 1:59
+ * 
  */
 public class ShortTypeHandler extends AbstractTypeHandler<Short>{
     @Override

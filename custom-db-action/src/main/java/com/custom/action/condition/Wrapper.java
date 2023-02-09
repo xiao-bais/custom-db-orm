@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
  * 条件包装
  * @param <Param> 字段类型
  * @param <Result> 返回结果类型
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/2/16 14:01
  **/
 @SuppressWarnings("all")

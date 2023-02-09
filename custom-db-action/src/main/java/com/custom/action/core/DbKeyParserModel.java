@@ -20,7 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 
 /**
  * 对于@DbKey的字段解析
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2021/12/2 0:44
  */
 public class DbKeyParserModel<T> extends AbstractTableModel<T> {

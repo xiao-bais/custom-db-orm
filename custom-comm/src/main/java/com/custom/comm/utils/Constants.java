@@ -1,7 +1,7 @@
 package com.custom.comm.utils;
 
 /**
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2021/10/6 17:37
  * 简短符号常量类
  **/

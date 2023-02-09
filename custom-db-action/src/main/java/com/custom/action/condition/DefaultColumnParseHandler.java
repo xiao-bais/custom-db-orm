@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 /**
  * 解析Function函数中字段名称
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/3/3 14:45
  **/
 @Slf4j

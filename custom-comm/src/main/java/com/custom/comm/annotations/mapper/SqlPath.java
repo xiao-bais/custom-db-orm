@@ -6,7 +6,7 @@ import java.lang.annotation.*;
 
 /**
  * 适用于dao层接口方法上使用
- * @author Xiao-Bai
+ * @author  Xiao-Bai
  * @since 2021/11/25 15:33
  **/
 @Target(ElementType.METHOD)

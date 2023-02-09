@@ -6,7 +6,7 @@ import java.lang.annotation.*;
 
 /**
  * 在被注解的方法执行前，进行一系列的参数检查，例如不规范，不合法的参数，或者null
- * @author Xiao-Bai
+ * @author  Xiao-Bai
  * @since 2021/11/17 10:08
  **/
 @Target(ElementType.METHOD)

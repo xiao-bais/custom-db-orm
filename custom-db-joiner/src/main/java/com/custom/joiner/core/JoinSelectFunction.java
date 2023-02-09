@@ -4,8 +4,8 @@ import com.custom.comm.utils.lambda.SFunction;
 import com.custom.joiner.core.func.AbstractJoinFunction;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/9/1 0001 11:01
+ * @author  Xiao-Bai
+ * @since  2022/9/1 0001 11:01
  * @Desc
  */
 public class JoinSelectFunction<T> extends AbstractJoinFunction<JoinSelectFunction<T>> {

@@ -21,7 +21,7 @@ import java.util.List;
  * 多数据源下，可通过重写{@link #order()}方法来指定不同数据源
  * @param <T> 实体对象类型
  * @param <P> 主键类型
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/7/15 0015 14:47
  *
  */

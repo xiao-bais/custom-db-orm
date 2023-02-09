@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @author Xiao-Bai
- * @date 2022/5/29 11:35
+ * @author  Xiao-Bai
+ * @since  2022/5/29 11:35
  * @desc:创建表对象
  */
 public class TableCreateInfo {

@@ -11,7 +11,7 @@ import java.lang.annotation.*;
  *  <p>
  *     注意: 该注解只对查询生效
  *  </p>
- * @author Xiao-Bai
+ * @author  Xiao-Bai
  * @since 2022/8/21 0:55
  *
  */

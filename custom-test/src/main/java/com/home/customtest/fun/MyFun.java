@@ -1,8 +1,8 @@
 package com.home.customtest.fun;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/1/25 22:06
+ * @author  Xiao-Bai
+ * @since  2022/1/25 22:06
  * @Desc
  */
 @FunctionalInterface

@@ -7,7 +7,7 @@ import java.util.Map;
 
 /**
  * 自动填充对象
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/3/21 14:47
  **/
 public class TableFillObject {

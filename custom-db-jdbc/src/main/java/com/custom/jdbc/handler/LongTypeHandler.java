@@ -6,8 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * @author Xiao-Bai
- * @date 2022/11/12 0012 15:32
+ * @author  Xiao-Bai
+ * @since  2022/11/12 0012 15:32
  */
 public class LongTypeHandler extends AbstractTypeHandler<Long> {
     @Override

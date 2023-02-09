@@ -4,7 +4,7 @@ import java.lang.annotation.*;
 
 /**
  * 表关联条件注解
- * @author Xiao-Bai
+ * @author  Xiao-Bai
  * @since 2021/10/19
  */
 @Target(ElementType.TYPE)

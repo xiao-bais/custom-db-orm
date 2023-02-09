@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 /**
  * 实体类的解析对象
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2021/12/2 14:10
  **/
 public class TableParseModel<T> {

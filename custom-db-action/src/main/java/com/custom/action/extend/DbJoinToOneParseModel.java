@@ -11,7 +11,7 @@ import java.util.Map;
 
 /**
  * 用于{@link DbOneToOne}注解的解析对象
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/8/21 2:00
  *
  */

@@ -12,8 +12,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * @author Xiao-Bai
- * @date 2022/5/8 19:46
+ * @author  Xiao-Bai
+ * @since  2022/5/8 19:46
  * @desc:sql参数结构解析
  */
 @SuppressWarnings("unchecked")

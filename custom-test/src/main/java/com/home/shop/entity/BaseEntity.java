@@ -4,8 +4,8 @@ import com.custom.comm.annotations.DbField;
 import lombok.Data;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/10/25
+ * @author  Xiao-Bai
+ * @since  2021/10/25
  * @Description 基础信息
  */
 @Data

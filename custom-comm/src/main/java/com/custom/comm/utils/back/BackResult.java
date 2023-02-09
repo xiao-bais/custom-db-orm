@@ -9,7 +9,7 @@ import java.util.Map;
 
 /**
  * 结果返回对象
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since 2021/3/11 0011 20:55
  */
 public class BackResult<T> {

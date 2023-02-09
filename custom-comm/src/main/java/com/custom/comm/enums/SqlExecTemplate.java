@@ -2,7 +2,7 @@ package com.custom.comm.enums;
 
 /**
  * SQL 操作模板
- * @author Xiao-Bai
+ * @author  Xiao-Bai
  * @since 2022/10/27 12:26
  */
 public enum SqlExecTemplate {

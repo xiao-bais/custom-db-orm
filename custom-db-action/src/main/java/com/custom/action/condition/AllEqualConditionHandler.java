@@ -13,7 +13,7 @@ import java.util.Objects;
 
 /**
  * 全等条件解析处理
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/7/21 0021 14:44
  */
 public class AllEqualConditionHandler<T> {

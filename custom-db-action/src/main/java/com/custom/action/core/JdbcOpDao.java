@@ -15,7 +15,7 @@ import java.util.Map;
 
 /**
  * 最终对外的JDBC基础操作对象
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/4/17 21:31
  */
 public class JdbcOpDao {

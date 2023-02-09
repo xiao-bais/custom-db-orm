@@ -5,9 +5,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/8/22
- * @Description 策略配置
+ * 策略配置
+ * @author  Xiao-Bai
+ * @since  2021/8/22
  */
 @Component
 @ConfigurationProperties(prefix = "custom.db.strategy")

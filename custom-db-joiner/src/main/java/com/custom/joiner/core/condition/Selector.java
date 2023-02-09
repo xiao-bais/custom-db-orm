@@ -6,8 +6,8 @@ import com.custom.action.condition.SelectFunc;
 import java.util.function.Consumer;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/9/1 0001 10:15
+ * @author  Xiao-Bai
+ * @since  2022/9/1 0001 10:15
  * @Desc
  */
 @SuppressWarnings("all")

@@ -6,7 +6,7 @@ import com.custom.comm.utils.lambda.SFunction;
 
 /**
  * 排序的函数式接口对象
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/3/19 17:27
  **/
 public class OrderByFunc<T> extends AbstractSqlFunc<T, OrderByFunc<T>> {

@@ -2,7 +2,7 @@ package com.custom.comm.enums;
 
 /**
  * 查询列表的sql聚合函数
- * @author Xiao-Bai
+ * @author  Xiao-Bai
  * @since 2022/3/15 17:34
  **/
 public enum SqlAggregate {

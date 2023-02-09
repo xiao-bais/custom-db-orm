@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 /**
  * sql函数方法
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/3/19 17:28
  **/
 @SuppressWarnings("all")

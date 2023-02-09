@@ -6,7 +6,7 @@ import java.util.Map;
 
 /**
  * 用于部分需要表数据支持的对象
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/11/1 13:07
  */
 public interface TableSupport {

@@ -22,7 +22,7 @@ import java.util.stream.IntStream;
  * @param <T> 实体类型
  * @param <R> 字段类型（字段类型为String是为字符串、lambda时为SFunction函数接口）
  * @param <Children> 继承该抽象类的子类类型
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2021/12/13 9:23
  **/
 @SuppressWarnings("all")

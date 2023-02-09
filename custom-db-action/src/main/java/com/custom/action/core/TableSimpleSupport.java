@@ -10,7 +10,7 @@ import java.util.Map;
 
 /**
  * 对于条件构造器的相关表数据支持
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/11/1 12:58
  */
 public class TableSimpleSupport<T> implements TableSupport {

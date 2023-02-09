@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2021/1/16 0016 1:44
  */
 public class JudgeUtil {

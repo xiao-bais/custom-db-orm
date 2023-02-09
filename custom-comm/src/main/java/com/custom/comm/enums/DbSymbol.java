@@ -4,7 +4,7 @@ import com.custom.comm.utils.Constants;
 
 /**
  * sql的条件符号
- * @author Xiao-Bai
+ * @author  Xiao-Bai
  * @since 2021/12/11 13:30
  **/
 public enum DbSymbol {

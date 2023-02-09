@@ -2,7 +2,7 @@ package com.custom.comm.enums;
 
 /**
  * 别名策略类型选择
- * @author Xiao-Bai
+ * @author  Xiao-Bai
  * @since 2022/8/30 0030 17:44
  */
 public enum AliasStrategy {

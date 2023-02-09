@@ -7,7 +7,7 @@ import java.lang.annotation.*;
 
 /**
  * 表关联注解，用于在属性上标明
- * @author Xiao-Bai
+ * @author  Xiao-Bai
  * @since 2021/1/17 0017 17:35
  */
 @Target(ElementType.FIELD)

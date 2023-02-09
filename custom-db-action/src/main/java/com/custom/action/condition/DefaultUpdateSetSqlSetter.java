@@ -2,7 +2,7 @@ package com.custom.action.condition;
 
 /**
  * 默认的sql设置器
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/6/27 0027 11:59
  */
 public class DefaultUpdateSetSqlSetter<T> extends AbstractUpdateSetSqlSetter<T, DefaultUpdateSetSqlSetter<T>>

@@ -5,9 +5,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * @author Xiao-Bai
- * @date 2022/11/13 1:14
- * @desc
+ * @author  Xiao-Bai
+ * @since  2022/11/13 1:14
+ * 
  */
 public class CharacterTypeHandler extends AbstractTypeHandler<Character> {
     @Override

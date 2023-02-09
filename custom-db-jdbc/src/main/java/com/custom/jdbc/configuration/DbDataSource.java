@@ -5,9 +5,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/1/31 22:35
- * @Description 数据库连接配置中心
+ * 数据库连接配置中心
+ * @author  Xiao-Bai
+ * @since  2021/1/31 22:35
  */
 @Component
 @ConfigurationProperties(prefix = "custom.db.datasource")

@@ -4,7 +4,7 @@ import com.custom.comm.utils.lambda.SFunction;
 
 /**
  * 对于exists条件的包装对象
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2023/1/12 0012 10:58
  */
 public interface ExistsWrapper<P, E> {

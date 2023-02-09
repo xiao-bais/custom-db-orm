@@ -13,9 +13,9 @@ import com.custom.jdbc.interfaces.DatabaseAdapter;
 import java.sql.Connection;
 
 /**
- * @author Xiao-Bai
- * @date 2022/10/22 0:06
- * @desc
+ * 全局连接管理
+ * @author  Xiao-Bai
+ * @since  2022/10/22 0:06
  */
 public class DbConnGlobal {
 

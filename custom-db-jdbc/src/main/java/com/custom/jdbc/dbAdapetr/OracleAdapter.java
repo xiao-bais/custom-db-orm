@@ -4,9 +4,9 @@ import com.custom.comm.enums.DatabaseDialect;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 
 /**
- * @author Xiao-Bai
- * @date 2022/10/27 18:52
- * @desc
+ * @author  Xiao-Bai
+ * @since  2022/10/27 18:52
+ * 
  */
 public class OracleAdapter extends AbstractDbAdapter {
 

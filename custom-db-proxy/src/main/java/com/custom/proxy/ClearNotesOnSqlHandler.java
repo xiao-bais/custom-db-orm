@@ -11,8 +11,8 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
 /**
- * @author Xiao-Bai
- * @date 2021/12/25 22:56
+ * @author  Xiao-Bai
+ * @since  2021/12/25 22:56
  * @desc:去除sql中的注释内容
  */
 @Slf4j

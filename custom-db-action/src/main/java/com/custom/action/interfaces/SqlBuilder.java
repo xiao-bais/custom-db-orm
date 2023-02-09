@@ -4,7 +4,7 @@ import com.custom.comm.enums.SqlExecTemplate;
 
 /**
  * sql构建的接口
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/10/27 12:41
  */
 public interface SqlBuilder {

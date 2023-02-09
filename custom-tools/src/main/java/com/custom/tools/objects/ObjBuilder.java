@@ -6,8 +6,8 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
- * @author Xiao-Bai
- * @date 2023/1/28 10:53
+ * @author  Xiao-Bai
+ * @since  2023/1/28 10:53
  */
 public class ObjBuilder<T> {
 

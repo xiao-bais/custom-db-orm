@@ -3,8 +3,8 @@ package com.custom.generator.model;
 import java.util.List;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/4/24 16:16
+ * @author  Xiao-Bai
+ * @since  2022/4/24 16:16
  * @Desc：
  **/
 public class ControllerStructModel {

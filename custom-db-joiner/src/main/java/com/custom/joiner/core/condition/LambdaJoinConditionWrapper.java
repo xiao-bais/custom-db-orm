@@ -5,8 +5,8 @@ import com.custom.comm.utils.lambda.SFunction;
 import java.util.Collection;
 
 /**
- * @author Xiao-Bai
- * @date 2022/8/31 23:49
+ * @author  Xiao-Bai
+ * @since  2022/8/31 23:49
  * @desc
  */
 public class LambdaJoinConditionWrapper<T> implements JoinConditionWrapper<LambdaJoinConditionWrapper<T>> {

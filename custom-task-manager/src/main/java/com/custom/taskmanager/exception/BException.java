@@ -2,7 +2,7 @@ package com.custom.taskmanager.exception;
 
 /**
  * @Auther: Xiao-Bai
- * @Date: 2021/04/08/17:08
+ * @since : 2021/04/08/17:08
  * @Description:
  */
 public class BException extends RuntimeException {

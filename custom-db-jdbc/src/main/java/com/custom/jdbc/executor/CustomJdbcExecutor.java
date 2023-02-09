@@ -7,9 +7,9 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author Xiao-Bai
- * @date 2022/10/23 18:51
- * @desc
+ * 自定义通用的jdbc执行对象，属于原生jdbc
+ * @author  Xiao-Bai
+ * @since  2022/10/23 18:51
  */
 public interface CustomJdbcExecutor {
 

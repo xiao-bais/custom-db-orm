@@ -16,12 +16,12 @@ import java.sql.SQLException;
 import java.util.*;
 
 /**
- * @author Xiao-Bai
- * @date 2022/11/12 0:11
- * @desc
+ * 类型处理
+ * @author  Xiao-Bai
+ * @since  2022/11/12 0:11
  */
 @SuppressWarnings("unchecked")
-public abstract class AbstractTypeHandler<T> implements TypeHandler<T>, NonNullableTypeHandler<T>, Cloneable {
+public abstract class AbstractTypeHandler<T> implements TypeHandler<T>, NonNullableTypeHandler<T> {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 

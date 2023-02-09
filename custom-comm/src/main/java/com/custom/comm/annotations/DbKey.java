@@ -7,7 +7,7 @@ import java.lang.annotation.*;
 
 /**
  * 主键注解
- * @author Xiao-Bai
+ * @author  Xiao-Bai
  * @since 2021/1/10 0010 16:25
  */
 @Target(ElementType.FIELD)

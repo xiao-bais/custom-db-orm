@@ -5,8 +5,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
- * @author Xiao-Bai
- * @date 2022/10/9 1:55
+ * @author  Xiao-Bai
+ * @since  2022/10/9 1:55
  * @desc
  */
 @Data

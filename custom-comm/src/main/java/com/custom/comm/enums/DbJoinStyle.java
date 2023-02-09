@@ -2,7 +2,7 @@ package com.custom.comm.enums;
 
 /**
  * 表连接方式
- * @author Xiao-Bai
+ * @author  Xiao-Bai
  * @since 2022/3/10 18:01
  **/
 public enum DbJoinStyle {

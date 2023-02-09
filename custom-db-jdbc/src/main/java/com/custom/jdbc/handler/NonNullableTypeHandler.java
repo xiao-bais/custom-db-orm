@@ -1,9 +1,9 @@
 package com.custom.jdbc.handler;
 
 /**
- * @author Xiao-Bai
- * @date 2022/11/13 1:15
- * @desc
+ * @author  Xiao-Bai
+ * @since  2022/11/13 1:15
+ * 
  */
 public interface NonNullableTypeHandler<T> {
 

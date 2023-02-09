@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * 分页对象
- * @author Xiao-Bai
+ * @author  Xiao-Bai
  * @since 2021/1/9 0009 15:09
  */
 public class DbPageRows<T> {

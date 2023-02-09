@@ -7,7 +7,7 @@ import java.lang.annotation.*;
 
 /**
  * sql字段
- * @author Xiao-Bai
+ * @author  Xiao-Bai
  * @since 2021/6/30
  */
 @Target(ElementType.FIELD)

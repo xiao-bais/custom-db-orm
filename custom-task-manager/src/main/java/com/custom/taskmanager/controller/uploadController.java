@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 
 /**
- * @author Xiao-Bai
- * @date 2022/10/9 1:32
+ * @author  Xiao-Bai
+ * @since  2022/10/9 1:32
  * @desc
  */
 @Api(tags = "图片上传管理")

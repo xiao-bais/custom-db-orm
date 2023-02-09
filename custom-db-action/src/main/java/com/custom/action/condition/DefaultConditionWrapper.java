@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 
 /**
  * 默认条件构造实例对象
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/2/16 14:11
  **/
 public class DefaultConditionWrapper<T> extends ConditionAssembly<T, String, DefaultConditionWrapper<T>>

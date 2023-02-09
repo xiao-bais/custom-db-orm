@@ -4,7 +4,7 @@ import java.util.function.Consumer;
 
 /**
  * 默认的update编辑对象
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/8/6 18:06
  */
 public class DefaultUpdateSet<T> extends AbstractUpdateSet<T>

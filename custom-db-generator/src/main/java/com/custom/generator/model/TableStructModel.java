@@ -3,8 +3,8 @@ package com.custom.generator.model;
 import java.util.List;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/4/19 14:48
+ * @author  Xiao-Bai
+ * @since  2022/4/19 14:48
  * @Desc：表结构解析模板
  **/
 public class TableStructModel {

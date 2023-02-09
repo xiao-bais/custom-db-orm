@@ -22,9 +22,9 @@ import java.sql.*;
 import java.util.*;
 
 /**
- * @author Xiao-Bai
- * @date 2022/10/23 19:05
- * @desc
+ * 默认的原生jdbc执行对象
+ * @author  Xiao-Bai
+ * @since  2022/10/23 19:05
  */
 @SuppressWarnings("unchecked")
 public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {

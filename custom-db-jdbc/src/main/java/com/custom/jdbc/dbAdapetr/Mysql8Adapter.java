@@ -7,9 +7,9 @@ import com.custom.jdbc.condition.SelectExecutorBody;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 
 /**
- * @author Xiao-Bai
- * @date 2022/10/27 18:33
- * @desc
+ * @author  Xiao-Bai
+ * @since  2022/10/27 18:33
+ * 
  */
 public class Mysql8Adapter extends AbstractDbAdapter {
 

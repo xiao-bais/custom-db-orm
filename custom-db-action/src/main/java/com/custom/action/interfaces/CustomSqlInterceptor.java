@@ -4,7 +4,7 @@ import com.custom.jdbc.condition.BaseExecutorBody;
 
 /**
  * sql 拦截器
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2023/2/7 22:13
  */
 public interface CustomSqlInterceptor {

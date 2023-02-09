@@ -11,7 +11,7 @@ import java.util.Objects;
 
 /**
  * 从spring容器中获取实例bean的工具类
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/3/28 15:01
  **/
 @Slf4j

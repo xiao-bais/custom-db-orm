@@ -15,8 +15,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * 自定义的bean初始化
- * @author Xiao-Bai
- * @date 2022/5/16 15:02
+ * @author  Xiao-Bai
+ * @since  2022/5/16 15:02
  *
  **/
 @Component

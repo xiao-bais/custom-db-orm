@@ -6,8 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * @author Xiao-Bai
- * @date 2022/10/9 1:58
+ * @author  Xiao-Bai
+ * @since  2022/10/9 1:58
  * @desc
  */
 @Getter

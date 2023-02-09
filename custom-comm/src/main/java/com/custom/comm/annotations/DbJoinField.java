@@ -4,7 +4,7 @@ import java.lang.annotation.*;
 
 /**
  * 表关联映射字段注解
- * @author Xiao-Bai
+ * @author  Xiao-Bai
  * @since 2021/10/20
  */
 @Target(ElementType.FIELD)

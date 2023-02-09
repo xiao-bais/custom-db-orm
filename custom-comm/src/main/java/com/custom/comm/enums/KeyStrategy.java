@@ -2,7 +2,7 @@ package com.custom.comm.enums;
 
 /**
  * 主键增值类型
- * @author Xiao-Bai
+ * @author  Xiao-Bai
  * @since 2021/1/10 0010 16:27
  */
 public enum KeyStrategy {

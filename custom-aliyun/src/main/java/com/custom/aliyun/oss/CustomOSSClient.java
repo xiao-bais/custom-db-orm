@@ -14,8 +14,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 /**
- * @author Xiao-Bai
- * @date 2022/10/7 22:04
+ * @author  Xiao-Bai
+ * @since  2022/10/7 22:04
  * @desc
  */
 public class CustomOSSClient {

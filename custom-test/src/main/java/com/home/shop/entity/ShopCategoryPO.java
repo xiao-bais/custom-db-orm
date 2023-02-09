@@ -9,8 +9,8 @@ import lombok.EqualsAndHashCode;
 import java.util.List;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/10/25
+ * @author  Xiao-Bai
+ * @since  2021/10/25
  * @Description 产品种类表
  */
 @EqualsAndHashCode(callSuper = true)

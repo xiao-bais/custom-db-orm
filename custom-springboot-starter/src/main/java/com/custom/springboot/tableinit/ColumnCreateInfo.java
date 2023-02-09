@@ -1,8 +1,8 @@
 package com.custom.springboot.tableinit;
 
 /**
- * @author Xiao-Bai
- * @date 2022/5/29 11:27
+ * @author  Xiao-Bai
+ * @since  2022/5/29 11:27
  * @desc:创建表的字段
  */
 public class ColumnCreateInfo {

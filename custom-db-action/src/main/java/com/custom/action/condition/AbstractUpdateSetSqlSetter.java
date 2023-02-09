@@ -12,7 +12,7 @@ import java.util.function.Consumer;
  * 修改操作的sqlSet实体
  * @param <T> 实体类型
  * @param <Children> 子类类型
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/6/27 0027 12:01
  */
 public abstract class AbstractUpdateSetSqlSetter<T, Children> extends UpdateSetWrapper<T> {

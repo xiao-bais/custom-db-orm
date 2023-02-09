@@ -1,9 +1,9 @@
 package com.custom.jdbc.condition;
 
 /**
- * @author Xiao-Bai
- * @date 2022/10/25 23:08
- * @desc
+ * 查询Map类型的执行体
+ * @author  Xiao-Bai
+ * @since  2022/10/25 23:08
  */
 public class SelectMapExecutorBody<K, V> extends BaseExecutorBody {
 

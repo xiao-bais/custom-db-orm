@@ -4,7 +4,7 @@ import java.util.List;
 
 /**
  * 查询结果后，做一些数据的补充
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2023/1/2 15:38
  */
 public interface SqlQueryAfter {

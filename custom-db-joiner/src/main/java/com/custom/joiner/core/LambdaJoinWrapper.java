@@ -6,8 +6,8 @@ import com.custom.comm.enums.AliasStrategy;
 import java.util.function.Consumer;
 
 /**
- * @author Xiao-Bai
- * @date 2022/8/29 14:59
+ * @author  Xiao-Bai
+ * @since  2022/8/29 14:59
  * lambda表达式的表连接包装对象
  */
 public class LambdaJoinWrapper<T> extends AbstractJoinWrapper<T> implements JoinWrapper<T> {

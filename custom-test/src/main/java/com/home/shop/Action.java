@@ -13,8 +13,8 @@ import com.custom.generator.model.TableStructModel;
 import java.util.List;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/4/24 13:50
+ * @author  Xiao-Bai
+ * @since  2022/4/24 13:50
  * @Desc：
  **/
 public class Action {

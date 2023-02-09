@@ -2,7 +2,7 @@ package com.custom.action.condition;
 
 /**
  * update set
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/8/2 22:36
  */
 public interface UpdateSqlSet<Param, Children> {

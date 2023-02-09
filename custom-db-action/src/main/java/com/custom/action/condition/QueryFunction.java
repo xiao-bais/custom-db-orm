@@ -4,7 +4,7 @@ import java.util.function.Consumer;
 
 /**
  * 查询函数接口
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/3/15 15:43
  **/
 @SuppressWarnings("all")

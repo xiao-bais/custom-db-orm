@@ -6,8 +6,8 @@ import com.custom.comm.annotations.DbTable;
 import lombok.Data;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/3/10 9:56
+ * @author  Xiao-Bai
+ * @since  2022/3/10 9:56
  * @Desc：
  **/
 @Data

@@ -10,8 +10,8 @@ package com.home.shop.pojo;
 import java.math.BigDecimal;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022-12-16 15:11
+ * @author  Xiao-Bai
+ * @since  2022-12-16 15:11
  */
 
 @Data

@@ -4,8 +4,8 @@ import com.custom.comm.annotations.*;
 import lombok.*;
 
 /**
- * @author Xiao-Bai
- * @date 2022/3/29 22:52
+ * @author  Xiao-Bai
+ * @since  2022/3/29 22:52
  * @desc:
  */
 @EqualsAndHashCode(callSuper = true)

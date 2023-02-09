@@ -12,7 +12,7 @@ import java.util.StringJoiner;
 
 /**
  * update set 包装类
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/8/6 17:45
  */
 public abstract class UpdateSetWrapper<T> {

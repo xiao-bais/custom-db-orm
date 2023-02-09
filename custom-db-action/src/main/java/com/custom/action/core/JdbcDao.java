@@ -12,7 +12,7 @@ import java.util.Map;
 
 /**
  * JDBC万能操作接口
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/7/20 0020 14:43
  */
 public interface JdbcDao {

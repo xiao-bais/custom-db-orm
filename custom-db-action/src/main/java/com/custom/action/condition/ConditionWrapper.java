@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 
 /**
  * 查询条件储存
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/3/5 23:07
  */
 @SuppressWarnings("unchecked")

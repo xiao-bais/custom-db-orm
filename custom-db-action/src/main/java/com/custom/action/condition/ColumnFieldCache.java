@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * 属性、sql字段缓存对象
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/12/6 0006 13:59
  */
 public class ColumnFieldCache implements Serializable {

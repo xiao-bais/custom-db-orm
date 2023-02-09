@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 
 /**
  * lambda格式的update编辑对象
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/8/6 18:06
  */
 public class LambdaUpdateSet<T> extends AbstractUpdateSet<T>

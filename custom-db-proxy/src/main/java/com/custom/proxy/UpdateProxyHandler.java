@@ -5,8 +5,8 @@ import com.custom.jdbc.executor.JdbcExecutorFactory;
 import java.lang.reflect.Method;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/6/6 0:29
+ * @author  Xiao-Bai
+ * @since  2022/6/6 0:29
  * @Desc 代理：执行增删改sql
  */
 public class UpdateProxyHandler extends AbstractProxyHandler {

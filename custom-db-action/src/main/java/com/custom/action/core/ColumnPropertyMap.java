@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * 字段属性关联
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/8/25 12:45
  */
 public class ColumnPropertyMap<T> implements Serializable {

@@ -4,7 +4,7 @@ import java.lang.annotation.*;
 
 /**
  * 适用于Dao层的参数注解
- * @author Xiao-Bai
+ * @author  Xiao-Bai
  * @since 2022/6/5 23:47
  */
 @Target(ElementType.PARAMETER)

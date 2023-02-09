@@ -14,8 +14,8 @@ import org.springframework.context.annotation.*;
 
 
 /**
- * @author Xiao-Bai
- * @date 2021/11/23 17:47
+ * @author  Xiao-Bai
+ * @since  2021/11/23 17:47
  **/
 @Configuration
 @ComponentScan("com.custom")

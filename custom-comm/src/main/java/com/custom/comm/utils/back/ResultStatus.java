@@ -2,7 +2,7 @@ package com.custom.comm.utils.back;
 
 /**
  * 返回结果状态
- * @author   Xiao-Bai
+ * @author    Xiao-Bai
  * @since  2021/3/11 20:43
  */
 public enum ResultStatus {

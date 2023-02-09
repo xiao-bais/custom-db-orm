@@ -6,8 +6,8 @@ import com.custom.comm.utils.CustomUtil;
 import java.util.Random;
 
 /**
- * @author Xiao-Bai
- * @date 2022/8/28 21:18
+ * @author  Xiao-Bai
+ * @since  2022/8/28 21:18
  * 自定义无规则字符串构造器
  */
 public class CustomCharUtil {

@@ -27,7 +27,7 @@ import java.util.*;
 
 /**
  * jdbc操作对象
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/4/13 20:49
  */
 @SuppressWarnings("unchecked")

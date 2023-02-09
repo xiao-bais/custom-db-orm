@@ -5,9 +5,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * @author Xiao-Bai
- * @date 2022/11/13 0:52
- * @desc
+ * @author  Xiao-Bai
+ * @since  2022/11/13 0:52
+ * 
  */
 public class BigDecimalTypeHandler extends AbstractTypeHandler<BigDecimal> {
 

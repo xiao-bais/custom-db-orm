@@ -13,9 +13,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/6/28
- * @Description 数据库连接配置
+ * 数据库连接配置
+ * @author  Xiao-Bai
+ * @since  2021/6/28
  */
 public class DbConnection {
 

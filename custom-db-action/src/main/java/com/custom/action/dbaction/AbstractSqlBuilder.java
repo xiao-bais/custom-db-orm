@@ -20,7 +20,7 @@ import java.util.stream.IntStream;
 
 /**
  * sql操作模板父类
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/4/3 17:33
  */
 @SuppressWarnings("unchecked")

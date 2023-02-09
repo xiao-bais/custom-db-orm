@@ -3,7 +3,7 @@ package com.custom.comm.annotations;
 import java.lang.annotation.*;
 
 /**
- * @author Xiao-Bai
+ * @author  Xiao-Bai
  * @since 2021/10/19 14:59
  **/
 @Target(ElementType.TYPE)

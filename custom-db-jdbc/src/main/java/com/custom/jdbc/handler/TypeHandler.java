@@ -4,11 +4,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * @author Xiao-Bai
- * @date 2022/11/12 0:11
- * @desc 类型转换处理
+ * 类型处理器
+ * @author  Xiao-Bai
+ * @since  2022/11/12 0:11
  */
-public interface TypeHandler<T> {
+public interface TypeHandler<T> extends Cloneable {
 
     /**
      * 获取本类型的值

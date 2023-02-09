@@ -16,8 +16,8 @@ import java.beans.Introspector;
 import java.util.Set;
 
 /**
- * @Author Xiao-Bai
- * @Date 2021/11/22 11:55
+ * @author  Xiao-Bai
+ * @since  2021/11/22 11:55
  * @Desc： 手动将对象注入spring
  **/
 

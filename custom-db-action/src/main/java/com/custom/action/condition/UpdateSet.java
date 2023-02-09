@@ -7,7 +7,7 @@ import java.util.function.Consumer;
  * @param <Children> 子类实例类型
  * @param <Setter> sql set 设置器类型
  * @param <Wrapper> 条件构造器类型
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/8/6 16:28
  */
 public interface UpdateSet<Children, Setter, Wrapper> {

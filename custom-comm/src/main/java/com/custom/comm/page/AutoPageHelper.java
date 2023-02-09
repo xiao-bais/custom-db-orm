@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * 分页辅助对象
- * @author Xiao-Bai
+ * @author  Xiao-Bai
  * @since 2021/10/15
  */
 public class AutoPageHelper<T> extends DbPageRows<T> {

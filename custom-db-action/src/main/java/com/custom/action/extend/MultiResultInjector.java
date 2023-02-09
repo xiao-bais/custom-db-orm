@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 一对一，一对多 value注入
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/8/22 18:16
  */
 public class MultiResultInjector<T> {

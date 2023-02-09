@@ -16,7 +16,7 @@ import java.util.Map;
 
 /**
  * 指定单表的专属DAO
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/7/15 0015 16:11
  */
 public class DefaultTableExecutor<T, P extends Serializable> implements TableExecutor<T, P> {

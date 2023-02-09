@@ -12,7 +12,7 @@ import java.util.*;
 
 /**
  * sql执行器
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2021/12/8 14:49
  **/
 public interface SqlExecutor {

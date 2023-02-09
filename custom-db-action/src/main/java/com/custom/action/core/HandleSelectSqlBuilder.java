@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 /**
  * 提供一系列查询记录的sql构建
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/4/1 17:22
  **/
 @SuppressWarnings("unchecked")

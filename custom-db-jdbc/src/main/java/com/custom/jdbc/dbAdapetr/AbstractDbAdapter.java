@@ -7,8 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author Xiao-Bai
- * @date 2022/10/29 0029 12:14
+ * @author  Xiao-Bai
+ * @since  2022/10/29 0029 12:14
  */
 public abstract class AbstractDbAdapter implements DatabaseAdapter {
 

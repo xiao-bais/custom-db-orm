@@ -3,9 +3,8 @@ package com.custom.jdbc.exceptions;
 import com.custom.comm.exceptions.CustomCheckException;
 
 /**
- * @author Xiao-Bai
- * @date 2022/10/23 23:16
- * @desc
+ * @author  Xiao-Bai
+ * @since  2022/10/23 23:16
  */
 public class SQLSessionException extends CustomCheckException {
 

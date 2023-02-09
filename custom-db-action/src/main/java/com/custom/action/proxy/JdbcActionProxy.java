@@ -25,7 +25,7 @@ import java.util.Objects;
 
 /**
  * 在执行之前做一些必要的检查，以减少异常的出现
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2021/11/17 9:55
  **/
 @SuppressWarnings("unchecked")

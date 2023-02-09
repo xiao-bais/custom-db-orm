@@ -3,9 +3,9 @@ package com.custom.jdbc.interfaces;
 import com.custom.comm.enums.DatabaseDialect;
 
 /**
- * @author Xiao-Bai
- * @date 2022/10/27 18:01
  * 数据库适配
+ * @author  Xiao-Bai
+ * @since  2022/10/27 18:01
  */
 public interface DatabaseAdapter {
 

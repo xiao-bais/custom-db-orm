@@ -2,7 +2,7 @@ package com.custom.action.condition;
 
 /**
  * 静态条件构造工具类
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/3/15 14:41
  **/
 @SuppressWarnings("unchecked")

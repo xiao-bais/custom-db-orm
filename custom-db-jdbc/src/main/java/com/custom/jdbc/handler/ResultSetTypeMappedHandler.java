@@ -16,9 +16,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @author Xiao-Bai
- * @date 2022/11/13 22:08
- * @desc
+ * @author  Xiao-Bai
+ * @since  2022/11/13 22:08
+ * 
  */
 @SuppressWarnings("unchecked")
 public class ResultSetTypeMappedHandler<T> {

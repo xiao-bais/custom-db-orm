@@ -12,7 +12,7 @@ import java.lang.reflect.Field;
 
 /**
  * 对于{@link com.custom.comm.annotations.DbJoinTable}的解析对象
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/3/7 14:40
  **/
 public class DbJoinTableParserModel<T> extends AbstractTableModel<T> {

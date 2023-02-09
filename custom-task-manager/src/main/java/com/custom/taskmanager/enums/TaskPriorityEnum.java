@@ -3,8 +3,8 @@ package com.custom.taskmanager.enums;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/7/10 18:53
+ * @author  Xiao-Bai
+ * @since  2022/7/10 18:53
  * @Desc
  */
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)

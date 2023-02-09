@@ -16,9 +16,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @Author Xiao-Bai
- * @Date 2022/4/8 13:40
- * @Desc：全局静态数据结构管理
+ * 全局静态数据结构管理
+ * @author  Xiao-Bai
+ * @since  2022/4/8 13:40
  **/
 public class GlobalDataHandler {
 

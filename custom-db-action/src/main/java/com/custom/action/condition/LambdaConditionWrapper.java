@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 
 /**
  * lambda表达式的条件构造对象
- * @author  Xiao-Bai
+ * @author   Xiao-Bai
  * @since  2022/3/3 17:17
  **/
 public class LambdaConditionWrapper<T> extends ConditionAdapter<T, LambdaConditionWrapper<T>>

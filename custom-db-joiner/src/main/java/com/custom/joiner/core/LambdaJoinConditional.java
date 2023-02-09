@@ -6,8 +6,8 @@ import com.custom.comm.enums.DbSymbol;
 import java.util.Collection;
 
 /**
- * @author Xiao-Bai
- * @date 2022/8/29 14:11
+ * @author  Xiao-Bai
+ * @since  2022/8/29 14:11
  * @desc
  */
 public class LambdaJoinConditional<T> extends AbstractJoinConditional<T> {

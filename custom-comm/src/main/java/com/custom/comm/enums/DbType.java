@@ -9,7 +9,7 @@ import java.util.Objects;
 
 /**
  * sql数据类型
- * @author Xiao-Bai
+ * @author  Xiao-Bai
  * @since 2021/1/10 0010 21:36
  */
 public enum DbType {
