@@ -37,7 +37,7 @@
         <dependency>
             <groupId>com.xb-custom</groupId>
             <artifactId>custom-comm</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
