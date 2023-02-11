@@ -265,12 +265,6 @@ public class DateTimeUtils {
     }
 
 
-    public static void main(String[] args) throws ParseException {
-        List<String> everyDayBy = getFormatDateMonthEveryDayBy("2021-07", "yyyyMMdd");
-        System.out.println("everyDayBy = " + everyDayBy);
-    }
-
-
 
 
 

@@ -185,13 +185,6 @@ public class ReflectUtil {
         return new HashMap<>();
     }
 
-    public static void main(String[] args) throws NoSuchMethodException {
-        Method method = ReflectUtil.class.getDeclaredMethod("getInfo");
-        Type[] genericType = getGenericTypes(method);
-        System.out.println("genericType = " + Arrays.toString(genericType));
-    }
-
-
 
 
 

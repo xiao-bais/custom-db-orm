@@ -175,11 +175,4 @@ public class ConvertUtil {
     }
 
 
-
-    public static void main(String[] args) {
-
-        boolean conBool = conBool("false");
-        System.out.println("conBool = " + conBool);
-
-    }
 }

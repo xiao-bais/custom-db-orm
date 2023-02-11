@@ -12,18 +12,15 @@
 
 
     <artifactId>custom-task-manager</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
     <name>custom-task-manager</name>
     <description>Demo project for Spring Boot</description>
-    <properties>
-        <java.version>1.8</java.version>
-    </properties>
+
+
     <dependencies>
 
         <dependency>
             <groupId>com.xb-custom</groupId>
             <artifactId>custom-springboot-starter</artifactId>
-            <version>${revision}</version>
         </dependency>
 
         <dependency>
@@ -35,11 +32,6 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -55,7 +47,6 @@
         <dependency>
             <groupId>com.xb-custom</groupId>
             <artifactId>custom-aliyun</artifactId>
-            <version>${revision}</version>
         </dependency>
 
     </dependencies>
@@ -66,12 +57,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
         </plugins>
