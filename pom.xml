@@ -14,7 +14,6 @@
     <groupId>com.xb-custom</groupId>
     <artifactId>custom-data</artifactId>
     <version>${revision}</version>
-
     <packaging>pom</packaging>
 
     <modules>
@@ -66,7 +65,49 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.ftl</include>
+                    <include>**/*.sql</include>
+                    <include>**/*.txt</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
+
+            <!-- 生成统一的版本号 -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                        <configuration>
+                            <updatePomFile>true</updatePomFile>
+                            <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <inherited>true</inherited>
+                <configuration>
+                    <updatePomFile>true</updatePomFile>
+                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                </configuration>
+            </plugin>
+
             <!-- 编译级别 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -5,9 +5,9 @@ import com.custom.comm.enums.KeyStrategy;
 import java.util.Objects;
 
 /**
+ * 全局配置
  * @author  Xiao-Bai
  * @since  2022/4/19 11:17
- * @Desc：
  **/
 public class GlobalConfig {
 

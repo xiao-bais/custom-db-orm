@@ -4,9 +4,9 @@ package com.custom.generator.model;
 import java.util.List;
 
 /**
+ * service接口层模板构造对象
  * @author  Xiao-Bai
  * @since  2022/4/21 10:55
- * @Desc：service接口层模板构造对象
  **/
 public class ServiceStructModel {
 

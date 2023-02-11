@@ -1,9 +1,9 @@
 package com.custom.generator.config;
 
 /**
+ * 表的配置
  * @author  Xiao-Bai
  * @since  2022/4/19 11:38
- * @Desc：
  **/
 public class TableConfig {
 

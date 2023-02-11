@@ -3,9 +3,9 @@ package com.custom.generator.model;
 import java.util.List;
 
 /**
+ * 控制器模板构造对象
  * @author  Xiao-Bai
  * @since  2022/4/24 16:16
- * @Desc：
  **/
 public class ControllerStructModel {
 

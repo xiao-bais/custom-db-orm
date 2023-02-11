@@ -4,9 +4,9 @@ import com.custom.comm.enums.DbType;
 import com.custom.comm.enums.KeyStrategy;
 
 /**
+ * 字段结构解析模板
  * @author  Xiao-Bai
  * @since  2022/4/19 14:49
- * @Desc：字段结构解析模板
  **/
 public class ColumnStructModel {
 

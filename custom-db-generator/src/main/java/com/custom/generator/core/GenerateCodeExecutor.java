@@ -29,9 +29,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
+ * 代码生成的执行器
  * @author  Xiao-Bai
  * @since  2022/4/19 11:54
- * @Desc：
  **/
 public class GenerateCodeExecutor {
 

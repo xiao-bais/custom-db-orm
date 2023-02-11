@@ -3,9 +3,9 @@ package com.custom.generator.model;
 import java.util.List;
 
 /**
+ * 表结构解析模板
  * @author  Xiao-Bai
  * @since  2022/4/19 14:48
- * @Desc：表结构解析模板
  **/
 public class TableStructModel {
 
