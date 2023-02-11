@@ -34,6 +34,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <revision>1.0.1-SNAPSHOT</revision>
+        <custom-aliyun-version>1.0.1-SNAPSHOT</custom-aliyun-version>
         <custom-comm-version>1.0.1-SNAPSHOT</custom-comm-version>
         <custom-db-jdbc-version>1.0.1-SNAPSHOT</custom-db-jdbc-version>
         <custom-db-action-version>1.0.1-SNAPSHOT</custom-db-action-version>

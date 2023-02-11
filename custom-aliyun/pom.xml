@@ -13,6 +13,7 @@
 
     <artifactId>custom-aliyun</artifactId>
     <name>custom-aliyun</name>
+    <version>${custom-aliyun-version}</version>
     <description>Demo project for Spring Boot</description>
 
 
