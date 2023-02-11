@@ -12,6 +12,7 @@
 
     <artifactId>custom-db-generator</artifactId>
     <name>custom-db-generator</name>
+    <version>${custom-db-generator-version}</version>
     <description>custom-db-generator</description>
 
 

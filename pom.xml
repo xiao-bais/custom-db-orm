@@ -34,7 +34,14 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <revision>1.0.1-SNAPSHOT</revision>
-        <comm-version>1.1.1-SNAPSHOT</comm-version>
+        <custom-comm-version>1.0.1-SNAPSHOT</custom-comm-version>
+        <custom-db-jdbc-version>1.0.1-SNAPSHOT</custom-db-jdbc-version>
+        <custom-db-action-version>1.0.1-SNAPSHOT</custom-db-action-version>
+        <custom-db-generator-version>1.0.1-SNAPSHOT</custom-db-generator-version>
+        <custom-db-joiner-version>1.0.1-SNAPSHOT</custom-db-joiner-version>
+        <custom-db-proxy-version>1.0.1-SNAPSHOT</custom-db-proxy-version>
+        <custom-db-springboot-starter-version>1.0.1-SNAPSHOT</custom-db-springboot-starter-version>
+        <custom-tools>1.0.1-SNAPSHOT</custom-tools>
     </properties>
 
     <dependencies>
@@ -81,37 +88,37 @@
             <dependency>
                 <groupId>com.xb-custom</groupId>
                 <artifactId>custom-comm</artifactId>
-                <version>${comm-version}</version>
+                <version>${custom-comm-version}</version>
             </dependency>
             <dependency>
                 <groupId>com.xb-custom</groupId>
                 <artifactId>custom-db-jdbc</artifactId>
-                <version>${revision}</version>
+                <version>${custom-db-jdbc-version}</version>
             </dependency>
             <dependency>
                 <groupId>com.xb-custom</groupId>
                 <artifactId>custom-db-action</artifactId>
-                <version>${revision}</version>
+                <version>${custom-db-action-version}</version>
             </dependency>
             <dependency>
                 <groupId>com.xb-custom</groupId>
                 <artifactId>custom-db-proxy</artifactId>
-                <version>${revision}</version>
+                <version>${custom-db-proxy-version}</version>
             </dependency>
             <dependency>
                 <groupId>com.xb-custom</groupId>
                 <artifactId>custom-springboot-starter</artifactId>
-                <version>${revision}</version>
+                <version>${custom-db-springboot-starter-version}</version>
             </dependency>
             <dependency>
                 <groupId>com.xb-custom</groupId>
                 <artifactId>custom-db-generator</artifactId>
-                <version>${revision}</version>
+                <version>${custom-db-generator-version}</version>
             </dependency>
             <dependency>
                 <groupId>com.xb-custom</groupId>
                 <artifactId>custom-db-joiner</artifactId>
-                <version>${revision}</version>
+                <version>${custom-db-joiner-version}</version>
             </dependency>
             <dependency>
                 <groupId>com.xb-custom</groupId>
@@ -121,7 +128,7 @@
             <dependency>
                 <groupId>com.xb-custom</groupId>
                 <artifactId>custom-tools</artifactId>
-                <version>${revision}</version>
+                <version>${custom-tools}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
