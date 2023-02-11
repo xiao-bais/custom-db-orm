@@ -88,7 +88,6 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
         }else {
             this.fieldName = field.getName();
         }
-
         this.type = field.getType();
         this.field = field;
         this.existsDbField = existsDbField;

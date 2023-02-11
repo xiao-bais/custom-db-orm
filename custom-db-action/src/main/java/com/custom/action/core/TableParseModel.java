@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  * @author   Xiao-Bai
  * @since  2021/12/2 14:10
  **/
-public class TableParseModel<T> {
+public class TableParseModel<T> implements Cloneable{
 
     private static final Logger logger = LoggerFactory.getLogger(TableParseModel.class);
 
@@ -494,4 +494,15 @@ public class TableParseModel<T> {
     }
 
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public TableParseModel<T> clone() {
+        try {
+            TableParseModel<T> clone = (TableParseModel<T>) super.clone();
+            // TODO: copy mutable state here, so the clone can't change the internals of the original
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 }
