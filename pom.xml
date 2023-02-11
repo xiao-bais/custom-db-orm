@@ -34,6 +34,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <revision>1.0.1-SNAPSHOT</revision>
+        <comm-version>1.1.1-SNAPSHOT</comm-version>
     </properties>
 
     <dependencies>
@@ -80,7 +81,7 @@
             <dependency>
                 <groupId>com.xb-custom</groupId>
                 <artifactId>custom-comm</artifactId>
-                <version>${revision}</version>
+                <version>${comm-version}</version>
             </dependency>
             <dependency>
                 <groupId>com.xb-custom</groupId>

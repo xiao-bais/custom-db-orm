@@ -13,6 +13,7 @@
 
     <artifactId>custom-comm</artifactId>
     <name>custom-comm</name>
+    <version>${comm-version}</version>
     <description>common package for springboot</description>
 
 
