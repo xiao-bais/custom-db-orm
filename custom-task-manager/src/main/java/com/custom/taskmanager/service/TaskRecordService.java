@@ -14,27 +14,27 @@ public interface TaskRecordService {
     /**
      * 任务列表查询
      */
-    DbPageRows<TaskRecordModel> taskList(TaskRecordRequest request);
+    DbPageRows<TaskRecordModel> taskList(TaskRecordRequest request) throws Exception;
 
     /**
      * 查询单个任务详情
      */
-    TaskRecordModel selectTaskById(Integer taskId);
+    TaskRecordModel selectTaskById(Integer taskId) throws Exception;
 
     /**
      * 编辑任务
      */
-    void editTask(TaskRecordModel model);
+    void editTask(TaskRecordModel model) throws Exception;
 
     /**
      * 删除任务
      */
-    void deleteTask(Integer taskId);
+    void deleteTask(Integer taskId) throws Exception;
 
     /**
      * 添加任务
      */
-    void addTask(TaskRecordModel model);
+    void addTask(TaskRecordModel model) throws Exception;
 
 
 

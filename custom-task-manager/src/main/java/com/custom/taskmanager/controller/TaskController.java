@@ -32,7 +32,7 @@ public class TaskController {
 
     @ApiOperation("主任务列表查询")
     @PostMapping("/query_task_list")
-    public BackResult<DbPageRows<TaskRecordModel>> mainTaskList(@RequestBody TaskRecordRequest request) {
+    public BackResult<DbPageRows<TaskRecordModel>> mainTaskList(@RequestBody TaskRecordRequest request) throws Exception {
         DbPageRows<TaskRecordModel> pageRows = taskRecordService.taskList(request);
         return BackResult.bySuccess(pageRows);
     }
@@ -66,21 +66,21 @@ public class TaskController {
 
     @ApiOperation("编辑任务详情")
     @PostMapping("/edit_task_detail")
-    public BackResult editTaskDetail(@RequestBody TaskRecordModel model) {
+    public BackResult editTaskDetail(@RequestBody TaskRecordModel model) throws Exception {
         taskRecordService.editTask(model);
         return BackResult.bySuccess();
     }
 
     @ApiOperation("删除单个任务")
     @GetMapping("/delete_one")
-    public BackResult deleteOne(@RequestParam Integer taskId) {
+    public BackResult deleteOne(@RequestParam Integer taskId) throws Exception {
         taskRecordService.deleteTask(taskId);
         return BackResult.bySuccess();
     }
 
     @ApiOperation("添加任务")
     @PostMapping("add_task")
-    public BackResult addTask(@RequestBody TaskRecordModel model) {
+    public BackResult addTask(@RequestBody TaskRecordModel model) throws Exception {
         taskRecordService.addTask(model);
         return BackResult.bySuccess();
     }

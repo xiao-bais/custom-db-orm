@@ -1,27 +1,27 @@
 package com.custom.taskmanager.service.impl;
 
 import com.custom.action.condition.Conditions;
-import com.custom.action.core.JdbcDao;
+import com.custom.action.core.JdbcOpDao;
+import com.custom.comm.date.DateTimeUtils;
+import com.custom.comm.page.DbPageRows;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
-import com.custom.comm.date.DateTimeUtils;
-import com.custom.comm.page.DbPageRows;
 import com.custom.comm.utils.StrUtils;
-import com.custom.taskmanager.exception.BException;
 import com.custom.taskmanager.entity.TaskImgPath;
 import com.custom.taskmanager.entity.TaskRecord;
 import com.custom.taskmanager.enums.TaskDifficultyEnum;
 import com.custom.taskmanager.enums.TaskImgTypeEnum;
 import com.custom.taskmanager.enums.TaskPriorityEnum;
 import com.custom.taskmanager.enums.TaskProgressEnum;
+import com.custom.taskmanager.exception.BException;
 import com.custom.taskmanager.params.TaskRecordRequest;
 import com.custom.taskmanager.service.TaskRecordService;
 import com.custom.taskmanager.view.TaskRecordModel;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.sql.SQLSyntaxErrorException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,18 +31,17 @@ import java.util.stream.Collectors;
  * @Desc
  */
 @Service
-@SuppressWarnings("unchecked")
 public class TaskRecordServiceImpl implements TaskRecordService {
 
-    @Resource
-    private JdbcDao jdbcDao;
+    @Autowired
+    private JdbcOpDao jdbcDao;
 
 
     /**
      * 任务列表查询
      */
     @Override
-    public DbPageRows<TaskRecordModel> taskList(TaskRecordRequest request) {
+    public DbPageRows<TaskRecordModel> taskList(TaskRecordRequest request) throws Exception {
 
         // 查询任务列表
         DbPageRows<TaskRecordModel> dbPageRows = jdbcDao.selectPage(Conditions.lambdaQuery(TaskRecordModel.class)
@@ -94,7 +93,7 @@ public class TaskRecordServiceImpl implements TaskRecordService {
     }
 
     @Override
-    public TaskRecordModel selectTaskById(Integer taskId) {
+    public TaskRecordModel selectTaskById(Integer taskId) throws Exception {
 
         TaskRecordModel taskRecordModel = jdbcDao.selectByKey(TaskRecordModel.class, taskId);
         this.loadViewInfo(taskRecordModel);
@@ -117,7 +116,7 @@ public class TaskRecordServiceImpl implements TaskRecordService {
     }
 
     @Override
-    public void editTask(TaskRecordModel model) {
+    public void editTask(TaskRecordModel model) throws Exception {
         if (model == null) {
             throw new BException("未知的任务");
         }
@@ -172,7 +171,7 @@ public class TaskRecordServiceImpl implements TaskRecordService {
     }
 
     @Override
-    public void deleteTask(Integer taskId) {
+    public void deleteTask(Integer taskId) throws Exception {
         TaskRecordModel taskRecordModel = jdbcDao.selectByKey(TaskRecordModel.class, taskId);
         if (taskRecordModel == null) {
             throw new BException("未知的任务ID");
@@ -197,7 +196,7 @@ public class TaskRecordServiceImpl implements TaskRecordService {
     }
 
     @Override
-    public void addTask(TaskRecordModel model) {
+    public void addTask(TaskRecordModel model) throws Exception {
         long count = jdbcDao.selectCount(Conditions.lambdaQuery(TaskRecordModel.class)
                 .eq(TaskRecordModel::getTaskTitle, model.getTaskTitle())
         );

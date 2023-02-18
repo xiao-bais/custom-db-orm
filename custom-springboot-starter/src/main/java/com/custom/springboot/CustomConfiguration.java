@@ -18,7 +18,7 @@ import org.springframework.context.annotation.*;
  * @since  2021/11/23 17:47
  **/
 @Configuration
-@ComponentScan("com.custom")
+@ComponentScan(basePackages = "com.custom")
 @Import({RegisterBeanExecutor.class})
 public class CustomConfiguration {
 
@@ -58,8 +58,13 @@ public class CustomConfiguration {
     }
 
     private boolean isDataSourceEmpty(DbDataSource dbDataSource) {
+        if (dbDataSource == null) {
+            return false;
+        }
         return JudgeUtil.isEmpty(dbDataSource.getUrl()) || JudgeUtil.isEmpty(dbDataSource.getUsername()) || JudgeUtil.isEmpty(dbDataSource.getPassword());
     }
 
 
 }
+
+
