@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
- * 继承该类，即可拥有增删改查功能
+ * service层继承该类，即可拥有增删改查功能
  * @author   Xiao-Bai
  * @since 2023/2/6 22:26
  * @param <T> 实体类映射对象
@@ -96,16 +96,16 @@ public abstract class DbServiceHelper<T> {
 
 
     /**
-     * lambda表达式查询1
+     * lambda expression 表达式查询1
      */
-    public DoTargetWrapper<T> whereLambda(LambdaConditionWrapper<T> wrapper) {
+    public DoTargetWrapper<T> whereEx(LambdaConditionWrapper<T> wrapper) {
         return DoTargetWrapper.build(wrapper, actuator());
     }
 
     /**
-     * lambda表达式查询2
+     * lambda expression 表达式查询2
      */
-    public DoTargetWrapper<T> whereLambda(Consumer<LambdaConditionWrapper<T>> consumer) {
+    public DoTargetWrapper<T> whereEx(Consumer<LambdaConditionWrapper<T>> consumer) {
         LambdaConditionWrapper<T> wrapper = Conditions.lambdaQuery(target());
         consumer.accept(wrapper);
         return DoTargetWrapper.build(wrapper, actuator());

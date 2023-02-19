@@ -11,7 +11,7 @@ import com.custom.comm.utils.StrUtils;
  * @author   Xiao-Bai
  * @since  2022/4/18 21:48
  */
-public class DbUtil {
+public final class DbUtil {
 
 
     /**
