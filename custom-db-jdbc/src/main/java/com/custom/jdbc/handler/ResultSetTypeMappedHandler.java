@@ -126,7 +126,7 @@ public class ResultSetTypeMappedHandler<T> {
             // 查询的列名
             String label = rsMetaData.getColumnLabel(i + 1);
             // 列名对应的值
-            T value = thisTypeHandler.getTypeValue(label);
+            T value = thisTypeHandler.getTypeValue(rs.getObject(label));
             map.put(label, value);
         }
     }
