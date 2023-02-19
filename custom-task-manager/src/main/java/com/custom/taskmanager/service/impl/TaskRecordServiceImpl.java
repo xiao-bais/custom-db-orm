@@ -2,6 +2,7 @@ package com.custom.taskmanager.service.impl;
 
 import com.custom.action.condition.Conditions;
 import com.custom.action.core.JdbcOpDao;
+import com.custom.action.service.DbServiceImplHelper;
 import com.custom.comm.date.DateTimeUtils;
 import com.custom.comm.page.DbPageRows;
 import com.custom.comm.utils.Asserts;
@@ -21,7 +22,6 @@ import com.custom.taskmanager.view.TaskRecordModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * @Desc
  */
 @Service
-public class TaskRecordServiceImpl implements TaskRecordService {
+public class TaskRecordServiceImpl extends DbServiceImplHelper<TaskRecord> implements TaskRecordService {
 
     @Autowired
     private JdbcOpDao jdbcDao;
@@ -42,6 +42,8 @@ public class TaskRecordServiceImpl implements TaskRecordService {
      */
     @Override
     public DbPageRows<TaskRecordModel> taskList(TaskRecordRequest request) throws Exception {
+
+        List<TaskRecord> taskRecords = whereEx(e -> e.eq(TaskRecord::getTaskCode, "aaaaa")).getList();
 
         // 查询任务列表
         DbPageRows<TaskRecordModel> dbPageRows = jdbcDao.selectPage(Conditions.lambdaQuery(TaskRecordModel.class)

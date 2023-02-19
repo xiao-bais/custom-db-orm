@@ -2,7 +2,7 @@ package com.home;
 
 import com.custom.action.core.JdbcDao;
 import com.custom.action.core.JdbcOpDao;
-import com.custom.action.service.DbServiceHelper;
+import com.custom.action.service.DbServiceImplHelper;
 import com.home.customtest.entity.Student;
 
 import java.util.List;
@@ -20,7 +20,7 @@ public class DoMain {
         JdbcTestBuilder jdbcTestBuilder = JdbcTestBuilder.builder();
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
-        DbServiceHelper<Student> helper = new MyServiceImpl();
+        DbServiceImplHelper<Student> helper = new MyServiceImpl();
 
         List<Student> students = jdbcDao.selectList(Student.class, "and a.age > 77");
 

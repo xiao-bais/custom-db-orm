@@ -1,6 +1,8 @@
 package com.custom.taskmanager.service;
 
+import com.custom.action.service.DbServiceHelper;
 import com.custom.comm.page.DbPageRows;
+import com.custom.taskmanager.entity.TaskRecord;
 import com.custom.taskmanager.params.TaskRecordRequest;
 import com.custom.taskmanager.view.TaskRecordModel;
 
@@ -9,7 +11,7 @@ import com.custom.taskmanager.view.TaskRecordModel;
  * @since  2022/7/10 1:34
  * @Desc
  */
-public interface TaskRecordService {
+public interface TaskRecordService extends DbServiceHelper<TaskRecord> {
 
     /**
      * 任务列表查询
