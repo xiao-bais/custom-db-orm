@@ -30,7 +30,7 @@ public class InterfacesProxyExecutor implements InvocationHandler {
         targetClassName = cls.getName();
         SqlMapper sqlMapper = cls.getAnnotation(SqlMapper.class);
         CustomConfigHelper configHelper = DbConnGlobal.getConfigHelper(sqlMapper.order());
-        this.executorFactory = new JdbcExecutorFactory(configHelper.getDbDataSource(),  configHelper.getDbCustomStrategy());
+        this.executorFactory = new JdbcExecutorFactory(configHelper.getDbDataSource(),  configHelper.getDbGlobalConfig());
 
         return (T) Proxy.newProxyInstance(classLoader, interfaces, this);
     }

@@ -1,7 +1,5 @@
 package com.custom.jdbc.executor;
 
-import java.util.List;
-
 /**
  * sql后置拦截器 <b>查询</b>后，做一些数据的补充
  * @author   Xiao-Bai

@@ -50,7 +50,7 @@ public class JdbcActionProxy implements MethodInterceptor {
         enhancer.setSuperclass(sqlExecutor.getClass());
         enhancer.setCallback(this);
         try {
-            return (JdbcAction) enhancer.create(new Class[]{DbDataSource.class, DbCustomStrategy.class}
+            return (JdbcAction) enhancer.create(new Class[]{DbDataSource.class, DbGlobalConfig.class}
                     , new Object[]{dbDataSource, globalConfig});
         } catch (Exception e) {
             Throwable throwable = e.getCause();

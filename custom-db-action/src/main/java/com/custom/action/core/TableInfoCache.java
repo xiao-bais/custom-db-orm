@@ -3,14 +3,13 @@ package com.custom.action.core;
 import com.custom.action.interfaces.TableExecutor;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.jdbc.configuration.CustomConfigHelper;
-import com.custom.jdbc.configuration.DbCustomStrategy;
+import com.custom.jdbc.configuration.DbGlobalConfig;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.jdbc.utils.DbConnGlobal;
 
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -136,8 +135,8 @@ public class TableInfoCache {
         if (configHelper.getDbDataSource() == null) {
             throw new CustomCheckException("No matching data source found");
         }
-        if (configHelper.getDbCustomStrategy() == null) {
-            configHelper.setDbCustomStrategy(new DbCustomStrategy());
+        if (configHelper.getDbGlobalConfig() == null) {
+            configHelper.setDbGlobalConfig(DbGlobalConfig.defaultConfig());
         }
         TableExecutor<T, P> tableExecutor = (TableExecutor<T, P>) TABLE_EXEC_CACHE.get(target);
         if (tableExecutor == null) {

@@ -12,6 +12,9 @@ custom:
       username: root
       password: xh@Mysql1524
     config:
-      sql-query-after: com.
+      sql-query-after: com.custom.taskmanager.config.MySqlQueryAfter
+      sql-interceptor: com.custom.taskmanager.config.MySqlInterceptor
+      strategy:
+        underline-to-camel: true
 
 

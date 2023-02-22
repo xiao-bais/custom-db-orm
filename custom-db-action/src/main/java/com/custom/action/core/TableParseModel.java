@@ -213,7 +213,7 @@ public class TableParseModel<T> implements Cloneable{
         CustomConfigHelper configHelper = DbConnGlobal.getConfigHelper(order);
         Asserts.notNull(configHelper, JdbcAction.class.getName() +"实例化之前，不允许构造实体解析模板");
 
-        this.underlineToCamel = configHelper.getDbCustomStrategy().isUnderlineToCamel();
+        this.underlineToCamel = configHelper.getDbGlobalConfig().getStrategy().isUnderlineToCamel();
         this.oneToOneFieldList = new ArrayList<>();
         this.oneToManyFieldList = new ArrayList<>();
         this.columnPropertyMaps = new ArrayList<>();

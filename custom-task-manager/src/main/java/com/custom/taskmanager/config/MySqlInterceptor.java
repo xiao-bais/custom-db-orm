@@ -13,6 +13,9 @@ public class MySqlInterceptor implements CustomSqlInterceptor {
     @Override
     public BaseExecutorBody handle(BaseExecutorBody body) throws Exception {
 
-        return null;
+        System.out.println("查询之前的处理......");
+        System.out.println("prepareSql ===> " + body.getPrepareSql());
+
+        return body;
     }
 }

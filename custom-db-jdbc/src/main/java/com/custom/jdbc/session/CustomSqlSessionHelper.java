@@ -2,8 +2,10 @@ package com.custom.jdbc.session;
 
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.CustomApplicationUtil;
+import com.custom.comm.utils.ReflectUtil;
 import com.custom.jdbc.condition.BaseExecutorBody;
 import com.custom.jdbc.configuration.DbCustomStrategy;
+import com.custom.jdbc.configuration.DbGlobalConfig;
 import com.custom.jdbc.executor.CustomSqlInterceptor;
 import com.custom.jdbc.interfaces.CustomSqlSession;
 import com.custom.jdbc.sqlprint.SqlOutPrintBuilder;
@@ -18,11 +20,11 @@ import java.sql.*;
  */
 public class CustomSqlSessionHelper {
 
-    private final DbCustomStrategy strategy;
+    private final DbGlobalConfig globalConfig;
     private final CustomSqlSession sqlSession;
 
-    public CustomSqlSessionHelper(DbCustomStrategy strategy, CustomSqlSession sqlSession) {
-        this.strategy = strategy;
+    public CustomSqlSessionHelper(DbGlobalConfig globalConfig, CustomSqlSession sqlSession) {
+        this.globalConfig = globalConfig;
         this.sqlSession = sqlSession;
     }
 
@@ -32,13 +34,19 @@ public class CustomSqlSessionHelper {
      */
     private void handleInterceptor() throws Exception {
         CustomSqlInterceptor sqlInterceptor;
+
         try {
             sqlInterceptor = CustomApplicationUtil.getBean(CustomSqlInterceptor.class);
         } catch (NoSuchBeanDefinitionException e) {
             sqlInterceptor = null;
         }
+
         if (sqlInterceptor == null) {
-            return;
+            Class<? extends CustomSqlInterceptor> sqlInterceptorClass = globalConfig.getSqlInterceptor();
+            if (sqlInterceptorClass == null) {
+                return;
+            }
+            sqlInterceptor = ReflectUtil.getInstance(sqlInterceptorClass);
         }
         BaseExecutorBody executorBody = sqlInterceptor.handle(sqlSession.getBody());
         Asserts.notNull(executorBody, "The execution body is missing. Please check whether the sql interceptor returns.");
@@ -111,6 +119,7 @@ public class CustomSqlSessionHelper {
         for (int i = 0; i < sqlParams.length; i++) {
             statement.setObject((i + 1), sqlParams[i]);
         }
+        DbCustomStrategy strategy = globalConfig.getStrategy();
         // sql打印
         if (strategy.isSqlOutPrinting() && sqlPrintSupport) {
             SqlOutPrintBuilder builder = SqlOutPrintBuilder.build(prepareSql, sqlParams, strategy.isSqlOutPrintExecute());

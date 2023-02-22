@@ -41,8 +41,4 @@ public class SelectExecutorBody<T> extends BaseExecutorBody {
         return entityClass;
     }
 
-    public void setEntityClass(Class<T> entityClass) {
-        this.entityClass = entityClass;
-    }
-
 }

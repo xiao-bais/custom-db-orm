@@ -15,15 +15,14 @@ import org.springframework.stereotype.Component;
 public class DbGlobalConfig {
 
     /**
-     * sql执行查询后的处理类
+     * sql执行查询后的处理类，若实现类加入spring容器则无需再在此配置，两者选其一即可
      */
     private Class<? extends CustomSqlQueryAfter> sqlQueryAfter;
 
     /**
-     * sql执行前的拦截处理类
+     * sql执行前的拦截处理类，sql执行查询后的处理类，若实现类加入spring容器则无需再在此配置，两者选其一即可
      */
     private Class<? extends CustomSqlInterceptor> sqlInterceptor;
-
 
     /**
      * 自定义的策略配置
@@ -54,5 +53,14 @@ public class DbGlobalConfig {
 
     public void setStrategy(DbCustomStrategy strategy) {
         this.strategy = strategy;
+    }
+
+    /**
+     * 默认配置
+     */
+    public static DbGlobalConfig defaultConfig() {
+        DbGlobalConfig globalConfig = new DbGlobalConfig();
+        globalConfig.setStrategy(new DbCustomStrategy());
+        return globalConfig;
     }
 }

@@ -81,7 +81,7 @@ public class JdbcExecutorFactory {
         this.dbDataSource = dbDataSource;
         this.globalConfig = globalConfig;
         this.dbCustomStrategy = globalConfig.getStrategy();
-        this.jdbcExecutor = new DefaultCustomJdbcExecutor(dbCustomStrategy);
+        this.jdbcExecutor = new DefaultCustomJdbcExecutor(globalConfig);
 
         if (StrUtils.isBlank(dbDataSource.getDriver())) {
             if (dbDataSource.getDatabaseType() == null) {
@@ -108,7 +108,7 @@ public class JdbcExecutorFactory {
         this.createCurrentDbAdapter();
         dbDataSource.setDatabase(databaseAdapter.databaseName());
 
-        CustomConfigHelper configHelper = new CustomConfigHelper(dbDataSource, dbCustomStrategy, databaseAdapter);
+        CustomConfigHelper configHelper = new CustomConfigHelper(dbDataSource, globalConfig, databaseAdapter);
         DbConnGlobal.addDataSource(configHelper);
 
     }
@@ -335,7 +335,7 @@ public class JdbcExecutorFactory {
 
         try {
             queryAfter = CustomApplicationUtil.getBean(CustomSqlQueryAfter.class);
-        }catch (NoSuchBeanDefinitionException e) {
+        } catch (NoSuchBeanDefinitionException e) {
             queryAfter = null;
         }
 
