@@ -20,14 +20,27 @@ public class CustomConfigHelper {
     private DbCustomStrategy dbCustomStrategy;
 
     /**
+     * 全局配置
+     */
+    private DbGlobalConfig dbGlobalConfig;
+
+    /**
      * 数据库适配对象
      */
-    private DatabaseAdapter databaseAdapter;
+    private final DatabaseAdapter databaseAdapter;
+
 
     public CustomConfigHelper(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy, DatabaseAdapter databaseAdapter) {
         this.dbDataSource = dbDataSource;
         this.dbCustomStrategy = dbCustomStrategy;
         this.databaseAdapter = databaseAdapter;
+    }
+
+    public CustomConfigHelper(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy, DatabaseAdapter databaseAdapter, DbGlobalConfig dbGlobalConfig) {
+        this.dbDataSource = dbDataSource;
+        this.dbCustomStrategy = dbCustomStrategy;
+        this.databaseAdapter = databaseAdapter;
+        this.dbGlobalConfig = dbGlobalConfig;
     }
 
     public DbDataSource getDbDataSource() {
@@ -50,7 +63,11 @@ public class CustomConfigHelper {
         return databaseAdapter;
     }
 
-    public void setDatabaseAdapter(DatabaseAdapter databaseAdapter) {
-        this.databaseAdapter = databaseAdapter;
+    public DbGlobalConfig getDbGlobalConfig() {
+        return dbGlobalConfig;
+    }
+
+    public void setDbGlobalConfig(DbGlobalConfig dbGlobalConfig) {
+        this.dbGlobalConfig = dbGlobalConfig;
     }
 }

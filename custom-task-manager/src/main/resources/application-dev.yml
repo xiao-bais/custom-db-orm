@@ -10,14 +10,16 @@ custom:
       url: jdbc:mysql://39.108.225.176:3306/custom_db?characterEncoding=utf-8&allowMultiQueries=true&autoreconnect=true&serverTimezone=UTC
       username: root
       password: xh@Mysql1524
-    strategy:
-      underline-to-camel: true
-      db-field-delete-logic: state
-      delete-logic-value: 1
-      not-delete-logic-value: 0
-      entity-package-scans: com.custom.taskmanager.entity
-#      sync-entity-enable: true
-      sql-out-printing: true
+    config:
+      sql-interceptor:
+      strategy:
+        underline-to-camel: true
+        db-field-delete-logic: state
+        delete-logic-value: 1
+        not-delete-logic-value: 0
+        entity-package-scans: com.custom.taskmanager.entity
+  #      sync-entity-enable: true
+        sql-out-printing: true
 
 
 

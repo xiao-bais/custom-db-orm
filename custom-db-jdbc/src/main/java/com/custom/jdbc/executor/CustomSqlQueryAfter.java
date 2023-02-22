@@ -1,13 +1,13 @@
-package com.custom.action.interfaces;
+package com.custom.jdbc.executor;
 
 import java.util.List;
 
 /**
- * 查询结果后，做一些数据的补充
+ * sql后置拦截器 <b>查询</b>后，做一些数据的补充
  * @author   Xiao-Bai
  * @since  2023/1/2 15:38
  */
-public interface SqlQueryAfter {
+public interface CustomSqlQueryAfter {
 
     <T> void handle(Class<T> target, List<T> result) throws Exception;
 

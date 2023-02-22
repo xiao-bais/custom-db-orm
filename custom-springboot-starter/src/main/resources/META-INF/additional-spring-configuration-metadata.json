@@ -7,7 +7,13 @@
       "sourceType": "com.custom.jdbc.configuration.DbDataSource"
     },
     {
-      "name": "custom.db.strategy",
+      "name": "custom.db.config",
+      "type": "com.custom.jdbc.configuration.DbGlobalConfig",
+      "description": "The Custom Global configuration management.",
+      "sourceType": "com.custom.jdbc.configuration.DbCustomStrategy"
+    },
+    {
+      "name": "custom.db.config.strategy",
       "type": "com.custom.jdbc.configuration.DbCustomStrategy",
       "description": "The Custom Strategy Rule.",
       "sourceType": "com.custom.jdbc.configuration.DbCustomStrategy"

@@ -3,7 +3,7 @@ package com.custom.action.core;
 import com.custom.action.condition.*;
 import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.extend.MultiResultInjector;
-import com.custom.action.interfaces.SqlQueryAfter;
+import com.custom.jdbc.executor.CustomSqlQueryAfter;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.action.interfaces.FullSqlConditionExecutor;
@@ -31,7 +31,7 @@ import java.util.*;
  * @since  2022/4/13 20:49
  */
 @SuppressWarnings("unchecked")
-public class JdbcAction implements SqlExecutor, SqlQueryAfter {
+public class JdbcAction implements SqlExecutor, CustomSqlQueryAfter {
 
     private static final Logger logger = LoggerFactory.getLogger(JdbcAction.class);
     private DbDataSource dbDataSource;

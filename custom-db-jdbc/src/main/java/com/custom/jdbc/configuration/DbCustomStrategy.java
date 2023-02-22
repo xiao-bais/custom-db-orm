@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
  * @since  2021/8/22
  */
 @Component
-@ConfigurationProperties(prefix = "custom.db.strategy")
+@ConfigurationProperties(prefix = "custom.db.config.strategy")
 public class DbCustomStrategy {
 
     /**

@@ -1,9 +1,13 @@
 package com.custom.jdbc.session;
 
-import com.custom.jdbc.interfaces.CustomSqlSession;
-import com.custom.jdbc.sqlprint.SqlOutPrintBuilder;
+import com.custom.comm.utils.Asserts;
+import com.custom.comm.utils.CustomApplicationUtil;
 import com.custom.jdbc.condition.BaseExecutorBody;
 import com.custom.jdbc.configuration.DbCustomStrategy;
+import com.custom.jdbc.executor.CustomSqlInterceptor;
+import com.custom.jdbc.interfaces.CustomSqlSession;
+import com.custom.jdbc.sqlprint.SqlOutPrintBuilder;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
 import java.sql.*;
 
@@ -22,10 +26,31 @@ public class CustomSqlSessionHelper {
         this.sqlSession = sqlSession;
     }
 
+
+    /**
+     * sql执行前的拦截。可对将要执行的sql以及参数信息进行一定的辅助操作
+     */
+    private void handleInterceptor() throws Exception {
+        CustomSqlInterceptor sqlInterceptor;
+        try {
+            sqlInterceptor = CustomApplicationUtil.getBean(CustomSqlInterceptor.class);
+        } catch (NoSuchBeanDefinitionException e) {
+            sqlInterceptor = null;
+        }
+        if (sqlInterceptor == null) {
+            return;
+        }
+        BaseExecutorBody executorBody = sqlInterceptor.handle(sqlSession.getBody());
+        Asserts.notNull(executorBody, "The execution body is missing. Please check whether the sql interceptor returns.");
+        this.sqlSession.setBody(executorBody);
+    }
+
+
     /**
      * 返回一个 增/删/改/查 通用的预编译(默认)
      */
     public PreparedStatement defaultPreparedStatement() throws Exception {
+        this.handleInterceptor();
         Connection connection = sqlSession.getConnection();
         BaseExecutorBody executorModel = sqlSession.getBody();
         String prepareSql = executorModel.getPrepareSql();
@@ -37,6 +62,7 @@ public class CustomSqlSessionHelper {
      * <br/> 一般用于插入新数据时使用
      */
     public PreparedStatement generateKeysStatement() throws Exception {
+        this.handleInterceptor();
         Connection connection = sqlSession.getConnection();
         BaseExecutorBody executorModel = sqlSession.getBody();
         String prepareSql = executorModel.getPrepareSql();
@@ -48,6 +74,7 @@ public class CustomSqlSessionHelper {
      * <br/> 用于数组查询时，实例化对应的数组长度
      */
     public PreparedStatement resultRowsStatement() throws Exception {
+        this.handleInterceptor();
         Connection connection = sqlSession.getConnection();
         BaseExecutorBody executorModel = sqlSession.getBody();
         String prepareSql = executorModel.getPrepareSql();
