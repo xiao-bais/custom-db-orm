@@ -6,6 +6,7 @@ import com.custom.action.condition.ConditionWrapper;
 import com.custom.comm.page.DbPageRows;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
+import com.custom.jdbc.configuration.DbGlobalConfig;
 import com.custom.jdbc.interfaces.TransactionExecutor;
 
 import java.io.Serializable;
@@ -356,19 +357,19 @@ public class JdbcOpDao {
 
     private final SqlExecutor sqlExecutor;
     private final DbDataSource dbDataSource;
-    private final DbCustomStrategy dbCustomStrategy;
+    private final DbGlobalConfig globalConfig;
 
-    public JdbcOpDao(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
+    public JdbcOpDao(DbDataSource dbDataSource, DbGlobalConfig globalConfig) {
         this.dbDataSource = dbDataSource;
-        this.dbCustomStrategy = dbCustomStrategy;
-        sqlExecutor = new JdbcActionProxy(new JdbcAction(), dbDataSource, dbCustomStrategy).createProxy();
+        this.globalConfig = globalConfig;
+        sqlExecutor = new JdbcActionProxy(new JdbcAction(), dbDataSource, globalConfig).createProxy();
     }
 
     public DbDataSource getDbDataSource() {
         return dbDataSource;
     }
 
-    public DbCustomStrategy getDbCustomStrategy() {
-        return dbCustomStrategy;
+    public DbGlobalConfig getGlobalConfig() {
+        return globalConfig;
     }
 }

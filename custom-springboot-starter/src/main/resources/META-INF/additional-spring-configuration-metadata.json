@@ -1,11 +1,17 @@
 {
-  "properties": [
+  "groups": [
+    {
+      "name": "custom.db.config",
+      "type": "com.custom.jdbc.configuration.DbGlobalConfig",
+      "sourceType": "com.custom.jdbc.configuration.DbGlobalConfig"
+    },
     {
       "name": "custom.db.datasource",
       "type": "com.custom.jdbc.configuration.DbDataSource",
-      "description": "The Connection database configuration.",
       "sourceType": "com.custom.jdbc.configuration.DbDataSource"
-    },
+    }
+  ],
+  "properties": [
     {
       "name": "custom.db.config",
       "type": "com.custom.jdbc.configuration.DbGlobalConfig",
@@ -17,16 +23,12 @@
       "type": "com.custom.jdbc.configuration.DbCustomStrategy",
       "description": "The Custom Strategy Rule.",
       "sourceType": "com.custom.jdbc.configuration.DbCustomStrategy"
-    }
-  ],
-
-  "groups": [
+    },
     {
       "name": "custom.db.datasource",
-      "sourceMethod": "DbDataSource()",
       "type": "com.custom.jdbc.configuration.DbDataSource",
+      "description": "The Connection database configuration.",
       "sourceType": "com.custom.jdbc.configuration.DbDataSource"
     }
   ]
-
 }

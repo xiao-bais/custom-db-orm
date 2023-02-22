@@ -14,6 +14,7 @@ import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
+import com.custom.jdbc.configuration.DbGlobalConfig;
 import com.custom.jdbc.exceptions.SQLSessionException;
 import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;
@@ -35,12 +36,12 @@ public class JdbcActionProxy implements MethodInterceptor {
 
     private final DbDataSource dbDataSource;
 
-    private final DbCustomStrategy dbCustomStrategy;
+    private final DbGlobalConfig globalConfig;
 
-    public JdbcActionProxy(SqlExecutor sqlExecutor, DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
+    public JdbcActionProxy(SqlExecutor sqlExecutor, DbDataSource dbDataSource, DbGlobalConfig globalConfig) {
         this.sqlExecutor = sqlExecutor;
         this.dbDataSource = dbDataSource;
-        this.dbCustomStrategy = dbCustomStrategy;
+        this.globalConfig = globalConfig;
     }
 
 
@@ -50,7 +51,7 @@ public class JdbcActionProxy implements MethodInterceptor {
         enhancer.setCallback(this);
         try {
             return (JdbcAction) enhancer.create(new Class[]{DbDataSource.class, DbCustomStrategy.class}
-                    , new Object[]{dbDataSource, dbCustomStrategy});
+                    , new Object[]{dbDataSource, globalConfig});
         } catch (Exception e) {
             Throwable throwable = e.getCause();
             if (throwable instanceof SQLSessionException) {

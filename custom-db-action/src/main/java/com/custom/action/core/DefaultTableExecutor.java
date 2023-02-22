@@ -1,13 +1,13 @@
 package com.custom.action.core;
 
 import com.custom.action.condition.AbstractUpdateSet;
+import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.interfaces.TableExecutor;
 import com.custom.action.proxy.JdbcActionProxy;
-import com.custom.action.condition.ConditionWrapper;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.page.DbPageRows;
-import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
+import com.custom.jdbc.configuration.DbGlobalConfig;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -24,9 +24,9 @@ public class DefaultTableExecutor<T, P extends Serializable> implements TableExe
     private final SqlExecutor sqlExecutor;
     private final Class<T> entityClass;
 
-    public DefaultTableExecutor(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy, Class<T> entityClass) {
+    public DefaultTableExecutor(DbDataSource dbDataSource, DbGlobalConfig globalConfig, Class<T> entityClass) {
         this.entityClass = entityClass;
-        this.sqlExecutor = new JdbcActionProxy(new JdbcAction(), dbDataSource, dbCustomStrategy).createProxy();
+        this.sqlExecutor = new JdbcActionProxy(new JdbcAction(), dbDataSource, globalConfig).createProxy();
     }
 
     @Override

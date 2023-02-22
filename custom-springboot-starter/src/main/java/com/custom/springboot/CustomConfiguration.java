@@ -6,6 +6,7 @@ import com.custom.action.proxy.JdbcDaoProxy;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
+import com.custom.jdbc.configuration.DbGlobalConfig;
 import com.custom.springboot.scanner.RegisterBeanExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,12 +26,12 @@ public class CustomConfiguration {
     private static final Logger logger = LoggerFactory.getLogger(CustomConfiguration.class);
 
     private final DbDataSource dbDataSource;
-    private final DbCustomStrategy dbCustomStrategy;
+    private final DbGlobalConfig globalConfig;
 
 
-    public CustomConfiguration(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
+    public CustomConfiguration(DbDataSource dbDataSource, DbGlobalConfig globalConfig) {
         this.dbDataSource = dbDataSource;
-        this.dbCustomStrategy = dbCustomStrategy;
+        this.globalConfig = globalConfig;
     }
 
     @Bean
@@ -40,7 +41,7 @@ public class CustomConfiguration {
         if(isDataSourceEmpty(dbDataSource)) {
             return null;
         }
-        JdbcOpDao jdbcOpDao = new JdbcOpDao(dbDataSource, dbCustomStrategy);
+        JdbcOpDao jdbcOpDao = new JdbcOpDao(dbDataSource, globalConfig);
         logger.info("JdbcOpDao Initialized Successfully !");
         return jdbcOpDao;
     }
@@ -52,7 +53,7 @@ public class CustomConfiguration {
         if(isDataSourceEmpty(dbDataSource)) {
             return null;
         }
-        JdbcDao jdbcDao = new JdbcDaoProxy(dbDataSource, dbCustomStrategy).createProxy();
+        JdbcDao jdbcDao = new JdbcDaoProxy(dbDataSource, globalConfig).createProxy();
         logger.info("JdbcDao Initialized Successfully !");
         return jdbcDao;
     }

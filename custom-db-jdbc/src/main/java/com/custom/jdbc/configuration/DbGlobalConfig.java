@@ -1,5 +1,7 @@
 package com.custom.jdbc.configuration;
 
+import com.custom.jdbc.executor.CustomSqlInterceptor;
+import com.custom.jdbc.executor.CustomSqlQueryAfter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -13,22 +15,14 @@ import org.springframework.stereotype.Component;
 public class DbGlobalConfig {
 
     /**
-     * sql执行<b>查询</b>后的处理类
-     * <br/> 填入接口{@link com.custom.jdbc.executor.CustomSqlQueryAfter}的实现类
-     * <br/> 例如: com.example.MyCustomSqlQueryAfter
-     * <br/> 若该实现类加入了spring容器，则无需再配置文件中配置该值，两者选其一即可
-     * @see com.custom.jdbc.executor.CustomSqlQueryAfter
+     * sql执行查询后的处理类
      */
-    private String sqlQueryAfter;
+    private Class<? extends CustomSqlQueryAfter> sqlQueryAfter;
 
     /**
      * sql执行前的拦截处理类
-     * <br/> 填入接口{@link com.custom.jdbc.executor.CustomSqlInterceptor}的实现类
-     * <br/> 例如: com.example.MyCustomSqlInterceptor
-     * <br/> 若该实现类加入了spring容器，则无需再配置文件中配置该值，两者选其一即可
-     * @see com.custom.jdbc.executor.CustomSqlInterceptor
      */
-    private String sqlInterceptor;
+    private Class<? extends CustomSqlInterceptor> sqlInterceptor;
 
 
     /**
@@ -37,19 +31,20 @@ public class DbGlobalConfig {
     private DbCustomStrategy strategy;
 
 
-    public String getSqlQueryAfter() {
+
+    public Class<? extends CustomSqlQueryAfter> getSqlQueryAfter() {
         return sqlQueryAfter;
     }
 
-    public void setSqlQueryAfter(String sqlQueryAfter) {
+    public void setSqlQueryAfter(Class<? extends CustomSqlQueryAfter> sqlQueryAfter) {
         this.sqlQueryAfter = sqlQueryAfter;
     }
 
-    public String getSqlInterceptor() {
+    public Class<? extends CustomSqlInterceptor> getSqlInterceptor() {
         return sqlInterceptor;
     }
 
-    public void setSqlInterceptor(String sqlInterceptor) {
+    public void setSqlInterceptor(Class<? extends CustomSqlInterceptor> sqlInterceptor) {
         this.sqlInterceptor = sqlInterceptor;
     }
 

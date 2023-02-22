@@ -3,6 +3,8 @@ package com.custom.jdbc.executor;
 import com.custom.comm.enums.DatabaseDialect;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.ConvertUtil;
+import com.custom.comm.utils.CustomApplicationUtil;
+import com.custom.comm.utils.ReflectUtil;
 import com.custom.comm.utils.StrUtils;
 import com.custom.jdbc.condition.BaseExecutorBody;
 import com.custom.jdbc.condition.SaveExecutorBody;
@@ -11,6 +13,7 @@ import com.custom.jdbc.condition.SelectMapExecutorBody;
 import com.custom.jdbc.configuration.CustomConfigHelper;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
+import com.custom.jdbc.configuration.DbGlobalConfig;
 import com.custom.jdbc.dbAdapetr.Mysql5Adapter;
 import com.custom.jdbc.dbAdapetr.Mysql8Adapter;
 import com.custom.jdbc.dbAdapetr.OracleAdapter;
@@ -22,8 +25,10 @@ import com.custom.jdbc.utils.DbConnGlobal;
 import com.custom.jdbc.interfaces.CustomSqlSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +48,7 @@ public class JdbcExecutorFactory {
      */
     private final CustomJdbcExecutor jdbcExecutor;
     private final DbDataSource dbDataSource;
+    private final DbGlobalConfig globalConfig;
     private final DbCustomStrategy dbCustomStrategy;
     private DatabaseAdapter databaseAdapter;
 
@@ -71,9 +77,10 @@ public class JdbcExecutorFactory {
     }
 
 
-    public JdbcExecutorFactory(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
+    public JdbcExecutorFactory(DbDataSource dbDataSource, DbGlobalConfig globalConfig) {
         this.dbDataSource = dbDataSource;
-        this.dbCustomStrategy = dbCustomStrategy;
+        this.globalConfig = globalConfig;
+        this.dbCustomStrategy = globalConfig.getStrategy();
         this.jdbcExecutor = new DefaultCustomJdbcExecutor(dbCustomStrategy);
 
         if (StrUtils.isBlank(dbDataSource.getDriver())) {
@@ -143,7 +150,9 @@ public class JdbcExecutorFactory {
     public <T> T[] selectArrays(Class<T> t, String sql, Object... params) throws Exception {
         SelectExecutorBody<T> paramInfo = new SelectExecutorBody<>(t, sql, params);
         CustomSqlSession sqlSession = this.createSqlSession(paramInfo);
-        return jdbcExecutor.selectArrays(sqlSession);
+        T[] arrays = jdbcExecutor.selectArrays(sqlSession);
+        this.queryAfterHandle(t, arrays);
+        return arrays;
     }
 
 
@@ -153,7 +162,9 @@ public class JdbcExecutorFactory {
     public <T> List<T> selectListBySql(Class<T> t, String sql, Object... params) throws Exception {
         SelectExecutorBody<T> paramInfo = new SelectExecutorBody<>(t, sql, params);
         CustomSqlSession sqlSession = this.createSqlSession(paramInfo);
-        return jdbcExecutor.selectList(sqlSession);
+        List<T> list = jdbcExecutor.selectList(sqlSession);
+        this.queryAfterHandle(t, list);
+        return list;
     }
 
     /**
@@ -162,7 +173,9 @@ public class JdbcExecutorFactory {
     public <T> Set<T> selectSetBySql(Class<T> t, String sql, Object... params) throws Exception {
         SelectExecutorBody<T> paramInfo = new SelectExecutorBody<>(t, sql, params);
         CustomSqlSession sqlSession = this.createSqlSession(paramInfo);
-        return jdbcExecutor.selectSet(sqlSession);
+        Set<T> set = jdbcExecutor.selectSet(sqlSession);
+        this.queryAfterHandle(t, set);
+        return set;
     }
 
     /**
@@ -171,7 +184,9 @@ public class JdbcExecutorFactory {
     public <T> T selectOneSql(Class<T> t, String sql, Object... params) throws Exception {
         SelectExecutorBody<T> paramInfo = new SelectExecutorBody<>(t, sql, params);
         CustomSqlSession sqlSession = this.createSqlSession(paramInfo);
-        return jdbcExecutor.selectOne(sqlSession);
+        T one = jdbcExecutor.selectOne(sqlSession);
+        this.queryAfterHandle(t, one);
+        return one;
     }
 
     /**
@@ -184,7 +199,9 @@ public class JdbcExecutorFactory {
     public <V> Map<String, V> selectMapBySql(Class<V> t, String sql, Object... params) throws Exception {
         SelectExecutorBody<V> paramInfo = new SelectExecutorBody<>(t, sql, params);
         CustomSqlSession sqlSession = this.createSqlSession(paramInfo);
-        return jdbcExecutor.selectOneMap(sqlSession);
+        Map<String, V> objectMap = jdbcExecutor.selectOneMap(sqlSession);
+        this.queryAfterHandle(t, objectMap);
+        return objectMap;
     }
 
     /**
@@ -193,7 +210,9 @@ public class JdbcExecutorFactory {
     public List<Map<String, Object>> selectMapsBySql(String sql, Object... params) throws Exception {
         SelectExecutorBody<Object> paramInfo = new SelectExecutorBody<>(Object.class, sql, params);
         CustomSqlSession sqlSession = this.createSqlSession(paramInfo);
-        return jdbcExecutor.selectListMap(sqlSession);
+        List<Map<String, Object>> maps = jdbcExecutor.selectListMap(sqlSession);
+        this.queryAfterHandle(Map.class, maps);
+        return maps;
     }
 
     /**
@@ -206,7 +225,9 @@ public class JdbcExecutorFactory {
     public Object selectObjBySql(boolean sqlPrintSupport, String sql, Object... params) throws Exception {
         SelectExecutorBody<Object> paramInfo = new SelectExecutorBody<>(Object.class, sql, sqlPrintSupport, params);
         CustomSqlSession sqlSession = this.createSqlSession(paramInfo);
-        return jdbcExecutor.selectObj(sqlSession);
+        Object obj = jdbcExecutor.selectObj(sqlSession);
+        this.queryAfterHandle(obj.getClass(), obj);
+        return obj;
     }
 
     /**
@@ -219,7 +240,9 @@ public class JdbcExecutorFactory {
     public <T> List<T> selectObjsBySql(Class<T> t, boolean sqlPrintSupport, String sql, Object... params) throws Exception {
         SelectExecutorBody<T> paramInfo = new SelectExecutorBody<>(t, sql, sqlPrintSupport, params);
         CustomSqlSession sqlSession = this.createSqlSession(paramInfo);
-        return jdbcExecutor.selectObjs(sqlSession);
+        List<T> objs = jdbcExecutor.selectObjs(sqlSession);
+        this.queryAfterHandle(t, objs);
+        return objs;
     }
 
     /**
@@ -228,7 +251,9 @@ public class JdbcExecutorFactory {
     public <K, V> Map<K, V> selectMap(Class<K> kClass, Class<V> vClass, String sql, Object... params) throws Exception {
         SelectMapExecutorBody<K, V> selectMapExecutorModel = new SelectMapExecutorBody<>(sql, true, params, kClass, vClass);
         CustomSqlSession sqlSession = this.createSqlSession(selectMapExecutorModel);
-        return jdbcExecutor.selectMap(sqlSession);
+        Map<K, V> map = jdbcExecutor.selectMap(sqlSession);
+        this.queryAfterHandle(Map.class, map);
+        return map;
     }
 
     /**
@@ -297,6 +322,34 @@ public class JdbcExecutorFactory {
             sqlSession.closeResources();
         }
     }
+
+
+    /**
+     * 自定义sql查询后的拦截处理
+     * @param <T> 查询结果的返回类型
+     * @param t 查询结果的类型
+     * @param obj 查询结果
+     */
+    private <T> void queryAfterHandle(Class<T> t, Object obj) throws Exception {
+        CustomSqlQueryAfter queryAfter;
+
+        try {
+            queryAfter = CustomApplicationUtil.getBean(CustomSqlQueryAfter.class);
+        }catch (NoSuchBeanDefinitionException e) {
+            queryAfter = null;
+        }
+
+        if (queryAfter == null) {
+            Class<? extends CustomSqlQueryAfter> queryAfterClass = globalConfig.getSqlQueryAfter();
+            if (queryAfterClass == null) {
+                return;
+            }
+            queryAfter = ReflectUtil.getInstance(queryAfterClass);
+        }
+        // 处理查询后的结果
+        queryAfter.handle(t, obj);
+    }
+
 
 
 

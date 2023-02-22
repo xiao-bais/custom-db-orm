@@ -5,6 +5,7 @@ import com.custom.action.core.JdbcOpDao;
 import com.custom.action.core.JdbcDao;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
+import com.custom.jdbc.configuration.DbGlobalConfig;
 
 /**
  * @author  Xiao-Bai
@@ -14,6 +15,7 @@ import com.custom.jdbc.configuration.DbDataSource;
 public class JdbcTestBuilder {
 
     private final DbDataSource dbDataSource;
+    private final DbGlobalConfig globalConfig;
     private final DbCustomStrategy dbCustomStrategy;
 
     public static JdbcTestBuilder builder() {
@@ -36,15 +38,18 @@ public class JdbcTestBuilder {
 //        dbCustomStrategy.setDeleteLogicValue(1);
 //        dbCustomStrategy.setNotDeleteLogicValue(0);
 
+        globalConfig = new DbGlobalConfig();
+        globalConfig.setStrategy(dbCustomStrategy);
+        globalConfig.setSqlInterceptor(null);
 
     }
 
     public JdbcOpDao getJdbcOpDao() {
-        return new JdbcOpDao(dbDataSource, dbCustomStrategy);
+        return new JdbcOpDao(dbDataSource, globalConfig);
     }
 
     public JdbcDao getJdbcDao() {
-        return new JdbcDaoProxy(dbDataSource, dbCustomStrategy).createProxy();
+        return new JdbcDaoProxy(dbDataSource, globalConfig).createProxy();
     }
 
 //    public <T> T getCustomClassDao(Class<T> entityClass) {
@@ -58,5 +63,9 @@ public class JdbcTestBuilder {
 
     public DbCustomStrategy getDbCustomStrategy() {
         return dbCustomStrategy;
+    }
+
+    public DbGlobalConfig getGlobalConfig() {
+        return globalConfig;
     }
 }

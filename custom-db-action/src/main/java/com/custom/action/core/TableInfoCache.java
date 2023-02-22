@@ -141,7 +141,7 @@ public class TableInfoCache {
         }
         TableExecutor<T, P> tableExecutor = (TableExecutor<T, P>) TABLE_EXEC_CACHE.get(target);
         if (tableExecutor == null) {
-            tableExecutor = new DefaultTableExecutor<>(configHelper.getDbDataSource(), configHelper.getDbCustomStrategy(), target);
+            tableExecutor = new DefaultTableExecutor<>(configHelper.getDbDataSource(), configHelper.getDbGlobalConfig(), target);
             TABLE_EXEC_CACHE.put(target, tableExecutor);
         }
         return tableExecutor;

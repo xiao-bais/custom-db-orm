@@ -9,6 +9,6 @@ import java.util.List;
  */
 public interface CustomSqlQueryAfter {
 
-    <T> void handle(Class<T> target, List<T> result) throws Exception;
+    <T> void handle(Class<T> target, Object result) throws Exception;
 
 }

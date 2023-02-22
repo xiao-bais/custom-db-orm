@@ -7,6 +7,7 @@ import com.custom.action.core.SqlExecutor;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
+import com.custom.jdbc.configuration.DbGlobalConfig;
 
 import java.io.Serializable;
 import java.lang.reflect.*;
@@ -29,11 +30,12 @@ public class JdbcDaoProxy implements InvocationHandler, Serializable {
     private final static List<Method> CUSTOMIZE_METHOD_CACHES;
     private final static Map<Class<?>, Class<?>> PRIMITIVE_MAPPED;
 
-    public JdbcDaoProxy(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
-        sqlExecutor = new JdbcActionProxy(new JdbcAction(), dbDataSource, dbCustomStrategy).createProxy();
+    public JdbcDaoProxy(DbDataSource dbDataSource, DbGlobalConfig globalConfig) {
+        sqlExecutor = new JdbcActionProxy(new JdbcAction(), dbDataSource, globalConfig).createProxy();
     }
 
     static {
+        // todo 给一个缓存，无需每次都要重新匹配
         Method[] declaredMethods = JdbcAction.class.getDeclaredMethods();
         CUSTOMIZE_METHOD_CACHES = new ArrayList<>((Arrays.asList(declaredMethods)));
         PRIMITIVE_MAPPED = new HashMap<>(8);

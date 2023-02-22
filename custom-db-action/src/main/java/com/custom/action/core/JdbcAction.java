@@ -3,8 +3,8 @@ package com.custom.action.core;
 import com.custom.action.condition.*;
 import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.extend.MultiResultInjector;
-import com.custom.jdbc.executor.CustomSqlQueryAfter;
 import com.custom.comm.exceptions.CustomCheckException;
+import com.custom.jdbc.configuration.DbGlobalConfig;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.comm.annotations.check.CheckExecute;
@@ -14,7 +14,6 @@ import com.custom.comm.page.DbPageRows;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
-import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.interfaces.DatabaseAdapter;
 import com.custom.jdbc.interfaces.TransactionExecutor;
@@ -31,15 +30,15 @@ import java.util.*;
  * @since  2022/4/13 20:49
  */
 @SuppressWarnings("unchecked")
-public class JdbcAction implements SqlExecutor, CustomSqlQueryAfter {
+public class JdbcAction implements SqlExecutor {
 
     private static final Logger logger = LoggerFactory.getLogger(JdbcAction.class);
     private DbDataSource dbDataSource;
     private JdbcExecutorFactory executorFactory;
 
-    public JdbcAction(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
+    public JdbcAction(DbDataSource dbDataSource, DbGlobalConfig globalConfig) {
         // 创建sql执行器
-        this.executorFactory = new JdbcExecutorFactory(dbDataSource, dbCustomStrategy);
+        this.executorFactory = new JdbcExecutorFactory(dbDataSource, globalConfig);
         this.dbDataSource = dbDataSource;
     }
 
@@ -55,7 +54,7 @@ public class JdbcAction implements SqlExecutor, CustomSqlQueryAfter {
         // 封装结果
         String selectSql = sqlBuilder.createTargetSql() + executor.execute();
         List<T> result = executorFactory.selectListBySql(entityClass, selectSql, params);
-        this.handle(entityClass, result);
+        this.otherResultInject(entityClass, result);
         return result;
     }
 
@@ -79,7 +78,7 @@ public class JdbcAction implements SqlExecutor, CustomSqlQueryAfter {
         this.buildPageResult(entityClass, selectSql, dbPageRows, params);
 
         // 注入一对一，一对多
-        this.handle(entityClass, dbPageRows.getData());
+        this.otherResultInject(entityClass, dbPageRows.getData());
         return dbPageRows;
     }
 
@@ -108,7 +107,7 @@ public class JdbcAction implements SqlExecutor, CustomSqlQueryAfter {
         String selectSql = sqlBuilder.createTargetSql() + executor.execute();
         T result = selectOneBySql(entityClass, selectSql, params);
 
-        this.handle(entityClass, Collections.singletonList(result));
+        this.otherResultInject(entityClass, Collections.singletonList(result));
         return result;
     }
 
@@ -167,7 +166,7 @@ public class JdbcAction implements SqlExecutor, CustomSqlQueryAfter {
         String selectSql = sqlBuilder.executeSqlBuilder(wrapper);
 
         this.buildPageResult(wrapper.getEntityClass(), selectSql, dbPageRows, wrapper.getParamValues().toArray());
-        this.handle(wrapper.getEntityClass(), dbPageRows.getData());
+        this.otherResultInject(wrapper.getEntityClass(), dbPageRows.getData());
 
         return dbPageRows;
     }
@@ -179,7 +178,7 @@ public class JdbcAction implements SqlExecutor, CustomSqlQueryAfter {
         String selectSql = sqlBuilder.executeSqlBuilder(wrapper);
 
         List<T> result = executorFactory.selectListBySql(wrapper.getEntityClass(), selectSql, wrapper.getParamValues().toArray());
-        this.handle(wrapper.getEntityClass(), result);
+        this.otherResultInject(wrapper.getEntityClass(), result);
         return result;
     }
 
@@ -190,7 +189,7 @@ public class JdbcAction implements SqlExecutor, CustomSqlQueryAfter {
         String selectSql = sqlBuilder.executeSqlBuilder(wrapper);
 
         T result = selectOneBySql(wrapper.getEntityClass(), selectSql, wrapper.getParamValues().toArray());
-        this.handle(wrapper.getEntityClass(), Collections.singletonList(result));
+        this.otherResultInject(wrapper.getEntityClass(), Collections.singletonList(result));
 
         return result;
     }
@@ -467,8 +466,10 @@ public class JdbcAction implements SqlExecutor, CustomSqlQueryAfter {
     }
 
 
-    @Override
-    public <T> void handle(Class<T> target, List<T> result) throws Exception {
+    /**
+     * 对于返回对象的一对一，一对多处理
+     */
+    public <T> void otherResultInject(Class<T> target, List<T> result) throws Exception {
         HandleSelectSqlBuilder<T> selectSqlBuilder = TableInfoCache.getSelectSqlBuilderCache(target, executorFactory);
         if (selectSqlBuilder.isExistNeedInjectResult() && result != null) {
             MultiResultInjector<T> resultInjector = new MultiResultInjector<>(target, this, target);

@@ -3,6 +3,7 @@ server:
   servlet:
     context-path: /myTask
 
+
   # 数据库连接配置
 custom:
   db:
@@ -11,15 +12,6 @@ custom:
       username: root
       password: xh@Mysql1524
     config:
-      sql-interceptor:
-      strategy:
-        underline-to-camel: true
-        db-field-delete-logic: state
-        delete-logic-value: 1
-        not-delete-logic-value: 0
-        entity-package-scans: com.custom.taskmanager.entity
-  #      sync-entity-enable: true
-        sql-out-printing: true
-
+      sql-query-after: com.
 
 
