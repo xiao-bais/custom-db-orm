@@ -16,13 +16,13 @@ import java.util.Objects;
  **/
 @Slf4j
 @Component
-public class CustomApplicationUtil implements ApplicationContextAware {
+public class CustomApp implements ApplicationContextAware {
 
     private static ApplicationContext applicationContext;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        CustomApplicationUtil.applicationContext = applicationContext;
+        CustomApp.applicationContext = applicationContext;
     }
 
     public ApplicationContext getApplicationContext() {

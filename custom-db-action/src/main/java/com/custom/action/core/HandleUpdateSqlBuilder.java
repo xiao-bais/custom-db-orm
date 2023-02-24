@@ -1,8 +1,8 @@
 package com.custom.action.core;
 
 import com.custom.action.dbaction.AbstractSqlBuilder;
-import com.custom.action.fieldfill.ColumnAutoFillHandleUtils;
 import com.custom.action.util.DbUtil;
+import com.custom.comm.enums.FillStrategy;
 import com.custom.comm.enums.SqlExecTemplate;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.Constants;
@@ -10,7 +10,9 @@ import com.custom.jdbc.executor.JdbcExecutorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.StringJoiner;
 
 /**
  * 提供一系列修改记录的sql构建
@@ -58,18 +60,17 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
     /**
      * 修改字段构建（set之后 where之前）
-     * @param addNullField 是否允许添加=null的字段
      */
     private void createUpdateSetColumn(T currEntity, List<Object> sqlParams, StringJoiner updateSqlColumns) {
         for (DbFieldParserModel<T> field : getFieldParserModels()) {
             Object value = field.getValue(currEntity);
-            if (Objects.isNull(value)) {
+            if (Objects.isNull(value) && field.getFillStrategy() != FillStrategy.DEFAULT && this.existFill()) {
                 // 修改时必要的自动填充
                 // 当修改时，用户没有为自动填充的字段额外设置业务值，则启用原本设定的默认值进行填充
-                Object fillValue = ColumnAutoFillHandleUtils
-                        .getFillValue(getEntityClass(), field.getFieldName());
+                Object fillValue = this.findFillValue(field.getFieldName(), field.getType(), FillStrategy.UPDATE);
                 if (Objects.nonNull(fillValue)) {
                     value = fillValue;
+                    field.setValue(fillValue);
                 }
             }
             if (Objects.nonNull(value)) {

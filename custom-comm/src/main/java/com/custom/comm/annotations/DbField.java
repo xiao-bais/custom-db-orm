@@ -1,5 +1,6 @@
 package com.custom.comm.annotations;
 
+import com.custom.comm.enums.FillStrategy;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.enums.DbType;
 
@@ -27,13 +28,11 @@ public @interface DbField {
      */
     DbType dataType() default DbType.DbVarchar;
 
-
     /**
      * 字段说明
      * @return desc
      */
     String desc() default Constants.EMPTY;
-
 
     /**
      * 是否为空，只在创建表的时候用到
@@ -41,11 +40,17 @@ public @interface DbField {
      */
     boolean isNull() default true;
 
-
     /**
      * 是否存在该表字段，作用与{@link DbNotField}一致
      */
     boolean exist() default true;
+
+    /**
+     * 自动填充策略，在进行参数为实体时的插入或者修改(逻辑删除)时，进行数据的自动填充
+     * <br/> 注意：插入或修改时，只有当参数是实体对象时才会生效
+     * <br/> 逻辑删除时也会进行填充(前提是有配置填充)
+     */
+    FillStrategy strategy() default FillStrategy.DEFAULT;
 
 
 }

@@ -4,6 +4,7 @@ import com.custom.action.dbaction.AbstractTableModel;
 import com.custom.action.util.DbUtil;
 import com.custom.comm.annotations.DbField;
 import com.custom.comm.enums.DbType;
+import com.custom.comm.enums.FillStrategy;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
@@ -52,11 +53,6 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     private final Field field;
 
     /**
-    * 字段值
-    */
-    private Object value;
-
-    /**
     * sql字段长度
     */
     private String length;
@@ -81,6 +77,11 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
      */
     private final boolean isDbField;
 
+    /**
+     * 填充策略
+     */
+    private FillStrategy fillStrategy = FillStrategy.DEFAULT;
+
 
     public DbFieldParserModel(Field field, String table, String alias, boolean underlineToCamel, boolean existsDbField) {
         if (GlobalDataHandler.hasSqlKeyword(field.getName())) {
@@ -104,6 +105,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
             this.desc = annotation.desc();
             this.dbType = annotation.dataType() == DbType.DbVarchar ? DbType.getDbMediaType(field.getType()) : annotation.dataType();
             this.length = this.dbType.getLength();
+            this.fillStrategy = annotation.strategy();
         }else {
             this.column = underlineToCamel ? CustomUtil.camelToUnderline(this.fieldName) : this.fieldName;
         }
@@ -121,18 +123,6 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
         this.field = field;
         this.existsDbField = false;
         this.isDbField = false;
-    }
-
-    /**
-     * 无注解的属性解析
-     */
-    public void noneAnnotationParser(String table, String alias, boolean underlineToCamel) {
-        this.column = underlineToCamel ? CustomUtil.camelToUnderline(this.fieldName) : this.fieldName;
-        if(GlobalDataHandler.hasSqlKeyword(column)) {
-            this.column = GlobalDataHandler.wrapperSqlKeyword(column);
-        }
-        super.setTable(table);
-        super.setAlias(alias);
     }
 
     public String getFieldName() {
@@ -161,6 +151,10 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
 
     public boolean isDbField() {
         return isDbField;
+    }
+
+    public FillStrategy getFillStrategy() {
+        return fillStrategy;
     }
 
     /**

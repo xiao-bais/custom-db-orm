@@ -1,11 +1,15 @@
 package com.custom.action.dbaction;
 
+import com.custom.action.autofill.CustomFillHandler;
+import com.custom.action.autofill.CustomFillHelper;
+import com.custom.action.autofill.CustomTableFill;
 import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.action.core.DbFieldParserModel;
 import com.custom.action.core.DbKeyParserModel;
 import com.custom.action.core.TableInfoCache;
 import com.custom.action.core.TableParseModel;
 import com.custom.action.util.DbUtil;
+import com.custom.comm.enums.FillStrategy;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.*;
 import com.custom.jdbc.configuration.DbCustomStrategy;
@@ -13,6 +17,7 @@ import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.jdbc.interfaces.DatabaseAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
 import java.io.Serializable;
 import java.util.*;
@@ -33,7 +38,6 @@ public abstract class AbstractSqlBuilder<T> {
     private Class<T> entityClass;
     private DbKeyParserModel<T> keyParserModel;
     private List<DbFieldParserModel<T>> fieldParserModels;
-    private Map<String, String> fieldMapper;
     private Map<String, String> columnMapper;
     private JdbcExecutorFactory executorFactory;
     private String logicColumn;
@@ -46,6 +50,10 @@ public abstract class AbstractSqlBuilder<T> {
      * 逻辑删除的修改条件
      */
     private String logicDeleteUpdateSql;
+    /**
+     * 表填充辅助对象
+     */
+    private CustomFillHelper<T> fillHelper;
 
     /**
      * 创建对应的sql
@@ -62,15 +70,6 @@ public abstract class AbstractSqlBuilder<T> {
         return alias;
     }
 
-    public void injectEntity(T entity) {
-        if (Objects.nonNull(keyParserModel)) {
-            keyParserModel.setEntity(entity);
-        }
-        if (!fieldParserModels.isEmpty()) {
-            fieldParserModels.forEach(x -> x.setEntity(entity));
-        }
-    }
-
     public Class<T> getEntityClass() {
         return entityClass;
     }
@@ -85,10 +84,6 @@ public abstract class AbstractSqlBuilder<T> {
 
     public List<DbFieldParserModel<T>> getFieldParserModels() {
         return fieldParserModels;
-    }
-
-    public Map<String, String> getFieldMapper() {
-        return fieldMapper;
     }
 
     public Map<String, String> getColumnMapper() {
@@ -139,6 +134,7 @@ public abstract class AbstractSqlBuilder<T> {
         }
         if (val instanceof List) {
             sqlParams.addAll((List<Object>) val);
+            return;
         }
         sqlParams.add(val);
     }
@@ -149,7 +145,6 @@ public abstract class AbstractSqlBuilder<T> {
         this.keyParserModel = tableSqlBuilder.getKeyParserModel();
         this.fieldParserModels = tableSqlBuilder.getDbFieldParseModels();
         this.columnMapper = tableSqlBuilder.getColumnMapper();
-        this.fieldMapper = tableSqlBuilder.getFieldMapper();
         this.entityClass = tableSqlBuilder.getEntityClass();
         this.executorFactory = executorFactory;
 
@@ -157,7 +152,8 @@ public abstract class AbstractSqlBuilder<T> {
         DbCustomStrategy customStrategy = executorFactory.getDbCustomStrategy();
         this.logicColumn = customStrategy.getDbFieldDeleteLogic();
         this.logicSqlInitialize(customStrategy.getDeleteLogicValue(), customStrategy.getNotDeleteLogicValue());
-
+        // 加载自动填充对象
+        this.loadFillObjectInfo();
     }
 
     /**
@@ -260,6 +256,73 @@ public abstract class AbstractSqlBuilder<T> {
             }
             return Constants.WHERE + DbUtil.trimSqlCondition(condition);
         };
+    }
+
+
+    /**
+     * 查找填充值
+     */
+    protected Object findFillValue(String fieldName, Class<?> fieldType, FillStrategy strategy) {
+        if (fillHelper == null) {
+            return null;
+        }
+        return fillHelper.getFillValue(fieldName, fieldType, strategy);
+    }
+
+    /**
+     * 是否存在自动填充
+     */
+    protected boolean existFill() {
+        return this.fillHelper == null;
+    }
+
+
+    /**
+     * 获取该类的
+     */
+    private void loadFillObjectInfo() {
+        CustomFillHandler fillHandler;
+
+        try {
+            fillHandler = CustomApp.getBean(CustomFillHandler.class);
+        } catch (NoSuchBeanDefinitionException e) {
+            fillHandler = null;
+        }
+        if (fillHandler == null) {
+            return;
+        }
+        List<CustomTableFill> tableFillList = this.handleMergeFills(fillHandler);
+        if (tableFillList.isEmpty()) {
+            return;
+        }
+        Optional<CustomTableFill> first = tableFillList.stream()
+                .filter(e -> e.getTarget().isAssignableFrom(entityClass))
+                .findFirst();
+        CustomTableFill tableFill = first.orElseGet(() ->
+                tableFillList.stream()
+                        .filter(CustomTableFill::isGlobalFill)
+                        .findFirst()
+                        .orElse(null)
+        );
+        if (tableFill != null) {
+            this.fillHelper = new CustomFillHelper<>(entityClass, tableFill);
+        }
+    }
+
+    /**
+     * 合并填充对象
+     */
+    private List<CustomTableFill> handleMergeFills(CustomFillHandler fillHandler) {
+        List<CustomTableFill> tableFillList = new ArrayList<>();
+        CustomTableFill fill = CustomTableFill.builder();
+        fillHandler.handle(fill);
+        fillHandler.handleMany(tableFillList);
+        fill.globalFill();
+        tableFillList.add(fill);
+        if (tableFillList.stream().filter(CustomTableFill::isGlobalFill).count() > 1) {
+            throw new CustomCheckException("错误配置：不允许出现两个或以上的全局填充对象配置");
+        }
+        return tableFillList;
     }
 
 

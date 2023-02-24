@@ -1,7 +1,7 @@
 package com.custom.action.core;
 
 import com.custom.action.dbaction.AbstractSqlBuilder;
-import com.custom.action.fieldfill.ColumnAutoFillHandleUtils;
+import com.custom.comm.enums.FillStrategy;
 import com.custom.comm.enums.SqlExecTemplate;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.Constants;
@@ -72,12 +72,17 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
      */
     private Object getFieldValue(DbFieldParserModel<T> fieldModel, T entity) {
         Object fieldValue = fieldModel.getValue(entity);
+        if (fieldValue != null) {
+            return fieldValue;
+        }
         try {
             // 若存在自动填充的字段，则在添加的时候，进行字段值的自动填充
-            if (ColumnAutoFillHandleUtils.exists(getEntityClass(), fieldModel.getFieldName())
-                    && Objects.isNull(fieldValue) ) {
-                fieldValue = ColumnAutoFillHandleUtils.getFillValue(getEntityClass(), fieldModel.getFieldName());
-                fieldModel.setValue(fieldValue);
+            if (this.existFill() && fieldModel.getFillStrategy() != FillStrategy.DEFAULT
+                    && !fieldModel.getColumn().equals(getLogicColumn())) {
+                fieldValue = this.findFillValue(fieldModel.getFieldName(), fieldModel.getType(), FillStrategy.INSERT);
+                if (fieldValue != null) {
+                    fieldModel.setValue(fieldValue);
+                }
             }
 
             // 否则若该字段为逻辑删除字段，则填入未删除的默认值

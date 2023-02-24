@@ -1,7 +1,7 @@
 package com.custom.jdbc.session;
 
 import com.custom.comm.utils.Asserts;
-import com.custom.comm.utils.CustomApplicationUtil;
+import com.custom.comm.utils.CustomApp;
 import com.custom.comm.utils.ReflectUtil;
 import com.custom.jdbc.condition.BaseExecutorBody;
 import com.custom.jdbc.configuration.DbCustomStrategy;
@@ -36,7 +36,7 @@ public class CustomSqlSessionHelper {
         CustomSqlInterceptor sqlInterceptor;
 
         try {
-            sqlInterceptor = CustomApplicationUtil.getBean(CustomSqlInterceptor.class);
+            sqlInterceptor = CustomApp.getBean(CustomSqlInterceptor.class);
         } catch (NoSuchBeanDefinitionException e) {
             sqlInterceptor = null;
         }

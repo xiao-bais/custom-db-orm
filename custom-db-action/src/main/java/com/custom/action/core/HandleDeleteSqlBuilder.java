@@ -1,21 +1,17 @@
 package com.custom.action.core;
 
 import com.custom.action.dbaction.AbstractSqlBuilder;
-import com.custom.action.fieldfill.ColumnFillAutoHandler;
-import com.custom.action.fieldfill.TableFillObject;
 import com.custom.action.util.DbUtil;
 import com.custom.comm.enums.FillStrategy;
 import com.custom.comm.enums.SqlExecTemplate;
-import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.Constants;
-import com.custom.comm.utils.CustomApplicationUtil;
-import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.StrUtils;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 提供一系列删除记录的sql构建
@@ -69,52 +65,20 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
      * <br/> 例如: 修改时间，修改人
      */
     protected String handleLogicDelBefore() {
-        ColumnFillAutoHandler fillColumnHandler = CustomApplicationUtil.getBean(ColumnFillAutoHandler.class);
-        if (Objects.isNull(fillColumnHandler)) {
-            return null;
-        }
-        Class<T> entityClass = getEntityClass();
-        Optional<TableFillObject> first = fillColumnHandler.fillStrategy().stream()
-                .filter(x -> x.getEntityClass().equals(entityClass)).findFirst();
 
-        if (!first.isPresent()) {
-            first = fillColumnHandler.fillStrategy().stream()
-                    .filter(x -> x.getEntityClass().isAssignableFrom(entityClass)).findFirst();
+        if (!this.existFill()) {
+            return Constants.EMPTY;
         }
-        if (!first.isPresent()) {
-            return null;
-        }
-        TableFillObject fillObject = first.get();
-
-        FillStrategy strategy = fillObject.getStrategy();
-        if (strategy == FillStrategy.DEFAULT) {
-            return null;
-        }
-        return this.buildAssignAutoUpdateSqlFragment(fillObject.getTableFillMapper());
-    }
-
-    /**
-     * 构建指定逻辑删除时自动填充的sql片段
-     */
-    private String buildAssignAutoUpdateSqlFragment(Map<String, Object> tableFillObjects) {
+        List<DbFieldParserModel<T>> fieldParserModels = getFieldParserModels().stream()
+                .filter(e -> e.getFillStrategy() != FillStrategy.DEFAULT)
+                .collect(Collectors.toList());
         StringJoiner autoUpdateFieldSql = new StringJoiner(Constants.SEPARATOR_COMMA_2);
-
-        Map<String, String> fieldMapper = getFieldMapper();
-        if (JudgeUtil.isEmpty(tableFillObjects)) {
-            return autoUpdateFieldSql.toString();
-        }
-        for (String fieldName : tableFillObjects.keySet()) {
-            String column = fieldMapper.get(fieldName);
-            if (JudgeUtil.isEmpty(column)) {
-                throw new CustomCheckException("未找到可匹配的java属性字段");
+        for (DbFieldParserModel<T> filedInfo : fieldParserModels) {
+            Object fieldVal = this.findFillValue(filedInfo.getFieldName(), filedInfo.getType(), FillStrategy.UPDATE);
+            if (fieldVal != null) {
+                String updateSetField = DbUtil.formatMapperSqlCondition(filedInfo.getFieldSql(), fieldVal);
+                autoUpdateFieldSql.add(updateSetField);
             }
-
-            Object fieldVal = tableFillObjects.get(fieldName);
-            // 若自定义的值为null, 则跳过
-            if (fieldVal == null) continue;
-
-            String updateField = DbUtil.formatMapperSqlCondition(column, fieldVal);
-            autoUpdateFieldSql.add(updateField);
         }
         return autoUpdateFieldSql.toString();
     }

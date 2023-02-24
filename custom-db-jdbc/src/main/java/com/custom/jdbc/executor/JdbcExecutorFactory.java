@@ -3,7 +3,7 @@ package com.custom.jdbc.executor;
 import com.custom.comm.enums.DatabaseDialect;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.ConvertUtil;
-import com.custom.comm.utils.CustomApplicationUtil;
+import com.custom.comm.utils.CustomApp;
 import com.custom.comm.utils.ReflectUtil;
 import com.custom.comm.utils.StrUtils;
 import com.custom.jdbc.condition.BaseExecutorBody;
@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +57,10 @@ public class JdbcExecutorFactory {
 
     public DbCustomStrategy getDbCustomStrategy() {
         return dbCustomStrategy;
+    }
+
+    public DbGlobalConfig getGlobalConfig() {
+        return globalConfig;
     }
 
     public DatabaseAdapter getDatabaseAdapter() {
@@ -334,7 +337,7 @@ public class JdbcExecutorFactory {
         CustomSqlQueryAfter queryAfter;
 
         try {
-            queryAfter = CustomApplicationUtil.getBean(CustomSqlQueryAfter.class);
+            queryAfter = CustomApp.getBean(CustomSqlQueryAfter.class);
         } catch (NoSuchBeanDefinitionException e) {
             queryAfter = null;
         }
