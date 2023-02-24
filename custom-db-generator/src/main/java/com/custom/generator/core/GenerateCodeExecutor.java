@@ -1,9 +1,10 @@
 package com.custom.generator.core;
 
 import com.custom.comm.exceptions.CustomCheckException;
+import com.custom.jdbc.configuration.DbGlobalConfig;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.comm.date.DateTimeUtils;
-import com.custom.generator.config.GlobalConfig;
+import com.custom.generator.config.GenarateGlobalConfig;
 import com.custom.generator.config.PackageConfig;
 import com.custom.generator.config.TableConfig;
 import com.custom.generator.model.ColumnStructModel;
@@ -17,13 +18,7 @@ import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -41,16 +36,16 @@ public class GenerateCodeExecutor {
     private List<TableStructModel> tableStructModels;
     private final JdbcExecutorFactory executorFactory;
 
-    public GenerateCodeExecutor(DbDataSource dbDataSource, DbCustomStrategy dbCustomStrategy) {
+    public GenerateCodeExecutor(DbDataSource dbDataSource, DbGlobalConfig globalConfig) {
         if (Objects.isNull(dbDataSource)) {
             throw new CustomCheckException("未配置数据源");
         }
+        this.dbCustomStrategy = globalConfig.getStrategy();
         if(Objects.isNull(dbCustomStrategy)) {
             dbCustomStrategy = new DbCustomStrategy();
         }
         DATA_BASE = CustomUtil.getDataBase(dbDataSource.getUrl());
-        this.dbCustomStrategy = dbCustomStrategy;
-        this.executorFactory = new JdbcExecutorFactory(dbDataSource, dbCustomStrategy);
+        this.executorFactory = new JdbcExecutorFactory(dbDataSource, globalConfig);
     }
 
     public void start() {
@@ -317,7 +312,7 @@ public class GenerateCodeExecutor {
     /**
      * 全局配置
      */
-    private GlobalConfig globalConfig;
+    private GenarateGlobalConfig globalConfig;
 
     /**
      * 包的配置
@@ -350,11 +345,11 @@ public class GenerateCodeExecutor {
         this.dbCustomStrategy = dbCustomStrategy;
     }
 
-    public GlobalConfig getGlobalConfig() {
+    public GenarateGlobalConfig getGlobalConfig() {
         return globalConfig;
     }
 
-    public void setGlobalConfig(GlobalConfig globalConfig) {
+    public void setGlobalConfig(GenarateGlobalConfig globalConfig) {
         this.globalConfig = globalConfig;
     }
 

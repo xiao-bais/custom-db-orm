@@ -12,7 +12,6 @@ import com.custom.jdbc.configuration.GlobalDataHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
@@ -25,12 +24,10 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(DbFieldParserModel.class);
 
-    private T entity;
-
     /**
     * java字段名称
     */
-    private String fieldName;
+    private final String fieldName;
 
     /**
     * sql列名
@@ -105,7 +102,7 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
             this.desc = annotation.desc();
             this.dbType = annotation.dataType() == DbType.DbVarchar ? DbType.getDbMediaType(field.getType()) : annotation.dataType();
             this.length = this.dbType.getLength();
-            this.fillStrategy = annotation.strategy();
+            this.fillStrategy = annotation.fillStrategy();
         }else {
             this.column = underlineToCamel ? CustomUtil.camelToUnderline(this.fieldName) : this.fieldName;
         }
@@ -129,24 +126,8 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
         return fieldName;
     }
 
-    public void setFieldName(String fieldName) {
-        this.fieldName = fieldName;
-    }
-
     public String getColumn() {
         return column;
-    }
-
-    public void setColumn(String column) {
-        this.column = column;
-    }
-
-    public T getEntity() {
-        return entity;
-    }
-
-    public void setEntity(T entity) {
-        this.entity = entity;
     }
 
     public boolean isDbField() {
@@ -212,8 +193,9 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
         return DbUtil.sqlSelectWrapper(column, this.fieldName);
     }
 
-    protected void setValue(Object value) {
-        super.setFieldValue(entity, this.field, value);
+    @Override
+    protected void setValue(T obj, Object value) {
+        super.setFieldValue(obj, this.field, value);
     }
 
     public Field getField() {

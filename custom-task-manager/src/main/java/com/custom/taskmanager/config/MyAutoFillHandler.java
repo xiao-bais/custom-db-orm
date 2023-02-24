@@ -19,8 +19,8 @@ public class MyAutoFillHandler implements CustomFillHandler {
 
     @Override
     public void handle(CustomTableFill fill) {
-        fill.addFill(FillObject.instance("createTime", Integer.class, DateTimeUtils.getThisTime(), FillStrategy.INSERT));
-        fill.addFill(FillObject.instance("operatorTime", Integer.class, DateTimeUtils.getThisTime(), FillStrategy.INSERT_UPDATE));
+        fill.addFill(FillObject.instance("createTime", Integer.class, DateTimeUtils::getThisTime, FillStrategy.INSERT));
+        fill.addFill(FillObject.instance("operatorTime", Integer.class, DateTimeUtils::getThisTime, FillStrategy.INSERT_UPDATE));
     }
 
     @Override

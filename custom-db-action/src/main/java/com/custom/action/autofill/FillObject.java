@@ -18,7 +18,7 @@ public class FillObject {
     /**
      * java属性名称对应的类型(可不填)
      */
-    private Class<?> fieldType;
+    private final Class<?> fieldType;
 
     /**
      * 设置值的供给函数
@@ -36,10 +36,6 @@ public class FillObject {
         this.fieldType = fieldType;
         this.targetVal = targetVal;
         this.fillStrategy = fillStrategy;
-    }
-
-    public static FillObject instance(String fieldName, Class<?> fieldType, Object targetVal, FillStrategy strategy) {
-        return new FillObject(fieldName, fieldType, () -> targetVal, strategy);
     }
 
     public static FillObject instance(String fieldName, Class<?> fieldType, Supplier<Object> targetVal, FillStrategy strategy) {

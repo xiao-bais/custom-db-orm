@@ -1,13 +1,10 @@
 package com.custom.action.dbaction;
 
 import com.custom.comm.utils.Asserts;
-import com.custom.comm.utils.CustomUtil;
-import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.ReflectUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
@@ -71,7 +68,7 @@ public abstract class AbstractTableModel<T> {
 
     public abstract String createTableSql();
     protected abstract Object getValue(T x);
-    protected abstract void setValue(Object value);
+    protected abstract void setValue(T obj, Object value);
     public abstract String getFieldSql();
     protected abstract String getSelectFieldSql();
 

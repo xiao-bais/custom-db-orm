@@ -37,7 +37,7 @@ public class CustomFillHelper<T> {
             return null;
         }
         // 若填充策略不匹配
-        if (!strategy.name().contains(fillObject.getFillStrategy().name())) {
+        if (!fillObject.getFillStrategy().name().contains(strategy.name())) {
              return null;
         }
         return fillObject.getTargetVal().get();

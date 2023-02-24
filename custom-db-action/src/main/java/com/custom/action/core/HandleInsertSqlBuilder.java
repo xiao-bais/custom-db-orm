@@ -81,7 +81,7 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
                     && !fieldModel.getColumn().equals(getLogicColumn())) {
                 fieldValue = this.findFillValue(fieldModel.getFieldName(), fieldModel.getType(), FillStrategy.INSERT);
                 if (fieldValue != null) {
-                    fieldModel.setValue(fieldValue);
+                    fieldModel.setValue(entity, fieldValue);
                 }
             }
 
@@ -89,7 +89,7 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
             else if (checkLogicFieldIsExist()
                     && fieldModel.getColumn().equals(getLogicColumn())) {
                 fieldValue = ConvertUtil.transToObject(fieldModel.getType(), getLogicNotDeleteValue());
-                fieldModel.setValue(fieldValue);
+                fieldModel.setValue(entity, fieldValue);
             }
 
         } catch (Exception e) {

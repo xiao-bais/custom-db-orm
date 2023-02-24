@@ -4,11 +4,12 @@ import com.custom.comm.enums.KeyStrategy;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.generator.FreemarkerTemplateExecutor;
-import com.custom.generator.config.GlobalConfig;
+import com.custom.generator.config.GenarateGlobalConfig;
 import com.custom.generator.config.PackageConfig;
 import com.custom.generator.config.TableConfig;
 import com.custom.generator.core.GenerateCodeExecutor;
 import com.custom.generator.model.TableStructModel;
+import com.custom.jdbc.configuration.DbGlobalConfig;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class Action {
         dbDataSource.setPassword("xh@Mysql1524");
 
         // 增删改查映射策略配置
+        DbGlobalConfig globalConfig = new DbGlobalConfig();
         DbCustomStrategy dbCustomStrategy = new DbCustomStrategy();
         dbCustomStrategy.setSqlOutPrinting(true);
         dbCustomStrategy.setSqlOutPrintExecute(true);
@@ -34,12 +36,13 @@ public class Action {
         dbCustomStrategy.setDbFieldDeleteLogic("state");
         dbCustomStrategy.setDeleteLogicValue(1);
         dbCustomStrategy.setNotDeleteLogicValue(0);
+        globalConfig.setStrategy(dbCustomStrategy);
 
 //        JdbcDao jdbcDao = new JdbcDao(dbDataSource, dbCustomStrategy);
 //        TableInfoCache.setUnderlineToCamel(true);
 
 
-        GenerateCodeExecutor gce = new GenerateCodeExecutor(dbDataSource, dbCustomStrategy);
+        GenerateCodeExecutor gce = new GenerateCodeExecutor(dbDataSource, globalConfig);
 
         // 表配置
         TableConfig tableConfig = new TableConfig();
@@ -58,14 +61,14 @@ public class Action {
         gce.setPackageConfig(packageConfig);
 
         // 全局配置
-        GlobalConfig globalConfig = new GlobalConfig();
-        globalConfig.setAuthor("Xiao-Bai");
-        globalConfig.setOutputDir("custom-test/src/main/java");
-        globalConfig.setKeyStrategy(KeyStrategy.AUTO);
-        globalConfig.setEntityLombok(true);
-        globalConfig.setSwagger(true);
-        globalConfig.setOverrideEnable(true);
-        gce.setGlobalConfig(globalConfig);
+        GenarateGlobalConfig ggc = new GenarateGlobalConfig();
+        ggc.setAuthor("Xiao-Bai");
+        ggc.setOutputDir("custom-test/src/main/java");
+        ggc.setKeyStrategy(KeyStrategy.AUTO);
+        ggc.setEntityLombok(true);
+        ggc.setSwagger(true);
+        ggc.setOverrideEnable(true);
+        gce.setGlobalConfig(ggc);
 
         String[] tables = {"shop_cart", "shop_category", "shop_order", "shop_product", "shop_user"};
         gce.setTables(tables);

@@ -20,7 +20,7 @@ public class DbJoinTableParserModel<T> extends AbstractTableModel<T> {
     /**
      * 关联字段属性
      */
-    private Field field;
+    private final Field field;
     /**
      * 关联表的查询字段
      */
@@ -65,24 +65,12 @@ public class DbJoinTableParserModel<T> extends AbstractTableModel<T> {
         return field;
     }
 
-    public void setField(Field field) {
-        this.field = field;
-    }
-
     public String getJoinName() {
         return joinName;
     }
 
-    public void setJoinName(String joinName) {
-        this.joinName = joinName;
-    }
-
     public String getFieldName() {
         return fieldName;
-    }
-
-    public void setFieldName(String fieldName) {
-        this.fieldName = fieldName;
     }
 
     @Override
@@ -96,7 +84,7 @@ public class DbJoinTableParserModel<T> extends AbstractTableModel<T> {
     }
 
     @Override
-    protected void setValue(Object value) {
+    protected void setValue(T obj, Object value) {
         throw new UnsupportedOperationException();
     }
 

@@ -9,7 +9,7 @@ import java.util.Objects;
  * @author  Xiao-Bai
  * @since  2022/4/19 11:17
  **/
-public class GlobalConfig {
+public class GenarateGlobalConfig {
 
     /**
      * 生成的Java类的作者

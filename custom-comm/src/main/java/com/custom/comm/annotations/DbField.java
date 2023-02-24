@@ -50,7 +50,7 @@ public @interface DbField {
      * <br/> 注意：插入或修改时，只有当参数是实体对象时才会生效
      * <br/> 逻辑删除时也会进行填充(前提是有配置填充)
      */
-    FillStrategy strategy() default FillStrategy.DEFAULT;
+    FillStrategy fillStrategy() default FillStrategy.DEFAULT;
 
 
 }

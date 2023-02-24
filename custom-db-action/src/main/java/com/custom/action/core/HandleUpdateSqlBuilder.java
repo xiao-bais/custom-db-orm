@@ -70,7 +70,7 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
                 Object fillValue = this.findFillValue(field.getFieldName(), field.getType(), FillStrategy.UPDATE);
                 if (Objects.nonNull(fillValue)) {
                     value = fillValue;
-                    field.setValue(fillValue);
+                    field.setValue(currEntity, fillValue);
                 }
             }
             if (Objects.nonNull(value)) {

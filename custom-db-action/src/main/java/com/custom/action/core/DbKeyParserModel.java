@@ -2,19 +2,18 @@ package com.custom.action.core;
 
 import com.custom.action.dbaction.AbstractTableModel;
 import com.custom.action.util.DbUtil;
-import com.custom.comm.exceptions.CustomCheckException;
-import com.custom.comm.utils.Asserts;
-import com.custom.comm.utils.CustomUtil;
-import com.custom.jdbc.configuration.GlobalDataHandler;
-import com.custom.comm.utils.JudgeUtil;
-import com.custom.comm.utils.Constants;
 import com.custom.comm.annotations.DbKey;
 import com.custom.comm.enums.DbType;
 import com.custom.comm.enums.KeyStrategy;
+import com.custom.comm.exceptions.CustomCheckException;
+import com.custom.comm.utils.Asserts;
+import com.custom.comm.utils.Constants;
+import com.custom.comm.utils.CustomUtil;
+import com.custom.comm.utils.JudgeUtil;
+import com.custom.jdbc.configuration.GlobalDataHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
@@ -36,8 +35,6 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
     private final Class<?> type;
     private final String length;
     private final String desc;
-    private Object value;
-
 
     public String getDbKey() {
         return dbKey;
@@ -71,29 +68,16 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
         return field;
     }
 
-    public Object getValue() {
-        if(entity == null) throw new NullPointerException();
-        try {
-            this.value = getFieldValue(entity, key);
-        }catch (InvocationTargetException | IllegalAccessException
-                | NoSuchMethodException | NoSuchFieldException e) {
-            logger.error(e.getMessage(), e);
-            return null;
-        }
-        return value;
-    }
-
     @Override
     public Object getValue(T t) {
         Asserts.npe(t);
         try {
-            this.value = getFieldValue(t, key);
+            return getFieldValue(t, key);
         }catch (InvocationTargetException | IllegalAccessException
                 | NoSuchMethodException | NoSuchFieldException e) {
             logger.error(e.getMessage(), e);
             return null;
         }
-        return value;
     }
 
     /**
@@ -111,12 +95,12 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
                 break;
             case UUID:
                 key = CustomUtil.getUUID();
-                this.setValue(key);
+                this.setValue(currEntity, key);
                 break;
             case INPUT:
-                key = getValue(currEntity);
+                key = this.getValue(currEntity);
                 if(key == null) {
-                    throw new CustomCheckException("The value of the primary key is empty");
+                    throw new CustomCheckException("The value of the primary key cannot be null");
                 }
                 break;
         }
@@ -133,8 +117,9 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
         return DbUtil.sqlSelectWrapper(DbUtil.fullSqlColumn(this.getAlias(), this.dbKey), this.key);
     }
 
-    protected void setValue(Object value) {
-        super.setFieldValue(this.entity, this.field, value);
+    @Override
+    protected void setValue(T obj, Object value) {
+        super.setFieldValue(obj, this.field, value);
     }
 
 

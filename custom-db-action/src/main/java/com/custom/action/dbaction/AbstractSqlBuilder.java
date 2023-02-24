@@ -273,7 +273,7 @@ public abstract class AbstractSqlBuilder<T> {
      * 是否存在自动填充
      */
     protected boolean existFill() {
-        return this.fillHelper == null;
+        return this.fillHelper != null;
     }
 
 
@@ -296,7 +296,7 @@ public abstract class AbstractSqlBuilder<T> {
             return;
         }
         Optional<CustomTableFill> first = tableFillList.stream()
-                .filter(e -> e.getTarget().isAssignableFrom(entityClass))
+                .filter(e -> !e.isGlobalFill() && e.getTarget().isAssignableFrom(entityClass))
                 .findFirst();
         CustomTableFill tableFill = first.orElseGet(() ->
                 tableFillList.stream()

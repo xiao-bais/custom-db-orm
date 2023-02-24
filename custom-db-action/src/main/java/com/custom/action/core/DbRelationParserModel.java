@@ -66,7 +66,7 @@ public class DbRelationParserModel<T> extends AbstractTableModel<T> {
     }
 
     @Override
-    protected void setValue(Object value) {
+    protected void setValue(T obj, Object value) {
         throw new UnsupportedOperationException();
     }
 

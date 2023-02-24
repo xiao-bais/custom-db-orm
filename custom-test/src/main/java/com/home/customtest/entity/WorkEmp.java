@@ -1,5 +1,7 @@
 package com.home.customtest.entity;
 
+import com.home.customtest.fun.MyInf;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,5 +62,15 @@ public class WorkEmp {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    private MyInf myInf;
+
+    public MyInf getMyInf() {
+        return myInf;
+    }
+
+    public void setMyInf(MyInf myInf) {
+        this.myInf = myInf;
     }
 }
