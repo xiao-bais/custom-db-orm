@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -72,7 +73,12 @@ public class ResultSetTypeMappedHandler<T> {
                 if (fieldCache != null) {
                     TypeHandler<?> typeHandler = fieldCache.getTypeHandler();
                     // 映射时，最终的格式或类型转换
-                    Object newValue = typeHandler.getTypeValue(value);
+                    Object newValue;
+                    try {
+                        newValue = typeHandler.getTypeValue(value);
+                    } catch (ClassCastException e) {
+                        throw new ClassCastException(e.getMessage() + " for " + label + " = " + value);
+                    }
                     PropertyDescriptor descriptor = fieldCache.getDescriptor();
                     Method writeMethod = descriptor.getWriteMethod();
                     writeMethod.invoke(instance, newValue);
@@ -200,6 +206,7 @@ public class ResultSetTypeMappedHandler<T> {
         registerType(String.class, new StringTypeHandler());
         registerType(BigDecimal.class, new BigDecimalTypeHandler());
         registerType(Date.class, new DateTypeHandler());
+        registerType(Timestamp.class, new TimestampTypeHandler());
         registerType(Object.class, new UnknownTypeHandler());
     }
 

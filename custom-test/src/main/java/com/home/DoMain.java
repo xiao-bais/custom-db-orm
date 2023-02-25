@@ -8,6 +8,7 @@ import com.custom.comm.utils.StrUtils;
 import com.custom.jdbc.configuration.DbGlobalConfig;
 import com.home.customtest.entity.Student;
 import com.home.customtest.entity.WorkEmp;
+import lombok.val;
 
 import java.util.Locale;
 
@@ -21,14 +22,18 @@ public class DoMain {
 
     public static void main(String[] args) throws Exception {
 
-        JdbcTestBuilder jdbcTestBuilder = JdbcTestBuilder.builder();
-        JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
-        JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
-        MyService helper = new MyServiceImpl();
+//        JdbcTestBuilder jdbcTestBuilder = JdbcTestBuilder.builder();
+//        JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
+//        JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
+//        MyService helper = new MyServiceImpl();
+//
+//
+//
+//        long count = helper.where(e -> e.eq("age", 27)).count();
+//        System.out.println("count = " + count);
 
-
-        long count = helper.where(e -> e.eq("age", 27)).count();
-        System.out.println("count = " + count);
+        int a = 1677338184;
+        Long l = a * 1000L;
 
     }
 
