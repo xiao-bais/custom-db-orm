@@ -98,6 +98,9 @@ public class DoTargetWrapper<T> {
         return tableExecutor.deleteSelective(wrapper) > 0;
     }
 
+    /**
+     * 默认的sql set 设置器
+     */
     public boolean updateSet(Consumer<DefaultUpdateSetSqlSetter<T>> consumer) throws Exception {
         if (wrapper instanceof LambdaConditionWrapper) {
             throw new IllegalArgumentException("当前方法不允许存在lambda表达式的条件构造器，请换成 " + DefaultConditionWrapper.class.getName() + "类型的构造器");
@@ -110,7 +113,10 @@ public class DoTargetWrapper<T> {
         return tableExecutor.updateSelective(updateSet) > 0;
     }
 
-    public boolean updateLambdaSet(Consumer<LambdaUpdateSetSqlSetter<T>> consumer) throws Exception {
+    /**
+     * lambda表达式的sql set 设置器
+     */
+    public boolean updateExSet(Consumer<LambdaUpdateSetSqlSetter<T>> consumer) throws Exception {
         if (wrapper instanceof DefaultConditionWrapper) {
             throw new IllegalArgumentException("当前方法不允许存在default表达式的条件构造器，请换成 " + LambdaConditionWrapper.class.getName() + "类型的构造器");
         }
