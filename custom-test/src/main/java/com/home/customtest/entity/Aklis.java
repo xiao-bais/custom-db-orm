@@ -17,7 +17,7 @@ import java.util.Date;
 @ToString
 @Getter
 @Setter
-@DbTable(table = "aklis")
+@DbTable(value = "aklis")
 public class Aklis {
 
     @DbKey

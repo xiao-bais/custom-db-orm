@@ -2,6 +2,7 @@ package com.custom.jdbc.handler;
 
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.ReflectUtil;
+import com.custom.jdbc.configuration.DbGlobalConfig;
 
 import java.beans.PropertyDescriptor;
 import java.lang.ref.WeakReference;
@@ -172,9 +173,9 @@ public class ResultSetTypeMappedHandler<T> {
     private final Class<T> resClass;
     private final boolean isUnderlineToCamel;
 
-    public ResultSetTypeMappedHandler(Class<T> resClass, boolean isUnderlineToCamel) {
+    public ResultSetTypeMappedHandler(Class<T> resClass, DbGlobalConfig globalConfig) {
         this.resClass = resClass;
-        this.isUnderlineToCamel = isUnderlineToCamel;
+        this.isUnderlineToCamel = globalConfig.getStrategy().isUnderlineToCamel();
     }
 
 

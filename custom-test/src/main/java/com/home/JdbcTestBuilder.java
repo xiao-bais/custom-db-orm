@@ -39,6 +39,7 @@ public class JdbcTestBuilder {
 //        dbCustomStrategy.setNotDeleteLogicValue(0);
 
         globalConfig = new DbGlobalConfig();
+        globalConfig.setTableNamePrefix("gs");
         globalConfig.setStrategy(dbCustomStrategy);
         globalConfig.setSqlInterceptor(null);
 

@@ -18,7 +18,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-@DbTable(table = "task_record", desc = "任务记录表")
+@DbTable(value = "task_record", desc = "任务记录表")
 public class TaskRecordModel extends TaskRecord {
 
     @ApiModelProperty("当前进度（标识）")

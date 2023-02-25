@@ -12,7 +12,7 @@ import java.util.List;
  * @Desc：
  **/
 @Data
-@DbTable(table = "province")
+@DbTable(value = "province")
 public class Province {
 
     @DbKey

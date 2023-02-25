@@ -15,7 +15,7 @@ import java.util.List;
  * @desc:
  */
 @Data
-@DbTable(table = "location")
+@DbTable(value = "location")
 public class Location {
 
     @DbKey

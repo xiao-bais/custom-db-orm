@@ -7,7 +7,7 @@ import com.custom.comm.annotations.DbTable;
  * @since  2022/7/9 13:19
  * @Desc
  */
-@DbTable(table = "optimize_record")
+@DbTable(value = "optimize_record")
 public class OptimizeRecord {
 
 

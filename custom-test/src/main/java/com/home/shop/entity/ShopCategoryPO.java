@@ -15,7 +15,7 @@ import java.util.List;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@DbTable(table = "shop_category")
+@DbTable(value = "shop_category")
 public class ShopCategoryPO extends BaseEntity {
 
     @DbKey

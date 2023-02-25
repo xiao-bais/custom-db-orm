@@ -15,7 +15,7 @@ import java.util.List;
  * @Desc：
  **/
 @Data
-@DbTable(table = "city")
+@DbTable(value = "city")
 public class City {
 
     @DbKey

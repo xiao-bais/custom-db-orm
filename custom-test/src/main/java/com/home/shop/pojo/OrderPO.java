@@ -5,9 +5,8 @@ package com.home.shop.pojo;
  import com.custom.comm.annotations.DbTable;
  import lombok.Data;
  import io.swagger.annotations.ApiModelProperty;
- import com.custom.comm.enums.KeyStrategy;
 
-import java.math.BigDecimal;
+ import java.math.BigDecimal;
 
 /**
  * @author  Xiao-Bai
@@ -15,7 +14,7 @@ import java.math.BigDecimal;
  */
 
 @Data
-@DbTable(table = "shop_order")
+@DbTable(value = "shop_order")
 public class OrderPO {
 
     /**

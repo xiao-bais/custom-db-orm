@@ -1,7 +1,10 @@
 package com.custom.jdbc.interfaces;
 
-import com.custom.jdbc.condition.BaseExecutorBody;
+import com.custom.jdbc.configuration.DbGlobalConfig;
+import com.custom.jdbc.executebody.BaseExecutorBody;
 import com.custom.jdbc.configuration.DbDataSource;
+import com.custom.jdbc.handler.ResultSetTypeMappedHandler;
+import com.custom.jdbc.session.CustomSqlSessionHelper;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -62,5 +65,15 @@ public interface CustomSqlSession {
      * 设置执行体
      */
     void setBody(BaseExecutorBody body);
+
+    /**
+     * 获取SqlSession助手
+     */
+    CustomSqlSessionHelper getHelper();
+
+    /**
+     * 结果集映射处理对象
+     */
+   <T> ResultSetTypeMappedHandler<T> getMappedHandler(Class<T> mappedType);
 
 }

@@ -1,6 +1,8 @@
-package com.custom.jdbc.condition;
+package com.custom.jdbc.executebody;
 
 import com.custom.comm.utils.Asserts;
+import com.custom.jdbc.configuration.DbGlobalConfig;
+import com.custom.jdbc.handler.ResultSetTypeMappedHandler;
 
 import java.util.Objects;
 
@@ -45,6 +47,13 @@ public class BaseExecutorBody {
             return new Object[]{};
         }
         return sqlParams;
+    }
+
+    /**
+     * 创建查询结果集映射处理对象
+     */
+    public <T> ResultSetTypeMappedHandler<T> createRsMappedHandler(Class<T> entityClass, DbGlobalConfig globalConfig) {
+        return new ResultSetTypeMappedHandler<>(entityClass, globalConfig);
     }
 
 }

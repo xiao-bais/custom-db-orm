@@ -14,7 +14,7 @@ import java.util.*;
  * @desc:
  */
 @Data
-@DbTable(table = "dept")
+@DbTable(value = "dept")
 public class Dept {
 
     @DbKey

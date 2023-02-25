@@ -16,9 +16,11 @@ public @interface DbTable {
 
     /**
      * 表名称
-     * @return table
+     * <br/> 当表名未设置时，则按照配置规则自动解析表名
+     * @return value
+     * @see com.custom.comm.enums.TableNameStrategy
      */
-    String table();
+    String value() default "";
 
 
     /**

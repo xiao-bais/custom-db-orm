@@ -6,10 +6,10 @@ import com.custom.comm.utils.ConvertUtil;
 import com.custom.comm.utils.CustomApp;
 import com.custom.comm.utils.ReflectUtil;
 import com.custom.comm.utils.StrUtils;
-import com.custom.jdbc.condition.BaseExecutorBody;
-import com.custom.jdbc.condition.SaveExecutorBody;
-import com.custom.jdbc.condition.SelectExecutorBody;
-import com.custom.jdbc.condition.SelectMapExecutorBody;
+import com.custom.jdbc.executebody.BaseExecutorBody;
+import com.custom.jdbc.executebody.SaveExecutorBody;
+import com.custom.jdbc.executebody.SelectExecutorBody;
+import com.custom.jdbc.executebody.SelectMapExecutorBody;
 import com.custom.jdbc.configuration.CustomConfigHelper;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
@@ -20,6 +20,7 @@ import com.custom.jdbc.dbAdapetr.OracleAdapter;
 import com.custom.jdbc.dbAdapetr.SqlServerAdapter;
 import com.custom.jdbc.interfaces.DatabaseAdapter;
 import com.custom.jdbc.interfaces.TransactionExecutor;
+import com.custom.jdbc.session.CustomSqlSessionHelper;
 import com.custom.jdbc.session.DefaultSqlSession;
 import com.custom.jdbc.utils.DbConnGlobal;
 import com.custom.jdbc.interfaces.CustomSqlSession;
@@ -72,7 +73,7 @@ public class JdbcExecutorFactory {
      */
     private CustomSqlSession createSqlSession(BaseExecutorBody paramInfo) {
         Connection connection = DbConnGlobal.getCurrentConnection(dbDataSource);
-        return new DefaultSqlSession(connection, paramInfo);
+        return new DefaultSqlSession(globalConfig, connection, paramInfo);
     }
 
     public CustomSqlSession createSqlSession() {
@@ -84,7 +85,7 @@ public class JdbcExecutorFactory {
         this.dbDataSource = dbDataSource;
         this.globalConfig = globalConfig;
         this.dbCustomStrategy = globalConfig.getStrategy();
-        this.jdbcExecutor = new DefaultCustomJdbcExecutor(globalConfig);
+        this.jdbcExecutor = new DefaultCustomJdbcExecutor();
 
         if (StrUtils.isBlank(dbDataSource.getDriver())) {
             if (dbDataSource.getDatabaseType() == null) {

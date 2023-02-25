@@ -5,7 +5,7 @@ import com.custom.comm.annotations.DbTable;
 import lombok.Data;
 
 @Data
-@DbTable(table = "hm_erp_order")
+@DbTable(value = "hm_erp_order")
 public class HmErpOrderPO {
     /**
      *

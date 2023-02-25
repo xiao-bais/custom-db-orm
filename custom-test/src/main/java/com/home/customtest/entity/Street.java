@@ -11,7 +11,7 @@ import lombok.Data;
  * @Desc：
  **/
 @Data
-@DbTable(table = "street")
+@DbTable(value = "street")
 public class Street {
 
     @DbKey

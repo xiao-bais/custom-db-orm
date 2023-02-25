@@ -3,7 +3,7 @@ package com.custom.jdbc.dbAdapetr;
 import com.custom.comm.enums.DatabaseDialect;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.Constants;
-import com.custom.jdbc.condition.SelectExecutorBody;
+import com.custom.jdbc.executebody.SelectExecutorBody;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 
 /**

@@ -5,7 +5,6 @@ package com.home.shop.pojo;
  import com.custom.comm.annotations.DbTable;
  import lombok.Data;
  import io.swagger.annotations.ApiModelProperty;
- import com.custom.comm.enums.KeyStrategy;
 
 
 /**
@@ -14,7 +13,7 @@ package com.home.shop.pojo;
  */
 
 @Data
-@DbTable(table = "shop_user")
+@DbTable(value = "shop_user")
 public class UserPO {
 
     /**

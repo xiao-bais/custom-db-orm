@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
  * @since  2021/11/27 15:37
  * @Desc：
  **/
-@DbTable(table = "employee")
+@DbTable(value = "employee")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

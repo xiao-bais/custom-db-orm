@@ -1,6 +1,6 @@
 package com.custom.taskmanager.config;
 
-import com.custom.jdbc.condition.BaseExecutorBody;
+import com.custom.jdbc.executebody.BaseExecutorBody;
 import com.custom.jdbc.executor.CustomSqlInterceptor;
 
 /**

@@ -16,5 +16,7 @@ custom:
       sql-interceptor: com.custom.taskmanager.config.MySqlInterceptor
       strategy:
         underline-to-camel: true
+      table-name-prefix: cm
+      table-name-strategy: default
 
 

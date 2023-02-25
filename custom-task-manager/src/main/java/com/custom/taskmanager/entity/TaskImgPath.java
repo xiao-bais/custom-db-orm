@@ -13,7 +13,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@DbTable(table = "task_img_path", desc = "任务图片表")
+@DbTable(value = "task_img_path", desc = "任务图片表")
 public class TaskImgPath extends BaseEntity {
 
     @DbKey

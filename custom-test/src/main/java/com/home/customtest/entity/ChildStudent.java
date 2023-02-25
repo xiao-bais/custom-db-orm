@@ -13,7 +13,7 @@ import lombok.*;
 @Setter
 @ToString(callSuper = true)
 @DbJoinTable("left join city lo on lo.id = a.area_id")
-@DbTable(table = "student")
+@DbTable(value = "student")
 public class ChildStudent extends Student {
 
 

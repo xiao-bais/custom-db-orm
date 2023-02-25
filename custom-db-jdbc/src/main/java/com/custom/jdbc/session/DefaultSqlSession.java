@@ -1,8 +1,10 @@
 package com.custom.jdbc.session;
 
 import com.custom.jdbc.configuration.DbDataSource;
+import com.custom.jdbc.configuration.DbGlobalConfig;
 import com.custom.jdbc.exceptions.SQLSessionException;
-import com.custom.jdbc.condition.BaseExecutorBody;
+import com.custom.jdbc.executebody.BaseExecutorBody;
+import com.custom.jdbc.handler.ResultSetTypeMappedHandler;
 import com.custom.jdbc.interfaces.CustomSqlSession;
 import com.custom.jdbc.utils.DbConnGlobal;
 
@@ -26,20 +28,21 @@ public class DefaultSqlSession implements CustomSqlSession {
      */
     private BaseExecutorBody executorBody;
 
-    public BaseExecutorBody getExecutorBody() {
-        return executorBody;
-    }
+    /**
+     * 全局配置
+     */
+    private final DbGlobalConfig globalConfig;
 
-    public DefaultSqlSession(Connection currentConn, BaseExecutorBody executorBody) {
+    private final CustomSqlSessionHelper sqlSessionHelper;
+
+    public DefaultSqlSession(DbGlobalConfig globalConfig, Connection currentConn, BaseExecutorBody executorBody) {
         if (currentConn == null) {
             throw new SQLSessionException("No JDBC connection obtained");
         }
+        this.globalConfig = globalConfig;
         this.currentConn = currentConn;
         this.executorBody = executorBody;
-    }
-
-    public DefaultSqlSession(Connection currentConn) {
-        this.currentConn = currentConn;
+        this.sqlSessionHelper = new CustomSqlSessionHelper(globalConfig, this);
     }
 
     @Override
@@ -97,6 +100,16 @@ public class DefaultSqlSession implements CustomSqlSession {
     @Override
     public void setBody(BaseExecutorBody body) {
         this.executorBody = body;
+    }
+
+    @Override
+    public CustomSqlSessionHelper getHelper() {
+        return this.sqlSessionHelper;
+    }
+
+    @Override
+    public <T> ResultSetTypeMappedHandler<T> getMappedHandler(Class<T> mappedType) {
+        return executorBody.createRsMappedHandler(mappedType, globalConfig);
     }
 
     public boolean isAutoCommit() throws SQLException {

@@ -2,9 +2,11 @@ package com.custom.action.core;
 
 import com.custom.action.condition.DefaultColumnParseHandler;
 import com.custom.comm.annotations.*;
+import com.custom.comm.enums.TableNameStrategy;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.*;
 import com.custom.jdbc.configuration.CustomConfigHelper;
+import com.custom.jdbc.configuration.DbGlobalConfig;
 import com.custom.jdbc.utils.DbConnGlobal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +23,7 @@ import java.util.stream.Collectors;
  * @author   Xiao-Bai
  * @since  2021/12/2 14:10
  **/
-public class TableParseModel<T> implements Cloneable{
+public class TableParseModel<T> implements Cloneable {
 
     private static final Logger logger = LoggerFactory.getLogger(TableParseModel.class);
 
@@ -29,27 +31,26 @@ public class TableParseModel<T> implements Cloneable{
      * 实体表的class对象
      */
     private Class<T> entityClass;
-
     /**
      * 表名称
      */
     private String table;
-
     /**
      * 表别名
      */
     private String alias;
-
     /**
      * 表说明
      */
     private String desc;
-
     /**
      * 表与实体对应的字段
      */
     private final List<Field> fields;
-
+    /**
+     * 全局配置
+     */
+    private DbGlobalConfig globalConfig;
     /**
      * 驼峰转下划线
      */
@@ -74,7 +75,6 @@ public class TableParseModel<T> implements Cloneable{
      * 对于{@link DbJoinTables}注解的解析
      */
     private final List<String> joinTableParserModels = new ArrayList<>();
-
     /**
      * 对于java属性字段到表字段的映射关系
      */
@@ -83,22 +83,21 @@ public class TableParseModel<T> implements Cloneable{
      * 对于表字段到java属性字段的映射关系
      */
     private final Map<String, String> columnMapper = new HashMap<>();
-
     /**
      * 一对一字段
      */
     private List<Field> oneToOneFieldList;
-
     /**
      * 一对多字段
      */
     private List<Field> oneToManyFieldList;
-
     /**
      * 全字段解析对象
      */
     private List<ColumnPropertyMap<T>> columnPropertyMaps;
-
+    /**
+     * 属性信息描述集合
+     */
     private List<PropertyDescriptor> propertyList;
 
 
@@ -198,26 +197,47 @@ public class TableParseModel<T> implements Cloneable{
      */
     private void initLocalProperty(Class<T> cls) {
         this.entityClass = cls;
-        DbTable annotation = cls.getAnnotation(DbTable.class);
-        if (Objects.isNull(annotation)) {
+        DbTable dbTable = cls.getAnnotation(DbTable.class);
+        if (Objects.isNull(dbTable)) {
             throw new CustomCheckException(cls.getName() + " 未标注@DbTable注解");
         }
-        if (JudgeUtil.isEmpty(annotation.table())) {
-            throw new CustomCheckException(cls.getName() + " 未指定@DbTable注解上实体映射的表名");
-        }
 
-        this.alias = annotation.alias();
-        this.table = annotation.table();
-        this.desc = annotation.desc();
-        int order = annotation.order();
+        this.table = dbTable.value();
+        this.alias = dbTable.alias();
+        this.desc = dbTable.desc();
+        int order = dbTable.order();
         CustomConfigHelper configHelper = DbConnGlobal.getConfigHelper(order);
         Asserts.notNull(configHelper, JdbcAction.class.getName() +"实例化之前，不允许构造实体解析模板");
 
-        this.underlineToCamel = configHelper.getDbGlobalConfig().getStrategy().isUnderlineToCamel();
+        this.globalConfig = configHelper.getDbGlobalConfig();
+        this.underlineToCamel = this.globalConfig.getStrategy().isUnderlineToCamel();
+
+        // 未填写表名的情况下，由策略生成表名
+        if (StrUtils.isBlank(this.table)) {
+            this.table = this.generateTableName(entityClass.getSimpleName());
+        }
         this.oneToOneFieldList = new ArrayList<>();
         this.oneToManyFieldList = new ArrayList<>();
         this.columnPropertyMaps = new ArrayList<>();
         this.propertyList = new ArrayList<>();
+    }
+
+    /**
+     * 根据类名以及前缀生成表名
+     */
+    private String generateTableName(String name) {
+        TableNameStrategy nameStrategy = globalConfig.getTableNameStrategy();
+        if (nameStrategy == TableNameStrategy.APPEND) {
+            return globalConfig.getTableNamePrefix() + name;
+        }
+        if (nameStrategy == TableNameStrategy.LOWERCASE) {
+            return globalConfig.getTableNamePrefix() + name.toLowerCase(Locale.ROOT);
+        }
+        String prefix = globalConfig.getTableNamePrefix();
+        if (StrUtils.isNotBlank(prefix)) {
+            prefix = globalConfig.getTableNamePrefix() + Constants.UNDERLINE;
+        }
+        return prefix + StrUtils.camelToUnderline(name);
     }
 
     /**

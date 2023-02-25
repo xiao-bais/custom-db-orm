@@ -20,7 +20,7 @@ import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@DbTable(table = "student", desc = "学生信息表")
+@DbTable
 @TableName("student")
 @DbJoinTable("left join province pv on pv.id = a.pro_id")
 public class Student extends ActiveModel<Student, Integer> {

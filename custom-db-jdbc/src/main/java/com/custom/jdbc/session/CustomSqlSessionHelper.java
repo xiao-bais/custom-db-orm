@@ -3,7 +3,7 @@ package com.custom.jdbc.session;
 import com.custom.comm.utils.Asserts;
 import com.custom.comm.utils.CustomApp;
 import com.custom.comm.utils.ReflectUtil;
-import com.custom.jdbc.condition.BaseExecutorBody;
+import com.custom.jdbc.executebody.BaseExecutorBody;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbGlobalConfig;
 import com.custom.jdbc.executor.CustomSqlInterceptor;
@@ -28,6 +28,9 @@ public class CustomSqlSessionHelper {
         this.sqlSession = sqlSession;
     }
 
+    public DbGlobalConfig getGlobalConfig() {
+        return globalConfig;
+    }
 
     /**
      * sql执行前的拦截。可对将要执行的sql以及参数信息进行一定的辅助操作
@@ -60,8 +63,8 @@ public class CustomSqlSessionHelper {
     public PreparedStatement defaultPreparedStatement() throws Exception {
         this.handleInterceptor();
         Connection connection = sqlSession.getConnection();
-        BaseExecutorBody executorModel = sqlSession.getBody();
-        String prepareSql = executorModel.getPrepareSql();
+        BaseExecutorBody executorBody = sqlSession.getBody();
+        String prepareSql = executorBody.getPrepareSql();
         return connection.prepareStatement(prepareSql);
     }
 
@@ -72,8 +75,8 @@ public class CustomSqlSessionHelper {
     public PreparedStatement generateKeysStatement() throws Exception {
         this.handleInterceptor();
         Connection connection = sqlSession.getConnection();
-        BaseExecutorBody executorModel = sqlSession.getBody();
-        String prepareSql = executorModel.getPrepareSql();
+        BaseExecutorBody executorBody = sqlSession.getBody();
+        String prepareSql = executorBody.getPrepareSql();
         return connection.prepareStatement(prepareSql, Statement.RETURN_GENERATED_KEYS);
     }
 
@@ -84,8 +87,8 @@ public class CustomSqlSessionHelper {
     public PreparedStatement resultRowsStatement() throws Exception {
         this.handleInterceptor();
         Connection connection = sqlSession.getConnection();
-        BaseExecutorBody executorModel = sqlSession.getBody();
-        String prepareSql = executorModel.getPrepareSql();
+        BaseExecutorBody executorBody = sqlSession.getBody();
+        String prepareSql = executorBody.getPrepareSql();
         return connection.prepareStatement(prepareSql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
     }
 
