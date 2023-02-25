@@ -48,7 +48,7 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
         if (obj instanceof List) {
             List<T> saveList = (List<T>) obj;
-            StringJoiner insertSqlField = new StringJoiner(Constants.SEPARATOR_COMMA_1);
+            StringJoiner insertSqlField = new StringJoiner(Constants.SEPARATOR_COMMA_2);
 
             Asserts.notEmpty(saveList, "未找到待新增的数据");
 

@@ -13,10 +13,6 @@ import java.util.function.Consumer;
  *
  **/
 public class EmptyConditionWrapper<T> extends ConditionAdapter<T, EmptyConditionWrapper<T>>{
-    @Override
-    public T getThisEntity() {
-        throw new UnsupportedOperationException();
-    }
 
     public EmptyConditionWrapper(Class<T> entityClass) {
         wrapperInitialize(entityClass);

@@ -179,9 +179,4 @@ public class ConditionAdapter<T, Children> extends ConditionAssembly<T, SFunctio
         consumer.accept(sqlFunc);
         return adapter(DbSymbol.ORDER_BY, true, sqlFunc.getColumns());
     }
-
-    @Override
-    public T getThisEntity() {
-        return null;
-    }
 }

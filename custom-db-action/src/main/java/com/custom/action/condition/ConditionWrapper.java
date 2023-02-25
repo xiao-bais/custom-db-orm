@@ -19,7 +19,6 @@ import java.util.stream.Stream;
  * @author   Xiao-Bai
  * @since  2022/3/5 23:07
  */
-@SuppressWarnings("unchecked")
 public abstract class ConditionWrapper<T> implements Serializable {
 
 
@@ -132,10 +131,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
     }
 
     public String getFinalConditional() {
-        if (this.customizeSql != null) {
-            return finalConditional.toString() + this.customizeSql;
-        }
-        return finalConditional.toString();
+        return finalConditional.toString() + getCustomizeSql();
     }
 
     protected StringBuilder getFinalCondition() {
@@ -297,8 +293,6 @@ public abstract class ConditionWrapper<T> implements Serializable {
     protected String parseColumn(SFunction<T, ?> func) {
         return enableAlias ? columnParseHandler.parseToColumn(func) : columnParseHandler.parseToNormalColumn(func);
     }
-
-    public abstract T getThisEntity();
 
     public Boolean getPrimaryTable() {
         return primaryTable;

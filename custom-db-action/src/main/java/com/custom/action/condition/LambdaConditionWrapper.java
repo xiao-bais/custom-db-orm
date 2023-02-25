@@ -210,9 +210,4 @@ public class LambdaConditionWrapper<T> extends ConditionAdapter<T, LambdaConditi
         this.setPrimaryTable(wrapper.getPrimaryTable());
     }
 
-
-    @Override
-    public T getThisEntity() {
-        throw new UnsupportedOperationException();
-    }
 }

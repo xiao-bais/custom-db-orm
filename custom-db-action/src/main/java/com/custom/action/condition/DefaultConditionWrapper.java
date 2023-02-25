@@ -244,12 +244,6 @@ public class DefaultConditionWrapper<T> extends ConditionAssembly<T, String, Def
 
 
     @Override
-    public T getThisEntity() {
-        throw new UnsupportedOperationException();
-    }
-
-
-    @Override
     public DefaultConditionWrapper<T> select(Consumer<SelectFunc<T>> consumer) {
         throw new UnsupportedOperationException();
     }
