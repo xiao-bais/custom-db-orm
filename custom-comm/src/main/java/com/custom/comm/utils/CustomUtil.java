@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.*;
@@ -59,6 +60,7 @@ public class CustomUtil extends StrUtils {
                 || Byte.class.equals(cls)
                 || LocalDate.class.equals(cls)
                 || BigInteger.class.equals(cls)
+                || Time.class.equals(cls)
                 || Timestamp.class.equals(cls)
                 || BigDecimal.class.equals(cls)
                 || Date.class.equals(cls);
