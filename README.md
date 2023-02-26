@@ -13,8 +13,6 @@ custom-springboot-starter
 - 支持可配置的表关联查询以及逻辑删除，```sql```语句打印输出，下划线转驼峰等功能。
 - 该工具已完成```springboot```的自动配置,在```springboot```项目中引入该依赖即可，无需另外配置，轻松便捷。
 
-### 注意
-目前依赖还未部署在maven中央仓库，所以需要手动将该项目打包后，加入本地的maven仓库中方才能使用
 #### 安装依赖
 
 ##### SpringBoot-自动配置
@@ -23,7 +21,7 @@ custom-springboot-starter
          <dependency>
             <groupId>com.xb-custom</groupId>
             <artifactId>custom-springboot-starter</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
 ```
 
@@ -33,7 +31,7 @@ custom-springboot-starter
          <dependency>
             <groupId>com.xb-custom</groupId>
             <artifactId>custom-db-action</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
 ```
 
