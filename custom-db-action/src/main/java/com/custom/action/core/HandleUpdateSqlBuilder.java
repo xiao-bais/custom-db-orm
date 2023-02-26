@@ -4,7 +4,7 @@ import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.util.DbUtil;
 import com.custom.comm.enums.FillStrategy;
 import com.custom.comm.enums.SqlExecTemplate;
-import com.custom.comm.utils.Asserts;
+import com.custom.comm.utils.AssertUtil;
 import com.custom.comm.utils.Constants;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 import org.slf4j.Logger;
@@ -51,7 +51,7 @@ public class HandleUpdateSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
         // 创建需要set的sql字段
         this.createUpdateSetColumn(currEntity, sqlParams, updateSqlColumns);
-        Asserts.notEmpty(updateSqlColumns, "update set column segment cannot be empty");
+        AssertUtil.notEmpty(updateSqlColumns, "update set column segment cannot be empty");
 
         return SqlExecTemplate.format(SqlExecTemplate.UPDATE_DATA, getTable(), getAlias(),
                 updateSqlColumns, Constants.EMPTY);

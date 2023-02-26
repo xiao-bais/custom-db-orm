@@ -2,7 +2,7 @@ package com.custom.action.condition;
 
 import com.custom.action.core.TableSimpleSupport;
 import com.custom.action.interfaces.ColumnParseHandler;
-import com.custom.comm.utils.Asserts;
+import com.custom.comm.utils.AssertUtil;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.Constants;
 
@@ -63,7 +63,7 @@ public abstract class UpdateSetWrapper<T> {
     }
 
     protected void addParams(Object val) {
-        Asserts.notNull(val, "params cannot be empty");
+        AssertUtil.notNull(val, "params cannot be empty");
         CustomUtil.addParams(this.setParams, val);
     }
 

@@ -10,9 +10,8 @@ import com.custom.comm.annotations.DbTable;
 import com.custom.comm.annotations.check.CheckExecute;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.CustomCheckException;
-import com.custom.comm.utils.Asserts;
+import com.custom.comm.utils.AssertUtil;
 import com.custom.comm.utils.JudgeUtil;
-import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.configuration.DbGlobalConfig;
 import com.custom.jdbc.exceptions.SQLSessionException;
@@ -159,10 +158,10 @@ public class JdbcActionProxy implements MethodInterceptor {
                 }
             }catch (ClassCastException e) {
                 Object entity = objects[0];
-                Asserts.notNull(entity, "update entity cannot ba empty");
+                AssertUtil.notNull(entity, "update entity cannot ba empty");
                 ConditionWrapper<?> conditionWrapper = (ConditionWrapper<?>) objects[1];
-                Asserts.notNull(conditionWrapper, "Update condition cannot be empty");
-                Asserts.notEmpty(conditionWrapper.getFinalConditional(), "Update condition cannot be empty");
+                AssertUtil.notNull(conditionWrapper, "Update condition cannot be empty");
+                AssertUtil.notEmpty(conditionWrapper.getFinalConditional(), "Update condition cannot be empty");
             }
             return;
         }

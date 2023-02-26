@@ -1,7 +1,7 @@
 package com.custom.action.condition;
 
 import com.custom.action.util.DbUtil;
-import com.custom.comm.utils.Asserts;
+import com.custom.comm.utils.AssertUtil;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.lambda.SFunction;
@@ -27,9 +27,9 @@ public abstract class AbstractUpdateSetSqlSetter<T, Children> extends UpdateSetW
 
     protected Children addSetSql(boolean condition, String column, Object val) {
         if (condition) {
-            Asserts.notNull(column, "column cannot be null");
+            AssertUtil.notNull(column, "column cannot be null");
             this.addSqlSetter(DbUtil.formatSqlCondition(column));
-            Asserts.illegal(!CustomUtil.isBasicType(val),
+            AssertUtil.illegal(!CustomUtil.isBasicType(val),
                     String.format("Parameter types of type '%s' are not supported", val.getClass()));
             this.addParams(val);
         }
@@ -54,7 +54,7 @@ public abstract class AbstractUpdateSetSqlSetter<T, Children> extends UpdateSetW
             this.addSqlSetter(setSql);
             if (JudgeUtil.isNotEmpty(params)) {
                 for (Object param : params) {
-                    Asserts.illegal(!CustomUtil.isBasicType(param),
+                    AssertUtil.illegal(!CustomUtil.isBasicType(param),
                             String.format("Parameter types of type '%s' are not supported", param.getClass()));
                     this.addParams(param);
                 }

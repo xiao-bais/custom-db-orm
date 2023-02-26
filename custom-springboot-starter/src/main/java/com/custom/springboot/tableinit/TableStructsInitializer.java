@@ -58,7 +58,7 @@ public class TableStructsInitializer {
 
     public TableStructsInitializer(String[] packageScans, JdbcExecutorFactory executorFactory) {
         this.packageScans = packageScans;
-        Asserts.npe(executorFactory);
+        AssertUtil.npe(executorFactory);
         this.executorFactory = executorFactory;
         this.databaseAdapter = executorFactory.getDatabaseAdapter();
         this.addColumnSqlList = new ArrayList<>();

@@ -1,6 +1,6 @@
 package com.custom.comm.readwrite;
 
-import com.custom.comm.utils.Asserts;
+import com.custom.comm.utils.AssertUtil;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.ReflectUtil;
@@ -50,26 +50,26 @@ public class ReadFieldHelper {
 
 
     public ReadFieldHelper field(String field) {
-        Asserts.notNull(field);
+        AssertUtil.notNull(field);
         thisHelper.fieldName = field;
         return thisHelper;
     }
 
     public <T> ReadFieldHelper objType(T objType) {
-        Asserts.notNull(objType);
+        AssertUtil.notNull(objType);
         thisHelper.waitReadEntity = objType;
         return thisHelper;
     }
 
     public <C> ReadFieldHelper convert(Class<C> type) {
-        Asserts.notNull(convertType);
+        AssertUtil.notNull(convertType);
         thisHelper.convertType = type;
         return thisHelper;
     }
 
     public ReadFieldHelper readStart() throws NoSuchFieldException {
-        Asserts.notNull(fieldName);
-        Asserts.notNull(waitReadEntity);
+        AssertUtil.notNull(fieldName);
+        AssertUtil.notNull(waitReadEntity);
         thisHelper.generateValue();
         return thisHelper;
     }
@@ -80,8 +80,8 @@ public class ReadFieldHelper {
     }
 
     private void generateValue() throws NoSuchFieldException {
-        Asserts.notNull(waitReadEntity, "The entity bean cannot be empty");
-        Asserts.notNull(fieldName, "The fieldName bean cannot be empty");
+        AssertUtil.notNull(waitReadEntity, "The entity bean cannot be empty");
+        AssertUtil.notNull(fieldName, "The fieldName bean cannot be empty");
         Map<String, Object> objectMap;
         try {
             if (waitReadEntity instanceof Map) {
@@ -115,9 +115,9 @@ public class ReadFieldHelper {
             return new ArrayList<>();
         }
         Class<?> valueType = this.readValue.getClass();
-        Asserts.illegal(!Collection.class.isAssignableFrom(convertType),
+        AssertUtil.illegal(!Collection.class.isAssignableFrom(convertType),
                 valueType + " cannot be cast to type " + this.convertType);
-        Asserts.illegal(Collection.class.isAssignableFrom(valueType),
+        AssertUtil.illegal(Collection.class.isAssignableFrom(valueType),
                 valueType + " cannot be cast to type " + this.convertType);
 
         return (Collection<R>) this.readValue;
@@ -131,7 +131,7 @@ public class ReadFieldHelper {
         if (readValue == null) {
             return new ArrayList<>();
         }
-        Asserts.notNull(type);
+        AssertUtil.notNull(type);
         thisHelper.convertType = type;
         Collection<R> collection = this.convertCollection();
         return collection.stream()

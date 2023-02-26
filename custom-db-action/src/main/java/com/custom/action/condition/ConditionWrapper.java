@@ -3,7 +3,7 @@ package com.custom.action.condition;
 import com.custom.action.condition.support.TableSupport;
 import com.custom.action.core.TableSimpleSupport;
 import com.custom.action.interfaces.ColumnParseHandler;
-import com.custom.comm.utils.Asserts;
+import com.custom.comm.utils.AssertUtil;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
@@ -11,7 +11,6 @@ import com.custom.comm.utils.lambda.SFunction;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -105,7 +104,7 @@ public abstract class ConditionWrapper<T> implements Serializable {
     }
 
     public ConditionWrapper<T> setEntityClass(Class<T> entityClass) {
-        Asserts.notNull(entityClass, "映射实体Class对象缺失");
+        AssertUtil.notNull(entityClass, "映射实体Class对象缺失");
         this.entityClass = entityClass;
         return this;
     }

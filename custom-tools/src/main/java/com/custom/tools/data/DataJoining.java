@@ -1,6 +1,6 @@
 package com.custom.tools.data;
 
-import com.custom.comm.utils.Asserts;
+import com.custom.comm.utils.AssertUtil;
 import com.custom.comm.utils.ReflectUtil;
 import com.custom.comm.utils.lambda.LambdaUtil;
 import com.custom.comm.utils.lambda.SFunction;
@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -50,7 +49,7 @@ public class DataJoining<T> {
         this.targetClass = targetClass;
         this.primaryList = primaryList;
         this.otherList = otherList;
-        Asserts.notNull(condition, "合并条件不允许为空");
+        AssertUtil.notNull(condition, "合并条件不允许为空");
         this.condition = condition;
         try {
             this.properties = ReflectUtil.getProperties(targetClass);

@@ -186,7 +186,7 @@ public abstract class AbstractSqlBuilder<T> {
      * 多个主键的条件
      */
     public String createKeysCondition(Collection<? extends Serializable> keys) {
-        Asserts.npe(keys);
+        AssertUtil.npe(keys);
         this.checkParams(keys);
         String condition = "";
         DbKeyParserModel<T> keyParserModel = getKeyParserModel();
@@ -211,7 +211,7 @@ public abstract class AbstractSqlBuilder<T> {
      * 一个主键的条件
      */
     public String createKeyCondition(Serializable key) {
-        Asserts.npe(key);
+        AssertUtil.npe(key);
         this.checkParams(Collections.singletonList(key));
         String condition = "";
         DbKeyParserModel<T> keyParserModel = getKeyParserModel();

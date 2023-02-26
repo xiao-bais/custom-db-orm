@@ -1,7 +1,7 @@
 package com.custom.tools.tree;
 
 import com.custom.comm.exceptions.CustomCheckException;
-import com.custom.comm.utils.Asserts;
+import com.custom.comm.utils.AssertUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -138,7 +138,7 @@ public class CmTreeNode<T> {
 
     private T thisTopObj() {
         T topObj = topNode.get();
-        Asserts.notNull(topObj, "top node cannot be null");
+        AssertUtil.notNull(topObj, "top node cannot be null");
         return topObj;
     }
 

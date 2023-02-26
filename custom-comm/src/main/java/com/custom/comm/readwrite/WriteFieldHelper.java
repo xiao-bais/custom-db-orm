@@ -3,7 +3,7 @@ package com.custom.comm.readwrite;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.custom.comm.exceptions.CustomCheckException;
-import com.custom.comm.utils.Asserts;
+import com.custom.comm.utils.AssertUtil;
 import com.custom.comm.utils.ConvertUtil;
 import com.custom.comm.utils.CustomUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -66,7 +66,7 @@ public class WriteFieldHelper {
      * 要写入的目标实体对象
      */
     public <T> WriteFieldHelper objType(T type) {
-        Asserts.notNull(type, "The entity bean cannot be empty");
+        AssertUtil.notNull(type, "The entity bean cannot be empty");
         thisHelper.waitWriteEntity = type;
         return thisHelper;
     }
@@ -96,8 +96,8 @@ public class WriteFieldHelper {
     }
 
     public boolean writeStart() throws NoSuchFieldException {
-        Asserts.notNull(thisHelper.fieldName);
-        Asserts.notNull(thisHelper.waitWriteEntity);
+        AssertUtil.notNull(thisHelper.fieldName);
+        AssertUtil.notNull(thisHelper.waitWriteEntity);
         boolean success = thisHelper.writeValue();
         thisHelper.clear();
         return success;

@@ -3,7 +3,7 @@ package com.custom.action.core;
 import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.comm.enums.FillStrategy;
 import com.custom.comm.enums.SqlExecTemplate;
-import com.custom.comm.utils.Asserts;
+import com.custom.comm.utils.AssertUtil;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.utils.ConvertUtil;
 import com.custom.comm.utils.RexUtil;
@@ -50,7 +50,7 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
             List<T> saveList = (List<T>) obj;
             StringJoiner insertSqlField = new StringJoiner(Constants.SEPARATOR_COMMA_2);
 
-            Asserts.notEmpty(saveList, "未找到待新增的数据");
+            AssertUtil.notEmpty(saveList, "未找到待新增的数据");
 
             if (saveList.size() == 1) {
                 this.extractParams(saveList.get(0), sqlParams);
@@ -138,7 +138,7 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
      * @param currEntity
      */
     private void extractParams(T currEntity, List<Object> sqlParams) {
-        Asserts.npe(currEntity);
+        AssertUtil.npe(currEntity);
         DbKeyParserModel<T> keyParserModel = getKeyParserModel();
 
         // 读取

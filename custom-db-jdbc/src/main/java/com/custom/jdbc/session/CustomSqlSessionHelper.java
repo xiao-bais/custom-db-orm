@@ -1,6 +1,6 @@
 package com.custom.jdbc.session;
 
-import com.custom.comm.utils.Asserts;
+import com.custom.comm.utils.AssertUtil;
 import com.custom.comm.utils.CustomApp;
 import com.custom.comm.utils.ReflectUtil;
 import com.custom.jdbc.executebody.BaseExecutorBody;
@@ -52,7 +52,7 @@ public class CustomSqlSessionHelper {
             sqlInterceptor = ReflectUtil.getInstance(sqlInterceptorClass);
         }
         BaseExecutorBody executorBody = sqlInterceptor.handle(sqlSession.getBody());
-        Asserts.notNull(executorBody, "The execution body is missing. Please check whether the sql interceptor returns.");
+        AssertUtil.notNull(executorBody, "The execution body is missing. Please check whether the sql interceptor returns.");
         this.sqlSession.setBody(executorBody);
     }
 

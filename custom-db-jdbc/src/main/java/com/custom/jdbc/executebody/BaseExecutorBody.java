@@ -1,6 +1,6 @@
 package com.custom.jdbc.executebody;
 
-import com.custom.comm.utils.Asserts;
+import com.custom.comm.utils.AssertUtil;
 import com.custom.jdbc.configuration.DbGlobalConfig;
 import com.custom.jdbc.handler.ResultSetTypeMappedHandler;
 
@@ -28,7 +28,7 @@ public class BaseExecutorBody {
     private final Object[] sqlParams;
 
     public BaseExecutorBody(String prepareSql, boolean sqlPrintSupport, Object[] sqlParams) {
-        Asserts.notEmpty(prepareSql, "The Sql to be Not Empty");
+        AssertUtil.notEmpty(prepareSql, "The Sql to be Not Empty");
         this.prepareSql = prepareSql;
         this.sqlPrintSupport = sqlPrintSupport;
         this.sqlParams = sqlParams;

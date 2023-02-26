@@ -1,5 +1,6 @@
 package com.home;
 
+import com.custom.action.condition.Conditions;
 import com.custom.action.core.JdbcDao;
 import com.custom.action.core.JdbcOpDao;
 import com.custom.comm.enums.TableNameStrategy;
@@ -22,18 +23,18 @@ public class DoMain {
 
     public static void main(String[] args) throws Exception {
 
-//        JdbcTestBuilder jdbcTestBuilder = JdbcTestBuilder.builder();
-//        JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
-//        JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
-//        MyService helper = new MyServiceImpl();
-//
-//
-//
+        JdbcTestBuilder jdbcTestBuilder = JdbcTestBuilder.builder();
+        JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
+        JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
+        MyService helper = new MyServiceImpl();
+
+        Student student = jdbcDao.selectOne(Conditions.lambdaQuery(Student.class).lt(Student::getAge, 20));
+        System.out.println("student = " + student);
+
+
 //        long count = helper.where(e -> e.eq("age", 27)).count();
 //        System.out.println("count = " + count);
 
-        int a = 1677338184;
-        Long l = a * 1000L;
 
     }
 

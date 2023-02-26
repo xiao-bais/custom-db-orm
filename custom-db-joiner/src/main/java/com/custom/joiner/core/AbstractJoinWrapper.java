@@ -4,10 +4,8 @@ import com.custom.action.condition.DefaultColumnParseHandler;
 import com.custom.action.condition.support.TableSupport;
 import com.custom.action.core.TableSimpleSupport;
 import com.custom.action.interfaces.ColumnParseHandler;
-import com.custom.action.core.TableInfoCache;
-import com.custom.action.core.TableParseModel;
 import com.custom.comm.exceptions.CustomCheckException;
-import com.custom.comm.utils.Asserts;
+import com.custom.comm.utils.AssertUtil;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.enums.DbJoinStyle;
 import com.custom.joiner.core.condition.LambdaJoinConditionWrapper;
@@ -54,12 +52,12 @@ public class AbstractJoinWrapper<T> extends LambdaJoinConditionWrapper<T> {
     }
 
     protected <R> LambdaJoinWrapper<T> addJoinTable(DbJoinStyle joinStyle, AbstractJoinConditional<R> joinConditional) {
-        Asserts.unSupportOp(joinConditional.getJoinClass().equals(thisClass),
+        AssertUtil.unSupportOp(joinConditional.getJoinClass().equals(thisClass),
                 String.format("暂不支持自关联或者一张表关联多次: [%s]", joinConditional.getJoinClass().getName()));
 
         Map<Class<?>, Long> joinClassMap = this.joinTableList.stream().filter(op -> JudgeUtil.isNotEmpty(op.getJoinTableAlias()))
                 .collect(Collectors.groupingBy(AbstractJoinConditional::getJoinClass, Collectors.counting()));
-        joinClassMap.forEach((joinClass, count) -> Asserts.unSupportOp(count > 1, String.format("不支持自关联或者一张表关联多次: [%s]", joinClass.getName())));
+        joinClassMap.forEach((joinClass, count) -> AssertUtil.unSupportOp(count > 1, String.format("不支持自关联或者一张表关联多次: [%s]", joinClass.getName())));
 
         this.aliasDefine(joinStyle, joinConditional);
         this.aliasList.add(joinConditional.getJoinTableAlias());

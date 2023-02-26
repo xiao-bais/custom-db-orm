@@ -1,6 +1,6 @@
 package com.custom.jdbc.executor;
 
-import com.custom.comm.utils.Asserts;
+import com.custom.comm.utils.AssertUtil;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.ReflectUtil;
@@ -349,7 +349,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
         if (result.size() == 0) {
             return null;
         }
-        Asserts.unSupportOp(result.size() > 1,
+        AssertUtil.cce(result.size() == 1,
                 String.format("只查一条，但查询到%s条结果", result.size()));
         return result.get(0);
     }

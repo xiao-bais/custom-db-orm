@@ -50,7 +50,7 @@ public abstract class AbstractTypeHandler<T> implements TypeHandler<T>, NonNulla
 
             }else throw new NumberFormatException("Cannot convert to numeric type");
         }
-        Asserts.allowed(val instanceof Number, "Cannot convert to numeric type");
+        AssertUtil.allowed(val instanceof Number, "Cannot convert to numeric type");
         return (Number) val;
     }
 

@@ -97,7 +97,7 @@ public class ReflectUtil {
      * 获取该类所有属性描述对象
      */
     public static <T> List<PropertyDescriptor> getProperties(Class<T> cls) throws IntrospectionException {
-        Asserts.npe(cls);
+        AssertUtil.npe(cls);
         BeanInfo beanInfo = Introspector.getBeanInfo(cls);
         PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
         return Arrays.stream(propertyDescriptors).filter(x -> !x.getName().equals("class")).collect(Collectors.toList());
@@ -142,7 +142,7 @@ public class ReflectUtil {
      */
     public static <T> Method getPropertyMethod(Class<T> t, String methodName) throws IntrospectionException {
 
-        Asserts.npe(methodName);
+        AssertUtil.npe(methodName);
         List<PropertyDescriptor> propertyDescriptors = getProperties(t);
         List<Method> methodList = new ArrayList<>();
         propertyDescriptors.forEach(op -> {

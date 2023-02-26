@@ -1,28 +1,21 @@
 package com.custom.action.condition;
 
 import com.custom.action.condition.support.TableSupport;
-import com.custom.action.core.DbKeyParserModel;
 import com.custom.action.interfaces.ColumnParseHandler;
 import com.custom.action.core.ColumnPropertyMap;
 import com.custom.action.core.TableInfoCache;
 import com.custom.action.core.TableParseModel;
-import com.custom.comm.utils.ReflectUtil;
 import com.custom.comm.utils.lambda.LambdaUtil;
-import com.custom.comm.utils.Asserts;
-import com.custom.comm.utils.JudgeUtil;
-import com.custom.comm.utils.Constants;
+import com.custom.comm.utils.AssertUtil;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.lambda.SFunction;
 import lombok.extern.slf4j.Slf4j;
 
-import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.invoke.SerializedLambda;
-import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 /**
  * 解析Function函数中字段名称
@@ -82,7 +75,7 @@ public class DefaultColumnParseHandler<T> implements ColumnParseHandler<T> {
      */
     @Override
     public String parseToField(SFunction<T, ?> func) {
-        Asserts.notNull(func);
+        AssertUtil.notNull(func);
         SerializedLambda serializedLambda = LambdaUtil.resolve(func);
         String implMethodName = serializedLambda.getImplMethodName();
 

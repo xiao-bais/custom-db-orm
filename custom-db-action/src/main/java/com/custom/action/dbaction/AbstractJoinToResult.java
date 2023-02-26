@@ -5,7 +5,7 @@ import com.custom.action.core.TableInfoCache;
 import com.custom.action.core.TableParseModel;
 import com.custom.action.exceptions.QueryMultiException;
 import com.custom.comm.enums.MultiStrategy;
-import com.custom.comm.utils.Asserts;
+import com.custom.comm.utils.AssertUtil;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.annotations.DbKey;
 import com.custom.comm.exceptions.CustomCheckException;
@@ -80,7 +80,7 @@ public abstract class AbstractJoinToResult {
         // this ....
         if (JudgeUtil.isBlank(thisField)) {
             DbKeyParserModel<?> keyParserModel = thisTableModel.getKeyParserModel();
-            Asserts.notNull(keyParserModel, "The defined primary key was not found on " + thisClass);
+            AssertUtil.notNull(keyParserModel, "The defined primary key was not found on " + thisClass);
             this.thisField = keyParserModel.getKey();
             this.thisColumn = keyParserModel.getDbKey();
 
@@ -97,7 +97,7 @@ public abstract class AbstractJoinToResult {
         this.joinAlias = targetTableModel.getAlias();
         if (JudgeUtil.isBlank(this.joinField)) {
             DbKeyParserModel<?> keyParserModel = targetTableModel.getKeyParserModel();
-            Asserts.notNull(keyParserModel, "The defined primary key was not found on " + this.joinTarget);
+            AssertUtil.notNull(keyParserModel, "The defined primary key was not found on " + this.joinTarget);
             this.joinField = keyParserModel.getKey();
             this.joinColumn = keyParserModel.getDbKey();
         }else {

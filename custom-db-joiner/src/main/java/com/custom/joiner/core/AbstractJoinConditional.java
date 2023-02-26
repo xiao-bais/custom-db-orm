@@ -118,7 +118,7 @@ public abstract class AbstractJoinConditional<T> {
      * 解析连接条件
      */
     protected <A> void resloveColumn(SFunction<T, ?> joinColumn, SFunction<A, ?> aColumn) {
-        Asserts.notNull(joinColumn);
+        AssertUtil.notNull(joinColumn);
         String joinMethodName = LambdaUtil.getImplMethodName(joinColumn);
         ColumnPropertyMap<T> tColumnPropertyMap = (ColumnPropertyMap<T>) ColumnPropertyMap.parse2Map(this.joinClass, joinMethodName);
 
@@ -126,7 +126,7 @@ public abstract class AbstractJoinConditional<T> {
             this.joinPropertyMap = tColumnPropertyMap;
         }
 
-        Asserts.notNull(aColumn);
+        AssertUtil.notNull(aColumn);
         Class<A> implClass = LambdaUtil.getImplClass(aColumn);
         String aMethodName = LambdaUtil.getImplMethodName(aColumn);
         ColumnPropertyMap<?> aColumnPropertyMap = ColumnPropertyMap.parse2Map(implClass, aMethodName);
@@ -223,7 +223,7 @@ public abstract class AbstractJoinConditional<T> {
         // 设定别名
         switch (aliasStrategy) {
             case INPUT:
-                Asserts.notEmpty(this.joinTableAlias,
+                AssertUtil.notEmpty(this.joinTableAlias,
                         "未定义表别名: "  + this.joinClass.getName());
                 break;
             case UNIQUE_ID:

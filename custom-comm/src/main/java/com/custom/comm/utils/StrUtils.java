@@ -31,7 +31,7 @@ public class StrUtils {
      * 字符串倒转
      */
     public static String reverse(String str) {
-        Asserts.notEmpty(str);
+        AssertUtil.notEmpty(str);
         char[] chars = str.toCharArray();
         int n = chars.length - 1;
         for (int i = 0; i < chars.length / 2; i++) {

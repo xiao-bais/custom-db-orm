@@ -1,7 +1,7 @@
 package com.custom.jdbc.dbAdapetr;
 
 import com.custom.comm.enums.DatabaseDialect;
-import com.custom.comm.utils.Asserts;
+import com.custom.comm.utils.AssertUtil;
 import com.custom.comm.utils.Constants;
 import com.custom.jdbc.executebody.SelectExecutorBody;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
@@ -57,7 +57,7 @@ public class Mysql8Adapter extends AbstractDbAdapter {
 
     @Override
     public boolean existTable(String table) {
-        Asserts.npe(table);
+        AssertUtil.npe(table);
         String targetSql = String.format(TABLE_EXISTS_SQL, table, this.databaseName());
         SelectExecutorBody<Long> selectExecutorBody = new SelectExecutorBody<>(Long.class, targetSql, false);
         return queryBoolean(targetSql);
@@ -66,8 +66,8 @@ public class Mysql8Adapter extends AbstractDbAdapter {
 
     @Override
     public boolean existColumn(String table, String column) {
-        Asserts.npe(table);
-        Asserts.npe(column);
+        AssertUtil.npe(table);
+        AssertUtil.npe(column);
         String targetSql = String.format(COLUMN_EXIST_SQL, this.databaseName(), table, column);
         return queryBoolean(targetSql);
     }

@@ -12,6 +12,7 @@ import com.custom.jdbc.configuration.DbGlobalConfig;
 import java.io.Serializable;
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * JdbcDao的接口代理
@@ -29,6 +30,7 @@ public class JdbcDaoProxy implements InvocationHandler, Serializable {
     private final SqlExecutor sqlExecutor;
     private final static List<Method> CUSTOMIZE_METHOD_CACHES;
     private final static Map<Class<?>, Class<?>> PRIMITIVE_MAPPED;
+    private final static Map<Method, Method> TARGET_METHOD_CACHE;
 
     public JdbcDaoProxy(DbDataSource dbDataSource, DbGlobalConfig globalConfig) {
         sqlExecutor = new JdbcActionProxy(new JdbcAction(), dbDataSource, globalConfig).createProxy();
@@ -38,6 +40,7 @@ public class JdbcDaoProxy implements InvocationHandler, Serializable {
         // todo 给一个缓存，无需每次都要重新匹配
         Method[] declaredMethods = JdbcAction.class.getDeclaredMethods();
         CUSTOMIZE_METHOD_CACHES = new ArrayList<>((Arrays.asList(declaredMethods)));
+        TARGET_METHOD_CACHE = new ConcurrentHashMap<>();
         PRIMITIVE_MAPPED = new HashMap<>(8);
         PRIMITIVE_MAPPED.put(Integer.TYPE, Integer.class);
         PRIMITIVE_MAPPED.put(Long.TYPE, Long.class);
@@ -58,8 +61,12 @@ public class JdbcDaoProxy implements InvocationHandler, Serializable {
         if (Object.class.equals(method.getDeclaringClass())) {
             return method.invoke(this, args);
         }
+        Method targetExecMethod = TARGET_METHOD_CACHE.get(method);
+        if (targetExecMethod != null) {
+            return targetExecMethod.invoke(sqlExecutor, args);
+        }
         String methodName = method.getName();
-        Method typeCache = CUSTOMIZE_METHOD_CACHES.stream()
+        targetExecMethod = CUSTOMIZE_METHOD_CACHES.stream()
                 .filter(op -> op.getName().equals(methodName))
                 .filter(op -> {
                     Class<?>[] parameterTypes = op.getParameterTypes();
@@ -97,12 +104,13 @@ public class JdbcDaoProxy implements InvocationHandler, Serializable {
                         new CustomCheckException("Unknown execution method : " + methodName)
                 );
         try {
-            return typeCache.invoke(sqlExecutor, args);
-        }catch (InvocationTargetException e) {
+            TARGET_METHOD_CACHE.put(method, targetExecMethod);
+            return targetExecMethod.invoke(sqlExecutor, args);
+        } catch (InvocationTargetException e) {
             Throwable te = e.getTargetException();
             if (te instanceof InvocationTargetException) {
                 throw e.getTargetException();
-            }else if (te instanceof UndeclaredThrowableException) {
+            } else if (te instanceof UndeclaredThrowableException) {
                 Throwable undeclaredThrowable = ((UndeclaredThrowableException) te).getUndeclaredThrowable();
                 throw undeclaredThrowable.getCause();
             }

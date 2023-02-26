@@ -5,7 +5,7 @@ import com.custom.action.core.JdbcOpDao;
 import com.custom.action.service.DbServiceImplHelper;
 import com.custom.comm.date.DateTimeUtils;
 import com.custom.comm.page.DbPageRows;
-import com.custom.comm.utils.Asserts;
+import com.custom.comm.utils.AssertUtil;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.StrUtils;
@@ -180,7 +180,7 @@ public class TaskRecordServiceImpl extends DbServiceImplHelper<TaskRecord> imple
         }
 
         TaskProgressEnum taskProgressEnum = TaskProgressEnum.valueOf(taskRecordModel.getCurrentProgress());
-        Asserts.notNull(taskProgressEnum, "未知的进度");
+        AssertUtil.notNull(taskProgressEnum, "未知的进度");
         if (TaskProgressEnum.isNotAllowEdit(taskProgressEnum)) {
             throw new BException(String.format("该任务当前进度为[%s], 不允许删除", taskProgressEnum.getName()));
         }

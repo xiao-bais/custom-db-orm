@@ -1,6 +1,6 @@
 package com.custom.action.dbaction;
 
-import com.custom.comm.utils.Asserts;
+import com.custom.comm.utils.AssertUtil;
 import com.custom.comm.utils.ReflectUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +57,7 @@ public abstract class AbstractTableModel<T> {
      * 将值设置进实体的指定属性中
      */
     protected void setFieldValue(T entity, Field field, Object value) {
-        Asserts.npe(entity);
+        AssertUtil.npe(entity);
         try {
             ReflectUtil.writeFieldValue(value, entity, field.getName(), field.getType());
         }catch (NoSuchFieldException e) {

@@ -6,7 +6,7 @@ import com.aliyun.oss.common.utils.BinaryUtil;
 import com.aliyun.oss.model.GetObjectRequest;
 import com.aliyun.oss.model.MatchMode;
 import com.aliyun.oss.model.PolicyConditions;
-import com.custom.comm.utils.Asserts;
+import com.custom.comm.utils.AssertUtil;
 import com.custom.comm.utils.back.BackResult;
 
 import java.io.File;
@@ -35,7 +35,7 @@ public class CustomOSSClient {
      * 上传
      */
     public BackResult<String> upload(String key, File file) {
-        Asserts.notNull(file);
+        AssertUtil.notNull(file);
         BackResult<String> result = new BackResult<>();
         OSS ossClient = new OSSClientBuilder().build(this.ossKey.getEndpoint(), this.ossKey.getAccessKeyId(), this.ossKey.getAccessKeySecret());
         try {
@@ -84,7 +84,7 @@ public class CustomOSSClient {
      */
     public OssPolicyResult getPolicySign(String fileName) {
 
-        Asserts.notEmpty(fileName);
+        AssertUtil.notEmpty(fileName);
         OssPolicyResult result = new OssPolicyResult();
 
         // https 前缀

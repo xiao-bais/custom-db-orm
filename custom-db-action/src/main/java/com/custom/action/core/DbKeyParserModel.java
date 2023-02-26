@@ -6,7 +6,7 @@ import com.custom.comm.annotations.DbKey;
 import com.custom.comm.enums.DbType;
 import com.custom.comm.enums.KeyStrategy;
 import com.custom.comm.exceptions.CustomCheckException;
-import com.custom.comm.utils.Asserts;
+import com.custom.comm.utils.AssertUtil;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
@@ -70,7 +70,7 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
 
     @Override
     public Object getValue(T t) {
-        Asserts.npe(t);
+        AssertUtil.npe(t);
         try {
             return getFieldValue(t, key);
         }catch (InvocationTargetException | IllegalAccessException

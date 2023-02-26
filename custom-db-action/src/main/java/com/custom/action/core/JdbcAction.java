@@ -11,7 +11,7 @@ import com.custom.comm.annotations.check.CheckExecute;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.enums.SqlExecTemplate;
 import com.custom.comm.page.DbPageRows;
-import com.custom.comm.utils.Asserts;
+import com.custom.comm.utils.AssertUtil;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.jdbc.configuration.DbDataSource;
@@ -133,7 +133,7 @@ public class JdbcAction implements SqlExecutor {
     @Override
     @CheckExecute(target = ExecuteMethod.SELECT)
     public <T> DbPageRows<T> selectPage(T entity, DbPageRows<T> pageRows) throws Exception {
-        Asserts.npe(pageRows, "Missing paging parameter");
+        AssertUtil.npe(pageRows, "Missing paging parameter");
         DefaultConditionWrapper<T> conditionWrapper = Conditions.allEqQuery(entity);
         conditionWrapper.pageParams(pageRows.getPageIndex(), pageRows.getPageSize());
         return selectPage(conditionWrapper);
@@ -322,7 +322,7 @@ public class JdbcAction implements SqlExecutor {
     @Override
     @CheckExecute(target = ExecuteMethod.INSERT)
     public <T> int insertBatch(List<T> ts) throws Exception {
-        Asserts.notEmpty(ts, "insert data cannot be empty ");
+        AssertUtil.notEmpty(ts, "insert data cannot be empty ");
         Class<T> targetClass = (Class<T>) ts.get(0).getClass();
         AbstractSqlBuilder<T> sqlBuilder = TableInfoCache.getInsertSqlBuilderCache(targetClass, executorFactory);
 

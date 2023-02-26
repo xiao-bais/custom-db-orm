@@ -207,7 +207,7 @@ public class TableParseModel<T> implements Cloneable {
         this.desc = dbTable.desc();
         int order = dbTable.order();
         CustomConfigHelper configHelper = DbConnGlobal.getConfigHelper(order);
-        Asserts.notNull(configHelper, JdbcAction.class.getName() +"实例化之前，不允许构造实体解析模板");
+        AssertUtil.notNull(configHelper, JdbcAction.class.getName() +"实例化之前，不允许构造实体解析模板");
 
         this.globalConfig = configHelper.getDbGlobalConfig();
         this.underlineToCamel = this.globalConfig.getStrategy().isUnderlineToCamel();
@@ -518,9 +518,7 @@ public class TableParseModel<T> implements Cloneable {
     @SuppressWarnings("unchecked")
     public TableParseModel<T> clone() {
         try {
-            TableParseModel<T> clone = (TableParseModel<T>) super.clone();
-            // TODO: copy mutable state here, so the clone can't change the internals of the original
-            return clone;
+            return (TableParseModel<T>) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }

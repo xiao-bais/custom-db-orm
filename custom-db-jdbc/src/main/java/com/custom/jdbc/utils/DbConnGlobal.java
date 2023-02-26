@@ -1,7 +1,7 @@
 package com.custom.jdbc.utils;
 
 import com.custom.comm.exceptions.CustomCheckException;
-import com.custom.comm.utils.Asserts;
+import com.custom.comm.utils.AssertUtil;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.utils.StrUtils;
 import com.custom.jdbc.configuration.DbConnection;
@@ -75,7 +75,7 @@ public class DbConnGlobal {
         String key = getDataConfigKey(dbDataSource);
         CustomConfigHelper configHelper = (CustomConfigHelper) GlobalDataHandler.readGlobalObject(key);
 
-        Asserts.notNull(configHelper, "未找到当前数据源相关信息");
+        AssertUtil.notNull(configHelper, "未找到当前数据源相关信息");
 
         String databaseName;
         if (StrUtils.isNotBlank(dbDataSource.getDatabase())) {

@@ -1,6 +1,6 @@
 package com.custom.jdbc.configuration;
 
-import com.custom.comm.utils.Asserts;
+import com.custom.comm.utils.AssertUtil;
 import com.custom.comm.utils.RexUtil;
 import com.custom.comm.utils.Constants;
 import org.slf4j.Logger;
@@ -48,7 +48,7 @@ public class GlobalDataHandler {
      * 该字段是否是sql关键字
      */
     public static boolean hasSqlKeyword(String column) {
-        Asserts.notEmpty(column);
+        AssertUtil.notEmpty(column);
         if (RexUtil.hasRegex(RexUtil.back_quotes, column)) {
             return false;
         }
