@@ -1,7 +1,7 @@
 package com.custom.jdbc.configuration;
 
 import com.custom.comm.enums.TableNameStrategy;
-import com.custom.jdbc.executor.CustomSqlInterceptor;
+import com.custom.jdbc.executor.CustomSqlExecuteBefore;
 import com.custom.jdbc.executor.CustomSqlQueryAfter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -34,7 +34,7 @@ public class DbGlobalConfig {
     /**
      * sql执行前的拦截处理类，若实现类加入spring容器则无需再在此配置，两者选其一即可
      */
-    private Class<? extends CustomSqlInterceptor> sqlInterceptor;
+    private Class<? extends CustomSqlExecuteBefore> sqlInterceptor;
 
     /**
      * 自定义的策略配置
@@ -66,11 +66,11 @@ public class DbGlobalConfig {
         this.sqlQueryAfter = sqlQueryAfter;
     }
 
-    public Class<? extends CustomSqlInterceptor> getSqlInterceptor() {
+    public Class<? extends CustomSqlExecuteBefore> getSqlInterceptor() {
         return sqlInterceptor;
     }
 
-    public void setSqlInterceptor(Class<? extends CustomSqlInterceptor> sqlInterceptor) {
+    public void setSqlInterceptor(Class<? extends CustomSqlExecuteBefore> sqlInterceptor) {
         this.sqlInterceptor = sqlInterceptor;
     }
 

@@ -38,7 +38,6 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
         List<T> list = new ArrayList<>();
         SelectExecutorBody<T> executorBody = (SelectExecutorBody<T>) sqlSession.getBody();
         CustomSqlSessionHelper sessionHelper = sqlSession.getHelper();
-        DbCustomStrategy strategy = sessionHelper.getGlobalConfig().getStrategy();
         Class<T> mappedType = executorBody.getMappedType();
         ResultSetTypeMappedHandler<T> typeMappedHandler = sqlSession.getMappedHandler(executorBody.getMappedType());
 
@@ -61,9 +60,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
                 list.add(t);
             }
         } catch (SQLException e) {
-            SqlOutPrintBuilder
-                    .build(executorBody.getPrepareSql(), executorBody.getSqlParams(), strategy.isSqlOutPrintExecute())
-                    .sqlErrPrint();
+            sessionHelper.sqlErrorOutPrinting();
             throw e;
         } finally {
             sessionHelper.closeResources(statement, resultSet);
@@ -89,7 +86,6 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
         SelectExecutorBody<T> executorBody = (SelectExecutorBody<T>) sqlSession.getBody();
         CustomSqlSessionHelper sessionHelper = sqlSession.getHelper();
         Class<T> mappedType = executorBody.getMappedType();
-        DbCustomStrategy strategy = sessionHelper.getGlobalConfig().getStrategy();
         ResultSetTypeMappedHandler<T> typeMappedHandler = sqlSession.getMappedHandler(mappedType);
 
         List<T> list = new ArrayList<>();
@@ -110,9 +106,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
                 throw e;
             }
         } catch (SQLException e) {
-            SqlOutPrintBuilder
-                    .build(executorBody.getPrepareSql(), executorBody.getSqlParams(), strategy.isSqlOutPrintExecute())
-                    .sqlErrPrint();
+            sessionHelper.sqlErrorOutPrinting();
             throw e;
         } finally {
             sessionHelper.closeResources(statement, resultSet);
@@ -133,7 +127,6 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
         List<Map<String, V>> list = new ArrayList<>();
         SelectExecutorBody<V> executorBody = (SelectExecutorBody<V>) sqlSession.getBody();
         CustomSqlSessionHelper sessionHelper = sqlSession.getHelper();
-        DbCustomStrategy strategy = sessionHelper.getGlobalConfig().getStrategy();
         ResultSetTypeMappedHandler<V> typeMappedHandler = sqlSession.getMappedHandler(executorBody.getMappedType());
 
         PreparedStatement statement = null;
@@ -151,9 +144,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
                 list.add(map);
             }
         } catch (SQLException e) {
-            SqlOutPrintBuilder
-                    .build(executorBody.getPrepareSql(), executorBody.getSqlParams(), strategy.isSqlOutPrintExecute())
-                    .sqlErrPrint();
+            sessionHelper.sqlErrorOutPrinting();
             throw e;
         } finally {
             sessionHelper.closeResources(statement, resultSet);
@@ -175,7 +166,6 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
 
         SelectMapExecutorBody<K, V> executorBody = (SelectMapExecutorBody<K, V>) sqlSession.getBody();
         CustomSqlSessionHelper sessionHelper = sqlSession.getHelper();
-        DbCustomStrategy strategy = sessionHelper.getGlobalConfig().getStrategy();
         ResultSetTypeMappedHandler<K> keyTypeMappedHandler = sqlSession.getMappedHandler(executorBody.getKeyType());
         ResultSetTypeMappedHandler<V> valTypeMappedHandler = sqlSession.getMappedHandler(executorBody.getValueType());
 
@@ -211,9 +201,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
                 }
             }
         } catch (SQLException e) {
-            SqlOutPrintBuilder
-                    .build(executorBody.getPrepareSql(), executorBody.getSqlParams(), strategy.isSqlOutPrintExecute())
-                    .sqlErrPrint();
+            sessionHelper.sqlErrorOutPrinting();
             throw e;
         } finally {
             sessionHelper.closeResources(statement, resultSet);
@@ -226,7 +214,6 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
 
         CustomSqlSessionHelper sessionHelper = sqlSession.getHelper();
         SelectExecutorBody<T> executorBody = (SelectExecutorBody<T>) sqlSession.getBody();
-        DbCustomStrategy strategy = sessionHelper.getGlobalConfig().getStrategy();
         ResultSetTypeMappedHandler<T> typeMappedHandler = sqlSession.getMappedHandler(executorBody.getMappedType());
 
         PreparedStatement statement = null;
@@ -246,9 +233,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
 
             return (T[]) res;
         } catch (Exception e) {
-            SqlOutPrintBuilder
-                    .build(executorBody.getPrepareSql(), executorBody.getSqlParams(), strategy.isSqlOutPrintExecute())
-                    .sqlErrPrint();
+            sessionHelper.sqlErrorOutPrinting();
             throw e;
         } finally {
             sessionHelper.closeResources(statement, resultSet);
@@ -260,8 +245,6 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
     public int executeUpdate(CustomSqlSession sqlSession) throws Exception {
 
         CustomSqlSessionHelper sessionHelper = sqlSession.getHelper();
-        BaseExecutorBody executorBody = sqlSession.getBody();
-        DbCustomStrategy strategy = sessionHelper.getGlobalConfig().getStrategy();
         PreparedStatement statement = null;
         try {
             statement = sessionHelper.defaultPreparedStatement();
@@ -269,9 +252,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
             sessionHelper.handleExecuteBefore(statement, false);
             return statement.executeUpdate();
         } catch (SQLException e) {
-            SqlOutPrintBuilder
-                    .build(executorBody.getPrepareSql(), executorBody.getSqlParams(), strategy.isSqlOutPrintExecute())
-                    .sqlErrPrint();
+            sessionHelper.sqlErrorOutPrinting();
             throw e;
         } finally {
             sessionHelper.closeResources(statement, null);
@@ -324,7 +305,6 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
         BaseExecutorBody executorBody = sqlSession.getBody();
         String prepareSql = executorBody.getPrepareSql();
         CustomSqlSessionHelper sessionHelper = sqlSession.getHelper();
-        DbCustomStrategy strategy = sessionHelper.getGlobalConfig().getStrategy();
 
         Statement statement = null;
         try {
@@ -332,9 +312,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
             statement = connection.createStatement();
             statement.execute(prepareSql);
         } catch (Exception e) {
-            SqlOutPrintBuilder
-                    .build(prepareSql, new String[]{}, strategy.isSqlOutPrintExecute())
-                    .sqlErrPrint();
+            sessionHelper.sqlErrorOutPrinting();
             logger.error(e.toString(), e);
         } finally {
             sessionHelper.closeResources(statement, null);

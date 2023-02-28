@@ -13,7 +13,7 @@ custom:
       password: 123456
     config:
       sql-query-after: com.custom.taskmanager.config.MySqlQueryAfter
-      sql-interceptor: com.custom.taskmanager.config.MySqlInterceptor
+      sql-interceptor: com.custom.taskmanager.config.MySqlExecuteBefore
       strategy:
         underline-to-camel: true
       table-name-prefix: cm

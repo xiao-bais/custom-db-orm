@@ -7,7 +7,7 @@ import com.custom.jdbc.executebody.BaseExecutorBody;
  * @author   Xiao-Bai
  * @since  2023/2/7 22:13
  */
-public interface CustomSqlInterceptor {
+public interface CustomSqlExecuteBefore {
 
     /**
      * sql执行前可做一些拦截处理

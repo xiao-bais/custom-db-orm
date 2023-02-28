@@ -1,13 +1,13 @@
 package com.custom.taskmanager.config;
 
 import com.custom.jdbc.executebody.BaseExecutorBody;
-import com.custom.jdbc.executor.CustomSqlInterceptor;
+import com.custom.jdbc.executor.CustomSqlExecuteBefore;
 
 /**
  * @author Xiao-Bai
  * @since 2023/2/21 12:15
  */
-public class MySqlInterceptor implements CustomSqlInterceptor {
+public class MySqlExecuteBefore implements CustomSqlExecuteBefore {
 
 
     @Override

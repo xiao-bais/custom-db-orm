@@ -6,7 +6,7 @@ import com.custom.comm.utils.ReflectUtil;
 import com.custom.jdbc.executebody.BaseExecutorBody;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbGlobalConfig;
-import com.custom.jdbc.executor.CustomSqlInterceptor;
+import com.custom.jdbc.executor.CustomSqlExecuteBefore;
 import com.custom.jdbc.interfaces.CustomSqlSession;
 import com.custom.jdbc.sqlprint.SqlOutPrintBuilder;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -36,16 +36,16 @@ public class CustomSqlSessionHelper {
      * sql执行前的拦截。可对将要执行的sql以及参数信息进行一定的辅助操作
      */
     private void handleInterceptor() throws Exception {
-        CustomSqlInterceptor sqlInterceptor;
+        CustomSqlExecuteBefore sqlInterceptor;
 
         try {
-            sqlInterceptor = CustomApp.getBean(CustomSqlInterceptor.class);
+            sqlInterceptor = CustomApp.getBean(CustomSqlExecuteBefore.class);
         } catch (NoSuchBeanDefinitionException e) {
             sqlInterceptor = null;
         }
 
         if (sqlInterceptor == null) {
-            Class<? extends CustomSqlInterceptor> sqlInterceptorClass = globalConfig.getSqlInterceptor();
+            Class<? extends CustomSqlExecuteBefore> sqlInterceptorClass = globalConfig.getSqlInterceptor();
             if (sqlInterceptorClass == null) {
                 return;
             }
@@ -109,29 +109,18 @@ public class CustomSqlSessionHelper {
 
     /**
      * 查询之前的处理
-     * @param query 是否执行查询
+     * @param isQuery 是否执行查询
      */
-    public void handleExecuteBefore(PreparedStatement statement, boolean query) throws SQLException {
+    public void handleExecuteBefore(PreparedStatement statement, boolean isQuery) throws SQLException {
 
         BaseExecutorBody executorModel = sqlSession.getBody();
         Object[] sqlParams = executorModel.getSqlParams();
-        boolean sqlPrintSupport = executorModel.isSqlPrintSupport();
-        String prepareSql = executorModel.getPrepareSql();
-
         // 设置参数
         for (int i = 0; i < sqlParams.length; i++) {
             statement.setObject((i + 1), sqlParams[i]);
         }
-        DbCustomStrategy strategy = globalConfig.getStrategy();
-        // sql打印
-        if (strategy.isSqlOutPrinting() && sqlPrintSupport) {
-            SqlOutPrintBuilder builder = SqlOutPrintBuilder.build(prepareSql, sqlParams, strategy.isSqlOutPrintExecute());
-            if (query) {
-                builder.sqlInfoQueryPrint();
-            } else {
-                builder.sqlInfoUpdatePrint();
-            }
-        }
+        // SQL打印输出
+        this.sqlDebugOutPrinting(isQuery);
     }
 
     /**
@@ -147,6 +136,42 @@ public class CustomSqlSessionHelper {
         }
         if (sqlSession != null && sqlSession.isAutoCommit()) {
             sqlSession.closeResources();
+        }
+    }
+
+    /**
+     * SQL错误-日志输出
+     */
+    public void sqlErrorOutPrinting() {
+        BaseExecutorBody executorBody = sqlSession.getBody();
+        boolean sqlOutPrintExecute = globalConfig.getStrategy().isSqlOutPrintExecute();
+        SqlOutPrintBuilder
+                .build(executorBody.getPrepareSql(),
+                        executorBody.getSqlParams(),
+                        sqlOutPrintExecute
+                ).sqlErrPrint();
+    }
+
+    /**
+     * sql调试-日志输出
+     */
+    private void sqlDebugOutPrinting(boolean isQuery) {
+        DbCustomStrategy strategy = globalConfig.getStrategy();
+        BaseExecutorBody executorBody = sqlSession.getBody();
+        boolean sqlPrintSupport = executorBody.isSqlPrintSupport();
+        String prepareSql = executorBody.getPrepareSql();
+        Object[] sqlParams = executorBody.getSqlParams();
+        // sql打印
+        if (strategy.isSqlOutPrinting() && sqlPrintSupport) {
+            SqlOutPrintBuilder builder = SqlOutPrintBuilder.build(prepareSql,
+                    sqlParams,
+                    strategy.isSqlOutPrintExecute()
+            );
+            if (isQuery) {
+                builder.sqlInfoQueryPrint();
+            } else {
+                builder.sqlInfoUpdatePrint();
+            }
         }
     }
 
