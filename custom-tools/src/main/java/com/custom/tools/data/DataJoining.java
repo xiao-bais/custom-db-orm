@@ -12,7 +12,6 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 /**
  * @author  Xiao-Bai
@@ -39,18 +38,18 @@ public class DataJoining<T> {
     /**
      * 合并的条件
      */
-    private final JoinCondition<T> condition;
+    private final Joining<T> joining;
     /**
      * 属性描述信息
      */
     private List<PropertyDescriptor> properties;
 
-    public DataJoining(Class<T> targetClass, List<T> primaryList, List<T> otherList, JoinCondition<T> condition) {
+    public DataJoining(Class<T> targetClass, List<T> primaryList, List<T> otherList, Joining<T> joining) {
         this.targetClass = targetClass;
         this.primaryList = primaryList;
         this.otherList = otherList;
-        AssertUtil.notNull(condition, "合并条件不允许为空");
-        this.condition = condition;
+        AssertUtil.notNull(joining, "连接条件不能为空");
+        this.joining = joining;
         try {
             this.properties = ReflectUtil.getProperties(targetClass);
         } catch (IntrospectionException e) {
@@ -80,8 +79,7 @@ public class DataJoining<T> {
 
         for (T currObj : primaryList) {
 
-            Predicate<T> doJoin = condition.doJoin(currObj);
-            T target = otherList.stream().filter(doJoin).findFirst().orElse(null);
+            T target = otherList.stream().filter(x -> joining.apply(currObj, x)).findFirst().orElse(null);
             if (target != null) {
                 for (String field : fields) {
 
