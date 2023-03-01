@@ -71,7 +71,7 @@ public class ToolTest {
                 // 设置顶级父节点列表的查找条件
                 .topListCond(e -> e.getParentId().equals(0))
                 // 设置向下查找子节点时的条件 o1-parent o2-child
-                .childCond(o1 -> o2 -> o1.getId().equals(o2.getParentId()))
+                .childCond((o1, o2) -> o1.getId().equals(o2.getParentId()))
                 // 设置父节点的set方法
                 .childrenSet(Person::setPersonList)
                 // 开始递归计算
