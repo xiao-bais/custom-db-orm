@@ -148,7 +148,7 @@ public class CmTreeNode<T> {
      */
     private void findChildren(T t) {
         List<T> childList = elements.stream()
-                .filter(this.childrenSeek.seek(t))
+                .filter(e -> this.childrenSeek.seek(t, e))
                 .collect(Collectors.toList());
 
         if (!childList.isEmpty()) {
