@@ -1,5 +1,7 @@
 package com.custom.tools.objects;
 
+import com.custom.tools.function.BuildParam;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;

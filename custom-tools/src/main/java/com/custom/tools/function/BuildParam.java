@@ -1,4 +1,4 @@
-package com.custom.tools.objects;
+package com.custom.tools.function;
 
 /**
  * @author  Xiao-Bai

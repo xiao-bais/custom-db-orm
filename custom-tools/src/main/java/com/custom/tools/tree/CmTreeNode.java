@@ -2,6 +2,7 @@ package com.custom.tools.tree;
 
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.AssertUtil;
+import com.custom.tools.function.Joining;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,7 @@ public class CmTreeNode<T> {
     /**
      * 子节点集的查找条件
      */
-    private ChildrenSeek<T> childrenSeek;
+    private Joining<T> joining;
 
 
     private CmTreeNode(List<T> elements) {
@@ -67,8 +68,8 @@ public class CmTreeNode<T> {
     /**
      * 查找子集的条件
      */
-    public CmTreeNode<T> childCond(ChildrenSeek<T> seek) {
-        this.childrenSeek = seek;
+    public CmTreeNode<T> childCond(Joining<T> joining) {
+        this.joining = joining;
         return this;
     }
 
@@ -89,11 +90,11 @@ public class CmTreeNode<T> {
         T topObj = thisTopObj();
         if (check()) return topObj;
 
-        List<T> topList = elements.stream().filter(topListFind).collect(Collectors.toList());
+        List<T> topList = this.elements.stream().filter(this.topListFind).collect(Collectors.toList());
         for (T t : topList) {
             findChildren(t);
         }
-        childrenSet.accept(topObj, topList);
+        this.childrenSet.accept(topObj, topList);
         return topObj;
     }
 
@@ -125,7 +126,7 @@ public class CmTreeNode<T> {
             throw new CustomCheckException("topListFind cannot be null");
         }
 
-        if (childrenSeek == null) {
+        if (joining == null) {
             throw new CustomCheckException("seek cannot be null");
         }
 
@@ -148,7 +149,7 @@ public class CmTreeNode<T> {
      */
     private void findChildren(T t) {
         List<T> childList = elements.stream()
-                .filter(e -> this.childrenSeek.seek(t, e))
+                .filter(e -> this.joining.apply(t, e))
                 .collect(Collectors.toList());
 
         if (!childList.isEmpty()) {
