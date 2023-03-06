@@ -4,6 +4,7 @@ import com.custom.comm.utils.AssertUtil;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.ReflectUtil;
+import com.custom.jdbc.exceptions.QueryMultiException;
 import com.custom.jdbc.handler.ResultSetTypeMappedHandler;
 import com.custom.jdbc.session.CustomSqlSessionHelper;
 import com.custom.jdbc.sqlprint.SqlOutPrintBuilder;
@@ -183,7 +184,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
             // 若查询的结果列数不是2列，则抛出异常
             int columnCount = metaData.getColumnCount();
             if (columnCount != 2) {
-                throw new SQLDataException("This query only supports dual column queries. Current number of query fields: (" + columnCount + ")");
+                throw new SQLDataException("This query only supports 2 column queries. Current number of query fields: (" + columnCount + ")");
             }
 
             while (resultSet.next()) {
@@ -327,8 +328,9 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
         if (result.size() == 0) {
             return null;
         }
-        AssertUtil.cce(result.size() == 1,
-                String.format("只查一条，但查询到%s条结果", result.size()));
+        if (result.size() > 1) {
+            throw new QueryMultiException("只查一条，但查询到" + result.size() + "条结果");
+        }
         return result.get(0);
     }
 

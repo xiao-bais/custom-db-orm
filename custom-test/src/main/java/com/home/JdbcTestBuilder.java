@@ -25,9 +25,9 @@ public class JdbcTestBuilder {
     private JdbcTestBuilder() {
         // 数据库连接配置
         dbDataSource = new DbDataSource();
-        dbDataSource.setUrl("jdbc:mysql://39.108.225.176:3306/hos?characterEncoding=utf-8&allowMultiQueries=true&autoreconnect=true&serverTimezone=UTC");
+        dbDataSource.setUrl("jdbc:mysql://127.0.0.1:3306/hos?characterEncoding=utf-8&allowMultiQueries=true&autoreconnect=true&serverTimezone=UTC");
         dbDataSource.setUsername("root");
-        dbDataSource.setPassword("xh@Mysql1524");
+        dbDataSource.setPassword("123456");
 
         // 增删改查映射策略配置
         dbCustomStrategy = new DbCustomStrategy();

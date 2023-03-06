@@ -102,15 +102,25 @@ public class ResultSetTypeMappedHandler<T> {
 
 
     /**
-     * 将rs中的结果写入数组(泛型的类型仅限于常用的基本类型、字符串、日期类型)
+     * 将rs中的结果写入数组
      * @param res 待写入的数组
      * @param rs jdbc结果集对象
      */
-    public void writeForArrays(Object res, ResultSet rs) throws SQLException {
-        // 只取每一行的第一列
+    public void writeForArrays(Object res, ResultSet rs) throws SQLException,
+            InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
+
         int len = 0;
         while (rs.next()) {
-            T value = this.getRsValue(rs, 1);
+            T value;
+            // 若数组的类型是基本类型，只取每一行的第一列
+            if (CustomUtil.isBasicClass(resClass)) {
+                value = this.getRsValue(rs, 1);
+            }
+            // 否则视为自定义对象
+            else {
+                value = this.getTargetObject(rs);
+            }
+
             Array.set(res, len, value);
             len ++;
         }
@@ -118,7 +128,7 @@ public class ResultSetTypeMappedHandler<T> {
 
 
     /**
-     * 将rs中的结果写入map(泛型的类型仅限于常用的基本类型、字符串、日期)
+     * 将rs中的结果写入map()
      * @param map 待写入的map
      * @param rs jdbc结果集对象
      */

@@ -84,42 +84,42 @@ public class TableInfoCache {
     }
 
     /**
-     * sql构造模板缓存
+     * sql构造合集缓存
      */
-    private final static Map<String, SqlBuilderTemplate<?>> SQL_BUILDER_TEMPLATE = new ConcurrentHashMap<>();
+    private final static Map<String, SqlBuilderCollection<?>> SQL_BUILDER_COLLECTION = new ConcurrentHashMap<>();
 
-    protected static <T> SqlBuilderTemplate<T> getSqlBuilderCache(Class<T> entityClass, JdbcExecutorFactory executorFactory) {
-        SqlBuilderTemplate<T> optionalSqlBuilder = (SqlBuilderTemplate<T>)
-                SQL_BUILDER_TEMPLATE.get(entityClass.getName());
+    protected static <T> SqlBuilderCollection<T> getSqlBuilderCache(Class<T> entityClass, JdbcExecutorFactory executorFactory) {
+        SqlBuilderCollection<T> optionalSqlBuilder = (SqlBuilderCollection<T>)
+                SQL_BUILDER_COLLECTION.get(entityClass.getName());
         if (optionalSqlBuilder == null) {
-            optionalSqlBuilder = new SqlBuilderTemplate<>(entityClass, executorFactory);
-            SQL_BUILDER_TEMPLATE.put(entityClass.getName(), optionalSqlBuilder);
+            optionalSqlBuilder = new SqlBuilderCollection<>(entityClass, executorFactory);
+            SQL_BUILDER_COLLECTION.put(entityClass.getName(), optionalSqlBuilder);
         }
         return optionalSqlBuilder;
     }
 
     public static <T> HandleSelectSqlBuilder<T> getSelectSqlBuilderCache(Class<T> entityClass, JdbcExecutorFactory executorFactory) {
-        SqlBuilderTemplate<T> sqlBuilderCache = getSqlBuilderCache(entityClass, executorFactory);
+        SqlBuilderCollection<T> sqlBuilderCache = getSqlBuilderCache(entityClass, executorFactory);
         return (HandleSelectSqlBuilder<T>) sqlBuilderCache.getSelectSqlBuilder();
     }
 
     protected static <T> HandleInsertSqlBuilder<T> getInsertSqlBuilderCache(Class<T> entityClass, JdbcExecutorFactory executorFactory) {
-        SqlBuilderTemplate<T> sqlBuilderCache = getSqlBuilderCache(entityClass, executorFactory);
+        SqlBuilderCollection<T> sqlBuilderCache = getSqlBuilderCache(entityClass, executorFactory);
         return (HandleInsertSqlBuilder<T>) sqlBuilderCache.getInsertSqlBuilder();
     }
 
     protected static <T> HandleUpdateSqlBuilder<T> getUpdateSqlBuilderCache(Class<T> entityClass, JdbcExecutorFactory executorFactory) {
-        SqlBuilderTemplate<T> sqlBuilderCache = getSqlBuilderCache(entityClass, executorFactory);
+        SqlBuilderCollection<T> sqlBuilderCache = getSqlBuilderCache(entityClass, executorFactory);
         return (HandleUpdateSqlBuilder<T>) sqlBuilderCache.getUpdateSqlBuilder();
     }
 
     protected static <T> HandleDeleteSqlBuilder<T> getDeleteSqlBuilderCache(Class<T> entityClass, JdbcExecutorFactory executorFactory) {
-        SqlBuilderTemplate<T> sqlBuilderCache = getSqlBuilderCache(entityClass, executorFactory);
+        SqlBuilderCollection<T> sqlBuilderCache = getSqlBuilderCache(entityClass, executorFactory);
         return (HandleDeleteSqlBuilder<T>) sqlBuilderCache.getDeleteSqlBuilder();
     }
 
     protected static <T> EmptySqlBuilder<T> getEmptySqlBuilder(Class<T> entityClass, JdbcExecutorFactory executorFactory) {
-        SqlBuilderTemplate<T> sqlBuilderCache = getSqlBuilderCache(entityClass, executorFactory);
+        SqlBuilderCollection<T> sqlBuilderCache = getSqlBuilderCache(entityClass, executorFactory);
         return (EmptySqlBuilder<T>) sqlBuilderCache.getEmptySqlBuilder();
     }
 

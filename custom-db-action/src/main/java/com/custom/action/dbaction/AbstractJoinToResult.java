@@ -3,7 +3,7 @@ package com.custom.action.dbaction;
 import com.custom.action.core.DbKeyParserModel;
 import com.custom.action.core.TableInfoCache;
 import com.custom.action.core.TableParseModel;
-import com.custom.action.exceptions.QueryMultiException;
+import com.custom.jdbc.exceptions.QueryMultiException;
 import com.custom.comm.enums.MultiStrategy;
 import com.custom.comm.utils.AssertUtil;
 import com.custom.comm.utils.JudgeUtil;

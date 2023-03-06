@@ -131,9 +131,17 @@ public class ReflectUtil {
      */
     public static <T> T getInstance(Class<T> t)
             throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        int modifiers = t.getModifiers();
+
+        if (Modifier.isInterface(modifiers)
+                || Modifier.isAbstract(modifiers) || t.isEnum()) {
+            throw new IllegalArgumentException("Cannot instantiate interface, abstract class and enumeration type.");
+        }
         Constructor<T> constructor = t.getDeclaredConstructor();
         constructor.setAccessible(true);
-        return constructor.newInstance();
+        T instance = constructor.newInstance();
+        constructor.setAccessible(false);
+        return instance;
     }
 
 

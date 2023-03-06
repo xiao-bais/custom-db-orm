@@ -20,12 +20,12 @@ public class LambdaExistsWrapper<P, E> implements ExistsWrapper<P, E> {
     public LambdaConditionWrapper<E> apply(SFunction<P, ?> proColumn, SFunction<E, ?> existColumn) {
         this.proColumn = proColumn;
         this.existColumn = existColumn;
-        return existWrapper;
+        return this.existWrapper;
     }
 
 
     public LambdaConditionWrapper<E> getWrapper() {
-        return existWrapper;
+        return this.existWrapper;
     }
 
     public LambdaExistsWrapper(Class<E> existClass) {

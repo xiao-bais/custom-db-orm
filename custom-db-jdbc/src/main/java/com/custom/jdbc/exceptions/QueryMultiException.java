@@ -1,4 +1,4 @@
-package com.custom.action.exceptions;
+package com.custom.jdbc.exceptions;
 
 import com.custom.comm.enums.MultiStrategy;
 import com.custom.comm.exceptions.CustomCheckException;
@@ -12,7 +12,7 @@ public class QueryMultiException extends CustomCheckException {
 
     private MultiStrategy strategy;
 
-    private QueryMultiException(String message) {
+    public QueryMultiException(String message) {
         super(message);
     }
 

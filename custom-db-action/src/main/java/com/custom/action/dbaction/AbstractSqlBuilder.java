@@ -234,7 +234,7 @@ public abstract class AbstractSqlBuilder<T> {
         if (JudgeUtil.isEmpty(keyParserModel)) {
             throw new CustomCheckException("%s 中未找到 @DbKey注解, 猜测该类或父类不存在主键字段，或没有标注@DbKey注解来表示主键", entityClass);
         }
-
+        AssertUtil.notEmpty(keys, "primary key(s) cannot be empty.");
         if (keys.stream().noneMatch(x -> CustomUtil.isKeyAllowType(keyParserModel.getType(), x))) {
             throw new CustomCheckException("不允许的主键参数: " + keys);
         }

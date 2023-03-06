@@ -99,15 +99,21 @@ public class SqlOutPrintBuilder implements Serializable {
     private String formatterParams() {
         StringJoiner sqlParams = new StringJoiner(Constants.SEPARATOR_COMMA_2);
         for (Object param : params) {
-            StringBuilder paramVal = new StringBuilder();
             if (param == null) {
                 sqlParams.add(Constants.NULL);
-            }else if (Constants.EMPTY.equals(param)) {
-                paramVal.append(Constants.EMPTY_SQL_STR).append(Constants.BRACKETS_LEFT)
-                        .append(param.getClass().getSimpleName()).append(Constants.BRACKETS_RIGHT);
-            }else {
-                paramVal.append(param).append(Constants.BRACKETS_LEFT)
-                        .append(param.getClass().getSimpleName()).append(Constants.BRACKETS_RIGHT);
+                continue;
+            }
+            StringBuilder paramVal = new StringBuilder();
+            if (Constants.EMPTY.equals(param)) {
+                paramVal.append(Constants.EMPTY_SQL_STR)
+                        .append(Constants.BRACKETS_LEFT)
+                        .append(param.getClass().getSimpleName())
+                        .append(Constants.BRACKETS_RIGHT);
+            } else {
+                paramVal.append(param)
+                        .append(Constants.BRACKETS_LEFT)
+                        .append(param.getClass().getSimpleName())
+                        .append(Constants.BRACKETS_RIGHT);
             }
             sqlParams.add(paramVal);
         }

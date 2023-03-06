@@ -4,11 +4,11 @@ import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 
 /**
- * SQL构建模板
+ * SQL构建对象合集
  * @author   Xiao-Bai
  * @since  2022/9/22 1:15
  */
-public class SqlBuilderTemplate<T> {
+public class SqlBuilderCollection<T> {
 
     /**
      * 查询sql构造模板对象
@@ -29,7 +29,7 @@ public class SqlBuilderTemplate<T> {
 
     private final AbstractSqlBuilder<T> emptySqlBuilder;
 
-    public SqlBuilderTemplate(Class<T> entityClass, JdbcExecutorFactory executorFactory) {
+    public SqlBuilderCollection(Class<T> entityClass, JdbcExecutorFactory executorFactory) {
         this.selectSqlBuilder = new HandleSelectSqlBuilder<>(entityClass, executorFactory);
         this.insertSqlBuilder = new HandleInsertSqlBuilder<>(entityClass, executorFactory);
         this.updateSqlBuilder = new HandleUpdateSqlBuilder<>(entityClass, executorFactory);
