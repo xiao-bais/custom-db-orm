@@ -59,7 +59,6 @@ public class Mysql8Adapter extends AbstractDbAdapter {
     public boolean existTable(String table) {
         AssertUtil.npe(table);
         String targetSql = String.format(TABLE_EXISTS_SQL, table, this.databaseName());
-        SelectExecutorBody<Long> selectExecutorBody = new SelectExecutorBody<>(Long.class, targetSql, false);
         return queryBoolean(targetSql);
     }
 

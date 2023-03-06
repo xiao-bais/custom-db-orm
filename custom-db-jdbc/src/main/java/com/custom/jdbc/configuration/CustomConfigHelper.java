@@ -1,5 +1,7 @@
 package com.custom.jdbc.configuration;
 
+import com.custom.jdbc.dbAdapetr.Mysql8Adapter;
+import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.jdbc.interfaces.DatabaseAdapter;
 
 /**
@@ -29,6 +31,13 @@ public class CustomConfigHelper {
         this.dbDataSource = dbDataSource;
         this.dbGlobalConfig = dbGlobalConfig;
         this.databaseAdapter = databaseAdapter;
+    }
+
+    // 默认Mysql 8.0
+    public CustomConfigHelper(DbDataSource dbDataSource, DbGlobalConfig dbGlobalConfig) {
+        this.dbDataSource = dbDataSource;
+        this.dbGlobalConfig = dbGlobalConfig;
+        this.databaseAdapter = new Mysql8Adapter(new JdbcExecutorFactory(dbDataSource, dbGlobalConfig));
     }
 
     public DbDataSource getDbDataSource() {

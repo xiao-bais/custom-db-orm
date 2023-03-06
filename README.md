@@ -1,11 +1,7 @@
-```
-
-```
-
-custom-springboot-starter
+# custom-springboot-starter
 
 ### 简介
-简易ORM操作工具，纯原生JDBC+阿里的Druid连接池，集成Mybatis-Plus的条件构造器，在此之上添加了```多表连接```的条件构造，使增删改查变得更容易，支持```ActiveRecord```以及```链式查询```。
+简易ORM操作工具，纯原生JDBC+阿里的Druid连接池，集成条件构造器，使用简单，一看就会，一用就爽，让增删改查变得更容易，支持```ActiveRecord```以及```链式查询```。
 ### 说明：
 - ```com.custom.action.core.JdbcDao```，该类提供了多种增删改查方法以供用户自定义使用，使用时只需要在service或controller注入该对象即可，只需要编写部分的条件```sql```，即可完成单表的大部分增删改查操作。
 - 只需要创建实体类，并添加上自定义的几个注解，即可生成对应的表结构。
@@ -25,7 +21,17 @@ custom-springboot-starter
         </dependency>
 ```
 
-纯依赖-手动配置
+**springboot方式 -- 配置数据源**
+
+```SpringBoot```项目配置数据源：因dataSource类为本工具自定义，所以在```application.yml(properties)```中进行如下基本配置即可，```mysql```驱动默认为```mysql8.0```--->```com.mysql.cj.jdbc.Driver```(配置文件中可不写)
+
+```properties
+custom.db.datasource.url=jdbc:mysql://127.0.0.1:3306/hos?characterEncoding=utf-8&allowMultiQueries=true&autoreconnect=true&serverTimezone=UTC
+custom.db.datasource.username=root
+custom.db.datasource.password=123456
+```
+
+**纯依赖-手动配置**
 
 ```xml
          <dependency>
@@ -35,17 +41,39 @@ custom-springboot-starter
         </dependency>
 ```
 
+**手动方式 -- 配置数据源**
 
+```java
+		// 数据库连接配置
+        DbDataSource dbDataSource = new DbDataSource();
+        dbDataSource.setUrl("jdbc:mysql://127.0.0.1:3306/hos?characterEncoding=utf-8&allowMultiQueries=true&autoreconnect=true&serverTimezone=UTC");
+        dbDataSource.setUsername("root");
+        dbDataSource.setPassword("123456");
+        // Driver不用填，默认mysql8.0
 
-#### 配置数据源
+        // 全局配置
+        DbGlobalConfig globalConfig = new DbGlobalConfig();
 
-1.  ```SpringBoot```项目配置数据源：因dataSource类为本工具自定义，所以在```application.yml(properties)```中进行如下基本配置即可，```mysql```驱动默认为```mysql8.0```--->```com.mysql.cj.jdbc.Driver```(配置文件中可不写)
+        // 策略配置
+        DbCustomStrategy dbCustomStrategy = new DbCustomStrategy();
+        // sql打印开关
+        dbCustomStrategy.setSqlOutPrinting(true);
+        // sql打印时， true为可执行的sql(即参数?已经替换为真实的值)， 默认false
+        dbCustomStrategy.setSqlOutPrintExecute(true);
+        // 是否下划线转驼峰?
+        dbCustomStrategy.setUnderlineToCamel(true);
 
-```properties
-custom.db.datasource.url=jdbc:mysql://127.0.0.1:3306/hos?characterEncoding=utf-8&allowMultiQueries=true&autoreconnect=true&serverTimezone=UTC
-custom.db.datasource.username=root
-custom.db.datasource.password=123456
+        // 逻辑删除的字段(表字段)
+        dbCustomStrategy.setDbFieldDeleteLogic("state");
+        // 逻辑删除的标识值
+        dbCustomStrategy.setDeleteLogicValue(1);
+        // 未逻辑删除的标识值
+        dbCustomStrategy.setNotDeleteLogicValue(0);
+
+        globalConfig.setStrategy(dbCustomStrategy);
 ```
+
+
 
 
 #### 使用说明
@@ -228,17 +256,19 @@ custom.db.datasource.password=123456
 
   普通字段注解：**@DbField**（仅可标注在java属性上)
 
-  | 注解属性 | 说明                                                         |
-  | :------- | ------------------------------------------------------------ |
-  | value    | 表主键字段，若不填写，则默认与java属性一致，当策略中驼峰转下划线为true时，解析时会自动转下划线 |
-  | dataType | 数据库对应字段类型：一共提供十多种类型供选择，为枚举属性，默认为DbType.DbVarchar |
-  | desc     | 字段说明                                                     |
-  | isNull   | 是否允许为空，该属性仅在创建表时用到                         |
+  | 注解属性     | 说明                                                         |
+  | :----------- | ------------------------------------------------------------ |
+  | value        | 表主键字段，若不填写，则默认与java属性一致，当策略中驼峰转下划线为true时，解析时会自动转下划线 |
+  | dataType     | 数据库对应字段类型：一共提供十多种类型供选择，为枚举属性，默认为DbType.DbVarchar |
+  | desc         | 字段说明                                                     |
+  | isNull       | 是否允许为空，该属性仅在创建表时用到                         |
+  | exist        | 是否存在该表字段，作用与DbNotField一致                       |
+  | fillStrategy | 自动填充策略，在参数为实体时的插入或者修改(逻辑删除)时，自动填充指定字段的值 |
 
   
 
   关联表注解1：**@DbRelated**（仅可标注在java属性上）
-
+  
   | 注解属性  | 说明                                              |
   | :-------- | ------------------------------------------------- |
   | joinTable | 要关联的表，例如：teacher                         |
@@ -250,7 +280,7 @@ custom.db.datasource.password=123456
   
 
   关联表注解2：**@DbJoinTables**（仅可标注在java类上）
-
+  
   | 注解         | 说明                                                         |
   | ------------ | ------------------------------------------------------------ |
   | @DbJoinTable | @DbJoinTables中内部注解，该注解仅用于配置表关联条件，例如：left join teacher tea on a.tea_id = tea.id |
@@ -259,14 +289,21 @@ custom.db.datasource.password=123456
   
 
   表注解：**@DbTable**（仅可标注在java类上)
-
-  | 注解属性 | 说明   |
-  | -------- | ------ |
-  | table    | 表名   |
-  | alias    | 别名   |
-  | desc     | 表说明 |
+  
+  | 注解属性 | 说明                                                      |
+  | -------- | --------------------------------------------------------- |
+  | table    | 表名                                                      |
+  | alias    | 别名                                                      |
+  | desc     | 表说明                                                    |
+  | order    | 若存在动态数据源，则指定该值与dataSource中的order一致即可 |
   
   
+  
+  表字段忽略注解：**@DbNotField**(标识在java属性上)
+  
+  在实体中指定忽略的属性，该注解作用与@DbField.exist = false 一致，表示不属于表的字段。
+  
+  若字段上同时标注了@DbField 或者 @DbKey 与此类注解，则此注解记为无效，
   
 - 注解使用示例
 
@@ -296,6 +333,9 @@ public class Student {
 
     @DbMapper("cy.name")
     private String city;
+    
+    @DbNotField
+    private List<String> childrenList;
 ```
 2. 第二步，执行```createTables```方法即可
 

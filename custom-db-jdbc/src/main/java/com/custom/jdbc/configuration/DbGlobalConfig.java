@@ -34,7 +34,7 @@ public class DbGlobalConfig {
     /**
      * sql执行前的拦截处理类，若实现类加入spring容器则无需再在此配置，两者选其一即可
      */
-    private Class<? extends CustomSqlExecuteBefore> sqlInterceptor;
+    private Class<? extends CustomSqlExecuteBefore> sqlExecuteBefore;
 
     /**
      * 自定义的策略配置
@@ -66,12 +66,12 @@ public class DbGlobalConfig {
         this.sqlQueryAfter = sqlQueryAfter;
     }
 
-    public Class<? extends CustomSqlExecuteBefore> getSqlInterceptor() {
-        return sqlInterceptor;
+    public Class<? extends CustomSqlExecuteBefore> getSqlExecuteBefore() {
+        return sqlExecuteBefore;
     }
 
-    public void setSqlInterceptor(Class<? extends CustomSqlExecuteBefore> sqlInterceptor) {
-        this.sqlInterceptor = sqlInterceptor;
+    public void setSqlExecuteBefore(Class<? extends CustomSqlExecuteBefore> sqlExecuteBefore) {
+        this.sqlExecuteBefore = sqlExecuteBefore;
     }
 
     public DbCustomStrategy getStrategy() {

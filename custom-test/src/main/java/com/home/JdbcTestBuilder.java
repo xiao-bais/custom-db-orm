@@ -3,9 +3,13 @@ package com.home;
 import com.custom.action.proxy.JdbcDaoProxy;
 import com.custom.action.core.JdbcOpDao;
 import com.custom.action.core.JdbcDao;
+import com.custom.jdbc.configuration.CustomConfigHelper;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.configuration.DbGlobalConfig;
+import com.custom.jdbc.dbAdapetr.Mysql8Adapter;
+import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.proxy.InterfacesProxyExecutor;
 
 /**
  * @author  Xiao-Bai
@@ -14,59 +18,62 @@ import com.custom.jdbc.configuration.DbGlobalConfig;
  */
 public class JdbcTestBuilder {
 
-    private final DbDataSource dbDataSource;
-    private final DbGlobalConfig globalConfig;
-    private final DbCustomStrategy dbCustomStrategy;
-
     public static JdbcTestBuilder builder() {
         return new JdbcTestBuilder();
     }
 
     private JdbcTestBuilder() {
+
+
+
+    }
+
+    private CustomConfigHelper configHelper() {
+
         // 数据库连接配置
-        dbDataSource = new DbDataSource();
+        DbDataSource dbDataSource = new DbDataSource();
         dbDataSource.setUrl("jdbc:mysql://127.0.0.1:3306/hos?characterEncoding=utf-8&allowMultiQueries=true&autoreconnect=true&serverTimezone=UTC");
         dbDataSource.setUsername("root");
         dbDataSource.setPassword("123456");
+        // Driver不用填，默认mysql8.0
 
-        // 增删改查映射策略配置
-        dbCustomStrategy = new DbCustomStrategy();
+        // 全局配置
+        DbGlobalConfig globalConfig = new DbGlobalConfig();
+
+        // 策略配置
+        DbCustomStrategy dbCustomStrategy = new DbCustomStrategy();
+        // sql打印开关
         dbCustomStrategy.setSqlOutPrinting(true);
-//        dbCustomStrategy.setSqlOutPrintExecute(true);
+        // sql打印时， true为可执行的sql(即参数?已经替换为真实的值)， 默认false
+        dbCustomStrategy.setSqlOutPrintExecute(true);
+        // 是否下划线转驼峰?
         dbCustomStrategy.setUnderlineToCamel(true);
-//        dbCustomStrategy.setDbFieldDeleteLogic("state");
-//        dbCustomStrategy.setDeleteLogicValue(1);
-//        dbCustomStrategy.setNotDeleteLogicValue(0);
 
-        globalConfig = new DbGlobalConfig();
-        globalConfig.setTableNamePrefix("");
+        // 逻辑删除的字段(表字段)
+        dbCustomStrategy.setDbFieldDeleteLogic("state");
+        // 逻辑删除的标识值
+        dbCustomStrategy.setDeleteLogicValue(1);
+        // 未逻辑删除的标识值
+        dbCustomStrategy.setNotDeleteLogicValue(0);
+
         globalConfig.setStrategy(dbCustomStrategy);
-        globalConfig.setSqlInterceptor(null);
 
+
+        return new CustomConfigHelper(dbDataSource, globalConfig);
     }
 
     public JdbcOpDao getJdbcOpDao() {
-        return new JdbcOpDao(dbDataSource, globalConfig);
+        CustomConfigHelper configHelper = configHelper();
+        return new JdbcOpDao(configHelper.getDbDataSource(), configHelper.getDbGlobalConfig());
     }
 
     public JdbcDao getJdbcDao() {
-        return new JdbcDaoProxy(dbDataSource, globalConfig).createProxy();
+        CustomConfigHelper configHelper = configHelper();
+        return new JdbcDaoProxy(configHelper.getDbDataSource(), configHelper.getDbGlobalConfig()).createProxy();
     }
 
-//    public <T> T getCustomClassDao(Class<T> entityClass) {
-//        InterfacesProxyExecutor proxyExecutor = new InterfacesProxyExecutor(dbDataSource, dbCustomStrategy);
-//        return proxyExecutor.createProxy(entityClass);
-//    }
-
-    public DbDataSource getDbDataSource() {
-        return dbDataSource;
-    }
-
-    public DbCustomStrategy getDbCustomStrategy() {
-        return dbCustomStrategy;
-    }
-
-    public DbGlobalConfig getGlobalConfig() {
-        return globalConfig;
+    public <T> T getCustomClassDao(Class<T> entityClass) {
+        InterfacesProxyExecutor proxyExecutor = new InterfacesProxyExecutor();
+        return proxyExecutor.createProxy(entityClass);
     }
 }

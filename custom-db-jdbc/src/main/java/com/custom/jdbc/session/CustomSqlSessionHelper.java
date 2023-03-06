@@ -45,7 +45,7 @@ public class CustomSqlSessionHelper {
         }
 
         if (sqlInterceptor == null) {
-            Class<? extends CustomSqlExecuteBefore> sqlInterceptorClass = globalConfig.getSqlInterceptor();
+            Class<? extends CustomSqlExecuteBefore> sqlInterceptorClass = globalConfig.getSqlExecuteBefore();
             if (sqlInterceptorClass == null) {
                 return;
             }
