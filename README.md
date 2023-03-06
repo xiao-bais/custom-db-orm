@@ -299,7 +299,7 @@ custom.db.datasource.password=123456
   
   
   
-  表字段忽略注解：**@DbNotField**(标识在java属性上)
+  非持久化字段注解：**@DbNotField**(标识在java属性上)
   
   在实体中指定忽略的属性，该注解作用与@DbField.exist = false 一致，表示不属于表的字段。
   
