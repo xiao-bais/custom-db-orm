@@ -3,6 +3,7 @@ package com.custom.action.service;
 import com.custom.action.condition.Conditions;
 import com.custom.action.condition.DefaultConditionWrapper;
 import com.custom.action.condition.LambdaConditionWrapper;
+import com.custom.action.core.DoTargetExecutor;
 import com.custom.action.interfaces.TableExecutor;
 
 import java.io.Serializable;
@@ -57,34 +58,34 @@ public interface DbServiceHelper<T> {
     /**
      * 普通查询1
      */
-    default DoTargetWrapper<T> where(DefaultConditionWrapper<T> wrapper) {
-        return DoTargetWrapper.build(wrapper, targetTemplate());
+    default DoTargetExecutor<T> where(DefaultConditionWrapper<T> wrapper) {
+        return DoTargetExecutor.build(wrapper, targetTemplate());
     }
 
     /**
      * 普通查询2
      */
-    default DoTargetWrapper<T> where(Consumer<DefaultConditionWrapper<T>> consumer) {
+    default DoTargetExecutor<T> where(Consumer<DefaultConditionWrapper<T>> consumer) {
         DefaultConditionWrapper<T> wrapper = Conditions.query(target());
         consumer.accept(wrapper);
-        return DoTargetWrapper.build(wrapper, targetTemplate());
+        return DoTargetExecutor.build(wrapper, targetTemplate());
     }
 
 
     /**
      * lambda expression 表达式查询1
      */
-    default DoTargetWrapper<T> whereEx(LambdaConditionWrapper<T> wrapper) {
-        return DoTargetWrapper.build(wrapper, targetTemplate());
+    default DoTargetExecutor<T> whereEx(LambdaConditionWrapper<T> wrapper) {
+        return DoTargetExecutor.build(wrapper, targetTemplate());
     }
 
     /**
      * lambda expression 表达式查询2
      */
-    default DoTargetWrapper<T> whereEx(Consumer<LambdaConditionWrapper<T>> consumer) {
+    default DoTargetExecutor<T> whereEx(Consumer<LambdaConditionWrapper<T>> consumer) {
         LambdaConditionWrapper<T> wrapper = Conditions.lambdaQuery(target());
         consumer.accept(wrapper);
-        return DoTargetWrapper.build(wrapper, targetTemplate());
+        return DoTargetExecutor.build(wrapper, targetTemplate());
     }
 
     /**

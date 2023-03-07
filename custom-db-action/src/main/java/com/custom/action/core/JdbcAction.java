@@ -1,8 +1,10 @@
 package com.custom.action.core;
 
 import com.custom.action.condition.*;
+import com.custom.action.core.chain.ChainWrapper;
 import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.extend.MultiResultInjector;
+import com.custom.action.interfaces.TableExecutor;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.jdbc.configuration.DbGlobalConfig;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
@@ -30,7 +32,7 @@ import java.util.*;
  * @since  2022/4/13 20:49
  */
 @SuppressWarnings("unchecked")
-public class JdbcAction implements SqlExecutor {
+public class JdbcAction implements SqlExecutor, DbCommHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(JdbcAction.class);
     private DbDataSource dbDataSource;
@@ -267,6 +269,11 @@ public class JdbcAction implements SqlExecutor {
         return executorFactory.selectMap(kClass, vClass, selectSql, wrapper.getParamValues().toArray());
     }
 
+    @Override
+    public <T> ChainWrapper<T> createChain(Class<T> entityClass) {
+        return new ChainWrapper<>(entityClass, this);
+    }
+
 
     @Override
     @CheckExecute(target = ExecuteMethod.DELETE)
@@ -475,5 +482,10 @@ public class JdbcAction implements SqlExecutor {
             MultiResultInjector<T> resultInjector = new MultiResultInjector<>(target, this, target);
             resultInjector.injectorValue(result);
         }
+    }
+
+    @Override
+    public int getOrder() {
+        return dbDataSource.getOrder();
     }
 }

@@ -1,10 +1,10 @@
 package com.custom.action.core;
 
 import com.custom.action.condition.AbstractUpdateSet;
+import com.custom.action.core.chain.ChainWrapper;
 import com.custom.action.proxy.JdbcActionProxy;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.comm.page.DbPageRows;
-import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.configuration.DbGlobalConfig;
 import com.custom.jdbc.interfaces.TransactionExecutor;
@@ -353,6 +353,13 @@ public class JdbcOpDao {
      */
     public void execTrans(TransactionExecutor executor) throws Exception {
         sqlExecutor.execTrans(executor);
+    }
+
+    /**
+     * 链式操作
+     */
+    public <T> ChainWrapper<T> createChain(Class<T> entityClass) {
+        return sqlExecutor.createChain(entityClass);
     }
 
     private final SqlExecutor sqlExecutor;

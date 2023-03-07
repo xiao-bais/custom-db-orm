@@ -146,6 +146,17 @@ public class TableInfoCache {
         return tableExecutor;
     }
 
+    public static <T, P extends Serializable> TableExecutor<T, P> getTableExecutor(SqlExecutor sqlExecutor, Class<T> target) {
+        TableExecutor<T, P> tableExecutor = (TableExecutor<T, P>) TABLE_EXEC_CACHE.get(target);
+        if (tableExecutor == null) {
+            DbCommHandler commHandler = (DbCommHandler) sqlExecutor;
+            CustomConfigHelper configHelper = DbConnGlobal.getConfigHelper(commHandler.getOrder());
+            tableExecutor = new DefaultTableExecutor<>(configHelper.getDbDataSource(), configHelper.getDbGlobalConfig(), target);
+            TABLE_EXEC_CACHE.put(target, tableExecutor);
+        }
+        return tableExecutor;
+    }
+
 
 
 }

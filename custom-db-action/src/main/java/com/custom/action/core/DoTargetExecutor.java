@@ -1,4 +1,4 @@
-package com.custom.action.service;
+package com.custom.action.core;
 
 import com.custom.action.condition.*;
 import com.custom.action.interfaces.TableExecutor;
@@ -20,18 +20,18 @@ import java.util.stream.Stream;
  * @author   Xiao-Bai
  * @since 2023/2/8 13:21
  */
-public class DoTargetWrapper<T> {
+public class DoTargetExecutor<T> {
 
     private final ConditionWrapper<T> wrapper;
     private final TableExecutor<T, Serializable> tableExecutor;
 
-    private DoTargetWrapper(ConditionWrapper<T> wrapper, TableExecutor<T, Serializable> tableExecutor) {
+    private DoTargetExecutor(ConditionWrapper<T> wrapper, TableExecutor<T, Serializable> tableExecutor) {
         this.wrapper = wrapper;
         this.tableExecutor = tableExecutor;
     }
 
-    public static <T> DoTargetWrapper<T> build(ConditionWrapper<T> wrapper, TableExecutor<T, Serializable> tableExecutor) {
-        return new DoTargetWrapper<>(wrapper, tableExecutor);
+    public static <T> DoTargetExecutor<T> build(ConditionWrapper<T> wrapper, TableExecutor<T, Serializable> tableExecutor) {
+        return new DoTargetExecutor<>(wrapper, tableExecutor);
     }
 
     public List<T> getList() throws Exception {

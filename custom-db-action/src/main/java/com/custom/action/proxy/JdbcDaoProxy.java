@@ -28,7 +28,6 @@ public class JdbcDaoProxy implements InvocationHandler, Serializable {
     }
 
     private final SqlExecutor sqlExecutor;
-    private final static List<Method> CUSTOMIZE_METHOD_CACHES;
     private final static Map<Class<?>, Class<?>> PRIMITIVE_MAPPED;
     private final static Map<Method, Method> TARGET_METHOD_CACHE;
 
@@ -37,9 +36,6 @@ public class JdbcDaoProxy implements InvocationHandler, Serializable {
     }
 
     static {
-        // todo 给一个缓存，无需每次都要重新匹配
-        Method[] declaredMethods = JdbcAction.class.getDeclaredMethods();
-        CUSTOMIZE_METHOD_CACHES = new ArrayList<>((Arrays.asList(declaredMethods)));
         TARGET_METHOD_CACHE = new ConcurrentHashMap<>();
         PRIMITIVE_MAPPED = new HashMap<>(8);
         PRIMITIVE_MAPPED.put(Integer.TYPE, Integer.class);
@@ -50,7 +46,6 @@ public class JdbcDaoProxy implements InvocationHandler, Serializable {
         PRIMITIVE_MAPPED.put(Byte.TYPE, Byte.class);
         PRIMITIVE_MAPPED.put(Character.TYPE, Character.class);
         PRIMITIVE_MAPPED.put(Boolean.TYPE, Boolean.class);
-
     }
 
 
@@ -66,7 +61,8 @@ public class JdbcDaoProxy implements InvocationHandler, Serializable {
             return targetExecMethod.invoke(sqlExecutor, args);
         }
         String methodName = method.getName();
-        targetExecMethod = CUSTOMIZE_METHOD_CACHES.stream()
+        Method[] declaredMethods = JdbcAction.class.getDeclaredMethods();
+        targetExecMethod = Arrays.stream(declaredMethods)
                 .filter(op -> op.getName().equals(methodName))
                 .filter(op -> {
                     Class<?>[] parameterTypes = op.getParameterTypes();

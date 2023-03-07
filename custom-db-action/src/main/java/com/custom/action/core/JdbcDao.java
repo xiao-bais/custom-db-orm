@@ -2,6 +2,7 @@ package com.custom.action.core;
 
 import com.custom.action.condition.AbstractUpdateSet;
 import com.custom.action.condition.ConditionWrapper;
+import com.custom.action.core.chain.ChainWrapper;
 import com.custom.comm.page.DbPageRows;
 import com.custom.jdbc.interfaces.TransactionExecutor;
 
@@ -279,6 +280,11 @@ public interface JdbcDao {
      * 事务执行方法
      */
     void execTrans(TransactionExecutor executor);
+
+    /**
+     * 链式操作
+     */
+    <T> ChainWrapper<T> createChain(Class<T> entityClass);
 
 
 }

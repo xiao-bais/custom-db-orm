@@ -2,6 +2,7 @@ package com.custom.action.core;
 
 import com.custom.action.condition.AbstractUpdateSet;
 import com.custom.action.condition.ConditionWrapper;
+import com.custom.action.core.chain.ChainWrapper;
 import com.custom.comm.page.DbPageRows;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
@@ -76,6 +77,7 @@ public interface SqlExecutor {
     DbDataSource getDbDataSource();
     JdbcExecutorFactory getExecutorFactory();
     void execTrans(TransactionExecutor wrapper) throws Exception;
+    <T> ChainWrapper<T> createChain(Class<T> entityClass);
 
 
 
