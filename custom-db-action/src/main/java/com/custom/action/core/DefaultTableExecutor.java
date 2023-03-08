@@ -2,6 +2,7 @@ package com.custom.action.core;
 
 import com.custom.action.condition.AbstractUpdateSet;
 import com.custom.action.condition.ConditionWrapper;
+import com.custom.action.core.chain.ChainWrapper;
 import com.custom.action.interfaces.TableExecutor;
 import com.custom.action.proxy.JdbcActionProxy;
 import com.custom.comm.exceptions.CustomCheckException;
@@ -138,6 +139,11 @@ public class DefaultTableExecutor<T, P extends Serializable> implements TableExe
         }
         DbKeyParserModel<T> keyParserModel = emptySqlBuilder.getKeyParserModel();
         return (P) keyParserModel.getValue(entity);
+    }
+
+    @Override
+    public ChainWrapper<T> createChain() {
+        return new ChainWrapper<>(entityClass, sqlExecutor);
     }
 
 

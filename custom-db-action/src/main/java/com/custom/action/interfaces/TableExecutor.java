@@ -2,6 +2,7 @@ package com.custom.action.interfaces;
 
 import com.custom.action.condition.AbstractUpdateSet;
 import com.custom.action.condition.ConditionWrapper;
+import com.custom.action.core.chain.ChainWrapper;
 import com.custom.comm.page.DbPageRows;
 
 import java.io.Serializable;
@@ -46,6 +47,7 @@ public interface TableExecutor<T, P extends Serializable> {
     /*------------------------------------ comm ---------------------------------------*/
     int save(T t) throws Exception;
     P primaryKeyValue(T entity);
+    ChainWrapper<T> createChain();
 
 
 }
