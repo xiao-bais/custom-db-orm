@@ -271,7 +271,7 @@ public class JdbcAction implements SqlExecutor, DbCommHandler {
 
     @Override
     public <T> ChainWrapper<T> createChain(Class<T> entityClass) {
-        return new ChainWrapper<>(entityClass, this);
+        return new ChainWrapper<>(entityClass, executorFactory);
     }
 
 

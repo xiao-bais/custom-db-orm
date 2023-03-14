@@ -266,7 +266,6 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
 
         CustomSqlSessionHelper sessionHelper = sqlSession.getHelper();
         SaveExecutorBody<T> executorBody = (SaveExecutorBody<T>) sqlSession.getBody();
-        DbCustomStrategy strategy = sessionHelper.getGlobalConfig().getStrategy();
 
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -290,9 +289,7 @@ public class DefaultCustomJdbcExecutor implements CustomJdbcExecutor {
             }
             return res;
         } catch (SQLException e) {
-            SqlOutPrintBuilder
-                    .build(executorBody.getPrepareSql(), executorBody.getSqlParams(), strategy.isSqlOutPrintExecute())
-                    .sqlErrPrint();
+            sessionHelper.sqlErrorOutPrinting();
             throw e;
         } finally {
             sessionHelper.closeResources(statement, resultSet);

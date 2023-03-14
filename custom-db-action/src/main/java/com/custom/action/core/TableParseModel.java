@@ -128,7 +128,7 @@ public class TableParseModel<T> implements Cloneable {
     /**
      * 删除表结构
      */
-    protected String dropTableSql() {
+    public String dropTableSql() {
         return String.format("DROP TABLE IF EXISTS `%s`", this.table);
     }
 

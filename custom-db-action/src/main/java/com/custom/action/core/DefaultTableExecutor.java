@@ -143,7 +143,7 @@ public class DefaultTableExecutor<T, P extends Serializable> implements TableExe
 
     @Override
     public ChainWrapper<T> createChain() {
-        return new ChainWrapper<>(entityClass, sqlExecutor);
+        return new ChainWrapper<>(entityClass, sqlExecutor.getExecutorFactory());
     }
 
 

@@ -71,7 +71,7 @@ public class JdbcExecutorFactory {
     /**
      * 创建请求会话
      */
-    private CustomSqlSession createSqlSession(BaseExecutorBody paramInfo) {
+    public CustomSqlSession createSqlSession(BaseExecutorBody paramInfo) {
         Connection connection = DbConnGlobal.getCurrentConnection(dbDataSource);
         return new DefaultSqlSession(globalConfig, connection, paramInfo);
     }
@@ -90,10 +90,11 @@ public class JdbcExecutorFactory {
         if (StrUtils.isBlank(dbDataSource.getDriver())) {
             if (dbDataSource.getDatabaseType() == null) {
 
-                // 在没有填写驱动类的情况下，使用默认的驱动去尝试加载
                 try {
+                    // 在没有填写驱动类的情况下，使用默认的驱动去尝试加载
                     Class.forName(DatabaseDialect.DEFAULT.getDriverClassName());
                     dbDataSource.setDatabaseType(DatabaseDialect.DEFAULT);
+
                 } catch (ClassNotFoundException e) {
                     throw new CustomCheckException("未指定连接的数据库驱动");
                 }
@@ -354,6 +355,9 @@ public class JdbcExecutorFactory {
         queryAfter.handle(t, obj);
     }
 
+    public CustomJdbcExecutor getJdbcExecutor() {
+        return jdbcExecutor;
+    }
 
 
 

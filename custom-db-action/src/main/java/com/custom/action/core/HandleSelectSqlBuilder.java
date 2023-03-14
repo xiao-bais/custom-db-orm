@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
  * @author   Xiao-Bai
  * @since  2022/4/1 17:22
  **/
-@SuppressWarnings("unchecked")
 public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -232,7 +231,7 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
     /**
      * 整合条件，获取最终可执行的sql
      */
-    protected String executeSqlBuilder(ConditionWrapper<T> wrapper) throws Exception {
+    public String executeSqlBuilder(ConditionWrapper<T> wrapper) throws Exception {
 
         StringBuilder selectSql = new StringBuilder();
         Boolean primaryTable = wrapper.getPrimaryTable();
