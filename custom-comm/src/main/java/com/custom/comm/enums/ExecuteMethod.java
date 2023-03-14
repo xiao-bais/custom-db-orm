@@ -28,6 +28,11 @@ public enum ExecuteMethod {
     SELECT,
 
     /**
+     * 其他
+     */
+    OTHERS,
+
+    /**
     * 默认不做处理
     */
     NONE

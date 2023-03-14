@@ -6,9 +6,9 @@ import com.custom.action.core.methods.delete.DeleteBatchKeys;
 import com.custom.action.core.methods.delete.DeleteByCondition;
 import com.custom.action.core.methods.delete.DeleteByKey;
 import com.custom.action.core.methods.delete.DeleteSelective;
-import com.custom.action.core.methods.insert.Insert;
+import com.custom.action.core.methods.insert.InsertOne;
 import com.custom.action.core.methods.insert.InsertBatch;
-import com.custom.action.core.methods.other.*;
+import com.custom.action.core.methods.others.*;
 import com.custom.action.core.methods.select.*;
 import com.custom.action.core.methods.update.UpdateByCondition;
 import com.custom.action.core.methods.update.UpdateByKey;
@@ -149,7 +149,7 @@ public class CustomMappedHandler {
         EXECUTE_HANDLER_CACHE.put(MethodKind.DELETE_SELECTIVE, DeleteSelective.class);
 
         // insert 2.
-        EXECUTE_HANDLER_CACHE.put(MethodKind.INSERT, Insert.class);
+        EXECUTE_HANDLER_CACHE.put(MethodKind.INSERT_ONE, InsertOne.class);
         EXECUTE_HANDLER_CACHE.put(MethodKind.INSERT_BATCH, InsertBatch.class);
 
         // update 4.

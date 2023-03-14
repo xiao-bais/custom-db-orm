@@ -1,7 +1,9 @@
 package com.custom.jdbc.dbAdapetr;
 
 import com.custom.comm.utils.ConvertUtil;
+import com.custom.jdbc.executebody.SelectExecutorBody;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.interfaces.CustomSqlSession;
 import com.custom.jdbc.interfaces.DatabaseAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,10 +16,12 @@ public abstract class AbstractDbAdapter implements DatabaseAdapter {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    protected <T> boolean queryBoolean(String selectSql) {
+    protected boolean queryBoolean(String selectSql) {
         Object res;
         try {
-            res = executorFactory.selectObjBySql(false, selectSql);
+            SelectExecutorBody<Object> paramInfo = new SelectExecutorBody<>(Object.class, selectSql, false, new Object[]{});
+            CustomSqlSession sqlSession = executorFactory.createSqlSession(paramInfo);
+            res = executorFactory.getJdbcExecutor().selectObj(sqlSession);
         } catch (Exception e) {
             logger.error(e.toString(), e);
             return false;

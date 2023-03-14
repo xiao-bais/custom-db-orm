@@ -1,30 +1,30 @@
-package com.custom.action.core.methods.other;
+package com.custom.action.core.methods.others;
 
 import com.custom.action.core.methods.AbstractMethod;
 import com.custom.action.core.methods.MethodKind;
+import com.custom.jdbc.executebody.BaseExecutorBody;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
-import com.custom.jdbc.interfaces.TransactionExecutor;
 
 /**
  * @author Xiao-Bai
- * @since 2023/3/14 13:04
+ * @since 2023/3/14 13:27
  */
-public class ExecTrans extends AbstractMethod {
+public class ExecuteSql extends AbstractMethod {
     @Override
     protected <T> CustomSqlSession createSqlSession(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
-        return null;
+        BaseExecutorBody executorBody = new BaseExecutorBody(String.valueOf(params[0]), sqlPrintSupport, (Object[]) params[1]);
+        return executorFactory.createSqlSession(executorBody);
     }
 
     @Override
     public <T> Object doExecute(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
-        TransactionExecutor transactionExecutor = (TransactionExecutor) params[0];
-        executorFactory.handleTransaction(transactionExecutor);
-        return null;
+        CustomSqlSession sqlSession = this.createSqlSession(executorFactory, target, params);
+        return executorFactory.getJdbcExecutor().executeUpdate(sqlSession);
     }
 
     @Override
     public MethodKind getKind() {
-        return MethodKind.EXEC_TRANS;
+        return MethodKind.EXECUTE_SQL;
     }
 }

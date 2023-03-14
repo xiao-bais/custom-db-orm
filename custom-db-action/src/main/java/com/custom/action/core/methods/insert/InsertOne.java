@@ -19,7 +19,7 @@ import java.util.List;
  * @since 2023/3/13 13:31
  */
 @SuppressWarnings("unchecked")
-public class Insert extends AbstractMethod {
+public class InsertOne extends AbstractMethod {
     @Override
     protected <T> CustomSqlSession createSqlSession(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
         AbstractSqlBuilder<T> sqlBuilder = TableInfoCache.getInsertSqlBuilderCache(target, executorFactory);
@@ -53,6 +53,6 @@ public class Insert extends AbstractMethod {
 
     @Override
     public MethodKind getKind() {
-        return MethodKind.INSERT;
+        return MethodKind.INSERT_ONE;
     }
 }

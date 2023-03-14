@@ -20,6 +20,7 @@ public class DoMain {
         JdbcTestBuilder jdbcTestBuilder = JdbcTestBuilder.builder();
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
         JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
+
         MyService helper = new MyServiceImpl();
 
         List<Student> students = jdbcDao.createChain(Student.class).whereEx(x -> x.eq(Student::getAge, 30)).getList();

@@ -1,4 +1,4 @@
-package com.custom.action.core.methods.other;
+package com.custom.action.core.methods.others;
 
 import com.custom.action.core.TableInfoCache;
 import com.custom.action.core.TableParseModel;

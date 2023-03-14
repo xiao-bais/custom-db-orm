@@ -65,32 +65,6 @@ public class DbConnGlobal {
     }
 
     /**
-     * 表是否存在
-     */
-    public static String exitsTableSql(String table, DbDataSource dbDataSource) {
-        if (table.contains(Constants.POINT)) {
-            table = table.substring(table.lastIndexOf(Constants.POINT));
-        }
-
-        String key = getDataConfigKey(dbDataSource);
-        CustomConfigHelper configHelper = (CustomConfigHelper) GlobalDataHandler.readGlobalObject(key);
-
-        AssertUtil.notNull(configHelper, "未找到当前数据源相关信息");
-
-        String databaseName;
-        if (StrUtils.isNotBlank(dbDataSource.getDatabase())) {
-            databaseName = dbDataSource.getDatabase();
-        } else {
-            DatabaseAdapter databaseAdapter = configHelper.getDatabaseAdapter();
-            databaseName = databaseAdapter.databaseName();
-        }
-
-        return String.format("SELECT COUNT(1) COUNT ROM " +
-                        "`information_schema`.`TABLES` WHERE TABLE_NAME = '%s' AND TABLE_SCHEMA = '%s'",
-                table, databaseName);
-    }
-
-    /**
      * 添加全局数据源配置
      * <br/>在多个数据源的情况下，需要指定dataSource中的order属性，并且order不能存在重复值
      */

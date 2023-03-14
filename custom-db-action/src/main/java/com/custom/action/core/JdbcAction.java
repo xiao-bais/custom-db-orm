@@ -32,7 +32,7 @@ import java.util.*;
  * @since  2022/4/13 20:49
  */
 @SuppressWarnings("unchecked")
-public class JdbcAction implements SqlExecutor, DbCommHandler {
+public class JdbcAction implements SqlExecutor {
 
     private static final Logger logger = LoggerFactory.getLogger(JdbcAction.class);
     private DbDataSource dbDataSource;
@@ -417,12 +417,12 @@ public class JdbcAction implements SqlExecutor, DbCommHandler {
 
     @Override
     public void createTables(Class<?>... arr) throws Exception {
-        TableParseModel<?> tableSqlBuilder;
+        TableParseModel<?> tableModel;
         for (int i = arr.length - 1; i >= 0; i--) {
-            tableSqlBuilder = TableInfoCache.getTableModel(arr[i]);
-            String exitsTableSql = DbConnGlobal.exitsTableSql(tableSqlBuilder.getTable(), dbDataSource);
-            if(!executorFactory.hasTableInfo(exitsTableSql)) {
-                String createTableSql = tableSqlBuilder.createTableSql();
+            tableModel = TableInfoCache.getTableModel(arr[i]);
+            DatabaseAdapter databaseAdapter = executorFactory.getDatabaseAdapter();
+            if (!databaseAdapter.existTable(tableModel.getTable())) {
+                String createTableSql = tableModel.createTableSql();
                 executorFactory.execTable(createTableSql);
                 logger.info("createTableSql ->\n " + createTableSql);
             }
@@ -432,10 +432,10 @@ public class JdbcAction implements SqlExecutor, DbCommHandler {
     @Override
     public void dropTables(Class<?>... arr) throws Exception {
         for (int i = arr.length - 1; i >= 0; i--) {
-            TableParseModel<?> tableSqlBuilder = TableInfoCache.getTableModel(arr[i]);
-            String dropTableSql = tableSqlBuilder.dropTableSql();
+            TableParseModel<?> tableModel = TableInfoCache.getTableModel(arr[i]);
+            String dropTableSql = tableModel.dropTableSql();
             executorFactory.execTable(dropTableSql);
-            logger.warn("drop table '{}' completed\n", tableSqlBuilder.getTable());
+            logger.warn("drop table '{}' completed\n", tableModel.getTable());
         }
     }
 
@@ -482,10 +482,5 @@ public class JdbcAction implements SqlExecutor, DbCommHandler {
             MultiResultInjector<T> resultInjector = new MultiResultInjector<>(target, this, target);
             resultInjector.injectorValue(result);
         }
-    }
-
-    @Override
-    public int getOrder() {
-        return dbDataSource.getOrder();
     }
 }

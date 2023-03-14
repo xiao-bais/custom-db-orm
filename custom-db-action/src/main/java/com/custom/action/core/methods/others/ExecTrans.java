@@ -1,17 +1,16 @@
-package com.custom.action.core.methods.other;
+package com.custom.action.core.methods.others;
 
-import com.custom.action.core.chain.ChainWrapper;
 import com.custom.action.core.methods.AbstractMethod;
 import com.custom.action.core.methods.MethodKind;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
+import com.custom.jdbc.interfaces.TransactionExecutor;
 
 /**
  * @author Xiao-Bai
- * @since 2023/3/14 13:33
+ * @since 2023/3/14 13:04
  */
-public class CreateChain extends AbstractMethod {
-
+public class ExecTrans extends AbstractMethod {
     @Override
     protected <T> CustomSqlSession createSqlSession(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
         return null;
@@ -19,11 +18,13 @@ public class CreateChain extends AbstractMethod {
 
     @Override
     public <T> Object doExecute(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
-        return new ChainWrapper<>(target, executorFactory);
+        TransactionExecutor transactionExecutor = (TransactionExecutor) params[0];
+        executorFactory.handleTransaction(transactionExecutor);
+        return null;
     }
 
     @Override
     public MethodKind getKind() {
-        return MethodKind.CREATE_CHAIN;
+        return MethodKind.EXEC_TRANS;
     }
 }

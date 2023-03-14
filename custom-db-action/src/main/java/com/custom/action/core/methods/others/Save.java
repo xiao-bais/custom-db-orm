@@ -1,4 +1,4 @@
-package com.custom.action.core.methods.other;
+package com.custom.action.core.methods.others;
 
 import com.custom.action.core.methods.AbstractMethod;
 import com.custom.action.core.methods.MethodKind;
@@ -24,7 +24,7 @@ public class Save extends AbstractMethod {
         T entity = (T) params[0];
         AbstractSqlBuilder<T> sqlBuilder = this.getEmptySqlBuilder(executorFactory, target);
         boolean primaryKeyIsNotNull = Objects.nonNull(sqlBuilder.primaryKeyVal(entity));
-        return primaryKeyIsNotNull ? MethodKind.INSERT : MethodKind.UPDATE_BY_KEY;
+        return primaryKeyIsNotNull ? MethodKind.INSERT_ONE : MethodKind.UPDATE_BY_KEY;
     }
 
     @Override
