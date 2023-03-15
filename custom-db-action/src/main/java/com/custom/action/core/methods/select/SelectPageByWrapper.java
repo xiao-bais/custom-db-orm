@@ -3,6 +3,7 @@ package com.custom.action.core.methods.select;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.core.HandleSelectSqlBuilder;
 import com.custom.action.core.methods.MethodKind;
+import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.page.DbPageRows;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
@@ -22,10 +23,22 @@ public class SelectPageByWrapper extends SelectListByWrapper {
     @Override
     public <T> Object doExecute(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
         ConditionWrapper<T> conditionWrapper = (ConditionWrapper<T>) params[0];
+        DbPageRows<T> pageRows;
+        if (params.length > 1 && params[1] instanceof DbPageRows) {
+            pageRows = (DbPageRows<T>) params[1];
+        }else {
+            pageRows = new DbPageRows<>(conditionWrapper.getPageIndex(), conditionWrapper.getPageSize());
+        }
+
+        if (!conditionWrapper.hasPageParams()) {
+            throw new CustomCheckException("Missing paging parameter：pageIndex：%s, pageSize：%s",
+                    conditionWrapper.getPageIndex(),
+                    conditionWrapper.getPageSize()
+            );
+        }
         HandleSelectSqlBuilder<T> sqlBuilder = (HandleSelectSqlBuilder<T>) super.getSelectSqlBuilder(executorFactory, target);
         String selectSql = sqlBuilder.executeSqlBuilder(conditionWrapper);
-        DbPageRows<T> pageRows = new DbPageRows<>(conditionWrapper.getPageIndex(), conditionWrapper.getPageSize());
-        buildPageResult(executorFactory, target, selectSql, pageRows, conditionWrapper.getParamValues().toArray());
+        super.buildPageResult(executorFactory, target, selectSql, pageRows, conditionWrapper.getParamValues().toArray());
         return pageRows;
     }
 

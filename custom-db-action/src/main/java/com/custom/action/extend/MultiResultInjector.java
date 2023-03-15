@@ -32,18 +32,12 @@ public class MultiResultInjector<T> {
      */
     private final Class<T> thisClass;
     private final Class<?> topNode;
-
-    /**
-     * select 查询对象
-     */
-    private final SqlExecutor sqlExecutor;
     private final JdbcExecutorFactory executorFactory;
 
 
-    public MultiResultInjector(Class<T> thisClass, SqlExecutor sqlExecutor, Class<?> topNode) {
+    public MultiResultInjector(Class<T> thisClass, JdbcExecutorFactory executorFactory, Class<?> topNode) {
         this.thisClass = thisClass;
-        this.sqlExecutor = sqlExecutor;
-        this.executorFactory = sqlExecutor.getExecutorFactory();
+        this.executorFactory = executorFactory;
         this.topNode = topNode;
     }
 

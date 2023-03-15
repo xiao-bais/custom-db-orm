@@ -15,6 +15,7 @@ import com.custom.action.core.methods.update.UpdateByKey;
 import com.custom.action.core.methods.update.UpdateSelectiveBySqlSet;
 import com.custom.action.core.methods.update.UpdateSelectiveByWrapper;
 import com.custom.action.interfaces.ExecuteHandler;
+import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.ReflectUtil;
 import com.custom.jdbc.configuration.DbDataSource;
@@ -33,7 +34,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class CustomMappedHandler {
 
-
+    /**
+     * 处理执行目标方法
+     */
     public <T> Object handleExecute(Method method, Object[] params) throws Exception {
         ExecuteHandler executor = METHOD_HANDLER_CACHE.get(method);
         if (executor == null) {
@@ -41,13 +44,25 @@ public class CustomMappedHandler {
             executor = ReflectUtil.getInstance(EXECUTE_HANDLER_CACHE.get(methodKind));
             METHOD_HANDLER_CACHE.put(method, executor);
         }
+        return handleExecute(executor.getKind(), params);
+    }
+
+    /**
+     * 处理目标执行方法
+     */
+    public <T> Object handleExecute(MethodKind methodKind, Object... params) throws Exception {
+        ExecuteHandler executor = ReflectUtil.getInstance(EXECUTE_HANDLER_CACHE.get(methodKind));
         Class<T> mappedType = executor.getMappedType(params);
         Object result = executor.doExecute(executorFactory, mappedType, params);
         // if save then insert or update....
         if (executor.getKind() == MethodKind.SAVE) {
             MethodKind saveKind = (MethodKind) executor.doExecute(executorFactory, mappedType, params);
             executor = ReflectUtil.getInstance(EXECUTE_HANDLER_CACHE.get(saveKind));
-            return executor.doExecute(executorFactory, mappedType, params);
+            result = executor.doExecute(executorFactory, mappedType, params);
+        }
+        // query after do something
+        if (executor.getKind().getExecuteMethod() == ExecuteMethod.SELECT) {
+            executorFactory.queryAfterHandle(mappedType, result);
         }
         return result;
     }
@@ -105,6 +120,10 @@ public class CustomMappedHandler {
 
     public CustomMappedHandler(DbDataSource dbDataSource, DbGlobalConfig dbGlobalConfig) {
         this.executorFactory = new JdbcExecutorFactory(dbDataSource, dbGlobalConfig);
+    }
+
+    public JdbcExecutorFactory getExecutorFactory() {
+        return executorFactory;
     }
 
     static {

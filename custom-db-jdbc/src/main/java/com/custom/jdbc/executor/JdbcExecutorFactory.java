@@ -335,7 +335,7 @@ public class JdbcExecutorFactory {
      * @param t 查询结果的类型
      * @param obj 查询结果
      */
-    private <T> void queryAfterHandle(Class<T> t, Object obj) throws Exception {
+    public <T> void queryAfterHandle(Class<T> t, Object obj) throws Exception {
         CustomSqlQueryAfter queryAfter;
 
         try {

@@ -77,7 +77,7 @@ public interface SqlExecutor {
     DbDataSource getDbDataSource();
     JdbcExecutorFactory getExecutorFactory();
     void execTrans(TransactionExecutor wrapper) throws Exception;
-    <T> ChainWrapper<T> createChain(Class<T> entityClass);
+    <T> ChainWrapper<T> createChain(Class<T> entityClass) throws Exception;
 
 
 

@@ -2,8 +2,10 @@ package com.custom.action.core.methods;
 
 import com.custom.action.condition.AbstractUpdateSet;
 import com.custom.action.condition.ConditionWrapper;
+import com.custom.action.core.HandleSelectSqlBuilder;
 import com.custom.action.core.TableInfoCache;
 import com.custom.action.dbaction.AbstractSqlBuilder;
+import com.custom.action.extend.MultiResultInjector;
 import com.custom.action.interfaces.ExecuteHandler;
 import com.custom.comm.enums.SqlExecTemplate;
 import com.custom.comm.page.DbPageRows;
@@ -75,6 +77,9 @@ public abstract class AbstractMethod implements ExecuteHandler {
         return TableInfoCache.getEmptySqlBuilder(mappedType, executorFactory);
     }
 
+    /**
+     * 分页数据整合
+     */
     protected <T> void buildPageResult(JdbcExecutorFactory executorFactory,
                                        Class<T> target,
                                        String selectSql,
@@ -115,5 +120,16 @@ public abstract class AbstractMethod implements ExecuteHandler {
                 (Object[]) params[3]
         );
         return executorFactory.createSqlSession(selectExecutorBody);
+    }
+
+    /**
+     * 对于返回对象的一对一，一对多处理
+     */
+    public <T> void otherResultInject(JdbcExecutorFactory executorFactory, Class<T> target, List<T> result) throws Exception {
+        HandleSelectSqlBuilder<T> selectSqlBuilder = TableInfoCache.getSelectSqlBuilderCache(target, executorFactory);
+        if (selectSqlBuilder.isExistNeedInjectResult() && result != null) {
+            MultiResultInjector<T> resultInjector = new MultiResultInjector<>(target, executorFactory, target);
+            resultInjector.injectorValue(result);
+        }
     }
 }

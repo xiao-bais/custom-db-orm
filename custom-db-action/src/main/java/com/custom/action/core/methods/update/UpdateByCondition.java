@@ -4,6 +4,8 @@ import com.custom.action.core.methods.AbstractMethod;
 import com.custom.action.core.methods.MethodKind;
 import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.interfaces.FullSqlConditionExecutor;
+import com.custom.comm.exceptions.CustomCheckException;
+import com.custom.comm.utils.AssertUtil;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.jdbc.executebody.SaveExecutorBody;
@@ -23,9 +25,7 @@ public class UpdateByCondition extends AbstractMethod {
     @Override
     protected <T> CustomSqlSession createSqlSession(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
         String condition = String.valueOf(params[1]);
-        if (JudgeUtil.isEmpty(condition)) {
-            throw new NullPointerException("修改条件不能为空");
-        }
+        AssertUtil.notEmpty("update condition cannot be empty.");
         T entity = (T) params[0];
         AbstractSqlBuilder<T> sqlBuilder = super.getUpdateSqlBuilder(executorFactory, target);
         // 创建update sql

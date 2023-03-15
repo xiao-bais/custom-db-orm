@@ -14,7 +14,7 @@ public class UpdateSelectiveByWrapper extends UpdateByCondition {
 
     @Override
     protected <T> CustomSqlSession createSqlSession(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
-        ConditionWrapper<T> wrapper = (ConditionWrapper<T>) params[0];
+        ConditionWrapper<T> wrapper = (ConditionWrapper<T>) params[1];
         return super.createSqlSession(executorFactory, target,
                 new Object[]{
                         wrapper.getFinalConditional(),

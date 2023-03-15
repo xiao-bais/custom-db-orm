@@ -2,6 +2,7 @@ package com.custom.action.core.methods.select;
 
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.core.HandleSelectSqlBuilder;
+import com.custom.action.core.methods.AbstractMethod;
 import com.custom.action.core.methods.MethodKind;
 import com.custom.comm.page.DbPageRows;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
@@ -16,7 +17,7 @@ import java.util.Map;
  * @since 2023/3/11 23:05
  */
 @SuppressWarnings("unchecked")
-public class SelectPageMapByWrapper extends SelectPageByWrapper {
+public class SelectPageMapByWrapper extends AbstractMethod {
 
 
     @Override
@@ -46,5 +47,10 @@ public class SelectPageMapByWrapper extends SelectPageByWrapper {
     @Override
     public MethodKind getKind() {
         return MethodKind.SELECT_PAGE_MAP_BY_WRAPPER;
+    }
+
+    @Override
+    protected <T> CustomSqlSession createSqlSession(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
+        return null;
     }
 }

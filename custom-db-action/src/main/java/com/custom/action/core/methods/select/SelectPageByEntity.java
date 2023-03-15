@@ -1,17 +1,29 @@
 package com.custom.action.core.methods.select;
 
+import com.custom.action.condition.ConditionWrapper;
+import com.custom.action.condition.Conditions;
+import com.custom.action.condition.DefaultConditionWrapper;
+import com.custom.action.core.HandleSelectSqlBuilder;
 import com.custom.action.core.methods.MethodKind;
+import com.custom.action.dbaction.AbstractSqlBuilder;
+import com.custom.comm.page.DbPageRows;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 
 /**
  * @author Xiao-Bai
  * @since 2023/3/11 23:22
  */
+@SuppressWarnings("unchecked")
 public class SelectPageByEntity extends SelectPageByWrapper {
 
     @Override
     public <T> Object doExecute(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
-        return super.doExecute(executorFactory, target, params);
+        DefaultConditionWrapper<T> conditionWrapper = Conditions.allEqQuery((T) params[0]);
+        if (params.length > 1 && params[1] != null && params[1] instanceof DbPageRows) {
+            DbPageRows<T> dbPageRows = (DbPageRows<T>) params[1];
+            conditionWrapper.pageParams(dbPageRows.getPageIndex(), dbPageRows.getPageSize());
+        }
+        return super.doExecute(executorFactory, target, new Object[]{conditionWrapper, params[1]});
     }
 
     @Override

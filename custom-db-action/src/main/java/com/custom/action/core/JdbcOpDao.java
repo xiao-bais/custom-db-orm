@@ -358,7 +358,7 @@ public class JdbcOpDao {
     /**
      * 链式操作
      */
-    public <T> ChainWrapper<T> createChain(Class<T> entityClass) {
+    public <T> ChainWrapper<T> createChain(Class<T> entityClass) throws Exception {
         return sqlExecutor.createChain(entityClass);
     }
 
