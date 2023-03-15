@@ -10,7 +10,7 @@ import com.custom.comm.enums.SqlExecTemplate;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.jdbc.executebody.BaseExecutorBody;
 import com.custom.jdbc.executebody.ExecuteBodyHelper;
-import com.custom.jdbc.executor.JdbcSqlSessionFactory;
+import com.custom.jdbc.session.JdbcSqlSessionFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
 
 import java.util.List;

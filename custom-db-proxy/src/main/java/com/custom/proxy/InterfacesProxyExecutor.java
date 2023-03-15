@@ -7,7 +7,7 @@ import com.custom.comm.annotations.mapper.Update;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.jdbc.configuration.CustomConfigHelper;
-import com.custom.jdbc.executor.JdbcSqlSessionFactory;
+import com.custom.jdbc.session.JdbcSqlSessionFactory;
 import com.custom.jdbc.utils.DbConnGlobal;
 import lombok.extern.slf4j.Slf4j;
 

@@ -4,7 +4,7 @@ import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.jdbc.configuration.DbGlobalConfig;
 import com.custom.jdbc.executebody.ExecuteBodyHelper;
 import com.custom.jdbc.executebody.SelectExecutorBody;
-import com.custom.jdbc.executor.JdbcSqlSessionFactory;
+import com.custom.jdbc.session.JdbcSqlSessionFactory;
 import com.custom.comm.date.DateTimeUtils;
 import com.custom.generator.config.GenarateGlobalConfig;
 import com.custom.generator.config.PackageConfig;

@@ -1,7 +1,7 @@
 package com.custom.jdbc.configuration;
 
 import com.custom.jdbc.dbAdapetr.Mysql8Adapter;
-import com.custom.jdbc.executor.JdbcSqlSessionFactory;
+import com.custom.jdbc.session.JdbcSqlSessionFactory;
 import com.custom.jdbc.interfaces.DatabaseAdapter;
 
 /**

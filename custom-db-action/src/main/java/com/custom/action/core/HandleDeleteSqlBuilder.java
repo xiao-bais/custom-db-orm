@@ -6,7 +6,7 @@ import com.custom.comm.enums.FillStrategy;
 import com.custom.comm.enums.SqlExecTemplate;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.utils.StrUtils;
-import com.custom.jdbc.executor.JdbcSqlSessionFactory;
+import com.custom.jdbc.session.JdbcSqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

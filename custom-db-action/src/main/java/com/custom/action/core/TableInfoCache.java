@@ -4,7 +4,7 @@ import com.custom.action.interfaces.TableExecutor;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.jdbc.configuration.CustomConfigHelper;
 import com.custom.jdbc.configuration.DbGlobalConfig;
-import com.custom.jdbc.executor.JdbcSqlSessionFactory;
+import com.custom.jdbc.session.JdbcSqlSessionFactory;
 import com.custom.jdbc.utils.DbConnGlobal;
 
 import java.io.Serializable;

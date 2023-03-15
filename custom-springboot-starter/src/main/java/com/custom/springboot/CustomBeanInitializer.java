@@ -4,7 +4,7 @@ import com.custom.comm.utils.JudgeUtil;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.configuration.DbGlobalConfig;
-import com.custom.jdbc.executor.JdbcSqlSessionFactory;
+import com.custom.jdbc.session.JdbcSqlSessionFactory;
 import com.custom.springboot.tableinit.TableStructsInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

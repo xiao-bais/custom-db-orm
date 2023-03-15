@@ -1,6 +1,6 @@
 package com.custom.proxy;
 
-import com.custom.jdbc.executor.JdbcSqlSessionFactory;
+import com.custom.jdbc.session.JdbcSqlSessionFactory;
 
 import java.lang.reflect.Method;
 

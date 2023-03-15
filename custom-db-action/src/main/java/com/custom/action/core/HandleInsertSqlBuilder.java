@@ -7,7 +7,7 @@ import com.custom.comm.utils.AssertUtil;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.utils.ConvertUtil;
 import com.custom.comm.utils.RexUtil;
-import com.custom.jdbc.executor.JdbcSqlSessionFactory;
+import com.custom.jdbc.session.JdbcSqlSessionFactory;
 
 import java.util.List;
 import java.util.Objects;

@@ -22,7 +22,7 @@ import com.custom.comm.utils.ReflectUtil;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.configuration.DbGlobalConfig;
 import com.custom.jdbc.executor.CustomSqlQueryAfter;
-import com.custom.jdbc.executor.JdbcSqlSessionFactory;
+import com.custom.jdbc.session.JdbcSqlSessionFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
 import java.lang.reflect.Method;

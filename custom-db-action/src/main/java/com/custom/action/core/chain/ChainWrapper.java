@@ -5,7 +5,7 @@ import com.custom.action.condition.DefaultConditionWrapper;
 import com.custom.action.condition.LambdaConditionWrapper;
 import com.custom.action.core.DoTargetExecutor;
 import com.custom.action.core.TableInfoCache;
-import com.custom.jdbc.executor.JdbcSqlSessionFactory;
+import com.custom.jdbc.session.JdbcSqlSessionFactory;
 
 import java.util.function.Consumer;
 

@@ -4,7 +4,7 @@ import com.custom.action.condition.*;
 import com.custom.action.core.chain.ChainWrapper;
 import com.custom.action.core.methods.MethodKind;
 import com.custom.jdbc.configuration.DbGlobalConfig;
-import com.custom.jdbc.executor.JdbcSqlSessionFactory;
+import com.custom.jdbc.session.JdbcSqlSessionFactory;
 import com.custom.comm.annotations.check.CheckExecute;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.page.DbPageRows;

@@ -1,7 +1,7 @@
 package com.custom.action.core;
 
 import com.custom.action.dbaction.AbstractSqlBuilder;
-import com.custom.jdbc.executor.JdbcSqlSessionFactory;
+import com.custom.jdbc.session.JdbcSqlSessionFactory;
 
 import java.util.List;
 

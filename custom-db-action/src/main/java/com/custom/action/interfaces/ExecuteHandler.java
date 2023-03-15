@@ -1,7 +1,7 @@
 package com.custom.action.interfaces;
 
 import com.custom.action.core.methods.MethodKind;
-import com.custom.jdbc.executor.JdbcSqlSessionFactory;
+import com.custom.jdbc.session.JdbcSqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

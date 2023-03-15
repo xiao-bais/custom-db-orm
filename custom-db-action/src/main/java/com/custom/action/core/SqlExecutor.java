@@ -5,7 +5,7 @@ import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.core.chain.ChainWrapper;
 import com.custom.comm.page.DbPageRows;
 import com.custom.jdbc.configuration.DbDataSource;
-import com.custom.jdbc.executor.JdbcSqlSessionFactory;
+import com.custom.jdbc.session.JdbcSqlSessionFactory;
 import com.custom.jdbc.interfaces.TransactionExecutor;
 
 import java.io.Serializable;

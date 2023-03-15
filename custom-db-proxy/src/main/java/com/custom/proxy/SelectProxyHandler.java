@@ -2,7 +2,7 @@ package com.custom.proxy;
 
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.CustomUtil;
-import com.custom.jdbc.executor.JdbcSqlSessionFactory;
+import com.custom.jdbc.session.JdbcSqlSessionFactory;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.lang.reflect.Method;

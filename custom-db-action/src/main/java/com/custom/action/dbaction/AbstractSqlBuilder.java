@@ -13,7 +13,7 @@ import com.custom.comm.enums.FillStrategy;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.*;
 import com.custom.jdbc.configuration.DbCustomStrategy;
-import com.custom.jdbc.executor.JdbcSqlSessionFactory;
+import com.custom.jdbc.session.JdbcSqlSessionFactory;
 import com.custom.jdbc.interfaces.DatabaseAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

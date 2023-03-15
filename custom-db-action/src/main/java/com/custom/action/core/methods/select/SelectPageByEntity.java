@@ -4,7 +4,7 @@ import com.custom.action.condition.Conditions;
 import com.custom.action.condition.DefaultConditionWrapper;
 import com.custom.action.core.methods.MethodKind;
 import com.custom.comm.page.DbPageRows;
-import com.custom.jdbc.executor.JdbcSqlSessionFactory;
+import com.custom.jdbc.session.JdbcSqlSessionFactory;
 
 /**
  * @author Xiao-Bai
