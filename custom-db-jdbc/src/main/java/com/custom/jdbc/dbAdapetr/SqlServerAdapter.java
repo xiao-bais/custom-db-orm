@@ -46,7 +46,7 @@ public class SqlServerAdapter extends AbstractDbAdapter {
         return false;
     }
 
-    public SqlServerAdapter(JdbcSqlSessionFactory executorFactory) {
-        super(executorFactory);
+    public SqlServerAdapter(JdbcSqlSessionFactory sqlSessionFactory) {
+        super(sqlSessionFactory);
     }
 }

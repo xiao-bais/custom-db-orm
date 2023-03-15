@@ -20,8 +20,8 @@ public abstract class AbstractDbAdapter implements DatabaseAdapter {
         Object res;
         try {
             SelectExecutorBody<Object> paramInfo = new SelectExecutorBody<>(Object.class, selectSql, false, new Object[]{});
-            CustomSqlSession sqlSession = executorFactory.createSqlSession(paramInfo);
-            res = executorFactory.getJdbcExecutor().selectObj(sqlSession);
+            CustomSqlSession sqlSession = sqlSessionFactory.createSqlSession(paramInfo);
+            res = sqlSessionFactory.getJdbcExecutor().selectObj(sqlSession);
         } catch (Exception e) {
             logger.error(e.toString(), e);
             return false;
@@ -30,13 +30,13 @@ public abstract class AbstractDbAdapter implements DatabaseAdapter {
     }
 
 
-    private final JdbcSqlSessionFactory executorFactory;
+    private final JdbcSqlSessionFactory sqlSessionFactory;
 
-    public AbstractDbAdapter(JdbcSqlSessionFactory executorFactory) {
-        this.executorFactory = executorFactory;
+    public AbstractDbAdapter(JdbcSqlSessionFactory sqlSessionFactory) {
+        this.sqlSessionFactory = sqlSessionFactory;
     }
 
     public JdbcSqlSessionFactory getExecutorFactory() {
-        return executorFactory;
+        return sqlSessionFactory;
     }
 }

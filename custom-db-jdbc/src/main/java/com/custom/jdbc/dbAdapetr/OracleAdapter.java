@@ -48,7 +48,7 @@ public class OracleAdapter extends AbstractDbAdapter {
         return false;
     }
 
-    public OracleAdapter(JdbcSqlSessionFactory executorFactory) {
-        super(executorFactory);
+    public OracleAdapter(JdbcSqlSessionFactory sqlSessionFactory) {
+        super(sqlSessionFactory);
     }
 }

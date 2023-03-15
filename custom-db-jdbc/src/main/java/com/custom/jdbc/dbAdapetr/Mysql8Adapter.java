@@ -70,7 +70,7 @@ public class Mysql8Adapter extends AbstractDbAdapter {
         return queryBoolean(targetSql);
     }
 
-    public Mysql8Adapter(JdbcSqlSessionFactory executorFactory) {
-        super(executorFactory);
+    public Mysql8Adapter(JdbcSqlSessionFactory sqlSessionFactory) {
+        super(sqlSessionFactory);
     }
 }

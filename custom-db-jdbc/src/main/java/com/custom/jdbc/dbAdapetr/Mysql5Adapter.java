@@ -26,7 +26,7 @@ public class Mysql5Adapter extends Mysql8Adapter {
         return null;
     }
 
-    public Mysql5Adapter(JdbcSqlSessionFactory executorFactory) {
-        super(executorFactory);
+    public Mysql5Adapter(JdbcSqlSessionFactory sqlSessionFactory) {
+        super(sqlSessionFactory);
     }
 }
