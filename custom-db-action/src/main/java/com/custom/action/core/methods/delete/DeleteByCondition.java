@@ -6,6 +6,8 @@ import com.custom.action.core.methods.MethodKind;
 import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.comm.utils.AssertUtil;
+import com.custom.jdbc.executebody.BaseExecutorBody;
+import com.custom.jdbc.executebody.ExecuteBodyHelper;
 import com.custom.jdbc.executebody.SaveExecutorBody;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
@@ -23,7 +25,7 @@ public class DeleteByCondition extends AbstractMethod {
         AssertUtil.notEmpty(condition, "delete condition cannot be empty.");
         FullSqlConditionExecutor conditionExecutor = sqlBuilder.addLogicCondition(condition);
         String deleteSql = sqlBuilder.createTargetSql() + conditionExecutor.execute();
-        SaveExecutorBody<Object> executorBody = new SaveExecutorBody<>(deleteSql, sqlPrintSupport, (Object[]) params[2]);
+        BaseExecutorBody executorBody = ExecuteBodyHelper.createExecUpdate(deleteSql, sqlPrintSupport, (Object[]) params[2]);
         return executorFactory.createSqlSession(executorBody);
     }
 

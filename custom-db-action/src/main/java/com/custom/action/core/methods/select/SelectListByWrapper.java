@@ -4,6 +4,7 @@ import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.core.HandleSelectSqlBuilder;
 import com.custom.action.core.methods.AbstractMethod;
 import com.custom.action.core.methods.MethodKind;
+import com.custom.jdbc.executebody.ExecuteBodyHelper;
 import com.custom.jdbc.executebody.SelectExecutorBody;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
@@ -20,10 +21,8 @@ public class SelectListByWrapper extends AbstractMethod {
         ConditionWrapper<T> conditionWrapper = (ConditionWrapper<T>) params[0];
         HandleSelectSqlBuilder<T> sqlBuilder = (HandleSelectSqlBuilder<T>) super.getSelectSqlBuilder(executorFactory, target);
         String selectSql = sqlBuilder.executeSqlBuilder(conditionWrapper);
-        SelectExecutorBody<T> executorBody = new SelectExecutorBody<>(
-                target,
-                selectSql,
-                true,
+        SelectExecutorBody<T> executorBody = ExecuteBodyHelper.createSelect(
+                target, selectSql, sqlPrintSupport,
                 conditionWrapper.getParamValues().toArray()
         );
         return executorFactory.createSqlSession(executorBody);

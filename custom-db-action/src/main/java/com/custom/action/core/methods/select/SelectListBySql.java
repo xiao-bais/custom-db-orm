@@ -2,6 +2,7 @@ package com.custom.action.core.methods.select;
 
 import com.custom.action.core.methods.AbstractMethod;
 import com.custom.action.core.methods.MethodKind;
+import com.custom.jdbc.executebody.ExecuteBodyHelper;
 import com.custom.jdbc.executebody.SelectExecutorBody;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
@@ -22,7 +23,7 @@ public class SelectListBySql extends AbstractMethod {
     @Override
     protected <T> CustomSqlSession createSqlSession(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) {
         String selectSql = String.valueOf(params[1]);
-        SelectExecutorBody<T> executorBody = new SelectExecutorBody<>(target, selectSql, sqlPrintSupport, (Object[]) params[2]);
+        SelectExecutorBody<T> executorBody = ExecuteBodyHelper.createSelect(target, selectSql, sqlPrintSupport, (Object[]) params[2]);
         return executorFactory.createSqlSession(executorBody);
     }
 

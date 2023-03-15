@@ -8,6 +8,8 @@ import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.comm.enums.SqlExecTemplate;
 import com.custom.comm.utils.CustomUtil;
+import com.custom.jdbc.executebody.BaseExecutorBody;
+import com.custom.jdbc.executebody.ExecuteBodyHelper;
 import com.custom.jdbc.executebody.SaveExecutorBody;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
@@ -36,7 +38,7 @@ public class UpdateSelectiveBySqlSet extends UpdateByCondition {
         // 创建SQL
         String updateSql = SqlExecTemplate.format(SqlExecTemplate.UPDATE_DATA, sqlBuilder.getTable(), sqlBuilder.getAlias(),
                 updateSetWrapper.getSqlSetter(), finalConditional);
-        SaveExecutorBody<T> executorBody = new SaveExecutorBody<>(updateSql, sqlPrintSupport, new Object[]{sqlParams.toArray()});
+        BaseExecutorBody executorBody = ExecuteBodyHelper.createExecUpdate(updateSql, sqlPrintSupport, sqlParams.toArray());
         return executorFactory.createSqlSession(executorBody);
     }
 

@@ -2,6 +2,7 @@ package com.custom.action.core.methods.select;
 
 import com.custom.action.core.methods.AbstractMethod;
 import com.custom.action.core.methods.MethodKind;
+import com.custom.jdbc.executebody.ExecuteBodyHelper;
 import com.custom.jdbc.executebody.SelectMapExecutorBody;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
@@ -18,10 +19,9 @@ public class SelectMap extends AbstractMethod {
     }
 
     private <K, V> SelectMapExecutorBody<K, V> createMapBody(Class<K> keyClass, Object[] params) {
-        return new SelectMapExecutorBody<>(
-                String.valueOf(params[2]), sqlPrintSupport,
-                (Object[]) params[3],
-                keyClass, getMappedType(params, 1)
+        return ExecuteBodyHelper.createSelect(
+                keyClass, getMappedType(params, 1),
+                String.valueOf(params[2]), sqlPrintSupport, params[3]
         );
     }
 

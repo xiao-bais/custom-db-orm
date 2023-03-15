@@ -9,6 +9,7 @@ import com.custom.action.extend.MultiResultInjector;
 import com.custom.action.interfaces.ExecuteHandler;
 import com.custom.comm.enums.SqlExecTemplate;
 import com.custom.comm.page.DbPageRows;
+import com.custom.jdbc.executebody.ExecuteBodyHelper;
 import com.custom.jdbc.executebody.SelectExecutorBody;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
@@ -101,7 +102,7 @@ public abstract class AbstractMethod implements ExecuteHandler {
     protected CustomSqlSession createCountSqlSession(JdbcExecutorFactory executorFactory, String selectSql, Object[] params) {
         // 格式化并获取selectCountSQL
         String selectCountSql = SqlExecTemplate.format(SqlExecTemplate.SELECT_COUNT, selectSql);
-        SelectExecutorBody<Long> executorBody = new SelectExecutorBody<>(
+        SelectExecutorBody<Long> executorBody = ExecuteBodyHelper.createSelect(
                 Long.class,
                 selectCountSql,
                 sqlPrintSupport,
@@ -113,7 +114,7 @@ public abstract class AbstractMethod implements ExecuteHandler {
     protected <T> CustomSqlSession createPageSqlSession(JdbcExecutorFactory executorFactory, Class<T> target, String selectSql, int pageIndex, int pageSize, Object[] params) {
         DatabaseAdapter databaseAdapter = executorFactory.getDatabaseAdapter();
         selectSql = databaseAdapter.handlePage(selectSql, pageIndex, pageSize);
-        SelectExecutorBody<T> selectExecutorBody = new SelectExecutorBody<>(
+        SelectExecutorBody<T> selectExecutorBody = ExecuteBodyHelper.createSelect(
                 target,
                 selectSql,
                 sqlPrintSupport,

@@ -8,6 +8,8 @@ import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.AssertUtil;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
+import com.custom.jdbc.executebody.BaseExecutorBody;
+import com.custom.jdbc.executebody.ExecuteBodyHelper;
 import com.custom.jdbc.executebody.SaveExecutorBody;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
@@ -36,7 +38,7 @@ public class UpdateByCondition extends AbstractMethod {
         // 拼接sql
         FullSqlConditionExecutor conditionExecutor = sqlBuilder.addLogicCondition(condition);
         updateSql = updateSql + conditionExecutor.execute();
-        SaveExecutorBody<T> executorBody = new SaveExecutorBody<>(updateSql, sqlPrintSupport, sqlParamList.toArray());
+        BaseExecutorBody executorBody = ExecuteBodyHelper.createExecUpdate(updateSql, sqlPrintSupport, sqlParamList.toArray());
         return executorFactory.createSqlSession(executorBody);
     }
 

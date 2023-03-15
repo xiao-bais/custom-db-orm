@@ -6,6 +6,7 @@ import com.custom.action.core.methods.AbstractMethod;
 import com.custom.action.core.methods.MethodKind;
 import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.comm.utils.AssertUtil;
+import com.custom.jdbc.executebody.ExecuteBodyHelper;
 import com.custom.jdbc.executebody.SaveExecutorBody;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
@@ -38,7 +39,7 @@ public class InsertOne extends AbstractMethod {
         List<Object> sqlParamList = new ArrayList<>();
         String insertSql = sqlBuilder.createTargetSql(list, sqlParamList);
         DbKeyParserModel<T> keyParserModel = sqlBuilder.getKeyParserModel();
-        SaveExecutorBody<T> paramInfo = new SaveExecutorBody<>(
+        SaveExecutorBody<T> paramInfo = ExecuteBodyHelper.createSave(
                 list,
                 keyParserModel.getField(),
                 insertSql,

@@ -9,6 +9,7 @@ import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 /**
  * @author Xiao-Bai
@@ -18,13 +19,7 @@ public class SelectByKey extends AbstractMethod {
 
     @Override
     public <T> Object doExecute(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
-        Serializable key = (Serializable) params[1];
-        AbstractSqlBuilder<T> sqlBuilder = super.getSelectSqlBuilder(executorFactory, target);
-        String condition = sqlBuilder.createKeyCondition(key);
-        FullSqlConditionExecutor executor = sqlBuilder.addLogicCondition(condition);
-        String selectSql = sqlBuilder.createTargetSql() + executor.execute();
-        SelectExecutorBody<T> executorBody = new SelectExecutorBody<>(target, selectSql, sqlPrintSupport, new Object[]{key});
-        CustomSqlSession sqlSession = executorFactory.createSqlSession(executorBody);
+        CustomSqlSession sqlSession = createSqlSession(executorFactory, target, params);
         return executorFactory.getJdbcExecutor().selectOne(sqlSession);
     }
 
@@ -35,6 +30,12 @@ public class SelectByKey extends AbstractMethod {
 
     @Override
     protected <T> CustomSqlSession createSqlSession(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
-        return null;
+        Serializable key = (Serializable) params[1];
+        AbstractSqlBuilder<T> sqlBuilder = super.getSelectSqlBuilder(executorFactory, target);
+        String condition = sqlBuilder.createKeyCondition(key);
+        FullSqlConditionExecutor executor = sqlBuilder.addLogicCondition(condition);
+        String selectSql = sqlBuilder.createTargetSql() + executor.execute();
+        SelectExecutorBody<T> executorBody = new SelectExecutorBody<>(target, selectSql, sqlPrintSupport, new Object[]{key});
+        return executorFactory.createSqlSession(executorBody);
     }
 }

@@ -9,6 +9,7 @@ import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.ReflectUtil;
+import com.custom.jdbc.executebody.ExecuteBodyHelper;
 import com.custom.jdbc.executebody.SelectExecutorBody;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
@@ -170,11 +171,10 @@ public class MultiResultInjector<T> {
         } catch (NoSuchFieldException e) {
             logger.error(e.getMessage(), e);
         }
-
         // 若该表存在逻辑删除的字段，则处理逻辑删除条件
         FullSqlConditionExecutor conditionExecutor = sqlBuilder.addLogicCondition(condPrefix);
         String selectSql = sqlBuilder.createTargetSql() + conditionExecutor.execute() + condSuffix;
-        SelectExecutorBody<?> selectExecutorBody = new SelectExecutorBody<>(joinTarget, selectSql, new Object[]{queryValue});
+        SelectExecutorBody<?> selectExecutorBody = ExecuteBodyHelper.createSelect(joinTarget, selectSql, queryValue);
         CustomSqlSession sqlSession = executorFactory.createSqlSession(selectExecutorBody);
         return executorFactory.getJdbcExecutor().selectList(sqlSession);
     }
