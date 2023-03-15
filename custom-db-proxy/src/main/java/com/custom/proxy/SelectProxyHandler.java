@@ -2,7 +2,7 @@ package com.custom.proxy;
 
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.CustomUtil;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.lang.reflect.Method;
@@ -20,10 +20,10 @@ import java.util.Set;
  */
 public class SelectProxyHandler extends AbstractProxyHandler {
 
-    protected SelectProxyHandler(JdbcExecutorFactory executorFactory, Object[] methodParams,
+    protected SelectProxyHandler(JdbcSqlSessionFactory sqlSessionFactory, Object[] methodParams,
                                  String prepareSql, Method method) {
 
-        super.setExecutorFactory(executorFactory);
+        super.setSqlSessionFactory(sqlSessionFactory);
         super.setMethodParams(methodParams);
         super.setPrepareSql(prepareSql);
         super.setMethod(method);
@@ -32,7 +32,6 @@ public class SelectProxyHandler extends AbstractProxyHandler {
 
     @Override
     protected Object execute() throws Exception {
-        JdbcExecutorFactory executorFactory = thisJdbcExecutor();
         String readyExecuteSql = sqlExecuteParamParser();
         Object[] sqlParams = getExecuteSqlParams().toArray();
 

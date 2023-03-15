@@ -2,14 +2,10 @@ package com.custom.jdbc.executor;
 
 import com.custom.comm.enums.DatabaseDialect;
 import com.custom.comm.exceptions.CustomCheckException;
-import com.custom.comm.utils.ConvertUtil;
 import com.custom.comm.utils.CustomApp;
 import com.custom.comm.utils.ReflectUtil;
 import com.custom.comm.utils.StrUtils;
 import com.custom.jdbc.executebody.BaseExecutorBody;
-import com.custom.jdbc.executebody.SaveExecutorBody;
-import com.custom.jdbc.executebody.SelectExecutorBody;
-import com.custom.jdbc.executebody.SelectMapExecutorBody;
 import com.custom.jdbc.configuration.CustomConfigHelper;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
@@ -20,26 +16,19 @@ import com.custom.jdbc.dbAdapetr.OracleAdapter;
 import com.custom.jdbc.dbAdapetr.SqlServerAdapter;
 import com.custom.jdbc.interfaces.DatabaseAdapter;
 import com.custom.jdbc.interfaces.TransactionExecutor;
-import com.custom.jdbc.session.CustomSqlSessionHelper;
 import com.custom.jdbc.session.DefaultSqlSession;
 import com.custom.jdbc.utils.DbConnGlobal;
 import com.custom.jdbc.interfaces.CustomSqlSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
-import java.lang.reflect.Field;
 import java.sql.Connection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
- * jdbc执行对象创建工厂
+ * jdbc会话创建工厂
  * @author  Xiao-Bai
  * @since  2022/6/16 13:18
  */
-public class JdbcExecutorFactory {
+public class JdbcSqlSessionFactory {
 
     /**
      * jdbc基础操作对象
@@ -79,7 +68,7 @@ public class JdbcExecutorFactory {
     }
 
 
-    public JdbcExecutorFactory(DbDataSource dbDataSource, DbGlobalConfig globalConfig) {
+    public JdbcSqlSessionFactory(DbDataSource dbDataSource, DbGlobalConfig globalConfig) {
         this.dbDataSource = dbDataSource;
         this.globalConfig = globalConfig;
         this.dbCustomStrategy = globalConfig.getStrategy();
@@ -164,33 +153,6 @@ public class JdbcExecutorFactory {
         } finally {
             sqlSession.closeResources();
         }
-    }
-
-
-    /**
-     * 自定义sql查询后的拦截处理
-     * @param <T> 查询结果的返回类型
-     * @param t 查询结果的类型
-     * @param obj 查询结果
-     */
-    public <T> void queryAfterHandle(Class<T> t, Object obj) throws Exception {
-        CustomSqlQueryAfter queryAfter;
-
-        try {
-            queryAfter = CustomApp.getBean(CustomSqlQueryAfter.class);
-        } catch (NoSuchBeanDefinitionException e) {
-            queryAfter = null;
-        }
-
-        if (queryAfter == null) {
-            Class<? extends CustomSqlQueryAfter> queryAfterClass = globalConfig.getSqlQueryAfter();
-            if (queryAfterClass == null) {
-                return;
-            }
-            queryAfter = ReflectUtil.getInstance(queryAfterClass);
-        }
-        // 处理查询后的结果
-        queryAfter.handle(t, obj);
     }
 
     public CustomJdbcExecutor getJdbcExecutor() {

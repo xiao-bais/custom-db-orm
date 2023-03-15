@@ -2,7 +2,7 @@ package com.custom.jdbc.dbAdapetr;
 
 import com.custom.comm.utils.ConvertUtil;
 import com.custom.jdbc.executebody.SelectExecutorBody;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
 import com.custom.jdbc.interfaces.DatabaseAdapter;
 import org.slf4j.Logger;
@@ -30,13 +30,13 @@ public abstract class AbstractDbAdapter implements DatabaseAdapter {
     }
 
 
-    private final JdbcExecutorFactory executorFactory;
+    private final JdbcSqlSessionFactory executorFactory;
 
-    public AbstractDbAdapter(JdbcExecutorFactory executorFactory) {
+    public AbstractDbAdapter(JdbcSqlSessionFactory executorFactory) {
         this.executorFactory = executorFactory;
     }
 
-    public JdbcExecutorFactory getExecutorFactory() {
+    public JdbcSqlSessionFactory getExecutorFactory() {
         return executorFactory;
     }
 }

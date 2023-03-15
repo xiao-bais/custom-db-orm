@@ -6,7 +6,7 @@ import com.custom.action.core.methods.AbstractMethod;
 import com.custom.action.core.methods.MethodKind;
 import com.custom.jdbc.executebody.ExecuteBodyHelper;
 import com.custom.jdbc.executebody.SelectExecutorBody;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
 
 /**
@@ -17,19 +17,19 @@ import com.custom.jdbc.interfaces.CustomSqlSession;
 public class SelectListByWrapper extends AbstractMethod {
 
     @Override
-    protected <T> CustomSqlSession createSqlSession(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
+    protected <T> CustomSqlSession createSqlSession(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
         ConditionWrapper<T> conditionWrapper = (ConditionWrapper<T>) params[0];
-        HandleSelectSqlBuilder<T> sqlBuilder = (HandleSelectSqlBuilder<T>) super.getSelectSqlBuilder(executorFactory, target);
+        HandleSelectSqlBuilder<T> sqlBuilder = (HandleSelectSqlBuilder<T>) super.getSelectSqlBuilder(sqlSessionFactory, target);
         String selectSql = sqlBuilder.executeSqlBuilder(conditionWrapper);
-        SelectExecutorBody<T> executorBody = ExecuteBodyHelper.createSelect(
+        SelectExecutorBody<T> executorBody = ExecuteBodyHelper.createSelectIf(
                 target, selectSql, sqlPrintSupport,
                 conditionWrapper.getParamValues().toArray()
         );
-        return executorFactory.createSqlSession(executorBody);
+        return sqlSessionFactory.createSqlSession(executorBody);
     }
 
     @Override
-    public <T> Object doExecute(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
+    public <T> Object doExecute(JdbcSqlSessionFactory executorFactory, Class<T> target, Object[] params) throws Exception {
         CustomSqlSession sqlSession = createSqlSession(executorFactory, target, params);
         return executorFactory.getJdbcExecutor().selectList(sqlSession);
     }

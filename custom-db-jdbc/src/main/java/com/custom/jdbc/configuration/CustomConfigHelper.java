@@ -1,7 +1,7 @@
 package com.custom.jdbc.configuration;
 
 import com.custom.jdbc.dbAdapetr.Mysql8Adapter;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 import com.custom.jdbc.interfaces.DatabaseAdapter;
 
 /**
@@ -37,7 +37,7 @@ public class CustomConfigHelper {
     public CustomConfigHelper(DbDataSource dbDataSource, DbGlobalConfig dbGlobalConfig) {
         this.dbDataSource = dbDataSource;
         this.dbGlobalConfig = dbGlobalConfig;
-        this.databaseAdapter = new Mysql8Adapter(new JdbcExecutorFactory(dbDataSource, dbGlobalConfig));
+        this.databaseAdapter = new Mysql8Adapter(new JdbcSqlSessionFactory(dbDataSource, dbGlobalConfig));
     }
 
     public DbDataSource getDbDataSource() {

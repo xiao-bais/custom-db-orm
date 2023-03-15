@@ -1,7 +1,7 @@
 package com.custom.action.interfaces;
 
 import com.custom.action.core.methods.MethodKind;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +16,7 @@ public interface ExecuteHandler {
     /**
      * 创建会话
      */
-    <T> Object doExecute(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception;
+    <T> Object doExecute(JdbcSqlSessionFactory executorFactory, Class<T> target, Object[] params) throws Exception;
 
     /**
      * 获取映射类型

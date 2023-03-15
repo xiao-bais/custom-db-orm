@@ -6,7 +6,7 @@ import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.jdbc.executebody.ExecuteBodyHelper;
 import com.custom.jdbc.executebody.SelectExecutorBody;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
 
 /**
@@ -16,18 +16,18 @@ import com.custom.jdbc.interfaces.CustomSqlSession;
 public class SelectList extends AbstractMethod {
 
     @Override
-    public <T> Object doExecute(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
+    public <T> Object doExecute(JdbcSqlSessionFactory executorFactory, Class<T> target, Object[] params) throws Exception {
         CustomSqlSession sqlSession = createSqlSession(executorFactory, target, params);
         return executorFactory.getJdbcExecutor().selectList(sqlSession);
     }
 
     @Override
-    protected <T> CustomSqlSession createSqlSession(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
-        AbstractSqlBuilder<T> sqlBuilder = super.getSelectSqlBuilder(executorFactory, target);
+    protected <T> CustomSqlSession createSqlSession(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
+        AbstractSqlBuilder<T> sqlBuilder = super.getSelectSqlBuilder(sqlSessionFactory, target);
         FullSqlConditionExecutor executor = sqlBuilder.addLogicCondition(String.valueOf(params[1]));
         String selectSql = sqlBuilder.createTargetSql() + executor.execute();
-        SelectExecutorBody<T> executorBody = ExecuteBodyHelper.createSelect(target, selectSql, sqlPrintSupport, (Object[]) params[2]);
-        return executorFactory.createSqlSession(executorBody);
+        SelectExecutorBody<T> executorBody = ExecuteBodyHelper.createSelectIf(target, selectSql, sqlPrintSupport, params[2]);
+        return sqlSessionFactory.createSqlSession(executorBody);
     }
 
     @Override

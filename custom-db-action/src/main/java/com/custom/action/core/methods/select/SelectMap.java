@@ -4,7 +4,7 @@ import com.custom.action.core.methods.AbstractMethod;
 import com.custom.action.core.methods.MethodKind;
 import com.custom.jdbc.executebody.ExecuteBodyHelper;
 import com.custom.jdbc.executebody.SelectMapExecutorBody;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
 
 /**
@@ -14,7 +14,7 @@ import com.custom.jdbc.interfaces.CustomSqlSession;
 public class SelectMap extends AbstractMethod {
 
     @Override
-    protected <T> CustomSqlSession createSqlSession(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
+    protected <T> CustomSqlSession createSqlSession(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
         return null;
     }
 
@@ -26,7 +26,7 @@ public class SelectMap extends AbstractMethod {
     }
 
     @Override
-    public <T> Object doExecute(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
+    public <T> Object doExecute(JdbcSqlSessionFactory executorFactory, Class<T> target, Object[] params) throws Exception {
         SelectMapExecutorBody<T, Object> mapExecutorBody = createMapBody(target, params);
         CustomSqlSession sqlSession = executorFactory.createSqlSession(mapExecutorBody);
         return executorFactory.getJdbcExecutor().selectMap(sqlSession);

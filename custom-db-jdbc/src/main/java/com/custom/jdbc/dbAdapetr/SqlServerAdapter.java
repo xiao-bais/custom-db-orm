@@ -1,7 +1,7 @@
 package com.custom.jdbc.dbAdapetr;
 
 import com.custom.comm.enums.DatabaseDialect;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 
 /**
  * @author  Xiao-Bai
@@ -46,7 +46,7 @@ public class SqlServerAdapter extends AbstractDbAdapter {
         return false;
     }
 
-    public SqlServerAdapter(JdbcExecutorFactory executorFactory) {
+    public SqlServerAdapter(JdbcSqlSessionFactory executorFactory) {
         super(executorFactory);
     }
 }

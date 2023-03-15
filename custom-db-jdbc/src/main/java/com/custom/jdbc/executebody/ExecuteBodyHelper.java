@@ -13,7 +13,7 @@ public class ExecuteBodyHelper {
         return new SelectExecutorBody<>(t, sql, true, params);
     }
 
-    public static <T> SelectExecutorBody<T> createSelect(Class<T> t, String sql, boolean b,  Object... params) {
+    public static <T> SelectExecutorBody<T> createSelectIf(Class<T> t,  String sql, boolean b, Object... params) {
         return new SelectExecutorBody<>(t, sql, b, params);
     }
 

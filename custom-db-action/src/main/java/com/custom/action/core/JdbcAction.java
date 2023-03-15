@@ -3,26 +3,13 @@ package com.custom.action.core;
 import com.custom.action.condition.*;
 import com.custom.action.core.chain.ChainWrapper;
 import com.custom.action.core.methods.MethodKind;
-import com.custom.action.dbaction.AbstractSqlBuilder;
-import com.custom.action.extend.MultiResultInjector;
-import com.custom.action.interfaces.TableExecutor;
-import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.jdbc.configuration.DbGlobalConfig;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
-import com.custom.action.interfaces.FullSqlConditionExecutor;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 import com.custom.comm.annotations.check.CheckExecute;
 import com.custom.comm.enums.ExecuteMethod;
-import com.custom.comm.enums.SqlExecTemplate;
 import com.custom.comm.page.DbPageRows;
-import com.custom.comm.utils.AssertUtil;
-import com.custom.comm.utils.CustomUtil;
-import com.custom.comm.utils.JudgeUtil;
 import com.custom.jdbc.configuration.DbDataSource;
-import com.custom.jdbc.interfaces.DatabaseAdapter;
 import com.custom.jdbc.interfaces.TransactionExecutor;
-import com.custom.jdbc.utils.DbConnGlobal;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.*;
@@ -288,8 +275,8 @@ public class JdbcAction implements SqlExecutor {
     }
 
     @Override
-    public JdbcExecutorFactory getExecutorFactory() {
-        return this.mappedHandler.getExecutorFactory();
+    public JdbcSqlSessionFactory getSqlSessionFactory() {
+        return this.mappedHandler.getSqlSessionFactory();
     }
 
     @Override

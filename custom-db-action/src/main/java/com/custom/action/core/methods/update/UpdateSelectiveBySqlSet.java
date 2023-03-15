@@ -10,8 +10,7 @@ import com.custom.comm.enums.SqlExecTemplate;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.jdbc.executebody.BaseExecutorBody;
 import com.custom.jdbc.executebody.ExecuteBodyHelper;
-import com.custom.jdbc.executebody.SaveExecutorBody;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
 
 import java.util.List;
@@ -24,12 +23,12 @@ import java.util.List;
 public class UpdateSelectiveBySqlSet extends UpdateByCondition {
 
     @Override
-    protected <T> CustomSqlSession createSqlSession(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
+    protected <T> CustomSqlSession createSqlSession(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
         AbstractUpdateSet<T> updateSet = (AbstractUpdateSet<T>) params[0];
         UpdateSetWrapper<T> updateSetWrapper = updateSet.getUpdateSetWrapper();
         ConditionWrapper<T> conditionWrapper = updateSet.getConditionWrapper();
 
-        AbstractSqlBuilder<T> sqlBuilder = super.getUpdateSqlBuilder(executorFactory, target);
+        AbstractSqlBuilder<T> sqlBuilder = super.getUpdateSqlBuilder(sqlSessionFactory, target);
         FullSqlConditionExecutor executor = sqlBuilder.addLogicCondition(conditionWrapper.getFinalConditional());
         String finalConditional = executor.execute();
         List<Object> sqlParams = updateSetWrapper.getSetParams();
@@ -39,7 +38,7 @@ public class UpdateSelectiveBySqlSet extends UpdateByCondition {
         String updateSql = SqlExecTemplate.format(SqlExecTemplate.UPDATE_DATA, sqlBuilder.getTable(), sqlBuilder.getAlias(),
                 updateSetWrapper.getSqlSetter(), finalConditional);
         BaseExecutorBody executorBody = ExecuteBodyHelper.createExecUpdate(updateSql, sqlPrintSupport, sqlParams.toArray());
-        return executorFactory.createSqlSession(executorBody);
+        return sqlSessionFactory.createSqlSession(executorBody);
     }
 
     @Override

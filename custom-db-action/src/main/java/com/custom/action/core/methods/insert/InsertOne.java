@@ -8,7 +8,7 @@ import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.comm.utils.AssertUtil;
 import com.custom.jdbc.executebody.ExecuteBodyHelper;
 import com.custom.jdbc.executebody.SaveExecutorBody;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
 
 import java.util.ArrayList;
@@ -24,8 +24,8 @@ import java.util.List;
 public class InsertOne extends AbstractMethod {
 
     @Override
-    protected <T> CustomSqlSession createSqlSession(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
-        AbstractSqlBuilder<T> sqlBuilder = TableInfoCache.getInsertSqlBuilderCache(target, executorFactory);
+    protected <T> CustomSqlSession createSqlSession(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
+        AbstractSqlBuilder<T> sqlBuilder = TableInfoCache.getInsertSqlBuilderCache(target, sqlSessionFactory);
 
         List<T> list;
         if (params[0] instanceof Collection) {
@@ -46,11 +46,11 @@ public class InsertOne extends AbstractMethod {
                 sqlPrintSupport,
                 sqlParamList.toArray()
         );
-        return executorFactory.createSqlSession(paramInfo);
+        return sqlSessionFactory.createSqlSession(paramInfo);
     }
 
     @Override
-    public <T> Object doExecute(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
+    public <T> Object doExecute(JdbcSqlSessionFactory executorFactory, Class<T> target, Object[] params) throws Exception {
         CustomSqlSession sqlSession = createSqlSession(executorFactory, target, params);
         return executorFactory.getJdbcExecutor().executeSave(sqlSession);
     }

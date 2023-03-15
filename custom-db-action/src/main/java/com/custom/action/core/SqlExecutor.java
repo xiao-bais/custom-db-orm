@@ -5,7 +5,7 @@ import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.core.chain.ChainWrapper;
 import com.custom.comm.page.DbPageRows;
 import com.custom.jdbc.configuration.DbDataSource;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 import com.custom.jdbc.interfaces.TransactionExecutor;
 
 import java.io.Serializable;
@@ -75,7 +75,7 @@ public interface SqlExecutor {
     void createTables(Class<?>... arr) throws Exception;
     void dropTables(Class<?>... arr) throws Exception;
     DbDataSource getDbDataSource();
-    JdbcExecutorFactory getExecutorFactory();
+    JdbcSqlSessionFactory getSqlSessionFactory();
     void execTrans(TransactionExecutor wrapper) throws Exception;
     <T> ChainWrapper<T> createChain(Class<T> entityClass) throws Exception;
 

@@ -5,7 +5,7 @@ import com.custom.action.core.HandleSelectSqlBuilder;
 import com.custom.action.core.methods.MethodKind;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.page.DbPageRows;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
 
 /**
@@ -16,12 +16,12 @@ import com.custom.jdbc.interfaces.CustomSqlSession;
 public class SelectPageByWrapper extends SelectListByWrapper {
 
     @Override
-    protected <T> CustomSqlSession createSqlSession(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
+    protected <T> CustomSqlSession createSqlSession(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
         return null;
     }
 
     @Override
-    public <T> Object doExecute(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
+    public <T> Object doExecute(JdbcSqlSessionFactory executorFactory, Class<T> target, Object[] params) throws Exception {
         ConditionWrapper<T> conditionWrapper = (ConditionWrapper<T>) params[0];
         DbPageRows<T> pageRows;
         if (params.length > 1 && params[1] instanceof DbPageRows) {

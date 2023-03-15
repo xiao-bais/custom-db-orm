@@ -7,7 +7,7 @@ import com.custom.comm.utils.AssertUtil;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.utils.ConvertUtil;
 import com.custom.comm.utils.RexUtil;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 
 import java.util.List;
 import java.util.Objects;
@@ -102,7 +102,7 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
     }
 
 
-    public HandleInsertSqlBuilder(Class<T> entityClass, JdbcExecutorFactory executorFactory) {
+    public HandleInsertSqlBuilder(Class<T> entityClass, JdbcSqlSessionFactory sqlSessionFactory) {
         this.insertSuffix = new StringJoiner(Constants.SEPARATOR_COMMA_1,
                 Constants.BRACKETS_LEFT, Constants.BRACKETS_RIGHT
         );
@@ -110,7 +110,7 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
         // 添加?
         TableParseModel<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
         // 初始化
-        this.injectTableInfo(tableSqlBuilder, executorFactory);
+        this.injectTableInfo(tableSqlBuilder, sqlSessionFactory);
 
         if (tableSqlBuilder.getKeyParserModel() != null) {
             this.insertSuffix.add(Constants.QUEST);

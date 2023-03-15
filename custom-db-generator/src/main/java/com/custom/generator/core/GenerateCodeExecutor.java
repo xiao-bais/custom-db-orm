@@ -4,7 +4,7 @@ import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.jdbc.configuration.DbGlobalConfig;
 import com.custom.jdbc.executebody.ExecuteBodyHelper;
 import com.custom.jdbc.executebody.SelectExecutorBody;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 import com.custom.comm.date.DateTimeUtils;
 import com.custom.generator.config.GenarateGlobalConfig;
 import com.custom.generator.config.PackageConfig;
@@ -37,7 +37,7 @@ public class GenerateCodeExecutor {
 
     private final String DATA_BASE;
     private List<TableStructModel> tableStructModels;
-    private final JdbcExecutorFactory executorFactory;
+    private final JdbcSqlSessionFactory sqlSessionFactory;
 
     public GenerateCodeExecutor(DbDataSource dbDataSource, DbGlobalConfig globalConfig) {
         if (Objects.isNull(dbDataSource)) {
@@ -48,7 +48,7 @@ public class GenerateCodeExecutor {
             dbCustomStrategy = new DbCustomStrategy();
         }
         DATA_BASE = CustomUtil.getDataBase(dbDataSource.getUrl());
-        this.executorFactory = new JdbcExecutorFactory(dbDataSource, globalConfig);
+        this.sqlSessionFactory = new JdbcSqlSessionFactory(dbDataSource, globalConfig);
     }
 
     public void start() {
@@ -305,9 +305,9 @@ public class GenerateCodeExecutor {
      * 执行sql
      */
     private <T> List<T> handleExecSql(Class<T> t, String sql) throws Exception {
-        SelectExecutorBody<T> executorBody = ExecuteBodyHelper.createSelect(t, sql, false);
-        CustomSqlSession sqlSession = executorFactory.createSqlSession(executorBody);
-        return executorFactory.getJdbcExecutor().selectList(sqlSession);
+        SelectExecutorBody<T> executorBody = ExecuteBodyHelper.createSelectIf(t, sql, false);
+        CustomSqlSession sqlSession = sqlSessionFactory.createSqlSession(executorBody);
+        return sqlSessionFactory.getJdbcExecutor().selectList(sqlSession);
     }
 
 

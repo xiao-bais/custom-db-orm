@@ -1,7 +1,7 @@
 package com.custom.action.core;
 
 import com.custom.action.dbaction.AbstractSqlBuilder;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 
 /**
  * SQL构建对象合集
@@ -29,7 +29,7 @@ public class SqlBuilderCollection<T> {
 
     private final AbstractSqlBuilder<T> emptySqlBuilder;
 
-    public SqlBuilderCollection(Class<T> entityClass, JdbcExecutorFactory executorFactory) {
+    public SqlBuilderCollection(Class<T> entityClass, JdbcSqlSessionFactory executorFactory) {
         this.selectSqlBuilder = new HandleSelectSqlBuilder<>(entityClass, executorFactory);
         this.insertSqlBuilder = new HandleInsertSqlBuilder<>(entityClass, executorFactory);
         this.updateSqlBuilder = new HandleUpdateSqlBuilder<>(entityClass, executorFactory);

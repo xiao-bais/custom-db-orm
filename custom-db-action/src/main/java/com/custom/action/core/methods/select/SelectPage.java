@@ -5,7 +5,7 @@ import com.custom.action.core.methods.MethodKind;
 import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.comm.page.DbPageRows;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
 
 /**
@@ -15,7 +15,7 @@ import com.custom.jdbc.interfaces.CustomSqlSession;
 @SuppressWarnings("unchecked")
 public class SelectPage extends AbstractMethod {
     @Override
-    public <T> Object doExecute(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
+    public <T> Object doExecute(JdbcSqlSessionFactory executorFactory, Class<T> target, Object[] params) throws Exception {
 
         DbPageRows<T> pageRows = (DbPageRows<T>) params[2];
         if(pageRows == null) {
@@ -26,7 +26,7 @@ public class SelectPage extends AbstractMethod {
 
         // 封装结果
         String selectSql = sqlBuilder.createTargetSql() + executor.execute();
-        this.buildPageResult(executorFactory, getMappedType(params), selectSql, pageRows, params);
+        this.buildPageResult(executorFactory, getMappedType(params), selectSql, pageRows, (Object[]) params[3]);
         return pageRows;
     }
 
@@ -36,7 +36,7 @@ public class SelectPage extends AbstractMethod {
     }
 
     @Override
-    protected <T> CustomSqlSession createSqlSession(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
+    protected <T> CustomSqlSession createSqlSession(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
         return null;
     }
 }

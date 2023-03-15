@@ -13,7 +13,7 @@ import com.custom.comm.enums.FillStrategy;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.*;
 import com.custom.jdbc.configuration.DbCustomStrategy;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 import com.custom.jdbc.interfaces.DatabaseAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +39,7 @@ public abstract class AbstractSqlBuilder<T> {
     private DbKeyParserModel<T> keyParserModel;
     private List<DbFieldParserModel<T>> fieldParserModels;
     private Map<String, String> columnMapper;
-    private JdbcExecutorFactory executorFactory;
+    private JdbcSqlSessionFactory sqlSessionFactory;
     private String logicColumn;
     private Object logicNotDeleteValue;
     /**
@@ -114,12 +114,12 @@ public abstract class AbstractSqlBuilder<T> {
         if (CustomUtil.isBlank(logicColumn)) {
             return false;
         }
-        int order = executorFactory.getDbDataSource().getOrder();
+        int order = sqlSessionFactory.getDbDataSource().getOrder();
         Boolean existsLogic = TableInfoCache.isExistsLogic(order, table);
         if (existsLogic != null) {
             return existsLogic;
         }
-        DatabaseAdapter databaseAdapter = executorFactory.getDatabaseAdapter();
+        DatabaseAdapter databaseAdapter = sqlSessionFactory.getDatabaseAdapter();
         boolean conBool = databaseAdapter.existColumn(table, logicColumn);
         TableInfoCache.setTableLogic(order, table, conBool);
         return conBool;
@@ -139,17 +139,17 @@ public abstract class AbstractSqlBuilder<T> {
         sqlParams.add(val);
     }
 
-    protected void injectTableInfo(TableParseModel<T> tableSqlBuilder, JdbcExecutorFactory executorFactory) {
+    protected void injectTableInfo(TableParseModel<T> tableSqlBuilder, JdbcSqlSessionFactory sqlSessionFactory) {
         this.table = tableSqlBuilder.getTable();
         this.alias = tableSqlBuilder.getAlias();
         this.keyParserModel = tableSqlBuilder.getKeyParserModel();
         this.fieldParserModels = tableSqlBuilder.getDbFieldParseModels();
         this.columnMapper = tableSqlBuilder.getColumnMapper();
         this.entityClass = tableSqlBuilder.getEntityClass();
-        this.executorFactory = executorFactory;
+        this.sqlSessionFactory = sqlSessionFactory;
 
         // 设置逻辑删除字段
-        DbCustomStrategy customStrategy = executorFactory.getDbCustomStrategy();
+        DbCustomStrategy customStrategy = sqlSessionFactory.getDbCustomStrategy();
         this.logicColumn = customStrategy.getDbFieldDeleteLogic();
         this.logicSqlInitialize(customStrategy.getDeleteLogicValue(), customStrategy.getNotDeleteLogicValue());
         // 加载自动填充对象

@@ -1,10 +1,9 @@
 package com.custom.action.core.methods.update;
 
 import com.custom.action.core.DbKeyParserModel;
-import com.custom.action.core.TableInfoCache;
 import com.custom.action.core.methods.MethodKind;
 import com.custom.action.dbaction.AbstractSqlBuilder;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
 
 import java.io.Serializable;
@@ -17,8 +16,8 @@ import java.io.Serializable;
 public class UpdateByKey extends UpdateByCondition {
 
     @Override
-    protected <T> CustomSqlSession createSqlSession(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
-        AbstractSqlBuilder<T> sqlBuilder = super.getUpdateSqlBuilder(executorFactory, target);
+    protected <T> CustomSqlSession createSqlSession(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
+        AbstractSqlBuilder<T> sqlBuilder = super.getUpdateSqlBuilder(sqlSessionFactory, target);
 
         T entity = (T) params[0];
         DbKeyParserModel<T> keyParserModel = sqlBuilder.getKeyParserModel();
@@ -27,7 +26,7 @@ public class UpdateByKey extends UpdateByCondition {
         }
         Serializable value = (Serializable) keyParserModel.getValue(entity);
         String condition = sqlBuilder.createKeyCondition(value);
-        return super.createSqlSession(executorFactory, target, new Object[]{entity, condition, value});
+        return super.createSqlSession(sqlSessionFactory, target, new Object[]{entity, condition, value});
     }
 
     @Override

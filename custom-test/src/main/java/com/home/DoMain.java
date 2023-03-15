@@ -2,9 +2,11 @@ package com.home;
 
 import com.custom.action.core.JdbcDao;
 import com.custom.action.core.JdbcOpDao;
+import com.custom.comm.page.DbPageRows;
 import com.home.customtest.entity.Employee;
 import com.home.customtest.entity.Student;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -23,8 +25,8 @@ public class DoMain {
 
         MyService helper = new MyServiceImpl();
 
-        List<Student> students = jdbcDao.createChain(Student.class).whereEx(x -> x.eq(Student::getAge, 30)).getList();
-        System.out.println("students = " + students);
+        Student student = jdbcDao.selectByKey(Student.class, 42);
+        System.out.println("students = " + 1);
 
     }
 

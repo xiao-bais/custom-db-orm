@@ -9,7 +9,7 @@ import com.custom.comm.utils.*;
 import com.custom.jdbc.executebody.BaseExecutorBody;
 import com.custom.jdbc.executebody.ExecuteBodyHelper;
 import com.custom.jdbc.executebody.SelectExecutorBody;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
 import com.custom.jdbc.interfaces.DatabaseAdapter;
 import com.custom.springboot.scanner.PackageScanner;
@@ -36,7 +36,7 @@ public class TableStructsInitializer {
     /**
      * jdbc执行对象
      */
-    private final JdbcExecutorFactory executorFactory;
+    private final JdbcSqlSessionFactory sqlSessionFactory;
 
     /**
      * 连接的数据库
@@ -60,11 +60,11 @@ public class TableStructsInitializer {
 
 
 
-    public TableStructsInitializer(String[] packageScans, JdbcExecutorFactory executorFactory) {
+    public TableStructsInitializer(String[] packageScans, JdbcSqlSessionFactory sqlSessionFactory) {
         this.packageScans = packageScans;
-        AssertUtil.npe(executorFactory);
-        this.executorFactory = executorFactory;
-        this.databaseAdapter = executorFactory.getDatabaseAdapter();
+        AssertUtil.npe(sqlSessionFactory);
+        this.sqlSessionFactory = sqlSessionFactory;
+        this.databaseAdapter = sqlSessionFactory.getDatabaseAdapter();
         this.addColumnSqlList = new ArrayList<>();
         this.waitCreateMapper = new HashMap<>();
         this.dataBaseName = databaseAdapter.databaseName();
@@ -102,8 +102,8 @@ public class TableStructsInitializer {
      */
     private void handleExecSql(StringJoiner sql) throws Exception {
         BaseExecutorBody executorBody = ExecuteBodyHelper.createExecUpdate(sql.toString());
-        CustomSqlSession sqlSession = executorFactory.createSqlSession(executorBody);
-        executorFactory.getJdbcExecutor().execTableInfo(sqlSession);
+        CustomSqlSession sqlSession = sqlSessionFactory.createSqlSession(executorBody);
+        sqlSessionFactory.getJdbcExecutor().execTableInfo(sqlSession);
     }
 
     /**
@@ -174,8 +174,8 @@ public class TableStructsInitializer {
         String selectColumnSql = String.format(SELECT_COLUMN_SQL,
                 sqlBuilder.getTable(), dataBaseName);
         SelectExecutorBody<String> paramInfo = new SelectExecutorBody<>(String.class, selectColumnSql, false);
-        CustomSqlSession sqlSession = executorFactory.createSqlSession(paramInfo);
-        List<String> columnList = executorFactory.getJdbcExecutor().selectObjs(sqlSession);
+        CustomSqlSession sqlSession = sqlSessionFactory.createSqlSession(paramInfo);
+        List<String> columnList = sqlSessionFactory.getJdbcExecutor().selectObjs(sqlSession);
         List<String> truthColumnList = sqlBuilder.getDbFieldParseModels().stream()
                 .map(DbFieldParserModel::getColumn)
                 .collect(Collectors.toList());

@@ -3,7 +3,7 @@ package com.custom.action.core.methods.others;
 import com.custom.action.core.methods.AbstractMethod;
 import com.custom.action.core.methods.MethodKind;
 import com.custom.jdbc.executebody.BaseExecutorBody;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
 
 /**
@@ -12,13 +12,13 @@ import com.custom.jdbc.interfaces.CustomSqlSession;
  */
 public class ExecuteSql extends AbstractMethod {
     @Override
-    protected <T> CustomSqlSession createSqlSession(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
+    protected <T> CustomSqlSession createSqlSession(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
         BaseExecutorBody executorBody = new BaseExecutorBody(String.valueOf(params[0]), sqlPrintSupport, (Object[]) params[1]);
-        return executorFactory.createSqlSession(executorBody);
+        return sqlSessionFactory.createSqlSession(executorBody);
     }
 
     @Override
-    public <T> Object doExecute(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
+    public <T> Object doExecute(JdbcSqlSessionFactory executorFactory, Class<T> target, Object[] params) throws Exception {
         CustomSqlSession sqlSession = this.createSqlSession(executorFactory, target, params);
         return executorFactory.getJdbcExecutor().executeUpdate(sqlSession);
     }

@@ -4,14 +4,13 @@ import com.custom.action.core.HandleSelectSqlBuilder;
 import com.custom.action.core.TableInfoCache;
 import com.custom.action.core.TableParseModel;
 import com.custom.action.dbaction.AbstractJoinToResult;
-import com.custom.action.core.SqlExecutor;
 import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.ReflectUtil;
 import com.custom.jdbc.executebody.ExecuteBodyHelper;
 import com.custom.jdbc.executebody.SelectExecutorBody;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,12 +34,12 @@ public class MultiResultInjector<T> {
      */
     private final Class<T> thisClass;
     private final Class<?> topNode;
-    private final JdbcExecutorFactory executorFactory;
+    private final JdbcSqlSessionFactory sqlSessionFactory;
 
 
-    public MultiResultInjector(Class<T> thisClass, JdbcExecutorFactory executorFactory, Class<?> topNode) {
+    public MultiResultInjector(Class<T> thisClass, JdbcSqlSessionFactory sqlSessionFactory, Class<?> topNode) {
         this.thisClass = thisClass;
-        this.executorFactory = executorFactory;
+        this.sqlSessionFactory = sqlSessionFactory;
         this.topNode = topNode;
     }
 
@@ -77,7 +76,7 @@ public class MultiResultInjector<T> {
                 }
                 Class<?> joinTarget = joinToManyParseModel.getJoinTarget();
 
-                HandleSelectSqlBuilder<?> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(joinTarget, executorFactory);
+                HandleSelectSqlBuilder<?> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(joinTarget, sqlSessionFactory);
                 String condPrefix = joinToManyParseModel.queryCondPrefix();
                 String condSuffix = joinToManyParseModel.queryCondSuffix();
 
@@ -118,7 +117,7 @@ public class MultiResultInjector<T> {
                 ONE_MODEL_CACHE.put(key, joinToOneParseModel);
             }
             Class<?> joinTarget = joinToOneParseModel.getJoinTarget();
-            HandleSelectSqlBuilder<?> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(joinTarget, executorFactory);
+            HandleSelectSqlBuilder<?> sqlBuilder = TableInfoCache.getSelectSqlBuilderCache(joinTarget, sqlSessionFactory);
             String condPrefix = joinToOneParseModel.queryCondPrefix();
             String condSuffix = joinToOneParseModel.queryCondSuffix();
 
@@ -175,8 +174,8 @@ public class MultiResultInjector<T> {
         FullSqlConditionExecutor conditionExecutor = sqlBuilder.addLogicCondition(condPrefix);
         String selectSql = sqlBuilder.createTargetSql() + conditionExecutor.execute() + condSuffix;
         SelectExecutorBody<?> selectExecutorBody = ExecuteBodyHelper.createSelect(joinTarget, selectSql, queryValue);
-        CustomSqlSession sqlSession = executorFactory.createSqlSession(selectExecutorBody);
-        return executorFactory.getJdbcExecutor().selectList(sqlSession);
+        CustomSqlSession sqlSession = sqlSessionFactory.createSqlSession(selectExecutorBody);
+        return sqlSessionFactory.getJdbcExecutor().selectList(sqlSession);
     }
 
 

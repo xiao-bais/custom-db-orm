@@ -3,8 +3,7 @@ package com.custom.jdbc.dbAdapetr;
 import com.custom.comm.enums.DatabaseDialect;
 import com.custom.comm.utils.AssertUtil;
 import com.custom.comm.utils.Constants;
-import com.custom.jdbc.executebody.SelectExecutorBody;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 
 /**
  * @author  Xiao-Bai
@@ -71,7 +70,7 @@ public class Mysql8Adapter extends AbstractDbAdapter {
         return queryBoolean(targetSql);
     }
 
-    public Mysql8Adapter(JdbcExecutorFactory executorFactory) {
+    public Mysql8Adapter(JdbcSqlSessionFactory executorFactory) {
         super(executorFactory);
     }
 }

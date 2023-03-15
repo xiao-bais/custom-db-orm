@@ -17,10 +17,13 @@ import com.custom.action.core.methods.update.UpdateSelectiveByWrapper;
 import com.custom.action.interfaces.ExecuteHandler;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.CustomCheckException;
+import com.custom.comm.utils.CustomApp;
 import com.custom.comm.utils.ReflectUtil;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.configuration.DbGlobalConfig;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.CustomSqlQueryAfter;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -53,16 +56,16 @@ public class CustomMappedHandler {
     public <T> Object handleExecute(MethodKind methodKind, Object... params) throws Exception {
         ExecuteHandler executor = ReflectUtil.getInstance(EXECUTE_HANDLER_CACHE.get(methodKind));
         Class<T> mappedType = executor.getMappedType(params);
-        Object result = executor.doExecute(executorFactory, mappedType, params);
+        Object result = executor.doExecute(sqlSessionFactory, mappedType, params);
         // if save then insert or update....
         if (executor.getKind() == MethodKind.SAVE) {
-            MethodKind saveKind = (MethodKind) executor.doExecute(executorFactory, mappedType, params);
+            MethodKind saveKind = (MethodKind) executor.doExecute(sqlSessionFactory, mappedType, params);
             executor = ReflectUtil.getInstance(EXECUTE_HANDLER_CACHE.get(saveKind));
-            result = executor.doExecute(executorFactory, mappedType, params);
+            result = executor.doExecute(sqlSessionFactory, mappedType, params);
         }
         // query after do something
         if (executor.getKind().getExecuteMethod() == ExecuteMethod.SELECT) {
-            executorFactory.queryAfterHandle(mappedType, result);
+            this.queryAfterHandle(mappedType, result);
         }
         return result;
     }
@@ -112,18 +115,45 @@ public class CustomMappedHandler {
                 );
     }
 
+    /**
+     * 自定义sql查询后的拦截处理
+     * @param <T> 查询结果的返回类型
+     * @param t 查询结果的类型
+     * @param obj 查询结果
+     */
+    private <T> void queryAfterHandle(Class<T> t, Object obj) throws Exception {
+        CustomSqlQueryAfter queryAfter;
+
+        try {
+            queryAfter = CustomApp.getBean(CustomSqlQueryAfter.class);
+        } catch (NoSuchBeanDefinitionException e) {
+            queryAfter = null;
+        }
+
+        if (queryAfter == null) {
+            DbGlobalConfig globalConfig = sqlSessionFactory.getGlobalConfig();
+            Class<? extends CustomSqlQueryAfter> queryAfterClass = globalConfig.getSqlQueryAfter();
+            if (queryAfterClass == null) {
+                return;
+            }
+            queryAfter = ReflectUtil.getInstance(queryAfterClass);
+        }
+        // 处理查询后的结果
+        queryAfter.handle(t, obj);
+    }
+
 
     private final static Map<Method, ExecuteHandler> METHOD_HANDLER_CACHE = new ConcurrentHashMap<>();
-    private final JdbcExecutorFactory executorFactory;
+    private final JdbcSqlSessionFactory sqlSessionFactory;
     private final static Map<Class<?>, Class<?>> PRIMITIVE_MAPPED = new HashMap<>(8);
     private final static Map<MethodKind, Class<? extends ExecuteHandler>> EXECUTE_HANDLER_CACHE = new ConcurrentHashMap<>();
 
     public CustomMappedHandler(DbDataSource dbDataSource, DbGlobalConfig dbGlobalConfig) {
-        this.executorFactory = new JdbcExecutorFactory(dbDataSource, dbGlobalConfig);
+        this.sqlSessionFactory = new JdbcSqlSessionFactory(dbDataSource, dbGlobalConfig);
     }
 
-    public JdbcExecutorFactory getExecutorFactory() {
-        return executorFactory;
+    public JdbcSqlSessionFactory getSqlSessionFactory() {
+        return sqlSessionFactory;
     }
 
     static {

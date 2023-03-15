@@ -133,7 +133,7 @@ public class DefaultTableExecutor<T, P extends Serializable> implements TableExe
     @Override
     @SuppressWarnings("unchecked")
     public P primaryKeyValue(T entity) {
-        EmptySqlBuilder<T> emptySqlBuilder = TableInfoCache.getEmptySqlBuilder(entityClass, sqlExecutor.getExecutorFactory());
+        EmptySqlBuilder<T> emptySqlBuilder = TableInfoCache.getEmptySqlBuilder(entityClass, sqlExecutor.getSqlSessionFactory());
         if (emptySqlBuilder.getKeyParserModel() == null) {
             throw new CustomCheckException("No primary key field specified");
         }
@@ -143,7 +143,7 @@ public class DefaultTableExecutor<T, P extends Serializable> implements TableExe
 
     @Override
     public ChainWrapper<T> createChain() {
-        return new ChainWrapper<>(entityClass, sqlExecutor.getExecutorFactory());
+        return new ChainWrapper<>(entityClass, sqlExecutor.getSqlSessionFactory());
     }
 
 

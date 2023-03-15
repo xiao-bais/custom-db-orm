@@ -1,7 +1,7 @@
 package com.custom.jdbc.dbAdapetr;
 
 import com.custom.comm.enums.DatabaseDialect;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 
 /**
  * @author  Xiao-Bai
@@ -26,7 +26,7 @@ public class Mysql5Adapter extends Mysql8Adapter {
         return null;
     }
 
-    public Mysql5Adapter(JdbcExecutorFactory executorFactory) {
+    public Mysql5Adapter(JdbcSqlSessionFactory executorFactory) {
         super(executorFactory);
     }
 }

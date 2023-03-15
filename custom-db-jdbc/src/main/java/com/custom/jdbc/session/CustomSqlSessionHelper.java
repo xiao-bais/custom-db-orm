@@ -148,8 +148,7 @@ public class CustomSqlSessionHelper {
         SqlOutPrintBuilder
                 .build(executorBody.getPrepareSql(),
                         executorBody.getSqlParams(),
-                        sqlOutPrintExecute
-                ).sqlErrPrint();
+                        sqlOutPrintExecute).sqlErrPrint();
     }
 
     /**

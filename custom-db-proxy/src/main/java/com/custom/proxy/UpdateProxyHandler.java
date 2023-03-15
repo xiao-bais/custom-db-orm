@@ -1,7 +1,6 @@
 package com.custom.proxy;
 
-import com.custom.jdbc.executebody.SaveExecutorBody;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 
 import java.lang.reflect.Method;
 
@@ -19,9 +18,9 @@ public class UpdateProxyHandler extends AbstractProxyHandler {
         return executeAnySql(readyExecuteSql, sqlParams);
     }
 
-    protected UpdateProxyHandler(JdbcExecutorFactory executorFactory, Object[] methodParams,
+    protected UpdateProxyHandler(JdbcSqlSessionFactory sqlSessionFactory, Object[] methodParams,
                                  String prepareSql, Method method) {
-        super.setExecutorFactory(executorFactory);
+        super.setSqlSessionFactory(sqlSessionFactory);
         super.setMethodParams(methodParams);
         super.setPrepareSql(prepareSql);
         super.setMethod(method);

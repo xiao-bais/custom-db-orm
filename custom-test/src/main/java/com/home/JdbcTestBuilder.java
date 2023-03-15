@@ -7,8 +7,6 @@ import com.custom.jdbc.configuration.CustomConfigHelper;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.configuration.DbGlobalConfig;
-import com.custom.jdbc.dbAdapetr.Mysql8Adapter;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.proxy.InterfacesProxyExecutor;
 
 /**

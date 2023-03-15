@@ -6,7 +6,7 @@ import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.jdbc.executebody.ExecuteBodyHelper;
 import com.custom.jdbc.executebody.SelectExecutorBody;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
 
 import java.io.Serializable;
@@ -20,18 +20,18 @@ import java.util.Collection;
 public class SelectBatchKeys extends AbstractMethod {
 
     @Override
-    protected <T> CustomSqlSession createSqlSession(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
+    protected <T> CustomSqlSession createSqlSession(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
         Collection<? extends Serializable> keys = (Collection<? extends Serializable>) params[1];
-        AbstractSqlBuilder<T> sqlBuilder = super.getSelectSqlBuilder(executorFactory, target);
+        AbstractSqlBuilder<T> sqlBuilder = super.getSelectSqlBuilder(sqlSessionFactory, target);
         String condition = sqlBuilder.createKeysCondition(keys);
         FullSqlConditionExecutor executor = sqlBuilder.addLogicCondition(condition);
         String selectSql = sqlBuilder.createTargetSql() + executor.execute();
-        SelectExecutorBody<T> executorBody = ExecuteBodyHelper.createSelect(target, selectSql, sqlPrintSupport, keys.toArray());
-        return executorFactory.createSqlSession(executorBody);
+        SelectExecutorBody<T> executorBody = ExecuteBodyHelper.createSelectIf(target, selectSql, sqlPrintSupport, keys.toArray());
+        return sqlSessionFactory.createSqlSession(executorBody);
     }
 
     @Override
-    public <T> Object doExecute(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
+    public <T> Object doExecute(JdbcSqlSessionFactory executorFactory, Class<T> target, Object[] params) throws Exception {
         CustomSqlSession sqlSession = createSqlSession(executorFactory, target, params);
         return executorFactory.getJdbcExecutor().selectList(sqlSession);
     }

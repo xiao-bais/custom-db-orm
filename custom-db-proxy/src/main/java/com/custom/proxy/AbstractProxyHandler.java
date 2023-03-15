@@ -8,7 +8,7 @@ import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.RexUtil;
 import com.custom.jdbc.executebody.SaveExecutorBody;
 import com.custom.jdbc.executebody.SelectExecutorBody;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +33,7 @@ public abstract class AbstractProxyHandler {
     /**
      * jdbc执行对象
      */
-    private JdbcExecutorFactory executorFactory;
+    private JdbcSqlSessionFactory sqlSessionFactory;
 
     /**
      * 方法参数
@@ -67,8 +67,8 @@ public abstract class AbstractProxyHandler {
      */
     protected abstract Object execute() throws Exception;
 
-    public void setExecutorFactory(JdbcExecutorFactory executorFactory) {
-        this.executorFactory = executorFactory;
+    public void setSqlSessionFactory(JdbcSqlSessionFactory sqlSessionFactory) {
+        this.sqlSessionFactory = sqlSessionFactory;
     }
 
     protected Object[] getMethodParams() {
@@ -102,10 +102,6 @@ public abstract class AbstractProxyHandler {
 
     public List<Object> getExecuteSqlParams() {
         return executeSqlParams;
-    }
-
-    public JdbcExecutorFactory thisJdbcExecutor() {
-        return executorFactory;
     }
 
     /**
@@ -217,8 +213,8 @@ public abstract class AbstractProxyHandler {
 
     public <V> Map<String, V> selectMapBySql(Class<V> t, String sql, Object... params) throws Exception {
         SelectExecutorBody<V> paramInfo = new SelectExecutorBody<>(t, sql, params);
-        CustomSqlSession sqlSession = executorFactory.createSqlSession(paramInfo);
-        return executorFactory.getJdbcExecutor().selectOneMap(sqlSession);
+        CustomSqlSession sqlSession = sqlSessionFactory.createSqlSession(paramInfo);
+        return sqlSessionFactory.getJdbcExecutor().selectOneMap(sqlSession);
     }
 
     /**
@@ -226,8 +222,8 @@ public abstract class AbstractProxyHandler {
      */
     public <T> Set<T> selectSetBySql(Class<T> t, String sql, Object... params) throws Exception {
         SelectExecutorBody<T> paramInfo = new SelectExecutorBody<>(t, sql, params);
-        CustomSqlSession sqlSession = executorFactory.createSqlSession(paramInfo);
-        return executorFactory.getJdbcExecutor().selectSet(sqlSession);
+        CustomSqlSession sqlSession = sqlSessionFactory.createSqlSession(paramInfo);
+        return sqlSessionFactory.getJdbcExecutor().selectSet(sqlSession);
     }
 
     /**
@@ -235,8 +231,8 @@ public abstract class AbstractProxyHandler {
      */
     public <T> T selectOneSql(Class<T> t, String sql, Object... params) throws Exception {
         SelectExecutorBody<T> paramInfo = new SelectExecutorBody<>(t, sql, params);
-        CustomSqlSession sqlSession = executorFactory.createSqlSession(paramInfo);
-        return executorFactory.getJdbcExecutor().selectOne(sqlSession);
+        CustomSqlSession sqlSession = sqlSessionFactory.createSqlSession(paramInfo);
+        return sqlSessionFactory.getJdbcExecutor().selectOne(sqlSession);
     }
 
     /**
@@ -244,8 +240,8 @@ public abstract class AbstractProxyHandler {
      */
     public <T> List<T> selectListBySql(Class<T> t, String sql, Object... params) throws Exception {
         SelectExecutorBody<T> paramInfo = new SelectExecutorBody<>(t, sql, params);
-        CustomSqlSession sqlSession = executorFactory.createSqlSession(paramInfo);
-        return executorFactory.getJdbcExecutor().selectList(sqlSession);
+        CustomSqlSession sqlSession = sqlSessionFactory.createSqlSession(paramInfo);
+        return sqlSessionFactory.getJdbcExecutor().selectList(sqlSession);
     }
 
     /**
@@ -253,19 +249,19 @@ public abstract class AbstractProxyHandler {
      */
     public <T> T[] selectArrays(Class<T> t, String sql, Object... params) throws Exception {
         SelectExecutorBody<T> paramInfo = new SelectExecutorBody<>(t, sql, params);
-        CustomSqlSession sqlSession = executorFactory.createSqlSession(paramInfo);
-        return executorFactory.getJdbcExecutor().selectArrays(sqlSession);
+        CustomSqlSession sqlSession = sqlSessionFactory.createSqlSession(paramInfo);
+        return sqlSessionFactory.getJdbcExecutor().selectArrays(sqlSession);
     }
 
     public Object selectObjBySql(String sql, Object... params) throws Exception {
         SelectExecutorBody<Object> paramInfo = new SelectExecutorBody<>(Object.class, sql, params);
-        CustomSqlSession sqlSession = executorFactory.createSqlSession(paramInfo);
-        return executorFactory.getJdbcExecutor().selectObj(sqlSession);
+        CustomSqlSession sqlSession = sqlSessionFactory.createSqlSession(paramInfo);
+        return sqlSessionFactory.getJdbcExecutor().selectObj(sqlSession);
     }
 
     public Object executeAnySql(String readyExecuteSql, Object[] sqlParams) throws Exception {
         SaveExecutorBody<Object> executorBody = new SaveExecutorBody<>(readyExecuteSql, sqlParams);
-        CustomSqlSession sqlSession = executorFactory.createSqlSession(executorBody);
-        return executorFactory.getJdbcExecutor().executeUpdate(sqlSession);
+        CustomSqlSession sqlSession = sqlSessionFactory.createSqlSession(executorBody);
+        return sqlSessionFactory.getJdbcExecutor().executeUpdate(sqlSession);
     }
 }

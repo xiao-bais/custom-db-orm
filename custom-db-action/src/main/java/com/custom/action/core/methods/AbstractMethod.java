@@ -11,7 +11,7 @@ import com.custom.comm.enums.SqlExecTemplate;
 import com.custom.comm.page.DbPageRows;
 import com.custom.jdbc.executebody.ExecuteBodyHelper;
 import com.custom.jdbc.executebody.SelectExecutorBody;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
 import com.custom.jdbc.interfaces.DatabaseAdapter;
 
@@ -27,9 +27,9 @@ public abstract class AbstractMethod implements ExecuteHandler {
 
     protected static boolean sqlPrintSupport = true;
 
-    protected abstract <T> CustomSqlSession createSqlSession(JdbcExecutorFactory executorFactory,
-                                                         Class<T> target,
-                                                         Object[] params) throws Exception;
+    protected abstract <T> CustomSqlSession createSqlSession(JdbcSqlSessionFactory sqlSessionFactory,
+                                                             Class<T> target,
+                                                             Object[] params) throws Exception;
 
 
     public <T> Class<T> getMappedType(Object[] params) {
@@ -58,30 +58,30 @@ public abstract class AbstractMethod implements ExecuteHandler {
     }
 
 
-    protected <T> AbstractSqlBuilder<T> getSelectSqlBuilder(JdbcExecutorFactory executorFactory, Class<T> mappedType) {
-        return TableInfoCache.getSelectSqlBuilderCache(mappedType, executorFactory);
+    protected <T> AbstractSqlBuilder<T> getSelectSqlBuilder(JdbcSqlSessionFactory sqlSessionFactory, Class<T> mappedType) {
+        return TableInfoCache.getSelectSqlBuilderCache(mappedType, sqlSessionFactory);
     }
 
-    protected <T> AbstractSqlBuilder<T> getInsertSqlBuilder(JdbcExecutorFactory executorFactory, Class<T> mappedType) {
-        return TableInfoCache.getInsertSqlBuilderCache(mappedType, executorFactory);
+    protected <T> AbstractSqlBuilder<T> getInsertSqlBuilder(JdbcSqlSessionFactory sqlSessionFactory, Class<T> mappedType) {
+        return TableInfoCache.getInsertSqlBuilderCache(mappedType, sqlSessionFactory);
     }
 
-    protected <T> AbstractSqlBuilder<T> getDeleteSqlBuilder(JdbcExecutorFactory executorFactory, Class<T> mappedType) {
-        return TableInfoCache.getDeleteSqlBuilderCache(mappedType, executorFactory);
+    protected <T> AbstractSqlBuilder<T> getDeleteSqlBuilder(JdbcSqlSessionFactory sqlSessionFactory, Class<T> mappedType) {
+        return TableInfoCache.getDeleteSqlBuilderCache(mappedType, sqlSessionFactory);
     }
 
-    protected <T> AbstractSqlBuilder<T> getUpdateSqlBuilder(JdbcExecutorFactory executorFactory, Class<T> mappedType) {
-        return TableInfoCache.getUpdateSqlBuilderCache(mappedType, executorFactory);
+    protected <T> AbstractSqlBuilder<T> getUpdateSqlBuilder(JdbcSqlSessionFactory sqlSessionFactory, Class<T> mappedType) {
+        return TableInfoCache.getUpdateSqlBuilderCache(mappedType, sqlSessionFactory);
     }
 
-    protected <T> AbstractSqlBuilder<T> getEmptySqlBuilder(JdbcExecutorFactory executorFactory, Class<T> mappedType) {
-        return TableInfoCache.getEmptySqlBuilder(mappedType, executorFactory);
+    protected <T> AbstractSqlBuilder<T> getEmptySqlBuilder(JdbcSqlSessionFactory sqlSessionFactory, Class<T> mappedType) {
+        return TableInfoCache.getEmptySqlBuilder(mappedType, sqlSessionFactory);
     }
 
     /**
      * 分页数据整合
      */
-    protected <T> void buildPageResult(JdbcExecutorFactory executorFactory,
+    protected <T> void buildPageResult(JdbcSqlSessionFactory sqlSessionFactory,
                                        Class<T> target,
                                        String selectSql,
                                        DbPageRows<T> dbPageRows,
@@ -89,47 +89,47 @@ public abstract class AbstractMethod implements ExecuteHandler {
 
         List<T> dataList = new ArrayList<>();
 
-        CustomSqlSession countSqlSession = this.createCountSqlSession(executorFactory, selectSql, params);
-        long count = (long) executorFactory.getJdbcExecutor().selectObj(countSqlSession);
+        CustomSqlSession countSqlSession = this.createCountSqlSession(sqlSessionFactory, selectSql, params);
+        long count = (long) sqlSessionFactory.getJdbcExecutor().selectObj(countSqlSession);
 
         if (count > 0) {
-            CustomSqlSession selectSqlSession = this.createPageSqlSession(executorFactory, target, selectSql, dbPageRows.getPageIndex(), dbPageRows.getPageSize(), params);
-            dataList = executorFactory.getJdbcExecutor().selectList(selectSqlSession);
+            CustomSqlSession selectSqlSession = this.createPageSqlSession(sqlSessionFactory, target, selectSql, dbPageRows.getPageIndex(), dbPageRows.getPageSize(), params);
+            dataList = sqlSessionFactory.getJdbcExecutor().selectList(selectSqlSession);
         }
         dbPageRows.setTotal(count).setData(dataList);
     }
 
-    protected CustomSqlSession createCountSqlSession(JdbcExecutorFactory executorFactory, String selectSql, Object[] params) {
+    protected CustomSqlSession createCountSqlSession(JdbcSqlSessionFactory sqlSessionFactory, String selectSql, Object[] params) {
         // 格式化并获取selectCountSQL
         String selectCountSql = SqlExecTemplate.format(SqlExecTemplate.SELECT_COUNT, selectSql);
-        SelectExecutorBody<Long> executorBody = ExecuteBodyHelper.createSelect(
+        SelectExecutorBody<Long> executorBody = ExecuteBodyHelper.createSelectIf(
                 Long.class,
                 selectCountSql,
                 sqlPrintSupport,
-                (Object[]) params[3]
+                params
         );
-        return executorFactory.createSqlSession(executorBody);
+        return sqlSessionFactory.createSqlSession(executorBody);
     }
 
-    protected <T> CustomSqlSession createPageSqlSession(JdbcExecutorFactory executorFactory, Class<T> target, String selectSql, int pageIndex, int pageSize, Object[] params) {
-        DatabaseAdapter databaseAdapter = executorFactory.getDatabaseAdapter();
+    protected <T> CustomSqlSession createPageSqlSession(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, String selectSql, int pageIndex, int pageSize, Object[] params) {
+        DatabaseAdapter databaseAdapter = sqlSessionFactory.getDatabaseAdapter();
         selectSql = databaseAdapter.handlePage(selectSql, pageIndex, pageSize);
-        SelectExecutorBody<T> selectExecutorBody = ExecuteBodyHelper.createSelect(
+        SelectExecutorBody<T> selectExecutorBody = ExecuteBodyHelper.createSelectIf(
                 target,
                 selectSql,
                 sqlPrintSupport,
-                (Object[]) params[3]
+                params
         );
-        return executorFactory.createSqlSession(selectExecutorBody);
+        return sqlSessionFactory.createSqlSession(selectExecutorBody);
     }
 
     /**
      * 对于返回对象的一对一，一对多处理
      */
-    public <T> void otherResultInject(JdbcExecutorFactory executorFactory, Class<T> target, List<T> result) throws Exception {
-        HandleSelectSqlBuilder<T> selectSqlBuilder = TableInfoCache.getSelectSqlBuilderCache(target, executorFactory);
+    public <T> void otherResultInject(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, List<T> result) throws Exception {
+        HandleSelectSqlBuilder<T> selectSqlBuilder = TableInfoCache.getSelectSqlBuilderCache(target, sqlSessionFactory);
         if (selectSqlBuilder.isExistNeedInjectResult() && result != null) {
-            MultiResultInjector<T> resultInjector = new MultiResultInjector<>(target, executorFactory, target);
+            MultiResultInjector<T> resultInjector = new MultiResultInjector<>(target, sqlSessionFactory, target);
             resultInjector.injectorValue(result);
         }
     }

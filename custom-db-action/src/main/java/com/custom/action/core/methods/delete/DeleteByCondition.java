@@ -8,8 +8,7 @@ import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.comm.utils.AssertUtil;
 import com.custom.jdbc.executebody.BaseExecutorBody;
 import com.custom.jdbc.executebody.ExecuteBodyHelper;
-import com.custom.jdbc.executebody.SaveExecutorBody;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
 
 /**
@@ -19,18 +18,18 @@ import com.custom.jdbc.interfaces.CustomSqlSession;
 public class DeleteByCondition extends AbstractMethod {
 
     @Override
-    protected <T> CustomSqlSession createSqlSession(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
-        AbstractSqlBuilder<T> sqlBuilder = TableInfoCache.getDeleteSqlBuilderCache(target, executorFactory);
+    protected <T> CustomSqlSession createSqlSession(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
+        AbstractSqlBuilder<T> sqlBuilder = TableInfoCache.getDeleteSqlBuilderCache(target, sqlSessionFactory);
         String condition = String.valueOf(params[1]);
         AssertUtil.notEmpty(condition, "delete condition cannot be empty.");
         FullSqlConditionExecutor conditionExecutor = sqlBuilder.addLogicCondition(condition);
         String deleteSql = sqlBuilder.createTargetSql() + conditionExecutor.execute();
         BaseExecutorBody executorBody = ExecuteBodyHelper.createExecUpdate(deleteSql, sqlPrintSupport, (Object[]) params[2]);
-        return executorFactory.createSqlSession(executorBody);
+        return sqlSessionFactory.createSqlSession(executorBody);
     }
 
     @Override
-    public <T> Object doExecute(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
+    public <T> Object doExecute(JdbcSqlSessionFactory executorFactory, Class<T> target, Object[] params) throws Exception {
         CustomSqlSession sqlSession = createSqlSession(executorFactory, target, params);
         return executorFactory.getJdbcExecutor().executeUpdate(sqlSession);
     }

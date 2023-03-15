@@ -7,7 +7,7 @@ import com.custom.comm.annotations.mapper.Update;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.jdbc.configuration.CustomConfigHelper;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 import com.custom.jdbc.utils.DbConnGlobal;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,13 +30,13 @@ public class InterfacesProxyExecutor implements InvocationHandler {
         targetClassName = cls.getName();
         SqlMapper sqlMapper = cls.getAnnotation(SqlMapper.class);
         CustomConfigHelper configHelper = DbConnGlobal.getConfigHelper(sqlMapper.order());
-        this.executorFactory = new JdbcExecutorFactory(configHelper.getDbDataSource(),  configHelper.getDbGlobalConfig());
+        this.sqlSessionFactory = new JdbcSqlSessionFactory(configHelper.getDbDataSource(),  configHelper.getDbGlobalConfig());
 
         return (T) Proxy.newProxyInstance(classLoader, interfaces, this);
     }
 
     private String targetClassName;
-    private JdbcExecutorFactory executorFactory;
+    private JdbcSqlSessionFactory sqlSessionFactory;
 
     public InterfacesProxyExecutor() {
 
@@ -76,13 +76,13 @@ public class InterfacesProxyExecutor implements InvocationHandler {
         // do Query
         if (method.isAnnotationPresent(Query.class)) {
             Query query = method.getAnnotation(Query.class);
-            proxyHandler = new SelectProxyHandler(executorFactory, args, query.value(), method);
+            proxyHandler = new SelectProxyHandler(sqlSessionFactory, args, query.value(), method);
         }
 
         // do Update
         else if (method.isAnnotationPresent(Update.class)) {
             Update update = method.getAnnotation(Update.class);
-            proxyHandler = new UpdateProxyHandler(executorFactory, args, update.value(), method);
+            proxyHandler = new UpdateProxyHandler(sqlSessionFactory, args, update.value(), method);
         }
 
         // do sqlPath(select or update)
@@ -91,12 +91,12 @@ public class InterfacesProxyExecutor implements InvocationHandler {
             ExecuteMethod execType = sqlPath.method();
             String sql = new ClearNotesOnSqlHandler(sqlPath.value()).loadSql();
             if (execType == ExecuteMethod.SELECT) {
-                proxyHandler = new SelectProxyHandler(executorFactory, args, sql, method);
+                proxyHandler = new SelectProxyHandler(sqlSessionFactory, args, sql, method);
             } else if (execType == ExecuteMethod.UPDATE
                     || execType == ExecuteMethod.DELETE
                     || execType == ExecuteMethod.INSERT) {
 
-                proxyHandler = new UpdateProxyHandler(executorFactory, args, sql, method);
+                proxyHandler = new UpdateProxyHandler(sqlSessionFactory, args, sql, method);
             }
         } else
             throw new CustomCheckException("The '@Update' or '@Query' or '@SqlPath' annotation was not found on the method : %s.%s()", targetClassName, method.getName());

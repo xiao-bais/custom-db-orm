@@ -4,7 +4,7 @@ import com.custom.action.interfaces.TableExecutor;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.jdbc.configuration.CustomConfigHelper;
 import com.custom.jdbc.configuration.DbGlobalConfig;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 import com.custom.jdbc.utils.DbConnGlobal;
 
 import java.io.Serializable;
@@ -88,38 +88,38 @@ public class TableInfoCache {
      */
     private final static Map<String, SqlBuilderCollection<?>> SQL_BUILDER_COLLECTION = new ConcurrentHashMap<>();
 
-    protected static <T> SqlBuilderCollection<T> getSqlBuilderCache(Class<T> entityClass, JdbcExecutorFactory executorFactory) {
+    protected static <T> SqlBuilderCollection<T> getSqlBuilderCache(Class<T> entityClass, JdbcSqlSessionFactory sqlSessionFactory) {
         SqlBuilderCollection<T> optionalSqlBuilder = (SqlBuilderCollection<T>)
                 SQL_BUILDER_COLLECTION.get(entityClass.getName());
         if (optionalSqlBuilder == null) {
-            optionalSqlBuilder = new SqlBuilderCollection<>(entityClass, executorFactory);
+            optionalSqlBuilder = new SqlBuilderCollection<>(entityClass, sqlSessionFactory);
             SQL_BUILDER_COLLECTION.put(entityClass.getName(), optionalSqlBuilder);
         }
         return optionalSqlBuilder;
     }
 
-    public static <T> HandleSelectSqlBuilder<T> getSelectSqlBuilderCache(Class<T> entityClass, JdbcExecutorFactory executorFactory) {
-        SqlBuilderCollection<T> sqlBuilderCache = getSqlBuilderCache(entityClass, executorFactory);
+    public static <T> HandleSelectSqlBuilder<T> getSelectSqlBuilderCache(Class<T> entityClass, JdbcSqlSessionFactory sqlSessionFactory) {
+        SqlBuilderCollection<T> sqlBuilderCache = getSqlBuilderCache(entityClass, sqlSessionFactory);
         return (HandleSelectSqlBuilder<T>) sqlBuilderCache.getSelectSqlBuilder();
     }
 
-    public static <T> HandleInsertSqlBuilder<T> getInsertSqlBuilderCache(Class<T> entityClass, JdbcExecutorFactory executorFactory) {
-        SqlBuilderCollection<T> sqlBuilderCache = getSqlBuilderCache(entityClass, executorFactory);
+    public static <T> HandleInsertSqlBuilder<T> getInsertSqlBuilderCache(Class<T> entityClass, JdbcSqlSessionFactory sqlSessionFactory) {
+        SqlBuilderCollection<T> sqlBuilderCache = getSqlBuilderCache(entityClass, sqlSessionFactory);
         return (HandleInsertSqlBuilder<T>) sqlBuilderCache.getInsertSqlBuilder();
     }
 
-    public static <T> HandleUpdateSqlBuilder<T> getUpdateSqlBuilderCache(Class<T> entityClass, JdbcExecutorFactory executorFactory) {
-        SqlBuilderCollection<T> sqlBuilderCache = getSqlBuilderCache(entityClass, executorFactory);
+    public static <T> HandleUpdateSqlBuilder<T> getUpdateSqlBuilderCache(Class<T> entityClass, JdbcSqlSessionFactory sqlSessionFactory) {
+        SqlBuilderCollection<T> sqlBuilderCache = getSqlBuilderCache(entityClass, sqlSessionFactory);
         return (HandleUpdateSqlBuilder<T>) sqlBuilderCache.getUpdateSqlBuilder();
     }
 
-    public static <T> HandleDeleteSqlBuilder<T> getDeleteSqlBuilderCache(Class<T> entityClass, JdbcExecutorFactory executorFactory) {
-        SqlBuilderCollection<T> sqlBuilderCache = getSqlBuilderCache(entityClass, executorFactory);
+    public static <T> HandleDeleteSqlBuilder<T> getDeleteSqlBuilderCache(Class<T> entityClass, JdbcSqlSessionFactory sqlSessionFactory) {
+        SqlBuilderCollection<T> sqlBuilderCache = getSqlBuilderCache(entityClass, sqlSessionFactory);
         return (HandleDeleteSqlBuilder<T>) sqlBuilderCache.getDeleteSqlBuilder();
     }
 
-    public static <T> EmptySqlBuilder<T> getEmptySqlBuilder(Class<T> entityClass, JdbcExecutorFactory executorFactory) {
-        SqlBuilderCollection<T> sqlBuilderCache = getSqlBuilderCache(entityClass, executorFactory);
+    public static <T> EmptySqlBuilder<T> getEmptySqlBuilder(Class<T> entityClass, JdbcSqlSessionFactory sqlSessionFactory) {
+        SqlBuilderCollection<T> sqlBuilderCache = getSqlBuilderCache(entityClass, sqlSessionFactory);
         return (EmptySqlBuilder<T>) sqlBuilderCache.getEmptySqlBuilder();
     }
 
@@ -146,10 +146,10 @@ public class TableInfoCache {
         return tableExecutor;
     }
 
-    public static <T, P extends Serializable> TableExecutor<T, P> getTableExecutor(JdbcExecutorFactory executorFactory, Class<T> target) {
+    public static <T, P extends Serializable> TableExecutor<T, P> getTableExecutor(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target) {
         TableExecutor<T, P> tableExecutor = (TableExecutor<T, P>) TABLE_EXEC_CACHE.get(target);
         if (tableExecutor == null) {
-            tableExecutor = new DefaultTableExecutor<>(executorFactory.getDbDataSource(), executorFactory.getGlobalConfig(), target);
+            tableExecutor = new DefaultTableExecutor<>(sqlSessionFactory.getDbDataSource(), sqlSessionFactory.getGlobalConfig(), target);
             TABLE_EXEC_CACHE.put(target, tableExecutor);
         }
         return tableExecutor;

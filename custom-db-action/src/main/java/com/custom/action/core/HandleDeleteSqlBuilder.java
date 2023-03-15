@@ -6,7 +6,7 @@ import com.custom.comm.enums.FillStrategy;
 import com.custom.comm.enums.SqlExecTemplate;
 import com.custom.comm.utils.Constants;
 import com.custom.comm.utils.StrUtils;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,8 +83,8 @@ public class HandleDeleteSqlBuilder<T> extends AbstractSqlBuilder<T> {
         return autoUpdateFieldSql.toString();
     }
 
-    public HandleDeleteSqlBuilder(Class<T> entityClass, JdbcExecutorFactory executorFactory) {
+    public HandleDeleteSqlBuilder(Class<T> entityClass, JdbcSqlSessionFactory sqlSessionFactory) {
         TableParseModel<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
-        this.injectTableInfo(tableSqlBuilder, executorFactory);
+        this.injectTableInfo(tableSqlBuilder, sqlSessionFactory);
     }
 }

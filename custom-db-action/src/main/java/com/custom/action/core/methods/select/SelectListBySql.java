@@ -4,7 +4,7 @@ import com.custom.action.core.methods.AbstractMethod;
 import com.custom.action.core.methods.MethodKind;
 import com.custom.jdbc.executebody.ExecuteBodyHelper;
 import com.custom.jdbc.executebody.SelectExecutorBody;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
 
 /**
@@ -14,17 +14,17 @@ import com.custom.jdbc.interfaces.CustomSqlSession;
 public class SelectListBySql extends AbstractMethod {
 
     @Override
-    public <T> Object doExecute(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) throws Exception {
+    public <T> Object doExecute(JdbcSqlSessionFactory executorFactory, Class<T> target, Object[] params) throws Exception {
         CustomSqlSession sqlSession = createSqlSession(executorFactory, target, params);
         return executorFactory.getJdbcExecutor().selectList(sqlSession);
     }
 
 
     @Override
-    protected <T> CustomSqlSession createSqlSession(JdbcExecutorFactory executorFactory, Class<T> target, Object[] params) {
+    protected <T> CustomSqlSession createSqlSession(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) {
         String selectSql = String.valueOf(params[1]);
-        SelectExecutorBody<T> executorBody = ExecuteBodyHelper.createSelect(target, selectSql, sqlPrintSupport, (Object[]) params[2]);
-        return executorFactory.createSqlSession(executorBody);
+        SelectExecutorBody<T> executorBody = ExecuteBodyHelper.createSelectIf(target, selectSql, sqlPrintSupport, (Object[]) params[2]);
+        return sqlSessionFactory.createSqlSession(executorBody);
     }
 
     @Override

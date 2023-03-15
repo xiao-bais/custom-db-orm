@@ -1,7 +1,7 @@
 package com.custom.action.core;
 
 import com.custom.action.dbaction.AbstractSqlBuilder;
-import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.executor.JdbcSqlSessionFactory;
 
 import java.util.List;
 
@@ -13,9 +13,9 @@ import java.util.List;
 public class EmptySqlBuilder<T> extends AbstractSqlBuilder<T> {
 
 
-    public EmptySqlBuilder(Class<T> entityClass, JdbcExecutorFactory executorFactory) {
+    public EmptySqlBuilder(Class<T> entityClass, JdbcSqlSessionFactory sqlSessionFactory) {
         TableParseModel<T> tableModel = TableInfoCache.getTableModel(entityClass);
-        this.injectTableInfo(tableModel, executorFactory);
+        this.injectTableInfo(tableModel, sqlSessionFactory);
     }
 
     @Override
