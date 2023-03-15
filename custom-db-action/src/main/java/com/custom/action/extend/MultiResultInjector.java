@@ -9,7 +9,9 @@ import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.ReflectUtil;
+import com.custom.jdbc.executebody.SelectExecutorBody;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.interfaces.CustomSqlSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -172,7 +174,9 @@ public class MultiResultInjector<T> {
         // 若该表存在逻辑删除的字段，则处理逻辑删除条件
         FullSqlConditionExecutor conditionExecutor = sqlBuilder.addLogicCondition(condPrefix);
         String selectSql = sqlBuilder.createTargetSql() + conditionExecutor.execute() + condSuffix;
-        return executorFactory.selectListBySql(joinTarget, selectSql, queryValue);
+        SelectExecutorBody<?> selectExecutorBody = new SelectExecutorBody<>(joinTarget, selectSql, new Object[]{queryValue});
+        CustomSqlSession sqlSession = executorFactory.createSqlSession(selectExecutorBody);
+        return executorFactory.getJdbcExecutor().selectList(sqlSession);
     }
 
 

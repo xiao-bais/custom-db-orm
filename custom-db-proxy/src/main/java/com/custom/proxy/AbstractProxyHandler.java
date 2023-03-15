@@ -6,7 +6,10 @@ import com.custom.comm.utils.Constants;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.RexUtil;
+import com.custom.jdbc.executebody.SaveExecutorBody;
+import com.custom.jdbc.executebody.SelectExecutorBody;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.interfaces.CustomSqlSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -210,5 +213,59 @@ public abstract class AbstractProxyHandler {
             parsingObject.parser(parameterName, prepareParam);
             mergeParams(parsingObject.getParamsMap());
         }
+    }
+
+    public <V> Map<String, V> selectMapBySql(Class<V> t, String sql, Object... params) throws Exception {
+        SelectExecutorBody<V> paramInfo = new SelectExecutorBody<>(t, sql, params);
+        CustomSqlSession sqlSession = executorFactory.createSqlSession(paramInfo);
+        return executorFactory.getJdbcExecutor().selectOneMap(sqlSession);
+    }
+
+    /**
+     * 查询单列的Set集合
+     */
+    public <T> Set<T> selectSetBySql(Class<T> t, String sql, Object... params) throws Exception {
+        SelectExecutorBody<T> paramInfo = new SelectExecutorBody<>(t, sql, params);
+        CustomSqlSession sqlSession = executorFactory.createSqlSession(paramInfo);
+        return executorFactory.getJdbcExecutor().selectSet(sqlSession);
+    }
+
+    /**
+     * 纯sql查询单条记录
+     */
+    public <T> T selectOneSql(Class<T> t, String sql, Object... params) throws Exception {
+        SelectExecutorBody<T> paramInfo = new SelectExecutorBody<>(t, sql, params);
+        CustomSqlSession sqlSession = executorFactory.createSqlSession(paramInfo);
+        return executorFactory.getJdbcExecutor().selectOne(sqlSession);
+    }
+
+    /**
+     * 纯sql查询集合
+     */
+    public <T> List<T> selectListBySql(Class<T> t, String sql, Object... params) throws Exception {
+        SelectExecutorBody<T> paramInfo = new SelectExecutorBody<>(t, sql, params);
+        CustomSqlSession sqlSession = executorFactory.createSqlSession(paramInfo);
+        return executorFactory.getJdbcExecutor().selectList(sqlSession);
+    }
+
+    /**
+     * 查询数组
+     */
+    public <T> T[] selectArrays(Class<T> t, String sql, Object... params) throws Exception {
+        SelectExecutorBody<T> paramInfo = new SelectExecutorBody<>(t, sql, params);
+        CustomSqlSession sqlSession = executorFactory.createSqlSession(paramInfo);
+        return executorFactory.getJdbcExecutor().selectArrays(sqlSession);
+    }
+
+    public Object selectObjBySql(String sql, Object... params) throws Exception {
+        SelectExecutorBody<Object> paramInfo = new SelectExecutorBody<>(Object.class, sql, params);
+        CustomSqlSession sqlSession = executorFactory.createSqlSession(paramInfo);
+        return executorFactory.getJdbcExecutor().selectObj(sqlSession);
+    }
+
+    public Object executeAnySql(String readyExecuteSql, Object[] sqlParams) throws Exception {
+        SaveExecutorBody<Object> executorBody = new SaveExecutorBody<>(readyExecuteSql, sqlParams);
+        CustomSqlSession sqlSession = executorFactory.createSqlSession(executorBody);
+        return executorFactory.getJdbcExecutor().executeUpdate(sqlSession);
     }
 }

@@ -50,10 +50,10 @@ public class SelectProxyHandler extends AbstractProxyHandler {
                 genericType = (Class<?>) pt.getActualTypeArguments()[0];
 
                 if (List.class.isAssignableFrom(truthResType)) {
-                    return executorFactory.selectListBySql(genericType, readyExecuteSql, sqlParams);
+                    return selectListBySql(genericType, readyExecuteSql, sqlParams);
 
                 }else if (Set.class.isAssignableFrom(truthResType)) {
-                    return executorFactory.selectSetBySql(genericType, readyExecuteSql, sqlParams);
+                    return selectSetBySql(genericType, readyExecuteSql, sqlParams);
                 }
                 // if not list or set, then throws error...
                 throw new CustomCheckException("返回的列表类型暂时只支持List以及Set");
@@ -62,7 +62,7 @@ public class SelectProxyHandler extends AbstractProxyHandler {
             // do Map
             else if (Map.class.isAssignableFrom(truthResType)) {
                 genericType = (Class<?>) pt.getActualTypeArguments()[1];
-                return executorFactory.selectMapBySql(genericType, readyExecuteSql, sqlParams);
+                return selectMapBySql(genericType, readyExecuteSql, sqlParams);
             }
             else return null;
         }
@@ -70,17 +70,20 @@ public class SelectProxyHandler extends AbstractProxyHandler {
         // do Array
         if (truthResType.isArray()) {
             genericType = truthResType.getComponentType();
-            return executorFactory.selectArrays(genericType, readyExecuteSql, sqlParams);
+            return selectArrays(genericType, readyExecuteSql, sqlParams);
         }
 
         // do Basic type
         else if (CustomUtil.isBasicClass(truthResType)) {
-            return executorFactory.selectObjBySql(readyExecuteSql, sqlParams);
+            return selectObjBySql(readyExecuteSql, sqlParams);
         }
 
         // do custom Object
-        return executorFactory.selectOneSql(truthResType, readyExecuteSql, sqlParams);
+        return selectOneSql(truthResType, readyExecuteSql, sqlParams);
     }
+
+
+
 
 
 }

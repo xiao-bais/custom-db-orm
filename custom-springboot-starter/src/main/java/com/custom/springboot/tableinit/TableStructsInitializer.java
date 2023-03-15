@@ -6,7 +6,10 @@ import com.custom.action.core.TableInfoCache;
 import com.custom.action.core.TableParseModel;
 import com.custom.comm.annotations.DbTable;
 import com.custom.comm.utils.*;
+import com.custom.jdbc.executebody.BaseExecutorBody;
+import com.custom.jdbc.executebody.SelectExecutorBody;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
+import com.custom.jdbc.interfaces.CustomSqlSession;
 import com.custom.jdbc.interfaces.DatabaseAdapter;
 import com.custom.springboot.scanner.PackageScanner;
 import org.slf4j.Logger;
@@ -160,7 +163,9 @@ public class TableStructsInitializer {
     private void buildColumnInfo(TableParseModel<?> sqlBuilder, String table) throws Exception {
         String selectColumnSql = String.format(SELECT_COLUMN_SQL,
                 sqlBuilder.getTable(), dataBaseName);
-        List<String> columnList = executorFactory.selectObjsBySql(String.class,false, selectColumnSql);
+        SelectExecutorBody<String> paramInfo = new SelectExecutorBody<>(String.class, selectColumnSql, false);
+        CustomSqlSession sqlSession = executorFactory.createSqlSession(paramInfo);
+        List<String> columnList = executorFactory.getJdbcExecutor().selectObjs(sqlSession);
         List<String> truthColumnList = sqlBuilder.getDbFieldParseModels().stream()
                 .map(DbFieldParserModel::getColumn)
                 .collect(Collectors.toList());
