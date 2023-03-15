@@ -2,6 +2,8 @@ package com.custom.generator.core;
 
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.jdbc.configuration.DbGlobalConfig;
+import com.custom.jdbc.executebody.ExecuteBodyHelper;
+import com.custom.jdbc.executebody.SelectExecutorBody;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.comm.date.DateTimeUtils;
 import com.custom.generator.config.GenarateGlobalConfig;
@@ -16,6 +18,7 @@ import com.custom.comm.utils.Constants;
 import com.custom.comm.enums.DbType;
 import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
+import com.custom.jdbc.interfaces.CustomSqlSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,7 +116,7 @@ public class GenerateCodeExecutor {
         String selectTableSql = String.format(CustomUtil.loadFiles("/sql/queryTableColumnStruct.sql"), tableStr, DATA_BASE);
         List<ColumnStructModel> columnStructModels = new ArrayList<>();
         try {
-            columnStructModels = executorFactory.executeQueryNotPrintSql(ColumnStructModel.class, selectTableSql);
+            columnStructModels = this.handleExecSql(ColumnStructModel.class, selectTableSql);
             if(columnStructModels.isEmpty()) {
                 return;
             }
@@ -292,10 +295,19 @@ public class GenerateCodeExecutor {
     private void handleTruthTables(String tableStr) {
         try {
             String selectTableSql  = String.format(CustomUtil.loadFiles("/sql/queryTableStruct.sql"), tableStr, DATA_BASE);
-            tableStructModels = executorFactory.executeQueryNotPrintSql(TableStructModel.class, selectTableSql);
+            tableStructModels = this.handleExecSql(TableStructModel.class, selectTableSql);
         }catch (Exception e) {
             logger.error(e.toString(), e);
         }
+    }
+
+    /**
+     * 执行sql
+     */
+    private <T> List<T> handleExecSql(Class<T> t, String sql) throws Exception {
+        SelectExecutorBody<T> executorBody = ExecuteBodyHelper.createSelect(t, sql, false);
+        CustomSqlSession sqlSession = executorFactory.createSqlSession(executorBody);
+        return executorFactory.getJdbcExecutor().selectList(sqlSession);
     }
 
 

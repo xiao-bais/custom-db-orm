@@ -7,6 +7,7 @@ import com.custom.action.core.TableParseModel;
 import com.custom.comm.annotations.DbTable;
 import com.custom.comm.utils.*;
 import com.custom.jdbc.executebody.BaseExecutorBody;
+import com.custom.jdbc.executebody.ExecuteBodyHelper;
 import com.custom.jdbc.executebody.SelectExecutorBody;
 import com.custom.jdbc.executor.JdbcExecutorFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
@@ -82,7 +83,7 @@ public class TableStructsInitializer {
                 createNewColumnSql.add(x);
                 logger.info("Added new column as '{}'\n", x);
             });
-            executorFactory.execTable(createNewColumnSql.toString());
+            this.handleExecSql(createNewColumnSql);
         }
 
         if (!waitCreateMapper.isEmpty()) {
@@ -92,8 +93,17 @@ public class TableStructsInitializer {
                 createNewTableSql.add(createTableSql);
                 logger.info("\nCreated new table for '{}' as ===================>\n\n{}\n", table, createTableSql);
             });
-            executorFactory.execTable(createNewTableSql.toString());
+            this.handleExecSql(createNewTableSql);
         }
+    }
+
+    /**
+     * 执行sql
+     */
+    private void handleExecSql(StringJoiner sql) throws Exception {
+        BaseExecutorBody executorBody = ExecuteBodyHelper.createExecUpdate(sql.toString());
+        CustomSqlSession sqlSession = executorFactory.createSqlSession(executorBody);
+        executorFactory.getJdbcExecutor().execTableInfo(sqlSession);
     }
 
     /**

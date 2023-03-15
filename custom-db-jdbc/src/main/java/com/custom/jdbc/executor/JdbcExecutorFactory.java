@@ -41,8 +41,6 @@ import java.util.Set;
  */
 public class JdbcExecutorFactory {
 
-    private final static Logger log = LoggerFactory.getLogger(JdbcExecutorFactory.class);
-
     /**
      * jdbc基础操作对象
      */
@@ -146,24 +144,6 @@ public class JdbcExecutorFactory {
             case SQL_SERVER:
                 this.databaseAdapter = new SqlServerAdapter(this);
         }
-    }
-
-    /**
-     * 直接执行查询，属于内部执行
-     */
-    public <T> List<T> executeQueryNotPrintSql(Class<T> t, String sql, Object... params) throws Exception {
-        SelectExecutorBody<T> paramInfo = new SelectExecutorBody<>(t, sql, false, params);
-        CustomSqlSession sqlSession = this.createSqlSession(paramInfo);
-        return jdbcExecutor.selectList(sqlSession);
-    }
-
-    /**
-     * 创建/删除表
-     */
-    public void execTable(String sql) throws Exception {
-        BaseExecutorBody paramInfo = new BaseExecutorBody(sql, false, new Object[]{});
-        CustomSqlSession sqlSession = this.createSqlSession(paramInfo);
-        jdbcExecutor.execTableInfo(sqlSession);
     }
 
     /**
