@@ -33,16 +33,16 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
-        <revision>1.0.1-SNAPSHOT</revision>
-        <custom-aliyun-version>1.0.1-SNAPSHOT</custom-aliyun-version>
-        <custom-comm-version>1.0.1-SNAPSHOT</custom-comm-version>
-        <custom-db-jdbc-version>1.0.1-SNAPSHOT</custom-db-jdbc-version>
-        <custom-db-action-version>1.0.1-SNAPSHOT</custom-db-action-version>
-        <custom-db-generator-version>1.0.1-SNAPSHOT</custom-db-generator-version>
-        <custom-db-joiner-version>1.0.1-SNAPSHOT</custom-db-joiner-version>
-        <custom-db-proxy-version>1.0.1-SNAPSHOT</custom-db-proxy-version>
-        <custom-db-springboot-starter-version>1.0.1-SNAPSHOT</custom-db-springboot-starter-version>
-        <custom-tools>1.0.1-SNAPSHOT</custom-tools>
+        <revision>1.0.2-SNAPSHOT</revision>
+        <custom-aliyun-version>${revision}</custom-aliyun-version>
+        <custom-comm-version>${revision}</custom-comm-version>
+        <custom-db-jdbc-version>${revision}</custom-db-jdbc-version>
+        <custom-db-action-version>${revision}</custom-db-action-version>
+        <custom-db-generator-version>${revision}</custom-db-generator-version>
+        <custom-db-joiner-version>${revision}</custom-db-joiner-version>
+        <custom-db-proxy-version>${revision}</custom-db-proxy-version>
+        <custom-db-springboot-starter-version>${revision}</custom-db-springboot-starter-version>
+        <custom-tools>${revision}</custom-tools>
     </properties>
 
     <dependencies>
