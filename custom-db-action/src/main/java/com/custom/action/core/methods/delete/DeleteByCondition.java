@@ -19,7 +19,7 @@ public class DeleteByCondition extends AbstractMethod {
 
     @Override
     protected <T> CustomSqlSession createSqlSession(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
-        AbstractSqlBuilder<T> sqlBuilder = TableInfoCache.getDeleteSqlBuilderCache(target, sqlSessionFactory);
+        AbstractSqlBuilder<T> sqlBuilder = super.getDeleteSqlBuilder(sqlSessionFactory, target);
         String condition = String.valueOf(params[1]);
         AssertUtil.notEmpty(condition, "delete condition cannot be empty.");
         FullSqlConditionExecutor conditionExecutor = sqlBuilder.addLogicCondition(condition);

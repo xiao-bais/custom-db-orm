@@ -25,7 +25,7 @@ public class InsertOne extends AbstractMethod {
 
     @Override
     protected <T> CustomSqlSession createSqlSession(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
-        AbstractSqlBuilder<T> sqlBuilder = TableInfoCache.getInsertSqlBuilderCache(target, sqlSessionFactory);
+        AbstractSqlBuilder<T> sqlBuilder = super.getInsertSqlBuilder(sqlSessionFactory, target);
 
         List<T> list;
         if (params[0] instanceof Collection) {

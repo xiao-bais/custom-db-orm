@@ -24,13 +24,13 @@ public class UpdateByCondition extends AbstractMethod {
     @Override
     protected <T> CustomSqlSession createSqlSession(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
         String condition = String.valueOf(params[1]);
-        AssertUtil.notEmpty("update condition cannot be empty.");
+        AssertUtil.notEmpty(condition, "update condition cannot be empty.");
         T entity = (T) params[0];
         AbstractSqlBuilder<T> sqlBuilder = super.getUpdateSqlBuilder(sqlSessionFactory, target);
         // 创建update sql
         List<Object> sqlParamList = new ArrayList<>();
         String updateSql = sqlBuilder.createTargetSql(entity, sqlParamList);
-        CustomUtil.addParams(sqlParamList, params);
+        CustomUtil.addParams(sqlParamList, params[2]);
 
         // 拼接sql
         FullSqlConditionExecutor conditionExecutor = sqlBuilder.addLogicCondition(condition);

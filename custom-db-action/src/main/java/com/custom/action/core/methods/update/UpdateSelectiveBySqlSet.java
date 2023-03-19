@@ -7,6 +7,7 @@ import com.custom.action.core.methods.MethodKind;
 import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.comm.enums.SqlExecTemplate;
+import com.custom.comm.utils.AssertUtil;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.jdbc.executebody.BaseExecutorBody;
 import com.custom.jdbc.executebody.ExecuteBodyHelper;
@@ -14,6 +15,7 @@ import com.custom.jdbc.session.JdbcSqlSessionFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
 
 import java.util.List;
+import java.util.StringJoiner;
 
 /**
  * @author Xiao-Bai
@@ -27,9 +29,13 @@ public class UpdateSelectiveBySqlSet extends UpdateByCondition {
         AbstractUpdateSet<T> updateSet = (AbstractUpdateSet<T>) params[0];
         UpdateSetWrapper<T> updateSetWrapper = updateSet.getUpdateSetWrapper();
         ConditionWrapper<T> conditionWrapper = updateSet.getConditionWrapper();
+        AssertUtil.notEmpty(conditionWrapper, "update condition cannot be empty.");
+        String condition = conditionWrapper.getFinalConditional();
+        AssertUtil.notEmpty(condition, "update condition cannot be empty.");
 
+        // 拼接
         AbstractSqlBuilder<T> sqlBuilder = super.getUpdateSqlBuilder(sqlSessionFactory, target);
-        FullSqlConditionExecutor executor = sqlBuilder.addLogicCondition(conditionWrapper.getFinalConditional());
+        FullSqlConditionExecutor executor = sqlBuilder.addLogicCondition(condition);
         String finalConditional = executor.execute();
         List<Object> sqlParams = updateSetWrapper.getSetParams();
         CustomUtil.addParams(sqlParams, conditionWrapper.getParamValues());

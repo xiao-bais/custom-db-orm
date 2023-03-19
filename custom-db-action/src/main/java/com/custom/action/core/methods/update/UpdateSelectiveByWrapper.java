@@ -17,6 +17,7 @@ public class UpdateSelectiveByWrapper extends UpdateByCondition {
         ConditionWrapper<T> wrapper = (ConditionWrapper<T>) params[1];
         return super.createSqlSession(sqlSessionFactory, target,
                 new Object[]{
+                        params[0],
                         wrapper.getFinalConditional(),
                         wrapper.getParamValues().toArray()
                 }

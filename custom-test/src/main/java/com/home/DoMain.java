@@ -7,6 +7,7 @@ import com.custom.comm.page.DbPageRows;
 import com.home.customtest.entity.Employee;
 import com.home.customtest.entity.Student;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,8 @@ public class DoMain {
 
         MyService helper = new MyServiceImpl();
 
-        DbPageRows<Map<String, Object>> mapDbPageRows = jdbcDao.selectPageMap(Conditions.lambdaQuery(Student.class).in(Student::getAge, 1, 2, 4, 12, 15).pageParams(1, 3));
+        Employee employee = jdbcDao.selectByKey(Employee.class, 11);
+
         System.out.println("students = " + 1);
 
     }

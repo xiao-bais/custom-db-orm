@@ -18,7 +18,7 @@ public class DeleteBatchKeys extends DeleteByCondition {
 
     @Override
     protected <T> CustomSqlSession createSqlSession(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
-        AbstractSqlBuilder<T> sqlBuilder = TableInfoCache.getDeleteSqlBuilderCache(target, sqlSessionFactory);
+        AbstractSqlBuilder<T> sqlBuilder = super.getDeleteSqlBuilder(sqlSessionFactory, target);
         Collection<? extends Serializable> keys = (Collection<? extends Serializable>) params[1];
         String condition = sqlBuilder.createKeysCondition(keys);
         return super.createSqlSession(sqlSessionFactory, target, new Object[]{target, condition, keys.toArray()});

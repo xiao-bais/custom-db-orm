@@ -16,7 +16,7 @@ public class DeleteByKey extends DeleteByCondition {
 
     @Override
     protected <T> CustomSqlSession createSqlSession(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
-        AbstractSqlBuilder<T> sqlBuilder = TableInfoCache.getDeleteSqlBuilderCache(target, sqlSessionFactory);
+        AbstractSqlBuilder<T> sqlBuilder = super.getDeleteSqlBuilder(sqlSessionFactory, target);
         Serializable key = (Serializable) params[1];
         String condition = sqlBuilder.createKeyCondition(key);
         return super.createSqlSession(sqlSessionFactory, target, new Object[]{target, condition, key});
