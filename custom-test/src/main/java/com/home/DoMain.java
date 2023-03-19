@@ -28,7 +28,7 @@ public class DoMain {
 
         MyService helper = new MyServiceImpl();
 
-        Employee employee = jdbcDao.selectByKey(Employee.class, 11);
+        Student student = jdbcDao.selectByKey(Student.class, 12);
 
         System.out.println("students = " + 1);
 
