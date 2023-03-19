@@ -1,4 +1,4 @@
-package com.custom.springboot.tableinit;
+package com.custom.action.core.structs;
 
 import com.custom.action.core.DbFieldParserModel;
 import com.custom.action.core.DbKeyParserModel;
@@ -12,7 +12,6 @@ import com.custom.jdbc.executebody.SelectExecutorBody;
 import com.custom.jdbc.session.JdbcSqlSessionFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
 import com.custom.jdbc.interfaces.DatabaseAdapter;
-import com.custom.springboot.scanner.PackageScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,11 +26,6 @@ import java.util.stream.Collectors;
 public class TableStructsInitializer {
 
     private static final Logger logger = LoggerFactory.getLogger(TableStructsInitializer.class);
-
-    /**
-     * 扫描的实体包路径
-     */
-    private final String[] packageScans;
 
     /**
      * jdbc执行对象
@@ -60,8 +54,7 @@ public class TableStructsInitializer {
 
 
 
-    public TableStructsInitializer(String[] packageScans, JdbcSqlSessionFactory sqlSessionFactory) {
-        this.packageScans = packageScans;
+    public TableStructsInitializer(JdbcSqlSessionFactory sqlSessionFactory) {
         AssertUtil.npe(sqlSessionFactory);
         this.sqlSessionFactory = sqlSessionFactory;
         this.databaseAdapter = sqlSessionFactory.getDatabaseAdapter();
@@ -71,9 +64,7 @@ public class TableStructsInitializer {
     }
 
 
-    public void initStart() throws Exception {
-        PackageScanner scanner = new PackageScanner(packageScans);
-        Set<Class<?>> tableInfoList = scanner.getBeanRegisterList();
+    public void initStart(Set<Class<?>> tableInfoList) throws Exception {
         buildTableInfo(tableInfoList);
 
         // 执行更新

@@ -75,8 +75,17 @@ custom.db.datasource.password=123456
 
 
 
-
 #### 使用说明
+
+```java
+import com.custom.action.core.JdbcDao;
+
+// 注入JdbcDao，即可使用
+@Autowired
+private JdbcDao jdbcDao;
+```
+
+
 
 1.  该工具提供大量的增删改查方法API
 - 一般查询
@@ -84,35 +93,35 @@ custom.db.datasource.password=123456
 ```java
 
     查询多条记录: 例1（and a.name = ?, "张三"），例2 (and a.name = "张三") 
-    public <T> List<T> selectList(Class<T> t, String condition, Object... params) throws Exception;
+    public <T> List<T> selectList(Class<T> t, String condition, Object... params);
 
 
     根据多个主键查询多条记录
-    public <T> List<T> selectListByKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception;
+    public <T> List<T> selectListByKeys(Class<T> t, Collection<? extends Serializable> keys);
 
 
-    根据sql查询多条记录: 例（select * from table ）
-    public <T> List<T> selectListBySql(Class<T> t, String sql, Object... params) throws Exception;
+    根据sql查询多条记录: 例(select * from table)
+    public <T> List<T> selectListBySql(Class<T> t, String sql, Object... params);
 
 
-    根据条件进行分页查询并排序: 例（and a.name = ? , 1, 10, "张三"）
-    public <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, int pageIndex, int pageSize, Object... params) throws Exception;
+    根据条件进行分页查询并排序: 例(and a.name = ?, 1, 10, "张三")
+    public <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, int pageIndex, int pageSize, Object... params);
 
 
     根据主键查询一条记录：例 (25)
-    public <T> T selectOneByKey(Class<T> t, Object key) throws Exception;
+    public <T> T selectOneByKey(Class<T> t, Object key);
 
-    纯sql查询一条记录：例（select * from table where age = ?, 25）
-    public <T> T selectOneBySql(Class<T> t, String sql, Object... params) throws Exception;
+    纯sql查询一条记录：例(select * from table where age = ?, 25)
+    public <T> T selectOneBySql(Class<T> t, String sql, Object... params);
 
-    纯sql查询单个值：例（select name from table where age = ?, 25）
-    public Object selectObjBySql(String sql, Object... params) throws Exception;
+    纯sql查询单个值：例(select name from table where age = ?, 25)
+    public Object selectObjBySql(String sql, Object... params);
 
     根据条件查询一条记录
-    public <T> T selectOneByCondition(Class<T> t, String condition, Object... params) throws Exception;
+    public <T> T selectOneByCondition(Class<T> t, String condition, Object... params);
 ```
 
-- **条件构造查询**（**与mybatis-plus的条件构造器相差无几**）
+- **条件构造查询**(**与mybatis-plus的条件构造器相差无几**)
 
   `selectPageRows(查询分页)`
 
@@ -127,12 +136,12 @@ custom.db.datasource.password=123456
   `selectObjs(同上，但允许会返回多个值)`
   
   ```java
-  public <T> DbPageRows<T> selectPageRows(ConditionWrapper<T> wrapper) throws Exception;
-  public <T> List<T> selectList(ConditionWrapper<T> wrapper) throws Exception;
-  public <T> T selectOne(ConditionWrapper<T> wrapper) throws Exception;
-  public <T> long selectCount(ConditionWrapper<T> wrapper) throws Exception;
-  public <T> Object selectObj(ConditionWrapper<T> wrapper) throws Exception;
-  public <T> List<Object> selectObjs(ConditionWrapper<T> wrapper) throws Exception;
+  public <T> DbPageRows<T> selectPageRows(ConditionWrapper<T> wrapper);
+  public <T> List<T> selectList(ConditionWrapper<T> wrapper);
+  public <T> T selectOne(ConditionWrapper<T> wrapper);
+  public <T> long selectCount(ConditionWrapper<T> wrapper);
+  public <T> Object selectObj(ConditionWrapper<T> wrapper);
+  public <T> List<Object> selectObjs(ConditionWrapper<T> wrapper);
   ```
 
   **使用方法**
@@ -177,13 +186,13 @@ custom.db.datasource.password=123456
 
 ```java
     根据主键删除一条记录
-    public <T> int deleteByKey(Class<T> t, Object key) throws Exception;
+    public <T> int deleteByKey(Class<T> t, Object key);
 
     根据主键删除多条记录
-    public <T> int deleteBatchKeys(Class<T> t, Collection<? extends Serializable> keys) throws Exception;
+    public <T> int deleteBatchKeys(Class<T> t, Collection<? extends Serializable> keys);
 
     根据条件删除记录
-    public <T> int deleteByCondition(Class<T> t, String condition, Object... params) throws Exception;
+    public <T> int deleteByCondition(Class<T> t, String condition, Object... params);
 
     根据条件删除记录
     public <T> int deleteSelective(ConditionWrapper<T> wrapper);
@@ -194,7 +203,7 @@ custom.db.datasource.password=123456
 
 ```java
     根据主键修改一条记录
-    public <T> int updateByKey(T entity) throws Exception;
+    public <T> int updateByKey(T entity);
 
     根据条件修改一条记录(只修改entity中属性值 !=null 的字段)
     public <T> int updateByCondition(T entity, String condition, Object... params);
@@ -207,25 +216,25 @@ custom.db.datasource.password=123456
 
 ```java
     插入一条记录
-    public <T> long insert(T t) throws Exception;
+    public <T> long insert(T entity);
 
     插入多条记录
-    public <T> int insert(List<T> tList) throws Exception;
+    public <T> int insertBatch(List<T> entityList);
 ```
 - 公共方法
 
   ```java
   保存一条记录(根据主键添加或修改)
-  public <T> int save(T entity) throws Exception;
+  public <T> int save(T entity);
   
    执行一条sql（增删改）
-   public <T> int executeSql(String sql, Object... params) throws Exception;
+   public <T> int executeSql(String sql, Object... params);
   
    删除表
-   public void dropTables(Class<?>... arr) throws Exception;
+   public void dropTables(Class<?>... arr);
   
    创建表
-   public void createTables(Class<?>... arr) throws Exception;
+   public void createTables(Class<?>... arr);
   ```
   
   

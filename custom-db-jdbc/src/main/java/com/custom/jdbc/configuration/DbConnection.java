@@ -21,8 +21,7 @@ public class DbConnection {
 
     private static final Logger logger = LoggerFactory.getLogger(DbConnection.class);
 
-    private DbDataSource dbDataSource = null;
-    private static final String CUSTOM_DRIVER = "com.mysql.cj.jdbc.Driver";
+    private final DbDataSource dbDataSource;
     private static final Map<String, Object> currMap  = new ConcurrentHashMap<>();
 
     /**
@@ -79,9 +78,5 @@ public class DbConnection {
             logger.error(e.toString(), e);
         }
         return connection;
-    }
-
-    public static Object getCurrMapData(String key) {
-        return currMap.get(key);
     }
 }

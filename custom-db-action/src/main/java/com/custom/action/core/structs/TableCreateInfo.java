@@ -1,6 +1,5 @@
-package com.custom.springboot.tableinit;
+package com.custom.action.core.structs;
 
-import java.util.List;
 import java.util.Set;
 
 /**

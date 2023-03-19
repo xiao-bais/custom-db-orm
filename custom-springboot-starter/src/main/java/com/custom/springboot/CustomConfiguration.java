@@ -11,7 +11,13 @@ import com.custom.springboot.scanner.RegisterBeanExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.*;
+
+import javax.sql.DataSource;
 
 
 /**
@@ -34,11 +40,13 @@ public class CustomConfiguration {
         this.globalConfig = globalConfig;
     }
 
+
+
     @Bean
     @Primary
     @ConditionalOnBean(DbDataSource.class)
     public JdbcOpDao jdbcOpDao(){
-        if(isDataSourceEmpty(dbDataSource)) {
+        if(isDataSourceEmpty()) {
             return null;
         }
         JdbcOpDao jdbcOpDao = new JdbcOpDao(dbDataSource, globalConfig);
@@ -50,7 +58,7 @@ public class CustomConfiguration {
     @Primary
     @ConditionalOnBean(DbDataSource.class)
     public JdbcDao jdbcDao() {
-        if(isDataSourceEmpty(dbDataSource)) {
+        if(isDataSourceEmpty()) {
             return null;
         }
         JdbcDao jdbcDao = new JdbcDaoProxy(dbDataSource, globalConfig).createProxy();
@@ -58,11 +66,13 @@ public class CustomConfiguration {
         return jdbcDao;
     }
 
-    private boolean isDataSourceEmpty(DbDataSource dbDataSource) {
+    private boolean isDataSourceEmpty() {
         if (dbDataSource == null) {
             return false;
         }
-        return JudgeUtil.isEmpty(dbDataSource.getUrl()) || JudgeUtil.isEmpty(dbDataSource.getUsername()) || JudgeUtil.isEmpty(dbDataSource.getPassword());
+        return JudgeUtil.isEmpty(dbDataSource.getUrl())
+                || JudgeUtil.isEmpty(dbDataSource.getUsername())
+                || JudgeUtil.isEmpty(dbDataSource.getPassword());
     }
 
 

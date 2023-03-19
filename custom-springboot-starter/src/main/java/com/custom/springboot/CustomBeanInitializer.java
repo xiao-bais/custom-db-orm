@@ -5,7 +5,8 @@ import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.configuration.DbGlobalConfig;
 import com.custom.jdbc.session.JdbcSqlSessionFactory;
-import com.custom.springboot.tableinit.TableStructsInitializer;
+import com.custom.action.core.structs.TableStructsInitializer;
+import com.custom.springboot.scanner.PackageScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -13,6 +14,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
+
+import java.util.Set;
 
 /**
  * 自定义的bean初始化
@@ -35,16 +38,18 @@ public class CustomBeanInitializer implements InitializingBean, ApplicationConte
         if (!strategy.isSyncEntityEnable()) {
             return;
         }
-        if (JudgeUtil.isEmpty(strategy.getEntityPackageScans())) {
+        String[] packageScans = strategy.getEntityPackageScans();
+        if (JudgeUtil.isEmpty(packageScans)) {
             return;
         }
         logger.info("Table info sync process started ... ...");
         // 表结构初始化
+        PackageScanner scanner = new PackageScanner(packageScans);
         TableStructsInitializer tableStructsInitializer = new TableStructsInitializer(
-                strategy.getEntityPackageScans(),
                 new JdbcSqlSessionFactory(dataSource, globalConfig)
         );
-        tableStructsInitializer.initStart();
+        Set<Class<?>> tableInfoSets = scanner.getBeanRegisterList();
+        tableStructsInitializer.initStart(tableInfoSets);
     }
 
     @Override

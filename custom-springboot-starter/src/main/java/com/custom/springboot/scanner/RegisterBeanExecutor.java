@@ -30,7 +30,7 @@ public class RegisterBeanExecutor implements BeanDefinitionRegistryPostProcessor
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry beanDefinitionRegistry) throws BeansException {
 
-        String[] packageScans = environment.getProperty("custom.db.strategy.mapper-package-scans", String[].class);
+        String[] packageScans = environment.getProperty("custom.db.config.strategy.mapper-package-scans", String[].class);
         if(JudgeUtil.isEmpty(packageScans)) {
             return;
         }

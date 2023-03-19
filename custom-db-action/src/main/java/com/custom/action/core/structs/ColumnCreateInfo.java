@@ -1,4 +1,4 @@
-package com.custom.springboot.tableinit;
+package com.custom.action.core.structs;
 
 /**
  * @author  Xiao-Bai
