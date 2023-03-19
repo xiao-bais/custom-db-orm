@@ -92,7 +92,7 @@ private JdbcDao jdbcDao;
 
 ```java
 
-    查询多条记录: 例1（and a.name = ?, "张三"），例2 (and a.name = "张三") 
+    查询多条记录: 例1(and a.name = ?, "张三")，例2 (and a.name = "张三") 
     public <T> List<T> selectList(Class<T> t, String condition, Object... params);
 
 
@@ -108,13 +108,13 @@ private JdbcDao jdbcDao;
     public <T> DbPageRows<T> selectPageRows(Class<T> t, String condition, int pageIndex, int pageSize, Object... params);
 
 
-    根据主键查询一条记录：例 (25)
+    根据主键查询一条记录: 例 (25)
     public <T> T selectOneByKey(Class<T> t, Object key);
 
-    纯sql查询一条记录：例(select * from table where age = ?, 25)
+    纯sql查询一条记录: 例(select * from table where age = ?, 25)
     public <T> T selectOneBySql(Class<T> t, String sql, Object... params);
 
-    纯sql查询单个值：例(select name from table where age = ?, 25)
+    纯sql查询单个值: 例(select name from table where age = ?, 25)
     public Object selectObjBySql(String sql, Object... params);
 
     根据条件查询一条记录
@@ -168,9 +168,9 @@ private JdbcDao jdbcDao;
                   .pageParams(1, 10)
      );
   
-  额外说明：
-      1. 使用onlyPrimary()方法时，可使本次查询只查询主表数据.
-      2. 使用select方法时，可使用部分sql函数(仅支持sum、max、min、ifnull、count、avg)，例如：
+  额外说明: 
+      1. 使用onlyPrimary()方法时, 可使本次查询只查询主表数据.
+      2. 使用select方法时, 可使用部分sql函数(仅支持sum/max/min/ifnull/count/avg)，例如：
       List<Student> students = jdbcDao.selectList(Conditions.lambdaQuery(Student.class)
                   .eq(Student::getName, "张三")
                   .between(Student::getAge, 20, 25)
@@ -227,7 +227,7 @@ private JdbcDao jdbcDao;
   保存一条记录(根据主键添加或修改)
   public <T> int save(T entity);
   
-   执行一条sql（增删改）
+   执行一条sql(增删改)
    public <T> int executeSql(String sql, Object... params);
   
    删除表
