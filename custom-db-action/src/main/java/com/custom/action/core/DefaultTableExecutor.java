@@ -4,7 +4,6 @@ import com.custom.action.condition.AbstractUpdateSet;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.core.chain.ChainWrapper;
 import com.custom.action.interfaces.TableExecutor;
-import com.custom.action.proxy.JdbcActionProxy;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.page.DbPageRows;
 import com.custom.jdbc.configuration.DbDataSource;
@@ -27,7 +26,7 @@ public class DefaultTableExecutor<T, P extends Serializable> implements TableExe
 
     public DefaultTableExecutor(DbDataSource dbDataSource, DbGlobalConfig globalConfig, Class<T> entityClass) {
         this.entityClass = entityClass;
-        this.sqlExecutor = new JdbcActionProxy(new JdbcAction(), dbDataSource, globalConfig).createProxy();
+        this.sqlExecutor = new JdbcAction(dbDataSource, globalConfig);
     }
 
     @Override

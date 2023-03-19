@@ -9,14 +9,19 @@ import com.custom.action.extend.MultiResultInjector;
 import com.custom.action.interfaces.ExecuteHandler;
 import com.custom.comm.enums.SqlExecTemplate;
 import com.custom.comm.page.DbPageRows;
+import com.custom.comm.utils.CustomUtil;
 import com.custom.jdbc.executebody.ExecuteBodyHelper;
 import com.custom.jdbc.executebody.SelectExecutorBody;
 import com.custom.jdbc.session.JdbcSqlSessionFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
 import com.custom.jdbc.interfaces.DatabaseAdapter;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * @author Xiao-Bai
@@ -126,11 +131,24 @@ public abstract class AbstractMethod implements ExecuteHandler {
     /**
      * 对于返回对象的一对一，一对多处理
      */
-    public <T> void otherResultInject(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, List<T> result) throws Exception {
-        HandleSelectSqlBuilder<T> selectSqlBuilder = TableInfoCache.getSelectSqlBuilderCache(target, sqlSessionFactory);
-        if (selectSqlBuilder.isExistNeedInjectResult() && result != null) {
-            MultiResultInjector<T> resultInjector = new MultiResultInjector<>(target, sqlSessionFactory, target);
-            resultInjector.injectorValue(result);
+    public <T> Object otherResultInject(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object result) throws Exception {
+
+        // 映射的是 基础类型/Map/Array 则直接忽略
+        if (CustomUtil.isBasicClass(target)
+                || Map.class.isAssignableFrom(target) || result instanceof Array) {
+            return result;
         }
+
+        HandleSelectSqlBuilder<T> selectSqlBuilder = TableInfoCache.getSelectSqlBuilderCache(target, sqlSessionFactory);
+        if (result instanceof Collection && !((Collection<T>) result).isEmpty()) {
+            Collection<T> resultList = (Collection<T>) result;
+            if (selectSqlBuilder.isExistNeedInjectResult()) {
+                MultiResultInjector<T> resultInjector = new MultiResultInjector<>(target, sqlSessionFactory, target);
+                resultInjector.injectorValue(resultList);
+            }
+        }else {
+            MultiResultInjector<T> resultInjector = new MultiResultInjector<>(target, sqlSessionFactory, target);
+        }
+        return result;
     }
 }

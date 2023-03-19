@@ -22,7 +22,7 @@ public class InsertBatch extends InsertOne {
     @Override
     public <T> Class<T> getMappedType(Object[] params) {
         AssertUtil.notEmpty(params, "insert data cannot be empty");
-        AssertUtil.notEmpty(params[0], "insert data cannot be empty");
+        AssertUtil.npe(params[0]);
         List<T> list = new ArrayList<>((Collection<T>) params[0]);
         return (Class<T>) list.get(0).getClass();
     }

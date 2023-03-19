@@ -2,22 +2,15 @@ package com.custom.springboot;
 
 import com.custom.action.core.JdbcDao;
 import com.custom.action.core.JdbcOpDao;
-import com.custom.action.proxy.JdbcDaoProxy;
+import com.custom.action.core.JdbcDaoProxy;
 import com.custom.comm.utils.JudgeUtil;
-import com.custom.jdbc.configuration.DbCustomStrategy;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.configuration.DbGlobalConfig;
 import com.custom.springboot.scanner.RegisterBeanExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.*;
-
-import javax.sql.DataSource;
 
 
 /**

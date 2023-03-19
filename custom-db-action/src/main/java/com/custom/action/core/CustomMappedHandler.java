@@ -1,6 +1,7 @@
 package com.custom.action.core;
 
 import com.custom.action.condition.ConditionWrapper;
+import com.custom.action.core.methods.AbstractMethod;
 import com.custom.action.core.methods.MethodKind;
 import com.custom.action.core.methods.delete.DeleteBatchKeys;
 import com.custom.action.core.methods.delete.DeleteByCondition;
@@ -40,7 +41,7 @@ public class CustomMappedHandler {
     /**
      * 处理执行目标方法
      */
-    public <T> Object handleExecute(Method method, Object[] params) throws Exception {
+    public Object handleExecute(Method method, Object[] params) throws Exception {
         ExecuteHandler executor = METHOD_HANDLER_CACHE.get(method);
         if (executor == null) {
             MethodKind methodKind = this.findMethod(method);
@@ -65,6 +66,10 @@ public class CustomMappedHandler {
         }
         // query after do something
         if (executor.getKind().getExecuteMethod() == ExecuteMethod.SELECT) {
+//            if (result != null) {
+//                AbstractMethod abstractMethod = (AbstractMethod) executor;
+//                result = abstractMethod.otherResultInject(sqlSessionFactory, mappedType, result);
+//            }
             this.queryAfterHandle(mappedType, result);
         }
         return result;
