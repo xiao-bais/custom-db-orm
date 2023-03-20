@@ -43,7 +43,7 @@ public class DoMain {
 //        int indexOf = url.indexOf(63);
 //        System.out.println("indexOf = " + indexOf);
         PostgresqlAdapter adapter = new PostgresqlAdapter(jdbcOpDao.getSqlExecutor().getSqlSessionFactory());
-        String databaseName = adapter.databaseName(url);
+        String databaseName = adapter.databaseName();
         System.out.println("databaseName = " + databaseName);
 
         System.out.println("students = " + 1);

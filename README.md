@@ -18,6 +18,7 @@
             <groupId>com.xb-custom</groupId>
             <artifactId>custom-springboot-starter</artifactId>
             <version>1.0.0</version>
+            <!-- 或最新版本  -->
         </dependency>
 ```
 
