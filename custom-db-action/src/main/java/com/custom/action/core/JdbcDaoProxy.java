@@ -1,7 +1,5 @@
-package com.custom.action.proxy;
+package com.custom.action.core;
 
-import com.custom.action.core.CustomMappedHandler;
-import com.custom.action.core.JdbcDao;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.configuration.DbGlobalConfig;
 

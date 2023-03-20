@@ -6,10 +6,11 @@ import com.custom.comm.utils.Constants;
 import com.custom.comm.utils.CustomUtil;
 import com.custom.comm.utils.JudgeUtil;
 import com.custom.comm.utils.RexUtil;
-import com.custom.jdbc.executebody.SaveExecutorBody;
+import com.custom.jdbc.executebody.BaseExecutorBody;
+import com.custom.jdbc.executebody.ExecuteBodyHelper;
 import com.custom.jdbc.executebody.SelectExecutorBody;
-import com.custom.jdbc.session.JdbcSqlSessionFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
+import com.custom.jdbc.session.JdbcSqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -212,7 +213,7 @@ public abstract class AbstractProxyHandler {
     }
 
     public <V> Map<String, V> selectMapBySql(Class<V> t, String sql, Object... params) throws Exception {
-        SelectExecutorBody<V> paramInfo = new SelectExecutorBody<>(t, sql, params);
+        SelectExecutorBody<V> paramInfo = ExecuteBodyHelper.createSelect(t, sql, params);
         CustomSqlSession sqlSession = sqlSessionFactory.createSqlSession(paramInfo);
         return sqlSessionFactory.getJdbcExecutor().selectOneMap(sqlSession);
     }
@@ -221,7 +222,7 @@ public abstract class AbstractProxyHandler {
      * 查询单列的Set集合
      */
     public <T> Set<T> selectSetBySql(Class<T> t, String sql, Object... params) throws Exception {
-        SelectExecutorBody<T> paramInfo = new SelectExecutorBody<>(t, sql, params);
+        SelectExecutorBody<T> paramInfo = ExecuteBodyHelper.createSelect(t, sql, params);
         CustomSqlSession sqlSession = sqlSessionFactory.createSqlSession(paramInfo);
         return sqlSessionFactory.getJdbcExecutor().selectSet(sqlSession);
     }
@@ -230,7 +231,7 @@ public abstract class AbstractProxyHandler {
      * 纯sql查询单条记录
      */
     public <T> T selectOneSql(Class<T> t, String sql, Object... params) throws Exception {
-        SelectExecutorBody<T> paramInfo = new SelectExecutorBody<>(t, sql, params);
+        SelectExecutorBody<T> paramInfo = ExecuteBodyHelper.createSelect(t, sql, params);
         CustomSqlSession sqlSession = sqlSessionFactory.createSqlSession(paramInfo);
         return sqlSessionFactory.getJdbcExecutor().selectOne(sqlSession);
     }
@@ -239,7 +240,7 @@ public abstract class AbstractProxyHandler {
      * 纯sql查询集合
      */
     public <T> List<T> selectListBySql(Class<T> t, String sql, Object... params) throws Exception {
-        SelectExecutorBody<T> paramInfo = new SelectExecutorBody<>(t, sql, params);
+        SelectExecutorBody<T> paramInfo = ExecuteBodyHelper.createSelect(t, sql, params);
         CustomSqlSession sqlSession = sqlSessionFactory.createSqlSession(paramInfo);
         return sqlSessionFactory.getJdbcExecutor().selectList(sqlSession);
     }
@@ -248,19 +249,19 @@ public abstract class AbstractProxyHandler {
      * 查询数组
      */
     public <T> T[] selectArrays(Class<T> t, String sql, Object... params) throws Exception {
-        SelectExecutorBody<T> paramInfo = new SelectExecutorBody<>(t, sql, params);
+        SelectExecutorBody<T> paramInfo = ExecuteBodyHelper.createSelect(t, sql, params);
         CustomSqlSession sqlSession = sqlSessionFactory.createSqlSession(paramInfo);
         return sqlSessionFactory.getJdbcExecutor().selectArrays(sqlSession);
     }
 
     public Object selectObjBySql(String sql, Object... params) throws Exception {
-        SelectExecutorBody<Object> paramInfo = new SelectExecutorBody<>(Object.class, sql, params);
+        SelectExecutorBody<Object> paramInfo = ExecuteBodyHelper.createSelect(Object.class, sql, params);
         CustomSqlSession sqlSession = sqlSessionFactory.createSqlSession(paramInfo);
         return sqlSessionFactory.getJdbcExecutor().selectObj(sqlSession);
     }
 
     public Object executeAnySql(String readyExecuteSql, Object[] sqlParams) throws Exception {
-        SaveExecutorBody<Object> executorBody = new SaveExecutorBody<>(readyExecuteSql, sqlParams);
+        BaseExecutorBody executorBody = ExecuteBodyHelper.createExecUpdate(readyExecuteSql, sqlParams);
         CustomSqlSession sqlSession = sqlSessionFactory.createSqlSession(executorBody);
         return sqlSessionFactory.getJdbcExecutor().executeUpdate(sqlSession);
     }

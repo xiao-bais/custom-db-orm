@@ -7,8 +7,10 @@ import com.custom.action.core.methods.MethodKind;
 import com.custom.action.dbaction.AbstractSqlBuilder;
 import com.custom.action.interfaces.FullSqlConditionExecutor;
 import com.custom.comm.enums.SqlExecTemplate;
+import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.AssertUtil;
 import com.custom.comm.utils.CustomUtil;
+import com.custom.comm.utils.JudgeUtil;
 import com.custom.jdbc.executebody.BaseExecutorBody;
 import com.custom.jdbc.executebody.ExecuteBodyHelper;
 import com.custom.jdbc.session.JdbcSqlSessionFactory;
@@ -28,6 +30,9 @@ public class UpdateSelectiveBySqlSet extends UpdateByCondition {
     protected <T> CustomSqlSession createSqlSession(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
         AbstractUpdateSet<T> updateSet = (AbstractUpdateSet<T>) params[0];
         UpdateSetWrapper<T> updateSetWrapper = updateSet.getUpdateSetWrapper();
+        if (updateSetWrapper == null || JudgeUtil.isEmpty(updateSetWrapper.getSqlSetter())) {
+            throw new CustomCheckException("Set value cannot be empty");
+        }
         ConditionWrapper<T> conditionWrapper = updateSet.getConditionWrapper();
         AssertUtil.notEmpty(conditionWrapper, "update condition cannot be empty.");
         String condition = conditionWrapper.getFinalConditional();

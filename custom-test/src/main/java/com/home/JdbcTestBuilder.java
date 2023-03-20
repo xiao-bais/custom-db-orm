@@ -1,6 +1,6 @@
 package com.home;
 
-import com.custom.action.proxy.JdbcDaoProxy;
+import com.custom.action.core.JdbcDaoProxy;
 import com.custom.action.core.JdbcOpDao;
 import com.custom.action.core.JdbcDao;
 import com.custom.jdbc.configuration.CustomConfigHelper;

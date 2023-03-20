@@ -1,6 +1,5 @@
 package com.custom.jdbc.handler;
 
-import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 

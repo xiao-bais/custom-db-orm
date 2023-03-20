@@ -2,8 +2,6 @@ package com.custom.jdbc.session;
 
 import com.custom.comm.enums.DatabaseDialect;
 import com.custom.comm.exceptions.CustomCheckException;
-import com.custom.comm.utils.CustomApp;
-import com.custom.comm.utils.ReflectUtil;
 import com.custom.comm.utils.StrUtils;
 import com.custom.jdbc.executebody.BaseExecutorBody;
 import com.custom.jdbc.configuration.CustomConfigHelper;
@@ -13,15 +11,13 @@ import com.custom.jdbc.configuration.DbGlobalConfig;
 import com.custom.jdbc.dbAdapetr.Mysql5Adapter;
 import com.custom.jdbc.dbAdapetr.Mysql8Adapter;
 import com.custom.jdbc.dbAdapetr.OracleAdapter;
-import com.custom.jdbc.dbAdapetr.SqlServerAdapter;
+import com.custom.jdbc.dbAdapetr.PostgresqlAdapter;
 import com.custom.jdbc.executor.CustomJdbcExecutor;
 import com.custom.jdbc.executor.DefaultCustomJdbcExecutor;
 import com.custom.jdbc.interfaces.DatabaseAdapter;
 import com.custom.jdbc.interfaces.TransactionExecutor;
-import com.custom.jdbc.session.DefaultSqlSession;
 import com.custom.jdbc.utils.DbConnGlobal;
 import com.custom.jdbc.interfaces.CustomSqlSession;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
 import java.sql.Connection;
 
@@ -132,8 +128,8 @@ public class JdbcSqlSessionFactory {
                 this.databaseAdapter = new OracleAdapter(this);
                 break;
 
-            case SQL_SERVER:
-                this.databaseAdapter = new SqlServerAdapter(this);
+            case POSTGRESQL:
+                this.databaseAdapter = new PostgresqlAdapter(this);
         }
     }
 

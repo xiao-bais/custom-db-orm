@@ -6,8 +6,8 @@ import com.custom.action.core.methods.delete.DeleteBatchKeys;
 import com.custom.action.core.methods.delete.DeleteByCondition;
 import com.custom.action.core.methods.delete.DeleteByKey;
 import com.custom.action.core.methods.delete.DeleteSelective;
-import com.custom.action.core.methods.insert.InsertOne;
 import com.custom.action.core.methods.insert.InsertBatch;
+import com.custom.action.core.methods.insert.InsertOne;
 import com.custom.action.core.methods.others.*;
 import com.custom.action.core.methods.select.*;
 import com.custom.action.core.methods.update.UpdateByCondition;
@@ -40,7 +40,7 @@ public class CustomMappedHandler {
     /**
      * 处理执行目标方法
      */
-    public <T> Object handleExecute(Method method, Object[] params) throws Exception {
+    public Object handleExecute(Method method, Object[] params) throws Exception {
         ExecuteHandler executor = METHOD_HANDLER_CACHE.get(method);
         if (executor == null) {
             MethodKind methodKind = this.findMethod(method);
@@ -65,6 +65,10 @@ public class CustomMappedHandler {
         }
         // query after do something
         if (executor.getKind().getExecuteMethod() == ExecuteMethod.SELECT) {
+//            if (result != null) {
+//                AbstractMethod abstractMethod = (AbstractMethod) executor;
+//                result = abstractMethod.otherResultInject(sqlSessionFactory, mappedType, result);
+//            }
             this.queryAfterHandle(mappedType, result);
         }
         return result;

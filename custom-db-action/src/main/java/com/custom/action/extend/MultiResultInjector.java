@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -44,7 +45,7 @@ public class MultiResultInjector<T> {
     }
 
 
-    public void injectorValue(List<T> resultList) throws Exception {
+    public void injectorValue(Collection<T> resultList) throws Exception {
         TableParseModel<T> tableModel = TableInfoCache.getTableModel(thisClass);
 
         // set 一对一
@@ -62,7 +63,7 @@ public class MultiResultInjector<T> {
      * @param tableModel - 实体解析模板
      * @param entityList - 实体对象
      */
-    private void oneToManyHandler(TableParseModel<T> tableModel, List<T> entityList) throws Exception {
+    private void oneToManyHandler(TableParseModel<T> tableModel, Collection<T> entityList) throws Exception {
         List<Field> oneToManyFieldList = tableModel.getOneToManyFieldList();
         if (JudgeUtil.isNotEmpty(oneToManyFieldList)) {
             for (Field waitSetField : oneToManyFieldList) {
@@ -102,7 +103,7 @@ public class MultiResultInjector<T> {
      * @param tableModel 实体解析模板
      * @param entityList 实体对象集合
      */
-    private void oneToOneHandler(TableParseModel<T> tableModel, List<T> entityList) throws Exception {
+    private void oneToOneHandler(TableParseModel<T> tableModel, Collection<T> entityList) throws Exception {
         List<Field> oneToOneFieldList = tableModel.getOneToOneFieldList();
         if (JudgeUtil.isEmpty(oneToOneFieldList)) {
             return;

@@ -1,9 +1,8 @@
 package com.custom.action.core;
 
 import com.custom.action.condition.AbstractUpdateSet;
-import com.custom.action.core.chain.ChainWrapper;
-import com.custom.action.proxy.JdbcActionProxy;
 import com.custom.action.condition.ConditionWrapper;
+import com.custom.action.core.chain.ChainWrapper;
 import com.custom.comm.page.DbPageRows;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.configuration.DbGlobalConfig;
@@ -369,7 +368,7 @@ public class JdbcOpDao {
     public JdbcOpDao(DbDataSource dbDataSource, DbGlobalConfig globalConfig) {
         this.dbDataSource = dbDataSource;
         this.globalConfig = globalConfig;
-        sqlExecutor = new JdbcActionProxy(new JdbcAction(), dbDataSource, globalConfig).createProxy();
+        sqlExecutor = new JdbcAction(dbDataSource, globalConfig);
     }
 
     public DbDataSource getDbDataSource() {
@@ -378,5 +377,9 @@ public class JdbcOpDao {
 
     public DbGlobalConfig getGlobalConfig() {
         return globalConfig;
+    }
+
+    public SqlExecutor getSqlExecutor() {
+        return sqlExecutor;
     }
 }
