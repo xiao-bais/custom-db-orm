@@ -1,14 +1,13 @@
 package com.custom.action.core;
 
 import com.custom.action.condition.ConditionWrapper;
-import com.custom.action.core.methods.AbstractMethod;
 import com.custom.action.core.methods.MethodKind;
 import com.custom.action.core.methods.delete.DeleteBatchKeys;
 import com.custom.action.core.methods.delete.DeleteByCondition;
 import com.custom.action.core.methods.delete.DeleteByKey;
 import com.custom.action.core.methods.delete.DeleteSelective;
-import com.custom.action.core.methods.insert.InsertOne;
 import com.custom.action.core.methods.insert.InsertBatch;
+import com.custom.action.core.methods.insert.InsertOne;
 import com.custom.action.core.methods.others.*;
 import com.custom.action.core.methods.select.*;
 import com.custom.action.core.methods.update.UpdateByCondition;
