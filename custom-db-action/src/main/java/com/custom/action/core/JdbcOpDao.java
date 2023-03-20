@@ -378,4 +378,8 @@ public class JdbcOpDao {
     public DbGlobalConfig getGlobalConfig() {
         return globalConfig;
     }
+
+    public SqlExecutor getSqlExecutor() {
+        return sqlExecutor;
+    }
 }

@@ -1,6 +1,7 @@
 package com.custom.jdbc.dbAdapetr;
 
 import com.custom.comm.enums.DatabaseDialect;
+import com.custom.comm.utils.AssertUtil;
 import com.custom.jdbc.session.JdbcSqlSessionFactory;
 
 /**
@@ -35,17 +36,29 @@ public class OracleAdapter extends AbstractDbAdapter {
 
     @Override
     public String handlePage(String originSql, long pageIndex, long pageSize) {
-        return originSql;
+        return new StringBuilder()
+                .append("SELECT tab_x_page.* FROM ( SELECT tab_x.*, rownum rm FROM (\n ")
+                .append(originSql)
+                .append(" \n\t) tab_x WHERE rownum <= ")
+                .append(pageIndex * pageSize)
+                .append(" ) tab_x_page WHERE tab_x_page.rm > ")
+                .append((pageIndex - 1) * pageSize)
+                .toString();
     }
 
     @Override
     public boolean existTable(String table) {
-        return false;
+        AssertUtil.npe(table);
+        String existSql = String.format("SELECT count(*) AS count FROM USER_OBJECTS WHERE OBJECT_NAME = '%s'", table);
+        return queryBoolean(existSql);
     }
 
     @Override
     public boolean existColumn(String table, String column) {
-        return false;
+        AssertUtil.npe(table);
+        AssertUtil.npe(column);
+        String existSql = String.format("SELECT COUNT(*) AS count FROM USER_TAB_COLUMNS WHERE TABLE_NAME = '%s' AND COLUMN_NAME = '%s'", table, column);
+        return queryBoolean(existSql);
     }
 
     public OracleAdapter(JdbcSqlSessionFactory sqlSessionFactory) {

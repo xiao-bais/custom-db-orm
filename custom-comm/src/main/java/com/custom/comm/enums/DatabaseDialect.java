@@ -15,7 +15,7 @@ public enum DatabaseDialect {
 
     ORACLE("ORACLE", "ORACLE数据库", "oracle.jdbc.driver.OracleDriver"),
 
-    SQL_SERVER("SQL_SERVER", "SQL_SERVER 数据库", "com.mircosoft.sqlserver.jdbc.SQLServerDriver")
+    POSTGRESQL("POSTGRE_SQL", "PostgreSql 数据库", "org.postgresql.Driver")
 
 
     ;
