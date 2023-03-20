@@ -11,7 +11,7 @@
 
     <artifactId>custom-tools</artifactId>
     <name>custom-tools</name>
-    <description>Demo project for Spring Boot</description>
+    <description>tool project for Spring Boot</description>
 
     <dependencies>
 

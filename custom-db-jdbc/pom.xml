@@ -13,7 +13,7 @@
     <artifactId>custom-db-jdbc</artifactId>
     <name>custom-db-jdbc</name>
     <version>${custom-db-jdbc-version}</version>
-    <description>Demo project for Spring Boot</description>
+    <description>custom jdbc for Spring Boot</description>
 
     <dependencies>
 

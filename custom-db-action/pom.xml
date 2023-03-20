@@ -13,7 +13,7 @@
     <artifactId>custom-db-action</artifactId>
     <name>custom-db-action</name>
     <version>${custom-db-action-version}</version>
-    <description>Demo project for Spring Boot</description>
+    <description>custom-orm for Spring Boot</description>
 
 
     <dependencies>
