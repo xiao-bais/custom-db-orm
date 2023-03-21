@@ -51,9 +51,12 @@ public class CustomSqlSessionHelper {
             }
             sqlInterceptor = ReflectUtil.getInstance(sqlInterceptorClass);
         }
-        BaseExecutorBody executorBody = sqlInterceptor.handle(sqlSession.getBody());
-        AssertUtil.notNull(executorBody, "The execution body is missing. Please check whether the sql interceptor returns.");
-        this.sqlSession.setBody(executorBody);
+        BaseExecutorBody body = sqlSession.getBody();
+        if (body.isSqlPrintSupport()) {
+            BaseExecutorBody executorBody = sqlInterceptor.handle(body);
+            AssertUtil.notNull(executorBody, "The execution body is missing. Please check whether the sql interceptor returns.");
+            this.sqlSession.setBody(executorBody);
+        }
     }
 
 

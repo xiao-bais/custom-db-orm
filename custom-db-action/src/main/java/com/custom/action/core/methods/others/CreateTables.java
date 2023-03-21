@@ -19,7 +19,7 @@ public class CreateTables extends AbstractMethod {
     protected <T> CustomSqlSession createSqlSession(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
         TableParseModel<T> tableModel = TableInfoCache.getTableModel(target);
         DatabaseAdapter databaseAdapter = sqlSessionFactory.getDatabaseAdapter();
-        if (databaseAdapter.existTable(tableModel.getTable())) {
+        if (!databaseAdapter.existTable(tableModel.getTable())) {
             String createTableSql = tableModel.createTableSql();
             BaseExecutorBody executorBody = new BaseExecutorBody(createTableSql, false, new Object[]{});
             return sqlSessionFactory.createSqlSession(executorBody);
