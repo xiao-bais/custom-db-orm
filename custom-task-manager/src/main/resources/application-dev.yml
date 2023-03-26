@@ -20,6 +20,7 @@ custom:
       table-name-prefix: cm
       table-name-strategy: default
 
+
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -27,4 +28,10 @@ spring:
     username: root
     password: 123456
     type: com.alibaba.druid.pool.DruidDataSource
+  redis:
+    host: 39.108.225.176
+    password: xh@Redis1524
+    database: 1
+    port: 6379
+
 

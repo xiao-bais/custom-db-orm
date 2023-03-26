@@ -26,7 +26,7 @@ public class SelectList extends AbstractMethod {
         AbstractSqlBuilder<T> sqlBuilder = super.getSelectSqlBuilder(sqlSessionFactory, target);
         FullSqlConditionExecutor executor = sqlBuilder.addLogicCondition(String.valueOf(params[1]));
         String selectSql = sqlBuilder.createTargetSql() + executor.execute();
-        SelectExecutorBody<T> executorBody = ExecuteBodyHelper.createSelectIf(target, selectSql, sqlPrintSupport, params[2]);
+        SelectExecutorBody<T> executorBody = ExecuteBodyHelper.createSelectIf(target, selectSql, sqlPrintSupport, (Object[]) params[2]);
         return sqlSessionFactory.createSqlSession(executorBody);
     }
 

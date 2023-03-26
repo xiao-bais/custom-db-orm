@@ -13,8 +13,8 @@ public class MySqlExecuteBefore implements CustomSqlExecuteBefore {
     @Override
     public BaseExecutorBody handle(BaseExecutorBody body) throws Exception {
 
-        System.out.println("查询之前的处理......");
-        System.out.println("prepareSql ===> " + body.getPrepareSql());
+//        System.out.println("查询之前的处理......");
+//        System.out.println("prepareSql ===> " + body.getPrepareSql());
 
         return body;
     }

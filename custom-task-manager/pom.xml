@@ -39,6 +39,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-spring-boot-starter</artifactId>
             <version>2.0.5</version>
@@ -47,6 +52,11 @@
         <dependency>
             <groupId>com.xb-custom</groupId>
             <artifactId>custom-aliyun</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.xb-custom</groupId>
+            <artifactId>custom-tools</artifactId>
         </dependency>
 
     </dependencies>

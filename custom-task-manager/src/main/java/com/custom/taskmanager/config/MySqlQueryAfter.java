@@ -10,7 +10,7 @@ public class MySqlQueryAfter implements CustomSqlQueryAfter {
 
     @Override
     public <T> void handle(Class<T> target, Object result) throws Exception {
-        System.out.println("查询之后的处理...");
-        System.out.println("result = " + result);
+//        System.out.println("查询之后的处理...");
+//        System.out.println("result = " + result);
     }
 }
