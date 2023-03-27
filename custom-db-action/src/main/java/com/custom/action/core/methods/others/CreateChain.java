@@ -18,8 +18,8 @@ public class CreateChain extends AbstractMethod {
     }
 
     @Override
-    public <T> Object doExecute(JdbcSqlSessionFactory executorFactory, Class<T> target, Object[] params) throws Exception {
-        return new ChainWrapper<>(target, executorFactory);
+    public <T> Object doExecute(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
+        return new ChainWrapper<>(target, sqlSessionFactory);
     }
 
     @Override

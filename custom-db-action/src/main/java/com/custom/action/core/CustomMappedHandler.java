@@ -14,6 +14,7 @@ import com.custom.action.core.methods.update.UpdateByCondition;
 import com.custom.action.core.methods.update.UpdateByKey;
 import com.custom.action.core.methods.update.UpdateSelectiveBySqlSet;
 import com.custom.action.core.methods.update.UpdateSelectiveByWrapper;
+import com.custom.action.core.syncquery.SyncQueryWrapper;
 import com.custom.action.interfaces.ExecuteHandler;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.exceptions.CustomCheckException;
@@ -65,10 +66,6 @@ public class CustomMappedHandler {
         }
         // query after do something
         if (executor.getKind().getExecuteMethod() == ExecuteMethod.SELECT) {
-//            if (result != null) {
-//                AbstractMethod abstractMethod = (AbstractMethod) executor;
-//                result = abstractMethod.otherResultInject(sqlSessionFactory, mappedType, result);
-//            }
             this.queryAfterHandle(mappedType, result);
         }
         return result;
@@ -97,10 +94,13 @@ public class CustomMappedHandler {
                         if (parameterTypes[i] == null) {
                             thisClass = targetClass;
                         } else {
-                            thisClass = typeArr[i];
+                            thisClass = parameterTypes[i];
                         }
                         if (ConditionWrapper.class.isAssignableFrom(thisClass)) {
                             return !Object.class.equals(targetClass);
+                        }
+                        if (SyncQueryWrapper.class.isAssignableFrom(thisClass)) {
+                            return thisClass.equals(targetClass);
                         }
                         // target 目标参数类型
                         // this 本次传递的参数类型
@@ -194,6 +194,10 @@ public class CustomMappedHandler {
         EXECUTE_HANDLER_CACHE.put(MethodKind.SELECT_PAGE_BY_ENTITY, SelectPageByEntity.class);
         EXECUTE_HANDLER_CACHE.put(MethodKind.SELECT_PAGE_BY_WRAPPER, SelectPageByWrapper.class);
         EXECUTE_HANDLER_CACHE.put(MethodKind.SELECT_PAGE_MAP_BY_WRAPPER, SelectPageMapByWrapper.class);
+        EXECUTE_HANDLER_CACHE.put(MethodKind.SELECT_LIST_BY_SYNC, SelectListBySync.class);
+        EXECUTE_HANDLER_CACHE.put(MethodKind.SELECT_ONE_BY_SYNC, SelectOneBySync.class);
+        EXECUTE_HANDLER_CACHE.put(MethodKind.SELECT_PAGE_BY_SYNC, SelectPageBySync.class);
+
 
         // delete 4.
         EXECUTE_HANDLER_CACHE.put(MethodKind.DELETE_BY_KEY, DeleteByKey.class);

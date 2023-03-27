@@ -1,6 +1,5 @@
 package com.custom.action.core.methods.delete;
 
-import com.custom.action.core.TableInfoCache;
 import com.custom.action.core.methods.AbstractMethod;
 import com.custom.action.core.methods.MethodKind;
 import com.custom.action.dbaction.AbstractSqlBuilder;
@@ -29,9 +28,9 @@ public class DeleteByCondition extends AbstractMethod {
     }
 
     @Override
-    public <T> Object doExecute(JdbcSqlSessionFactory executorFactory, Class<T> target, Object[] params) throws Exception {
-        CustomSqlSession sqlSession = createSqlSession(executorFactory, target, params);
-        return executorFactory.getJdbcExecutor().executeUpdate(sqlSession);
+    public <T> Object doExecute(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
+        CustomSqlSession sqlSession = createSqlSession(sqlSessionFactory, target, params);
+        return sqlSessionFactory.getJdbcExecutor().executeUpdate(sqlSession);
     }
 
     @Override

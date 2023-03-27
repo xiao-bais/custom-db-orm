@@ -24,11 +24,11 @@ public class DropTables extends AbstractMethod {
     }
 
     @Override
-    public <T> Object doExecute(JdbcSqlSessionFactory executorFactory, Class<T> target, Object[] params) throws Exception {
+    public <T> Object doExecute(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
         Class<?>[] dropTables = (Class<?>[]) params[0];
         for (int i = dropTables.length - 1; i >= 0; i--) {
-            CustomSqlSession sqlSession = this.createSqlSession(executorFactory, dropTables[i], params);
-            executorFactory.getJdbcExecutor().execTableInfo(sqlSession);
+            CustomSqlSession sqlSession = this.createSqlSession(sqlSessionFactory, dropTables[i], params);
+            sqlSessionFactory.getJdbcExecutor().execTableInfo(sqlSession);
         }
         return null;
     }

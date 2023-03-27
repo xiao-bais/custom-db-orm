@@ -36,7 +36,7 @@ public class Student extends ActiveModel<Student, Integer> {
     private String name;
 
 //    @DbOneToOne(thisField = "proId", strategy = MultiStrategy.RECURSION)
-//    private Province province;
+    private Province province;
 
     @DbField("nick_code")
     private String nickName;

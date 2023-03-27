@@ -14,13 +14,13 @@ import com.custom.jdbc.session.JdbcSqlSessionFactory;
 public class SelectPageByEntity extends SelectPageByWrapper {
 
     @Override
-    public <T> Object doExecute(JdbcSqlSessionFactory executorFactory, Class<T> target, Object[] params) throws Exception {
+    public <T> Object doExecute(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
         DefaultConditionWrapper<T> conditionWrapper = Conditions.allEqQuery((T) params[0]);
         if (params.length > 1 && params[1] != null && params[1] instanceof DbPageRows) {
             DbPageRows<T> dbPageRows = (DbPageRows<T>) params[1];
             conditionWrapper.pageParams(dbPageRows.getPageIndex(), dbPageRows.getPageSize());
         }
-        return super.doExecute(executorFactory, target, new Object[]{conditionWrapper, params[1]});
+        return super.doExecute(sqlSessionFactory, target, new Object[]{conditionWrapper, params[1]});
     }
 
     @Override

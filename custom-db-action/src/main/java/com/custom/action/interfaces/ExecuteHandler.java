@@ -16,7 +16,7 @@ public interface ExecuteHandler {
     /**
      * 创建会话
      */
-    <T> Object doExecute(JdbcSqlSessionFactory executorFactory, Class<T> target, Object[] params) throws Exception;
+    <T> Object doExecute(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception;
 
     /**
      * 获取映射类型

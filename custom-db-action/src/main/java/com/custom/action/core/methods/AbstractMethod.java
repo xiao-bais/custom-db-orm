@@ -2,26 +2,33 @@ package com.custom.action.core.methods;
 
 import com.custom.action.condition.AbstractUpdateSet;
 import com.custom.action.condition.ConditionWrapper;
-import com.custom.action.core.HandleSelectSqlBuilder;
 import com.custom.action.core.TableInfoCache;
+import com.custom.action.core.TableParseModel;
+import com.custom.action.core.methods.select.SelectListByWrapper;
+import com.custom.action.core.methods.select.SelectMapByWrapper;
+import com.custom.action.core.methods.select.SelectObjByWrapper;
+import com.custom.action.core.methods.select.SelectOneByWrapper;
+import com.custom.action.core.syncquery.SyncFunction;
+import com.custom.action.core.syncquery.SyncProperty;
+import com.custom.action.core.syncquery.SyncQueryWrapper;
 import com.custom.action.dbaction.AbstractSqlBuilder;
-import com.custom.action.extend.MultiResultInjector;
 import com.custom.action.interfaces.ExecuteHandler;
 import com.custom.comm.enums.SqlExecTemplate;
+import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.page.DbPageRows;
 import com.custom.comm.utils.CustomUtil;
+import com.custom.comm.utils.StrUtils;
+import com.custom.comm.utils.lambda.LambdaUtil;
+import com.custom.comm.utils.lambda.TargetSetter;
 import com.custom.jdbc.executebody.ExecuteBodyHelper;
 import com.custom.jdbc.executebody.SelectExecutorBody;
-import com.custom.jdbc.session.JdbcSqlSessionFactory;
 import com.custom.jdbc.interfaces.CustomSqlSession;
 import com.custom.jdbc.interfaces.DatabaseAdapter;
+import com.custom.jdbc.session.JdbcSqlSessionFactory;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
+import java.lang.reflect.Field;
+import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * @author Xiao-Bai
@@ -42,7 +49,7 @@ public abstract class AbstractMethod implements ExecuteHandler {
     }
 
 
-    public <T> Class<T> getMappedType(Object[] params, int index) {
+    protected <T> Class<T> getMappedType(Object[] params, int index) {
         if (params.length == 0 || params[index] == null) {
             throw new NullPointerException();
         }
@@ -53,6 +60,10 @@ public abstract class AbstractMethod implements ExecuteHandler {
         if (param instanceof ConditionWrapper) {
             ConditionWrapper<T> conditionWrapper = (ConditionWrapper<T>) param;
             return conditionWrapper.getEntityClass();
+        }
+        if (param instanceof SyncQueryWrapper) {
+            SyncQueryWrapper<T> queryWrapper = (SyncQueryWrapper<T>) params[0];
+            return queryWrapper.getEntityClass();
         }
         if (param instanceof AbstractUpdateSet) {
             AbstractUpdateSet<T> updateSet = (AbstractUpdateSet<T>) param;
@@ -128,27 +139,70 @@ public abstract class AbstractMethod implements ExecuteHandler {
         return sqlSessionFactory.createSqlSession(selectExecutorBody);
     }
 
+
     /**
-     * 对于返回对象的一对一，一对多处理
+     * 结果集对象中剩余属性的值写入
      */
-    public <T> Object otherResultInject(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object result) throws Exception {
-
-        // 映射的是 基础类型/Map/Array 则直接忽略
-        if (CustomUtil.isBasicClass(target)
-                || Map.class.isAssignableFrom(target) || result instanceof Array) {
-            return result;
-        }
-
-        HandleSelectSqlBuilder<T> selectSqlBuilder = TableInfoCache.getSelectSqlBuilderCache(target, sqlSessionFactory);
-        if (result instanceof Collection && !((Collection<T>) result).isEmpty()) {
-            Collection<T> resultList = (Collection<T>) result;
-            if (selectSqlBuilder.isExistNeedInjectResult()) {
-                MultiResultInjector<T> resultInjector = new MultiResultInjector<>(target, sqlSessionFactory, target);
-                resultInjector.injectorValue(resultList);
+    protected <T, P> void resultPropertyInject(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target,
+                                               SyncQueryWrapper<T> queryWrapper,
+                                               Collection<T> resultList) throws Exception {
+        for (T data : resultList) {
+            if (data == null) {
+                continue;
             }
-        }else {
-            MultiResultInjector<T> resultInjector = new MultiResultInjector<>(target, sqlSessionFactory, target);
+            List<SyncProperty<T, ?>> syncProperties = queryWrapper.getSyncProperties();
+            for (SyncProperty<T, ?> property : syncProperties) {
+                Predicate<T> ifCondition = property.getCondition();
+                if (ifCondition == null || !ifCondition.test(data)) {
+                    continue;
+                }
+                TargetSetter<T, P> setter = (TargetSetter<T, P>) property.getSetter();
+                ConditionWrapper<?> wrapper = property.getWrapper();
+                SyncFunction<T, ?> syncFunction = property.getSyncFunction();
+                if (setter == null || (wrapper == null && syncFunction == null)) {
+                    continue;
+                }
+                if (syncFunction != null) {
+                    wrapper = syncFunction.doQuery(data);
+                }
+
+                TableParseModel<?> tableModel = TableInfoCache.getTableModel(target);
+                String implMethodName = LambdaUtil.getImplMethodName(setter);
+                String fieldName = StrUtils.trimSet(implMethodName);
+
+                Field field = tableModel.getFields().stream()
+                        .filter(op -> op.getName().equals(fieldName))
+                        .findFirst()
+                        .orElseThrow(() -> new CustomCheckException("Parse setter method error: " + implMethodName + " in " + target));
+
+                Class<?> fieldType = field.getType();
+                if (fieldType.isArray() || fieldType.isEnum()) {
+                    throw new UnsupportedOperationException("Injection methods with attribute type of (array/enum) are not currently supported.");
+                }
+                P result = null;
+                ExecuteHandler executeHandler = null;
+                Object[] preParamArr = {wrapper};
+                if (Collection.class.isAssignableFrom(fieldType)) {
+                    executeHandler = new SelectListByWrapper();
+                } else if (Map.class.isAssignableFrom(fieldType)) {
+                    executeHandler = new SelectMapByWrapper();
+                } else if (CustomUtil.isBasicClass(fieldType)) {
+                    executeHandler = new SelectObjByWrapper();
+                } else {
+                    executeHandler = new SelectOneByWrapper();
+                }
+
+                Class<T> mappedType = executeHandler.getMappedType(preParamArr);
+                result = (P) executeHandler.doExecute(sqlSessionFactory, mappedType, preParamArr);
+
+                if (Set.class.isAssignableFrom(fieldType)) {
+                    result = (P) new HashSet<>((Collection<T>) result);
+                }
+
+                if (result != null) {
+                    setter.accept(data, result);
+                }
+            }
         }
-        return result;
     }
 }

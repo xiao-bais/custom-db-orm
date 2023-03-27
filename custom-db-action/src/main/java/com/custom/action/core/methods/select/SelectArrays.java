@@ -11,9 +11,9 @@ import com.custom.jdbc.interfaces.CustomSqlSession;
 public class SelectArrays extends SelectListBySql {
 
     @Override
-    public <T> Object doExecute(JdbcSqlSessionFactory executorFactory, Class<T> target, Object[] params) throws Exception {
-        CustomSqlSession sqlSession = super.createSqlSession(executorFactory, target, params);
-        return executorFactory.getJdbcExecutor().selectArrays(sqlSession);
+    public <T> Object doExecute(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
+        CustomSqlSession sqlSession = super.createSqlSession(sqlSessionFactory, target, params);
+        return sqlSessionFactory.getJdbcExecutor().selectArrays(sqlSession);
     }
 
     @Override

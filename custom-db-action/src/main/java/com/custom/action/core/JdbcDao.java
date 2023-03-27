@@ -3,6 +3,7 @@ package com.custom.action.core;
 import com.custom.action.condition.AbstractUpdateSet;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.core.chain.ChainWrapper;
+import com.custom.action.core.syncquery.SyncQueryWrapper;
 import com.custom.comm.page.DbPageRows;
 import com.custom.jdbc.interfaces.TransactionExecutor;
 
@@ -113,12 +114,12 @@ public interface JdbcDao {
     <T> DbPageRows<T> selectPage(ConditionWrapper<T> wrapper);
 
     /**
-     * 条件构造器查询-查询多个
+     * 条件构造器查询-查询多条记录
      */
     <T> List<T> selectList(ConditionWrapper<T> wrapper);
 
     /**
-     * 条件构造器查询-查询单个对象
+     * 条件构造器查询-查询单条记录
      */
     <T> T selectOne(ConditionWrapper<T> wrapper);
 
@@ -183,6 +184,21 @@ public interface JdbcDao {
      * 查询多条记录并分页，!= null 的实体属性即为条件(全等查询)
      */
     <T> DbPageRows<T> selectPage(T entity, DbPageRows<T> pageRows);
+
+    /**
+     * 同步查询-查询多条记录
+     */
+    <T> List<T> selectList(SyncQueryWrapper<T> wrapper);
+
+    /**
+     * 同步查询-查询单条记录
+     */
+    <T> T selectOne(SyncQueryWrapper<T> wrapper);
+
+    /**
+     * 同步查询-分页
+     */
+    <T> DbPageRows<T> selectPage(SyncQueryWrapper<T> wrapper);
 
 
     /* ----------------------------------------------------------------delete---------------------------------------------------------------- */

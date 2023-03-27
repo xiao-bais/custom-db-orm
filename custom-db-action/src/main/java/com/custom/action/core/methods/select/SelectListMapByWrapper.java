@@ -11,9 +11,9 @@ import com.custom.jdbc.interfaces.CustomSqlSession;
 public class SelectListMapByWrapper extends SelectListByWrapper {
 
     @Override
-    public <T> Object doExecute(JdbcSqlSessionFactory executorFactory, Class<T> target, Object[] params) throws Exception {
-        CustomSqlSession sqlSession = super.createSqlSession(executorFactory, target, params);
-        return executorFactory.getJdbcExecutor().selectListMap(sqlSession);
+    public <T> Object doExecute(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
+        CustomSqlSession sqlSession = super.createSqlSession(sqlSessionFactory, target, params);
+        return sqlSessionFactory.getJdbcExecutor().selectListMap(sqlSession);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.custom.action.condition;
 
+import com.custom.action.core.syncquery.SyncQueryWrapper;
+
 /**
  * 静态条件构造工具类
  * @author   Xiao-Bai
@@ -66,5 +68,14 @@ public class Conditions {
     public static <T> LambdaUpdateSet<T> lambdaUpdate(Class<T> entityClass) {
         return new LambdaUpdateSet<>(entityClass);
     }
-    
+
+    /**
+     * 给定一个同步查询的包装器
+     * @param entityClass
+     * @param <T>
+     * @return
+     */
+    public static <T> SyncQueryWrapper<T> syncQuery(Class<T> entityClass) {
+        return new SyncQueryWrapper<>(entityClass);
+    }
 }

@@ -26,10 +26,10 @@ public class SelectMap extends AbstractMethod {
     }
 
     @Override
-    public <T> Object doExecute(JdbcSqlSessionFactory executorFactory, Class<T> target, Object[] params) throws Exception {
+    public <T> Object doExecute(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
         SelectMapExecutorBody<T, Object> mapExecutorBody = createMapBody(target, params);
-        CustomSqlSession sqlSession = executorFactory.createSqlSession(mapExecutorBody);
-        return executorFactory.getJdbcExecutor().selectMap(sqlSession);
+        CustomSqlSession sqlSession = sqlSessionFactory.createSqlSession(mapExecutorBody);
+        return sqlSessionFactory.getJdbcExecutor().selectMap(sqlSession);
     }
 
     @Override

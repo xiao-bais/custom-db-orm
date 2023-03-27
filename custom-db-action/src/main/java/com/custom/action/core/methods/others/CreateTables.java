@@ -28,14 +28,14 @@ public class CreateTables extends AbstractMethod {
     }
 
     @Override
-    public <T> Object doExecute(JdbcSqlSessionFactory executorFactory, Class<T> target, Object[] params) throws Exception {
+    public <T> Object doExecute(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
         Class<?>[] createTables = (Class<?>[]) params[0];
         for (int i = createTables.length - 1; i >= 0; i--) {
-            CustomSqlSession sqlSession = this.createSqlSession(executorFactory, createTables[i], params);
+            CustomSqlSession sqlSession = this.createSqlSession(sqlSessionFactory, createTables[i], params);
             if (sqlSession != null) {
                 String createTableSql = sqlSession.getBody().getPrepareSql();
                 logger.info("createTableSql ->\n " + createTableSql);
-                executorFactory.getJdbcExecutor().execTableInfo(sqlSession);
+                sqlSessionFactory.getJdbcExecutor().execTableInfo(sqlSession);
             }
         }
         return null;

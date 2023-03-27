@@ -15,18 +15,18 @@ import com.custom.jdbc.interfaces.CustomSqlSession;
 @SuppressWarnings("unchecked")
 public class SelectPage extends AbstractMethod {
     @Override
-    public <T> Object doExecute(JdbcSqlSessionFactory executorFactory, Class<T> target, Object[] params) throws Exception {
+    public <T> Object doExecute(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
 
         DbPageRows<T> pageRows = (DbPageRows<T>) params[2];
         if(pageRows == null) {
             pageRows = new DbPageRows<>();
         }
-        AbstractSqlBuilder<T> sqlBuilder = super.getSelectSqlBuilder(executorFactory, target);
+        AbstractSqlBuilder<T> sqlBuilder = super.getSelectSqlBuilder(sqlSessionFactory, target);
         FullSqlConditionExecutor executor = sqlBuilder.addLogicCondition(String.valueOf(params[1]));
 
         // 封装结果
         String selectSql = sqlBuilder.createTargetSql() + executor.execute();
-        this.buildPageResult(executorFactory, getMappedType(params), selectSql, pageRows, (Object[]) params[3]);
+        this.buildPageResult(sqlSessionFactory, getMappedType(params), selectSql, pageRows, (Object[]) params[3]);
         return pageRows;
     }
 

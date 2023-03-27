@@ -13,11 +13,11 @@ import com.custom.jdbc.session.JdbcSqlSessionFactory;
 public class SelectMapByWrapper extends SelectMap {
 
     @Override
-    public <T> Object doExecute(JdbcSqlSessionFactory executorFactory, Class<T> target, Object[] params) throws Exception {
+    public <T> Object doExecute(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
         ConditionWrapper<T> conditionWrapper = (ConditionWrapper<T>) params[0];
-        HandleSelectSqlBuilder<T> sqlBuilder = (HandleSelectSqlBuilder<T>) super.getSelectSqlBuilder(executorFactory, target);
+        HandleSelectSqlBuilder<T> sqlBuilder = (HandleSelectSqlBuilder<T>) super.getSelectSqlBuilder(sqlSessionFactory, target);
         String selectSql = sqlBuilder.executeSqlBuilder(conditionWrapper);
-        return super.doExecute(executorFactory, target,
+        return super.doExecute(sqlSessionFactory, target,
                 new Object[]{params[1],
                         params[2], selectSql,
                         conditionWrapper.getParamValues().toArray()

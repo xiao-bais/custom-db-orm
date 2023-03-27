@@ -17,9 +17,9 @@ public class ExecTrans extends AbstractMethod {
     }
 
     @Override
-    public <T> Object doExecute(JdbcSqlSessionFactory executorFactory, Class<T> target, Object[] params) throws Exception {
+    public <T> Object doExecute(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
         TransactionExecutor transactionExecutor = (TransactionExecutor) params[0];
-        executorFactory.handleTransaction(transactionExecutor);
+        sqlSessionFactory.handleTransaction(transactionExecutor);
         return null;
     }
 

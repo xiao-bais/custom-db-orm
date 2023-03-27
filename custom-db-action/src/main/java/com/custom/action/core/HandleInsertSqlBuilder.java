@@ -50,7 +50,7 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
             List<T> saveList = (List<T>) obj;
             StringJoiner insertSqlField = new StringJoiner(Constants.SEPARATOR_COMMA_2);
 
-            AssertUtil.notEmpty(saveList, "未找到待新增的数据");
+            AssertUtil.notEmpty(saveList, "No data to operate.");
 
             if (saveList.size() == 1) {
                 this.extractParams(saveList.get(0), sqlParams);
@@ -58,6 +58,7 @@ public class HandleInsertSqlBuilder<T> extends AbstractSqlBuilder<T> {
             }
 
             saveList.forEach(op -> {
+                AssertUtil.npe(op, "Null object in saveList.");
                 this.extractParams(op, sqlParams);
                 insertSqlField.add(insertSuffix.toString());
             });

@@ -2,6 +2,7 @@ package com.custom.action.core.methods;
 
 import com.custom.action.condition.AbstractUpdateSet;
 import com.custom.action.condition.ConditionWrapper;
+import com.custom.action.core.syncquery.SyncQueryWrapper;
 import com.custom.comm.enums.ExecuteMethod;
 import com.custom.comm.page.DbPageRows;
 import com.custom.jdbc.interfaces.TransactionExecutor;
@@ -39,6 +40,9 @@ public enum MethodKind {
     SELECT_ONE_BY_ENTITY("selectOne", ExecuteMethod.SELECT, new Class<?>[]{Object.class}),
     SELECT_LIST_BY_ENTITY("selectList", ExecuteMethod.SELECT, new Class<?>[]{Object.class}),
     SELECT_PAGE_BY_ENTITY("selectPage", ExecuteMethod.SELECT, new Class<?>[]{Object.class, DbPageRows.class}),
+    SELECT_LIST_BY_SYNC("selectList", ExecuteMethod.SELECT, new Class<?>[]{SyncQueryWrapper.class}),
+    SELECT_ONE_BY_SYNC("selectOne", ExecuteMethod.SELECT, new Class<?>[]{SyncQueryWrapper.class}),
+    SELECT_PAGE_BY_SYNC("selectPage", ExecuteMethod.SELECT, new Class<?>[]{SyncQueryWrapper.class}),
 
 
     DELETE_BY_KEY("deleteByKey", ExecuteMethod.DELETE, new Class<?>[]{Class.class, Serializable.class}),

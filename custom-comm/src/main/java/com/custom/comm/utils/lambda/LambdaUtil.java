@@ -27,17 +27,34 @@ public final class LambdaUtil {
 
     /**
      * 解析 Lambda 表达式, 从SFunction中获取序列化的信息
-     * @param function 表达式
+     * @param function 表达式 -> Model::getXXX
      * @param <T> 对象类型
      * @return {@link SerializedLambda}
      */
     public static <T> SerializedLambda resolve(SFunction<T, ?> function) {
-        Class<?> aClass = function.getClass();
+        return getSerializedLambda(function);
+    }
+
+    /**
+     * 解析 Lambda 表达式, 从SFunction中获取序列化的信息
+     * @param setter 表达式 -> Model::setXXX
+     * @param <T> 对象类型
+     * @return {@link SerializedLambda}
+     */
+    public static <T> SerializedLambda resolve(TargetSetter<T, ?> setter) {
+        return getSerializedLambda(setter);
+    }
+
+    /**
+     * 获取lambda的序列化信息
+     */
+    private static SerializedLambda getSerializedLambda(Object obj) {
+        Class<?> aClass = obj.getClass();
         String canonicalName = aClass.getCanonicalName();
         return Optional.ofNullable(FUNCTION_CACHE.get(canonicalName))
                 .map(WeakReference::get)
                 .orElseGet(() -> {
-                    SerializedLambda serializedLambda = startParse(function);
+                    SerializedLambda serializedLambda = startParse(obj);
                     FUNCTION_CACHE.put(canonicalName, new WeakReference<>(serializedLambda));
                     return serializedLambda;
                 });
@@ -46,14 +63,14 @@ public final class LambdaUtil {
     /**
      * 解析函数
      */
-    private static <T> SerializedLambda startParse(SFunction<T, ?> function) {
+    private static SerializedLambda startParse(Object obj) {
         SerializedLambda serializedLambda = null;
         Method writeMethod;
         try {
             // 从function中取出序列化方法
-            writeMethod = function.getClass().getDeclaredMethod("writeReplace");
+            writeMethod = obj.getClass().getDeclaredMethod("writeReplace");
             writeMethod.setAccessible(true);
-            serializedLambda = (SerializedLambda) writeMethod.invoke(function);
+            serializedLambda = (SerializedLambda) writeMethod.invoke(obj);
             writeMethod.setAccessible(false);
         }
         catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
@@ -61,7 +78,7 @@ public final class LambdaUtil {
         }
 
         if (Objects.isNull(serializedLambda)) {
-            throw new CustomCheckException("Unable to parse：" + function);
+            throw new CustomCheckException("Unable to parse：" + obj);
         }
         return serializedLambda;
     }
@@ -94,6 +111,11 @@ public final class LambdaUtil {
         return serializedLambda.getImplMethodName();
     }
 
+    public static <T, P> String getImplMethodName(TargetSetter<T, P> setter) {
+        SerializedLambda serializedLambda = resolve(setter);
+        return serializedLambda.getImplMethodName();
+    }
+
     /**
      * 获取lambda表达式函数的引用方法返回类型
      * @param function 函数表达式
@@ -105,7 +127,7 @@ public final class LambdaUtil {
         String implMethodSignature = serializedLambda.getImplMethodSignature();
         if (implMethodSignature.length() <= 5 && !implMethodSignature.contains("/")) {
             String implMethodName = serializedLambda.getImplMethodName();
-            log.error(implMethodName + " ==> 该方法或方法对应的属性使用了基础类型，会造成无法解析，请将属性或方法的返回值换成基础类型对应的包装类");
+            log.error(implMethodName + " ==> 该方法或方法对应的属性使用了基础类型，会造成无法解析，请将属性或方法的返回值类型(参数类型) 换成基础类型对应的包装类");
         }
         implMethodSignature = implMethodSignature.substring(3, implMethodSignature.indexOf(";"));
         try {

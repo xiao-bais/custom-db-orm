@@ -16,13 +16,14 @@ import com.custom.jdbc.interfaces.CustomSqlSession;
 public class SelectPageByWrapper extends SelectListByWrapper {
 
     @Override
-    protected <T> CustomSqlSession createSqlSession(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
-        return null;
-    }
-
-    @Override
-    public <T> Object doExecute(JdbcSqlSessionFactory executorFactory, Class<T> target, Object[] params) throws Exception {
+    public <T> Object doExecute(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
         ConditionWrapper<T> conditionWrapper = (ConditionWrapper<T>) params[0];
+        if (!conditionWrapper.hasPageParams()) {
+            throw new CustomCheckException("Missing paging parameter：pageIndex：%s, pageSize：%s",
+                    conditionWrapper.getPageIndex(), conditionWrapper.getPageSize()
+            );
+        }
+
         DbPageRows<T> pageRows;
         if (params.length > 1 && params[1] instanceof DbPageRows) {
             pageRows = (DbPageRows<T>) params[1];
@@ -30,15 +31,9 @@ public class SelectPageByWrapper extends SelectListByWrapper {
             pageRows = new DbPageRows<>(conditionWrapper.getPageIndex(), conditionWrapper.getPageSize());
         }
 
-        if (!conditionWrapper.hasPageParams()) {
-            throw new CustomCheckException("Missing paging parameter：pageIndex：%s, pageSize：%s",
-                    conditionWrapper.getPageIndex(),
-                    conditionWrapper.getPageSize()
-            );
-        }
-        HandleSelectSqlBuilder<T> sqlBuilder = (HandleSelectSqlBuilder<T>) super.getSelectSqlBuilder(executorFactory, target);
+        HandleSelectSqlBuilder<T> sqlBuilder = (HandleSelectSqlBuilder<T>) super.getSelectSqlBuilder(sqlSessionFactory, target);
         String selectSql = sqlBuilder.executeSqlBuilder(conditionWrapper);
-        super.buildPageResult(executorFactory, target, selectSql, pageRows, conditionWrapper.getParamValues().toArray());
+        super.buildPageResult(sqlSessionFactory, target, selectSql, pageRows, conditionWrapper.getParamValues().toArray());
         return pageRows;
     }
 

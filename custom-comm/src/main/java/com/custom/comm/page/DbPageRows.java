@@ -3,6 +3,8 @@ package com.custom.comm.page;
 import com.custom.comm.utils.Constants;
 
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 分页对象
@@ -87,10 +89,15 @@ public class DbPageRows<T> {
         return data;
     }
 
-    @SuppressWarnings("unchecked")
     public DbPageRows<T> setData(List<T> data) {
         this.data = data;
         return this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <R> DbPageRows<R> convert(Function<? super T, ? extends R> mapping) {
+        List<R> collect = data.stream().map(mapping).collect(Collectors.toList());
+        return ((DbPageRows<R>) this).setData(collect);
     }
 
     @Override

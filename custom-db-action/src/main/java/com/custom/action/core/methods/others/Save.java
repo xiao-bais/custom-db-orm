@@ -20,9 +20,9 @@ public class Save extends AbstractMethod {
     }
 
     @Override
-    public <T> Object doExecute(JdbcSqlSessionFactory executorFactory, Class<T> target, Object[] params) throws Exception {
+    public <T> Object doExecute(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
         T entity = (T) params[0];
-        AbstractSqlBuilder<T> sqlBuilder = this.getEmptySqlBuilder(executorFactory, target);
+        AbstractSqlBuilder<T> sqlBuilder = this.getEmptySqlBuilder(sqlSessionFactory, target);
         boolean primaryKeyIsNotNull = Objects.nonNull(sqlBuilder.primaryKeyVal(entity));
         return primaryKeyIsNotNull ? MethodKind.INSERT_ONE : MethodKind.UPDATE_BY_KEY;
     }

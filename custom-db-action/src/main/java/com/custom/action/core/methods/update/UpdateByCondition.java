@@ -40,9 +40,9 @@ public class UpdateByCondition extends AbstractMethod {
     }
 
     @Override
-    public <T> Object doExecute(JdbcSqlSessionFactory executorFactory, Class<T> target, Object[] params) throws Exception {
-        CustomSqlSession sqlSession = createSqlSession(executorFactory, target, params);
-        return executorFactory.getJdbcExecutor().executeUpdate(sqlSession);
+    public <T> Object doExecute(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
+        CustomSqlSession sqlSession = createSqlSession(sqlSessionFactory, target, params);
+        return sqlSessionFactory.getJdbcExecutor().executeUpdate(sqlSession);
     }
 
     @Override

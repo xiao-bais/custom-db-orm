@@ -14,11 +14,11 @@ public class SelectObjByWrapper extends SelectObjBySql {
 
 
     @Override
-    public <T> Object doExecute(JdbcSqlSessionFactory executorFactory, Class<T> target, Object[] params) throws Exception {
+    public <T> Object doExecute(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
         ConditionWrapper<T> conditionWrapper = (ConditionWrapper<T>) params[0];
-        HandleSelectSqlBuilder<T> sqlBuilder = (HandleSelectSqlBuilder<T>) super.getSelectSqlBuilder(executorFactory, target);
+        HandleSelectSqlBuilder<T> sqlBuilder = (HandleSelectSqlBuilder<T>) super.getSelectSqlBuilder(sqlSessionFactory, target);
         String selectSql = sqlBuilder.executeSqlBuilder(conditionWrapper);
-        return super.doExecute(executorFactory, target, new Object[]{selectSql, conditionWrapper.getParamValues()});
+        return super.doExecute(sqlSessionFactory, target, new Object[]{selectSql, conditionWrapper.getParamValues()});
     }
 
     @Override

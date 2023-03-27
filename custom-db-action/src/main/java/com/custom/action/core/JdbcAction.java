@@ -22,15 +22,13 @@ import java.util.*;
 @SuppressWarnings("unchecked")
 public class JdbcAction implements SqlExecutor {
 
-    private DbDataSource dbDataSource;
-    private CustomMappedHandler mappedHandler;
+    private final DbDataSource dbDataSource;
+    private final CustomMappedHandler mappedHandler;
 
     public JdbcAction(DbDataSource dbDataSource, DbGlobalConfig globalConfig) {
         this.dbDataSource = dbDataSource;
         this.mappedHandler = new CustomMappedHandler(dbDataSource, globalConfig);
     }
-
-    public JdbcAction(){}
 
 
     @Override
@@ -267,11 +265,6 @@ public class JdbcAction implements SqlExecutor {
     @Override
     public void dropTables(Class<?>... arr) throws Exception {
         mappedHandler.handleExecute(MethodKind.DROP_TABLES, (Object) arr);
-    }
-
-    @Override
-    public DbDataSource getDbDataSource() {
-        return this.dbDataSource;
     }
 
     @Override

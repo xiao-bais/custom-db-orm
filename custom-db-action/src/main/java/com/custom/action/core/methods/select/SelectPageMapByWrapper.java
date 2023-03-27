@@ -21,24 +21,24 @@ public class SelectPageMapByWrapper extends AbstractMethod {
 
 
     @Override
-    public <T> Object doExecute(JdbcSqlSessionFactory executorFactory, Class<T> target, Object[] params) throws Exception {
+    public <T> Object doExecute(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
         ConditionWrapper<T> conditionWrapper = (ConditionWrapper<T>) params[0];
-        HandleSelectSqlBuilder<T> sqlBuilder = (HandleSelectSqlBuilder<T>) super.getSelectSqlBuilder(executorFactory, target);
+        HandleSelectSqlBuilder<T> sqlBuilder = (HandleSelectSqlBuilder<T>) super.getSelectSqlBuilder(sqlSessionFactory, target);
         String selectSql = sqlBuilder.executeSqlBuilder(conditionWrapper);
         Object[] sqlParams = conditionWrapper.getParamValues().toArray();
-        CustomSqlSession countSqlSession = createCountSqlSession(executorFactory, selectSql, sqlParams);
-        long count = (long) executorFactory.getJdbcExecutor().selectObj(countSqlSession);
+        CustomSqlSession countSqlSession = createCountSqlSession(sqlSessionFactory, selectSql, sqlParams);
+        long count = (long) sqlSessionFactory.getJdbcExecutor().selectObj(countSqlSession);
 
         List<Map<String, Object>> dataList = new ArrayList<>();
         DbPageRows<Map<String, Object>> dbPageRows = new DbPageRows<>(conditionWrapper.getPageIndex(), conditionWrapper.getPageSize());
         if (count > 0) {
-            CustomSqlSession pageSqlSession = createPageSqlSession(executorFactory,
+            CustomSqlSession pageSqlSession = createPageSqlSession(sqlSessionFactory,
                     target,
                     selectSql,
                     conditionWrapper.getPageIndex(),
                     conditionWrapper.getPageSize(),
                     sqlParams);
-            dataList = executorFactory.getJdbcExecutor().selectListMap(pageSqlSession);
+            dataList = sqlSessionFactory.getJdbcExecutor().selectListMap(pageSqlSession);
         }
         dbPageRows.setTotal(count).setData(dataList);
         return dbPageRows;

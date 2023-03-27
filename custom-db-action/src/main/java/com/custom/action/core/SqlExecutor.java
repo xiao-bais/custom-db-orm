@@ -74,7 +74,6 @@ public interface SqlExecutor {
     int executeSql(String sql, Object... params) throws Exception;
     void createTables(Class<?>... arr) throws Exception;
     void dropTables(Class<?>... arr) throws Exception;
-    DbDataSource getDbDataSource();
     JdbcSqlSessionFactory getSqlSessionFactory();
     void execTrans(TransactionExecutor wrapper) throws Exception;
     <T> ChainWrapper<T> createChain(Class<T> entityClass) throws Exception;

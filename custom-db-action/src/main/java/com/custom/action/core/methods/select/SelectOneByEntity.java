@@ -13,10 +13,10 @@ import com.custom.jdbc.session.JdbcSqlSessionFactory;
 public class SelectOneByEntity extends SelectOneByWrapper {
 
     @Override
-    public <T> Object doExecute(JdbcSqlSessionFactory executorFactory, Class<T> target, Object[] params) throws Exception {
+    public <T> Object doExecute(JdbcSqlSessionFactory sqlSessionFactory, Class<T> target, Object[] params) throws Exception {
         T param = (T) params[0];
         DefaultConditionWrapper<T> conditionWrapper = Conditions.allEqQuery(param);
-        return super.doExecute(executorFactory, target, new Object[]{conditionWrapper});
+        return super.doExecute(sqlSessionFactory, target, new Object[]{conditionWrapper});
     }
 
     @Override
