@@ -84,14 +84,6 @@ public class TableParseModel<T> implements Cloneable {
      */
     private final Map<String, String> columnMapper = new HashMap<>();
     /**
-     * 一对一字段
-     */
-    private List<Field> oneToOneFieldList;
-    /**
-     * 一对多字段
-     */
-    private List<Field> oneToManyFieldList;
-    /**
      * 全字段解析对象
      */
     private List<ColumnPropertyMap<T>> columnPropertyMaps;
@@ -216,8 +208,6 @@ public class TableParseModel<T> implements Cloneable {
         if (StrUtils.isBlank(this.table)) {
             this.table = this.generateTableName(entityClass.getSimpleName());
         }
-        this.oneToOneFieldList = new ArrayList<>();
-        this.oneToManyFieldList = new ArrayList<>();
         this.columnPropertyMaps = new ArrayList<>();
         this.propertyList = new ArrayList<>();
     }
@@ -249,7 +239,7 @@ public class TableParseModel<T> implements Cloneable {
         this.joinTableParserModels.addAll(joinTables);
 
         for (Field field : fields) {
-            if (this.isNotNeedParseProperty(field)) {
+            if (!CustomUtil.isBasicClass(field.getType())) {
                 continue;
             }
 
@@ -308,39 +298,6 @@ public class TableParseModel<T> implements Cloneable {
     }
 
     /**
-     * 若满足条件，则该字段无需解析
-     */
-    private boolean isNotNeedParseProperty(Field field) {
-        // 基础字段或关联字段的java属性类型必须是允许的基本类型
-        Class<?> fieldType = field.getType();
-        if (!CustomUtil.isBasicClass(fieldType)) {
-            this.handleMoreResultField(field, fieldType);
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * 处理一对一，一对多
-     */
-    private void handleMoreResultField(Field field, Class<?> fieldType) {
-        if (field.isAnnotationPresent(DbOneToOne.class)) {
-            if (Collection.class.isAssignableFrom(fieldType)) {
-                throw new UnsupportedOperationException("Annotation DbOneToOne does not support acting on properties of " + fieldType.getName());
-            }
-            this.oneToOneFieldList.add(field);
-        }
-
-        if (field.isAnnotationPresent(DbOneToMany.class)) {
-            if (Collection.class.isAssignableFrom(fieldType) || Object.class.equals(fieldType)) {
-                this.oneToManyFieldList.add(field);
-            } else if (Map.class.isAssignableFrom(fieldType)) {
-                throw new UnsupportedOperationException("Annotation DbOneToMany does not support acting on properties of " + fieldType.getName());
-            }
-        }
-    }
-
-    /**
      * 解析@DbJoinTable(s)
      */
     private List<String> buildDbJoinTables() {
@@ -378,14 +335,6 @@ public class TableParseModel<T> implements Cloneable {
 
     public List<PropertyDescriptor> getPropertyList() {
         return propertyList;
-    }
-
-    /**
-     * 是否存在一对一，一对多的结果注入
-     */
-    protected boolean existNeedInjectResult() {
-        return JudgeUtil.isNotEmpty(this.oneToOneFieldList)
-                || JudgeUtil.isNotEmpty(this.oneToManyFieldList);
     }
 
     public Class<T> getEntityClass() {
@@ -426,14 +375,6 @@ public class TableParseModel<T> implements Cloneable {
 
     public Map<String, String> getColumnMapper() {
         return columnMapper;
-    }
-
-    public List<Field> getOneToOneFieldList() {
-        return oneToOneFieldList;
-    }
-
-    public List<Field> getOneToManyFieldList() {
-        return oneToManyFieldList;
     }
 
     public List<ColumnPropertyMap<T>> columnPropertyMaps() {

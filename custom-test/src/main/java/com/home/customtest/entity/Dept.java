@@ -2,11 +2,11 @@ package com.home.customtest.entity;
 
 import com.custom.comm.annotations.DbField;
 import com.custom.comm.annotations.DbKey;
-import com.custom.comm.annotations.DbOneToMany;
 import com.custom.comm.annotations.DbTable;
 import lombok.Data;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author  Xiao-Bai
@@ -25,7 +25,6 @@ public class Dept {
 
     private boolean adminFlag;
 
-    @DbOneToMany(joinField = "deptId", joinTarget = Employee.class)
     private List<Map<String, Object>> employeeList;
 
 }

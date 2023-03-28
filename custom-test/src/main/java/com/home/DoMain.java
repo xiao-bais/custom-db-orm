@@ -6,9 +6,7 @@ import com.custom.action.core.JdbcDao;
 import com.custom.action.core.JdbcOpDao;
 import com.custom.action.core.syncquery.SyncProperty;
 import com.custom.action.core.syncquery.SyncQueryWrapper;
-import com.home.customtest.entity.Province;
-import com.home.customtest.entity.Street;
-import com.home.customtest.entity.Student;
+import com.home.customtest.entity.*;
 
 import java.util.List;
 
@@ -32,11 +30,15 @@ public class DoMain {
                 .primaryEx(x -> x.eq(Student::getNickName, "siyecao"))
                 .injectProperty(Student::setModelList, x -> x.getModelList() == null, Conditions.lambdaQuery(Street.class).in(Street::getId, 5012, 5013, 5014, 5015))
                 .injectProperty(Student::setProvince, x -> x.getProvince() == null,
-                        t -> {
-                            LambdaConditionWrapper<Province> wrapper = Conditions.lambdaQuery(Province.class);
-                            return wrapper.in(t.getProId() != null, Province::getId, t.getProId());
-                        })
+                        t -> Conditions.lambdaQuery(Province.class).in(t.getProId() != null, Province::getId, t.getProId()))
         );
+
+        Province province = student.getProvince();
+        List<City> cityList = jdbcDao.selectList(Conditions.syncQuery(City.class)
+                .primaryEx(x -> x.eq(City::getProvinceId, province.getId()))
+                .injectProperty(City::setLocationList, t -> Conditions.lambdaQuery(Location.class).in(Location::getCityId, t.getId()))
+        );
+        province.setCityList(cityList);
 
         System.out.println("students = " + 1);
 

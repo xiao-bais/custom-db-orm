@@ -36,7 +36,6 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
     private final List<DbRelationParserModel<T>> relatedParserModels;
     private final List<DbJoinTableParserModel<T>> joinDbMappers;
     private final List<String> joinTableParserModels;
-    private final boolean existNeedInjectResult;
 
     public HandleSelectSqlBuilder(Class<T> entityClass, JdbcSqlSessionFactory sqlSessionFactory) {
         TableParseModel<T> tableSqlBuilder = TableInfoCache.getTableModel(entityClass);
@@ -44,8 +43,6 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
         this.relatedParserModels = tableSqlBuilder.getRelatedParserModels();
         this.joinDbMappers = tableSqlBuilder.getJoinDbMappers();
         this.joinTableParserModels = tableSqlBuilder.getJoinTableParserModels();
-        this.existNeedInjectResult = tableSqlBuilder.existNeedInjectResult();
-
         this.injectTableInfo(tableSqlBuilder, sqlSessionFactory);
     }
 
@@ -222,11 +219,6 @@ public class HandleSelectSqlBuilder<T> extends AbstractSqlBuilder<T> {
 
         return template -> SqlExecTemplate.format(template, columnStr, getTable(), getAlias()) + suffix;
     }
-
-    public boolean isExistNeedInjectResult() {
-        return existNeedInjectResult;
-    }
-
 
     /**
      * 整合条件，获取最终可执行的sql

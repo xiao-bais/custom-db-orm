@@ -182,7 +182,7 @@ public class ResultSetTypeMappedHandler<T> {
         if (typeHandler == null) {
             return (T) rs.getObject(index);
         }
-        return (T) typeHandler.getTypeValue(rs, index);
+        return typeHandler.getTypeValue(rs, index);
     }
 
 

@@ -1,14 +1,14 @@
 package com.custom.jdbc.handler;
 
 import com.custom.comm.utils.CustomUtil;
+import com.custom.comm.utils.ReflectUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
-import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -26,12 +26,8 @@ public class MappedTargetCache<T> {
         this.fieldSet = new HashSet<>();
 
         try {
-            BeanInfo beanInfo = Introspector.getBeanInfo(targetClass);
-            PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-            for (PropertyDescriptor descriptor : propertyDescriptors) {
-                if (descriptor.getName().equals("class")) {
-                    continue;
-                }
+            List<PropertyDescriptor> descriptorList = ReflectUtil.getProperties(targetClass);
+            for (PropertyDescriptor descriptor : descriptorList) {
                 FieldCache fieldCache = new FieldCache(descriptor);
                 this.fieldSet.add(fieldCache);
             }

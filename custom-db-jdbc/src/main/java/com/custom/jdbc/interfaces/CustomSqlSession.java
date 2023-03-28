@@ -1,8 +1,7 @@
 package com.custom.jdbc.interfaces;
 
-import com.custom.jdbc.configuration.DbGlobalConfig;
-import com.custom.jdbc.executebody.BaseExecutorBody;
 import com.custom.jdbc.configuration.DbDataSource;
+import com.custom.jdbc.executebody.BaseExecutorBody;
 import com.custom.jdbc.handler.ResultSetTypeMappedHandler;
 import com.custom.jdbc.session.CustomSqlSessionHelper;
 

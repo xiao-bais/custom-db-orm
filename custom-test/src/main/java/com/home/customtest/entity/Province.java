@@ -1,7 +1,8 @@
 package com.home.customtest.entity;
 
-import com.custom.comm.annotations.*;
-import com.custom.comm.enums.MultiStrategy;
+import com.custom.comm.annotations.DbField;
+import com.custom.comm.annotations.DbKey;
+import com.custom.comm.annotations.DbTable;
 import lombok.Data;
 
 import java.util.List;
@@ -24,7 +25,6 @@ public class Province {
 //    @DbOneToMany(joinField = "proId", sortField = "age", strategy = MultiStrategy.ERROR)
 //    private List<Student> students;
 
-    @DbOneToMany(joinField = "provinceId", strategy = MultiStrategy.RECURSION)
     private List<City> cityList;
 
 //    @DbOneToMany(joinField = "proId", sortField = "age", strategy = MultiStrategy.RECURSION)
