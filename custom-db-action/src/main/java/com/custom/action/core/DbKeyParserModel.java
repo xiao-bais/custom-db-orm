@@ -119,7 +119,7 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
 
     @Override
     protected String getSelectAsFieldSql() {
-        return null;
+        return DbUtil.sqlSelectAsWrapper(DbUtil.fullSqlColumn(this.getAlias(), this.dbKey), this.key);
     }
 
     @Override

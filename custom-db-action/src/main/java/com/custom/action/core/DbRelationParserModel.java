@@ -82,7 +82,7 @@ public class DbRelationParserModel<T> extends AbstractTableModel<T> {
 
     @Override
     protected String getSelectAsFieldSql() {
-        return null;
+        return DbUtil.sqlSelectAsWrapper(DbUtil.fullSqlColumn(this.joinAlias, this.column), this.fieldName);
     }
 
 
