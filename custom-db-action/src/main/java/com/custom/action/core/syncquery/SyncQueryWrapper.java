@@ -46,6 +46,12 @@ public class SyncQueryWrapper<T> {
 
     /**
      * 注入属性的查询结果
+     * @param setter Model::setXXX (属性的set方法)
+     * @param condition ( ) -> a != null (执行的条件，用于判断该次注入是否执行)
+     * @param wrapper <code>Conditions.query(XXModel.class).eq("xxColumn", "123")</code> (查询条件)
+     * @param <P>
+     * @param <Pro>
+     * @return
      */
     public <P, Pro> SyncQueryWrapper<T> injectProperty(TargetSetter<T, P> setter, BooleanSupplier condition, ConditionWrapper<Pro> wrapper) {
         SyncProperty<T, Pro> syncProperty = new SyncProperty<>();
@@ -53,7 +59,6 @@ public class SyncQueryWrapper<T> {
         syncProperty.setSetter(setter);
         syncProperty.setWrapper(wrapper);
         this.addPropertyInjector(syncProperty);
-
         return this;
     }
 
@@ -62,6 +67,15 @@ public class SyncQueryWrapper<T> {
     }
 
 
+    /**
+     * 注入属性的查询结果
+     * @param setter Model::setXXX (属性的set方法)
+     * @param condition ( ) -> a != null (执行的条件，用于判断该次注入是否执行)
+     * @param syncFunction <code> res -> Conditions.query(XXModel.class).eq("xxColumn", "123")</code> (查询条件, 其中res为主对象(即 T)，只是查询之前的提前消费)
+     * @param <P>
+     * @param <Pro>
+     * @return
+     */
     public <P, Pro> SyncQueryWrapper<T> injectProperty(TargetSetter<T, P> setter, BooleanSupplier condition, SyncFunction<T, Pro> syncFunction) {
         SyncProperty<T, Pro> syncProperty = new SyncProperty<>();
         syncProperty.setCondition(x -> condition.getAsBoolean());
@@ -75,6 +89,15 @@ public class SyncQueryWrapper<T> {
         return injectProperty(setter, () -> true, syncConsumer);
     }
 
+    /**
+     * 注入属性的查询结果
+     * @param setter Model::setXXX (属性的set方法)
+     * @param condition res -> a != null (执行的条件, 其中res为主对象(即 T), 用于判断该次注入是否执行)
+     * @param syncFunction <code> res -> Conditions.query(XXModel.class).eq("xxColumn", "123")</code> (查询条件, 其中res为主对象(即 T)，只是查询之前的提前消费)
+     * @param <P>
+     * @param <Pro>
+     * @return
+     */
     public <P, Pro> SyncQueryWrapper<T> injectProperty(TargetSetter<T, P> setter, Predicate<T> condition, SyncFunction<T, Pro> syncFunction) {
         SyncProperty<T, Pro> syncProperty = new SyncProperty<>();
         syncProperty.setCondition(condition);
@@ -84,6 +107,15 @@ public class SyncQueryWrapper<T> {
         return this;
     }
 
+    /**
+     * 注入属性的查询结果
+     * @param setter Model::setXXX (属性的set方法)
+     * @param condition res -> a != null (执行的条件, 其中res为主对象(即 T), 用于判断该次注入是否执行)
+     * @param wrapper <code> Conditions.query(XXModel.class).eq("xxColumn", "123")</code> (查询条件)
+     * @param <P>
+     * @param <Pro>
+     * @return
+     */
     public <P, Pro> SyncQueryWrapper<T> injectProperty(TargetSetter<T, P> setter, Predicate<T> condition, ConditionWrapper<Pro> wrapper) {
         SyncProperty<T, Pro> syncProperty = new SyncProperty<>();
         syncProperty.setCondition(condition);

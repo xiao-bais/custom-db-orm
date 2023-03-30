@@ -170,7 +170,7 @@ public class CustomMappedHandler {
         PRIMITIVE_MAPPED.put(Character.TYPE, Character.class);
         PRIMITIVE_MAPPED.put(Boolean.TYPE, Boolean.class);
 
-        // select 23.
+        // select 26.
         EXECUTE_HANDLER_CACHE.put(MethodKind.SELECT_ARRAYS, SelectArrays.class);
         EXECUTE_HANDLER_CACHE.put(MethodKind.SELECT_BATCH_KEYS, SelectBatchKeys.class);
         EXECUTE_HANDLER_CACHE.put(MethodKind.SELECT_BY_KEY, SelectByKey.class);

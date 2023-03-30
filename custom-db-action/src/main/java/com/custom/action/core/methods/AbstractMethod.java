@@ -26,7 +26,9 @@ import com.custom.jdbc.interfaces.CustomSqlSession;
 import com.custom.jdbc.interfaces.DatabaseAdapter;
 import com.custom.jdbc.session.JdbcSqlSessionFactory;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Predicate;
 
@@ -168,14 +170,14 @@ public abstract class AbstractMethod implements ExecuteHandler {
 
                 TableParseModel<?> tableModel = TableInfoCache.getTableModel(target);
                 String implMethodName = LambdaUtil.getImplMethodName(setter);
-                String fieldName = StrUtils.trimSet(implMethodName);
 
-                Field field = tableModel.getFields().stream()
-                        .filter(op -> op.getName().equals(fieldName))
+                Method setMethod = tableModel.getPropertyList().stream().map(PropertyDescriptor::getWriteMethod)
+                        .filter(op -> op.getName().equals(implMethodName))
                         .findFirst()
                         .orElseThrow(() -> new CustomCheckException("Parse setter method error: " + implMethodName + " in " + target));
 
-                Class<?> fieldType = field.getType();
+                // 获取该属性setter 方法的参数类型
+                Class<?> fieldType = setMethod.getParameterTypes()[0];
                 if (fieldType.isArray() || fieldType.isEnum()) {
                     throw new UnsupportedOperationException("Injection methods with attribute type of (array/enum) are not currently supported.");
                 }

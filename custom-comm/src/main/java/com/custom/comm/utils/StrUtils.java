@@ -286,17 +286,6 @@ public class StrUtils {
         return endWith(str, suffix, true);
     }
 
-    /**
-     * 根据set方法，解析出真实属性
-     */
-    public static String trimSet(String setter) {
-        if (setter.length() < 3) {
-            throw new CustomCheckException("Unable to get setter method : " + setter);
-        }
-        String first = setter.substring(3, 4).toLowerCase(Locale.ROOT);
-        return first + setter.substring(4);
-    }
-
 
 
 }

@@ -353,10 +353,6 @@ public class TableParseModel<T> implements Cloneable {
         return keyParserModel;
     }
 
-    public List<DbFieldParserModel<T>> getFieldParserModels() {
-        return fieldParserModels;
-    }
-
     public List<DbFieldParserModel<T>> getDbFieldParseModels() {
         return fieldParserModels.stream().filter(DbFieldParserModel::isDbField).collect(Collectors.toList());
     }
