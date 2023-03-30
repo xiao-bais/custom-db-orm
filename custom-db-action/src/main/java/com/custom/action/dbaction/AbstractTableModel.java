@@ -71,5 +71,6 @@ public abstract class AbstractTableModel<T> {
     protected abstract void setValue(T obj, Object value);
     public abstract String getFieldSql();
     protected abstract String getSelectFieldSql();
+    protected abstract String getSelectAsFieldSql();
 
 }

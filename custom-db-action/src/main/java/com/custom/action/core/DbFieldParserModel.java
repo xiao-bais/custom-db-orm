@@ -57,17 +57,12 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     /**
     * sql字段说明
     */
-    private String desc;
+    private String desc = Constants.EMPTY;
 
     /**
     * 是否为空
     */
-    private boolean isNull;
-
-    /**
-     * 是否标注了DbField注解
-     */
-    private final boolean existsDbField;
+    private boolean isNull = true;
 
     /**
      * 是否是表字段
@@ -88,7 +83,6 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
         }
         this.type = field.getType();
         this.field = field;
-        this.existsDbField = existsDbField;
         this.isDbField = true;
 
         if (existsDbField) {
@@ -101,11 +95,12 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
             this.isNull = annotation.isNull();
             this.desc = annotation.desc();
             this.dbType = annotation.dataType() == DbType.DbVarchar ? DbType.getDbMediaType(field.getType()) : annotation.dataType();
-            this.length = this.dbType.getLength();
             this.fillStrategy = annotation.fillStrategy();
         }else {
             this.column = underlineToCamel ? CustomUtil.camelToUnderline(this.fieldName) : this.fieldName;
+            this.dbType = DbType.getDbMediaType(field.getType());
         }
+        this.length = this.dbType.getLength();
 
         if(GlobalDataHandler.hasSqlKeyword(column)) {
             this.column = GlobalDataHandler.wrapperSqlKeyword(column);
@@ -118,7 +113,6 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
         this.fieldName = field.getName();
         this.type = field.getType();
         this.field = field;
-        this.existsDbField = false;
         this.isDbField = false;
     }
 
@@ -194,6 +188,15 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
     }
 
     @Override
+    protected String getSelectAsFieldSql() {
+        if (!isDbField) {
+            return Constants.EMPTY;
+        }
+        String column = DbUtil.fullSqlColumn(this.getAlias(), this.column);
+        return DbUtil.sqlSelectAsWrapper(column, this.fieldName);
+    }
+
+    @Override
     protected void setValue(T obj, Object value) {
         super.setFieldValue(obj, this.field, value);
     }
@@ -204,10 +207,6 @@ public class DbFieldParserModel<T> extends AbstractTableModel<T> {
 
     public Class<?> getType() {
         return type;
-    }
-
-    public boolean isExistsDbField() {
-        return existsDbField;
     }
 
 }

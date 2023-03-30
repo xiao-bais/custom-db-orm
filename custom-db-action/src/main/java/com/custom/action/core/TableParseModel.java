@@ -103,11 +103,9 @@ public class TableParseModel<T> implements Cloneable {
             fieldSql.add(keyParserModel.createTableSql() + "\n");
         }
 
-        if (!this.fieldParserModels.isEmpty()) {
-            fieldParserModels.stream()
-                    .filter(DbFieldParserModel::isExistsDbField)
-                    .map(dbFieldParserModel -> dbFieldParserModel.createTableSql() + "\n").forEach(fieldSql::add);
-        }
+        getDbFieldParseModels().stream()
+                    .map(dbFieldParserModel -> dbFieldParserModel.createTableSql() + "\n")
+                .forEach(fieldSql::add);
 
         createTableSql.append(String.format("CREATE TABLE `%s` (\n%s)", this.table, fieldSql));
 

@@ -118,6 +118,11 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
     }
 
     @Override
+    protected String getSelectAsFieldSql() {
+        return null;
+    }
+
+    @Override
     protected void setValue(T obj, Object value) {
         super.setFieldValue(obj, this.field, value);
     }

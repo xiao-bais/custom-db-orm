@@ -4,6 +4,8 @@ import com.custom.action.condition.Conditions;
 import com.custom.action.condition.LambdaConditionWrapper;
 import com.custom.action.core.JdbcDao;
 import com.custom.action.core.JdbcOpDao;
+import com.custom.action.core.TableInfoCache;
+import com.custom.action.core.TableParseModel;
 import com.custom.action.core.syncquery.SyncProperty;
 import com.custom.action.core.syncquery.SyncQueryWrapper;
 import com.home.customtest.entity.*;
@@ -22,10 +24,21 @@ public class DoMain {
 
         JdbcTestBuilder jdbcTestBuilder = JdbcTestBuilder.builder();
         JdbcDao jdbcDao = jdbcTestBuilder.getJdbcDao();
-        JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
+//        JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
+//        MyService helper = new MyServiceImpl();
 
-        MyService helper = new MyServiceImpl();
+        jdbcDao.createTables(Student.class);
 
+
+        System.out.println("students = " + 1);
+
+    }
+
+
+
+
+
+    private static void testInjectProperty(JdbcDao jdbcDao) {
         Student student = jdbcDao.selectOne(Conditions.syncQuery(Student.class)
                 .primaryEx(x -> x.eq(Student::getNickName, "siyecao"))
                 .injectProperty(Student::setModelList, x -> x.getModelList() == null, Conditions.lambdaQuery(Street.class).in(Street::getId, 5012, 5013, 5014, 5015))
@@ -39,17 +52,7 @@ public class DoMain {
                 .injectProperty(City::setLocationList, t -> Conditions.lambdaQuery(Location.class).in(Location::getCityId, t.getId()))
         );
         province.setCityList(cityList);
-
-        System.out.println("students = " + 1);
-
     }
-
-
-
-
-
-
-
 
 
 }

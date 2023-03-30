@@ -53,6 +53,10 @@ public final class DbUtil {
         return String.format("%s %s", val1, val2);
     }
 
+    public static String sqlSelectAsWrapper(String val1, String val2) {
+        return String.format("%s AS %s", val1, val2);
+    }
+
     /**
      * 完整sql字段，例如：a.name
      * a 为表的别名

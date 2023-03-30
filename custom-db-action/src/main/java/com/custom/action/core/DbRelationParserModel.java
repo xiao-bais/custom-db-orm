@@ -80,6 +80,11 @@ public class DbRelationParserModel<T> extends AbstractTableModel<T> {
         return DbUtil.sqlSelectWrapper(DbUtil.fullSqlColumn(this.joinAlias, this.column), this.fieldName);
     }
 
+    @Override
+    protected String getSelectAsFieldSql() {
+        return null;
+    }
+
 
     public String getJoinTable() {
         return joinTable;

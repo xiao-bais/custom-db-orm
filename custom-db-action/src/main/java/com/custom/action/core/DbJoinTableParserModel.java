@@ -97,4 +97,9 @@ public class DbJoinTableParserModel<T> extends AbstractTableModel<T> {
     protected String getSelectFieldSql() {
         return DbUtil.sqlSelectWrapper(joinName, fieldName);
     }
+
+    @Override
+    protected String getSelectAsFieldSql() {
+        return DbUtil.sqlSelectAsWrapper(joinName, fieldName);
+    }
 }
