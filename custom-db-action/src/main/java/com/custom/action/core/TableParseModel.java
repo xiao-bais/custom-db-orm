@@ -98,16 +98,20 @@ public class TableParseModel<T> implements Cloneable {
      */
     public String createTableSql() {
         StringBuilder createTableSql = new StringBuilder();
-        StringJoiner fieldSql = new StringJoiner(Constants.SEPARATOR_COMMA_1);
+        StringJoiner columnCreateSql = new StringJoiner(Constants.SEPARATOR_COMMA_1);
         if (Objects.nonNull(keyParserModel)) {
-            fieldSql.add(keyParserModel.createTableSql() + "\n");
+            columnCreateSql.add(keyParserModel.createTableSql() + "\n");
         }
 
         getDbFieldParseModels().stream()
                     .map(dbFieldParserModel -> dbFieldParserModel.createTableSql() + "\n")
-                .forEach(fieldSql::add);
+                .forEach(columnCreateSql::add);
 
-        createTableSql.append(String.format("CREATE TABLE `%s` (\n%s)", this.table, fieldSql));
+        if (keyParserModel != null) {
+            columnCreateSql.add("primary key("+ keyParserModel.getDbKey() +")");
+        }
+
+        createTableSql.append(String.format("CREATE TABLE `%s` (\n%s)", this.table, columnCreateSql));
 
         if (JudgeUtil.isNotEmpty(this.desc)) {
             createTableSql.append(String.format(" COMMENT = '%s'", this.desc));

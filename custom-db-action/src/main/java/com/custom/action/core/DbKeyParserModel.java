@@ -134,13 +134,12 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
         keyFieldSql.append(this.dbType.getType())
                 .append(Constants.BRACKETS_LEFT)
                 .append(this.length)
-                .append(Constants.BRACKETS_RIGHT)
-                .append(" primary key ");
+                .append(Constants.BRACKETS_RIGHT);
 
         if(this.strategy == KeyStrategy.AUTO) {
             keyFieldSql.append(" auto_increment ");
         }
-        keyFieldSql.append(" not null ").append(String.format(" comment '%s'", this.desc));
+        keyFieldSql.append(" NOT NULL ").append(String.format(" COMMENT '%s'", this.desc));
         return keyFieldSql.toString();
     }
 
@@ -153,7 +152,7 @@ public class DbKeyParserModel<T> extends AbstractTableModel<T> {
         }else {
             this.dbKey = annotation.value();
         }
-        this.dbKey = GlobalDataHandler.hasSqlKeyword(dbKey) ? String.format("`%s`", dbKey) : dbKey;
+        this.dbKey = GlobalDataHandler.hasSqlKeyword(this.dbKey) ? String.format("`%s`", this.dbKey) : this.dbKey;
         this.field = field;
         this.type = field.getType();
         this.dbType = annotation.dbType();
