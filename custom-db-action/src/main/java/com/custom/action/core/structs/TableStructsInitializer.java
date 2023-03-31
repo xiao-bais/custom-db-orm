@@ -46,7 +46,7 @@ public class TableStructsInitializer {
     /**
      * 待创建的表合集
      */
-    private final Map<String, TableCreateInfo> waitCreateMapper;
+     private final Map<String, TableCreateInfo> waitCreateTableMap;
 
     private final static String SELECT_COLUMN_SQL = "SELECT COLUMN_NAME FROM `information_schema`.`COLUMNS` WHERE TABLE_NAME = '%s' AND TABLE_SCHEMA = '%s'";
     private final static String CREATE_COLUMN_AFTER_SQL = "ALTER TABLE `%s` add %s AFTER `%s`";
@@ -59,7 +59,7 @@ public class TableStructsInitializer {
         this.sqlSessionFactory = sqlSessionFactory;
         this.databaseAdapter = sqlSessionFactory.getDatabaseAdapter();
         this.addColumnSqlList = new ArrayList<>();
-        this.waitCreateMapper = new HashMap<>();
+        this.waitCreateTableMap = new HashMap<>();
         this.dataBaseName = databaseAdapter.databaseName();
     }
 
@@ -77,9 +77,9 @@ public class TableStructsInitializer {
             this.handleExecSql(createNewColumnSql);
         }
 
-        if (!waitCreateMapper.isEmpty()) {
+        if (!waitCreateTableMap.isEmpty()) {
             StringJoiner createNewTableSql = new StringJoiner(";");
-            waitCreateMapper.forEach((table, tableInfo) -> {
+            waitCreateTableMap.forEach((table, tableInfo) -> {
                 String createTableSql = buildCreateTableSql(tableInfo);
                 createNewTableSql.add(createTableSql);
                 logger.info("\nCreated new table for '{}' as ===================>\n\n{}\n", table, createTableSql);
@@ -124,8 +124,8 @@ public class TableStructsInitializer {
      */
     private void saveWaitCreateTableInfo(TableParseModel<?> waitUpdateSqlBuilder, String table) {
         TableCreateInfo tableCreateInfo;
-        if (waitCreateMapper.containsKey(table)) {
-            tableCreateInfo = waitCreateMapper.get(table);
+        if (waitCreateTableMap.containsKey(table)) {
+            tableCreateInfo = waitCreateTableMap.get(table);
             addColumnInfos(waitUpdateSqlBuilder, tableCreateInfo.getColumnCreateInfos());
         }else {
             tableCreateInfo = new TableCreateInfo();
@@ -134,7 +134,7 @@ public class TableStructsInitializer {
             Set<ColumnCreateInfo> buildColumnSqls = new LinkedHashSet<>();
             addColumnInfos(waitUpdateSqlBuilder, buildColumnSqls);
             tableCreateInfo.setColumnCreateInfos(buildColumnSqls);
-            waitCreateMapper.put(table, tableCreateInfo);
+            waitCreateTableMap.put(table, tableCreateInfo);
         }
         // 若主键为空，则加入主键的创建sql
         if (JudgeUtil.isEmpty(tableCreateInfo.getPrimaryKeyCreateSql())) {
@@ -197,14 +197,14 @@ public class TableStructsInitializer {
      */
     private String buildCreateTableSql(TableCreateInfo tableCreateInfo) {
         StringBuilder createTableSql = new StringBuilder();
-        StringJoiner fieldSql = new StringJoiner(Constants.SEPARATOR_COMMA_1);
+        StringJoiner createColumnSql = new StringJoiner(Constants.SEPARATOR_COMMA_1);
         if (Objects.nonNull(tableCreateInfo.getPrimaryKeyCreateSql())) {
-            fieldSql.add(tableCreateInfo.getPrimaryKeyCreateSql() + "\n");
+            createColumnSql.add(tableCreateInfo.getPrimaryKeyCreateSql() + "\n");
         }
         Set<ColumnCreateInfo> columnCreateInfos = tableCreateInfo.getColumnCreateInfos();
-        columnCreateInfos.stream().map(column -> column.getCreateColumnSql() + "\n").forEach(fieldSql::add);
+        columnCreateInfos.stream().map(column -> column.getCreateColumnSql() + "\n").forEach(createColumnSql::add);
 
-        createTableSql.append(String.format("CREATE TABLE `%s` (\n%s)", tableCreateInfo.getTable(), fieldSql));
+        createTableSql.append(String.format("CREATE TABLE `%s` (\n%s)", tableCreateInfo.getTable(), createColumnSql));
         if (JudgeUtil.isNotEmpty(tableCreateInfo.getComment())) {
             createTableSql.append(String.format(" COMMENT = '%s'", tableCreateInfo.getComment()));
         }
