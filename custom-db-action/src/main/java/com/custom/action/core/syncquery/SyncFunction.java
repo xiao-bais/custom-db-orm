@@ -11,7 +11,6 @@ public interface SyncFunction<T, Other> {
     /**
      * 利用查询好的结果去做其他属性的查询
      * @param res
-     * @param wrapper
      */
     ConditionWrapper<Other> doQuery(T res);
 
