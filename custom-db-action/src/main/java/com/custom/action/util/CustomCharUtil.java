@@ -1,4 +1,4 @@
-package com.custom.joiner.util;
+package com.custom.action.util;
 
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.utils.CustomUtil;
