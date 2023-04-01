@@ -22,9 +22,15 @@ import java.util.function.Predicate;
 public class SyncQueryWrapper<T> {
 
     private final Class<T> entityClass;
+    /**
+     * 主对象查询条件
+     */
     private ConditionWrapper<T> primaryWrapper;
 
-    private List<SyncProperty<T, ?>> syncProperties;
+    /**
+     * 同步的属性
+     */
+    private List<SyncProperty<T, ?>> syncPropertyList;
 
     public SyncQueryWrapper(Class<T> entityClass) {
         this.entityClass = entityClass;
@@ -127,10 +133,10 @@ public class SyncQueryWrapper<T> {
 
 
     private void addPropertyInjector(SyncProperty<T, ?> property) {
-        if (this.syncProperties == null) {
-            this.syncProperties = new ArrayList<>();
+        if (this.syncPropertyList == null) {
+            this.syncPropertyList = new ArrayList<>();
         }
-        this.syncProperties.add(property);
+        this.syncPropertyList.add(property);
     }
 
     public Class<T> getEntityClass() {
@@ -141,8 +147,8 @@ public class SyncQueryWrapper<T> {
         return primaryWrapper;
     }
 
-    public List<SyncProperty<T, ?>> getSyncProperties() {
-        return syncProperties;
+    public List<SyncProperty<T, ?>> getSyncPropertyList() {
+        return syncPropertyList;
     }
 
     public void setPrimaryWrapper(ConditionWrapper<T> primaryWrapper) {

@@ -320,4 +320,17 @@ public abstract class ConditionWrapper<T> implements Serializable {
     public boolean isEnableAlias() {
         return enableAlias;
     }
+
+    /**
+     * 清除所有条件-即初始化
+     */
+    public void clear() {
+        this.dataStructureInit();
+        this.selectColumns = null;
+        this.pageIndex = null;
+        this.pageSize = null;
+        this.hasPageParams = false;
+        this.primaryTable = false;
+    }
+
 }

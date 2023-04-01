@@ -17,7 +17,6 @@ import com.custom.comm.enums.SqlExecTemplate;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.page.DbPageRows;
 import com.custom.comm.utils.CustomUtil;
-import com.custom.comm.utils.StrUtils;
 import com.custom.comm.utils.lambda.LambdaUtil;
 import com.custom.comm.utils.lambda.TargetSetter;
 import com.custom.jdbc.executebody.ExecuteBodyHelper;
@@ -27,7 +26,6 @@ import com.custom.jdbc.interfaces.DatabaseAdapter;
 import com.custom.jdbc.session.JdbcSqlSessionFactory;
 
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Predicate;
@@ -152,7 +150,7 @@ public abstract class AbstractMethod implements ExecuteHandler {
             if (data == null) {
                 continue;
             }
-            List<SyncProperty<T, ?>> syncProperties = queryWrapper.getSyncProperties();
+            List<SyncProperty<T, ?>> syncProperties = queryWrapper.getSyncPropertyList();
             for (SyncProperty<T, ?> property : syncProperties) {
                 Predicate<T> ifCondition = property.getCondition();
                 if (ifCondition == null || !ifCondition.test(data)) {

@@ -18,7 +18,7 @@ public class SelectListBySync extends SelectListByWrapper {
         SyncQueryWrapper<T> queryWrapper = (SyncQueryWrapper<T>) params[0];
         Object primaryResult = super.doExecute(sqlSessionFactory, target, new Object[]{queryWrapper.getPrimaryWrapper()});
 
-        if (primaryResult != null || queryWrapper.getSyncProperties() != null) {
+        if (primaryResult != null || queryWrapper.getSyncPropertyList() != null) {
             if (primaryResult instanceof Collection) {
                 super.resultPropertyInject(sqlSessionFactory, target, queryWrapper, (Collection<T>) primaryResult);
             }

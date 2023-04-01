@@ -17,7 +17,7 @@ public class SelectPageBySync extends SelectPageByWrapper {
         SyncQueryWrapper<T> queryWrapper = (SyncQueryWrapper<T>) params[0];
         Object primaryResult = super.doExecute(sqlSessionFactory, target, new Object[]{queryWrapper.getPrimaryWrapper()});
 
-        if (primaryResult != null || queryWrapper.getSyncProperties() != null) {
+        if (primaryResult != null || queryWrapper.getSyncPropertyList() != null) {
             DbPageRows<T> pageRows = (DbPageRows<T>) primaryResult;
             super.resultPropertyInject(sqlSessionFactory, target, queryWrapper,  pageRows.getData());
         }
