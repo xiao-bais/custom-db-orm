@@ -45,15 +45,6 @@ public class DoTargetExecutor<T> {
         return new DoTargetExecutor<>(syncQueryWrapper, tableExecutor);
     }
 
-
-    public List<T> listSync() throws Exception {
-        return tableExecutor.selectList(syncQueryWrapper);
-    }
-
-    public Stream<T> listSyncStream() throws Exception {
-        return tableExecutor.selectList(syncQueryWrapper).stream();
-    }
-
     public List<T> list() throws Exception {
        return tableExecutor.selectList(wrapper);
     }
@@ -68,14 +59,6 @@ public class DoTargetExecutor<T> {
 
     public T one(Supplier<T> supplier) throws Exception {
         return Optional.ofNullable(one()).orElseGet(supplier);
-    }
-
-    public T oneSync() throws Exception {
-        return tableExecutor.selectOne(syncQueryWrapper);
-    }
-
-    public T oneSync(Supplier<T> supplier) throws Exception {
-        return Optional.ofNullable(oneSync()).orElseGet(supplier);
     }
 
     public long count() throws Exception {
@@ -117,10 +100,6 @@ public class DoTargetExecutor<T> {
 
     public DbPageRows<T> page() throws Exception {
         return tableExecutor.selectPage(wrapper);
-    }
-
-    public DbPageRows<T> pageSync() throws Exception {
-        return tableExecutor.selectPage(syncQueryWrapper);
     }
 
     public boolean delete() throws Exception {
