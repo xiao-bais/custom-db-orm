@@ -294,7 +294,7 @@ private JdbcDao jdbcDao;
   | 注解         | 说明                                                         |
   | ------------ | ------------------------------------------------------------ |
   | @DbJoinTable | @DbJoinTables中内部注解，该注解仅用于配置表关联条件，例如：left join teacher tea on a.tea_id = tea.id |
-  | @DbMapper    | 配合@DbJoinTable一起使用，value值必须带上关联表的别名，例如：tea.teacher_name |
+  | @DbJoinField    | 配合@DbJoinTable一起使用，value值必须带上关联表的别名，例如：tea.teacher_name |
 
   
 
