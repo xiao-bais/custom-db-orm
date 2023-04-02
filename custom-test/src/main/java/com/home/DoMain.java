@@ -27,7 +27,12 @@ public class DoMain {
 //        JdbcOpDao jdbcOpDao = jdbcTestBuilder.getJdbcOpDao();
 //        MyService helper = new MyServiceImpl();
 
-        jdbcDao.createTables(Student.class);
+//        jdbcDao.createTables(Student.class);
+
+        List<Student> students = jdbcDao.selectList(Conditions.syncQuery(Student.class)
+                .primaryEx(x -> x.lt(Student::getAge, 24).or().toDefault().eq("a.nick_code", "lisan"))
+
+        );
 
 
         System.out.println("students = " + 1);
@@ -52,6 +57,7 @@ public class DoMain {
                 .injectProperty(City::setLocationList, t -> Conditions.lambdaQuery(Location.class).in(Location::getCityId, t.getId()))
         );
         province.setCityList(cityList);
+        System.out.println("1 = " + 1);
     }
 
 

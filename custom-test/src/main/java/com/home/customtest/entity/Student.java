@@ -20,7 +20,7 @@ import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@DbTable("student233")
+@DbTable("student")
 @TableName("student")
 @DbJoinTable("left join province pv on pv.id = a.pro_id")
 public class Student extends ActiveModel<Student, Integer> {
@@ -35,7 +35,7 @@ public class Student extends ActiveModel<Student, Integer> {
 
     private String name;
 
-//    @DbOneToOne(thisField = "proId", strategy = MultiStrategy.RECURSION)
+    @DbNotField
     private Province province;
 
     @DbField("nick_code")

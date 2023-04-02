@@ -59,9 +59,9 @@ public class SyncQueryWrapper<T> {
      * @param <Pro>
      * @return
      */
-    public <P, Pro> SyncQueryWrapper<T> injectProperty(TargetSetter<T, P> setter, BooleanSupplier condition, ConditionWrapper<Pro> wrapper) {
+    public <P, Pro> SyncQueryWrapper<T> injectProperty(TargetSetter<T, P> setter, boolean condition, ConditionWrapper<Pro> wrapper) {
         SyncProperty<T, Pro> syncProperty = new SyncProperty<>();
-        syncProperty.setCondition(x -> condition.getAsBoolean());
+        syncProperty.setCondition(x -> condition);
         syncProperty.setSetter(setter);
         syncProperty.setWrapper(wrapper);
         this.addPropertyInjector(syncProperty);
@@ -69,7 +69,7 @@ public class SyncQueryWrapper<T> {
     }
 
     public <P, Pro> SyncQueryWrapper<T> injectProperty(TargetSetter<T, P> setter, ConditionWrapper<Pro> wrapper) {
-        return injectProperty(setter, () -> true, wrapper);
+        return injectProperty(setter,  true, wrapper);
     }
 
 
@@ -82,9 +82,9 @@ public class SyncQueryWrapper<T> {
      * @param <Pro>
      * @return
      */
-    public <P, Pro> SyncQueryWrapper<T> injectProperty(TargetSetter<T, P> setter, BooleanSupplier condition, SyncFunction<T, Pro> syncFunction) {
+    public <P, Pro> SyncQueryWrapper<T> injectProperty(TargetSetter<T, P> setter, boolean condition, SyncFunction<T, Pro> syncFunction) {
         SyncProperty<T, Pro> syncProperty = new SyncProperty<>();
-        syncProperty.setCondition(x -> condition.getAsBoolean());
+        syncProperty.setCondition(x -> condition);
         syncProperty.setSetter(setter);
         syncProperty.setSyncFunction(syncFunction);
         this.addPropertyInjector(syncProperty);
@@ -92,7 +92,7 @@ public class SyncQueryWrapper<T> {
     }
 
     public <P, Pro> SyncQueryWrapper<T> injectProperty(TargetSetter<T, P> setter, SyncFunction<T, Pro> syncConsumer) {
-        return injectProperty(setter, () -> true, syncConsumer);
+        return injectProperty(setter, true, syncConsumer);
     }
 
     /**
