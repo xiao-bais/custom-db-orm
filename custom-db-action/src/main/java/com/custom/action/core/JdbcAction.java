@@ -4,6 +4,7 @@ import com.custom.action.condition.AbstractUpdateSet;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.core.chain.ChainWrapper;
 import com.custom.action.core.methods.MethodKind;
+import com.custom.action.core.syncquery.SyncQueryWrapper;
 import com.custom.comm.page.DbPageRows;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.configuration.DbGlobalConfig;
@@ -160,6 +161,21 @@ public class JdbcAction implements SqlExecutor {
     @Override
     public <T, K, V> Map<K, V> selectMap(ConditionWrapper<T> wrapper, Class<K> kClass, Class<V> vClass) throws Exception {
         return (Map<K, V>) mappedHandler.handleExecute(MethodKind.SELECT_MAP_BY_WRAPPER, wrapper, kClass, vClass);
+    }
+
+    @Override
+    public <T> List<T> selectList(SyncQueryWrapper<T> wrapper) throws Exception {
+        return (List<T>) mappedHandler.handleExecute(MethodKind.SELECT_LIST_BY_SYNC, wrapper);
+    }
+
+    @Override
+    public <T> T selectOne(SyncQueryWrapper<T> wrapper) throws Exception {
+        return (T) mappedHandler.handleExecute(MethodKind.SELECT_ONE_BY_SYNC, wrapper);
+    }
+
+    @Override
+    public <T> DbPageRows<T> selectPage(SyncQueryWrapper<T> wrapper) throws Exception {
+        return (DbPageRows<T>) mappedHandler.handleExecute(MethodKind.SELECT_PAGE_BY_SYNC, wrapper);
     }
 
 

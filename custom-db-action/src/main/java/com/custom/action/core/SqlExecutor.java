@@ -3,6 +3,7 @@ package com.custom.action.core;
 import com.custom.action.condition.AbstractUpdateSet;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.core.chain.ChainWrapper;
+import com.custom.action.core.syncquery.SyncQueryWrapper;
 import com.custom.comm.page.DbPageRows;
 import com.custom.jdbc.configuration.DbDataSource;
 import com.custom.jdbc.session.JdbcSqlSessionFactory;
@@ -47,6 +48,9 @@ public interface SqlExecutor {
     <T> List<Map<String, Object>> selectListMap(ConditionWrapper<T> wrapper) throws Exception;
     <T> DbPageRows<Map<String, Object>> selectPageMap(ConditionWrapper<T> wrapper) throws Exception;
     <T, K, V> Map<K, V> selectMap(ConditionWrapper<T> wrapper, Class<K> kClass, Class<V> vClass) throws Exception;
+    <T> List<T> selectList(SyncQueryWrapper<T> wrapper) throws Exception;
+    <T> T selectOne(SyncQueryWrapper<T> wrapper) throws Exception;
+    <T> DbPageRows<T> selectPage(SyncQueryWrapper<T> wrapper) throws Exception;
 
 
     /*--------------------------------------- delete ---------------------------------------*/
@@ -77,7 +81,5 @@ public interface SqlExecutor {
     JdbcSqlSessionFactory getSqlSessionFactory();
     void execTrans(TransactionExecutor wrapper) throws Exception;
     <T> ChainWrapper<T> createChain(Class<T> entityClass) throws Exception;
-
-
 
 }

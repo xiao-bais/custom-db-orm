@@ -3,6 +3,7 @@ package com.custom.action.core;
 import com.custom.action.condition.AbstractUpdateSet;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.core.chain.ChainWrapper;
+import com.custom.action.core.syncquery.SyncQueryWrapper;
 import com.custom.action.interfaces.TableExecutor;
 import com.custom.comm.exceptions.CustomCheckException;
 import com.custom.comm.page.DbPageRows;
@@ -82,6 +83,21 @@ public class DefaultTableExecutor<T, P extends Serializable> implements TableExe
     @Override
     public DbPageRows<Map<String, Object>> selectPageMaps(ConditionWrapper<T> wrapper) throws Exception {
         return sqlExecutor.selectPageMap(wrapper);
+    }
+
+    @Override
+    public List<T> selectList(SyncQueryWrapper<T> wrapper) throws Exception {
+        return sqlExecutor.selectList(wrapper);
+    }
+
+    @Override
+    public T selectOne(SyncQueryWrapper<T> wrapper) throws Exception {
+        return sqlExecutor.selectOne(wrapper);
+    }
+
+    @Override
+    public DbPageRows<T> selectPage(SyncQueryWrapper<T> wrapper) throws Exception {
+        return sqlExecutor.selectPage(wrapper);
     }
 
     @Override

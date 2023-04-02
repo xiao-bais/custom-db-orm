@@ -1,6 +1,7 @@
 package com.custom.action.core;
 
 import com.custom.action.condition.*;
+import com.custom.action.core.syncquery.SyncQueryWrapper;
 import com.custom.action.interfaces.TableExecutor;
 import com.custom.comm.page.DbPageRows;
 
@@ -22,7 +23,8 @@ import java.util.stream.Stream;
  */
 public class DoTargetExecutor<T> {
 
-    private final ConditionWrapper<T> wrapper;
+    private ConditionWrapper<T> wrapper;
+    private SyncQueryWrapper<T> syncQueryWrapper;
     private final TableExecutor<T, Serializable> tableExecutor;
 
     private DoTargetExecutor(ConditionWrapper<T> wrapper, TableExecutor<T, Serializable> tableExecutor) {
@@ -30,68 +32,95 @@ public class DoTargetExecutor<T> {
         this.tableExecutor = tableExecutor;
     }
 
+    private DoTargetExecutor(SyncQueryWrapper<T> syncQueryWrapper, TableExecutor<T, Serializable> tableExecutor) {
+        this.syncQueryWrapper = syncQueryWrapper;
+        this.tableExecutor = tableExecutor;
+    }
+
     public static <T> DoTargetExecutor<T> build(ConditionWrapper<T> wrapper, TableExecutor<T, Serializable> tableExecutor) {
         return new DoTargetExecutor<>(wrapper, tableExecutor);
     }
 
-    public List<T> getList() throws Exception {
+    public static <T> DoTargetExecutor<T> build(SyncQueryWrapper<T> syncQueryWrapper, TableExecutor<T, Serializable> tableExecutor) {
+        return new DoTargetExecutor<>(syncQueryWrapper, tableExecutor);
+    }
+
+
+    public List<T> listSync() throws Exception {
+        return tableExecutor.selectList(syncQueryWrapper);
+    }
+
+    public Stream<T> listSyncStream() throws Exception {
+        return tableExecutor.selectList(syncQueryWrapper).stream();
+    }
+
+    public List<T> list() throws Exception {
        return tableExecutor.selectList(wrapper);
     }
 
-    public Stream<T> getListStream() throws Exception {
+    public Stream<T> listStream() throws Exception {
         return tableExecutor.selectList(wrapper).stream();
     }
 
-
-    public T getOne() throws Exception {
+    public T one() throws Exception {
         return tableExecutor.selectOne(wrapper);
     }
 
-
-    public T getOne(Supplier<T> supplier) throws Exception {
-        return Optional.ofNullable(getOne()).orElseGet(supplier);
+    public T one(Supplier<T> supplier) throws Exception {
+        return Optional.ofNullable(one()).orElseGet(supplier);
     }
 
+    public T oneSync() throws Exception {
+        return tableExecutor.selectOne(syncQueryWrapper);
+    }
+
+    public T oneSync(Supplier<T> supplier) throws Exception {
+        return Optional.ofNullable(oneSync()).orElseGet(supplier);
+    }
 
     public long count() throws Exception {
         return tableExecutor.selectCount(wrapper);
     }
 
 
-    public Object getObj() throws Exception {
+    public Object obj() throws Exception {
         return tableExecutor.selectObj(wrapper);
     }
 
 
-    public Object getObj(Supplier<T> supplier) throws Exception {
-        return Optional.ofNullable(getObj()).orElseGet(supplier);
+    public Object obj(Supplier<T> supplier) throws Exception {
+        return Optional.ofNullable(obj()).orElseGet(supplier);
     }
 
 
-    public List<Object> getObjs() throws Exception {
+    public List<Object> objs() throws Exception {
         return tableExecutor.selectObjs(wrapper);
     }
 
-    public Stream<Object> getObjsStream() throws Exception {
+    public Stream<Object> objsStream() throws Exception {
         return tableExecutor.selectObjs(wrapper).stream();
     }
 
-    public <V> List<V> getObjsStream(Function<? super Object, V> convert) throws Exception {
+    public <V> List<V> objsStream(Function<? super Object, V> convert) throws Exception {
         return tableExecutor.selectObjs(wrapper).stream().filter(Objects::nonNull).map(convert).collect(Collectors.toList());
     }
 
-    public Map<String, Object> getMap() throws Exception {
+    public Map<String, Object> map() throws Exception {
         return tableExecutor.selectMap(wrapper);
     }
 
 
-    public List<Map<String, Object>> getMaps() throws Exception {
+    public List<Map<String, Object>> maps() throws Exception {
         return tableExecutor.selectMaps(wrapper);
     }
 
 
-    public DbPageRows<T> getPage() throws Exception {
+    public DbPageRows<T> page() throws Exception {
         return tableExecutor.selectPage(wrapper);
+    }
+
+    public DbPageRows<T> pageSync() throws Exception {
+        return tableExecutor.selectPage(syncQueryWrapper);
     }
 
     public boolean delete() throws Exception {

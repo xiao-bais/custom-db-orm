@@ -3,6 +3,7 @@ package com.custom.action.interfaces;
 import com.custom.action.condition.AbstractUpdateSet;
 import com.custom.action.condition.ConditionWrapper;
 import com.custom.action.core.chain.ChainWrapper;
+import com.custom.action.core.syncquery.SyncQueryWrapper;
 import com.custom.comm.page.DbPageRows;
 
 import java.io.Serializable;
@@ -29,6 +30,9 @@ public interface TableExecutor<T, P extends Serializable> {
     Map<String, Object> selectMap(ConditionWrapper<T> wrapper) throws Exception;
     List<Map<String, Object>> selectMaps(ConditionWrapper<T> wrapper) throws Exception;
     DbPageRows<Map<String, Object>> selectPageMaps(ConditionWrapper<T> wrapper) throws Exception;
+    List<T> selectList(SyncQueryWrapper<T> wrapper) throws Exception;
+    T selectOne(SyncQueryWrapper<T> wrapper) throws Exception;
+    DbPageRows<T> selectPage(SyncQueryWrapper<T> wrapper) throws Exception;
 
     /*------------------------------------ delete ---------------------------------------*/
     int deleteByKey(P key) throws Exception;
