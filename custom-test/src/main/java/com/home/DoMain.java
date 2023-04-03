@@ -29,10 +29,8 @@ public class DoMain {
 
 //        jdbcDao.createTables(Student.class);
 
-        List<Student> students = jdbcDao.selectList(Conditions.syncQuery(Student.class)
-                .primaryEx(x -> x.lt(Student::getAge, 24).or().toDefault().eq("a.nick_code", "lisan"))
-
-        );
+        Employee employee = jdbcDao.selectByKey(Employee.class, 10);
+        int selective = jdbcDao.updateByCondition(employee, "and a.id = ?", employee.getId());
 
 
         System.out.println("students = " + 1);
