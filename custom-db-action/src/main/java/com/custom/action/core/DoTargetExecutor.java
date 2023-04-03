@@ -23,8 +23,7 @@ import java.util.stream.Stream;
  */
 public class DoTargetExecutor<T> {
 
-    private ConditionWrapper<T> wrapper;
-    private SyncQueryWrapper<T> syncQueryWrapper;
+    private final ConditionWrapper<T> wrapper;
     private final TableExecutor<T, Serializable> tableExecutor;
 
     private DoTargetExecutor(ConditionWrapper<T> wrapper, TableExecutor<T, Serializable> tableExecutor) {
@@ -32,17 +31,8 @@ public class DoTargetExecutor<T> {
         this.tableExecutor = tableExecutor;
     }
 
-    private DoTargetExecutor(SyncQueryWrapper<T> syncQueryWrapper, TableExecutor<T, Serializable> tableExecutor) {
-        this.syncQueryWrapper = syncQueryWrapper;
-        this.tableExecutor = tableExecutor;
-    }
-
     public static <T> DoTargetExecutor<T> build(ConditionWrapper<T> wrapper, TableExecutor<T, Serializable> tableExecutor) {
         return new DoTargetExecutor<>(wrapper, tableExecutor);
-    }
-
-    public static <T> DoTargetExecutor<T> build(SyncQueryWrapper<T> syncQueryWrapper, TableExecutor<T, Serializable> tableExecutor) {
-        return new DoTargetExecutor<>(syncQueryWrapper, tableExecutor);
     }
 
     public List<T> list() throws Exception {
