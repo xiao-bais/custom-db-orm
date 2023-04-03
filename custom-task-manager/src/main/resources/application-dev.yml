@@ -29,8 +29,7 @@ spring:
     password: 123456
     type: com.alibaba.druid.pool.DruidDataSource
   redis:
-    host: 39.108.225.176
-    password: xh@Redis1524
+    host: 127.0.0.1
     database: 1
     port: 6379
 
