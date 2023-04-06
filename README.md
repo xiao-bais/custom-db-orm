@@ -124,7 +124,7 @@ private JdbcDao jdbcDao;
     public <T> T selectOneByCondition(Class<T> t, String condition, Object... params);
 ```
 
-- **条件构造查询**(**与mybatis-plus的条件构造器相差无几**)
+- 条件构造查询**(**与mybatis-plus的条件构造器相差无几)
 
   `selectPageRows(查询分页)`
 
@@ -147,7 +147,7 @@ private JdbcDao jdbcDao;
   public <T> List<Object> selectObjs(ConditionWrapper<T> wrapper);
 ```
 
-  **使用方法**
+  使用示例
 
 ```java
   1: 一般字段构造
@@ -183,50 +183,48 @@ private JdbcDao jdbcDao;
           );
 ```
 
-- 实时同步一对一、一对多查询
+- 实时同步查询(一对一、一对多)
 
-  
+```java
+/**
+ * 同步查询-查询多条记录
+ */
+<T> List<T> selectList(SyncQueryWrapper<T> wrapper);
 
-  ```java
-  /**
-   * 同步查询-查询多条记录
-   */
-  <T> List<T> selectList(SyncQueryWrapper<T> wrapper);
-  
-  /**
-   * 同步查询-查询单条记录
-   */
-  <T> T selectOne(SyncQueryWrapper<T> wrapper);
-  
-  /**
-   * 同步查询-分页
-   */
-  <T> DbPageRows<T> selectPage(SyncQueryWrapper<T> wrapper);
-  ```
+/**
+ * 同步查询-查询单条记录
+ */
+<T> T selectOne(SyncQueryWrapper<T> wrapper);
 
-  ```java
-  // 查询单个对象
-  Student student = jdbcDao.selectOne(Conditions.syncQuery(Student.class)
-                  // student对象的查询(即主对象)
-                  .primaryEx(x -> x.eq(Student::getNickName, "siyecao"))
-                  // student对象中某个非持久化属性的查询(即一对一、一对多)
-                  // t 即是查询后的student对象，作为预判断提前使用
-                  .property(Student::setModelList, t -> t.getModelList() == null,
-                          Conditions.lambdaQuery(Street.class).in(Street::getId, 5012, 5013, 5014, 5015))
-                  .property(Student::setProvince, t -> t.getProvince() == null,
-                          t -> Conditions.lambdaQuery(Province.class).in(t.getProId() != null, Province::getId, t.getProId()))
-          );
-  
-  Province province = student.getProvince();
-  // 查询多条主对象
-  List<City> cityList = jdbcDao.selectList(Conditions.syncQuery(City.class)
-                                           .primaryEx(x -> x.eq(City::getProvinceId, province.getId()))
-                                           .property(City::setLocationList, t -> Conditions.lambdaQuery(Location.class).in(Location::getCityId, t.getId()))
-                                          );
-  province.setCityList(cityList);
-  ```
+/**
+ * 同步查询-分页
+ */
+<T> DbPageRows<T> selectPage(SyncQueryWrapper<T> wrapper);
+```
 
-  
+使用示例
+
+```java
+// 查询单个对象
+Student student = jdbcDao.selectOne(Conditions.syncQuery(Student.class)
+                // student对象的查询(即主对象)
+                .primaryEx(x -> x.eq(Student::getNickName, "siyecao"))
+                // student对象中某个非持久化属性的查询(即一对一、一对多)
+                // t 即是查询后的student对象，作为预判断提前使用
+                .property(Student::setModelList, t -> t.getModelList() == null,
+                        Conditions.lambdaQuery(Street.class).in(Street::getId, 5012, 5013, 5014, 5015))
+                .property(Student::setProvince, t -> t.getProvince() == null,
+                        t -> Conditions.lambdaQuery(Province.class).in(t.getProId() != null, Province::getId, t.getProId()))
+        );
+
+Province province = student.getProvince();
+// 查询多条主对象
+List<City> cityList = jdbcDao.selectList(Conditions.syncQuery(City.class)
+                                         .primaryEx(x -> x.eq(City::getProvinceId, province.getId()))
+                                         .property(City::setLocationList, t -> Conditions.lambdaQuery(Location.class).in(Location::getCityId, t.getId()))
+                                        );
+province.setCityList(cityList);
+```
 
 - 删除
 
@@ -292,7 +290,19 @@ private JdbcDao jdbcDao;
   public void execTrans(TransactionExecutor executor);
 ```
 
-  
+  使用示例
+
+```java
+jdbcDao.execTrans(() -> {
+    // 逻辑写在里面即可
+    Employee employee = jdbcDao.selectByKey(Employee.class, 10);
+    employee.setEmpName("zhangsan");
+    jdbcDao.updateByKey(employee);
+    int a = 1 / 0;
+    employee.setEmpName("lisi");
+    jdbcDao.updateByKey(employee);
+});
+```
 
 - 实体注解介绍
 
