@@ -1,3 +1,5 @@
+
+
 # custom-springboot-starter
 
 ### 简介
@@ -136,18 +138,18 @@ private JdbcDao jdbcDao;
 
   `selectObjs(同上，但允许会返回多个值)`
   
-  ```java
+```java
   public <T> DbPageRows<T> selectPageRows(ConditionWrapper<T> wrapper);
   public <T> List<T> selectList(ConditionWrapper<T> wrapper);
   public <T> T selectOne(ConditionWrapper<T> wrapper);
   public <T> long selectCount(ConditionWrapper<T> wrapper);
   public <T> Object selectObj(ConditionWrapper<T> wrapper);
   public <T> List<Object> selectObjs(ConditionWrapper<T> wrapper);
-  ```
+```
 
   **使用方法**
-  
-  ```java
+
+```java
   1: 一般字段构造
       
       DefaultConditionWrapper<Student> wrapper = new DefaultConditionWrapper<>(Student.class);
@@ -179,9 +181,52 @@ private JdbcDao jdbcDao;
                   .select(x -> x.sum(Student::getAge, Student::getSumAge))
                   .groupBy(Student::getAge)
           );
+```
+
+- 实时同步一对一、一对多查询
+
+  
+
+  ```java
+  /**
+   * 同步查询-查询多条记录
+   */
+  <T> List<T> selectList(SyncQueryWrapper<T> wrapper);
+  
+  /**
+   * 同步查询-查询单条记录
+   */
+  <T> T selectOne(SyncQueryWrapper<T> wrapper);
+  
+  /**
+   * 同步查询-分页
+   */
+  <T> DbPageRows<T> selectPage(SyncQueryWrapper<T> wrapper);
   ```
 
+  ```java
+  // 查询单个对象
+  Student student = jdbcDao.selectOne(Conditions.syncQuery(Student.class)
+                  // student对象的查询(即主对象)
+                  .primaryEx(x -> x.eq(Student::getNickName, "siyecao"))
+                  // student对象中某个非持久化属性的查询(即一对一、一对多)
+                  // t 即是查询后的student对象，作为预判断提前使用
+                  .property(Student::setModelList, t -> t.getModelList() == null,
+                          Conditions.lambdaQuery(Street.class).in(Street::getId, 5012, 5013, 5014, 5015))
+                  .property(Student::setProvince, t -> t.getProvince() == null,
+                          t -> Conditions.lambdaQuery(Province.class).in(t.getProId() != null, Province::getId, t.getProId()))
+          );
+  
+  Province province = student.getProvince();
+  // 查询多条主对象
+  List<City> cityList = jdbcDao.selectList(Conditions.syncQuery(City.class)
+                                           .primaryEx(x -> x.eq(City::getProvinceId, province.getId()))
+                                           .property(City::setLocationList, t -> Conditions.lambdaQuery(Location.class).in(Location::getCityId, t.getId()))
+                                          );
+  province.setCityList(cityList);
+  ```
 
+  
 
 - 删除
 
@@ -224,31 +269,31 @@ private JdbcDao jdbcDao;
 ```
 - 公共方法
 
-  ```java
+```java
   保存一条记录(根据主键添加或修改)
   public <T> int save(T entity);
   
-   执行一条sql(增删改)
-   public <T> int executeSql(String sql, Object... params);
+  执行一条sql(增删改)
+  public <T> int executeSql(String sql, Object... params);
   
-   删除表
-   public void dropTables(Class<?>... arr);
+  删除表
+  public void dropTables(Class<?>... arr);
   
-   创建表
-   public void createTables(Class<?>... arr);
-  ```
+  创建表
+  public void createTables(Class<?>... arr);
+```
+
   
-  
-  
+
 - 事务执行
 
-  ```java
+```java
   事务执行方法
   public void execTrans(TransactionExecutor executor);
-  ```
+```
+
   
-  
-  
+
 - 实体注解介绍
 
   
@@ -338,10 +383,10 @@ public class Student {
     @DbField
     private Integer areaId;
 
-    @DbMapper("pro.name")
+    @DbJoinField("pro.name")
     private String province;
 
-    @DbMapper("cy.name")
+    @DbJoinField("cy.name")
     private String city;
     
     @DbNotField

@@ -1,13 +1,7 @@
 package com.home;
 
 import com.custom.action.condition.Conditions;
-import com.custom.action.condition.LambdaConditionWrapper;
 import com.custom.action.core.JdbcDao;
-import com.custom.action.core.JdbcOpDao;
-import com.custom.action.core.TableInfoCache;
-import com.custom.action.core.TableParseModel;
-import com.custom.action.core.syncquery.SyncProperty;
-import com.custom.action.core.syncquery.SyncQueryWrapper;
 import com.home.customtest.entity.*;
 
 import java.util.List;
@@ -29,11 +23,17 @@ public class DoMain {
 
 //        jdbcDao.createTables(Student.class);
 
-        Employee employee = jdbcDao.selectByKey(Employee.class, 10);
-        int selective = jdbcDao.updateByCondition(employee, "and a.id = ?", employee.getId());
+        jdbcDao.execTrans(() -> {
+            // 逻辑写在里面即可
+            Employee employee = jdbcDao.selectByKey(Employee.class, 10);
+            employee.setEmpName("zhangsan");
+            jdbcDao.updateByKey(employee);
+            int a = 1 / 0;
+            employee.setEmpName("lisi");
+            jdbcDao.updateByKey(employee);
+        });
 
 
-        System.out.println("students = " + 1);
 
     }
 
@@ -42,19 +42,25 @@ public class DoMain {
 
 
     private static void testInjectProperty(JdbcDao jdbcDao) {
+
         Student student = jdbcDao.selectOne(Conditions.syncQuery(Student.class)
+                // student对象的查询(即主对象)
                 .primaryEx(x -> x.eq(Student::getNickName, "siyecao"))
-                .injectProperty(Student::setModelList, x -> x.getModelList() == null, Conditions.lambdaQuery(Street.class).in(Street::getId, 5012, 5013, 5014, 5015))
-                .injectProperty(Student::setProvince, x -> x.getProvince() == null,
+                // student对象中某个非持久化属性的查询(即一对一、一对多)
+                // t 即是查询后的student对象，作为预判断提前使用
+                .property(Student::setModelList, t -> t.getModelList() == null,
+                        Conditions.lambdaQuery(Street.class).in(Street::getId, 5012, 5013, 5014, 5015))
+                .property(Student::setProvince, t -> t.getProvince() == null,
                         t -> Conditions.lambdaQuery(Province.class).in(t.getProId() != null, Province::getId, t.getProId()))
         );
 
         Province province = student.getProvince();
         List<City> cityList = jdbcDao.selectList(Conditions.syncQuery(City.class)
                 .primaryEx(x -> x.eq(City::getProvinceId, province.getId()))
-                .injectProperty(City::setLocationList, t -> Conditions.lambdaQuery(Location.class).in(Location::getCityId, t.getId()))
+                .property(City::setLocationList, t -> Conditions.lambdaQuery(Location.class).in(Location::getCityId, t.getId()))
         );
         province.setCityList(cityList);
+
         System.out.println("1 = " + 1);
     }
 
